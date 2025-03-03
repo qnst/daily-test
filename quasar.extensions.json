@@ -1,0 +1,8 @@
+{
+  "sys-env": {},
+  "@quasar/testing-unit-vitest": {
+    "options": [
+      "ui"
+    ]
+  }
+}

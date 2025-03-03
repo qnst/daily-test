@@ -1,0 +1,5637 @@
+{
+    "Name": "Basic",
+    "Category": "2019",
+    "NumColorColumns": 10,
+    "NumColorRows": 8,
+    "Background":
+    {
+        "Paint":
+        {
+            "FillType": 1,
+            "Color": "#FFFFFF",
+            "EndColor": null,
+            "GradientFlags": 0,
+            "Texture": 0,
+            "TextureScale":
+            {
+                "Units": 0,
+                "Scale": 0,
+                "RWidth": 0,
+                "AlignmentScalar": 0,
+                "Flags": 0
+            },
+            "Opacity": 1
+        },
+        "Hatch": 0,
+        "Effect": 0,
+        "EffectColor": null,
+        "WParam": 0,
+        "LParam": 0
+    },
+    "EffectStyleIndex": 14,
+    "Styles":
+    [
+        {
+            "Name": "Style1",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Style2",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Style3",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Style4",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Style5",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Style6",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Style1020",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 1,
+                "OutsideExtent_Right": 0.05,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0.05,
+                "Color": "#999999",
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Style8",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 1,
+                "OutsideExtent_Right": 0.05,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0.05,
+                "Color": "#999999",
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Style9",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 1,
+                "OutsideExtent_Right": 0.05,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0.05,
+                "Color": "#999999",
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Style10",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 1,
+                "OutsideExtent_Right": 0.05,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0.05,
+                "Color": "#999999",
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Style11",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 1,
+                "OutsideExtent_Right": 0.05,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0.05,
+                "Color": "#999999",
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Style12",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 1,
+                "OutsideExtent_Right": 0.05,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0.05,
+                "Color": "#999999",
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Style7",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Style14",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Style15",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Style16",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Style17",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Style18",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Style19",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 24,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Style20",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 24,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Style21",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 24,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Style22",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 24,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Style23",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 24,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Style24",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 24,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Style25",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Style26",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Style27",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Style28",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Style29",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Style30",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Text Block",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 0,
+                    "Color": null,
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": null,
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 0,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Slide",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 18,
+                "Pattern": 6,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 11,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": null,
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 8,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Bullet",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 3,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": null,
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Completed",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 2,
+                    "Color": "#030200",
+                    "EndColor": "#3B3E40",
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 0,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": null,
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 0,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Remaining",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#FFFFFF",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "Grid",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": null,
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#7F7F7F",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 8,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#545454",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 8,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        },
+        {
+            "Name": "D3",
+            "Fill":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#F5F5F5",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "Effect": 0,
+                "EffectColor": null,
+                "WParam": 0,
+                "LParam": 0
+            },
+            "Border":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#4E67C7",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "OutsideEffect":
+            {
+                "OutsideType": 0,
+                "OutsideExtent_Right": 0,
+                "OutsideExtent_Left": 0,
+                "OutsideExtent_Top": 0,
+                "OutsideExtent_Bottom": 0,
+                "Color": null,
+                "LParam": 0,
+                "WParam": 0
+            },
+            "Text":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "FontName": "Arial",
+                "CharSet": 0,
+                "FontId": 0,
+                "FontSize": 10,
+                "Face": 0,
+                "Effect":
+                {
+                    "OutsideType": 0,
+                    "OutsideExtent_Right": 0,
+                    "OutsideExtent_Left": 0,
+                    "OutsideExtent_Top": 0,
+                    "OutsideExtent_Bottom": 0,
+                    "Color": null,
+                    "LParam": 0,
+                    "WParam": 0
+                }
+            },
+            "Line":
+            {
+                "Paint":
+                {
+                    "FillType": 1,
+                    "Color": "#333333",
+                    "EndColor": null,
+                    "GradientFlags": 0,
+                    "Texture": 0,
+                    "TextureScale":
+                    {
+                        "Units": 0,
+                        "Scale": 0,
+                        "RWidth": 0,
+                        "AlignmentScalar": 0,
+                        "Flags": 0
+                    },
+                    "Opacity": 1
+                },
+                "Hatch": 0,
+                "LineEffect": 0,
+                "Thickness": 6,
+                "Pattern": 1,
+                "BThick": 0,
+                "EdgeColor": null,
+                "LParam": 0,
+                "WParam": 0
+            }
+        }
+    ],
+    "Colors":
+    [
+        "#cccccc",
+        "#b4b4b4",
+        "#838383",
+        "#626262",
+        "#414141",
+        "#f8eca0",
+        "#f4e273",
+        "#eecf19",
+        "#b79f0e",
+        "#796909",
+        "#ffcf99",
+        "#ffb869",
+        "#ff8908",
+        "#c56700",
+        "#834500",
+        "#eeaaaa",
+        "#e68282",
+        "#d63132",
+        "#a42122",
+        "#6d1616",
+        "#dbaaee",
+        "#cb82e6",
+        "#a831d6",
+        "#8021a4",
+        "#55166d",
+        "#aacaee",
+        "#82b1e6",
+        "#317fd6",
+        "#215fa4",
+        "#163f6d",
+        "#aae6ee",
+        "#82dae6",
+        "#31c3d6",
+        "#2195a4",
+        "#16636d",
+        "#dfeeaa",
+        "#cfe682",
+        "#b2d631",
+        "#87a421",
+        "#5a6d16"
+    ],
+    "MenuTextures":
+    [],
+    "OutsideEffects":
+    [
+        {
+            "OutsideType": 1,
+            "OutsideExtent_Right": 0,
+            "OutsideExtent_Left": 0.2,
+            "OutsideExtent_Top": 0.2,
+            "OutsideExtent_Bottom": 0,
+            "Color": "#000000",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 1,
+            "OutsideExtent_Right": 0.05,
+            "OutsideExtent_Left": 0.05,
+            "OutsideExtent_Top": 0.1,
+            "OutsideExtent_Bottom": 0,
+            "Color": "#000000",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 1,
+            "OutsideExtent_Right": 0.2,
+            "OutsideExtent_Left": 0,
+            "OutsideExtent_Top": 0.2,
+            "OutsideExtent_Bottom": 0,
+            "Color": "#000000",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 1,
+            "OutsideExtent_Right": 0,
+            "OutsideExtent_Left": 0.1,
+            "OutsideExtent_Top": 0.05,
+            "OutsideExtent_Bottom": 0.05,
+            "Color": "#000000",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 1,
+            "OutsideExtent_Right": 0.1,
+            "OutsideExtent_Left": 0.1,
+            "OutsideExtent_Top": 0.1,
+            "OutsideExtent_Bottom": 0.1,
+            "Color": "#000000",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 1,
+            "OutsideExtent_Right": 0.1,
+            "OutsideExtent_Left": 0,
+            "OutsideExtent_Top": 0.05,
+            "OutsideExtent_Bottom": 0.05,
+            "Color": "#000000",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 1,
+            "OutsideExtent_Right": 0,
+            "OutsideExtent_Left": 0.2,
+            "OutsideExtent_Top": 0,
+            "OutsideExtent_Bottom": 0.2,
+            "Color": "#000000",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 1,
+            "OutsideExtent_Right": 0.05,
+            "OutsideExtent_Left": 0.05,
+            "OutsideExtent_Top": 0,
+            "OutsideExtent_Bottom": 0.1,
+            "Color": "#000000",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 1,
+            "OutsideExtent_Right": 0.2,
+            "OutsideExtent_Left": 0,
+            "OutsideExtent_Top": 0,
+            "OutsideExtent_Bottom": 0.2,
+            "Color": "#000000",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 2,
+            "OutsideExtent_Right": 0,
+            "OutsideExtent_Left": 0.2,
+            "OutsideExtent_Top": 0,
+            "OutsideExtent_Bottom": 0.25,
+            "Color": "#000000",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 2,
+            "OutsideExtent_Right": 0,
+            "OutsideExtent_Left": 0,
+            "OutsideExtent_Top": 0,
+            "OutsideExtent_Bottom": 0.25,
+            "Color": "#000000",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 2,
+            "OutsideExtent_Right": 0.2,
+            "OutsideExtent_Left": 0,
+            "OutsideExtent_Top": 0,
+            "OutsideExtent_Bottom": 0.25,
+            "Color": "#000000",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 2,
+            "OutsideExtent_Right": 0,
+            "OutsideExtent_Left": 0.4,
+            "OutsideExtent_Top": 0,
+            "OutsideExtent_Bottom": 0.5,
+            "Color": "#000000",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 2,
+            "OutsideExtent_Right": 0,
+            "OutsideExtent_Left": 0,
+            "OutsideExtent_Top": 0,
+            "OutsideExtent_Bottom": 0.5,
+            "Color": "#000000",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 2,
+            "OutsideExtent_Right": 0.4,
+            "OutsideExtent_Left": 0,
+            "OutsideExtent_Top": 0,
+            "OutsideExtent_Bottom": 0.5,
+            "Color": "#000000",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 2,
+            "OutsideExtent_Right": 0,
+            "OutsideExtent_Left": 0.7,
+            "OutsideExtent_Top": 0,
+            "OutsideExtent_Bottom": 0.75,
+            "Color": "#000000",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 2,
+            "OutsideExtent_Right": 0,
+            "OutsideExtent_Left": 0,
+            "OutsideExtent_Top": 0,
+            "OutsideExtent_Bottom": 0.75,
+            "Color": "#000000",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 2,
+            "OutsideExtent_Right": 0.7,
+            "OutsideExtent_Left": 0,
+            "OutsideExtent_Top": 0,
+            "OutsideExtent_Bottom": 0.75,
+            "Color": "#000000",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 3,
+            "OutsideExtent_Right": 0.1,
+            "OutsideExtent_Left": 0.1,
+            "OutsideExtent_Top": 0.1,
+            "OutsideExtent_Bottom": 0.1,
+            "Color": "#aacaee",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 3,
+            "OutsideExtent_Right": 0.1,
+            "OutsideExtent_Left": 0.1,
+            "OutsideExtent_Top": 0.1,
+            "OutsideExtent_Bottom": 0.1,
+            "Color": "#ffcf99",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 3,
+            "OutsideExtent_Right": 0.1,
+            "OutsideExtent_Left": 0.1,
+            "OutsideExtent_Top": 0.1,
+            "OutsideExtent_Bottom": 0.1,
+            "Color": "#eeaaaa",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 3,
+            "OutsideExtent_Right": 0.2,
+            "OutsideExtent_Left": 0.2,
+            "OutsideExtent_Top": 0.2,
+            "OutsideExtent_Bottom": 0.2,
+            "Color": "#aacaee",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 3,
+            "OutsideExtent_Right": 0.2,
+            "OutsideExtent_Left": 0.2,
+            "OutsideExtent_Top": 0.2,
+            "OutsideExtent_Bottom": 0.2,
+            "Color": "#ffcf99",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 3,
+            "OutsideExtent_Right": 0.2,
+            "OutsideExtent_Left": 0.2,
+            "OutsideExtent_Top": 0.2,
+            "OutsideExtent_Bottom": 0.2,
+            "Color": "#eeaaaa",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 3,
+            "OutsideExtent_Right": 0.3,
+            "OutsideExtent_Left": 0.3,
+            "OutsideExtent_Top": 0.3,
+            "OutsideExtent_Bottom": 0.3,
+            "Color": "#aacaee",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 3,
+            "OutsideExtent_Right": 0.3,
+            "OutsideExtent_Left": 0.3,
+            "OutsideExtent_Top": 0.3,
+            "OutsideExtent_Bottom": 0.3,
+            "Color": "#ffcf99",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 3,
+            "OutsideExtent_Right": 0.3,
+            "OutsideExtent_Left": 0.3,
+            "OutsideExtent_Top": 0.3,
+            "OutsideExtent_Bottom": 0.3,
+            "Color": "#eeaaaa",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 4,
+            "OutsideExtent_Right": 0,
+            "OutsideExtent_Left": 0.2,
+            "OutsideExtent_Top": 0,
+            "OutsideExtent_Bottom": 0.25,
+            "Color": "#000000",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 4,
+            "OutsideExtent_Right": 0,
+            "OutsideExtent_Left": 0,
+            "OutsideExtent_Top": 0,
+            "OutsideExtent_Bottom": 0.25,
+            "Color": "#000000",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 4,
+            "OutsideExtent_Right": 0.2,
+            "OutsideExtent_Left": 0,
+            "OutsideExtent_Top": 0,
+            "OutsideExtent_Bottom": 0.25,
+            "Color": "#000000",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 4,
+            "OutsideExtent_Right": 0,
+            "OutsideExtent_Left": 0.4,
+            "OutsideExtent_Top": 0,
+            "OutsideExtent_Bottom": 0.5,
+            "Color": "#000000",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 4,
+            "OutsideExtent_Right": 0,
+            "OutsideExtent_Left": 0,
+            "OutsideExtent_Top": 0,
+            "OutsideExtent_Bottom": 0.5,
+            "Color": "#000000",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 4,
+            "OutsideExtent_Right": 0.4,
+            "OutsideExtent_Left": 0,
+            "OutsideExtent_Top": 0,
+            "OutsideExtent_Bottom": 0.5,
+            "Color": "#000000",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 4,
+            "OutsideExtent_Right": 0,
+            "OutsideExtent_Left": 0.6,
+            "OutsideExtent_Top": 0,
+            "OutsideExtent_Bottom": 0.75,
+            "Color": "#000000",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 4,
+            "OutsideExtent_Right": 0,
+            "OutsideExtent_Left": 0,
+            "OutsideExtent_Top": 0,
+            "OutsideExtent_Bottom": 0.75,
+            "Color": "#000000",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "OutsideType": 4,
+            "OutsideExtent_Right": 0.6,
+            "OutsideExtent_Left": 0,
+            "OutsideExtent_Top": 0,
+            "OutsideExtent_Bottom": 0.75,
+            "Color": "#000000",
+            "LParam": 0,
+            "WParam": 0
+        }
+    ],
+    "InsideEffects":
+    [
+        {
+            "Effect": 2,
+            "EffectColor": null,
+            "LParam": 1,
+            "WParam": 1
+        },
+        {
+            "Effect": 2,
+            "EffectColor": null,
+            "LParam": 2,
+            "WParam": 1
+        },
+        {
+            "Effect": 2,
+            "EffectColor": null,
+            "LParam": 3,
+            "WParam": 1
+        },
+        {
+            "Effect": 2,
+            "EffectColor": null,
+            "LParam": 1,
+            "WParam": 0
+        },
+        {
+            "Effect": 2,
+            "EffectColor": null,
+            "LParam": 2,
+            "WParam": 0
+        },
+        {
+            "Effect": 2,
+            "EffectColor": null,
+            "LParam": 3,
+            "WParam": 0
+        },
+        {
+            "Effect": 2,
+            "EffectColor": null,
+            "LParam": 1,
+            "WParam": 2
+        },
+        {
+            "Effect": 2,
+            "EffectColor": null,
+            "LParam": 2,
+            "WParam": 2
+        },
+        {
+            "Effect": 2,
+            "EffectColor": null,
+            "LParam": 3,
+            "WParam": 2
+        },
+        {
+            "Effect": 2,
+            "EffectColor": null,
+            "LParam": 3,
+            "WParam": 2
+        },
+        {
+            "Effect": 1,
+            "EffectColor": "#FFFFFF",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "Effect": 1,
+            "EffectColor": "#FAFAFA",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "Effect": 1,
+            "EffectColor": "#C9C9C9",
+            "LParam": 0,
+            "WParam": 0
+        },
+        {
+            "Effect": 1,
+            "EffectColor": "#FFFFFF",
+            "LParam": 1,
+            "WParam": 0
+        },
+        {
+            "Effect": 1,
+            "EffectColor": "#FAFAFA",
+            "LParam": 1,
+            "WParam": 0
+        },
+        {
+            "Effect": 1,
+            "EffectColor": "#C9C9C9",
+            "LParam": 1,
+            "WParam": 0
+        },
+        {
+            "Effect": 1,
+            "EffectColor": "#FFFFFF",
+            "LParam": 2,
+            "WParam": 0
+        },
+        {
+            "Effect": 1,
+            "EffectColor": "#FAFAFA",
+            "LParam": 2,
+            "WParam": 0
+        },
+        {
+            "Effect": 1,
+            "EffectColor": "#C9C9C9",
+            "LParam": 2,
+            "WParam": 0
+        },
+        {
+            "Effect": 1,
+            "EffectColor": "#FFFFFF",
+            "LParam": 3,
+            "WParam": 0
+        },
+        {
+            "Effect": 1,
+            "EffectColor": "#FAFAFA",
+            "LParam": 3,
+            "WParam": 0
+        },
+        {
+            "Effect": 1,
+            "EffectColor": "#C9C9C9",
+            "LParam": 3,
+            "WParam": 0
+        },
+        {
+            "Effect": 1,
+            "EffectColor": "#FFFFFF",
+            "LParam": 0,
+            "WParam": 1
+        },
+        {
+            "Effect": 1,
+            "EffectColor": "#FAFAFA",
+            "LParam": 0,
+            "WParam": 1
+        },
+        {
+            "Effect": 1,
+            "EffectColor": "#C9C9C9",
+            "LParam": 0,
+            "WParam": 1
+        },
+        {
+            "Effect": 3,
+            "EffectColor": null,
+            "LParam": 0,
+            "WParam": 10
+        },
+        {
+            "Effect": 3,
+            "EffectColor": null,
+            "LParam": 0,
+            "WParam": 15
+        },
+        {
+            "Effect": 3,
+            "EffectColor": null,
+            "LParam": 0,
+            "WParam": 20
+        },
+        {
+            "Effect": 3,
+            "EffectColor": null,
+            "LParam": 0,
+            "WParam": 25
+        },
+        {
+            "Effect": 3,
+            "EffectColor": null,
+            "LParam": 0,
+            "WParam": 30
+        },
+        {
+            "Effect": 3,
+            "EffectColor": null,
+            "LParam": 0,
+            "WParam": 35
+        },
+        {
+            "Effect": 4,
+            "EffectColor": "#aacaee",
+            "LParam": 0,
+            "WParam": 10
+        },
+        {
+            "Effect": 4,
+            "EffectColor": "#ffcf99",
+            "LParam": 0,
+            "WParam": 10
+        },
+        {
+            "Effect": 4,
+            "EffectColor": "#eeaaaa",
+            "LParam": 0,
+            "WParam": 10
+        },
+        {
+            "Effect": 4,
+            "EffectColor": "#aacaee",
+            "LParam": 0,
+            "WParam": 20
+        },
+        {
+            "Effect": 4,
+            "EffectColor": "#ffcf99",
+            "LParam": 0,
+            "WParam": 20
+        },
+        {
+            "Effect": 4,
+            "EffectColor": "#eeaaaa",
+            "LParam": 0,
+            "WParam": 20
+        },
+        {
+            "Effect": 4,
+            "EffectColor": "#aacaee",
+            "LParam": 0,
+            "WParam": 30
+        },
+        {
+            "Effect": 4,
+            "EffectColor": "#ffcf99",
+            "LParam": 0,
+            "WParam": 30
+        },
+        {
+            "Effect": 4,
+            "EffectColor": "#eeaaaa",
+            "LParam": 0,
+            "WParam": 30
+        }
+    ],
+    "Gradients":
+    [
+        {
+            "Color": "#FBFBF3",
+            "EndColor": "#F2F2B7",
+            "GradientFlags": 8
+        },
+        {
+            "Color": "#BBA35B",
+            "EndColor": "#FDF0C9",
+            "GradientFlags": 8
+        },
+        {
+            "Color": "#B97034",
+            "EndColor": "#FBD585",
+            "GradientFlags": 8
+        },
+        {
+            "Color": "#722927",
+            "EndColor": "#D99694",
+            "GradientFlags": 8
+        },
+        {
+            "Color": "#403251",
+            "EndColor": "#CCC1D9",
+            "GradientFlags": 8
+        },
+        {
+            "Color": "#17365D",
+            "EndColor": "#CBB6CB",
+            "GradientFlags": 8
+        },
+        {
+            "Color": "#27405E",
+            "EndColor": "#B8CCE4",
+            "GradientFlags": 8
+        },
+        {
+            "Color": "#255663",
+            "EndColor": "#93CDDC",
+            "GradientFlags": 8
+        },
+        {
+            "Color": "#4D5D2C",
+            "EndColor": "#D7E3BC",
+            "GradientFlags": 8
+        },
+        {
+            "Color": "#696D3D",
+            "EndColor": "#E4E8AF",
+            "GradientFlags": 8
+        },
+        {
+            "Color": "#FEF7E4",
+            "EndColor": "#BBA35B",
+            "GradientFlags": 8
+        },
+        {
+            "Color": "#FDEADA",
+            "EndColor": "#B97034",
+            "GradientFlags": 8
+        },
+        {
+            "Color": "#F2DCDB",
+            "EndColor": "#903C39",
+            "GradientFlags": 8
+        },
+        {
+            "Color": "#E5E0EC",
+            "EndColor": "#8064A2",
+            "GradientFlags": 8
+        },
+        {
+            "Color": "#D2DAE5",
+            "EndColor": "#1F497D",
+            "GradientFlags": 8
+        },
+        {
+            "Color": "#DBE5F1",
+            "EndColor": "#3B608D",
+            "GradientFlags": 8
+        },
+        {
+            "Color": "#DBEEF3",
+            "EndColor": "#4BACC6",
+            "GradientFlags": 8
+        },
+        {
+            "Color": "#EBF1DD",
+            "EndColor": "#748C42",
+            "GradientFlags": 8
+        },
+        {
+            "Color": "#000000",
+            "EndColor": "#A5A5A5",
+            "GradientFlags": 8
+        }
+    ],
+    "RecentStyles":
+    [
+        0,
+        7,
+        14
+    ]
+}
