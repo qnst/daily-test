@@ -3822,7 +3822,7 @@ Collab.SecondaryToPrimary = function () {
           GlobalData.optManager.WorkAreaHammer.off('tap'),
           GlobalData.optManager.WorkAreaHammer.off('doubletap'),
           GlobalData.optManager.WorkAreaHammer.on('dragstart', Evt_WorkAreaHammerDragStart),
-          GlobalData.optManager.WorkAreaHammer.on('tap', Evt_WorkAreaHammerTap)
+          GlobalData.optManager.WorkAreaHammer.on('tap', Evt_WorkAreaHammerClick)
         ),
         GlobalData.optManager.LinkParams = null,
         GlobalData.optManager.theDragBBoxList = [],

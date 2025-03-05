@@ -2,18 +2,18 @@
 
 class RightClickData {
 
-  public TargetID: number;
+  public targetId: number;
   public segment: number;
-  public HitPt: { x: number, y: number };
-  public Locked: boolean;
-  public Context: number;
+  public hitPoint: { x: number, y: number };
+  public locked: boolean;
+  public context: number;
 
   constructor() {
-    this.TargetID = -1;
+    this.targetId = -1;
     this.segment = -1;
-    this.HitPt = { x: 0, y: 0 };
-    this.Locked = false;
-    this.Context = 0;
+    this.hitPoint = { x: 0, y: 0 };
+    this.locked = false;
+    this.context = 0;
   }
 }
 

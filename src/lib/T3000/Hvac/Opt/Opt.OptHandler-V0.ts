@@ -13,7 +13,7 @@ import SEDSession from '../Model/SEDSession';
 import LayersManager from "../Model/LayersManager";
 import Layer from "../Model/Layer";
 import $ from 'jquery';
-import DefaultEvt from "../Event/DefaultEvt";
+import EvtUtil from "../Event/EvtUtil";
 import Collab from "../Data/Collab";
 import Resources from "../Data/Resources";
 import ArrowDefs from '../Model/ArrowDefs';
@@ -448,7 +448,7 @@ OptHandler.prototype.InitSVGDocument = function () {
     this.DocumentElement = document.getElementById('document-area'),
     this.WorkAreaHammer = Hammer(this.WorkAreaElement),
     this.DocumentElementHammer = Hammer(this.DocumentElement),
-    this.WorkAreaHammer.on('tap', Evt_WorkAreaHammerTap),
+    this.WorkAreaHammer.on('tap', Evt_WorkAreaHammerClick),
     this.WorkAreaHammer.on('wheel', Evt_WorkAreaMouseWheel),
     this.DocumentElementHammer.on('wheel', Evt_WorkAreaMouseWheel),
     this.isGestureCapable &&
@@ -508,9 +508,9 @@ OptHandler.prototype.InitSVGDocument = function () {
   this.WorkAreaHammer = Hammer(this.WorkAreaElement);
   this.DocumentElementHammer = Hammer(this.DocumentElement);
 
-  this.WorkAreaHammer.on('tap', DefaultEvt.Evt_WorkAreaHammerTap);
-  this.WorkAreaHammer.on('wheel', DefaultEvt.Evt_WorkAreaMouseWheel);
-  this.DocumentElementHammer.on('wheel', DefaultEvt.Evt_WorkAreaMouseWheel);
+  this.WorkAreaHammer.on('tap', EvtUtil.Evt_WorkAreaHammerClick);
+  this.WorkAreaHammer.on('wheel', EvtUtil.Evt_WorkAreaMouseWheel);
+  this.DocumentElementHammer.on('wheel', EvtUtil.Evt_WorkAreaMouseWheel);
 
   // if (this.isGestureCapable) {
   //   this.WorkAreaHammer.on('pinchin', Evt_WorkAreaHammerPinchIn);
@@ -529,7 +529,7 @@ OptHandler.prototype.InitSVGDocument = function () {
   //   this.WorkAreaTextInputProxy = $('#SDTS_TouchProxy');
   // }
 
-  this.WorkAreaHammer.on('dragstart', DefaultEvt.Evt_WorkAreaHammerDragStart);
+  this.WorkAreaHammer.on('dragstart', EvtUtil.Evt_WorkAreaHammerDragStart);
 }
 
 
@@ -1662,8 +1662,8 @@ OptHandler.prototype.StartRubberBandSelect = function (e) {
     console.log('222222 ListManager.LM.prototype.StartRubberBandSelect GlobalData.optManager.theRubberBand=>', GlobalData.optManager.theRubberBand);
 
     GlobalData.optManager.EndStampSession();
-    GlobalData.optManager.WorkAreaHammer.on('drag', DefaultEvt.Evt_RubberBandDrag);
-    GlobalData.optManager.WorkAreaHammer.on('dragend', DefaultEvt.Evt_RubberBandDragEnd);
+    GlobalData.optManager.WorkAreaHammer.on('drag', EvtUtil.Evt_RubberBandDrag);
+    GlobalData.optManager.WorkAreaHammer.on('dragend', EvtUtil.Evt_RubberBandDragEnd);
   } catch (e) {
     console.log('ListManager.LM.prototype.StartRubberBandSelect ====== e error ========================================>', e);
     GlobalData.optManager.RubberBandSelect_ExceptionCleanup(e);
@@ -1779,13 +1779,13 @@ OptHandler.prototype.RenderAllSVGSelectionStates = function () {
       ) {
         var d = l.DOMElement(),
           D = Hammer(d);
-        D.on('tap', DefaultEvt.Evt_ActionTriggerTap),
+        D.on('tap', EvtUtil.Evt_ActionTriggerTap),
           D.on('dragstart', p(o)),
           this.isGestureCapable &&
           (
-            D.on('pinchin', DefaultEvt.Evt_WorkAreaHammerPinchIn),
-            D.on('pinchout', DefaultEvt.Evt_WorkAreaHammerPinchOut),
-            D.on('transformend', DefaultEvt.Evt_WorkAreaHammerPinchEnd)
+            D.on('pinchin', EvtUtil.Evt_WorkAreaHammerPinchIn),
+            D.on('pinchout', EvtUtil.Evt_WorkAreaHammerPinchOut),
+            D.on('transformend', EvtUtil.Evt_WorkAreaHammerPinchEnd)
           ),
           l.SetEventProxy(D)
       }
@@ -2557,7 +2557,7 @@ OptHandler.prototype.DrawNewObject = function (drwShape, isClearSection) {
   this.theDrawShape = drwShape;
   this.ClearAnySelection(!isClearSection);
   this.SetEditMode(ConstantData.EditState.EDIT);
-  this.WorkAreaHammer.on('dragstart', DefaultEvt.Evt_WorkAreaHammerDrawStart);
+  this.WorkAreaHammer.on('dragstart', EvtUtil.Evt_WorkAreaHammerDrawStart);
   // GlobalData.optManager.isMobilePlatform ||
   //   (
   //     e instanceof PolyLine ||
@@ -4063,20 +4063,20 @@ OptHandler.prototype.AddSVGObject = function (e, objectId, a, r) {
           var S = shapeContainer.DOMElement(),
             c = Hammer(S);
 
-          var SDJS_LM_ShapeTap = DefaultEvt.Evt_ShapeTapFactory(drwData);
+          var SDJS_LM_ShapeTap = EvtUtil.Evt_ShapeTapFactory(drwData);
           c.on('tap', SDJS_LM_ShapeTap);
 
           if (!GlobalData.docHandler.IsReadOnly()) {
-            GlobalData.Evt_ShapeDragStart = DefaultEvt.Evt_ShapeDragStartFactory(drwData);
+            GlobalData.Evt_ShapeDragStart = EvtUtil.Evt_ShapeDragStartFactory(drwData);
             c.on('dragstart', GlobalData.Evt_ShapeDragStart);
 
             if (this.isMobilePlatform) {
-              GlobalData.SDJS_LM_ShapeHold = DefaultEvt.Evt_ShapeHoldFactory(drwData);
+              GlobalData.SDJS_LM_ShapeHold = EvtUtil.Evt_ShapeHoldFactory(drwData);
               c.on('hold', GlobalData.SDJS_LM_ShapeHold);
             }
 
             if (drwData.AllowTextEdit() || drwData.AllowDoubleClick()) {
-              GlobalData.SDJS_LM_ShapeDoubleTap = DefaultEvt.Evt_ShapeDoubleTapFactory(drwData);
+              GlobalData.SDJS_LM_ShapeDoubleTap = EvtUtil.Evt_ShapeDoubleTapFactory(drwData);
               c.on('doubletap', GlobalData.SDJS_LM_ShapeDoubleTap);
             }
 
@@ -4372,8 +4372,8 @@ OptHandler.prototype.CancelObjectDraw = function () {
     ) : this.GetObjectPtr(this.theActionStoredObjectID, !0),
     this.SetEditMode(ConstantData.EditState.DEFAULT),
     GlobalData.optManager.UnbindDragDropOrStamp(),
-    this.WorkAreaHammer.on('dragstart', DefaultEvt.Evt_WorkAreaHammerDragStart),
-    this.WorkAreaHammer.on('tap', DefaultEvt.Evt_WorkAreaHammerTap),
+    this.WorkAreaHammer.on('dragstart', EvtUtil.Evt_WorkAreaHammerDragStart),
+    this.WorkAreaHammer.on('tap', EvtUtil.Evt_WorkAreaHammerClick),
     e &&
     e.CancelObjectDraw(),
     GlobalData.gBusinessManager.CancelObjectDraw &&
@@ -5839,8 +5839,8 @@ OptHandler.prototype.ResetObjectDraw = function () {
     this.theActionSVGObject = null,
     this.GetObjectPtr(this.theActionStoredObjectID, !0),
     this.SetEditMode(ConstantData.EditState.DEFAULT),
-    this.WorkAreaHammer.on('dragstart', DefaultEvt.Evt_WorkAreaHammerDragStart),
-    this.WorkAreaHammer.on('tap', DefaultEvt.Evt_WorkAreaHammerTap),
+    this.WorkAreaHammer.on('dragstart', EvtUtil.Evt_WorkAreaHammerDragStart),
+    this.WorkAreaHammer.on('tap', EvtUtil.Evt_WorkAreaHammerClick),
     this.SetModalOperation(ConstantData2.ModalOperations.NONE)
 }
 
@@ -5909,8 +5909,8 @@ OptHandler.prototype.LM_MoveClick = function (e) {
     Collab.UnLockMessages(),
       this.currentModalOperation === ConstantData2.ModalOperations.NONE &&
       GlobalData.optManager.SetEditMode(ConstantData.EditState.DRAGSHAPE),
-      GlobalData.optManager.WorkAreaHammer.on('drag', DefaultEvt.Evt_ShapeDrag),
-      GlobalData.optManager.WorkAreaHammer.on('dragend', DefaultEvt.Evt_ShapeDragEnd)
+      GlobalData.optManager.WorkAreaHammer.on('drag', EvtUtil.Evt_ShapeDrag),
+      GlobalData.optManager.WorkAreaHammer.on('dragend', EvtUtil.Evt_ShapeDragEnd)
   } catch (e) {
     GlobalData.optManager.LM_Move_ExceptionCleanup(e);
     GlobalData.optManager.ExceptionCleanup(e);
@@ -8017,7 +8017,7 @@ OptHandler.prototype.DragDropNewShape = function (e, t, a, r, i, n) {
 
 
 
-    GlobalData.Evt_StampObjectDragEnd = DefaultEvt.Evt_StampObjectDragEndFactory(r);
+    GlobalData.Evt_StampObjectDragEnd = EvtUtil.Evt_StampObjectDragEndFactory(r);
 
     // debugger;
 
@@ -8028,10 +8028,10 @@ OptHandler.prototype.DragDropNewShape = function (e, t, a, r, i, n) {
     // debugger
     this.WorkAreaHammer.enable(!1);
 
-    // GlobalData.optManager.MainAppHammer.on('drag', DefaultEvt.Evt_StampObjectDrag);
+    // GlobalData.optManager.MainAppHammer.on('drag', EvtUtil.Evt_StampObjectDrag);
     // GlobalData.optManager.MainAppHammer.on('dragend', Evt_StampObjectDragEnd);
 
-    GlobalData.optManager.MainAppHammer.on('mousemove', DefaultEvt.Evt_StampObjectDrag);
+    GlobalData.optManager.MainAppHammer.on('mousemove', EvtUtil.Evt_StampObjectDrag);
 
     // console.log('===GlobalData.Evt_StampObjectDragEnd', GlobalData.Evt_StampObjectDragEnd)
     // GlobalData.optManager.MainAppHammer.on('mousedown', GlobalData.Evt_StampObjectDragEnd);
@@ -8040,7 +8040,7 @@ OptHandler.prototype.DragDropNewShape = function (e, t, a, r, i, n) {
     // GlobalData.optManager.MainAppHammer.on('click', function (e) { console.log('===DragDropNewShape click', e) });
 
     // GlobalData.optManager.MainAppHammer.on('dragend', function (e) { console.log('===DragDropNewShape dragend', e) });
-    // GlobalData.optManager.MainAppHammer.on('dragend', DefaultEvt.Evt_StampObjectDragEndFactory(r));
+    // GlobalData.optManager.MainAppHammer.on('dragend', EvtUtil.Evt_StampObjectDragEndFactory(r));
 
     // GlobalData.optManager.MainAppHammer.on('dragend', function (e) { GlobalData.optManager.DragDropObjectDone(e, r) })
     GlobalData.optManager.MainAppHammer.on('dragend', GlobalData.Evt_StampObjectDragEnd);
@@ -8131,8 +8131,8 @@ OptHandler.prototype.MouseStampNewShape = function (e, t, a, r, i, n) {
       ConstantData.CursorType.STAMP
     ),
     this.WorkAreaHammer.enable(!1),
-    $(window).bind('mousemove', DefaultEvt.Evt_MouseStampObjectMove),
-    GlobalData.SDJS_LM_MouseStampObjectDone = DefaultEvt.Evt_MouseStampObjectDoneFactory(r),
+    $(window).bind('mousemove', EvtUtil.Evt_MouseStampObjectMove),
+    GlobalData.SDJS_LM_MouseStampObjectDone = EvtUtil.Evt_MouseStampObjectDoneFactory(r),
     $(window).bind('mousedown', GlobalData.SDJS_LM_MouseStampObjectDone),
     $(window).bind('click', GlobalData.SDJS_LM_MouseStampObjectDone),
     this.LM_StampPreTrack(),
@@ -8242,7 +8242,7 @@ OptHandler.prototype.MouseStampObjectDone = function (e, t) {
       this.SetEditMode(ConstantData.EditState.DEFAULT),
       $(window).unbind('mousedown'),
       $(window).unbind('click'),
-      $(window).unbind('mousemove', DefaultEvt.Evt_MouseStampObjectMove),
+      $(window).unbind('mousemove', EvtUtil.Evt_MouseStampObjectMove),
       this.WorkAreaHammer.enable(!0),
       p ||
       l.push(this.theActionStoredObjectID),
@@ -8356,7 +8356,7 @@ OptHandler.prototype.CancelObjectStamp = function (e) {
     (
       $(window).unbind('mousedown'),
       $(window).unbind('click'),
-      $(window).unbind('mousemove', DefaultEvt.Evt_MouseStampObjectMove),
+      $(window).unbind('mousemove', EvtUtil.Evt_MouseStampObjectMove),
       GlobalData.optManager.WorkAreaHammer.enable(!0)
     ),
     this.theMoveList = null,
@@ -14495,7 +14495,7 @@ OptHandler.prototype.CancelObjectStampTextOnTap = function (e) {
     this.LM_StampPostRelease(!1),
     this.SetEditMode(ConstantData.EditState.DEFAULT),
     e &&
-    this.WorkAreaHammer.on('tap', DefaultEvt.Evt_WorkAreaHammerTap),
+    this.WorkAreaHammer.on('tap', EvtUtil.Evt_WorkAreaHammerClick),
     this.stampCompleteCallback = null,
     this.stampCompleteUserData = null,
     this.theMoveList = null,
@@ -14547,7 +14547,7 @@ OptHandler.prototype.StampTextObjectOnTapDone = function (e, t) {
     ) : this.AddToDirtyList(this.theActionStoredObjectID),
     this.RenderDirtySVGObjects(),
     this.theMoveList = null,
-    this.WorkAreaHammer.on('tap', DefaultEvt.Evt_WorkAreaHammerTap),
+    this.WorkAreaHammer.on('tap', EvtUtil.Evt_WorkAreaHammerClick),
     this.CompleteOperation(a),
     this.stampCompleteCallback &&
     this.theActionStoredObjectID >= 0 &&

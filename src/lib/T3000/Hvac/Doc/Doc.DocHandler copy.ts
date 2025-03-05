@@ -4,7 +4,7 @@
 import RulerSettings from '../Model/RulerSettings';
 import $ from 'jquery';
 import GlobalData from '../Data/GlobalData';
-import DefaultEvt from '../Event/DefaultEvt';
+import EvtUtil from '../Event/EvtUtil';
 import Document from '../Basic/Basic.Document';
 import Globals from '../Data/Globals';
 import FileParser from '../Data/FileParser';
@@ -124,7 +124,7 @@ class DocHandler {
     this.rulerSettings.fractionaldenominator = GlobalData.optManager.GetFractionDenominator();
     this.UpdateRulerVisibility();
 
-    $(window).bind('mousemove', DefaultEvt.Evt_MouseMove);
+    $(window).bind('mousemove', EvtUtil.Evt_MouseMove);
     this.InitSVGArea(config);
 
     this.UpdateGridVisibility();

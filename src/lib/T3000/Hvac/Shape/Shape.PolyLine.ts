@@ -3,7 +3,7 @@
 import { Type } from 'class-transformer'
 import 'reflect-metadata'
 import BaseLine from './Shape.BaseLine'
-import DefaultEvt from "../Event/DefaultEvt";
+import EvtUtil from "../Event/EvtUtil";
 import Utils1 from '../Helper/Utils1';
 import Utils2 from "../Helper/Utils2";
 import Utils3 from "../Helper/Utils3";
@@ -2802,14 +2802,14 @@ class PolyLine extends BaseLine {
 
     if (!GlobalData.optManager.isMobilePlatform) {
       $(window).unbind("mousemove");
-      GlobalData.optManager.WorkAreaHammer.on("tap", DefaultEvt.Evt_WorkAreaHammerTap);
+      GlobalData.optManager.WorkAreaHammer.on("tap", EvtUtil.Evt_WorkAreaHammerClick);
     }
 
     this.ResetAutoScrollTimer();
     GlobalData.optManager.LinkParams = null;
     GlobalData.optManager.theActionStoredObjectID = -1;
     GlobalData.optManager.theActionSVGObject = null;
-    GlobalData.optManager.WorkAreaHammer.on("dragstart", DefaultEvt.Evt_WorkAreaHammerDragStart);
+    GlobalData.optManager.WorkAreaHammer.on("dragstart", EvtUtil.Evt_WorkAreaHammerDragStart);
 
     console.log("S.PolyLine: LM_DrawClick_ExceptionCleanup output", {});
   }
@@ -2831,35 +2831,35 @@ class PolyLine extends BaseLine {
       if (GlobalData.optManager.isMobilePlatform) {
         GlobalData.optManager.WorkAreaHammer.on(
           "dragstart",
-          DefaultEvt.Evt_PolyLineDrawDragStart
+          EvtUtil.Evt_PolyLineDrawDragStart
         );
         GlobalData.optManager.WorkAreaHammer.on(
           "drag",
-          DefaultEvt.Evt_DrawTrackHandlerFactory(this)
+          EvtUtil.Evt_DrawTrackHandlerFactory(this)
         );
         GlobalData.optManager.WorkAreaHammer.on(
           "dragend",
-          DefaultEvt.Evt_PolyLineDrawExtendHandlerFactory(this)
+          EvtUtil.Evt_PolyLineDrawExtendHandlerFactory(this)
         );
       }
 
       GlobalData.optManager.WorkAreaHammer.on(
         "doubletap",
-        DefaultEvt.Evt_DrawReleaseHandlerFactory(this)
+        EvtUtil.Evt_DrawReleaseHandlerFactory(this)
       );
 
       if (!GlobalData.optManager.isMobilePlatform) {
         GlobalData.optManager.WorkAreaHammer.on(
           "tap",
-          DefaultEvt.Evt_PolyLineDrawExtendHandlerFactory(this)
+          EvtUtil.Evt_PolyLineDrawExtendHandlerFactory(this)
         );
         GlobalData.optManager.WorkAreaHammer.on(
           "drag",
-          DefaultEvt.Evt_DrawTrackHandlerFactory(this)
+          EvtUtil.Evt_DrawTrackHandlerFactory(this)
         );
         GlobalData.optManager.WorkAreaHammer.on(
           "dragend",
-          DefaultEvt.Evt_PolyLineDrawExtendHandlerFactory(this)
+          EvtUtil.Evt_PolyLineDrawExtendHandlerFactory(this)
         );
         $(window).bind("mousemove", function (mouseEvent) {
           try {
@@ -2890,7 +2890,7 @@ class PolyLine extends BaseLine {
     GlobalData.optManager.UnbindActionClickHammerEvents();
     if (!GlobalData.optManager.isMobilePlatform) {
       $(window).unbind("mousemove");
-      GlobalData.optManager.WorkAreaHammer.on("tap", DefaultEvt.Evt_WorkAreaHammerTap);
+      GlobalData.optManager.WorkAreaHammer.on("tap", EvtUtil.Evt_WorkAreaHammerClick);
     }
 
     // Calculate distance between the last two segments
@@ -5067,7 +5067,7 @@ class PolyLine extends BaseLine {
 
     if (!GlobalData.optManager.isMobilePlatform) {
       $(window).unbind("mousemove");
-      GlobalData.optManager.WorkAreaHammer.on("tap", DefaultEvt.Evt_WorkAreaHammerTap);
+      GlobalData.optManager.WorkAreaHammer.on("tap", EvtUtil.Evt_WorkAreaHammerClick);
     }
 
     this.ResetAutoScrollTimer();

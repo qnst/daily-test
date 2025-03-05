@@ -8,7 +8,7 @@ import Utils2 from "../Helper/Utils2"
 import Utils3 from "../Helper/Utils3"
 import Global from '../Data/Globals'
 import GlobalData from '../Data/GlobalData'
-import DefaultEvt from "../Event/DefaultEvt"
+import EvtUtil from "../Event/EvtUtil"
 import DefaultStyle from '../Model/DefaultStyle'
 import Point from '../Model/Point'
 import $ from 'jquery'
@@ -2402,8 +2402,8 @@ class BaseDrawingObject {
 
       if (!isAreaDimension && !isLocked && !this.NoGrow()) {
         let hammerInstance = Hammer(textShape.svgObj.SDGObj.DOMElement());
-        hammerInstance.on('tap', DefaultEvt.Evt_DimensionTextTapFactory(this, textFrameData, false));
-        hammerInstance.on('doubletap', DefaultEvt.Evt_DimensionTextTapFactory(this, textFrameData, true));
+        hammerInstance.on('tap', EvtUtil.Evt_DimensionTextTapFactory(this, textFrameData, false));
+        hammerInstance.on('doubletap', EvtUtil.Evt_DimensionTextTapFactory(this, textFrameData, true));
         textShape.SetEventProxy(hammerInstance);
       }
     }
@@ -2530,8 +2530,8 @@ class BaseDrawingObject {
 
     if (!isAreaDimension && !isLocked && !this.NoGrow()) {
       let hammerInstance = Hammer(textShape.svgObj.SDGObj.DOMElement());
-      hammerInstance.on('tap', DefaultEvt.Evt_DimensionTextTapFactory(this, textFrameData, false));
-      hammerInstance.on('doubletap', DefaultEvt.Evt_DimensionTextTapFactory(this, textFrameData, true));
+      hammerInstance.on('tap', EvtUtil.Evt_DimensionTextTapFactory(this, textFrameData, false));
+      hammerInstance.on('doubletap', EvtUtil.Evt_DimensionTextTapFactory(this, textFrameData, true));
       textShape.SetEventProxy(hammerInstance);
     }
   }
@@ -2563,8 +2563,8 @@ class BaseDrawingObject {
       if (distanceBetweenPoints > textMinDimensions.width) {
         const textElement = dimensionInfo.text.svgObj.SDGObj.DOMElement();
         const hammerInstance = Hammer(textElement);
-        hammerInstance.on('tap', DefaultEvt.Evt_DimensionTextTapFactory(this, angleChangeData, false));
-        hammerInstance.on('doubletap', DefaultEvt.Evt_DimensionTextTapFactory(this, angleChangeData, true));
+        hammerInstance.on('tap', EvtUtil.Evt_DimensionTextTapFactory(this, angleChangeData, false));
+        hammerInstance.on('doubletap', EvtUtil.Evt_DimensionTextTapFactory(this, angleChangeData, true));
         dimensionInfo.text.SetEventProxy(hammerInstance);
       } else {
         container.RemoveElement(dimensionInfo.text);

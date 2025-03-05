@@ -12,7 +12,7 @@
 // import HvacSVG from '../../Hvac.SVG.t2';
 
 
-// import {Evt_WorkAreaHammerTap,
+// import {Evt_WorkAreaHammerClick,
 //   Evt_WorkAreaHammerDragStart,
 //   Evt_PolyLineDrawDragStart,
 //   SDJS_LM_PolyLineDrawExtendHandlerFactory,
@@ -25,7 +25,7 @@ import { Type } from 'class-transformer'
 import 'reflect-metadata'
 
 import BaseLine from './Shape.BaseLine'
-import DefaultEvt from "../Event/DefaultEvt";
+import EvtUtil from "../Event/EvtUtil";
 
 import Utils1 from '../Helper/Utils1';
 import Utils2 from "../Helper/Utils2";
@@ -2056,12 +2056,12 @@ class PolyLine extends BaseLine {
   LM_DrawClick_ExceptionCleanup(e) {
     GlobalData.optManager.unbindActionClickHammerEvents(),
       GlobalData.optManager.isMobilePlatform || ($(window).unbind("mousemove"),
-        GlobalData.optManager.WorkAreaHammer.on("tap", DefaultEvt.Evt_WorkAreaHammerTap)),
+        GlobalData.optManager.WorkAreaHammer.on("tap", EvtUtil.Evt_WorkAreaHammerClick)),
       this.ResetAutoScrollTimer(),
       GlobalData.optManager.LinkParams = null,
       GlobalData.optManager.theActionStoredObjectID = -1,
       GlobalData.optManager.theActionSVGObject = null,
-      GlobalData.optManager.WorkAreaHammer.on("dragstart", DefaultEvt.Evt_WorkAreaHammerDragStart)
+      GlobalData.optManager.WorkAreaHammer.on("dragstart", EvtUtil.Evt_WorkAreaHammerDragStart)
   }
 
 
@@ -2086,13 +2086,13 @@ class PolyLine extends BaseLine {
         };
       var a = this;
       GlobalData.optManager.WorkAreaHammer.off("dragstart"),
-        GlobalData.optManager.isMobilePlatform && (GlobalData.optManager.WorkAreaHammer.on("dragstart", DefaultEvt.Evt_PolyLineDrawDragStart),
-          GlobalData.optManager.WorkAreaHammer.on("drag", DefaultEvt.Evt_DrawTrackHandlerFactory(this)),
-          GlobalData.optManager.WorkAreaHammer.on("dragend", DefaultEvt.SDJS_LM_PolyLineDrawExtendHandlerFactory(this))),
-        GlobalData.optManager.WorkAreaHammer.on("doubletap", DefaultEvt.Evt_DrawReleaseHandlerFactory(this)),
-        GlobalData.optManager.isMobilePlatform || (GlobalData.optManager.WorkAreaHammer.on("tap", DefaultEvt.SDJS_LM_PolyLineDrawExtendHandlerFactory(this)),
-          GlobalData.optManager.WorkAreaHammer.on("drag", DefaultEvt.Evt_DrawTrackHandlerFactory(this)),
-          GlobalData.optManager.WorkAreaHammer.on("dragend", DefaultEvt.SDJS_LM_PolyLineDrawExtendHandlerFactory(this)),
+        GlobalData.optManager.isMobilePlatform && (GlobalData.optManager.WorkAreaHammer.on("dragstart", EvtUtil.Evt_PolyLineDrawDragStart),
+          GlobalData.optManager.WorkAreaHammer.on("drag", EvtUtil.Evt_DrawTrackHandlerFactory(this)),
+          GlobalData.optManager.WorkAreaHammer.on("dragend", EvtUtil.SDJS_LM_PolyLineDrawExtendHandlerFactory(this))),
+        GlobalData.optManager.WorkAreaHammer.on("doubletap", EvtUtil.Evt_DrawReleaseHandlerFactory(this)),
+        GlobalData.optManager.isMobilePlatform || (GlobalData.optManager.WorkAreaHammer.on("tap", EvtUtil.SDJS_LM_PolyLineDrawExtendHandlerFactory(this)),
+          GlobalData.optManager.WorkAreaHammer.on("drag", EvtUtil.Evt_DrawTrackHandlerFactory(this)),
+          GlobalData.optManager.WorkAreaHammer.on("dragend", EvtUtil.SDJS_LM_PolyLineDrawExtendHandlerFactory(this)),
           $(window).bind("mousemove", (function (e) {
             try {
               a.LM_DrawTrack(e)
@@ -2116,7 +2116,7 @@ class PolyLine extends BaseLine {
     e && e.gesture.stopDetect(),
       GlobalData.optManager.unbindActionClickHammerEvents(),
       GlobalData.optManager.isMobilePlatform || ($(window).unbind("mousemove"),
-        GlobalData.optManager.WorkAreaHammer.on("tap", DefaultEvt.Evt_WorkAreaHammerTap));
+        GlobalData.optManager.WorkAreaHammer.on("tap", EvtUtil.Evt_WorkAreaHammerClick));
     if (i = this.polylist.segs.length,
       a = this.polylist.segs[i - 2].pt.x - this.polylist.segs[i - 1].pt.x,
       r = this.polylist.segs[i - 2].pt.y - this.polylist.segs[i - 1].pt.y,
@@ -3472,7 +3472,7 @@ class PolyLine extends BaseLine {
     return GlobalData.optManager.unbindActionClickHammerEvents(),
       GlobalData.optManager.WorkAreaHammer.off("doubletap"),
       GlobalData.optManager.isMobilePlatform || ($(window).unbind("mousemove"),
-        GlobalData.optManager.WorkAreaHammer.on("tap", DefaultEvt.Evt_WorkAreaHammerTap)),
+        GlobalData.optManager.WorkAreaHammer.on("tap", EvtUtil.Evt_WorkAreaHammerClick)),
       this.ResetAutoScrollTimer(),
       GlobalData.optManager.AddToDirtyList(this.BlockID),
       GlobalData.optManager.RenderDirtySVGObjects(),

@@ -19,7 +19,7 @@ import {
 } from '../../Common';
 
 import {
-  Evt_WorkAreaHammerTap, Evt_WorkAreaMouseWheel,
+  Evt_WorkAreaHammerClick, Evt_WorkAreaMouseWheel,
 
   Evt_WorkAreaHammerPinchIn, Evt_WorkAreaHammerPinchOut, Evt_WorkAreaHammerPinchEnd,
   SDJS_LM_WorkAreaHold, Evt_WorkAreaHammerDragStart, Evt_WorkAreaHammerDrawStart,

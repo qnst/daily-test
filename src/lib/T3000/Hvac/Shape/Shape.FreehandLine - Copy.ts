@@ -12,7 +12,7 @@
 // import HvacSVG from '../../Hvac.SVG.t2';
 
 
-// import {Evt_WorkAreaHammerTap,
+// import {Evt_WorkAreaHammerClick,
 
 //   Evt_DrawTrackHandlerFactory,
 //   Evt_DrawReleaseHandlerFactory
@@ -26,7 +26,7 @@ import Utils3 from "../Helper/Utils3";
 import GlobalData from '../Data/GlobalData'
 import Collab from '../Data/Collab'
 import FileParser from '../Data/FileParser'
-import DefaultEvt from "../Event/DefaultEvt";
+import EvtUtil from "../Event/EvtUtil";
 import Resources from '../Data/Resources'
 import ListManager from '../Data/ListManager';
 
@@ -537,7 +537,7 @@ class FreehandLine extends BaseLine {
       GlobalData.optManager.isMobilePlatform ||
       (
         $(window).unbind('mousemove'),
-        GlobalData.optManager.WorkAreaHammer.on('tap', Evt_WorkAreaHammerTap)
+        GlobalData.optManager.WorkAreaHammer.on('tap', Evt_WorkAreaHammerClick)
       ),
       this.ResetAutoScrollTimer(),
       Collab.AllowMessage()

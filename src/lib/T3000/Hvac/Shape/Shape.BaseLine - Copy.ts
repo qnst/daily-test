@@ -13,7 +13,7 @@
 // import HvTimer from '../../GPTimer';
 
 // import {
-//   Evt_WorkAreaHammerTap, Evt_WorkAreaHammerDragStart,
+//   Evt_WorkAreaHammerClick, Evt_WorkAreaHammerDragStart,
 //   Evt_DrawTrackHandlerFactory,
 //   Evt_DrawReleaseHandlerFactory,Evt_ActionTrackHandlerFactory,
 //   Evt_ActionReleaseHandlerFactory,
@@ -27,7 +27,7 @@ import Utils3 from "../Helper/Utils3";
 import GlobalData from '../Data/GlobalData'
 import Collab from '../Data/Collab'
 import FileParser from '../Data/FileParser'
-import DefaultEvt from "../Event/DefaultEvt";
+import EvtUtil from "../Event/EvtUtil";
 import Resources from '../Data/Resources'
 // import Element from "../Basic/Basic.Element";
 
@@ -1487,14 +1487,14 @@ class BaseLine extends BaseDrawingObject {
       ) return;
       Collab.BeginSecondaryEdit();
       var i = GlobalData.optManager.GetObjectPtr(this.BlockID, !1);
-      GlobalData.optManager.WorkAreaHammer.on('drag', DefaultEvt.Evt_ActionTrackHandlerFactory(i)),
+      GlobalData.optManager.WorkAreaHammer.on('drag', EvtUtil.Evt_ActionTrackHandlerFactory(i)),
 
         // GlobalData.optManager.WorkAreaHammer.on('drag', function(ee){
         //   console.log("0000011120200030========================= ee",ee);
         // }),
 
 
-        GlobalData.optManager.WorkAreaHammer.on('dragend', DefaultEvt.Evt_ActionReleaseHandlerFactory(i))
+        GlobalData.optManager.WorkAreaHammer.on('dragend', EvtUtil.Evt_ActionReleaseHandlerFactory(i))
     } catch (e) {
       this.LM_ActionClick_ExceptionCleanup(e);
       GlobalData.optManager.ExceptionCleanup(e);
@@ -2490,7 +2490,7 @@ class BaseLine extends BaseDrawingObject {
         GlobalData.optManager.LineStamp = !1
       ),
       GlobalData.optManager.FromOverlayLayer = !1,
-      GlobalData.optManager.WorkAreaHammer.on('tap', DefaultEvt.Evt_WorkAreaHammerTap),
+      GlobalData.optManager.WorkAreaHammer.on('tap', EvtUtil.Evt_WorkAreaHammerClick),
       this.ResetAutoScrollTimer(),
       !0
   }
@@ -2535,13 +2535,13 @@ class BaseLine extends BaseDrawingObject {
         void (
           GlobalData.optManager.isMobilePlatform ||
           GlobalData.optManager.WorkAreaHammer &&
-          GlobalData.optManager.WorkAreaHammer.on('mousemove', DefaultEvt.Evt_DrawTrackHandlerFactory(this))
+          GlobalData.optManager.WorkAreaHammer.on('mousemove', EvtUtil.Evt_DrawTrackHandlerFactory(this))
         );
       if (
         GlobalData.optManager.WorkAreaHammer &&
         (
           GlobalData.optManager.unbindActionClickHammerEvents(),
-          GlobalData.optManager.WorkAreaHammer.on('tap', DefaultEvt.Evt_WorkAreaHammerTap)
+          GlobalData.optManager.WorkAreaHammer.on('tap', EvtUtil.Evt_WorkAreaHammerClick)
         ),
         e &&
         e.gesture &&
@@ -2940,14 +2940,14 @@ class BaseLine extends BaseDrawingObject {
   //       GlobalData.optManager.WorkAreaHammer.off('mousemove'),
   //       GlobalData.optManager.LineStamp = !1
   //     ),
-  //     GlobalData.optManager.WorkAreaHammer.on('tap', DefaultEvt.Evt_WorkAreaHammerTap),
+  //     GlobalData.optManager.WorkAreaHammer.on('tap', EvtUtil.Evt_WorkAreaHammerClick),
   //     this.ResetAutoScrollTimer(),
   //     GlobalData.optManager.LinkParams = null,
   //     GlobalData.optManager.theActionStoredObjectID = - 1,
   //     GlobalData.optManager.theActionSVGObject = null,
   //     GlobalData.optManager.LineStamp = !1,
   //     GlobalData.optManager.FromOverlayLayer = !1,
-  //     GlobalData.optManager.WorkAreaHammer.on('dragstart', DefaultEvt.Evt_WorkAreaHammerDragStart),
+  //     GlobalData.optManager.WorkAreaHammer.on('dragstart', EvtUtil.Evt_WorkAreaHammerDragStart),
   //     Collab.UnBlockMessages()
   // }
 
@@ -2962,14 +2962,14 @@ class BaseLine extends BaseDrawingObject {
       GlobalData.optManager.LineStamp = false;
     }
 
-    GlobalData.optManager.WorkAreaHammer.on('tap', DefaultEvt.Evt_WorkAreaHammerTap);
+    GlobalData.optManager.WorkAreaHammer.on('tap', EvtUtil.Evt_WorkAreaHammerClick);
     this.ResetAutoScrollTimer();
     GlobalData.optManager.LinkParams = null;
     GlobalData.optManager.theActionStoredObjectID = -1;
     GlobalData.optManager.theActionSVGObject = null;
     GlobalData.optManager.LineStamp = false;
     GlobalData.optManager.FromOverlayLayer = false;
-    GlobalData.optManager.WorkAreaHammer.on('dragstart', DefaultEvt.Evt_WorkAreaHammerDragStart);
+    GlobalData.optManager.WorkAreaHammer.on('dragstart', EvtUtil.Evt_WorkAreaHammerDragStart);
     // Collab.UnBlockMessages();
   }
 
@@ -2985,8 +2985,8 @@ class BaseLine extends BaseDrawingObject {
       this.Frame.y = docCorY;
       this.StartPoint = { x: docCorX, y: docCorY };
       this.EndPoint = { x: docCorX, y: docCorY };
-      GlobalData.optManager.WorkAreaHammer.on('drag', DefaultEvt.Evt_DrawTrackHandlerFactory(this));
-      GlobalData.optManager.WorkAreaHammer.on('dragend', DefaultEvt.Evt_DrawReleaseHandlerFactory(this));
+      GlobalData.optManager.WorkAreaHammer.on('drag', EvtUtil.Evt_DrawTrackHandlerFactory(this));
+      GlobalData.optManager.WorkAreaHammer.on('dragend', EvtUtil.Evt_DrawReleaseHandlerFactory(this));
       GlobalData.optManager.WorkAreaHammer.off('tap');
     } catch (error) {
 

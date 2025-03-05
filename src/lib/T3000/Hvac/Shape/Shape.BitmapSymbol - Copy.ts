@@ -10,7 +10,7 @@ import BaseSymbol from './Shape.BaseSymbol';
 // import GPP from '../Data/Data.GlobalData'
 // import Collab from '../Data/Collab'
 // import FileParser from '../Data/FileParser'
-// import DefaultEvt from "../Event/Event.Default";
+// import EvtUtil from "../Event/Event.Default";
 // import Resources from '../Data/Resources'
 // import Element from "../Basic/Basic.Element";
 

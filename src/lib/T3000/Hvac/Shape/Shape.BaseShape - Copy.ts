@@ -26,7 +26,7 @@ import GlobalData from '../Data/GlobalData'
 import Utils1 from '../Helper/Utils1';
 import Utils2 from "../Helper/Utils2";
 import Utils3 from "../Helper/Utils3";
-import DefaultEvt from "../Event/DefaultEvt";
+import EvtUtil from "../Event/EvtUtil";
 
 import Collab from '../Data/Collab'
 import FileParser from '../Data/FileParser'
@@ -2841,14 +2841,14 @@ class BaseShape extends BaseDrawingObject {
       ) return;
       Collab.BeginSecondaryEdit();
       var i = GlobalData.optManager.GetObjectPtr(this.BlockID, !1);
-      GlobalData.optManager.WorkAreaHammer.on('drag', DefaultEvt.Evt_ActionTrackHandlerFactory(i)),
+      GlobalData.optManager.WorkAreaHammer.on('drag', EvtUtil.Evt_ActionTrackHandlerFactory(i)),
 
         // GlobalData.optManager.WorkAreaHammer.on('drag', function(ee){
         //   console.log("0000011120200030========================= ee",ee);
         // }),
 
 
-        GlobalData.optManager.WorkAreaHammer.on('dragend', DefaultEvt.Evt_ActionReleaseHandlerFactory(i))
+        GlobalData.optManager.WorkAreaHammer.on('dragend', EvtUtil.Evt_ActionReleaseHandlerFactory(i))
     } catch (e) {
       this.LM_ActionClick_ExceptionCleanup(e);
       GlobalData.optManager.ExceptionCleanup(e);
@@ -2884,8 +2884,8 @@ class BaseShape extends BaseDrawingObject {
       ) return;
       Collab.BeginSecondaryEdit();
       var s = GlobalData.optManager.GetObjectPtr(this.BlockID, !1);
-      GlobalData.optManager.WorkAreaHammer.on('drag', DefaultEvt.Evt_ActionTrackHandlerFactory(s)),
-        GlobalData.optManager.WorkAreaHammer.on('dragend', DefaultEvt.Evt_ActionReleaseHandlerFactory(s))
+      GlobalData.optManager.WorkAreaHammer.on('drag', EvtUtil.Evt_ActionTrackHandlerFactory(s)),
+        GlobalData.optManager.WorkAreaHammer.on('dragend', EvtUtil.Evt_ActionReleaseHandlerFactory(s))
     } catch (e) {
       this.LM_ActionClick_ExceptionCleanup(e);
       GlobalData.optManager.ExceptionCleanup(e);
@@ -3325,7 +3325,7 @@ class BaseShape extends BaseDrawingObject {
       GlobalData.optManager.LinkParams = null,
       GlobalData.optManager.theActionStoredObjectID = - 1,
       GlobalData.optManager.theActionSVGObject = null,
-      GlobalData.optManager.WorkAreaHammer.on('dragstart', DefaultEvt.Evt_WorkAreaHammerDragStart)
+      GlobalData.optManager.WorkAreaHammer.on('dragstart', EvtUtil.Evt_WorkAreaHammerDragStart)
   }
 
 
@@ -3339,8 +3339,8 @@ class BaseShape extends BaseDrawingObject {
         this.Frame.y = t,
         this.prevBBox = $.extend(!0, {
         }, this.Frame),
-        GlobalData.optManager.WorkAreaHammer.on('drag', DefaultEvt.Evt_DrawTrackHandlerFactory(this)),
-        GlobalData.optManager.WorkAreaHammer.on('dragend', DefaultEvt.Evt_DrawReleaseHandlerFactory(this))
+        GlobalData.optManager.WorkAreaHammer.on('drag', EvtUtil.Evt_DrawTrackHandlerFactory(this)),
+        GlobalData.optManager.WorkAreaHammer.on('dragend', EvtUtil.Evt_DrawReleaseHandlerFactory(this))
     } catch (e) {
       this.LM_DrawClick_ExceptionCleanup(e);
       GlobalData.optManager.ExceptionCleanup(e);

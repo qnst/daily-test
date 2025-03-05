@@ -10,7 +10,7 @@ import Utils2 from "../Helper/Utils2";
 import Utils3 from "../Helper/Utils3";
 import GlobalData from '../Data/GlobalData'
 import Collab from '../Data/Collab'
-import DefaultEvt from "../Event/DefaultEvt";
+import EvtUtil from "../Event/EvtUtil";
 
 import Document from '../Basic/Basic.Document'
 

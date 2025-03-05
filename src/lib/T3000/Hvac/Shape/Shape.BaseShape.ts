@@ -6,7 +6,7 @@ import GlobalData from '../Data/GlobalData'
 import Utils1 from '../Helper/Utils1';
 import Utils2 from "../Helper/Utils2";
 import Utils3 from "../Helper/Utils3";
-import DefaultEvt from "../Event/DefaultEvt";
+import EvtUtil from "../Event/EvtUtil";
 import FileParser from '../Data/FileParser'
 import Resources from '../Data/Resources'
 import $ from 'jquery';
@@ -3130,12 +3130,12 @@ class BaseShape extends BaseDrawingObject {
 
       GlobalData.optManager.WorkAreaHammer.on(
         "drag",
-        DefaultEvt.Evt_ActionTrackHandlerFactory(currentObject)
+        EvtUtil.Evt_ActionTrackHandlerFactory(currentObject)
       );
 
       GlobalData.optManager.WorkAreaHammer.on(
         "dragend",
-        DefaultEvt.Evt_ActionReleaseHandlerFactory(currentObject)
+        EvtUtil.Evt_ActionReleaseHandlerFactory(currentObject)
       );
 
       console.log("= S.BaseShape - BaseLine_LM_ActionClick output: completed successfully");
@@ -3179,8 +3179,8 @@ class BaseShape extends BaseDrawingObject {
       }
       // Collab.BeginSecondaryEdit();
       const currentObject = GlobalData.optManager.GetObjectPtr(this.BlockID, false);
-      GlobalData.optManager.WorkAreaHammer.on('drag', DefaultEvt.Evt_ActionTrackHandlerFactory(currentObject));
-      GlobalData.optManager.WorkAreaHammer.on('dragend', DefaultEvt.Evt_ActionReleaseHandlerFactory(currentObject));
+      GlobalData.optManager.WorkAreaHammer.on('drag', EvtUtil.Evt_ActionTrackHandlerFactory(currentObject));
+      GlobalData.optManager.WorkAreaHammer.on('dragend', EvtUtil.Evt_ActionReleaseHandlerFactory(currentObject));
       console.log("= S.BaseShape - LM_ActionClick output: completed successfully");
     } catch (error) {
       this.LM_ActionClick_ExceptionCleanup(error);
@@ -3350,7 +3350,7 @@ class BaseShape extends BaseDrawingObject {
     GlobalData.optManager.LinkParams = null;
     GlobalData.optManager.theActionStoredObjectID = -1;
     GlobalData.optManager.theActionSVGObject = null;
-    GlobalData.optManager.WorkAreaHammer.on('dragstart', DefaultEvt.Evt_WorkAreaHammerDragStart);
+    GlobalData.optManager.WorkAreaHammer.on('dragstart', EvtUtil.Evt_WorkAreaHammerDragStart);
     console.log("= S.BaseShape - LM_DrawClick_ExceptionCleanup output: cleanup complete");
   }
 
@@ -3365,8 +3365,8 @@ class BaseShape extends BaseDrawingObject {
       this.prevBBox = $.extend(true, {}, this.Frame);
 
       // Attach draggable event handlers for drawing tracking and release
-      GlobalData.optManager.WorkAreaHammer.on('drag', DefaultEvt.Evt_DrawTrackHandlerFactory(this));
-      GlobalData.optManager.WorkAreaHammer.on('dragend', DefaultEvt.Evt_DrawReleaseHandlerFactory(this));
+      GlobalData.optManager.WorkAreaHammer.on('drag', EvtUtil.Evt_DrawTrackHandlerFactory(this));
+      GlobalData.optManager.WorkAreaHammer.on('dragend', EvtUtil.Evt_DrawReleaseHandlerFactory(this));
 
       console.log("= S.BaseShape - LM_DrawClick output:", { Frame: this.Frame, prevBBox: this.prevBBox });
     } catch (error) {

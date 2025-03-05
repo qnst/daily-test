@@ -5,7 +5,7 @@ import Utils1 from '../Helper/Utils1';
 import Utils2 from "../Helper/Utils2";
 import Utils3 from "../Helper/Utils3";
 import GlobalData from '../Data/GlobalData'
-import DefaultEvt from "../Event/DefaultEvt";
+import EvtUtil from "../Event/EvtUtil";
 import $ from 'jquery'
 import HvTimer from '../Helper/HvTimer'
 import Point from '../Model/Point'
@@ -1862,8 +1862,8 @@ class BaseLine extends BaseDrawingObject {
       // Collab.BeginSecondaryEdit();
 
       const actionObjectPtr = GlobalData.optManager.GetObjectPtr(blockID, false);
-      GlobalData.optManager.WorkAreaHammer.on('drag', DefaultEvt.Evt_ActionTrackHandlerFactory(actionObjectPtr));
-      GlobalData.optManager.WorkAreaHammer.on('dragend', DefaultEvt.Evt_ActionReleaseHandlerFactory(actionObjectPtr));
+      GlobalData.optManager.WorkAreaHammer.on('drag', EvtUtil.Evt_ActionTrackHandlerFactory(actionObjectPtr));
+      GlobalData.optManager.WorkAreaHammer.on('dragend', EvtUtil.Evt_ActionReleaseHandlerFactory(actionObjectPtr));
 
       console.log("= S.BaseLine: LM_ActionClick setup completed for blockID:", blockID);
     } catch (error) {
@@ -2976,7 +2976,7 @@ class BaseLine extends BaseDrawingObject {
 
     // Reset overlay flag and re-bind tap event
     GlobalData.optManager.FromOverlayLayer = false;
-    GlobalData.optManager.WorkAreaHammer.on('tap', DefaultEvt.Evt_WorkAreaHammerTap);
+    GlobalData.optManager.WorkAreaHammer.on('tap', EvtUtil.Evt_WorkAreaHammerClick);
 
     // Reset auto-scroll timer
     this.ResetAutoScrollTimer();
@@ -3041,7 +3041,7 @@ class BaseLine extends BaseDrawingObject {
         if (!GlobalData.optManager.isMobilePlatform && GlobalData.optManager.WorkAreaHammer) {
           GlobalData.optManager.WorkAreaHammer.on(
             "mousemove",
-            DefaultEvt.Evt_DrawTrackHandlerFactory(this)
+            EvtUtil.Evt_DrawTrackHandlerFactory(this)
           );
         }
         console.log("= S.BaseLine: LM_DrawRelease - negligible movement; early exit.");
@@ -3051,7 +3051,7 @@ class BaseLine extends BaseDrawingObject {
       // Unbind click events and re-bind tap events on the work area hammer
       if (GlobalData.optManager.WorkAreaHammer) {
         GlobalData.optManager.UnbindActionClickHammerEvents();
-        GlobalData.optManager.WorkAreaHammer.on("tap", DefaultEvt.Evt_WorkAreaHammerTap);
+        GlobalData.optManager.WorkAreaHammer.on("tap", EvtUtil.Evt_WorkAreaHammerClick);
       }
       if (event && event.gesture) {
         event.gesture.stopDetect();
@@ -3450,14 +3450,14 @@ class BaseLine extends BaseDrawingObject {
       GlobalData.optManager.LineStamp = false;
     }
 
-    GlobalData.optManager.WorkAreaHammer.on('tap', DefaultEvt.Evt_WorkAreaHammerTap);
+    GlobalData.optManager.WorkAreaHammer.on('tap', EvtUtil.Evt_WorkAreaHammerClick);
     this.ResetAutoScrollTimer();
     GlobalData.optManager.LinkParams = null;
     GlobalData.optManager.theActionStoredObjectID = -1;
     GlobalData.optManager.theActionSVGObject = null;
     GlobalData.optManager.LineStamp = false;
     GlobalData.optManager.FromOverlayLayer = false;
-    GlobalData.optManager.WorkAreaHammer.on('dragstart', DefaultEvt.Evt_WorkAreaHammerDragStart);
+    GlobalData.optManager.WorkAreaHammer.on('dragstart', EvtUtil.Evt_WorkAreaHammerDragStart);
 
     console.log("= S.BaseLine: LM_DrawClick_ExceptionCleanup output: cleanup complete");
   }
@@ -3473,8 +3473,8 @@ class BaseLine extends BaseDrawingObject {
       this.Frame.y = docCorY;
       this.StartPoint = { x: docCorX, y: docCorY };
       this.EndPoint = { x: docCorX, y: docCorY };
-      GlobalData.optManager.WorkAreaHammer.on('drag', DefaultEvt.Evt_DrawTrackHandlerFactory(this));
-      GlobalData.optManager.WorkAreaHammer.on('dragend', DefaultEvt.Evt_DrawReleaseHandlerFactory(this));
+      GlobalData.optManager.WorkAreaHammer.on('drag', EvtUtil.Evt_DrawTrackHandlerFactory(this));
+      GlobalData.optManager.WorkAreaHammer.on('dragend', EvtUtil.Evt_DrawReleaseHandlerFactory(this));
       GlobalData.optManager.WorkAreaHammer.off('tap');
     } catch (error) {
 

@@ -13,7 +13,7 @@ import SEDSession from '../Model/SEDSession';
 import LayersManager from "../Model/LayersManager";
 import Layer from "../Model/Layer";
 import $ from 'jquery';
-import DefaultEvt from "../Event/DefaultEvt";
+import EvtUtil from "../Event/EvtUtil";
 import Collab from "../Data/Collab";
 import Resources from "../Data/Resources";
 import ArrowDefs from '../Model/ArrowDefs';
@@ -589,10 +589,10 @@ class OptHandler {
     console.log("O.Opt InitSVGDocument - Hammer instances created");
 
     // Bind event handlers
-    this.WorkAreaHammer.on('tap', DefaultEvt.Evt_WorkAreaHammerTap);
-    this.WorkAreaHammer.on('wheel', DefaultEvt.Evt_WorkAreaMouseWheel);
-    this.DocumentElementHammer.on('wheel', DefaultEvt.Evt_WorkAreaMouseWheel);
-    this.WorkAreaHammer.on('dragstart', DefaultEvt.Evt_WorkAreaHammerDragStart);
+    this.WorkAreaHammer.on('tap', EvtUtil.Evt_WorkAreaHammerClick);
+    this.WorkAreaHammer.on('wheel', EvtUtil.Evt_WorkAreaMouseWheel);
+    this.DocumentElementHammer.on('wheel', EvtUtil.Evt_WorkAreaMouseWheel);
+    this.WorkAreaHammer.on('dragstart', EvtUtil.Evt_WorkAreaHammerDragStart);
     console.log("O.Opt InitSVGDocument - Event handlers registered");
 
     console.log("O.Opt InitSVGDocument - Output: SVG document initialization completed");
@@ -1506,7 +1506,7 @@ class OptHandler {
       GlobalData.optManager.WorkAreaHammer.off('dragend');
 
       // Restore default drag start handler
-      GlobalData.optManager.WorkAreaHammer.on('dragstart', DefaultEvt.Evt_WorkAreaHammerDragStart);
+      GlobalData.optManager.WorkAreaHammer.on('dragstart', EvtUtil.Evt_WorkAreaHammerDragStart);
 
       // Clean up resources
       GlobalData.optManager.ResetAutoScrollTimer();
@@ -1761,8 +1761,8 @@ class OptHandler {
       GlobalData.optManager.EndStampSession();
 
       // Bind hammer events for the rubber band dragging
-      GlobalData.optManager.WorkAreaHammer.on('drag', DefaultEvt.Evt_RubberBandDrag);
-      GlobalData.optManager.WorkAreaHammer.on('dragend', DefaultEvt.Evt_RubberBandDragEnd);
+      GlobalData.optManager.WorkAreaHammer.on('drag', EvtUtil.Evt_RubberBandDrag);
+      GlobalData.optManager.WorkAreaHammer.on('dragend', EvtUtil.Evt_RubberBandDragEnd);
 
       console.log('O.Opt StartRubberBandSelect - Output rubber band set successfully:', GlobalData.optManager.theRubberBand);
     } catch (error) {
@@ -1913,13 +1913,13 @@ class OptHandler {
           const domElement = actionTriggerElement.DOMElement();
           const hammerInstance = Hammer(domElement);
 
-          hammerInstance.on('tap', DefaultEvt.Evt_ActionTriggerTap);
+          hammerInstance.on('tap', EvtUtil.Evt_ActionTriggerTap);
           hammerInstance.on('dragstart', createActionClickHandler(drawingObject));
 
           if (this.isGestureCapable) {
-            hammerInstance.on('pinchin', DefaultEvt.Evt_WorkAreaHammerPinchIn);
-            hammerInstance.on('pinchout', DefaultEvt.Evt_WorkAreaHammerPinchOut);
-            hammerInstance.on('transformend', DefaultEvt.Evt_WorkAreaHammerPinchEnd);
+            hammerInstance.on('pinchin', EvtUtil.Evt_WorkAreaHammerPinchIn);
+            hammerInstance.on('pinchout', EvtUtil.Evt_WorkAreaHammerPinchOut);
+            hammerInstance.on('transformend', EvtUtil.Evt_WorkAreaHammerPinchEnd);
           }
 
           actionTriggerElement.SetEventProxy(hammerInstance);
@@ -2675,7 +2675,7 @@ class OptHandler {
     this.theDrawShape = newShape;
     this.ClearAnySelection(!clearExistingSection);
     this.SetEditMode(ConstantData.EditState.EDIT);
-    this.WorkAreaHammer.on('dragstart', DefaultEvt.Evt_WorkAreaHammerDrawStart);
+    this.WorkAreaHammer.on('dragstart', EvtUtil.Evt_WorkAreaHammerDrawStart);
 
     console.log("O.Opt DrawNewObject - Output: Draw new object initialized");
   }
@@ -3893,20 +3893,20 @@ class OptHandler {
           let domElement = shapeContainer.DOMElement();
           let hammerInstance = Hammer(domElement);
 
-          let shapeTapHandler = DefaultEvt.Evt_ShapeTapFactory(drawingData);
+          let shapeTapHandler = EvtUtil.Evt_ShapeTapFactory(drawingData);
           hammerInstance.on('tap', shapeTapHandler);
 
           if (!GlobalData.docHandler.IsReadOnly()) {
-            GlobalData.Evt_ShapeDragStart = DefaultEvt.Evt_ShapeDragStartFactory(drawingData);
+            GlobalData.Evt_ShapeDragStart = EvtUtil.Evt_ShapeDragStartFactory(drawingData);
             hammerInstance.on('dragstart', GlobalData.Evt_ShapeDragStart);
 
             if (this.isMobilePlatform) {
-              GlobalData.SDJS_LM_ShapeHold = DefaultEvt.Evt_ShapeHoldFactory(drawingData);
+              GlobalData.SDJS_LM_ShapeHold = EvtUtil.Evt_ShapeHoldFactory(drawingData);
               hammerInstance.on('hold', GlobalData.SDJS_LM_ShapeHold);
             }
 
             if (drawingData.AllowTextEdit() || drawingData.AllowDoubleClick()) {
-              GlobalData.SDJS_LM_ShapeDoubleTap = DefaultEvt.Evt_ShapeDoubleTapFactory(drawingData);
+              GlobalData.SDJS_LM_ShapeDoubleTap = EvtUtil.Evt_ShapeDoubleTapFactory(drawingData);
               hammerInstance.on('doubletap', GlobalData.SDJS_LM_ShapeDoubleTap);
             }
 
@@ -4283,8 +4283,8 @@ class OptHandler {
     GlobalData.optManager.UnbindDragDropOrStamp();
 
     // Rebind work area events.
-    this.WorkAreaHammer.on('dragstart', DefaultEvt.Evt_WorkAreaHammerDragStart);
-    this.WorkAreaHammer.on('tap', DefaultEvt.Evt_WorkAreaHammerTap);
+    this.WorkAreaHammer.on('dragstart', EvtUtil.Evt_WorkAreaHammerDragStart);
+    this.WorkAreaHammer.on('tap', EvtUtil.Evt_WorkAreaHammerClick);
 
     // Call cancel on the drawing object if present.
     if (actionObject) {
@@ -6197,8 +6197,8 @@ class OptHandler {
     this.SetEditMode(ConstantData.EditState.DEFAULT);
 
     // Rebind default work area events
-    this.WorkAreaHammer.on('dragstart', DefaultEvt.Evt_WorkAreaHammerDragStart);
-    this.WorkAreaHammer.on('tap', DefaultEvt.Evt_WorkAreaHammerTap);
+    this.WorkAreaHammer.on('dragstart', EvtUtil.Evt_WorkAreaHammerDragStart);
+    this.WorkAreaHammer.on('tap', EvtUtil.Evt_WorkAreaHammerClick);
 
     // Clear any modal operations
     this.SetModalOperation(ConstantData2.ModalOperations.NONE);
@@ -6213,7 +6213,7 @@ class OptHandler {
       GlobalData.optManager.IsWheelClick(event) ||
       ConstantData.DocumentContext.SpacebarDown
     ) {
-      DefaultEvt.Evt_WorkAreaHammerDragStart(event);
+      EvtUtil.Evt_WorkAreaHammerDragStart(event);
       Utils2.StopPropagationAndDefaults(event);
       console.log("O.Opt LM_MoveClick - Output: Wheel click or spacebar down detected, redirected to WorkAreaHammerDragStart");
       return;
@@ -6259,8 +6259,8 @@ class OptHandler {
       }
 
       // Register event handlers for drag operations
-      GlobalData.optManager.WorkAreaHammer.on('drag', DefaultEvt.Evt_ShapeDrag);
-      GlobalData.optManager.WorkAreaHammer.on('dragend', DefaultEvt.Evt_ShapeDragEnd);
+      GlobalData.optManager.WorkAreaHammer.on('drag', EvtUtil.Evt_ShapeDrag);
+      GlobalData.optManager.WorkAreaHammer.on('dragend', EvtUtil.Evt_ShapeDragEnd);
 
       console.log("O.Opt LM_MoveClick - Output: Move operation set up successfully");
     } catch (error) {
@@ -9587,7 +9587,7 @@ class OptHandler {
       }
 
       // Set up drag end handler
-      GlobalData.Evt_StampObjectDragEnd = DefaultEvt.Evt_StampObjectDragEndFactory(useDefaultStyle);
+      GlobalData.Evt_StampObjectDragEnd = EvtUtil.Evt_StampObjectDragEndFactory(useDefaultStyle);
 
       // Initialize hammer.js for gesture handling
       if (!GlobalData.optManager.MainAppHammer) {
@@ -9598,7 +9598,7 @@ class OptHandler {
       this.WorkAreaHammer.enable(false);
 
       // Register event handlers for shape dragging
-      GlobalData.optManager.MainAppHammer.on('mousemove', DefaultEvt.Evt_StampObjectDrag);
+      GlobalData.optManager.MainAppHammer.on('mousemove', EvtUtil.Evt_StampObjectDrag);
       GlobalData.optManager.MainAppHammer.on('dragend', GlobalData.Evt_StampObjectDragEnd);
 
       // Initialize tracking and prepare for movement
@@ -9665,8 +9665,8 @@ class OptHandler {
     this.WorkAreaHammer.enable(false);
 
     // Bind mouse event handlers for stamping operation
-    $(window).bind('mousemove', DefaultEvt.Evt_MouseStampObjectMove);
-    GlobalData.SDJS_LM_MouseStampObjectDone = DefaultEvt.Evt_MouseStampObjectDoneFactory(useDefaultStyle);
+    $(window).bind('mousemove', EvtUtil.Evt_MouseStampObjectMove);
+    GlobalData.SDJS_LM_MouseStampObjectDone = EvtUtil.Evt_MouseStampObjectDoneFactory(useDefaultStyle);
     $(window).bind('mousedown', GlobalData.SDJS_LM_MouseStampObjectDone);
     $(window).bind('click', GlobalData.SDJS_LM_MouseStampObjectDone);
 
@@ -9817,7 +9817,7 @@ class OptHandler {
       this.SetEditMode(ConstantData.EditState.DEFAULT);
       $(window).unbind('mousedown');
       $(window).unbind('click');
-      $(window).unbind('mousemove', DefaultEvt.Evt_MouseStampObjectMove);
+      $(window).unbind('mousemove', EvtUtil.Evt_MouseStampObjectMove);
       this.WorkAreaHammer.enable(true);
 
       // Build selection list
@@ -9981,7 +9981,7 @@ class OptHandler {
     if (shouldUnbindEvents) {
       $(window).unbind('mousedown');
       $(window).unbind('click');
-      $(window).unbind('mousemove', DefaultEvt.Evt_MouseStampObjectMove);
+      $(window).unbind('mousemove', EvtUtil.Evt_MouseStampObjectMove);
       GlobalData.optManager.WorkAreaHammer.enable(true);
     }
 
@@ -19047,7 +19047,7 @@ class OptHandler {
     this.LM_StampPostRelease(false);
     this.SetEditMode(ConstantData.EditState.DEFAULT);
     if (event) {
-      this.WorkAreaHammer.on('tap', DefaultEvt.Evt_WorkAreaHammerTap);
+      this.WorkAreaHammer.on('tap', EvtUtil.Evt_WorkAreaHammerClick);
     }
     this.stampCompleteCallback = null;
     this.stampCompleteUserData = null;
@@ -19123,7 +19123,7 @@ class OptHandler {
     this.RenderDirtySVGObjects();
     this.theMoveList = null;
 
-    this.WorkAreaHammer.on('tap', DefaultEvt.Evt_WorkAreaHammerTap);
+    this.WorkAreaHammer.on('tap', EvtUtil.Evt_WorkAreaHammerClick);
 
     this.CompleteOperation(objectIds);
 
