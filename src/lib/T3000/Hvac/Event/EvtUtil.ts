@@ -115,10 +115,10 @@ class EvtUtil {
       // Determine zoom direction based on wheel direction
       if (event.deltaY > 0) {
         // Zoom out
-        DocOpt.ZoomInandOut(false, true);
+        DocOpt.ZoomInAndOut(false, true);
       } else if (event.deltaY < 0) {
         // Zoom in
-        DocOpt.ZoomInandOut(true, true);
+        DocOpt.ZoomInAndOut(true, true);
       }
 
       // Prevent default scrolling behavior

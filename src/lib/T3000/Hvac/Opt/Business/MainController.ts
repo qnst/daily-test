@@ -1,7 +1,7 @@
 
 
 
-import ShapeController from './ShapeController'
+// import ShapeController from './ToolOpt'
 import BusinessController from './BusinessController'
 import ConnectionPointsController from './ConnectionPointsController'
 import DocOpt from './DocOpt'
@@ -28,7 +28,7 @@ class MainController {
 
   constructor() {
     this.Selection = new ActiveSelection();
-    this.Shapes = new ShapeController();
+    // this.Shapes = new ShapeController();
     this.Document = new DocOpt();
     this.Business = new BusinessController();
     this.ConnectionPoints = new ConnectionPointsController();

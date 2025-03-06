@@ -6402,59 +6402,59 @@ class OptHandler {
     console.log('O.Opt ResetObjectDraw - Output: Object draw state reset');
   }
 
-  /**
-   * Updates the active drawing tool based on current selection state.
-   * This function handles tool persistence when sticky selection is enabled,
-   * and resets to the default selection tool when sticky selection is disabled.
-   */
-  UpdateTools() {
-    console.log("O.Opt UpdateTools - Input: No parameters");
+  // /**
+  //  * Updates the active drawing tool based on current selection state.
+  //  * This function handles tool persistence when sticky selection is enabled,
+  //  * and resets to the default selection tool when sticky selection is disabled.
+  //  */
+  // UpdateTools() {
+  //   console.log("O.Opt UpdateTools - Input: No parameters");
 
-    let mouseEvent;
+  //   let mouseEvent;
 
-    if (!ConstantData.DocumentContext.SelectionToolSticky) {
-      // If sticky selection is not enabled, set tool back to Select
-      if (ConstantData.DocumentContext.SelectionTool !== Resources.Tools.Tool_Select) {
-        // SDUI.Commands.MainController.Selection.SetSelectionTool(Resources.Tools.Tool_Select, false);
-      }
-    } else {
-      // If sticky selection is enabled, maintain the current drawing tool
-      switch (ConstantData.DocumentContext.SelectionTool) {
-        case Resources.Tools.Tool_Line:
-          Commands.MainController.Shapes.DrawNewLineShape(null, false, true);
-          break;
+  //   if (!ConstantData.DocumentContext.SelectionToolSticky) {
+  //     // If sticky selection is not enabled, set tool back to Select
+  //     if (ConstantData.DocumentContext.SelectionTool !== Resources.Tools.Tool_Select) {
+  //       // SDUI.Commands.MainController.Selection.SetSelectionTool(Resources.Tools.Tool_Select, false);
+  //     }
+  //   } else {
+  //     // If sticky selection is enabled, maintain the current drawing tool
+  //     switch (ConstantData.DocumentContext.SelectionTool) {
+  //       case Resources.Tools.Tool_Line:
+  //         Commands.MainController.Shapes.DrawNewLineShape(null, false, true);
+  //         break;
 
-        case Resources.Tools.Tool_Shape:
-          mouseEvent = { type: 'mousedown' };
-          Commands.MainController.Shapes.StampOrDragDropNewShape(mouseEvent, null);
-          mouseEvent = { type: 'mouseup' };
-          Commands.MainController.Shapes.StampOrDragDropNewShape(mouseEvent, null);
-          break;
+  //       case Resources.Tools.Tool_Shape:
+  //         mouseEvent = { type: 'mousedown' };
+  //         Commands.MainController.Shapes.StampOrDragDropNewShape(mouseEvent, null);
+  //         mouseEvent = { type: 'mouseup' };
+  //         Commands.MainController.Shapes.StampOrDragDropNewShape(mouseEvent, null);
+  //         break;
 
-        case Resources.Tools.Tool_Text:
-          Commands.MainController.Shapes.StampTextLabel(true, true);
-          break;
+  //       case Resources.Tools.Tool_Text:
+  //         Commands.MainController.Shapes.StampTextLabel(true, true);
+  //         break;
 
-        case Resources.Tools.Tool_Wall:
-          Commands.MainController.Shapes.DrawNewWallShape(true, null);
-          break;
+  //       case Resources.Tools.Tool_Wall:
+  //         Commands.MainController.Shapes.DrawNewWallShape(true, null);
+  //         break;
 
-        case Resources.Tools.Tool_Symbol:
-          mouseEvent = { type: 'mousedown' };
-          const selectedButton = Commands.MainController.Symbols.GetSelectedButton();
-          Commands.MainController.Shapes.DragDropSymbol(mouseEvent, selectedButton);
-          mouseEvent = { type: 'click' };
-          Commands.MainController.Shapes.DragDropSymbol(mouseEvent, selectedButton);
-          break;
+  //       case Resources.Tools.Tool_Symbol:
+  //         mouseEvent = { type: 'mousedown' };
+  //         const selectedButton = Commands.MainController.Symbols.GetSelectedButton();
+  //         Commands.MainController.Shapes.DragDropSymbol(mouseEvent, selectedButton);
+  //         mouseEvent = { type: 'click' };
+  //         Commands.MainController.Shapes.DragDropSymbol(mouseEvent, selectedButton);
+  //         break;
 
-        case Resources.Tools.Tool_StyledLine:
-          Commands.MainController.Shapes.DrawNewStyledLineShape(null, true);
-          break;
-      }
-    }
+  //       case Resources.Tools.Tool_StyledLine:
+  //         Commands.MainController.Shapes.DrawNewStyledLineShape(null, true);
+  //         break;
+  //     }
+  //   }
 
-    console.log("O.Opt UpdateTools - Output: Tool selection updated");
-  }
+  //   console.log("O.Opt UpdateTools - Output: Tool selection updated");
+  // }
 
   LM_MoveClick(event) {
     console.log("O.Opt LM_MoveClick - Input:", event);
