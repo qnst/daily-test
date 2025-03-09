@@ -1227,8 +1227,8 @@ class DocUtil {
    * @param conversionFactor - Base scale conversion factor (typically 1 or metric conversion value)
    * @returns number - Adjusted scale factor for ruler calculations
    */
-  SD_GetScaledRuler(conversionFactor: number): number {
-    console.log("= U.DocUtil: SD_GetScaledRuler - Input:", {
+  GetScaledRuler(conversionFactor: number): number {
+    console.log("= U.DocUtil: GetScaledRuler - Input:", {
       conversionFactor,
       documentScale: this.svgDoc.docInfo.docScale
     });
@@ -1248,7 +1248,7 @@ class DocUtil {
       conversionFactor *= documentScaleFloor;
     }
 
-    console.log("= U.DocUtil: SD_GetScaledRuler - Output:", {
+    console.log("= U.DocUtil: GetScaledRuler - Output:", {
       adjustedFactor: conversionFactor
     });
 
@@ -1274,7 +1274,7 @@ class DocUtil {
 
     // Get scale factor adjusted for document zoom
     let unitConversionFactor = 1;
-    const scaledRulerFactor = this.SD_GetScaledRuler(unitConversionFactor);
+    const scaledRulerFactor = this.GetScaledRuler(unitConversionFactor);
 
     // Create a PATH shape used to draw tick marks
     const rulerPathElement = rulerDocument.CreateShape(ConstantData.CreateShapeType.PATH);
@@ -1484,7 +1484,7 @@ class DocUtil {
 
     if (gridLayer) {
       // Get the scale factor based on the current conversion factor
-      const scaleFactor = this.SD_GetScaledRuler(unitConversionFactor);
+      const scaleFactor = this.GetScaledRuler(unitConversionFactor);
       gridLayer.RemoveAll();
 
       const majorGridPath = this.svgDoc.CreateShape(ConstantData.CreateShapeType.PATH);
@@ -1763,7 +1763,7 @@ class DocUtil {
     }
 
     // Get the scale adjustment for the current document zoom
-    const scaleAdjustment = this.SD_GetScaledRuler(unitConversionFactor);
+    const scaleAdjustment = this.GetScaledRuler(unitConversionFactor);
 
     // Create copy of input coordinates to work with
     let remainingDistance = { x: point.x, y: point.y };

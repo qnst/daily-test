@@ -4,9 +4,7 @@ import ListManager from './ListManager'
 import Utils2 from '../Helper/Utils2'
 import T3Gv from './T3Gv'
 import FileParser from '../Data/FileParser'
-// import DataStream from '../Opt/Business/DataStream'
 import T3DataStream from '../Opt/Business/T3DataStream'
-//import DataStream from 'datastream-js'
 import Resources from '../Data/Resources'
 import Utils1 from '../Helper/Utils1'
 import Utils3 from '../Helper/Utils3'
@@ -14,7 +12,6 @@ import Globals from './Globals'
 import HashController from '../Opt/Business/HashController'
 import $ from 'jquery'
 import RulerConfig from '../Model/RulerConfig'
-// import Collab from '../Data/Collab'
 import Polygon from '../Basic/B.Polygon'
 import PolygonShapeGenerator from "../Opt/Business/PolygonUtil"
 import QuickStyle from '../Model/QuickStyle'
@@ -42,7 +39,6 @@ import ConstantData1 from "../Data/ConstantData1"
 import ConstantData2 from './ConstantData2'
 import TextureList from '../Model/TextureList'
 import PolygonConstant from '../Opt/Business/PolygonConstant'
-
 
 class SDF {
 
@@ -8502,8 +8498,8 @@ SDF.ReadGraphAxisLabel = function (e, t, a) {
       o.links = Utils1.DeepCopy(n),
       t
     ) {
-      stateManagerPrimary = stateManager,
-        objectStorePrimary = objectStore;
+      // stateManagerPrimary = stateManager,
+      // objectStorePrimary = objectStore;
       var c = new SDJS.Editor.BaseStateManager,
         u = new SDJS.Editor.ObjectStore;
       if (

@@ -4064,13 +4064,13 @@ class OptHandler {
             hammerInstance.on('dragstart', T3Gv.Evt_ShapeDragStart);
 
             if (this.isMobilePlatform) {
-              T3Gv.SDJS_LM_ShapeHold = EvtUtil.Evt_ShapeHoldFactory(drawingData);
-              hammerInstance.on('hold', T3Gv.SDJS_LM_ShapeHold);
+              T3Gv.Evt_LM_ShapeHold = EvtUtil.Evt_ShapeHoldFactory(drawingData);
+              hammerInstance.on('hold', T3Gv.Evt_LM_ShapeHold);
             }
 
             if (drawingData.AllowTextEdit() || drawingData.AllowDoubleClick()) {
-              T3Gv.SDJS_LM_ShapeDoubleTap = EvtUtil.Evt_ShapeDoubleTapFactory(drawingData);
-              hammerInstance.on('doubletap', T3Gv.SDJS_LM_ShapeDoubleTap);
+              T3Gv.Evt_LM_ShapeDoubleTap = EvtUtil.Evt_ShapeDoubleTapFactory(drawingData);
+              hammerInstance.on('doubletap', T3Gv.Evt_LM_ShapeDoubleTap);
             }
 
             shapeContainer.SetEventProxy(hammerInstance);
@@ -4516,15 +4516,15 @@ class OptHandler {
         );
       } else if (this.LinkParams && (this.LinkParams.ConnectIndex >= 0 || this.LinkParams.InitialHook >= 0)) {
         // If connection indexes or an initial hook exists, handle flow chart hook logic
-        if (T3Gv.gFlowChartManager) {
-          flowHookResult = T3Gv.gFlowChartManager.FlowChartHook(
-            this.theActionStoredObjectID,
-            this.LinkParams.InitialHook,
-            this.LinkParams.ConnectIndex,
-            this.LinkParams.HookIndex,
-            this.LinkParams.ConnectPt
-          );
-        }
+        // if (T3Gv.gFlowChartManager) {
+        //   flowHookResult = T3Gv.gFlowChartManager.FlowChartHook(
+        //     this.theActionStoredObjectID,
+        //     this.LinkParams.InitialHook,
+        //     this.LinkParams.ConnectIndex,
+        //     this.LinkParams.HookIndex,
+        //     this.LinkParams.ConnectPt
+        //   );
+        // }
         if (!flowHookResult) {
           if (this.LinkParams.ConnectHookFlag === ConstantData.HookFlags.SED_LC_AutoInsert) {
             this.SD_AutoInsertShape(this.theActionStoredObjectID, this.LinkParams.ConnectIndex);
@@ -8016,16 +8016,16 @@ class OptHandler {
       else if (this.LinkParams &&
         (this.LinkParams.ConnectIndex >= 0 || this.LinkParams.InitialHook >= 0)) {
 
-        // Allow flow chart business logic to handle the hook if needed
-        if (T3Gv.gFlowChartManager) {
-          flowChartHookResult = T3Gv.gFlowChartManager.FlowChartHook(
-            this.theDragTargetID,
-            this.LinkParams.InitialHook,
-            this.LinkParams.ConnectIndex,
-            this.LinkParams.HookIndex,
-            this.LinkParams.ConnectPt
-          );
-        }
+        // // Allow flow chart business logic to handle the hook if needed
+        // if (T3Gv.gFlowChartManager) {
+        //   flowChartHookResult = T3Gv.gFlowChartManager.FlowChartHook(
+        //     this.theDragTargetID,
+        //     this.LinkParams.InitialHook,
+        //     this.LinkParams.ConnectIndex,
+        //     this.LinkParams.HookIndex,
+        //     this.LinkParams.ConnectPt
+        //   );
+        // }
 
         // If flow chart handling didn't succeed, handle the connection based on hook flag
         if (!flowChartHookResult) {
@@ -10081,9 +10081,9 @@ class OptHandler {
 
     // Bind mouse event handlers for stamping operation
     $(window).bind('mousemove', EvtUtil.Evt_MouseStampObjectMove);
-    T3Gv.SDJS_LM_MouseStampObjectDone = EvtUtil.Evt_MouseStampObjectDoneFactory(useDefaultStyle);
-    $(window).bind('mousedown', T3Gv.SDJS_LM_MouseStampObjectDone);
-    $(window).bind('click', T3Gv.SDJS_LM_MouseStampObjectDone);
+    T3Gv.Evt_LM_MouseStampObjectDone = EvtUtil.Evt_MouseStampObjectDoneFactory(useDefaultStyle);
+    $(window).bind('mousedown', T3Gv.Evt_LM_MouseStampObjectDone);
+    $(window).bind('click', T3Gv.Evt_LM_MouseStampObjectDone);
 
     // Prepare for stamping
     this.LM_StampPreTrack();
@@ -16077,9 +16077,10 @@ class OptHandler {
                     if (gStepChartHManager && !isForced) {
                       helperValue = gStepChartHManager.DeleteShape(objectIds[currentIndex], objectIds, false, null, childIds);
                     }
-                  } else if (gFlowChartManager && !isForced) {
-                    helperValue = gFlowChartManager.DeleteShape(objectIds[currentIndex], objectIds, false, childIds);
                   }
+                  // else if (gFlowChartManager && !isForced) {
+                  //   helperValue = gFlowChartManager.DeleteShape(objectIds[currentIndex], objectIds, false, childIds);
+                  // }
                 } else if (tempObj.arraylist.styleflags & ConstantData.SEDA_Styles.SEDA_CoManager) {
                   if (isForced) {
                     tempId = tempObj.arraylist.hook[connectorDefines.SEDA_NSkip].id;
