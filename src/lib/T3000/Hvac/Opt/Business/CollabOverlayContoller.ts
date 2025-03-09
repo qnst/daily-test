@@ -1,9 +1,10 @@
 
 
 import ConstantData from '../../Data/ConstantData'
+import T3Constant from '../../Data/T3Constant';
 
 
-
+// DO NOT USER THIS CLASS
 const CollabOverlayContoller = function () {
   var e = {
     DEFAULT: {
@@ -127,7 +128,7 @@ const CollabOverlayContoller = function () {
             this.CreateCursorElement(r)
           ) : (
             this.SetCursorPos(r),
-            ConstantData.DocumentContext.UserSettings.CursorDisplayMode !== Resources.CursorDisplayMode.Hide ? this.ShowCursor(r) : this.HideCursor(r)
+            T3Constant.DocContext.UserSettings.CursorDisplayMode !== Resources.CursorDisplayMode.Hide ? this.ShowCursor(r) : this.HideCursor(r)
           ),
           this.SetCursorTimer(r)
         )

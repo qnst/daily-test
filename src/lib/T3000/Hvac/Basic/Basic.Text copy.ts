@@ -2,7 +2,7 @@
 
 // import Basic from "./Basic.Index";
 // import "./Basic.Text.Index";
-import HvacSVG from "../Helper/SVG.t2"
+import T3Svg from "../Helper/T3Svg"
 import $ from "jquery";
 // import SDJS from "../SDJS/SDJS.Index";
 // import SDUI from "../SDUI/SDUI.Index";
@@ -10,9 +10,9 @@ import $ from "jquery";
 // import BasicTextFormatter from './Basic.Text.Formatter';
 // import './Basic.Element';
 
-import Element from "./Basic.Element"
-import Formatter from "./Basic.Text.Formatter";
-import Edit from "./Basic.Text.Edit";
+import Element from "./B.Element"
+import Formatter from "./B.Text.Formatter";
+import Edit from "./B.Text.Edit";
 
 import Global from "./Basic.Global";
 import Utils1 from "../Helper/Utils1"
@@ -68,13 +68,13 @@ class Text extends Element {
     //'use strict';
     return this.formatter = new Formatter(this),/*new Basic.Text.Formatter(this),*/
       this.editor = new Edit(this),
-      this.svgObj = new HvacSVG.Container(HvacSVG.create('g')),
+      this.svgObj = new T3Svg.Container(T3Svg.create('g')),
       this.InitElement(e, t),
-      this.textElem = new HvacSVG.Container(HvacSVG.create('text')),
-      this.selectElem = new HvacSVG.Path,
-      this.cursorElem = new HvacSVG.Line,
-      this.clickAreaElem = new HvacSVG.Rect,
-      this.decorationAreaElem = new HvacSVG.Container(HvacSVG.create('g')),
+      this.textElem = new T3Svg.Container(T3Svg.create('text')),
+      this.selectElem = new T3Svg.Path,
+      this.cursorElem = new T3Svg.Line,
+      this.clickAreaElem = new T3Svg.Rect,
+      this.decorationAreaElem = new T3Svg.Container(T3Svg.create('g')),
       this.cursorTimer = void 0,
       this.cursorPos = void 0,
       this.cursorState = ConstantData.CursorState.LINKONLY,

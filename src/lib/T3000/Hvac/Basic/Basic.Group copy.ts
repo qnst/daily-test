@@ -1,12 +1,12 @@
 
 
 // import Basic from "./Basic.Index";
-import HvacSVG from "../Helper/SVG.t2"
+import T3Svg from "../Helper/T3Svg"
 import $ from "jquery";
 // import SDJS from "../SDJS/SDJS.Index";
 // import SDUI from "../SDUI/SDUI.Index";
 
-import Container from "./Basic.Container";
+import Container from "./B.Container";
 
 import Global from "./Basic.Global";
 import Utils1 from "../Helper/Utils1"
@@ -34,7 +34,7 @@ class Group extends Container {
   // Basic.Group.prototype.constructor = Basic.Group,
   CreateElement(e, t) {
     //'use strict';
-    return this.svgObj = new HvacSVG.Container(HvacSVG.create('g')),
+    return this.svgObj = new T3Svg.Container(T3Svg.create('g')),
       this.clipElem = null,
       this.InitElement(e, t),
       this.svgObj
@@ -115,9 +115,9 @@ class Group extends Container {
     //'use strict';
     if (this.ClearClipRect(), a && r) {
       var i = Utils1.MakeGuid(),
-        n = new HvacSVG.Container(HvacSVG.create('clipPath'));
+        n = new T3Svg.Container(T3Svg.create('clipPath'));
       n.attr('id', i);
-      var o = new HvacSVG.Rect;
+      var o = new T3Svg.Rect;
       o.transform({
         x: Global.RoundCoord(e),
         y: Global.RoundCoord(t)

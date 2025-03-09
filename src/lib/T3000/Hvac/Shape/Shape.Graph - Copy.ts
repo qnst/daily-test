@@ -1,12 +1,12 @@
 
 import Utils2 from "../Helper/Utils2";
 import Utils3 from "../Helper/Utils3";
-import GlobalData from '../Data/GlobalData'
+import GlobalData from '../Data/T3Gv'
 import Collab from '../Data/Collab'
 import FileParser from '../Data/FileParser'
 import EvtUtil from "../Event/EvtUtil";
 import Resources from '../Data/Resources'
-import Element from "../Basic/Basic.Element";
+import Element from "../Basic/B.Element";
 import QuickStyle from "../Model/QuickStyle"
 import Rectangle from "../Model/Rectangle"
 

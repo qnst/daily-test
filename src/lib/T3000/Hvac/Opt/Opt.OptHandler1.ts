@@ -1,8 +1,8 @@
 
 
 import Models from '../Data/Constant';
-import Formatter from '../Basic/Basic.Text.Formatter';
-import Text from '../Basic/Basic.Text';
+import Formatter from '../Basic/B.Text.Formatter';
+import Text from '../Basic/B.Text';
 import ContentHeader from '../Doc/Doc.ContentHeader';
 import DocHandler from '../Doc/Doc.DocHandler1';
 import * as Utils from '../Helper/Utils1';
@@ -340,7 +340,7 @@ class OptHandler1 {
   DrawTest = (event) => {
 
 
-    // HvacSVG().addTo('#svg-area').rect(100, 100).attr({ fill: 'red' });
+    // T3Svg().addTo('#svg-area').rect(100, 100).attr({ fill: 'red' });
 
     // this.svgObjectLayer.AddElement(100, 100).attr({ fill: 'blue' });
 
@@ -363,7 +363,7 @@ class OptHandler1 {
     this.svgObjectLayer.AddElement(this.testWall);
 
     /*
-    var svgElem = HvacSVG("#svg-area").get(0);
+    var svgElem = T3Svg("#svg-area").get(0);
     console.log('DrawTest 1 svgElem', svgElem);
     svgElem.rect(100, 100).attr({ fill: 'red' });
     */

@@ -7,18 +7,18 @@
 import $ from "jquery";
 // import SDJS from "../SDJS/SDJS.Index";
 // import SDUI from "../SDUI/SDUI.Index";
-// import HvacSVG from '../../app-t5/Hvac.SVG.t2';
-import HvacSVG from "../Helper/SVG.t2";
+// import T3Svg from '../../app-t5/Hvac.SVG.t2';
+import T3Svg from "../Helper/T3Svg";
 
 import Global from "./Basic.Global"
-import Effects from "./Basic.Element.Effects"
-import Style from "./Basic.Element.Style";
+import Effects from "./B.Element.Effects"
+import Style from "./B.Element.Style";
 // import Container from "./Basic.Container";
 // import Group from './Basic.Group'
 import Utils1 from "../Helper/Utils1"
 import Utils2 from "../Helper/Utils2"
 import Utils3 from "../Helper/Utils3"
-import GlobalData from '../Data/GlobalData'
+import GlobalData from '../Data/T3Gv'
 import Instance from "../Data/Instance/Instance";
 
 import ConstantData from "../Data/ConstantData"
@@ -433,8 +433,8 @@ class Element {
 
   static SetTooltipOnElement(e, t) {
     //'use strict';
-    if (e && e instanceof HvacSVG.Container) {
-      var a = new HvacSVG.Element(HvacSVG.create('title'));
+    if (e && e instanceof T3Svg.Container) {
+      var a = new T3Svg.Element(T3Svg.create('title'));
       a.node.textContent = t,
         e.add(a)
     }
@@ -605,8 +605,8 @@ class Element {
       if (
         a.patternElem ||
         (
-          a.patternElem = new HvacSVG.Pattern,
-          a.imageElem = new HvacSVG.Image,
+          a.patternElem = new T3Svg.Pattern,
+          a.imageElem = new T3Svg.Image,
           a.imageElem.load(a.url),
           a.patternElem.add(a.imageElem),
           a.patternElem.attr('id', a.ID),
@@ -810,7 +810,7 @@ class Element {
             i = 'linear'
         }
         for (
-          a.gradientElem = new HvacSVG.Gradient(i),
+          a.gradientElem = new T3Svg.Gradient(i),
           a.gradientElem.attr('id', a.ID),
           r = 0;
           r < a.settings.stops.length;
@@ -1169,7 +1169,7 @@ class Element {
       e.SDGObj &&
       (e.SDGObj.cursor = null),
       e.node.removeAttribute('class'),
-      e instanceof HvacSVG.Container
+      e instanceof T3Svg.Container
     ) for (a = e.children(), t = 0; t < a.length; t++) Element.RemoveCursorsOnSVGObj(a[t])
   }
 

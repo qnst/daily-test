@@ -1,7 +1,7 @@
 
 import ConstantData from '../../Data/ConstantData'
 
-
+// DO NOT USER THIS CLASS
 class BusinessController {
 
   static Collab_RecordMessage = function (e, t, a, r, i) {
@@ -33,9 +33,9 @@ class BusinessController {
 
   static AddRight = function (e, t, a) {
     try {
-      if (null != t && (t = GlobalData.optManager.SD_GetVisioTextParent(t)), a) var r = a;
+      if (null != t && (t = T3Gv.optManager.SD_GetVisioTextParent(t)), a) var r = a;
       else r = Business.GetSelectionBusinessManager(t);
-      if (null == r && (r = GlobalData.gBusinessManager), r && r.AddLeftRight) if (null == t && (t = r.GetTargetShape(!0)), t >= 0) {
+      if (null == r && (r = T3Gv.gBusinessManager), r && r.AddLeftRight) if (null == t && (t = r.GetTargetShape(!0)), t >= 0) {
         if (r.AllowAdd(t, ConstantData.ActionArrow.RIGHT)) {
           var i = Collab.AreMessagesLocked();
           Collab.LockMessages();
@@ -64,9 +64,9 @@ class BusinessController {
 
   static AddLeft = function (e, t, a) {
     try {
-      if (null != t && (t = GlobalData.optManager.SD_GetVisioTextParent(t)), a) var r = a;
+      if (null != t && (t = T3Gv.optManager.SD_GetVisioTextParent(t)), a) var r = a;
       else r = Business.GetSelectionBusinessManager(t);
-      if (null == r && (r = GlobalData.gBusinessManager), r && r.AddLeftRight) if (null == t && (t = r.GetTargetShape(!0)), t >= 0) {
+      if (null == r && (r = T3Gv.gBusinessManager), r && r.AddLeftRight) if (null == t && (t = r.GetTargetShape(!0)), t >= 0) {
         if (r.AllowAdd(t, ConstantData.ActionArrow.LEFT)) {
           var i = Collab.AreMessagesLocked();
           Collab.LockMessages();
@@ -94,9 +94,9 @@ class BusinessController {
 
   static AddBelow = function (e, t, a) {
     try {
-      if (null != t && (t = GlobalData.optManager.SD_GetVisioTextParent(t)), a) var r = a;
+      if (null != t && (t = T3Gv.optManager.SD_GetVisioTextParent(t)), a) var r = a;
       else r = Business.GetSelectionBusinessManager(t);
-      if (null == r && (r = GlobalData.gBusinessManager), r && r.AddAboveBelow) if (null == t && (t = r.GetTargetShape(!0)), t >= 0) {
+      if (null == r && (r = T3Gv.gBusinessManager), r && r.AddAboveBelow) if (null == t && (t = r.GetTargetShape(!0)), t >= 0) {
         if (r.AllowAdd(t, ConstantData.ActionArrow.DOWN)) {
           var i = Collab.AreMessagesLocked();
           Collab.LockMessages();
@@ -124,9 +124,9 @@ class BusinessController {
 
   static AddAbove = function (e, t, a) {
     try {
-      if (null != t && (t = GlobalData.optManager.SD_GetVisioTextParent(t)), a) var r = a;
+      if (null != t && (t = T3Gv.optManager.SD_GetVisioTextParent(t)), a) var r = a;
       else r = Business.GetSelectionBusinessManager(t);
-      if (null == r && (r = GlobalData.gBusinessManager), r && r.AddAboveBelow) if (null == t && (t = r.GetTargetShape(!0)), t >= 0) {
+      if (null == r && (r = T3Gv.gBusinessManager), r && r.AddAboveBelow) if (null == t && (t = r.GetTargetShape(!0)), t >= 0) {
         if (r.AllowAdd(t, ConstantData.ActionArrow.UP)) {
           var i = Collab.AreMessagesLocked();
           Collab.LockMessages();
@@ -156,7 +156,7 @@ class BusinessController {
     try {
       if (r) var i = r;
       else i = Business.GetSelectionBusinessManager(t);
-      if (null == i && (i = GlobalData.gBusinessManager), i && i.AddCustom) {
+      if (null == i && (i = T3Gv.gBusinessManager), i && i.AddCustom) {
         var n = Collab.AreMessagesLocked();
         Collab.LockMessages();
         var o = this.Collab_RecordMessage(i, t, ConstantData.ActionArrow.CUSTOM, null, e);
@@ -186,7 +186,7 @@ class BusinessController {
     try {
       if (a) var r = a;
       else r = Business.GetSelectionBusinessManager(t);
-      if (null == r && (r = GlobalData.gBusinessManager), r && r.AddParents) if (null == t && (t = r.GetTargetShape(!0)), t >= 0) {
+      if (null == r && (r = T3Gv.gBusinessManager), r && r.AddParents) if (null == t && (t = r.GetTargetShape(!0)), t >= 0) {
         var i = Collab.AreMessagesLocked();
         Collab.LockMessages();
         var n = this.Collab_RecordMessage(r, t, ConstantData.ActionArrow.ADDPARENTS);
@@ -215,7 +215,7 @@ class BusinessController {
     try {
       if (a) var r = a;
       else r = Business.GetSelectionBusinessManager(t);
-      if (null == r && (r = GlobalData.gBusinessManager), r && r.AddDescendants) if (null == t && (t = r.GetTargetShape(!0)), t >= 0) {
+      if (null == r && (r = T3Gv.gBusinessManager), r && r.AddDescendants) if (null == t && (t = r.GetTargetShape(!0)), t >= 0) {
         var i = Collab.AreMessagesLocked();
         Collab.LockMessages();
         var n = this.Collab_RecordMessage(r, t, ConstantData.ActionArrow.ADDDESCENDANTS);
@@ -244,7 +244,7 @@ class BusinessController {
     try {
       if (r) var i = r;
       else i = Business.GetSelectionBusinessManager(t);
-      if (null == i && (i = GlobalData.gBusinessManager), i && i.ActionClick) {
+      if (null == i && (i = T3Gv.gBusinessManager), i && i.ActionClick) {
         null == t &&
           (t = i.GetTargetShape());
         var n = Collab.AreMessagesLocked();
@@ -262,7 +262,7 @@ class BusinessController {
     try {
       var a = Business.GetSelectionBusinessManager(e);
       null == a &&
-        (a = GlobalData.gBusinessManager),
+        (a = T3Gv.gBusinessManager),
         a &&
         a.CompleteAction &&
         a.CompleteAction(e, t)
@@ -276,7 +276,7 @@ class BusinessController {
       var t = null,
         a = Business.GetSelectionBusinessManager(e);
       return null == a &&
-        (a = GlobalData.gBusinessManager),
+        (a = T3Gv.gBusinessManager),
         a &&
         a.AddLineLabel &&
         (t = a.AddLineLabel(e)),
@@ -290,12 +290,12 @@ class BusinessController {
     try {
       var a = Business.GetSelectionBusinessManager(t);
       null == a &&
-        (a = GlobalData.gBusinessManager),
+        (a = T3Gv.gBusinessManager),
         a &&
         a.InsertShape &&
         a.InsertShape(e)
     } catch (e) {
-      GlobalData.optManager.ExceptionCleanup(e)
+      T3Gv.optManager.ExceptionCleanup(e)
     }
   }
 
@@ -303,11 +303,11 @@ class BusinessController {
     try {
       var t = Business.GetSelectionBusinessManager(e);
       return null == t &&
-        (t = GlobalData.gBusinessManager),
+        (t = T3Gv.gBusinessManager),
         !(!t || !t.StopActionEventPropagation) &&
         t.StopActionEventPropagation()
     } catch (e) {
-      GlobalData.optManager.ExceptionCleanup(e)
+      T3Gv.optManager.ExceptionCleanup(e)
     }
   }
 
@@ -315,11 +315,11 @@ class BusinessController {
     try {
       var i = Business.GetSelectionBusinessManager(r);
       return null == i &&
-        (i = GlobalData.gBusinessManager),
+        (i = T3Gv.gBusinessManager),
         i &&
           i.CreateActionButton ? i.CreateActionButton(e, t, a) : null
     } catch (e) {
-      GlobalData.optManager.ExceptionCleanup(e)
+      T3Gv.optManager.ExceptionCleanup(e)
     }
   }
 
@@ -327,11 +327,11 @@ class BusinessController {
     try {
       var i = Business.GetSelectionBusinessManager(r);
       return null == i &&
-        (i = GlobalData.gBusinessManager),
+        (i = T3Gv.gBusinessManager),
         i &&
           i.CreateCustomActionButtons ? i.CreateCustomActionButtons(e, t, a) : null
     } catch (e) {
-      GlobalData.optManager.ExceptionCleanup(e)
+      T3Gv.optManager.ExceptionCleanup(e)
     }
   }
 
@@ -339,11 +339,11 @@ class BusinessController {
     try {
       var e = Business.GetSelectionBusinessManager();
       return null == e &&
-        (e = GlobalData.gBusinessManager),
+        (e = T3Gv.gBusinessManager),
         e &&
           e.RotateActionButtons ? e.RotateActionButtons() : null
     } catch (e) {
-      GlobalData.optManager.ExceptionCleanup(e)
+      T3Gv.optManager.ExceptionCleanup(e)
     }
   }
 
@@ -351,17 +351,17 @@ class BusinessController {
     try {
       if (e) var t = e;
       else t = Business.GetSelectionBusinessManager();
-      if (null == t && (t = GlobalData.gBusinessManager), t && t.RemoveShape) {
+      if (null == t && (t = T3Gv.gBusinessManager), t && t.RemoveShape) {
         var a = Collab.AreMessagesLocked();
         Collab.LockMessages(),
           Collab.IsProcessingMessage() ||
-          GlobalData.optManager.CloseEdit(),
+          T3Gv.optManager.CloseEdit(),
           t.RemoveShape(),
           a ||
           (Collab.UnLockMessages(), Collab.UnBlockMessages())
       }
     } catch (e) {
-      GlobalData.optManager.ExceptionCleanup(e)
+      T3Gv.optManager.ExceptionCleanup(e)
     }
   }
 
@@ -372,7 +372,7 @@ class BusinessController {
       if (
         null == a &&
         'FLOWCHART' === gListManager.theContentHeader.BusinessModule &&
-        (a = GlobalData.gBusinessManager),
+        (a = T3Gv.gBusinessManager),
         null == a
       ) this.GrowRight();
       else if (a && a.AddSplitPath) if (null == e && (e = Business.GetTargetShape(!0, !0)), e >= 0) {
@@ -385,7 +385,7 @@ class BusinessController {
           ConstantData.CollabMessages.ActionButton_SplitPath
         );
         Collab.IsProcessingMessage() ||
-          GlobalData.optManager.CloseEdit(),
+          T3Gv.optManager.CloseEdit(),
           a.AddSplitPath(!1, !1, e),
           i &&
           (
@@ -401,7 +401,7 @@ class BusinessController {
       } else Utils2.Alert(Resources.Strings.NoShape, null);
       else Utils2.Alert(Resources.Strings.NoShape, null)
     } catch (e) {
-      GlobalData.optManager.ExceptionCleanup(e)
+      T3Gv.optManager.ExceptionCleanup(e)
     }
   }
 
@@ -411,8 +411,8 @@ class BusinessController {
       else a = Business.GetSelectionBusinessManager(e);
       if (
         null == a &&
-        'FLOWCHART' === GlobalData.optManager.theContentHeader.BusinessModule &&
-        (a = GlobalData.gBusinessManager),
+        'FLOWCHART' === T3Gv.optManager.theContentHeader.BusinessModule &&
+        (a = T3Gv.gBusinessManager),
         null == a
       ) this.GrowLeft();
       else if (a && a.AddSplitPath) if (null == e && (e = Business.GetTargetShape(!0, !0)), e >= 0) {
@@ -425,7 +425,7 @@ class BusinessController {
           ConstantData.CollabMessages.ActionButton_SplitPath
         );
         Collab.IsProcessingMessage() ||
-          GlobalData.optManager.CloseEdit(),
+          T3Gv.optManager.CloseEdit(),
           a.AddSplitPath(!0, !1, e),
           i &&
           (
@@ -441,7 +441,7 @@ class BusinessController {
       } else Utils2.Alert(Resources.Strings.NoShape, null);
       else Utils2.Alert(Resources.Strings.NoShape, null)
     } catch (e) {
-      GlobalData.optManager.ExceptionCleanup(e)
+      T3Gv.optManager.ExceptionCleanup(e)
     }
   }
 
@@ -452,7 +452,7 @@ class BusinessController {
       if (
         null == a &&
         'FLOWCHART' === gListManager.theContentHeader.BusinessModule &&
-        (a = GlobalData.gBusinessManager),
+        (a = T3Gv.gBusinessManager),
         null == a
       ) this.GrowDown();
       else if (a && a.AddSplitPath) if (null == e && (e = Business.GetTargetShape(!0, !0)), e >= 0) {

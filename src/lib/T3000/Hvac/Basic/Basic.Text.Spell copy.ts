@@ -1,7 +1,7 @@
 
 
 // import Basic from "./Basic.Index";
-import './Basic.Text';
+import './B.Text';
 // import "./Basic.Text.Index";
 // Basic.Text = {}
 import Utils1 from "../Helper/Utils1"
@@ -10,7 +10,7 @@ import Utils3 from "../Helper/Utils3"
 import $ from "jquery";
 // import SDJS from "../SDJS/SDJS.Index";
 // import SDUI from "../SDUI/SDUI.Index";
-import Commands from '../Opt/Business/Commands'
+import Commands from '../Opt/Business/ToolOpt'
 
 import ConstantData from "../Data/ConstantData"
 
@@ -202,7 +202,7 @@ class Spell {
       (
         function (e, t) {
           e &&
-            GlobalData.docHandler.svgDoc.GetSpellCheck().SetUserDictFromSource(t)
+            T3Gv.docHandler.svgDoc.GetSpellCheck().SetUserDictFromSource(t)
         }
       )
     )

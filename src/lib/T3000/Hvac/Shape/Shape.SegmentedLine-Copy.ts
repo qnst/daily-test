@@ -9,15 +9,15 @@
 // import SDGraphics from "./../../SDGraphics/SDGraphics.Index";
 // import GPP from '../../gListManager';
 // import $ from 'jquery';
-// import HvacSVG from '../../Hvac.SVG.t2';
+// import T3Svg from '../../Hvac.SVG.t2';
 
 
-import BaseLine from './Shape.BaseLine'
+import BaseLine from './S.BaseLine'
 import ListManager from '../Data/ListManager';
 import Utils1 from '../Helper/Utils1';
 import Utils2 from "../Helper/Utils2";
 import Utils3 from "../Helper/Utils3";
-import GlobalData from '../Data/GlobalData'
+import GlobalData from '../Data/T3Gv'
 import Collab from '../Data/Collab'
 import FileParser from '../Data/FileParser'
 import EvtUtil from "../Event/EvtUtil";
@@ -25,10 +25,10 @@ import Resources from '../Data/Resources'
 // import Element from "../Basic/Basic.Element";
 
 
-import Document from '../Basic/Basic.Document'
+import Document from '../Basic/B.Document'
 
-import Element from '../Basic/Basic.Element';
-import BaseShape from './Shape.BaseShape';
+import Element from '../Basic/B.Element';
+import BaseShape from './S.BaseShape';
 import ConstantData from '../Data/ConstantData'
 
 
@@ -166,7 +166,7 @@ class SegmentedLine extends BaseLine {
       a = this.GetPolyPoints(ConstantData.Defines.NPOLYPTS, !0, !1, !1, null),
       0 !== this.hoplist.nhops
     ) {
-      var D = GlobalData.optManager.InsertHops(this, a, a.length);
+      var D = T3Gv.optManager.InsertHops(this, a, a.length);
       a = a.slice(0, D.npts)
     }
     return this.UpdateSVG(i, a),
@@ -504,7 +504,7 @@ class SegmentedLine extends BaseLine {
         y = (b = Utils2.Pt2Rect(this.StartPoint, this.EndPoint)).x,
         b.x = b.y,
         b.y = y,
-        GlobalData.optManager.GetMaxDim(T),
+        T3Gv.optManager.GetMaxDim(T),
         y = T.x,
         T.x = T.y,
         T.y = y
@@ -516,7 +516,7 @@ class SegmentedLine extends BaseLine {
         S = this.EndPoint.x,
         c = this.EndPoint.y,
         b = Utils2.Pt2Rect(this.StartPoint, this.EndPoint),
-        GlobalData.optManager.GetMaxDim(T)
+        T3Gv.optManager.GetMaxDim(T)
       ),
       D = this.segl.pts.length,
       this.segl.pts.splice(0),
@@ -527,7 +527,7 @@ class SegmentedLine extends BaseLine {
         r ? - 1 == a ? this.StartPoint.x > this.EndPoint.x : this.StartPoint.x < this.EndPoint.x : - 1 == a ? this.StartPoint.y > this.EndPoint.y : this.StartPoint.y < this.EndPoint.y
       ) {
         for (m = 0; m < this.hooks.length; m++) if (this.hooks[m].hookpt === ConstantData.HookPts.SED_KTL) {
-          (h = GlobalData.optManager.GetObjectPtr(this.hooks[m].objid, !1)) &&
+          (h = T3Gv.optManager.GetObjectPtr(this.hooks[m].objid, !1)) &&
             (
               g = h.GetTargetRect(),
               C = r ? this.StartPoint.y + g.height * ((R - this.hooks[m].connect.y) / R) + ConstantData.Defines.SED_SegDefLen : this.StartPoint.x + g.width * ((R - this.hooks[m].connect.x) / R) + ConstantData.Defines.SED_SegDefLen
@@ -535,7 +535,7 @@ class SegmentedLine extends BaseLine {
           break
         }
       } else for (m = 0; m < this.hooks.length; m++) if (this.hooks[m].hookpt === ConstantData.HookPts.SED_KTR) {
-        (h = GlobalData.optManager.GetObjectPtr(this.hooks[m].objid, !1)) &&
+        (h = T3Gv.optManager.GetObjectPtr(this.hooks[m].objid, !1)) &&
           (
             g = h.GetTargetRect(),
             C = r ? this.EndPoint.y + g.height * ((R - this.hooks[m].connect.y) / R) + ConstantData.Defines.SED_SegDefLen : this.EndPoint.x + g.width * ((R - this.hooks[m].connect.x) / R) + ConstantData.Defines.SED_SegDefLen
@@ -671,7 +671,7 @@ class SegmentedLine extends BaseLine {
         m = (f = Utils2.Pt2Rect(this.StartPoint, this.EndPoint)).x,
         f.x = f.y,
         f.y = m,
-        GlobalData.optManager.GetMaxDim(y),
+        T3Gv.optManager.GetMaxDim(y),
         m = y.x,
         y.x = y.y,
         y.y = m
@@ -683,7 +683,7 @@ class SegmentedLine extends BaseLine {
         p = this.EndPoint.x,
         d = this.EndPoint.y,
         f = Utils2.Pt2Rect(this.StartPoint, this.EndPoint),
-        GlobalData.optManager.GetMaxDim(y)
+        T3Gv.optManager.GetMaxDim(y)
       ),
       l = - 1 == a ? d - 2 * ConstantData.Defines.SED_SegMinLen > u : d + 2 * ConstantData.Defines.SED_SegMinLen < u,
       s = this.segl.pts.length,
@@ -739,7 +739,7 @@ class SegmentedLine extends BaseLine {
     );
     else {
       if (this.hooks && this.hooks.length > 0) for (h = 0; h < this.hooks.length; h++) if (this.hooks[h].hookpt === ConstantData.HookPts.SED_KTL) {
-        (g = GlobalData.optManager.GetObjectPtr(this.hooks[h].objid, !1)) &&
+        (g = T3Gv.optManager.GetObjectPtr(this.hooks[h].objid, !1)) &&
           (
             D = g.GetTargetRect(),
             L = r ? c <= p ? this.StartPoint.y + D.height * ((I - this.hooks[h].connect.y) / I) + ConstantData.Defines.SED_SegDefLen : this.StartPoint.y + D.height * (this.hooks[h].connect.y / I) + ConstantData.Defines.SED_SegDefLen : c <= p ? this.StartPoint.x + D.width * ((I - this.hooks[h].connect.x) / I) + ConstantData.Defines.SED_SegDefLen : this.StartPoint.x + D.width * (this.hooks[h].connect.x / I) + ConstantData.Defines.SED_SegDefLen
@@ -828,9 +828,9 @@ class SegmentedLine extends BaseLine {
         y: 0
       },
       R = ConstantData.Defines.SED_CDim;
-    GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
+    T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
     if (
-      GlobalData.optManager.AllowAutoInsert() &&
+      T3Gv.optManager.AllowAutoInsert() &&
       (b = !0),
       Math.abs(this.EndPoint.x - this.StartPoint.x),
       Math.abs(this.EndPoint.y - this.StartPoint.y),
@@ -842,7 +842,7 @@ class SegmentedLine extends BaseLine {
         S = (M = Utils2.Pt2Rect(this.StartPoint, this.EndPoint)).x,
         M.x = M.y,
         M.y = S,
-        GlobalData.optManager.GetMaxDim(P),
+        T3Gv.optManager.GetMaxDim(P),
         S = P.x,
         P.x = P.y,
         P.y = S
@@ -852,7 +852,7 @@ class SegmentedLine extends BaseLine {
         y = this.EndPoint.x,
         f = this.EndPoint.y,
         M = Utils2.Pt2Rect(this.StartPoint, this.EndPoint),
-        GlobalData.optManager.GetMaxDim(P)
+        T3Gv.optManager.GetMaxDim(P)
       ),
       h = this.segl.pts.length,
       this.segl.pts.splice(0),
@@ -878,14 +878,14 @@ class SegmentedLine extends BaseLine {
             D < this.hooks.length;
             D++
           ) if (this.hooks[D].hookpt === ConstantData.HookPts.SED_KTR) {
-            (d = GlobalData.optManager.GetObjectPtr(this.hooks[D].objid, !1)) &&
+            (d = T3Gv.optManager.GetObjectPtr(this.hooks[D].objid, !1)) &&
               (
                 T = C - ((L = d.GetTargetRect()).y + L.height) < ConstantData.Defines.SED_SegDefLen + ConstantData.Defines.SED_SegMinLen ? i ? this.EndPoint.x - L.width * (this.hooks[D].connect.x / R) - ConstantData.Defines.SED_SegDefLen : this.EndPoint.y - L.height * (this.hooks[D].connect.y / R) - ConstantData.Defines.SED_SegDefLen : i ? this.EndPoint.x + L.width * ((R - this.hooks[D].connect.x) / R) + ConstantData.Defines.SED_SegDefLen : this.EndPoint.y + L.height * ((R - this.hooks[D].connect.y) / R) + ConstantData.Defines.SED_SegDefLen
               );
             break
           }
         } else for (D = 0; D < this.hooks.length; D++) if (this.hooks[D].hookpt === ConstantData.HookPts.SED_KTR) {
-          (d = GlobalData.optManager.GetObjectPtr(this.hooks[D].objid, !1)) &&
+          (d = T3Gv.optManager.GetObjectPtr(this.hooks[D].objid, !1)) &&
             (
               L = d.GetTargetRect(),
               I = i ? this.StartPoint.y + L.height / 2 + ConstantData.Defines.SED_SegDefLen : this.StartPoint.x + L.width / 2 + ConstantData.Defines.SED_SegDefLen
@@ -893,7 +893,7 @@ class SegmentedLine extends BaseLine {
           break
         }
       } else for (D = 0; D < this.hooks.length; D++) if (this.hooks[D].hookpt === ConstantData.HookPts.SED_KTR) {
-        (d = GlobalData.optManager.GetObjectPtr(this.hooks[D].objid, !1)) &&
+        (d = T3Gv.optManager.GetObjectPtr(this.hooks[D].objid, !1)) &&
           (
             L = d.GetTargetRect(),
             T = i ? this.EndPoint.x - L.width / 2 - ConstantData.Defines.SED_SegDefLen : this.EndPoint.y - L.height / 2 - ConstantData.Defines.SED_SegDefLen
@@ -1040,13 +1040,13 @@ class SegmentedLine extends BaseLine {
             D.push(
               new Point(this.segl.pts[n].x, this.segl.pts[n].y - g * u)
             ),
-            d = GlobalData.optManager.Lines_AddCurve(!0, u, p, this.segl.pts[n].x, this.segl.pts[n].y, g),
+            d = T3Gv.optManager.Lines_AddCurve(!0, u, p, this.segl.pts[n].x, this.segl.pts[n].y, g),
             D = D.concat(d)
           ) : (
             D.push(
               new Point(this.segl.pts[n].x - g * u, this.segl.pts[n].y)
             ),
-            d = GlobalData.optManager.Lines_AddCurve(!1, u, p, this.segl.pts[n].x, this.segl.pts[n].y, g),
+            d = T3Gv.optManager.Lines_AddCurve(!1, u, p, this.segl.pts[n].x, this.segl.pts[n].y, g),
             D = D.concat(d)
           )
         ) : D.push(
@@ -1059,7 +1059,7 @@ class SegmentedLine extends BaseLine {
         this.objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_CONNECTOR &&
         this.hooks.length > 1 &&
         (
-          D[0].x = GlobalData.optManager.GetDependencyLineStartX(this),
+          D[0].x = T3Gv.optManager.GetDependencyLineStartX(this),
           s = Utils2.Pt2Rect(this.StartPoint, this.EndPoint),
           D[0].x -= s.x,
           D[0].x > D[1].x &&
@@ -1089,13 +1089,13 @@ class SegmentedLine extends BaseLine {
     // ListManager.BaseLine.prototype.LM_DrawPreTrack.call(this, e),
     // Double === TODO
     super.LM_DrawPreTrack(e),
-      GlobalData.optManager.LinkParams &&
-      GlobalData.optManager.LinkParams.SConnectIndex >= 0 &&
+      T3Gv.optManager.LinkParams &&
+      T3Gv.optManager.LinkParams.SConnectIndex >= 0 &&
       (
-        t = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.LinkParams.SConnectIndex, !1)
+        t = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.LinkParams.SConnectIndex, !1)
       ) &&
       (
-        this.segl.firstdir = t.GetSegLFace(GlobalData.optManager.LinkParams.SConnectPt, this.EndPoint, e)
+        this.segl.firstdir = t.GetSegLFace(T3Gv.optManager.LinkParams.SConnectPt, this.EndPoint, e)
       ),
       !0
   }
@@ -1124,7 +1124,7 @@ class SegmentedLine extends BaseLine {
         this.UpdateSVG(n, l);
       new SelectionAttributes();
       this.UpdateDimensionLines(e),
-        GlobalData.optManager.UpdateDisplayCoordinates(
+        T3Gv.optManager.UpdateDisplayCoordinates(
           this.Frame,
           o,
           ConstantData.CursorTypes.Grow,
@@ -1152,19 +1152,19 @@ class SegmentedLine extends BaseLine {
       y: a
     };
     if (
-      GlobalData.optManager.LinkParams &&
-      GlobalData.optManager.LinkParams.ConnectIndex >= 0
+      T3Gv.optManager.LinkParams &&
+      T3Gv.optManager.LinkParams.ConnectIndex >= 0
     ) {
-      var o = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.LinkParams.ConnectIndex, !1);
+      var o = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.LinkParams.ConnectIndex, !1);
       o &&
         (
-          this.segl.lastdir = o.GetSegLFace(GlobalData.optManager.LinkParams.ConnectPt, this.StartPoint, n)
+          this.segl.lastdir = o.GetSegLFace(T3Gv.optManager.LinkParams.ConnectPt, this.StartPoint, n)
         )
-    } else GlobalData.optManager.ob &&
-      GlobalData.optManager.ob.BlockID === this.BlockID &&
+    } else T3Gv.optManager.ob &&
+      T3Gv.optManager.ob.BlockID === this.BlockID &&
       (
-        this.segl.firstdir = GlobalData.optManager.ob.segl.firstdir,
-        this.segl.lastdir = GlobalData.optManager.ob.segl.lastdir
+        this.segl.firstdir = T3Gv.optManager.ob.segl.firstdir,
+        this.segl.lastdir = T3Gv.optManager.ob.segl.lastdir
       );
     this.AdjustLine(e, t, a, ConstantData.ActionTriggerType.LINEEND)
   }
@@ -1196,19 +1196,19 @@ class SegmentedLine extends BaseLine {
       y: a
     };
     if (
-      GlobalData.optManager.LinkParams &&
-      GlobalData.optManager.LinkParams.ConnectIndex >= 0
+      T3Gv.optManager.LinkParams &&
+      T3Gv.optManager.LinkParams.ConnectIndex >= 0
     ) {
-      var o = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.LinkParams.ConnectIndex, !1);
+      var o = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.LinkParams.ConnectIndex, !1);
       o &&
         (
-          this.segl.firstdir = o.GetSegLFace(GlobalData.optManager.LinkParams.ConnectPt, this.EndPoint, n)
+          this.segl.firstdir = o.GetSegLFace(T3Gv.optManager.LinkParams.ConnectPt, this.EndPoint, n)
         )
-    } else GlobalData.optManager.ob &&
-      GlobalData.optManager.ob.BlockID === this.BlockID &&
+    } else T3Gv.optManager.ob &&
+      T3Gv.optManager.ob.BlockID === this.BlockID &&
       (
-        this.segl.firstdir = GlobalData.optManager.ob.segl.firstdir,
-        this.segl.lastdir = GlobalData.optManager.ob.segl.lastdir
+        this.segl.firstdir = T3Gv.optManager.ob.segl.firstdir,
+        this.segl.lastdir = T3Gv.optManager.ob.segl.lastdir
       );
     this.AdjustLine(e, t, a, ConstantData.ActionTriggerType.LINESTART)
   }
@@ -1237,7 +1237,7 @@ class SegmentedLine extends BaseLine {
   UpdateDimensions(e, t, a) {
     var r,
       i,
-      n = GlobalData.optManager.svgObjectLayer.GetElementByID(this.BlockID);
+      n = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID);
     r = t ? this.StartPoint.x + t : this.EndPoint.x,
       i = a ? this.StartPoint.y + a : this.EndPoint.y,
       this.AdjustLineEnd(n, r, i, ConstantData.ActionTriggerType.LINEEND)
@@ -1266,9 +1266,9 @@ class SegmentedLine extends BaseLine {
         this.StartPoint.y < this.EndPoint.y
       ) &&
       (r = !0);
-    var o = GlobalData.optManager.svgObjectLayer.GetElementByID(this.BlockID);
+    var o = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID);
     r ? this.AdjustLineEnd(o, this.EndPoint.x + i, this.EndPoint.y + n, 0) : this.AdjustLineStart(o, this.StartPoint.x + i, this.StartPoint.y + n, 0),
-      GlobalData.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE)
+      T3Gv.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE)
   }
 
   Flip(e) {
@@ -1282,7 +1282,7 @@ class SegmentedLine extends BaseLine {
       l = [],
       S = ConstantData.SegLDir;
     if (
-      GlobalData.optManager.ob = Utils1.DeepCopy(this),
+      T3Gv.optManager.ob = Utils1.DeepCopy(this),
       e & ConstantData.ExtraFlags.SEDE_FlipVert
     ) {
       switch (t = !0, this.segl.firstdir) {
@@ -1353,19 +1353,19 @@ class SegmentedLine extends BaseLine {
       ) this.segl.pts[r].x = l[r].x - s
     }
     if (t) {
-      var c = GlobalData.optManager.svgObjectLayer.GetElementByID(this.BlockID);
+      var c = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID);
       - 1 != this.DataID &&
         this.LM_ResizeSVGTextObject(c, this, this.Frame),
-        GlobalData.optManager.ob.Frame &&
-        GlobalData.optManager.MaintainLink(
+        T3Gv.optManager.ob.Frame &&
+        T3Gv.optManager.MaintainLink(
           this.BlockID,
           this,
-          GlobalData.optManager.ob,
+          T3Gv.optManager.ob,
           ConstantData.ActionTriggerType.ROTATE
         ),
-        GlobalData.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE)
+        T3Gv.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE)
     }
-    GlobalData.optManager.ob = {}
+    T3Gv.optManager.ob = {}
   }
 
   GetFrameIntersects(e, t, a, r) {
@@ -1666,7 +1666,7 @@ class SegmentedLine extends BaseLine {
       n = Utils2.Pt2Rect(this.StartPoint, this.EndPoint);
       var c = this.Frame.width,
         u = this.Frame.height,
-        p = GlobalData.optManager.GetObjectPtr(t, !1);
+        p = T3Gv.optManager.GetObjectPtr(t, !1);
       c += S,
         u += S;
       var d = $.extend(!0, {
@@ -1781,16 +1781,16 @@ class SegmentedLine extends BaseLine {
     var n,
       o,
       s = 0,
-      l = GlobalData.optManager.svgObjectLayer.GetElementByID(e);
+      l = T3Gv.optManager.svgObjectLayer.GetElementByID(e);
     switch (a) {
       case ConstantData.HookPts.SED_KTL:
-        this.segl.firstdir = t.GetSegLFace(GlobalData.optManager.LinkParams.ConnectPt, this.EndPoint, r),
+        this.segl.firstdir = t.GetSegLFace(T3Gv.optManager.LinkParams.ConnectPt, this.EndPoint, r),
           s = ConstantData.ActionTriggerType.LINEEND,
           n = this.EndPoint.x,
           o = this.EndPoint.y;
         break;
       case ConstantData.HookPts.SED_KTR:
-        this.segl.lastdir = t.GetSegLFace(GlobalData.optManager.LinkParams.ConnectPt, this.StartPoint, r),
+        this.segl.lastdir = t.GetSegLFace(T3Gv.optManager.LinkParams.ConnectPt, this.StartPoint, r),
           s = ConstantData.ActionTriggerType.LINESTART,
           n = this.StartPoint.x,
           o = this.StartPoint.y
@@ -1803,13 +1803,13 @@ class SegmentedLine extends BaseLine {
     var i,
       n,
       o = 0,
-      s = GlobalData.optManager.svgObjectLayer.GetElementByID(e);
+      s = T3Gv.optManager.svgObjectLayer.GetElementByID(e);
     switch (
-    GlobalData.optManager.ob &&
-    GlobalData.optManager.ob.BlockID === this.BlockID &&
+    T3Gv.optManager.ob &&
+    T3Gv.optManager.ob.BlockID === this.BlockID &&
     (
-      this.segl.firstdir = GlobalData.optManager.ob.segl.firstdir,
-      this.segl.lastdir = GlobalData.optManager.ob.segl.lastdir
+      this.segl.firstdir = T3Gv.optManager.ob.segl.firstdir,
+      this.segl.lastdir = T3Gv.optManager.ob.segl.lastdir
     ),
     a
     ) {
@@ -1818,18 +1818,18 @@ class SegmentedLine extends BaseLine {
           i = this.EndPoint.x,
           n = this.EndPoint.y,
           this.segl.firstdir = 0,
-          GlobalData.optManager.ob &&
-          GlobalData.optManager.ob.segl &&
-          (GlobalData.optManager.ob.segl.firstdir = 0);
+          T3Gv.optManager.ob &&
+          T3Gv.optManager.ob.segl &&
+          (T3Gv.optManager.ob.segl.firstdir = 0);
         break;
       case ConstantData.HookPts.SED_KTR:
         o = ConstantData.ActionTriggerType.LINESTART,
           i = this.StartPoint.x,
           n = this.StartPoint.y,
           this.segl.lastdir = 0,
-          GlobalData.optManager.ob &&
-          GlobalData.optManager.ob.segl &&
-          (GlobalData.optManager.ob.segl.lastdir = 0)
+          T3Gv.optManager.ob &&
+          T3Gv.optManager.ob.segl &&
+          (T3Gv.optManager.ob.segl.lastdir = 0)
     }
     o &&
       this.AdjustLine(s, i, n, o)
@@ -1848,8 +1848,8 @@ class SegmentedLine extends BaseLine {
           this.SegLFormat(a, ConstantData.ActionTriggerType.LINEEND, 0)
     }
     this.CalcFrame(!0),
-      GlobalData.optManager.SetLinkFlag(e, ConstantData.LinkFlags.SED_L_MOVE),
-      GlobalData.optManager.AddToDirtyList(e)
+      T3Gv.optManager.SetLinkFlag(e, ConstantData.LinkFlags.SED_L_MOVE),
+      T3Gv.optManager.AddToDirtyList(e)
   }
 
   HookToPoint(e, t) {
@@ -1919,7 +1919,7 @@ class SegmentedLine extends BaseLine {
       null != a &&
       null != a &&
       a >= 0 &&
-      GlobalData.optManager.GetObjectPtr(a, !1).DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.SHAPE
+      T3Gv.optManager.GetObjectPtr(a, !1).DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.SHAPE
     ) {
       var o = e.id;
       switch (e.id >= r.SED_CustomBase && (o = r.SED_CustomBase), o) {
@@ -1991,9 +1991,9 @@ class SegmentedLine extends BaseLine {
     for (
       P.x = e.x,
       P.y = e.y,
-      GlobalData.docHandler.documentConfig.enableSnap &&
+      T3Gv.docHandler.documentConfig.enableSnap &&
         0 == (t & ConstantData.HookFlags.SED_LC_NoSnaps) ? (
-        (P = GlobalData.docHandler.SnapToGrid(P)).y < a.y &&
+        (P = T3Gv.docHandler.SnapToGrid(P)).y < a.y &&
         (P.y = a.y),
         P.y > a.y + a.height &&
         (P.y = a.y + a.height),
@@ -2102,7 +2102,7 @@ class SegmentedLine extends BaseLine {
         ),
         c;
       if (n >= 0) {
-        var p = GlobalData.optManager.GetObjectPtr(n, !1);
+        var p = T3Gv.optManager.GetObjectPtr(n, !1);
         if (
           p &&
           p.objecttype === ConstantData.ObjectTypes.SD_OBJT_MULTIPLICITY &&
@@ -2223,8 +2223,8 @@ class SegmentedLine extends BaseLine {
         width: null,
         height: null
       };
-    if (2 === this.hooks.length) var a = GlobalData.optManager.GetObjectPtr(this.hooks[0].objid, !1),
-      r = GlobalData.optManager.GetObjectPtr(this.hooks[1].objid, !1);
+    if (2 === this.hooks.length) var a = T3Gv.optManager.GetObjectPtr(this.hooks[0].objid, !1),
+      r = T3Gv.optManager.GetObjectPtr(this.hooks[1].objid, !1);
     switch (this.segl.firstdir) {
       case e.SED_KTC:
         if (this.segl.lastdir === e.SED_KBC) t.height = Math.abs(this.StartPoint.y - this.EndPoint.y),
@@ -2329,7 +2329,7 @@ class SegmentedLine extends BaseLine {
       this.segl.pts[0].x === this.segl.pts[1].x &&
       (n = a.y),
       SDF.LineIsReversed(this, null, !1) ? 0 === n ? (i = this.segl.pts[l - 2], r = this.segl.pts[l - 1]) : (r = this.segl.pts[0], i = this.segl.pts[1]) : n === o ? (i = this.segl.pts[l - 2], r = this.segl.pts[l - 1]) : (r = this.segl.pts[0], i = this.segl.pts[1]);
-    var S = GlobalData.optManager.GetObjectPtr(e, !1);
+    var S = T3Gv.optManager.GetObjectPtr(e, !1);
     if (
       S &&
       S.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.SHAPE
@@ -2385,14 +2385,14 @@ class SegmentedLine extends BaseLine {
             u.StartPoint.y = S.y,
             u.EndPoint.x = S.x + S.width,
             u.EndPoint.y = S.y + S.height,
-            GlobalData.optManager.LineCheckPoint(u, e)
+            T3Gv.optManager.LineCheckPoint(u, e)
           ) return !0;
-          if (GlobalData.optManager.Lines_Intersect(u, l, e)) return !0
+          if (T3Gv.optManager.Lines_Intersect(u, l, e)) return !0
         }
-        GlobalData.optManager.Lines_MaintainDist(this, a, i, e);
+        T3Gv.optManager.Lines_MaintainDist(this, a, i, e);
         break;
       case ConstantData.DrawingObjectBaseClass.SHAPE:
-        GlobalData.optManager.Lines_MaintainDist(this, a, i, e)
+        T3Gv.optManager.Lines_MaintainDist(this, a, i, e)
     }
     return !0
   }

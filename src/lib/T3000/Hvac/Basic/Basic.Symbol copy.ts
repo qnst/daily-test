@@ -7,7 +7,7 @@
 // import Basic from "./Basic.Index";
 // import GPP from "../gListManager";
 import $ from 'jquery';
-import HvacSVG from "../Helper/SVG.t2"
+import T3Svg from "../Helper/T3Svg"
 
 import Utils1 from "../Helper/Utils1"
 import Utils2 from "../Helper/Utils2"
@@ -15,7 +15,7 @@ import Utils3 from "../Helper/Utils3"
 
 
 import Global from "./Basic.Global";
-import Element from './Basic.Element';
+import Element from './B.Element';
 
 import ConstantData from "../Data/ConstantData"
 
@@ -50,8 +50,8 @@ class Symbol extends Element {
     //'use strict';
     console.log("= B.Symbol CreateElement input:", { element, type });
 
-    this.svgObj = new HvacSVG.Container(HvacSVG.create('g'));
-    this.shapeElem = new HvacSVG.Container(HvacSVG.create('g'));
+    this.svgObj = new T3Svg.Container(T3Svg.create('g'));
+    this.shapeElem = new T3Svg.Container(T3Svg.create('g'));
     this.svgObj.add(this.shapeElem);
     this.InitElement(element, type);
     this.fillColors = [];

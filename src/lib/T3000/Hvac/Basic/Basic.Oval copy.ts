@@ -7,7 +7,7 @@
 // import Basic from "./Basic.Index";
 // import GPP from "../gListManager";
 import $ from 'jquery';
-import HvacSVG from "../Helper/SVG.t2"
+import T3Svg from "../Helper/T3Svg"
 
 
 import Global from "./Basic.Global";
@@ -20,7 +20,7 @@ import ConstantData from "../Data/ConstantData"
 
 
 
-import Element from "./Basic.Element";
+import Element from "./B.Element";
 
 class Oval extends Element {
   public shapeElem: any;
@@ -40,8 +40,8 @@ class Oval extends Element {
   // Basic.Oval.prototype.constructor = Basic.Oval,
   CreateElement(e, t) {
     //'use strict';
-    return this.svgObj = new HvacSVG.Container(HvacSVG.create('g')),
-      this.shapeElem = new HvacSVG.Ellipse,
+    return this.svgObj = new T3Svg.Container(T3Svg.create('g')),
+      this.shapeElem = new T3Svg.Ellipse,
       this.svgObj.add(this.shapeElem),
       this.InitElement(e, t),
       this.svgObj

@@ -1,7 +1,7 @@
 
 
 
-import HvacSVG from "../Helper/SVG.t2"
+import T3Svg from "../Helper/T3Svg"
 // import Basic from "./Basic.Index";
 import $ from 'jquery';
 // import BasicTextFormatter from "./Basic.Text.Formatter";
@@ -13,25 +13,25 @@ import $ from 'jquery';
 // this.svgObj = svg($(this.parentElem)[0]),
 
 
-import Rect from './Basic.Rect';
-import Container from './Basic.Container';
-import RRect from './Basic.RRect';
-import Oval from './Basic.Oval';
-import Line from './Basic.Line';
-import PolyLine from './Basic.PolyLine';
-import PolyPolyLine from './Basic.PolyPolyLine';
-import Polygon from './Basic.Polygon';
-import Path from './Basic.Path';
-import Group from './Basic.Group';
-import Layer from './Basic.Layer';
-import Symbol from './Basic.Symbol';
+import Rect from './B.Rect';
+import Container from './B.Container';
+import RRect from './B.RRect';
+import Oval from './B.Oval';
+import Line from './B.Line';
+import PolyLine from './B.PolyLine';
+import PolyPolyLine from './B.PolyPolyLine';
+import Polygon from './B.Polygon';
+import Path from './B.Path';
+import Group from './B.Group';
+import Layer from './B.Layer';
+import Symbol from './B.Symbol';
 import ShapeCopy from './Basic.ShapeCopy';
-import ShapeContainer from './Basic.ShapeContainer';
-import Text from './Basic.Text';
-import Formatter from "./Basic.Text.Formatter";
-import Spell from "./Basic.Text.Spell";
+import ShapeContainer from './B.ShapeContainer';
+import Text from './B.Text';
+import Formatter from "./B.Text.Formatter";
+import Spell from "./B.Text.Spell";
 import Global from "./Basic.Global";
-import Image from './Basic.Image'
+import Image from './B.Image'
 import Utils1 from "../Helper/Utils1"
 import Utils2 from "../Helper/Utils2"
 import Utils3 from "../Helper/Utils3"
@@ -62,7 +62,7 @@ class Document extends Container {
       '#' !== this.parentElem.charAt(0) &&
       '.' !== this.parentElem.charAt(0) &&
       (this.parentElem = '#' + this.parentElem),
-      this.svgObj = HvacSVG.svg($(this.parentElem)[0]),
+      this.svgObj = T3Svg.svg($(this.parentElem)[0]),
       this.docInfo = {
         dispX: 0,
         dispY: 0,

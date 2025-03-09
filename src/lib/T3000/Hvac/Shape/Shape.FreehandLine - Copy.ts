@@ -9,7 +9,7 @@
 // import SDGraphics from "./../../SDGraphics/SDGraphics.Index";
 // import GPP from '../../gListManager';
 // import $ from 'jquery';
-// import HvacSVG from '../../Hvac.SVG.t2';
+// import T3Svg from '../../Hvac.SVG.t2';
 
 
 // import {Evt_WorkAreaHammerClick,
@@ -19,20 +19,20 @@
 // } from '../../MouseEvent';
 
 
-import BaseLine from './Shape.BaseLine'
+import BaseLine from './S.BaseLine'
 import Utils1 from '../Helper/Utils1';
 import Utils2 from "../Helper/Utils2";
 import Utils3 from "../Helper/Utils3";
-import GlobalData from '../Data/GlobalData'
+import GlobalData from '../Data/T3Gv'
 import Collab from '../Data/Collab'
 import FileParser from '../Data/FileParser'
 import EvtUtil from "../Event/EvtUtil";
 import Resources from '../Data/Resources'
 import ListManager from '../Data/ListManager';
 
-import Document from '../Basic/Basic.Document'
+import Document from '../Basic/B.Document'
 
-import Element from '../Basic/Basic.Element';
+import Element from '../Basic/B.Element';
 import ConstantData from '../Data/ConstantData'
 
 
@@ -200,7 +200,7 @@ class FreehandLine extends BaseLine {
     let o = this.Frame,
       s = this.StyleRecord;
     if (s = this.SVGTokenizerHook(s), null == s) {
-      let e = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
+      let e = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
       e &&
         (s = e.def.style)
     }
@@ -249,7 +249,7 @@ class FreehandLine extends BaseLine {
       l = this.Frame,
       S = l.width,
       c = l.height;
-    GlobalData.optManager.GetObjectPtr(t, !1);
+    T3Gv.optManager.GetObjectPtr(t, !1);
     S += s,
       c += s;
     let u = $.extend(!0, {
@@ -306,19 +306,19 @@ class FreehandLine extends BaseLine {
   }
 
   ModifyShape(e, t, a, r, i) {
-    GlobalData.optManager.theActionStartX,
-      GlobalData.optManager.theActionStartY;
+    T3Gv.optManager.theActionStartX,
+      T3Gv.optManager.theActionStartY;
     var n = {
       x: t,
       y: a
     },
       o = (
         $.extend(!0, {
-        }, GlobalData.optManager.theActionBBox),
+        }, T3Gv.optManager.theActionBBox),
         $.extend(!0, {
-        }, GlobalData.optManager.theActionBBox)
+        }, T3Gv.optManager.theActionBBox)
       );
-    switch (GlobalData.optManager.theActionTriggerID) {
+    switch (T3Gv.optManager.theActionTriggerID) {
       case ConstantData.ActionTriggerType.TOPLEFT:
         delx = o.x - t,
           dely = o.y - a,
@@ -328,17 +328,17 @@ class FreehandLine extends BaseLine {
           o.height += dely,
           o.width < 0 &&
           (
-            o.x = GlobalData.optManager.theActionBBox.x + GlobalData.optManager.theActionBBox.width,
+            o.x = T3Gv.optManager.theActionBBox.x + T3Gv.optManager.theActionBBox.width,
             o.width = - o.width
           ),
           o.height < 0 &&
           (
-            o.y = GlobalData.optManager.theActionBBox.y + GlobalData.optManager.theActionBBox.height,
+            o.y = T3Gv.optManager.theActionBBox.y + T3Gv.optManager.theActionBBox.height,
             o.height = - o.height
           ),
-          GlobalData.optManager.theActionNewBBox = $.extend(!0, {
+          T3Gv.optManager.theActionNewBBox = $.extend(!0, {
           }, o),
-          this.HandleActionTriggerCallResize(GlobalData.optManager.theActionNewBBox, !0, n);
+          this.HandleActionTriggerCallResize(T3Gv.optManager.theActionNewBBox, !0, n);
         break;
       case ConstantData.ActionTriggerType.TOPRIGHT:
         dely = o.y - a,
@@ -349,12 +349,12 @@ class FreehandLine extends BaseLine {
           (o.x = t, o.width = - o.width),
           o.height < 0 &&
           (
-            o.y = GlobalData.optManager.theActionBBox.y + GlobalData.optManager.theActionBBox.height,
+            o.y = T3Gv.optManager.theActionBBox.y + T3Gv.optManager.theActionBBox.height,
             o.height = - o.height
           ),
-          GlobalData.optManager.theActionNewBBox = $.extend(!0, {
+          T3Gv.optManager.theActionNewBBox = $.extend(!0, {
           }, o),
-          this.HandleActionTriggerCallResize(GlobalData.optManager.theActionNewBBox, !0, n);
+          this.HandleActionTriggerCallResize(T3Gv.optManager.theActionNewBBox, !0, n);
         break;
       case ConstantData.ActionTriggerType.BOTTOMRIGHT:
         o.width = t - o.x,
@@ -363,9 +363,9 @@ class FreehandLine extends BaseLine {
           (o.x = t, o.width = - o.width),
           o.height < 0 &&
           (o.y = a, o.height = - o.height),
-          GlobalData.optManager.theActionNewBBox = $.extend(!0, {
+          T3Gv.optManager.theActionNewBBox = $.extend(!0, {
           }, o),
-          this.HandleActionTriggerCallResize(GlobalData.optManager.theActionNewBBox, !0, n);
+          this.HandleActionTriggerCallResize(T3Gv.optManager.theActionNewBBox, !0, n);
         break;
       case ConstantData.ActionTriggerType.BOTTOMLEFT:
         o.height = a - o.y,
@@ -374,14 +374,14 @@ class FreehandLine extends BaseLine {
           o.width += delx,
           o.width < 0 &&
           (
-            o.x = GlobalData.optManager.theActionBBox.x + GlobalData.optManager.theActionBBox.width,
+            o.x = T3Gv.optManager.theActionBBox.x + T3Gv.optManager.theActionBBox.width,
             o.width = - o.width
           ),
           o.height < 0 &&
           (o.y = a, o.height = - o.height),
-          GlobalData.optManager.theActionNewBBox = $.extend(!0, {
+          T3Gv.optManager.theActionNewBBox = $.extend(!0, {
           }, o),
-          this.HandleActionTriggerCallResize(GlobalData.optManager.theActionNewBBox, !0, n)
+          this.HandleActionTriggerCallResize(T3Gv.optManager.theActionNewBBox, !0, n)
     }
   }
 
@@ -399,14 +399,14 @@ class FreehandLine extends BaseLine {
       (n.height = t),
       (t || e) &&
       (
-        r = GlobalData.optManager.theActionBBox,
-        i = GlobalData.optManager.theActionNewBBox,
-        GlobalData.optManager.theActionBBox = Utils1.DeepCopy(this.Frame),
-        GlobalData.optManager.theActionNewBBox = Utils1.DeepCopy(this.Frame),
+        r = T3Gv.optManager.theActionBBox,
+        i = T3Gv.optManager.theActionNewBBox,
+        T3Gv.optManager.theActionBBox = Utils1.DeepCopy(this.Frame),
+        T3Gv.optManager.theActionNewBBox = Utils1.DeepCopy(this.Frame),
         this.HandleActionTriggerCallResize(n, a, null),
-        GlobalData.optManager.theActionBBox = r,
-        GlobalData.optManager.theActionNewBBox = i,
-        GlobalData.optManager.AddToDirtyList(this.BlockID),
+        T3Gv.optManager.theActionBBox = r,
+        T3Gv.optManager.theActionNewBBox = i,
+        T3Gv.optManager.AddToDirtyList(this.BlockID),
         this.rflags &&
         (
           e &&
@@ -457,14 +457,14 @@ class FreehandLine extends BaseLine {
       this.CalcFrame(),
       t === ConstantData.ActionTriggerType.LINELENGTH &&
       (t = 0, noMin = !0),
-      GlobalData.optManager.theActionStoredObjectID === this.BlockID &&
+      T3Gv.optManager.theActionStoredObjectID === this.BlockID &&
       a &&
-      GlobalData.optManager.UpdateDisplayCoordinates(e, a, ConstantData.CursorTypes.Grow, this),
+      T3Gv.optManager.UpdateDisplayCoordinates(e, a, ConstantData.CursorTypes.Grow, this),
       t &&
-      GlobalData.optManager.theActionSVGObject &&
-      GlobalData.optManager.theActionStoredObjectID === this.BlockID
+      T3Gv.optManager.theActionSVGObject &&
+      T3Gv.optManager.theActionStoredObjectID === this.BlockID
     ) {
-      if (null == GlobalData.optManager.theActionSVGObject) return;
+      if (null == T3Gv.optManager.theActionSVGObject) return;
       let e = {
         action: t,
         prevBBox: this.prevBBox,
@@ -474,10 +474,10 @@ class FreehandLine extends BaseLine {
       Collab.SendSVGEvent(
         this.BlockID,
         ConstantData.CollabSVGEventTypes.Shape_Grow,
-        GlobalData.optManager.theActionNewBBox,
+        T3Gv.optManager.theActionNewBBox,
         e
       ),
-        this.UpdateDrawing(GlobalData.optManager.theActionSVGObject)
+        this.UpdateDrawing(T3Gv.optManager.theActionSVGObject)
     }
   }
 
@@ -533,11 +533,11 @@ class FreehandLine extends BaseLine {
         Utils2.StopPropagationAndDefaults(e),
         e.gesture.stopDetect()
       ),
-      GlobalData.optManager.unbindActionClickHammerEvents(),
-      GlobalData.optManager.isMobilePlatform ||
+      T3Gv.optManager.unbindActionClickHammerEvents(),
+      T3Gv.optManager.isMobilePlatform ||
       (
         $(window).unbind('mousemove'),
-        GlobalData.optManager.WorkAreaHammer.on('tap', Evt_WorkAreaHammerClick)
+        T3Gv.optManager.WorkAreaHammer.on('tap', Evt_WorkAreaHammerClick)
       ),
       this.ResetAutoScrollTimer(),
       Collab.AllowMessage()
@@ -546,28 +546,28 @@ class FreehandLine extends BaseLine {
         attributes: {
         }
       };
-      t.attributes.StyleRecord = Utils1.DeepCopy(GlobalData.optManager.theDrawShape.StyleRecord),
-        t.attributes.StartArrowID = GlobalData.optManager.theDrawShape.StartArrowID,
-        t.attributes.EndArrowID = GlobalData.optManager.theDrawShape.EndArrowID,
-        t.attributes.StartArrowDisp = GlobalData.optManager.theDrawShape.StartArrowDisp,
-        t.attributes.ArrowSizeIndex = GlobalData.optManager.theDrawShape.ArrowSizeIndex,
-        t.attributes.TextGrow = GlobalData.optManager.theDrawShape.TextGrow,
-        t.attributes.TextAlign = GlobalData.optManager.theDrawShape.TextAlign,
-        t.attributes.TextDirection = GlobalData.optManager.theDrawShape.TextDirection,
-        t.attributes.Dimensions = GlobalData.optManager.theDrawShape.Dimensions,
-        t.attributes.StartPoint = Utils1.DeepCopy(GlobalData.optManager.theDrawShape.StartPoint),
-        t.attributes.EndPoint = Utils1.DeepCopy(GlobalData.optManager.theDrawShape.EndPoint),
-        t.attributes.Frame = Utils1.DeepCopy(GlobalData.optManager.theDrawShape.Frame),
+      t.attributes.StyleRecord = Utils1.DeepCopy(T3Gv.optManager.theDrawShape.StyleRecord),
+        t.attributes.StartArrowID = T3Gv.optManager.theDrawShape.StartArrowID,
+        t.attributes.EndArrowID = T3Gv.optManager.theDrawShape.EndArrowID,
+        t.attributes.StartArrowDisp = T3Gv.optManager.theDrawShape.StartArrowDisp,
+        t.attributes.ArrowSizeIndex = T3Gv.optManager.theDrawShape.ArrowSizeIndex,
+        t.attributes.TextGrow = T3Gv.optManager.theDrawShape.TextGrow,
+        t.attributes.TextAlign = T3Gv.optManager.theDrawShape.TextAlign,
+        t.attributes.TextDirection = T3Gv.optManager.theDrawShape.TextDirection,
+        t.attributes.Dimensions = T3Gv.optManager.theDrawShape.Dimensions,
+        t.attributes.StartPoint = Utils1.DeepCopy(T3Gv.optManager.theDrawShape.StartPoint),
+        t.attributes.EndPoint = Utils1.DeepCopy(T3Gv.optManager.theDrawShape.EndPoint),
+        t.attributes.Frame = Utils1.DeepCopy(T3Gv.optManager.theDrawShape.Frame),
         t.attributes.extraflags = ConstantData.ExtraFlags.SEDE_SideKnobs,
         this.pointlist &&
         (t.attributes.pointlist = Utils1.DeepCopy(this.pointlist)),
         t.LineTool = Resources.LineToolTypes.FreehandLine,
-        Collab.AddNewBlockToSecondary(GlobalData.optManager.theDrawShape.BlockID),
+        Collab.AddNewBlockToSecondary(T3Gv.optManager.theDrawShape.BlockID),
         Collab.IsSecondary() &&
         (t.CreateList = [
-          GlobalData.optManager.theDrawShape.BlockID
+          T3Gv.optManager.theDrawShape.BlockID
         ]),
-        t.LinkParams = Utils1.DeepCopy(GlobalData.optManager.LinkParams),
+        t.LinkParams = Utils1.DeepCopy(T3Gv.optManager.LinkParams),
         t.Actions = [];
       var a = new Collab.MessageAction(ConstantData.CollabMessageActions.CreateLine);
       t.Actions.push(a),
@@ -575,8 +575,8 @@ class FreehandLine extends BaseLine {
         t.Actions.push(a),
         Collab.BuildMessage(ConstantData.CollabMessages.AddLine, t, !1)
     }
-    this.LM_DrawPostRelease(GlobalData.optManager.theActionStoredObjectID),
-      GlobalData.optManager.PostObjectDraw()
+    this.LM_DrawPostRelease(T3Gv.optManager.theActionStoredObjectID),
+      T3Gv.optManager.PostObjectDraw()
   }
 
   LM_DrawClick(e, t) {
@@ -595,15 +595,15 @@ class FreehandLine extends BaseLine {
           x: e,
           y: t
         },
-        GlobalData.optManager.WorkAreaHammer.off('dragstart'),
-        GlobalData.optManager.isMobilePlatform ||
+        T3Gv.optManager.WorkAreaHammer.off('dragstart'),
+        T3Gv.optManager.isMobilePlatform ||
         (
-          GlobalData.optManager.WorkAreaHammer.on('drag', Evt_DrawTrackHandlerFactory(this)),
-          GlobalData.optManager.WorkAreaHammer.on('dragend', Evt_DrawReleaseHandlerFactory(this))
+          T3Gv.optManager.WorkAreaHammer.on('drag', Evt_DrawTrackHandlerFactory(this)),
+          T3Gv.optManager.WorkAreaHammer.on('dragend', Evt_DrawReleaseHandlerFactory(this))
         )
     } catch (e) {
       this.LM_DrawClick_ExceptionCleanup(e);
-      GlobalData.optManager.ExceptionCleanup(e);
+      T3Gv.optManager.ExceptionCleanup(e);
       throw e;
     }
   }

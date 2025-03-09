@@ -2,19 +2,19 @@
 
 
 
-import Rect from './Shape.Rect'
+import Rect from './S.Rect'
 import ListManager from '../Data/ListManager';
 import FileParser from '../Data/FileParser';
 import Utils1 from '../Helper/Utils1';
 import Utils2 from "../Helper/Utils2";
 import Utils3 from "../Helper/Utils3";
-import GlobalData from '../Data/GlobalData'
+import GlobalData from '../Data/T3Gv'
 import Collab from '../Data/Collab'
 import EvtUtil from "../Event/EvtUtil";
 
-import Document from '../Basic/Basic.Document'
+import Document from '../Basic/B.Document'
 
-import Element from '../Basic/Basic.Element';
+import Element from '../Basic/B.Element';
 import ConstantData from '../Data/ConstantData'
 import ContainerListShape from '../Model/ContainerListShape'
 
@@ -81,7 +81,7 @@ class ShapeContainer extends Rect {
     if (null == e) return !1;
     if (
       e.ParentFrameID >= 0 &&
-      GlobalData.optManager.GetObjectPtr(e.ParentFrameID, !1)
+      T3Gv.optManager.GetObjectPtr(e.ParentFrameID, !1)
     ) return !1;
     if (e.IsSwimlane()) return !1;
     if (e.flags & ConstantData.ObjFlags.SEDO_TextOnly) return !1;
@@ -133,7 +133,7 @@ class ShapeContainer extends Rect {
       },
       p = s.flags & ConstantData.ContainerListFlags.Sparse,
       d = this.Pr_GetContainerFrame().frame,
-      D = GlobalData.optManager.ContainerIsInCell(this);
+      D = T3Gv.optManager.ContainerIsInCell(this);
     n = d.width;
     var g = s.ndown,
       h = s.nacross;
@@ -223,7 +223,7 @@ class ShapeContainer extends Rect {
           s = 0;
         for (t = 0; t < i.ndown; t++) {
           if (a = t * i.nacross + e, n[a].id >= 0) {
-            if (!(r = GlobalData.optManager.GetObjectPtr(n[a].id, !1))) continue;
+            if (!(r = T3Gv.optManager.GetObjectPtr(n[a].id, !1))) continue;
             o = r.Frame.width
           } else o = i.childwidth;
           o > s &&
@@ -234,8 +234,8 @@ class ShapeContainer extends Rect {
     if (!t) {
       var p = e.gesture.srcEvent.ctrlKey,
         d = e.gesture.srcEvent.shiftKey,
-        D = GlobalData.optManager.ContainerIsInCell(this);
-      if (D && (d || p)) return void GlobalData.optManager.Table_SetupAction(e, D.obj.BlockID, ConstantData.Defines.TableCellHit, null)
+        D = T3Gv.optManager.ContainerIsInCell(this);
+      if (D && (d || p)) return void T3Gv.optManager.Table_SetupAction(e, D.obj.BlockID, ConstantData.Defines.TableCellHit, null)
     }
     if (s) {
       if (t) {
@@ -245,7 +245,7 @@ class ShapeContainer extends Rect {
         var g = Utils1.DeepCopy(t.Data.theNewPoint)
       } else {
         foundslot = !1;
-        g = GlobalData.optManager.svgDoc.ConvertWindowToDocCoords(e.gesture.center.clientX, e.gesture.center.clientY);
+        g = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(e.gesture.center.clientX, e.gesture.center.clientY);
         var h = Utils1.DeepCopy(g);
         if (
           g.x -= this.Frame.x,
@@ -256,8 +256,8 @@ class ShapeContainer extends Rect {
           ) &&
           (g.y < 10 || g.y > this.Frame.height - 10)
         ) {
-          var m = GlobalData.optManager.svgObjectLayer.GetElementByID(this.BlockID);
-          return void GlobalData.optManager.ActivateTextEdit(m.svgObj.SDGObj, e)
+          var m = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID);
+          return void T3Gv.optManager.ActivateTextEdit(m.svgObj.SDGObj, e)
         }
         if (D) for (
           var C,
@@ -328,7 +328,7 @@ class ShapeContainer extends Rect {
         if (_ < 0) {
           c = t ? t.Data.SymbolID : SDUI.Commands.MainController.Symbols.GetSelectedButton();
           var E = gBaseManager.AddSymbol(c),
-            w = GlobalData.optManager.GetObjectPtr(E, !0),
+            w = T3Gv.optManager.GetObjectPtr(E, !0),
             F = i.childwidth,
             v = i.childheight,
             G = {
@@ -341,7 +341,7 @@ class ShapeContainer extends Rect {
             w.sizedim.width = F,
             w.sizedim.height = v
         } else E = gBaseManager.DuplicateShape(_, !0, !1);
-        GlobalData.optManager.AddToDirtyList(E);
+        T3Gv.optManager.AddToDirtyList(E);
         L = {
           x: S,
           y: l
@@ -349,9 +349,9 @@ class ShapeContainer extends Rect {
         var N = ConstantData.HookPts.SED_KCT,
           k = [];
         if (
-          GlobalData.optManager.UpdateHook(E, - 1, this.BlockID, N, L, null),
+          T3Gv.optManager.UpdateHook(E, - 1, this.BlockID, N, L, null),
           k.push(E),
-          GlobalData.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
+          T3Gv.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
           Collab.AllowMessage()
         ) {
           var U = [];
@@ -370,7 +370,7 @@ class ShapeContainer extends Rect {
             },
             Collab.BuildMessage(ConstantData.CollabMessages.ContainerDoubleClick, J, !1)
         }
-        GlobalData.optManager.CompleteOperation(k)
+        T3Gv.optManager.CompleteOperation(k)
       }
     }
   }
@@ -380,7 +380,7 @@ class ShapeContainer extends Rect {
   }
 
   FieldDataAllowed() {
-    return !GlobalData.optManager.ContainerIsInCell(this)
+    return !T3Gv.optManager.ContainerIsInCell(this)
   }
 
   GetPerimPts(e, t, a, r, i, n) {
@@ -406,7 +406,7 @@ class ShapeContainer extends Rect {
     var y = this.Pr_GetContainerFrame(),
       f = y.frame;
     S = p.VerticalSpacing + y.StartY;
-    var L = GlobalData.optManager.ContainerIsInCell(this);
+    var L = T3Gv.optManager.ContainerIsInCell(this);
     if (1 === u && n < 0) return a === ConstantData.HookPts.SED_KCTL ? (l = f.x, S = f.y) : a === ConstantData.HookPts.SED_KCL ? (l = f.x, S = f.y + f.height / 2) : (l = f.x + f.width / 2, S = f.y),
       s = new Point(l, S),
       null != t[0].id &&
@@ -445,7 +445,7 @@ class ShapeContainer extends Rect {
       p.Arrangement === ConstantData.ContainerListArrangements.Column ? l = t[o].x / g * f.width : S = t[o].x / g * f.height,
       c < D ? (S = d[c].pt.y, l = d[c].pt.x) : 0 === D ? p.Arrangement === ConstantData.ContainerListArrangements.Column ? S = p.VerticalSpacing : (l = p.HorizontalSpacing, S = this.Frame.height / 2) : (
         c = D - 1,
-        obj = GlobalData.optManager.GetObjectPtr(d[c].id, !1),
+        obj = T3Gv.optManager.GetObjectPtr(d[c].id, !1),
         p.Arrangement === m.Row ? (
           l = p.width,
           S = d[c].pt.y,
@@ -508,10 +508,10 @@ class ShapeContainer extends Rect {
             x: r,
             y: S
           },
-          (a = GlobalData.optManager.GetObjectPtr(o[t].id, !1)) &&
+          (a = T3Gv.optManager.GetObjectPtr(o[t].id, !1)) &&
           (
             a.Frame.y !== S &&
-            GlobalData.optManager.SetLinkFlag(a.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
+            T3Gv.optManager.SetLinkFlag(a.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
             a.Frame.width > p &&
             (p = a.Frame.width),
             S += a.Frame.height + n.VerticalSpacing,
@@ -529,14 +529,14 @@ class ShapeContainer extends Rect {
         (l = i.width);
       var g = !1;
       for (t = e; t < s; t++) o[t].pt.x += l / 2,
-        (a = GlobalData.optManager.GetObjectPtr(o[t].id, !1)) &&
+        (a = T3Gv.optManager.GetObjectPtr(o[t].id, !1)) &&
         a.Frame.x + a.Frame.width / 2 !== d.Frame.x + o[t].pt.x &&
         (
-          GlobalData.optManager.SetLinkFlag(a.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
+          T3Gv.optManager.SetLinkFlag(a.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
           g = !0
         );
       return g &&
-        GlobalData.optManager.SetLinkFlag(d.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
+        T3Gv.optManager.SetLinkFlag(d.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
       {
         start: u + e,
         colwidth: p,
@@ -560,9 +560,9 @@ class ShapeContainer extends Rect {
               x: u,
               y: h
             },
-            (a = GlobalData.optManager.GetObjectPtr(o[t].id, !1)) ? (
+            (a = T3Gv.optManager.GetObjectPtr(o[t].id, !1)) ? (
               a.Frame.y / 2 !== h &&
-              GlobalData.optManager.SetLinkFlag(a.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
+              T3Gv.optManager.SetLinkFlag(a.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
               S = a.Frame.width,
               c = a.Frame.height
             ) : (S = n.childwidth, c = n.childheight),
@@ -582,21 +582,21 @@ class ShapeContainer extends Rect {
           (m = l.height);
         var C = !1;
         for (t = e; t < s; t++) o[t].pt.y += m / 2,
-          (a = GlobalData.optManager.GetObjectPtr(o[t].id, !1)) &&
+          (a = T3Gv.optManager.GetObjectPtr(o[t].id, !1)) &&
           a.Frame.y + a.Frame.height / 2 !== r.y + o[t].pt.y &&
           (
-            GlobalData.optManager.SetLinkFlag(a.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
+            T3Gv.optManager.SetLinkFlag(a.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
             C = !0
           );
         return C &&
-          GlobalData.optManager.SetLinkFlag(d.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
+          T3Gv.optManager.SetLinkFlag(d.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
         {
           start: D + e,
           rowht: g,
           left: u
         }
       },
-      L = GlobalData.optManager.ContainerIsInCell(this);
+      L = T3Gv.optManager.ContainerIsInCell(this);
     L &&
       (C = {
         width: this.trect.width,
@@ -622,7 +622,7 @@ class ShapeContainer extends Rect {
       for (t = 0; t < n.ndown; t++) for (r = 0; r < n.nacross; r++) i = t * n.nacross + r,
         null == (o = n.List[i]).id &&
         (o.id = - 1),
-        (a = GlobalData.optManager.GetObjectPtr(o.id, !1)) ? (s = a.Frame.width, l = a.Frame.height) : (s = n.childwidth, l = n.childheight),
+        (a = T3Gv.optManager.GetObjectPtr(o.id, !1)) ? (s = a.Frame.width, l = a.Frame.height) : (s = n.childwidth, l = n.childheight),
         (null == u[r] || u[r] < s) &&
         (u[r] = s),
         (null == p[t] || p[t] < l) &&
@@ -677,7 +677,7 @@ class ShapeContainer extends Rect {
         L &&
         (M || P)
       ) {
-        var R = GlobalData.optManager.GetObjectPtr(L.obj.BlockID, !0),
+        var R = T3Gv.optManager.GetObjectPtr(L.obj.BlockID, !0),
           A = R.GetTable(!0);
         Business.SizeContainerCell(R, A, L.cell, L.cellindex, c, u),
           g ||
@@ -702,7 +702,7 @@ class ShapeContainer extends Rect {
           P &&
           (F = u, trect.height = F, m && (E = - P)),
           this.TRectToFrame(trect, !0),
-          GlobalData.optManager.AddToDirtyList(this.BlockID),
+          T3Gv.optManager.AddToDirtyList(this.BlockID),
           L ||
           (
             this.sizedim.width = this.Frame.width,
@@ -711,15 +711,15 @@ class ShapeContainer extends Rect {
           !L
         ) {
           if (
-            GlobalData.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
+            T3Gv.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
             this.hooks.length
           ) {
-            var v = GlobalData.optManager.GetObjectPtr(this.hooks[0].objid, !1);
+            var v = T3Gv.optManager.GetObjectPtr(this.hooks[0].objid, !1);
             // v instanceof ListManager.ShapeContainer &&
             v instanceof ShapeContainer &&
               (
                 v.flags = Utils2.SetFlag(v.flags, ConstantData.ObjFlags.SEDO_Obj1, !0),
-                GlobalData.optManager.SetLinkFlag(v.BlockID, ConstantData.LinkFlags.SED_L_MOVE)
+                T3Gv.optManager.SetLinkFlag(v.BlockID, ConstantData.LinkFlags.SED_L_MOVE)
               )
           } (_ || E) &&
             this.OffsetShape(_, E)
@@ -735,11 +735,11 @@ class ShapeContainer extends Rect {
       t instanceof ShapeContainer &&
       (null == this.zListIndex || this.zListIndex < 0)
     ) {
-      var n = GlobalData.optManager.svgObjectLayer.GetElementByID(e);
+      var n = T3Gv.optManager.svgObjectLayer.GetElementByID(e);
       n &&
         (
-          this.zListIndex = GlobalData.optManager.svgObjectLayer.GetElementIndex(n),
-          GlobalData.optManager.svgObjectLayer.MoveElementToFront(n)
+          this.zListIndex = T3Gv.optManager.svgObjectLayer.GetElementIndex(n),
+          T3Gv.optManager.svgObjectLayer.MoveElementToFront(n)
         )
     }
   }
@@ -779,7 +779,7 @@ class ShapeContainer extends Rect {
 
   ChangeTarget(e, t, a, r, i, n) {
     var o = ConstantData.ContainerListFlags,
-      s = GlobalData.optManager.ContainerIsInCell(this),
+      s = T3Gv.optManager.ContainerIsInCell(this),
       l = function (e, t) {
         var a = C.ContainerList.List,
           r = a.length,
@@ -865,7 +865,7 @@ class ShapeContainer extends Rect {
         }
       };
     if (null != t) {
-      var u = GlobalData.optManager.GetObjectPtr(t, !1);
+      var u = T3Gv.optManager.GetObjectPtr(t, !1);
       u.OnDisconnect(t, this);
       var p,
         d,
@@ -978,7 +978,7 @@ class ShapeContainer extends Rect {
               l.nacross = t + 1
             } (i = S[o = a * l.nacross + t]).id = e
           }(t, i.x, i.y),
-          GlobalData.optManager.PutInFrontofObject(C.BlockID, t),
+          T3Gv.optManager.PutInFrontofObject(C.BlockID, t),
           u.moreflags = Utils2.SetFlag(
             u.moreflags,
             ConstantData.ObjMoreFlags.SED_MF_ContainerChild,
@@ -1003,7 +1003,7 @@ class ShapeContainer extends Rect {
       } else n ? f >= 0 ? (d = i.y) > f ? (l(t, i.y), S(t)) : d < f &&
         (S(t), l(t, d)) : (
         l(t, i.y),
-        GlobalData.optManager.PutInFrontofObject(C.BlockID, t),
+        T3Gv.optManager.PutInFrontofObject(C.BlockID, t),
         u.moreflags = Utils2.SetFlag(
           u.moreflags,
           ConstantData.ObjMoreFlags.SED_MF_ContainerChild,
@@ -1016,7 +1016,7 @@ class ShapeContainer extends Rect {
           ConstantData.ObjMoreFlags.SED_MF_ContainerChild,
           !1
         ),
-        GlobalData.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE)
+        T3Gv.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE)
       );
       y ? function () {
         var e,
@@ -1026,14 +1026,14 @@ class ShapeContainer extends Rect {
           i = C.ContainerList,
           n = i.List;
         for (e = 0; e < i.ndown; e++) for (t = 0; t < i.nacross; t++) r = e * i.nacross + t,
-          obj = GlobalData.optManager.GetObjectPtr(n[r].id, !1),
+          obj = T3Gv.optManager.GetObjectPtr(n[r].id, !1),
           obj &&
           obj.hooks.length &&
           (
             (a = obj.hooks[0].connect).x === t &&
             a.y === e ||
             (
-              obj = GlobalData.optManager.GetObjectPtr(n[r].id, !0),
+              obj = T3Gv.optManager.GetObjectPtr(n[r].id, !0),
               obj.hooks[0].connect.x = t,
               obj.hooks[0].connect.y = e
             )
@@ -1042,7 +1042,7 @@ class ShapeContainer extends Rect {
         var e,
           t = C.ContainerList.List,
           a = t.length;
-        for (e = 0; e < a; e++) obj = GlobalData.optManager.GetObjectPtr(t[e].id, !0),
+        for (e = 0; e < a; e++) obj = T3Gv.optManager.GetObjectPtr(t[e].id, !0),
           obj &&
           obj.hooks.length &&
           (obj.hooks[0].connect.y = e)

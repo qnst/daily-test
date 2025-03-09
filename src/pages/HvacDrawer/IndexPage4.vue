@@ -11,7 +11,7 @@ import '@svgdotjs/svg.draggable.js';
 import '@svgdotjs/svg.select.js';
 import '@svgdotjs/svg.resize.js';
 
-import Hammer from 'hammerjs';
+// import Hammer from 'hammerjs';
 
 export default {
   name: 'IndexPage4',

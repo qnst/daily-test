@@ -9,33 +9,33 @@
 // import SDGraphics from "./../../SDGraphics/SDGraphics.Index";
 // import GPP from '../../gListManager';
 // import $ from 'jquery';
-// import HvacSVG from '../../Hvac.SVG.t2';
+// import T3Svg from '../../Hvac.SVG.t2';
 
 
 
 
 
-import BaseShape from './Shape.BaseShape'
+import BaseShape from './S.BaseShape'
 import Utils1 from '../Helper/Utils1';
 import Utils2 from "../Helper/Utils2";
 import Utils3 from "../Helper/Utils3";
 
-import GlobalData from '../Data/GlobalData'
+import GlobalData from '../Data/T3Gv'
 import Collab from '../Data/Collab'
 import FileParser from '../Data/FileParser'
 import EvtUtil from "../Event/EvtUtil";
 import Resources from '../Data/Resources'
 import ListManager from '../Data/ListManager';
 // import Element from "../Basic/Basic.Element";
-import RRect from './Shape.RRect'
+import RRect from './S.RRect'
 
 import $ from 'jquery';
 // import ShapeContainer from '../Shape/Shape.ShapeContainer'
 
 import Point from '../Model/Point'
-import Document from '../Basic/Basic.Document'
+import Document from '../Basic/B.Document'
 
-import Element from '../Basic/Basic.Element';
+import Element from '../Basic/B.Element';
 import Instance from '../Data/Instance/Instance';
 import ConstantData from '../Data/ConstantData'
 
@@ -185,10 +185,10 @@ class Rect extends BaseShape {
     a.isShape = !0;
     var I = this.GetTable(!1);
     I &&
-      GlobalData.optManager.LM_AddSVGTableObject(this, e, a, I);
+      T3Gv.optManager.LM_AddSVGTableObject(this, e, a, I);
     var T = this.GetGraph(!1);
     return T &&
-      GlobalData.optManager.LM_AddSVGGraphObject(this, e, a, T),
+      T3Gv.optManager.LM_AddSVGGraphObject(this, e, a, T),
       this.DataID >= 0 &&
       this.LM_AddSVGTextObject(e, a),
       a
@@ -253,22 +253,22 @@ class Rect extends BaseShape {
       S.y = 0,
       S.width = u,
       S.height = 2 * u,
-      GlobalData.optManager.PolyYCurve(l, S, e / 2, 0, 0, 0, u, !0),
+      T3Gv.optManager.PolyYCurve(l, S, e / 2, 0, 0, 0, u, !0),
       S.x = 0,
       S.y = c.height - 2 * u,
       S.width = u,
       S.height = 2 * u,
-      GlobalData.optManager.PolyYCurve(l, S, e / 2, 0, 0, u, 0, !0),
+      T3Gv.optManager.PolyYCurve(l, S, e / 2, 0, 0, u, 0, !0),
       S.x = c.width - u,
       S.y = c.height,
       S.width = u,
       S.height = - 2 * u,
-      GlobalData.optManager.PolyYCurve(l, S, e / 2, 0, 0, 0, - u, !1),
+      T3Gv.optManager.PolyYCurve(l, S, e / 2, 0, 0, 0, - u, !1),
       S.x = c.width - u,
       S.y = 2 * u,
       S.width = u,
       S.height = - 2 * u,
-      GlobalData.optManager.PolyYCurve(l, S, e / 2, 0, 0, - u, 0, !1),
+      T3Gv.optManager.PolyYCurve(l, S, e / 2, 0, 0, - u, 0, !1),
       l.push(new Point(l[0].x, l[0].y)),
       !t
     ) for (s = l.length, n = 0; n < s; n++) l[n].x += c.x,
@@ -311,7 +311,7 @@ class Rect extends BaseShape {
   RRect_ExtendLines() {
     var e = this.GetTable(!1);
     e &&
-      GlobalData.optManager.Table_ExtendLines(this, e)
+      T3Gv.optManager.Table_ExtendLines(this, e)
   }
 
 
@@ -325,7 +325,7 @@ class Rect extends BaseShape {
   RRect_ExtendCell(e, t, a) {
     var r = this.GetTable(!1);
     if (r) {
-      var i = GlobalData.optManager.Table_ExtendCell(this, r, e, t, a);
+      var i = T3Gv.optManager.Table_ExtendCell(this, r, e, t, a);
       if (i) {
         var n,
           o,

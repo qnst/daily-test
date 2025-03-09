@@ -7,13 +7,13 @@
 // import Basic from "./Basic.Index";
 // import GPP from "../gListManager";
 import $ from 'jquery';
-import HvacSVG from "../Helper/SVG.t2"
+import T3Svg from "../Helper/T3Svg"
 
 import Global from "./Basic.Global";
 
 
 
-import Group from "./Basic.Group";
+import Group from "./B.Group";
 import Utils1 from "../Helper/Utils1"
 import Utils2 from "../Helper/Utils2"
 import Utils3 from "../Helper/Utils3"
@@ -39,7 +39,7 @@ class ShapeContainer extends Group {
 
   CreateElement(e, t) {
     //'use strict';
-    return this.svgObj = new HvacSVG.Container(HvacSVG.create('g')),
+    return this.svgObj = new T3Svg.Container(T3Svg.create('g')),
       this.InitElement(e, t),
       this.shapeGroup = new Group(),
       this.shapeGroup.CreateElement(e, t),

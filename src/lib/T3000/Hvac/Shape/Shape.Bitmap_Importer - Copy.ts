@@ -9,9 +9,9 @@
 // import SDGraphics from "./../../SDGraphics/SDGraphics.Index";
 // import GPP from '../../gListManager';
 // import $ from 'jquery';
-// import HvacSVG from '../../Hvac.SVG.t2';
+// import T3Svg from '../../Hvac.SVG.t2';
 
-import GlobalData from '../Data/GlobalData'
+import GlobalData from '../Data/T3Gv'
 // import Utils2 from "../Helper/Utils2";
 // import Utils3 from "../Helper/Utils3";
 // import Collab from '../Data/Collab'
@@ -20,7 +20,7 @@ import GlobalData from '../Data/GlobalData'
 // import Resources from '../Data/Resources'
 // import Element from "../Basic/Basic.Element";
 
-import Element from '../Basic/Basic.Element';
+import Element from '../Basic/B.Element';
 
 
 
@@ -33,19 +33,19 @@ class Bitmap_Importer {
   importBitmap(e, t, a, r, i) {
     var n;
     if (e && i && !(r <= 0)) {
-      GlobalData.optManager.bitmapImportDestWidth = t,
-        GlobalData.optManager.bitmapImportDestHeight = a,
-        GlobalData.optManager.bitmapImportDPI = r;
+      T3Gv.optManager.bitmapImportDestWidth = t,
+        T3Gv.optManager.bitmapImportDestHeight = a,
+        T3Gv.optManager.bitmapImportDPI = r;
       var o = e.type;
-      GlobalData.optManager.bitmapImportMimeType = o,
+      T3Gv.optManager.bitmapImportMimeType = o,
         e instanceof File ? 'image/jpeg' == o ||
           'image/png' == o ? (
-          GlobalData.optManager.bitmapImportOriginalSize = e.size,
-          GlobalData.optManager.scaledBitmapCallback = i,
+          T3Gv.optManager.bitmapImportOriginalSize = e.size,
+          T3Gv.optManager.scaledBitmapCallback = i,
           (n = new FileReader).onload = function (t) {
-            GlobalData.optManager.bitmapImportEXIFdata = null,
-              GlobalData.optManager.bitmapImportFile = e,
-              GlobalData.optManager.bitmapImportResult = t.target.result,
+            T3Gv.optManager.bitmapImportEXIFdata = null,
+              T3Gv.optManager.bitmapImportFile = e,
+              T3Gv.optManager.bitmapImportResult = t.target.result,
               EXIF.getData(e, GotEXIF)
           },
           n.readAsDataURL(e)

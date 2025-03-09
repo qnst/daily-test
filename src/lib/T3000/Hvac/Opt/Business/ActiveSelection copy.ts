@@ -1,11 +1,12 @@
 
 
-import GlobalData from '../../Data/GlobalData'
+import GlobalData from '../../Data/T3Gv'
 
 import Resources from '../../Data/Resources'
-import Commands from './Commands'
+import Commands from './ToolOpt'
 import ConstantData from '../../Data/ConstantData'
 
+// DO NOT USE THIS CLASS
 class ActiveSelection {
 
   // SetFormatPainterHighlight(e) {
@@ -22,7 +23,7 @@ class ActiveSelection {
     console.log('O.ActiveSelection.SetSelectionTool - Input:', { toolType, isSticky });
 
     // Initial render of all SVG selection states
-    GlobalData.optManager.RenderAllSVGSelectionStates();
+    T3Gv.optManager.RenderAllSVGSelectionStates();
 
     // Check if we're currently using the wall tool
     const isCurrentlyWallTool = ConstantData.DocumentContext.SelectionTool === Resources.Tools.Tool_Wall;
@@ -38,7 +39,7 @@ class ActiveSelection {
 
       // If we were previously using the wall tool, re-render all states
       if (isCurrentlyWallTool) {
-        GlobalData.optManager.RenderAllSVGSelectionStates();
+        T3Gv.optManager.RenderAllSVGSelectionStates();
       }
     }
 

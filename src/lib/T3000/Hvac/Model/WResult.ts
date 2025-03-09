@@ -22,7 +22,7 @@ class WResult {
   public nsegl: number;
   public arrayid: number;
   public GroupOffset: { x: number; y: number };
-  public rulerSettings: any;
+  public rulerConfig: any;
   public WriteBlocks: boolean;
   public noTables: boolean;
   public WriteGroupBlock: boolean;
@@ -60,7 +60,7 @@ class WResult {
     this.nsegl = 0;
     this.arrayid = 0;
     this.GroupOffset = { x: 0, y: 0 };
-    this.rulerSettings = null;
+    this.rulerConfig = null;
     this.WriteBlocks = false;
     this.noTables = false;
     this.WriteGroupBlock = false;

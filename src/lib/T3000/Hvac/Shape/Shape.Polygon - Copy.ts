@@ -9,17 +9,17 @@
 // import SDGraphics from "./../../SDGraphics/SDGraphics.Index";
 // import GPP from '../../gListManager';
 // import $ from 'jquery';
-// import HvacSVG from '../../Hvac.SVG.t2';
+// import T3Svg from '../../Hvac.SVG.t2';
 
 
 
 
 
-import BaseShape from './Shape.BaseShape'
+import BaseShape from './S.BaseShape'
 import Utils1 from '../Helper/Utils1';
 import Utils2 from "../Helper/Utils2";
 import Utils3 from "../Helper/Utils3";
-import GlobalData from '../Data/GlobalData'
+import GlobalData from '../Data/T3Gv'
 import Collab from '../Data/Collab'
 import FileParser from '../Data/FileParser'
 import EvtUtil from "../Event/EvtUtil";
@@ -27,10 +27,10 @@ import Resources from '../Data/Resources'
 // import Element from "../Basic/Basic.Element";
 import ListManager from '../Data/ListManager';
 
-import Document from '../Basic/Basic.Document'
+import Document from '../Basic/B.Document'
 
-import Element from '../Basic/Basic.Element';
-import PolygonShapeGenerator from '../Opt/Business/PolygonShapeGenerator'
+import Element from '../Basic/B.Element';
+import PolygonShapeGenerator from '../Opt/Business/PolygonUtil'
 import $ from 'jquery'
 import ConstantData from '../Data/ConstantData'
 
@@ -327,7 +327,7 @@ class Polygon extends BaseShape {
     a.isShape = !0;
     var O = this.GetTable(!1);
     return O &&
-      GlobalData.optManager.LM_AddSVGTableObject(this, e, a, O),
+      T3Gv.optManager.LM_AddSVGTableObject(this, e, a, O),
       this.DataID >= 0 &&
       this.LM_AddSVGTextObject(e, a),
       a
@@ -346,7 +346,7 @@ class Polygon extends BaseShape {
         }, t),
         s = $.extend(!0, {
         }, t),
-        l = GlobalData.optManager.svgDoc.CalculateRotatedOffsetForResize(n, o, i);
+        l = T3Gv.optManager.svgDoc.CalculateRotatedOffsetForResize(n, o, i);
       if (
         this.StyleRecord.Line.BThick &&
         null == this.polylist &&
@@ -378,10 +378,10 @@ class Polygon extends BaseShape {
         C &&
           (C.SetPoints(D), C.SetSize(t.width, t.height))
       }
-      return this.GetTable(!1) ? GlobalData.optManager.Table_ResizeSVGTableObject(e, a, t) : this.LM_ResizeSVGTextObject(e, a, t),
+      return this.GetTable(!1) ? T3Gv.optManager.Table_ResizeSVGTableObject(e, a, t) : this.LM_ResizeSVGTextObject(e, a, t),
         e.SetRotation(i),
         this.UpdateDimensionLines(e),
-        GlobalData.optManager.UpdateDisplayCoordinates(t, null, null, this),
+        T3Gv.optManager.UpdateDisplayCoordinates(t, null, null, this),
         l
     }
   }
@@ -398,7 +398,7 @@ class Polygon extends BaseShape {
       }, t),
       n = $.extend(!0, {
       }, t),
-      o = GlobalData.optManager.svgDoc.CalculateRotatedOffsetForResize(r, i, a);
+      o = T3Gv.optManager.svgDoc.CalculateRotatedOffsetForResize(r, i, a);
     this.StyleRecord.Line.BThick &&
       null == this.polylist &&
       Utils2.InflateRect(n, this.StyleRecord.Line.BThick, this.StyleRecord.Line.BThick),
@@ -430,13 +430,13 @@ class Polygon extends BaseShape {
     g &&
       (g.SetPoints(p), g.SetSize(n.width, n.height)),
       this.GetTable(!1) &&
-      GlobalData.optManager.Table_ResizeSVGTableObject(e, this, t, !0);
+      T3Gv.optManager.Table_ResizeSVGTableObject(e, this, t, !0);
     var h = e.GetElementByID(ConstantData.SVGElementClass.HATCH);
     return h &&
       (h.SetPoints(p), h.SetSize(t.width, t.height)),
       e.SetRotation(a),
       this.UpdateDimensionLines(e),
-      GlobalData.optManager.UpdateDisplayCoordinates(t, null, null, this),
+      T3Gv.optManager.UpdateDisplayCoordinates(t, null, null, this),
       o
   }
 
@@ -478,10 +478,10 @@ class Polygon extends BaseShape {
       S &&
       s &&
       e &&
-      (u = GlobalData.optManager.Table_GetTargetPoints(this, s, e, t, c, a)),
+      (u = T3Gv.optManager.Table_GetTargetPoints(this, s, e, t, c, a)),
       a >= 0
     ) {
-      var d = GlobalData.optManager.GetObjectPtr(a, !1);
+      var d = T3Gv.optManager.GetObjectPtr(a, !1);
       if (
         d &&
         d.moreflags & ConstantData.ObjMoreFlags.SED_MF_VisioText
@@ -497,7 +497,7 @@ class Polygon extends BaseShape {
     if (o || l) {
       var g = [];
       return o ? g = this.ConnectPoints : l &&
-        (g = GlobalData.optManager.Table_GetRowConnectPoints(this, s)),
+        (g = T3Gv.optManager.Table_GetRowConnectPoints(this, s)),
         r = Utils1.DeepCopy(g)
     }
     return i
@@ -506,13 +506,13 @@ class Polygon extends BaseShape {
   ExtendLines() {
     var e = this.GetTable(!1);
     e &&
-      GlobalData.optManager.Table_ExtendLines(this, e)
+      T3Gv.optManager.Table_ExtendLines(this, e)
   }
 
   ExtendCell(e, t, a) {
     var r = this.GetTable(!1);
     if (r) {
-      var i = GlobalData.optManager.Table_ExtendCell(this, r, e, t, a);
+      var i = T3Gv.optManager.Table_ExtendCell(this, r, e, t, a);
       if (i) {
         var n,
           o,
@@ -556,7 +556,7 @@ class Polygon extends BaseShape {
     ) return u = this.BaseDrawingObject_GetPerimPts(e, t, a, !1, i);
     var h = this.GetTable(!1);
     if (null != i && h) {
-      var m = GlobalData.optManager.Table_GetPerimPts(this, h, i, t);
+      var m = T3Gv.optManager.Table_GetPerimPts(this, h, i, t);
       if (m) return u = m,
         r ||
         (
@@ -581,7 +581,7 @@ class Polygon extends BaseShape {
     else {
       if (
         this.flags & ConstantData.ObjFlags.SEDO_ContConn &&
-        !GlobalData.optManager.FromOverlayLayer
+        !T3Gv.optManager.FromOverlayLayer
         // ) return u = ListManager.BaseDrawingObject.prototype.GetPerimPts.call(this, e, t, a, r, i, n);
       ) return u = this.BaseDrawingObject_GetPerimPts(e, t, a, r, i, n);
       for (
@@ -596,11 +596,11 @@ class Polygon extends BaseShape {
         c = 0;
         c < l;
         c++
-      ) t[c].x < g / 4 ? (o = GlobalData.optManager.PolyGetIntersect(p, u[c].y, D, null, !1)) &&
-        (u[c].x = D[0], o > 1 && D[1] < u[c].x && (u[c].x = D[1])) : t[c].x > 3 * g / 4 ? (o = GlobalData.optManager.PolyGetIntersect(p, u[c].y, D, null, !1)) &&
-          (u[c].x = D[0], o > 1 && D[1] > u[c].x && (u[c].x = D[1])) : t[c].y < g / 4 ? (o = GlobalData.optManager.PolyGetIntersect(p, u[c].x, D, null, !0)) &&
+      ) t[c].x < g / 4 ? (o = T3Gv.optManager.PolyGetIntersect(p, u[c].y, D, null, !1)) &&
+        (u[c].x = D[0], o > 1 && D[1] < u[c].x && (u[c].x = D[1])) : t[c].x > 3 * g / 4 ? (o = T3Gv.optManager.PolyGetIntersect(p, u[c].y, D, null, !1)) &&
+          (u[c].x = D[0], o > 1 && D[1] > u[c].x && (u[c].x = D[1])) : t[c].y < g / 4 ? (o = T3Gv.optManager.PolyGetIntersect(p, u[c].x, D, null, !0)) &&
             (u[c].y = D[0], o > 1 && D[1] < u[c].y && (u[c].y = D[1])) : t[c].y > 3 * g / 4 &&
-            (o = GlobalData.optManager.PolyGetIntersect(p, u[c].x, D, null, !0)) &&
+            (o = T3Gv.optManager.PolyGetIntersect(p, u[c].x, D, null, !0)) &&
       (u[c].y = D[0], o > 1 && D[1] > u[c].y && (u[c].y = D[1])),
         null != t[c].id &&
         (u[c].id = t[c].id)
@@ -683,7 +683,7 @@ class Polygon extends BaseShape {
       this.NeedsSIndentCount &&
       (
         s = this.GetPolyPoints(ConstantData.Defines.NPOLYPTS, !0, !1, !1, null),
-        l = GlobalData.optManager.GuessTextIndents(s, this.Frame),
+        l = T3Gv.optManager.GuessTextIndents(s, this.Frame),
         this.left_sindent = l.left_sindent,
         this.right_sindent = l.right_sindent,
         this.top_sindent = l.top_sindent,
@@ -788,7 +788,7 @@ class Polygon extends BaseShape {
       i = ConstantData.SDRShapeTypes,
       n = ConstantData.Defines.SED_CDim;
     if (
-      this.VertexArray = GlobalData.optManager.FlipVertexArray(this.VertexArray, e),
+      this.VertexArray = T3Gv.optManager.FlipVertexArray(this.VertexArray, e),
       this.polylist &&
       ListManager.PolyLine.prototype.Flip.call(this, e),
       e & ConstantData.ExtraFlags.SEDE_FlipVert &&
@@ -860,16 +860,16 @@ class Polygon extends BaseShape {
         this.ConnectPoints
       ) for (a = this.ConnectPoints.length, r = 0; r < a; r++) this.ConnectPoints[r].x = n - this.ConnectPoints[r].x
     }
-    GlobalData.optManager.SetLinkFlag(
+    T3Gv.optManager.SetLinkFlag(
       this.BlockID,
       ConstantData.LinkFlags.SED_L_MOVE | ConstantData.LinkFlags.SED_L_CHANGE
     ),
       this.hooks.length &&
-      GlobalData.optManager.SetLinkFlag(this.hooks[0].objid, ConstantData.LinkFlags.SED_L_MOVE),
+      T3Gv.optManager.SetLinkFlag(this.hooks[0].objid, ConstantData.LinkFlags.SED_L_MOVE),
       this.NeedsSIndentCount = !0,
       this.UpdateFrame(this.Frame),
       this.Resize(
-        GlobalData.optManager.svgObjectLayer.GetElementByID(this.BlockID),
+        T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID),
         this.Frame,
         this
       )
@@ -949,7 +949,7 @@ class Polygon extends BaseShape {
       ConstantData.ExtraFlags.SEDE_FlipHoriz | ConstantData.ExtraFlags.SEDE_FlipVert
     ) &&
       o &&
-      (o = GlobalData.optManager.FlipVertexArray(o, s)),
+      (o = T3Gv.optManager.FlipVertexArray(o, s)),
       o
   }
 
@@ -995,7 +995,7 @@ class Polygon extends BaseShape {
         y: s.y + s.height / 2
       },
         S = 2 * Math.PI * (r / 360),
-        c = GlobalData.optManager.RotatePointAroundPoint(a, l, S);
+        c = T3Gv.optManager.RotatePointAroundPoint(a, l, S);
       s.x = c.x - s.width / 2,
         s.y = c.y - s.height / 2,
         this.RotationAngle += r,
@@ -1050,16 +1050,16 @@ class Polygon extends BaseShape {
   }
 
   SetSegmentAngle(e, t, a) {
-    GlobalData.optManager.ShapeToPolyLine(this.BlockID, !1, !0),
-      GlobalData.optManager.GetObjectPtr(this.BlockID, !1).SetSegmentAngle(e, t, a),
-      GlobalData.optManager.PolyLineToShape(this.BlockID)
+    T3Gv.optManager.ShapeToPolyLine(this.BlockID, !1, !0),
+      T3Gv.optManager.GetObjectPtr(this.BlockID, !1).SetSegmentAngle(e, t, a),
+      T3Gv.optManager.PolyLineToShape(this.BlockID)
   }
 
   DimensionLineDeflectionAdjust(e, t, a, r, i) {
     if (!this.polylist) return ListManager.BaseShape.prototype.DimensionLineDeflectionAdjust.call(this, e, t, a, r, i);
-    GlobalData.optManager.ShapeToPolyLine(this.BlockID, !1, !0),
-      GlobalData.optManager.GetObjectPtr(this.BlockID, !1).DimensionLineDeflectionAdjust(e, t, a, r, i),
-      GlobalData.optManager.PolyLineToShape(this.BlockID)
+    T3Gv.optManager.ShapeToPolyLine(this.BlockID, !1, !0),
+      T3Gv.optManager.GetObjectPtr(this.BlockID, !1).DimensionLineDeflectionAdjust(e, t, a, r, i),
+      T3Gv.optManager.PolyLineToShape(this.BlockID)
   }
 
   GetDimensionDeflectionValue(e) {
@@ -1072,22 +1072,22 @@ class Polygon extends BaseShape {
 
   UpdateDimensionFromTextObj(e, t) {
     //'use strict';
-    GlobalData.objectStore.PreserveBlock(this.BlockID);
+    T3Gv.objectStore.PreserveBlock(this.BlockID);
     if (t) var a = t.text,
       r = t.userData;
     else a = e.GetText(),
       r = e.GetUserData();
-    var i = GlobalData.optManager.svgObjectLayer.GetElementByID(this.BlockID);
+    var i = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID);
     if (r.angleChange) return this.UpdateLineAngleDimensionFromText(i, a, r),
-      GlobalData.optManager.AddToDirtyList(this.BlockID),
+      T3Gv.optManager.AddToDirtyList(this.BlockID),
       (this.Frame.x < 0 || this.Frame.y < 0) &&
-      GlobalData.optManager.ScrollObjectIntoView(this.BlockID, !1),
-      void GlobalData.optManager.CompleteOperation(null);
+      T3Gv.optManager.ScrollObjectIntoView(this.BlockID, !1),
+      void T3Gv.optManager.CompleteOperation(null);
     this.polylist &&
       (this.extraflags & ConstantData.ExtraFlags.SEDE_SideKnobs) > 0 ? (
-      GlobalData.optManager.ShapeToPolyLine(this.BlockID, !1, !0),
-      GlobalData.optManager.GetObjectPtr(this.BlockID, !1).UpdateDimensionFromText(i, a, r),
-      GlobalData.optManager.PolyLineToShape(this.BlockID)
+      T3Gv.optManager.ShapeToPolyLine(this.BlockID, !1, !0),
+      T3Gv.optManager.GetObjectPtr(this.BlockID, !1).UpdateDimensionFromText(i, a, r),
+      T3Gv.optManager.PolyLineToShape(this.BlockID)
     ) : ListManager.BaseShape.prototype.UpdateDimensionFromTextObj.call(this, e, t)
   }
 
@@ -1096,7 +1096,7 @@ class Polygon extends BaseShape {
     return this.polylist &&
       (this.extraflags & ConstantData.ExtraFlags.SEDE_SideKnobs) > 0 ? (
       e = Utils1.DeepCopy(this),
-      (e = GlobalData.optManager.ShapeToPolyLine(this.BlockID, !1, !0, e)).GetPolyPoints(ConstantData.Defines.NPOLYPTS, !0, !0, !1, null)
+      (e = T3Gv.optManager.ShapeToPolyLine(this.BlockID, !1, !0, e)).GetPolyPoints(ConstantData.Defines.NPOLYPTS, !0, !0, !1, null)
     ) : ListManager.BaseShape.prototype.GetDimensionPoints.call(this)
   }
 
@@ -1128,7 +1128,7 @@ class Polygon extends BaseShape {
         (t = Utils2.GetDistanceBetween2Points(o[1], o[2])) / (a = Utils2.GetDistanceBetween2Points(o[3], o[4])) > 0.99 &&
         t / a < 1.01 ? (
         (
-          e = GlobalData.optManager.SD_GetCounterClockwiseAngleBetween2Points(o[0], o[1])
+          e = T3Gv.optManager.SD_GetCounterClockwiseAngleBetween2Points(o[0], o[1])
         ) < Math.PI / 4 ||
           e > 1.5 * Math.PI ||
           e > 0.75 * Math.PI &&

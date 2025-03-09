@@ -8,25 +8,25 @@
 // import SDGraphics from "./../../SDGraphics/SDGraphics.Index";
 // import GPP from '../../gListManager';
 // import $ from 'jquery';
-// import HvacSVG from '../../Hvac.SVG.t2';
+// import T3Svg from '../../Hvac.SVG.t2';
 
 
-import BaseShape from './Shape.BaseShape'
+import BaseShape from './S.BaseShape'
 import Utils1 from '../Helper/Utils1';
 import Utils2 from "../Helper/Utils2";
 import Utils3 from "../Helper/Utils3";
 
 // import Utils3 from "../Helper/Utils3";
-import GlobalData from '../Data/GlobalData'
+import GlobalData from '../Data/T3Gv'
 // import Collab from '../Data/Collab'
 // import FileParser from '../Data/FileParser'
 // import EvtUtil from "../Event/Event.Default";
 // import Resources from '../Data/Resources'
 // import Element from "../Basic/Basic.Element";
 
-import Document from '../Basic/Basic.Document'
+import Document from '../Basic/B.Document'
 
-import Element from '../Basic/Basic.Element';
+import Element from '../Basic/B.Element';
 import ListManager from '../Data/ListManager'
 import ConstantData from '../Data/ConstantData'
 
@@ -158,7 +158,7 @@ class BaseSymbol extends BaseShape {
       C.knobID = ConstantData.ActionTriggerType.BOTTOMLEFT,
       y = this.GenericKnob(C),
       n.AddElement(y),
-      GlobalData.optManager.bTouchInitiated ||
+      T3Gv.optManager.bTouchInitiated ||
       C.locked ||
       this.NoGrow() ||
       (
@@ -187,7 +187,7 @@ class BaseSymbol extends BaseShape {
   }
 
   Flip(e) {
-    GlobalData.optManager.svgObjectLayer.GetElementByID(this.BlockID);
+    T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID);
     e & ConstantData.ExtraFlags.SEDE_FlipHoriz &&
       (
         this.extraflags = Utils2.SetFlag(
@@ -218,7 +218,7 @@ class BaseSymbol extends BaseShape {
           this.TextFlags & ConstantData.TextFlags.SED_TF_AttachA ||
           this.TextFlags & ConstantData.TextFlags.SED_TF_AttachB
         ) &&
-        GlobalData.optManager.theActionSVGObject.textElem.SetVisible(!1)
+        T3Gv.optManager.theActionSVGObject.textElem.SetVisible(!1)
       );
     this.rflags &&
       (
@@ -239,11 +239,11 @@ class BaseSymbol extends BaseShape {
           this.TextFlags & ConstantData.TextFlags.SED_TF_AttachA ||
           this.TextFlags & ConstantData.TextFlags.SED_TF_AttachB
         ) &&
-        GlobalData.optManager.theActionSVGObject.textElem.SetVisible(!0)
+        T3Gv.optManager.theActionSVGObject.textElem.SetVisible(!0)
       );
-    GlobalData.optManager.SetEditMode(ConstantData.EditState.DEFAULT),
-      GlobalData.optManager.UpdateLinks(),
-      GlobalData.optManager.LinkParams = null,
+    T3Gv.optManager.SetEditMode(ConstantData.EditState.DEFAULT),
+      T3Gv.optManager.UpdateLinks(),
+      T3Gv.optManager.LinkParams = null,
       this.sizedim.width = this.Frame.width,
       this.sizedim.height = this.Frame.height
   }

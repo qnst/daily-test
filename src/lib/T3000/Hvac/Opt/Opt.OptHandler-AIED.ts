@@ -1,10 +1,10 @@
 
 
-import HvTimer from "../Helper/HvTimer";
+import HvTimer from "../Helper/T3Timer";
 import QuickStyle from "../Model/QuickStyle";
 import ListManager from '../Data/ListManager';
 import ParagraphFormat from '../Model/ParagraphFormat';
-import GlobalData from '../Data/GlobalData';
+import GlobalData from '../Data/T3Gv';
 import Globals from "../Data/Globals";
 import SDTextureList from "../Model/TextureList";
 import SDF from '../Data/SDF';
@@ -19,30 +19,30 @@ import Resources from "../Data/Resources";
 import ArrowDefs from '../Model/ArrowDefs';
 import ArrowSizes from '../Model/ArrowSizes';
 import CollabOverlayContoller from "../Opt/Business/CollabOverlayContoller";
-import Commands from '../Opt/Business/Commands';
-import Document from '../Basic/Basic.Document';
+import Commands from './Business/ToolOpt';
+import Document from '../Basic/B.Document';
 import Utils1 from "../Helper/Utils1";
 import Utils2 from "../Helper/Utils2";
 import Utils3 from "../Helper/Utils3"
-import BaseLine from '../Shape/Shape.BaseLine';
+import BaseLine from '../Shape/S.BaseLine';
 import FileParser from "../Data/FileParser";
-import '../Helper/HammerTest2'
-import PolyLine from '../Shape/Shape.PolyLine';
-import PolyLineContainer from '../Shape/Shape.PolyLineContainer';
-import BaseDrawingObject from '../Shape/Shape.BaseDrawingObject';
-import Business from '../Opt/Business/Business';
-import GroupSymbol from '../Shape/Shape.GroupSymbol';
-import Connector from '../Shape/Shape.Connector';
-import FloorPlan from '../Opt/Business/FloorPlan'
+import '../Helper/T3Hammer'
+import PolyLine from '../Shape/S.PolyLine';
+import PolyLineContainer from '../Shape/S.PolyLineContainer';
+import BaseDrawingObject from '../Shape/S.BaseDrawingObject';
+import Business from './Business/OptAhUtil';
+import GroupSymbol from '../Shape/S.GroupSymbol';
+import Connector from '../Shape/S.Connector';
+import FloorPlan from './Business/WallOpt'
 import Point from '../Model/Point';
-import ShapeContainer from '../Shape/Shape.ShapeContainer'
-import SegmentedLine from '../Shape/Shape.SegmentedLine';
-import BaseShape from '../Shape/Shape.BaseShape';
+import ShapeContainer from '../Shape/S.ShapeContainer'
+import SegmentedLine from '../Shape/S.SegmentedLine';
+import BaseShape from '../Shape/S.BaseShape';
 import SegmentData from '../Model/SegmentData'
-import PolygonShapeGenerator from "./Business/PolygonShapeGenerator"
+import PolygonShapeGenerator from "./Business/PolygonUtil"
 import DefaultStyle from "../Model/DefaultStyle"
 import TextParams from "../Model/TextParams"
-import Style from '../Basic/Basic.Element.Style'
+import Style from '../Basic/B.Element.Style'
 import Instance from "../Data/Instance/Instance"
 import ConstantData from '../Data/ConstantData'
 import TEDSession from "../Model/TEDSession"
@@ -386,7 +386,7 @@ class OptHandler {
     this.CutFromButton = false;
     this.theImageClipboard = null;
 
-    const selectedListBlock = GlobalData.objectStore.CreateBlock(ConstantData.StoredObjectType.SELECTEDLIST_OBJECT, []);
+    const selectedListBlock = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.SELECTEDLIST_OBJECT, []);
     this.theSelectedListBlockID = selectedListBlock.ID;
 
     let defaultStyle = new QuickStyle();
@@ -411,7 +411,7 @@ class OptHandler {
     sedSession.d_arrowsize = 1;
     sedSession.CurrentTheme = null;
 
-    const sedSessionBlock = GlobalData.objectStore.CreateBlock(ConstantData.StoredObjectType.SED_SESSION_OBJECT, sedSession);
+    const sedSessionBlock = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.SED_SESSION_OBJECT, sedSession);
     this.theSEDSessionBlockID = sedSessionBlock.ID;
 
     const layersManager = new LayersManager();
@@ -421,16 +421,16 @@ class OptHandler {
     layersManager.nlayers = 1;
     layersManager.activelayer = 0;
 
-    const layersManagerBlock = GlobalData.objectStore.CreateBlock(ConstantData.StoredObjectType.LAYERS_MANAGER_OBJECT, layersManager);
+    const layersManagerBlock = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.LAYERS_MANAGER_OBJECT, layersManager);
     this.theLayersManagerBlockID = layersManagerBlock.ID;
 
     this.SelectionState = new SelectionAttributes();
 
     const tedSession = new TEDSession();// new ListManager.TEDSession();
-    const tedSessionBlock = GlobalData.objectStore.CreateBlock(ConstantData.StoredObjectType.TED_SESSION_OBJECT, tedSession);
+    const tedSessionBlock = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.TED_SESSION_OBJECT, tedSession);
     this.theTEDSessionBlockID = tedSessionBlock.ID;
 
-    const linksBlock = GlobalData.objectStore.CreateBlock(ConstantData.StoredObjectType.LINKLIST_OBJECT, []);
+    const linksBlock = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.LINKLIST_OBJECT, []);
     this.theLinksBlockID = linksBlock.ID;
 
     this.PreserveUndoState(true);
@@ -450,8 +450,8 @@ class OptHandler {
     this.bBuildingSymbols = false;
     this.bTokenizeStyle = false;
     this.bDrawEffects = true;
-    this.initialStateID = GlobalData.stateManager.CurrentStateID;
-    this.nObjectStoreStart = GlobalData.objectStore.StoredObjects.length;
+    this.initialStateID = T3Gv.stateManager.CurrentStateID;
+    this.nObjectStoreStart = T3Gv.objectStore.StoredObjects.length;
     this.cachedHeight = null;
     this.cachedWidth = null;
     this.bInDimensionEdit = false;
@@ -499,29 +499,29 @@ class OptHandler {
   PreserveUndoState(preserveState) {
     console.log('O.Opt PreserveUndoState - Input:', { preserveState });
 
-    if (!GlobalData.optManager.NoUndo) {
+    if (!T3Gv.optManager.NoUndo) {
       // Check if the state manager exists
-      if (null === GlobalData.stateManager) {
+      if (null === T3Gv.stateManager) {
         throw new Error('stateManager is null');
       }
 
       // Only proceed if we have a valid state ID
-      if (GlobalData.stateManager.CurrentStateID >= 0) {
+      if (T3Gv.stateManager.CurrentStateID >= 0) {
         // Check if state is currently open
         const isStateOpen = Utils1.IsStateOpen();
 
         // Preserve the current state
-        GlobalData.stateManager.PreserveState();
+        T3Gv.stateManager.PreserveState();
 
         // Add to history state if state was open
         if (isStateOpen) {
-          GlobalData.stateManager.AddToHistoryState();
+          T3Gv.stateManager.AddToHistoryState();
         }
 
         // Save blocks and update dirty state if needed
         if (!preserveState && isStateOpen) {
           if (this.GetDocDirtyState()) {
-            SDF.SaveChangedBlocks(GlobalData.stateManager.CurrentStateID, 1);
+            SDF.SaveChangedBlocks(T3Gv.stateManager.CurrentStateID, 1);
           } else {
             SDF.SaveAllBlocks();
           }
@@ -537,7 +537,7 @@ class OptHandler {
     console.log("O.Opt InitSVGDocument - Input: Starting SVG document initialization");
 
     // Get the session data from stored object
-    const sessionData = GlobalData.objectStore.GetObject(this.theSEDSessionBlockID).Data;
+    const sessionData = T3Gv.objectStore.GetObject(this.theSEDSessionBlockID).Data;
 
     // Get current screen dimensions
     const screenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
@@ -545,7 +545,7 @@ class OptHandler {
     console.log("O.Opt InitSVGDocument - Screen dimensions:", { width: screenWidth, height: screenHeight });
 
     // Initialize the document work area
-    GlobalData.docHandler.InitializeWorkArea({
+    T3Gv.docHandler.InitializeWorkArea({
       svgAreaID: this.theSVGDocumentID,
       documentWidth: screenWidth,
       documentHeight: screenHeight,
@@ -553,7 +553,7 @@ class OptHandler {
     });
 
     // Get document object and initialize layers
-    this.svgDoc = GlobalData.docHandler.DocObject();
+    this.svgDoc = T3Gv.docHandler.DocObject();
     console.log("O.Opt InitSVGDocument - Created SVG document object");
 
     // Add and configure the object layer (main content layer)
@@ -602,7 +602,7 @@ class OptHandler {
     console.log('O.Opt GetFractionDenominator - Input: No parameters');
 
     let denominator;
-    const rulerScale = GlobalData.docHandler.rulerSettings.majorScale;
+    const rulerScale = T3Gv.docHandler.rulerSettings.majorScale;
 
     // Determine denominator based on ruler scale
     if (rulerScale <= 1) {
@@ -664,7 +664,7 @@ class OptHandler {
     };
 
     // Get session data
-    const sessionData = GlobalData.optManager.GetObjectPtr(this.theSEDSessionBlockID, false);
+    const sessionData = T3Gv.optManager.GetObjectPtr(this.theSEDSessionBlockID, false);
 
     // Get selection count if we have selected objects
     if (selectedObjects && (objectCount = selectedObjects.length)) {
@@ -689,7 +689,7 @@ class OptHandler {
     this.SelectionState.redo = undoState.redo;
 
     // Special case: dimension editing mode
-    if (GlobalData.optManager.bInDimensionEdit) {
+    if (T3Gv.optManager.bInDimensionEdit) {
       this.HandleDimensionEditMode(sessionData);
       console.log('O.Opt UpdateSelectionAttributes - Output: Dimension edit mode handled');
       return;
@@ -746,7 +746,7 @@ class OptHandler {
       if (!(currentObject instanceof BaseDrawingObject)) continue;
 
       // Check for Visio text child
-      objectVisioTextChild = -1; // GlobalData.optManager.SD_GetVisioTextChild(objectId);
+      objectVisioTextChild = -1; // T3Gv.optManager.SD_GetVisioTextChild(objectId);
       const objectToProcess = (objectVisioTextChild >= 0) ?
         this.GetObjectPtr(objectVisioTextChild, false) : currentObject;
 
@@ -763,7 +763,7 @@ class OptHandler {
     $.extend(true, selectionAttributes, this.SelectionState);
 
     // Handle pixel to point conversion for font size if needed
-    if (GlobalData.docHandler.rulerSettings.showpixels && selectionAttributes.fontsize >= 0) {
+    if (T3Gv.docHandler.rulerSettings.showpixels && selectionAttributes.fontsize >= 0) {
       selectionAttributes.fontsize = this.PixelstoPoints(selectionAttributes.fontsize);
     }
 
@@ -825,7 +825,7 @@ class OptHandler {
     this.SelectionState.fixedCornerRadius = -2;
     this.SelectionState.lineCornerRadius = -2;
     this.SelectionState.connectorCanHaveCurve = false;
-    this.SelectionState.CurrentSelectionBusinessManager = GlobalData.gBusinessManager;
+    this.SelectionState.CurrentSelectionBusinessManager = T3Gv.gBusinessManager;
     this.SelectionState.isJiraCard = false;
 
     console.log('O.Opt ResetSelectionState - Output: Selection state reset');
@@ -836,13 +836,13 @@ class OptHandler {
 
     const TEXT_FACE = ConstantData.TextFace;
 
-    this.SelectionState.fontid = -1; // GlobalData.optManager.GetFontIdByName(GlobalData.optManager.theContentHeader.DimensionFont.fontName)
-    this.SelectionState.fontsize = GlobalData.optManager.theContentHeader.DimensionFont.fontSize;
-    this.SelectionState.bold = (GlobalData.optManager.theContentHeader.DimensionFont.face & TEXT_FACE.Bold) > 0;
-    this.SelectionState.italic = (GlobalData.optManager.theContentHeader.DimensionFont.face & TEXT_FACE.Italic) > 0;
-    this.SelectionState.underline = (GlobalData.optManager.theContentHeader.DimensionFont.face & TEXT_FACE.Underline) > 0;
-    this.SelectionState.superscript = (GlobalData.optManager.theContentHeader.DimensionFont.face & TEXT_FACE.Subscript) > 0;
-    this.SelectionState.subscript = (GlobalData.optManager.theContentHeader.DimensionFont.face & TEXT_FACE.Subscript) > 0;
+    this.SelectionState.fontid = -1; // T3Gv.optManager.GetFontIdByName(T3Gv.optManager.theContentHeader.DimensionFont.fontName)
+    this.SelectionState.fontsize = T3Gv.optManager.theContentHeader.DimensionFont.fontSize;
+    this.SelectionState.bold = (T3Gv.optManager.theContentHeader.DimensionFont.face & TEXT_FACE.Bold) > 0;
+    this.SelectionState.italic = (T3Gv.optManager.theContentHeader.DimensionFont.face & TEXT_FACE.Italic) > 0;
+    this.SelectionState.underline = (T3Gv.optManager.theContentHeader.DimensionFont.face & TEXT_FACE.Underline) > 0;
+    this.SelectionState.superscript = (T3Gv.optManager.theContentHeader.DimensionFont.face & TEXT_FACE.Subscript) > 0;
+    this.SelectionState.subscript = (T3Gv.optManager.theContentHeader.DimensionFont.face & TEXT_FACE.Subscript) > 0;
     this.SelectionState.CurrentSelectionBusinessManager = null;
 
     console.log('O.Opt HandleDimensionEditMode - Output: Dimension edit mode processed');
@@ -853,7 +853,7 @@ class OptHandler {
 
     const TEXT_FACE = ConstantData.TextFace;
 
-    this.SelectionState.fontid = -1; // GlobalData.optManager.GetFontIdByName(sessionData.def.lf.fontName)
+    this.SelectionState.fontid = -1; // T3Gv.optManager.GetFontIdByName(sessionData.def.lf.fontName)
     this.SelectionState.fontsize = sessionData.def.style.Text.FontSize;
     this.SelectionState.bold = (sessionData.def.style.Text.Face & TEXT_FACE.Bold) > 0;
     this.SelectionState.italic = (sessionData.def.style.Text.Face & TEXT_FACE.Italic) > 0;
@@ -909,11 +909,11 @@ class OptHandler {
       // Format dimensions as strings
       this.SelectionState.leftstr = targetObject.GetLengthInRulerUnits(
         this.SelectionState.left,
-        GlobalData.docHandler.rulerSettings.originx
+        T3Gv.docHandler.rulerSettings.originx
       );
       this.SelectionState.topstr = targetObject.GetLengthInRulerUnits(
         this.SelectionState.top,
-        GlobalData.docHandler.rulerSettings.originy
+        T3Gv.docHandler.rulerSettings.originy
       );
       this.SelectionState.widthstr = targetObject.GetLengthInRulerUnits(this.SelectionState.width);
 
@@ -924,7 +924,7 @@ class OptHandler {
       }
 
       // Handle table objects
-      const table = GlobalData.optManager.Table_HideUI(targetObject) ? null : targetObject.GetTable(false);
+      const table = T3Gv.optManager.Table_HideUI(targetObject) ? null : targetObject.GetTable(false);
       if (table) {
         this.SelectionState.IsTargetTable = true;
         this.SelectionState.NTableRows = table.rows.length;
@@ -968,7 +968,7 @@ class OptHandler {
         this.SelectionState.lockedTableSelected = true;
       }
 
-      if (GlobalData.optManager.Table_GetCellWithType(table, ListManager.Table.CellTypes.SD_CT_JIRA_ISSUEKEY)) {
+      if (T3Gv.optManager.Table_GetCellWithType(table, ListManager.Table.CellTypes.SD_CT_JIRA_ISSUEKEY)) {
         this.SelectionState.isJiraCard = true;
       }
     }
@@ -1173,14 +1173,14 @@ class OptHandler {
   GetObjectPtr(blockId, isPreserveBlock) {
     console.log('O.Opt GetObjectPtr - Input:', { blockId, isPreserveBlock });
 
-    const object = GlobalData.objectStore.GetObject(blockId);
+    const object = T3Gv.objectStore.GetObject(blockId);
     if (object == null || blockId < 0) {
       console.log('O.Opt GetObjectPtr - Output: null (invalid block ID or not found)');
       return null;
     }
 
     const result = isPreserveBlock ?
-      GlobalData.objectStore.PreserveBlock(blockId).Data :
+      T3Gv.objectStore.PreserveBlock(blockId).Data :
       object.Data;
 
     console.log('O.Opt GetObjectPtr - Output:', result);
@@ -1194,7 +1194,7 @@ class OptHandler {
     const tedSession = this.GetObjectPtr(this.theTEDSessionBlockID, false);
 
     // Initialize clipboard manager
-    GlobalData.clipboardManager.Get();
+    T3Gv.clipboardManager.Get();
 
     let clipboardType;
 
@@ -1218,7 +1218,7 @@ class OptHandler {
       clipboardType = ConstantData.ClipboardType.Table;
     }
     // Handle case when LM content is in clipboard
-    else if (GlobalData.optManager.theContentHeader.ClipboardBuffer &&
+    else if (T3Gv.optManager.theContentHeader.ClipboardBuffer &&
       this.theContentHeader.ClipboardType === ConstantData.ClipboardType.LM) {
       clipboardType = ConstantData.ClipboardType.LM;
     }
@@ -1252,7 +1252,7 @@ class OptHandler {
 
     // Verify the selected object is valid
     if (sessionData.tselect >= 0) {
-      const selectedObject = GlobalData.optManager.GetObjectPtr(sessionData.tselect, false);
+      const selectedObject = T3Gv.optManager.GetObjectPtr(sessionData.tselect, false);
       if (selectedObject && selectedObject instanceof BaseDrawingObject) {
         targetSelectId = sessionData.tselect;
       }
@@ -1305,8 +1305,8 @@ class OptHandler {
     }
 
     // Notify business manager if available
-    if (GlobalData.gBusinessManager && GlobalData.gBusinessManager.NotifySetEditMode) {
-      GlobalData.gBusinessManager.NotifySetEditMode(stateMode);
+    if (T3Gv.gBusinessManager && T3Gv.gBusinessManager.NotifySetEditMode) {
+      T3Gv.gBusinessManager.NotifySetEditMode(stateMode);
     }
 
     // If no cursor type provided, determine it based on state mode
@@ -1360,7 +1360,7 @@ class OptHandler {
 
     // Update cursors for highlighted shape
     if (this.curHiliteShape >= 0) {
-      const highlightedObject = GlobalData.objectStore.GetObject(this.curHiliteShape);
+      const highlightedObject = T3Gv.objectStore.GetObject(this.curHiliteShape);
       if (highlightedObject) {
         highlightedObject.Data.SetCursors();
       }
@@ -1406,11 +1406,11 @@ class OptHandler {
     }
 
     // Update ruler displays if rulers are enabled
-    if (GlobalData.docHandler.documentConfig.showRulers) {
+    if (T3Gv.docHandler.documentConfig.showRulers) {
       let showFractionalInches = 0;
       let showFeetAsInches = 0;
-      const useFeet = GlobalData.docHandler.rulerSettings.useInches &&
-        GlobalData.docHandler.rulerSettings.units === ConstantData.RulerUnits.SED_Feet;
+      const useFeet = T3Gv.docHandler.rulerSettings.useInches &&
+        T3Gv.docHandler.rulerSettings.units === ConstantData.RulerUnits.SED_Feet;
 
       // Configure display options for feet/inch mode
       if (useFeet) {
@@ -1426,8 +1426,8 @@ class OptHandler {
 
       // Update dimension display
       if (dimensions) {
-        const xLength = this.GetLengthInRulerUnits(dimensions.x, false, GlobalData.docHandler.rulerSettings.originx, showFractionalInches);
-        const yLength = this.GetLengthInRulerUnits(dimensions.y, false, GlobalData.docHandler.rulerSettings.originy, showFractionalInches);
+        const xLength = this.GetLengthInRulerUnits(dimensions.x, false, T3Gv.docHandler.rulerSettings.originx, showFractionalInches);
+        const yLength = this.GetLengthInRulerUnits(dimensions.y, false, T3Gv.docHandler.rulerSettings.originy, showFractionalInches);
         const width = this.GetLengthInRulerUnits(dimensions.width, false, null, showFeetAsInches);
         const height = this.GetLengthInRulerUnits(dimensions.height, false, null, showFeetAsInches);
 
@@ -1467,7 +1467,7 @@ class OptHandler {
         position.x = Math.max(0, position.x);
         position.y = Math.max(0, position.y);
 
-        const sessionBlock = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, false);
+        const sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
         position.x = Math.min(sessionBlock.dim.x, position.x);
         position.y = Math.min(sessionBlock.dim.y, position.y);
       }
@@ -1500,23 +1500,23 @@ class OptHandler {
   RubberBandSelect_Cancel(event) {
     console.log("O.Opt RubberBandSelect_Cancel - Input:", event);
 
-    if (GlobalData.optManager.theRubberBand) {
+    if (T3Gv.optManager.theRubberBand) {
       // Unbind related event handlers
-      GlobalData.optManager.WorkAreaHammer.off('drag');
-      GlobalData.optManager.WorkAreaHammer.off('dragend');
+      T3Gv.optManager.WorkAreaHammer.off('drag');
+      T3Gv.optManager.WorkAreaHammer.off('dragend');
 
       // Restore default drag start handler
-      GlobalData.optManager.WorkAreaHammer.on('dragstart', EvtUtil.Evt_WorkAreaHammerDragStart);
+      T3Gv.optManager.WorkAreaHammer.on('dragstart', EvtUtil.Evt_WorkAreaHammerDragStart);
 
       // Clean up resources
-      GlobalData.optManager.ResetAutoScrollTimer();
-      GlobalData.optManager.svgOverlayLayer.RemoveElement(GlobalData.optManager.theRubberBand);
+      T3Gv.optManager.ResetAutoScrollTimer();
+      T3Gv.optManager.svgOverlayLayer.RemoveElement(T3Gv.optManager.theRubberBand);
 
       // Reset rubber band properties
-      GlobalData.optManager.theRubberBand = null;
-      GlobalData.optManager.theRubberBandStartX = 0;
-      GlobalData.optManager.theRubberBandStartY = 0;
-      GlobalData.optManager.theRubberBandFrame = {
+      T3Gv.optManager.theRubberBand = null;
+      T3Gv.optManager.theRubberBandStartX = 0;
+      T3Gv.optManager.theRubberBandStartY = 0;
+      T3Gv.optManager.theRubberBandFrame = {
         x: 0,
         y: 0,
         width: 0,
@@ -1534,7 +1534,7 @@ class OptHandler {
     console.log('O.Opt SetDocumentScale: input', { scaleFactor, isAnimated });
 
     if (this.svgDoc) {
-      GlobalData.docHandler.SetZoomFactor(scaleFactor, isAnimated);
+      T3Gv.docHandler.SetZoomFactor(scaleFactor, isAnimated);
     }
 
     console.log('O.Opt SetDocumentScale: output');
@@ -1563,7 +1563,7 @@ class OptHandler {
     const selectedList = this.GetObjectPtr(this.theSelectedListBlockID, false);
     this.SetDimensionVisibility(selectedList, false);
 
-    if (!GlobalData.optManager.FromOverlayLayer) {
+    if (!T3Gv.optManager.FromOverlayLayer) {
       this.svgOverlayLayer.RemoveAll();
     }
 
@@ -1578,7 +1578,7 @@ class OptHandler {
 
     let objectCount = objects.length;
     for (let i = 0; i < objectCount; i++) {
-      let object = GlobalData.optManager.GetObjectPtr(objects[i], false);
+      let object = T3Gv.optManager.GetObjectPtr(objects[i], false);
       if (object && object.ShowOrHideDimensions) {
         object.ShowOrHideDimensions(isVisible);
       }
@@ -1622,7 +1622,7 @@ class OptHandler {
       let isNudgeActive = false;
       if (this.NudgeOpen) {
         isNudgeActive = true;
-        GlobalData.optManager.CloseOpenNudge();
+        T3Gv.optManager.CloseOpenNudge();
       }
       if (!skipTooltipProcessing) {
         this.HandleDataTooltipClose(true);
@@ -1676,7 +1676,7 @@ class OptHandler {
   ShowFrame(isShowFrame: boolean) {
     console.log('O.Opt ShowFrame - Input:', { isShowFrame });
 
-    const isShowRulers = GlobalData.docHandler.documentConfig.showRulers;
+    const isShowRulers = T3Gv.docHandler.documentConfig.showRulers;
 
     if (!isShowRulers) {
       console.log('O.Opt ShowFrame - Output: Rulers are not shown');
@@ -1691,26 +1691,26 @@ class OptHandler {
   StartRubberBandSelect(event: any) {
     console.log('O.Opt StartRubberBandSelect - Input event:', event);
     try {
-      if (GlobalData.docHandler.IsReadOnly()) {
+      if (T3Gv.docHandler.IsReadOnly()) {
         console.log('O.Opt StartRubberBandSelect - Document is read-only; aborting.');
         return;
       }
 
       if (this.cachedWidth) {
         try {
-          GlobalData.optManager.CloseEdit();
-          GlobalData.optManager.ChangeWidth(this.cachedWidth);
+          T3Gv.optManager.CloseEdit();
+          T3Gv.optManager.ChangeWidth(this.cachedWidth);
         } catch (error) {
-          GlobalData.optManager.ExceptionCleanup(error);
+          T3Gv.optManager.ExceptionCleanup(error);
           throw error;
         }
       }
       if (this.cachedHeight) {
         try {
-          GlobalData.optManager.CloseEdit();
-          GlobalData.optManager.ChangeHeight(this.cachedHeight);
+          T3Gv.optManager.CloseEdit();
+          T3Gv.optManager.ChangeHeight(this.cachedHeight);
         } catch (error) {
-          GlobalData.optManager.ExceptionCleanup(error);
+          T3Gv.optManager.ExceptionCleanup(error);
           throw error;
         }
       }
@@ -1724,12 +1724,12 @@ class OptHandler {
 
       // Ensure any active edit is closed
       this.GetObjectPtr(this.theTEDSessionBlockID, false);
-      GlobalData.optManager.CloseEdit();
+      T3Gv.optManager.CloseEdit();
 
       // Create the rubber band shape as a rectangle
       const rubberBandShape = this.svgDoc.CreateShape(ConstantData.CreateShapeType.RECT);
       rubberBandShape.SetStrokeColor('black');
-      if (GlobalData.optManager.isAndroid) {
+      if (T3Gv.optManager.isAndroid) {
         rubberBandShape.SetFillColor('none');
         rubberBandShape.SetFillOpacity(0);
       } else {
@@ -1737,10 +1737,10 @@ class OptHandler {
         rubberBandShape.SetFillOpacity(0.03);
       }
 
-      const zoomFactorInverse = 1 / GlobalData.docHandler.GetZoomFactor();
+      const zoomFactorInverse = 1 / T3Gv.docHandler.GetZoomFactor();
       rubberBandShape.SetStrokeWidth(1 * zoomFactorInverse);
 
-      if (!GlobalData.optManager.isAndroid) {
+      if (!T3Gv.optManager.isAndroid) {
         const strokePattern = 2 * zoomFactorInverse + ',' + zoomFactorInverse;
         rubberBandShape.SetStrokePattern(strokePattern);
       }
@@ -1750,25 +1750,25 @@ class OptHandler {
         event.gesture.center.clientX,
         event.gesture.center.clientY
       );
-      GlobalData.optManager.theRubberBandStartX = startCoordinates.x;
-      GlobalData.optManager.theRubberBandStartY = startCoordinates.y;
+      T3Gv.optManager.theRubberBandStartX = startCoordinates.x;
+      T3Gv.optManager.theRubberBandStartY = startCoordinates.y;
       rubberBandShape.SetSize(1, 1);
       rubberBandShape.SetPos(startCoordinates.x, startCoordinates.y);
-      GlobalData.optManager.svgOverlayLayer.AddElement(rubberBandShape);
+      T3Gv.optManager.svgOverlayLayer.AddElement(rubberBandShape);
 
       console.log('O.Opt StartRubberBandSelect - Rubber band shape created:', rubberBandShape);
-      GlobalData.optManager.theRubberBand = rubberBandShape;
-      GlobalData.optManager.EndStampSession();
+      T3Gv.optManager.theRubberBand = rubberBandShape;
+      T3Gv.optManager.EndStampSession();
 
       // Bind hammer events for the rubber band dragging
-      GlobalData.optManager.WorkAreaHammer.on('drag', EvtUtil.Evt_RubberBandDrag);
-      GlobalData.optManager.WorkAreaHammer.on('dragend', EvtUtil.Evt_RubberBandDragEnd);
+      T3Gv.optManager.WorkAreaHammer.on('drag', EvtUtil.Evt_RubberBandDrag);
+      T3Gv.optManager.WorkAreaHammer.on('dragend', EvtUtil.Evt_RubberBandDragEnd);
 
-      console.log('O.Opt StartRubberBandSelect - Output rubber band set successfully:', GlobalData.optManager.theRubberBand);
+      console.log('O.Opt StartRubberBandSelect - Output rubber band set successfully:', T3Gv.optManager.theRubberBand);
     } catch (error) {
       console.log('O.Opt StartRubberBandSelect - Error:', error);
-      GlobalData.optManager.RubberBandSelectExceptionCleanup(error);
-      GlobalData.optManager.ExceptionCleanup(error);
+      T3Gv.optManager.RubberBandSelectExceptionCleanup(error);
+      T3Gv.optManager.ExceptionCleanup(error);
       throw error;
     }
   }
@@ -1816,7 +1816,7 @@ class OptHandler {
   VisibleZList() {
     console.log('O.Opt VisibleZList: input');
 
-    const layersManager = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
+    const layersManager = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
     const layers = layersManager.layers;
     const numberOfLayers = layersManager.nlayers;
     const activeLayerIndex = layersManager.activelayer;
@@ -1845,7 +1845,7 @@ class OptHandler {
     // Get the visible objects list and the currently selected objects
     const visibleObjectIds = this.ActiveVisibleZList();
     const visibleObjectCount = visibleObjectIds.length;
-    const selectedList = GlobalData.objectStore.GetObject(this.theSelectedListBlockID).Data;
+    const selectedList = T3Gv.objectStore.GetObject(this.theSelectedListBlockID).Data;
 
     let objectIndex = 0;
     let indexInSelectedList = -1;
@@ -1883,7 +1883,7 @@ class OptHandler {
       // Skip if object is not in selection list or has issues
       indexInSelectedList = selectedList.indexOf(objectId);
       if (indexInSelectedList < 0 ||
-        (drawingObject = GlobalData.optManager.GetObjectPtr(objectId, false)) === null ||
+        (drawingObject = T3Gv.optManager.GetObjectPtr(objectId, false)) === null ||
         drawingObject.flags & ConstantData.ObjFlags.SEDO_NotVisible ||
         (svgElement = this.svgObjectLayer.GetElementByID(objectId)) === null ||
         svgElement.GetElementByID(ConstantData.SVGElementClass.SHAPE) === null) {
@@ -1907,7 +1907,7 @@ class OptHandler {
 
         // Add interaction events if object is not locked
         if ((drawingObject.flags & ConstantData.ObjFlags.SEDO_Lock) === 0 &&
-          !GlobalData.docHandler.IsReadOnly() &&
+          !T3Gv.docHandler.IsReadOnly() &&
           !drawingObject.NoGrow()) {
 
           const domElement = actionTriggerElement.DOMElement();
@@ -1949,7 +1949,7 @@ class OptHandler {
   ActiveVisibleZList() {
     console.log('O.Opt ActiveVisibleZList: input');
 
-    const layersManager = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
+    const layersManager = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
     const layers = layersManager.layers;
     const numberOfLayers = layersManager.nlayers;
     const activeLayerIndex = layersManager.activelayer;
@@ -1991,8 +1991,8 @@ class OptHandler {
       this.CancelModalOperation();
 
       // Get current text edit and active table
-      const activeTextEdit = GlobalData.optManager.GetActiveTextEdit();
-      activeTableId = GlobalData.optManager.Table_GetActiveID();
+      const activeTextEdit = T3Gv.optManager.GetActiveTextEdit();
+      activeTableId = T3Gv.optManager.Table_GetActiveID();
 
       // CASE 1: If text is being edited, set up text format painter
       if (activeTextEdit != null) {
@@ -2225,13 +2225,13 @@ class OptHandler {
   EndStampSession() {
     console.log('O.Opt EndStampSession - Input');
 
-    const editMode = GlobalData.optManager.GetEditMode();
+    const editMode = T3Gv.optManager.GetEditMode();
     if (editMode === ConstantData.EditState.STAMP) {
       this.theActionStoredObjectID = -1;
       this.CancelObjectDragDrop(true);
 
-      if (GlobalData.optManager.MainAppHammer) {
-        GlobalData.optManager.UnbindDragDropOrStamp();
+      if (T3Gv.optManager.MainAppHammer) {
+        T3Gv.optManager.UnbindDragDropOrStamp();
       }
     }
 
@@ -2277,7 +2277,7 @@ class OptHandler {
     let newY = clientY;
 
     // Cache document display info for readability
-    const docInfo = GlobalData.optManager.svgDoc.docInfo;
+    const docInfo = T3Gv.optManager.svgDoc.docInfo;
     const dispX = docInfo.dispX;
     const dispY = docInfo.dispY;
     const dispWidth = docInfo.dispWidth;
@@ -2305,24 +2305,24 @@ class OptHandler {
 
     if (requiresAutoScroll) {
       // Apply snapping if enabled and allowed
-      if (snapEnabled && GlobalData.docHandler.documentConfig.enableSnap) {
+      if (snapEnabled && T3Gv.docHandler.documentConfig.enableSnap) {
         let snapPoint = { x: newX, y: newY };
-        snapPoint = GlobalData.docHandler.SnapToGrid(snapPoint);
+        snapPoint = T3Gv.docHandler.SnapToGrid(snapPoint);
         newX = snapPoint.x;
         newY = snapPoint.y;
       }
-      GlobalData.optManager.autoScrollXPos = newX;
-      GlobalData.optManager.autoScrollYPos = newY;
-      if (GlobalData.optManager.autoScrollTimerID !== -1) {
+      T3Gv.optManager.autoScrollXPos = newX;
+      T3Gv.optManager.autoScrollYPos = newY;
+      if (T3Gv.optManager.autoScrollTimerID !== -1) {
         console.log("O.Opt AutoScrollCommon - Output: Auto scroll already scheduled");
         return false;
       } else {
-        GlobalData.optManager.autoScrollTimerID = GlobalData.optManager.autoScrollTimer.setTimeout(callback, 0);
+        T3Gv.optManager.autoScrollTimerID = T3Gv.optManager.autoScrollTimer.setTimeout(callback, 0);
         console.log("O.Opt AutoScrollCommon - Output: Auto scroll timer set", { newX, newY });
         return false;
       }
     } else {
-      GlobalData.optManager.ResetAutoScrollTimer();
+      T3Gv.optManager.ResetAutoScrollTimer();
       console.log("O.Opt AutoScrollCommon - Output: No auto scroll needed, timer reset");
       return true;
     }
@@ -2333,24 +2333,24 @@ class OptHandler {
 
     try {
       // Unbind rubber band related hammer events and reset auto-scroll timer.
-      GlobalData.optManager.UnbindRubberBandHammerEvents();
-      GlobalData.optManager.ResetAutoScrollTimer();
+      T3Gv.optManager.UnbindRubberBandHammerEvents();
+      T3Gv.optManager.ResetAutoScrollTimer();
 
       // Remove the rubber band element from the overlay layer if it exists.
-      if (GlobalData.optManager.theRubberBand) {
-        GlobalData.optManager.svgOverlayLayer.RemoveElement(GlobalData.optManager.theRubberBand);
+      if (T3Gv.optManager.theRubberBand) {
+        T3Gv.optManager.svgOverlayLayer.RemoveElement(T3Gv.optManager.theRubberBand);
       }
 
       // Reset rubber band properties.
-      GlobalData.optManager.theRubberBand = null;
-      GlobalData.optManager.theRubberBandStartX = 0;
-      GlobalData.optManager.theRubberBandStartY = 0;
-      GlobalData.optManager.theRubberBandFrame = { x: 0, y: 0, width: 0, height: 0 };
+      T3Gv.optManager.theRubberBand = null;
+      T3Gv.optManager.theRubberBandStartX = 0;
+      T3Gv.optManager.theRubberBandStartY = 0;
+      T3Gv.optManager.theRubberBandFrame = { x: 0, y: 0, width: 0, height: 0 };
 
       // Unlock and unblock collaboration messages, and reset undo state.
       Collab.UnLockMessages();
       Collab.UnBlockMessages();
-      GlobalData.optManager.InUndo = false;
+      T3Gv.optManager.InUndo = false;
     } catch (cleanupError) {
       console.error("O.Opt RubberBandSelectExceptionCleanup - Cleanup Error:", cleanupError);
       throw cleanupError;
@@ -2388,9 +2388,9 @@ class OptHandler {
   UnbindRubberBandHammerEvents() {
     console.log('O.Opt UnbindRubberBandHammerEvents - Input');
 
-    if (GlobalData.optManager.WorkAreaHammer) {
-      GlobalData.optManager.WorkAreaHammer.off('drag');
-      GlobalData.optManager.WorkAreaHammer.off('dragend');
+    if (T3Gv.optManager.WorkAreaHammer) {
+      T3Gv.optManager.WorkAreaHammer.off('drag');
+      T3Gv.optManager.WorkAreaHammer.off('dragend');
     }
 
     console.log('O.Opt UnbindRubberBandHammerEvents - Output: done');
@@ -2410,18 +2410,18 @@ class OptHandler {
   RubberBandSelectMoveCommon(mouseX: number, mouseY: number) {
     console.log('O.Opt RubberBandSelectMoveCommon - Input:', { mouseX, mouseY });
 
-    if (GlobalData.optManager.theRubberBand === null) {
+    if (T3Gv.optManager.theRubberBand === null) {
       return;
     }
 
     const currentX = mouseX;
     const currentY = mouseY;
-    const startX = GlobalData.optManager.theRubberBandStartX;
-    const startY = GlobalData.optManager.theRubberBandStartY;
+    const startX = T3Gv.optManager.theRubberBandStartX;
+    const startY = T3Gv.optManager.theRubberBandStartY;
 
     if (currentX >= startX && currentY >= startY) {
-      GlobalData.optManager.theRubberBand.SetSize(currentX - startX, currentY - startY);
-      GlobalData.optManager.theRubberBandFrame = {
+      T3Gv.optManager.theRubberBand.SetSize(currentX - startX, currentY - startY);
+      T3Gv.optManager.theRubberBandFrame = {
         x: startX,
         y: startY,
         width: currentX - startX,
@@ -2429,18 +2429,18 @@ class OptHandler {
       };
     } else if (currentY < startY) {
       if (currentX >= startX) {
-        GlobalData.optManager.theRubberBand.SetSize(currentX - startX, startY - currentY);
-        GlobalData.optManager.theRubberBand.SetPos(startX, currentY);
-        GlobalData.optManager.theRubberBandFrame = {
+        T3Gv.optManager.theRubberBand.SetSize(currentX - startX, startY - currentY);
+        T3Gv.optManager.theRubberBand.SetPos(startX, currentY);
+        T3Gv.optManager.theRubberBandFrame = {
           x: startX,
           y: currentY,
           width: currentX - startX,
           height: startY - currentY
         };
       } else {
-        GlobalData.optManager.theRubberBand.SetSize(startX - currentX, startY - currentY);
-        GlobalData.optManager.theRubberBand.SetPos(currentX, currentY);
-        GlobalData.optManager.theRubberBandFrame = {
+        T3Gv.optManager.theRubberBand.SetSize(startX - currentX, startY - currentY);
+        T3Gv.optManager.theRubberBand.SetPos(currentX, currentY);
+        T3Gv.optManager.theRubberBandFrame = {
           x: currentX,
           y: currentY,
           width: startX - currentX,
@@ -2448,9 +2448,9 @@ class OptHandler {
         };
       }
     } else if (currentX < startX) {
-      GlobalData.optManager.theRubberBand.SetSize(startX - currentX, currentY - startY);
-      GlobalData.optManager.theRubberBand.SetPos(currentX, startY);
-      GlobalData.optManager.theRubberBandFrame = {
+      T3Gv.optManager.theRubberBand.SetSize(startX - currentX, currentY - startY);
+      T3Gv.optManager.theRubberBand.SetPos(currentX, startY);
+      T3Gv.optManager.theRubberBandFrame = {
         x: currentX,
         y: startY,
         width: startX - currentX,
@@ -2458,7 +2458,7 @@ class OptHandler {
       };
     }
 
-    console.log('O.Opt RubberBandSelectMoveCommon - Output:', { rubberBandFrame: GlobalData.optManager.theRubberBandFrame });
+    console.log('O.Opt RubberBandSelectMoveCommon - Output:', { rubberBandFrame: T3Gv.optManager.theRubberBandFrame });
   }
 
   ExceptionCleanup(error) {
@@ -2468,7 +2468,7 @@ class OptHandler {
       this.TEUnregisterEvents();
       this.DeactivateAllTextEdit(true);
       this.CloseEdit(false, true);
-      GlobalData.stateManager.ExceptionCleanup();
+      T3Gv.stateManager.ExceptionCleanup();
       this.ResizeSVGDocument();
       this.RenderAllSVGObjects();
 
@@ -2506,7 +2506,7 @@ class OptHandler {
 
       // Check each object against the selection rectangle
       for (let i = 0; i < objectCount; ++i) {
-        const object = GlobalData.objectStore.GetObject(filteredObjects[i]);
+        const object = T3Gv.objectStore.GetObject(filteredObjects[i]);
         if (object != null) {
           const objectData = object.Data;
 
@@ -2520,7 +2520,7 @@ class OptHandler {
                 x: objectFrame.x + objectFrame.width / 2,
                 y: objectFrame.y + objectFrame.height / 2
               };
-              objectFrame = GlobalData.optManager.RotateRectAboutCenter(
+              objectFrame = T3Gv.optManager.RotateRectAboutCenter(
                 objectFrame,
                 center,
                 objectData.RotationAngle
@@ -2592,21 +2592,21 @@ class OptHandler {
     console.log("O.Opt RubberBandSelectDoAutoScroll - Input: starting auto scroll");
 
     // Schedule auto-scroll callback to run every 100ms
-    GlobalData.optManager.autoScrollTimerID = this.autoScrollTimer.setTimeout("RubberBandSelectDoAutoScroll", 100);
+    T3Gv.optManager.autoScrollTimerID = this.autoScrollTimer.setTimeout("RubberBandSelectDoAutoScroll", 100);
 
     // Convert window coordinates (autoScrollXPos, autoScrollYPos) to document coordinates
-    const documentCoords = GlobalData.optManager.svgDoc.ConvertWindowToDocCoords(
-      GlobalData.optManager.autoScrollXPos,
-      GlobalData.optManager.autoScrollYPos
+    const documentCoords = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(
+      T3Gv.optManager.autoScrollXPos,
+      T3Gv.optManager.autoScrollYPos
     );
     console.log(`O.Opt RubberBandSelectDoAutoScroll - Converted Coordinates: x=${documentCoords.x}, y=${documentCoords.y}`);
 
     // Scroll the document to the computed position
-    GlobalData.docHandler.ScrollToPosition(documentCoords.x, documentCoords.y);
+    T3Gv.docHandler.ScrollToPosition(documentCoords.x, documentCoords.y);
     console.log(`O.Opt RubberBandSelectDoAutoScroll - Scrolled to position: x=${documentCoords.x}, y=${documentCoords.y}`);
 
     // Move the rubber band selection rectangle based on the new coordinates
-    GlobalData.optManager.RubberBandSelectMoveCommon(documentCoords.x, documentCoords.y);
+    T3Gv.optManager.RubberBandSelectMoveCommon(documentCoords.x, documentCoords.y);
     console.log("O.Opt RubberBandSelectDoAutoScroll - Output: Rubber band selection moved");
   }
 
@@ -2631,7 +2631,7 @@ class OptHandler {
     this.RenderDirtySVGObjects();
     this.FitDocumentWorkArea(false, false, false, fitOption);
 
-    if (GlobalData.gTestException) {
+    if (T3Gv.gTestException) {
       const error = new Error(Resources.Strings.Error_InComplete);
       error.name = '1';
       throw error;
@@ -2648,7 +2648,7 @@ class OptHandler {
     }
 
     const selectedList = this.GetObjectPtr(this.theSelectedListBlockID, false);
-    GlobalData.docHandler.ShowCoordinates(true);
+    T3Gv.docHandler.ShowCoordinates(true);
 
     if (Collab.AllowSelectionChange()) {
       this.UpdateSelectionAttributes(selectedList);
@@ -2699,7 +2699,7 @@ class OptHandler {
     console.log("O.Opt StartNewObjectDraw - Input:", inputEvent);
 
     // Abort drawing if LineStamp is active
-    if (GlobalData.optManager.LineStamp) {
+    if (T3Gv.optManager.LineStamp) {
       console.log("O.Opt StartNewObjectDraw - Output: LineStamp active, aborting draw");
       return;
     }
@@ -2727,7 +2727,7 @@ class OptHandler {
     let hasLinkParam = this.LinkParams && this.LinkParams.SConnectIndex >= 0;
     let needOverrideSnaps = this.OverrideSnaps(inputEvent);
     hasLinkParam = hasLinkParam || needOverrideSnaps;
-    const isSnapEnabled = GlobalData.docHandler.documentConfig.enableSnap && !hasLinkParam;
+    const isSnapEnabled = T3Gv.docHandler.documentConfig.enableSnap && !hasLinkParam;
 
     if (isSnapEnabled) {
       let snapRect = this.theDrawShape.GetSnapRect();
@@ -2747,15 +2747,15 @@ class OptHandler {
       };
 
       if (!this.theDrawShape.CustomSnap(adjustedOffset.x, adjustedOffset.y, 0, 0, false, docCoords)) {
-        if (GlobalData.docHandler.documentConfig.centerSnap) {
-          let snapPoint = GlobalData.docHandler.SnapToGrid(docCoords);
+        if (T3Gv.docHandler.documentConfig.centerSnap) {
+          let snapPoint = T3Gv.docHandler.SnapToGrid(docCoords);
           docCoords.x = snapPoint.x;
           docCoords.y = snapPoint.y;
         } else {
           let tempSnapRect = $.extend(true, {}, snapRect);
           tempSnapRect.x = docCoords.x - snapRect.width / 2;
           tempSnapRect.y = docCoords.y - snapRect.height / 2;
-          let snapAdjustment = GlobalData.docHandler.SnapRect(tempSnapRect);
+          let snapAdjustment = T3Gv.docHandler.SnapRect(tempSnapRect);
           docCoords.x += snapAdjustment.x;
           docCoords.y += snapAdjustment.y;
         }
@@ -2881,7 +2881,7 @@ class OptHandler {
     hookFlags = Utils2.SetFlag(hookFlags, ConstantData.HookFlags.SED_LC_AttachToLine, false);
 
     // Get session data and flags
-    const sessionData = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, false);
+    const sessionData = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
     if (sessionData) {
       sessionFlags = sessionData.flags;
     }
@@ -2915,7 +2915,7 @@ class OptHandler {
     }
 
     // When drawing from overlay layer, include shapes in the filter
-    if (GlobalData.optManager.FromOverlayLayer) {
+    if (T3Gv.optManager.FromOverlayLayer) {
       classFilters.push(ConstantData.DrawingObjectBaseClass.SHAPE);
       objectClassesToFind = classFilters;
     }
@@ -2969,7 +2969,7 @@ class OptHandler {
         const prevConnectObject = this.GetObjectPtr(this.LinkParams.PrevConnect, false);
         if (prevConnectObject) {
           // Check if object is a container
-          const containerPoint = Utils1.DeepCopy(GlobalData.optManager.LinkParams.ContainerPt[0]);
+          const containerPoint = Utils1.DeepCopy(T3Gv.optManager.LinkParams.ContainerPt[0]);
           if (prevConnectObject.IsShapeContainer(drawingObject, containerPoint)) {
             const hitTestFrame = prevConnectObject.GetHitTestFrame(drawingObject);
             if (Utils2.pointInRect(hitTestFrame, containerPoint)) {
@@ -3223,7 +3223,7 @@ class OptHandler {
         this.LinkParams.HookIndex = hookIndex;
 
         // Set appropriate hook flag
-        if (this.LinkParams.AutoInsert && isAttachMode && !GlobalData.optManager.LinkParams.AutoSinglePoint) {
+        if (this.LinkParams.AutoInsert && isAttachMode && !T3Gv.optManager.LinkParams.AutoSinglePoint) {
           this.LinkParams.ConnectHookFlag = ConstantData.HookFlags.SED_LC_AutoInsert;
         } else if (this.LinkParams.ArraysOnly &&
           targetObject.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.LINE &&
@@ -3472,7 +3472,7 @@ class OptHandler {
           if (
             containerObject &&
             containerObject.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.CONNECTOR &&
-            GlobalData.optManager.FindChildArray(visibleObjects[idx], -1) >= 0
+            T3Gv.optManager.FindChildArray(visibleObjects[idx], -1) >= 0
           ) {
             continue;
           }
@@ -3495,7 +3495,7 @@ class OptHandler {
 
           // If the object is a ShapeContainer, check if the point is inside its container point.
           if (currentObject instanceof ShapeContainer) {
-            const containerPoint = Utils1.DeepCopy(GlobalData.optManager.LinkParams.ContainerPt[0]);
+            const containerPoint = Utils1.DeepCopy(T3Gv.optManager.LinkParams.ContainerPt[0]);
             if (currentObject.IsShapeContainer(containerObject, containerPoint) && Utils2.pointInRect(hitTestFrame, containerPoint)) {
               hitResult.objectid = visibleObjects[idx];
               hitResult.hitcode = ConstantData.HitCodes.SED_InContainer;
@@ -3543,7 +3543,7 @@ class OptHandler {
   UnbindActionClickHammerEvents() {
     console.log('O.Opt UnbindActionClickHammerEvents - Input:');
 
-    const workAreaHammer = GlobalData.optManager.WorkAreaHammer;
+    const workAreaHammer = T3Gv.optManager.WorkAreaHammer;
     if (workAreaHammer) {
       workAreaHammer.off('drag');
       workAreaHammer.off('dragend');
@@ -3609,7 +3609,7 @@ class OptHandler {
       }
     }
 
-    const sessionData = GlobalData.objectStore.GetObject(this.theSEDSessionBlockID).Data;
+    const sessionData = T3Gv.objectStore.GetObject(this.theSEDSessionBlockID).Data;
 
     if (shouldStyleCopy === undefined) {
       shouldStyleCopy = true;
@@ -3649,7 +3649,7 @@ class OptHandler {
       layerFlag = ConstantData.LayerFlags.SDLF_UseEdges;
     }
 
-    drawingObject.DataID = textContent ? GlobalData.optManager.CreateTextBlock(drawingObject, textContent) : -1;
+    drawingObject.DataID = textContent ? T3Gv.optManager.CreateTextBlock(drawingObject, textContent) : -1;
 
     // Process EMFBuffer if available.
     if (drawingObject.EMFBuffer) {
@@ -3657,12 +3657,12 @@ class OptHandler {
       const buffer = drawingObject.EMFBuffer;
       const blobBytes = new ListManager.BlobBytes(drawingObject.EMFBufferType, buffer);
       if (drawingObject.EMFBufferType === ConstantData2.ImageDir.dir_meta) {
-        bmp = GlobalData.objectStore.CreateBlock(ConstantData.StoredObjectType.BLOBBYTES_OBJECT, blobBytes);
+        bmp = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.BLOBBYTES_OBJECT, blobBytes);
         if (bmp) {
           drawingObject.EMFBlobBytesID = bmp.ID;
         }
       } else {
-        bmp = GlobalData.objectStore.CreateBlock(ConstantData.StoredObjectType.BLOBBYTES_OBJECT, blobBytes);
+        bmp = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.BLOBBYTES_OBJECT, blobBytes);
         if (bmp) {
           drawingObject.BlobBytesID = bmp.ID;
         }
@@ -3682,7 +3682,7 @@ class OptHandler {
     }
 
     // Create new graphics block.
-    const newBlock = GlobalData.objectStore.CreateBlock(ConstantData.StoredObjectType.BASE_LM_DRAWING_OBJECT, drawingObject);
+    const newBlock = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.BASE_LM_DRAWING_OBJECT, drawingObject);
     if (newBlock == null) {
       throw new Error('AddNewObject got a null new graphics block allocation');
     }
@@ -3690,7 +3690,7 @@ class OptHandler {
     Collab.AddToCreateList(newBlock.Data.BlockID);
 
     if (symbolId) {
-      GlobalData.gBaseManager.UpdateShapeList(drawingObject, symbolId, symbolTitleForUpdate, isStandardShape);
+      T3Gv.gBaseManager.UpdateShapeList(drawingObject, symbolId, symbolTitleForUpdate, isStandardShape);
     }
     if (symbolData) {
       const replacements = [];
@@ -3712,21 +3712,21 @@ class OptHandler {
         SymbolID: drawingObject.SymbolID,
         BlockID: drawingObject.BlockID
       };
-      GlobalData.optManager.EmptySymbolList.push(nativeInfo);
+      T3Gv.optManager.EmptySymbolList.push(nativeInfo);
     } else if (isStandardShape) {
       const emfInfo = {
         EMFHash: drawingObject.EMFHash,
         BlockID: drawingObject.BlockID,
         EMFBufferType: drawingObject.EMFBufferType
       };
-      GlobalData.optManager.EmptyEMFList.push(emfInfo);
+      T3Gv.optManager.EmptyEMFList.push(emfInfo);
       drawingObject.SymbolData = null;
     }
 
     this.ZListPreserve(layerFlag).push(newBlock.ID);
 
     const isBaseline = drawingObject instanceof BaseLine;
-    const layersData = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, false);
+    const layersData = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, false);
     const isSpecialLayer = layersData.layers[layersData.activelayer].layertype === ConstantData.LayerTypes.SD_LAYERT_MINDMAP ||
       layersData.layers[layersData.activelayer].layertype === ConstantData.LayerTypes.SD_LAYERT_GANTT;
 
@@ -3766,7 +3766,7 @@ class OptHandler {
 
   ZListPreserve(additionalLayerFlag) {
     console.log('O.Opt zListPreserve - Input:', additionalLayerFlag);
-    const layersManager = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, true);
+    const layersManager = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, true);
     const layers = layersManager.layers;
     const activeLayerIndex = layersManager.activelayer;
     let currentLayer = layers[activeLayerIndex];
@@ -3775,9 +3775,9 @@ class OptHandler {
       for (let index = 0; index < totalLayers; index++) {
         if ((layers[index].flags & ConstantData.LayerFlags.SDLF_NoAdd) === 0) {
           this.MakeLayerActiveByIndex(index);
-          GlobalData.optManager.DirtyObjectsOnLayer(activeLayerIndex, currentLayer);
-          GlobalData.optManager.DirtyObjectsOnLayer(index, layers[index]);
-          GlobalData.optManager.RenderDirtySVGObjects();
+          T3Gv.optManager.DirtyObjectsOnLayer(activeLayerIndex, currentLayer);
+          T3Gv.optManager.DirtyObjectsOnLayer(index, layers[index]);
+          T3Gv.optManager.RenderDirtySVGObjects();
           currentLayer = layers[index];
           break;
         }
@@ -3797,7 +3797,7 @@ class OptHandler {
 
   GetTopMostVisibleLayer() {
     console.log('O.Opt getTopMostVisibleLayer - Input');
-    const layersManager = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
+    const layersManager = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
     const layers = layersManager.layers;
     const totalLayers = layersManager.nlayers;
     for (let i = 0; i < totalLayers; ++i) {
@@ -3814,7 +3814,7 @@ class OptHandler {
 
     console.log('= Opt RenderLastSVGObject shouldRenderSelectionStates', shouldRenderSelectionStates);
 
-    const isFromOverlayLayer = GlobalData.optManager.FromOverlayLayer;
+    const isFromOverlayLayer = T3Gv.optManager.FromOverlayLayer;
     const activeLayerZList = this.ActiveLayerZList();
     const lastObjectId = activeLayerZList[activeLayerZList.length - 1];
 
@@ -3828,7 +3828,7 @@ class OptHandler {
   ActiveLayerZList() {
     console.log('O.Opt ActiveLayerZList - Input');
 
-    const layersManager = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
+    const layersManager = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
     const activeLayerZList = layersManager.layers[layersManager.activelayer].zList;
 
     console.log('O.Opt ActiveLayerZList - Output:', activeLayerZList);
@@ -3839,7 +3839,7 @@ class OptHandler {
     console.log("O.Opt: AddSVGObject - Input:", { containerElement, objectId, removeExisting, renderCallback });
 
     let svgDocument = this.svgDoc;
-    let drawingObject = GlobalData.objectStore.GetObject(objectId);
+    let drawingObject = T3Gv.objectStore.GetObject(objectId);
 
     console.log("O.Opt: AddSVGObject - Drawing object:", drawingObject);
 
@@ -3896,27 +3896,27 @@ class OptHandler {
           let shapeTapHandler = EvtUtil.Evt_ShapeTapFactory(drawingData);
           hammerInstance.on('tap', shapeTapHandler);
 
-          if (!GlobalData.docHandler.IsReadOnly()) {
-            GlobalData.Evt_ShapeDragStart = EvtUtil.Evt_ShapeDragStartFactory(drawingData);
-            hammerInstance.on('dragstart', GlobalData.Evt_ShapeDragStart);
+          if (!T3Gv.docHandler.IsReadOnly()) {
+            T3Gv.Evt_ShapeDragStart = EvtUtil.Evt_ShapeDragStartFactory(drawingData);
+            hammerInstance.on('dragstart', T3Gv.Evt_ShapeDragStart);
 
             if (this.isMobilePlatform) {
-              GlobalData.SDJS_LM_ShapeHold = EvtUtil.Evt_ShapeHoldFactory(drawingData);
-              hammerInstance.on('hold', GlobalData.SDJS_LM_ShapeHold);
+              T3Gv.SDJS_LM_ShapeHold = EvtUtil.Evt_ShapeHoldFactory(drawingData);
+              hammerInstance.on('hold', T3Gv.SDJS_LM_ShapeHold);
             }
 
             if (drawingData.AllowTextEdit() || drawingData.AllowDoubleClick()) {
-              GlobalData.SDJS_LM_ShapeDoubleTap = EvtUtil.Evt_ShapeDoubleTapFactory(drawingData);
-              hammerInstance.on('doubletap', GlobalData.SDJS_LM_ShapeDoubleTap);
+              T3Gv.SDJS_LM_ShapeDoubleTap = EvtUtil.Evt_ShapeDoubleTapFactory(drawingData);
+              hammerInstance.on('doubletap', T3Gv.SDJS_LM_ShapeDoubleTap);
             }
 
             shapeContainer.SetEventProxy(hammerInstance);
           }
 
-          if (!this.isMobilePlatform && !GlobalData.docHandler.IsReadOnly()) {
+          if (!this.isMobilePlatform && !T3Gv.docHandler.IsReadOnly()) {
             shapeContainer.svgObj.mouseover(function (event) {
               let elementId = this.SDGObj.GetID();
-              let drawingObj = GlobalData.optManager.GetObjectPtr(elementId, false);
+              let drawingObj = T3Gv.optManager.GetObjectPtr(elementId, false);
               if (drawingObj) {
                 drawingObj.SetRolloverActions(svgDocument, shapeContainer, event);
               }
@@ -3963,10 +3963,10 @@ class OptHandler {
       dragPoint.y = 0;
     }
 
-    let sessionData = GlobalData.objectStore.GetObject(GlobalData.optManager.theSEDSessionBlockID).Data;
+    let sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data;
 
     // If auto-grow is disabled by content header flags, constrain coordinates to session dimensions
-    if (GlobalData.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto) {
+    if (T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto) {
       if (dragPoint.x > sessionData.dim.x) {
         dragPoint.x = sessionData.dim.x;
       }
@@ -3980,88 +3980,88 @@ class OptHandler {
 
       // Grow the document width if dragPoint.x exceeds the current dimension
       if (dragPoint.x > sessionData.dim.x) {
-        GlobalData.optManager.theDragGotAutoResizeOldX.push(sessionData.dim.x);
+        T3Gv.optManager.theDragGotAutoResizeOldX.push(sessionData.dim.x);
 
         // Refresh session data from the preserved block
-        sessionData = GlobalData.objectStore.PreserveBlock(GlobalData.optManager.theSEDSessionBlockID).Data;
+        sessionData = T3Gv.objectStore.PreserveBlock(T3Gv.optManager.theSEDSessionBlockID).Data;
         newDimension = {
           x: sessionData.dim.x +
-            GlobalData.optManager.theContentHeader.Page.papersize.x -
-            (GlobalData.optManager.theContentHeader.Page.margins.left +
-              GlobalData.optManager.theContentHeader.Page.margins.right),
+            T3Gv.optManager.theContentHeader.Page.papersize.x -
+            (T3Gv.optManager.theContentHeader.Page.margins.left +
+              T3Gv.optManager.theContentHeader.Page.margins.right),
           y: sessionData.dim.y
         };
 
-        GlobalData.optManager.UpdateEdgeLayers([], sessionData.dim, newDimension);
-        sessionData.dim.x += GlobalData.optManager.theContentHeader.Page.papersize.x -
-          (GlobalData.optManager.theContentHeader.Page.margins.left +
-            GlobalData.optManager.theContentHeader.Page.margins.right);
-        GlobalData.optManager.bInAutoScroll = true;
-        GlobalData.optManager.ResizeSVGDocument();
-        GlobalData.optManager.bInAutoScroll = false;
-        GlobalData.optManager.theDragGotAutoResizeRight = true;
+        T3Gv.optManager.UpdateEdgeLayers([], sessionData.dim, newDimension);
+        sessionData.dim.x += T3Gv.optManager.theContentHeader.Page.papersize.x -
+          (T3Gv.optManager.theContentHeader.Page.margins.left +
+            T3Gv.optManager.theContentHeader.Page.margins.right);
+        T3Gv.optManager.bInAutoScroll = true;
+        T3Gv.optManager.ResizeSVGDocument();
+        T3Gv.optManager.bInAutoScroll = false;
+        T3Gv.optManager.theDragGotAutoResizeRight = true;
       }
       // Shrink the document width if auto-resizing was active and dragPoint.x is less than the last increased value
       else if (
-        GlobalData.optManager.theDragGotAutoResizeRight &&
-        dragPoint.x < GlobalData.optManager.theDragGotAutoResizeOldX.slice(-1).pop()
+        T3Gv.optManager.theDragGotAutoResizeRight &&
+        dragPoint.x < T3Gv.optManager.theDragGotAutoResizeOldX.slice(-1).pop()
       ) {
-        sessionData = GlobalData.objectStore.PreserveBlock(GlobalData.optManager.theSEDSessionBlockID).Data;
+        sessionData = T3Gv.objectStore.PreserveBlock(T3Gv.optManager.theSEDSessionBlockID).Data;
         newDimension = {
-          x: GlobalData.optManager.theDragGotAutoResizeOldX.pop(),
+          x: T3Gv.optManager.theDragGotAutoResizeOldX.pop(),
           y: sessionData.dim.y
         };
 
-        GlobalData.optManager.UpdateEdgeLayers([], sessionData.dim, newDimension);
+        T3Gv.optManager.UpdateEdgeLayers([], sessionData.dim, newDimension);
         sessionData.dim.x = newDimension.x;
-        GlobalData.optManager.bInAutoScroll = true;
-        GlobalData.optManager.ResizeSVGDocument();
-        GlobalData.optManager.bInAutoScroll = false;
-        if (GlobalData.optManager.theDragGotAutoResizeOldX.length === 0) {
-          GlobalData.optManager.theDragGotAutoResizeRight = false;
+        T3Gv.optManager.bInAutoScroll = true;
+        T3Gv.optManager.ResizeSVGDocument();
+        T3Gv.optManager.bInAutoScroll = false;
+        if (T3Gv.optManager.theDragGotAutoResizeOldX.length === 0) {
+          T3Gv.optManager.theDragGotAutoResizeRight = false;
         }
       }
 
       // Grow the document height if dragPoint.y exceeds the current dimension
       if (dragPoint.y > sessionData.dim.y) {
-        GlobalData.optManager.theDragGotAutoResizeOldY.push(sessionData.dim.y);
+        T3Gv.optManager.theDragGotAutoResizeOldY.push(sessionData.dim.y);
 
-        sessionData = GlobalData.objectStore.PreserveBlock(GlobalData.optManager.theSEDSessionBlockID).Data;
+        sessionData = T3Gv.objectStore.PreserveBlock(T3Gv.optManager.theSEDSessionBlockID).Data;
         newDimension = {
           x: sessionData.dim.x,
           y: sessionData.dim.y +
-            GlobalData.optManager.theContentHeader.Page.papersize.y -
-            (GlobalData.optManager.theContentHeader.Page.margins.top +
-              GlobalData.optManager.theContentHeader.Page.margins.bottom)
+            T3Gv.optManager.theContentHeader.Page.papersize.y -
+            (T3Gv.optManager.theContentHeader.Page.margins.top +
+              T3Gv.optManager.theContentHeader.Page.margins.bottom)
         };
 
-        GlobalData.optManager.UpdateEdgeLayers([], sessionData.dim, newDimension);
-        sessionData.dim.y += GlobalData.optManager.theContentHeader.Page.papersize.y -
-          (GlobalData.optManager.theContentHeader.Page.margins.top +
-            GlobalData.optManager.theContentHeader.Page.margins.bottom);
-        GlobalData.optManager.bInAutoScroll = true;
-        GlobalData.optManager.ResizeSVGDocument();
-        GlobalData.optManager.bInAutoScroll = false;
-        GlobalData.optManager.theDragGotAutoResizeBottom = true;
+        T3Gv.optManager.UpdateEdgeLayers([], sessionData.dim, newDimension);
+        sessionData.dim.y += T3Gv.optManager.theContentHeader.Page.papersize.y -
+          (T3Gv.optManager.theContentHeader.Page.margins.top +
+            T3Gv.optManager.theContentHeader.Page.margins.bottom);
+        T3Gv.optManager.bInAutoScroll = true;
+        T3Gv.optManager.ResizeSVGDocument();
+        T3Gv.optManager.bInAutoScroll = false;
+        T3Gv.optManager.theDragGotAutoResizeBottom = true;
       }
       // Shrink the document height if auto-resizing was active and dragPoint.y is less than the last increased value
       else if (
-        GlobalData.optManager.theDragGotAutoResizeBottom &&
-        dragPoint.y < GlobalData.optManager.theDragGotAutoResizeOldY.slice(-1).pop()
+        T3Gv.optManager.theDragGotAutoResizeBottom &&
+        dragPoint.y < T3Gv.optManager.theDragGotAutoResizeOldY.slice(-1).pop()
       ) {
-        sessionData = GlobalData.objectStore.PreserveBlock(GlobalData.optManager.theSEDSessionBlockID).Data;
+        sessionData = T3Gv.objectStore.PreserveBlock(T3Gv.optManager.theSEDSessionBlockID).Data;
         newDimension = {
           x: sessionData.dim.x,
-          y: GlobalData.optManager.theDragGotAutoResizeOldY.pop()
+          y: T3Gv.optManager.theDragGotAutoResizeOldY.pop()
         };
 
-        GlobalData.optManager.UpdateEdgeLayers([], sessionData.dim, newDimension);
+        T3Gv.optManager.UpdateEdgeLayers([], sessionData.dim, newDimension);
         sessionData.dim.y = newDimension.y;
-        GlobalData.optManager.bInAutoScroll = true;
-        GlobalData.optManager.ResizeSVGDocument();
-        GlobalData.optManager.bInAutoScroll = false;
-        if (GlobalData.optManager.theDragGotAutoResizeOldY.length === 0) {
-          GlobalData.optManager.theDragGotAutoResizeBottom = false;
+        T3Gv.optManager.bInAutoScroll = true;
+        T3Gv.optManager.ResizeSVGDocument();
+        T3Gv.optManager.bInAutoScroll = false;
+        if (T3Gv.optManager.theDragGotAutoResizeOldY.length === 0) {
+          T3Gv.optManager.theDragGotAutoResizeBottom = false;
         }
       }
       console.log("O.Opt DoAutoGrowDrag - Output:", dragPoint);
@@ -4088,7 +4088,7 @@ class OptHandler {
     console.log("O.Opt GetLengthInRulerUnits - Input:", { lengthInUnits, skipFeetConversion, offset, displayFlags });
 
     // Get session data for ruler settings
-    let sessionData = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, false);
+    let sessionData = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
     let resultString = "";
     let feetPart = 0;
     let inchPart = 0;
@@ -4112,13 +4112,13 @@ class OptHandler {
     // Adjust for offset if provided
     if (offset) {
       offset *= 100;
-      if (!GlobalData.docHandler.rulerSettings.useInches) {
+      if (!T3Gv.docHandler.rulerSettings.useInches) {
         offset /= ConstantData.Defines.MetricConv;
       }
       lengthInUnits -= offset;
     }
     // If showing pixels, simply round the value
-    if (GlobalData.docHandler.rulerSettings.showpixels) {
+    if (T3Gv.docHandler.rulerSettings.showpixels) {
       resultString = String(Math.round(lengthInUnits));
       console.log("O.Opt GetLengthInRulerUnits - Output:", resultString);
       return resultString;
@@ -4127,8 +4127,8 @@ class OptHandler {
     totalUnits = this.GetLengthInUnits(lengthInUnits);
     // Process conversion if the settings use inches but display in feet and conversion is not skipped
     if (
-      GlobalData.docHandler.rulerSettings.useInches &&
-      GlobalData.docHandler.rulerSettings.units === ConstantData.RulerUnits.SED_Feet &&
+      T3Gv.docHandler.rulerSettings.useInches &&
+      T3Gv.docHandler.rulerSettings.units === ConstantData.RulerUnits.SED_Feet &&
       !skipFeetConversion
     ) {
       if (totalUnits < 0) {
@@ -4188,12 +4188,12 @@ class OptHandler {
     }
     // If display units are not feet, simply format the number with specified decimal places
     else if (
-      GlobalData.docHandler.rulerSettings.units === ConstantData.RulerUnits.SED_Inches ||
-      GlobalData.docHandler.rulerSettings.units === ConstantData.RulerUnits.SED_M ||
-      GlobalData.docHandler.rulerSettings.units === ConstantData.RulerUnits.SED_Cm ||
-      GlobalData.docHandler.rulerSettings.units === ConstantData.RulerUnits.SED_Mm
+      T3Gv.docHandler.rulerSettings.units === ConstantData.RulerUnits.SED_Inches ||
+      T3Gv.docHandler.rulerSettings.units === ConstantData.RulerUnits.SED_M ||
+      T3Gv.docHandler.rulerSettings.units === ConstantData.RulerUnits.SED_Cm ||
+      T3Gv.docHandler.rulerSettings.units === ConstantData.RulerUnits.SED_Mm
     ) {
-      resultString = totalUnits.toFixed(GlobalData.docHandler.rulerSettings.dp);
+      resultString = totalUnits.toFixed(T3Gv.docHandler.rulerSettings.dp);
     }
     console.log("O.Opt GetLengthInRulerUnits - Output:", resultString);
     return resultString;
@@ -4208,12 +4208,12 @@ class OptHandler {
 
   GetToUnits(): number {
     console.log("O.Opt GetToUnits - Input");
-    let dpi = GlobalData.docHandler.DocObject().GetWorkArea().docDpi;
+    let dpi = T3Gv.docHandler.DocObject().GetWorkArea().docDpi;
     let conversionFactor = 0;
-    dpi = GlobalData.docHandler.rulerSettings.major;
-    conversionFactor = GlobalData.docHandler.rulerSettings.majorScale / dpi;
-    if (!GlobalData.docHandler.rulerSettings.useInches) {
-      conversionFactor *= GlobalData.docHandler.rulerSettings.metricConv;
+    dpi = T3Gv.docHandler.rulerSettings.major;
+    conversionFactor = T3Gv.docHandler.rulerSettings.majorScale / dpi;
+    if (!T3Gv.docHandler.rulerSettings.useInches) {
+      conversionFactor *= T3Gv.docHandler.rulerSettings.metricConv;
     }
     console.log("O.Opt GetToUnits - Output:", conversionFactor);
     return conversionFactor;
@@ -4240,14 +4240,14 @@ class OptHandler {
         this.SetFormatPainter(true, false);
         break;
       case ConstantData2.ModalOperations.ADDCORNER:
-        if (GlobalData.gBusinessManager && GlobalData.gBusinessManager.AddCorner) {
-          this.ResetHammerGesture('dragstart', GlobalData.gBusinessManager.AddCorner, GlobalData.Evt_ShapeDragStart);
+        if (T3Gv.gBusinessManager && T3Gv.gBusinessManager.AddCorner) {
+          this.ResetHammerGesture('dragstart', T3Gv.gBusinessManager.AddCorner, T3Gv.Evt_ShapeDragStart);
         }
         break;
       case ConstantData2.ModalOperations.SPLITWALL:
-        if (GlobalData.gBusinessManager && GlobalData.gBusinessManager.SplitWall) {
-          this.ResetHammerGesture('dragstart', GlobalData.gBusinessManager.SplitWall, GlobalData.Evt_ShapeDragStart);
-          GlobalData.optManager.SetEditMode(ConstantData.EditState.DEFAULT);
+        if (T3Gv.gBusinessManager && T3Gv.gBusinessManager.SplitWall) {
+          this.ResetHammerGesture('dragstart', T3Gv.gBusinessManager.SplitWall, T3Gv.Evt_ShapeDragStart);
+          T3Gv.optManager.SetEditMode(ConstantData.EditState.DEFAULT);
         }
         break;
     }
@@ -4280,7 +4280,7 @@ class OptHandler {
     this.SetEditMode(ConstantData.EditState.DEFAULT);
 
     // Unbind drag/drop or stamp events.
-    GlobalData.optManager.UnbindDragDropOrStamp();
+    T3Gv.optManager.UnbindDragDropOrStamp();
 
     // Rebind work area events.
     this.WorkAreaHammer.on('dragstart', EvtUtil.Evt_WorkAreaHammerDragStart);
@@ -4292,8 +4292,8 @@ class OptHandler {
     }
 
     // Invoke any business manager cancellation routines if present.
-    if (GlobalData.gBusinessManager.CancelObjectDraw) {
-      GlobalData.gBusinessManager.CancelObjectDraw();
+    if (T3Gv.gBusinessManager.CancelObjectDraw) {
+      T3Gv.gBusinessManager.CancelObjectDraw();
     }
 
     // Set the selection tool to the default select tool.
@@ -4311,7 +4311,7 @@ class OptHandler {
     // Process HiliteConnect if available
     if (this.LinkParams && this.LinkParams.HiliteConnect >= 0) {
       this.HiliteConnect(
-        GlobalData.optManager.LinkParams.HiliteConnect,
+        T3Gv.optManager.LinkParams.HiliteConnect,
         this.LinkParams.ConnectPt,
         false,
         false,
@@ -4326,7 +4326,7 @@ class OptHandler {
     // Process HiliteJoin if available
     if (this.LinkParams && this.LinkParams.HiliteJoin >= 0) {
       this.HiliteConnect(
-        GlobalData.optManager.LinkParams.HiliteJoin,
+        T3Gv.optManager.LinkParams.HiliteJoin,
         this.LinkParams.ConnectPt,
         false,
         true,
@@ -4351,8 +4351,8 @@ class OptHandler {
         );
       } else if (this.LinkParams && (this.LinkParams.ConnectIndex >= 0 || this.LinkParams.InitialHook >= 0)) {
         // If connection indexes or an initial hook exists, handle flow chart hook logic
-        if (GlobalData.gFlowChartManager) {
-          flowHookResult = GlobalData.gFlowChartManager.FlowChartHook(
+        if (T3Gv.gFlowChartManager) {
+          flowHookResult = T3Gv.gFlowChartManager.FlowChartHook(
             this.theActionStoredObjectID,
             this.LinkParams.InitialHook,
             this.LinkParams.ConnectIndex,
@@ -4393,30 +4393,30 @@ class OptHandler {
 
     // Cancel modal operation if required
     if (cancelModalOperation) {
-      GlobalData.optManager.CancelModalOperation();
+      T3Gv.optManager.CancelModalOperation();
     } else if (this.currentModalOperation !== ConstantData2.ModalOperations.NONE) {
       console.log("O.Opt Undo - Output:", false);
       return false;
     }
 
     // Make sure state manager exists
-    if (GlobalData.stateManager === null) {
+    if (T3Gv.stateManager === null) {
       throw new Error('stateManager is null');
     }
 
     // Close nudge if open and check state ID
     if (this.NudgeOpen) {
-      GlobalData.optManager.CloseOpenNudge();
+      T3Gv.optManager.CloseOpenNudge();
     }
-    if (GlobalData.stateManager.CurrentStateID <= 0) {
+    if (T3Gv.stateManager.CurrentStateID <= 0) {
       console.log("O.Opt Undo - Output:", false);
       return false;
     }
 
     // Get session and layer data
-    const sessionObject = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, false);
+    const sessionObject = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
     const spellCheckEnabled = sessionObject.EnableSpellCheck;
-    const layersManager = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, false);
+    const layersManager = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, false);
     const activeLayerType = layersManager.layers[layersManager.activelayer].layertype;
     const tedSession = this.GetObjectPtr(this.theTEDSessionBlockID, false);
 
@@ -4435,35 +4435,35 @@ class OptHandler {
 
     // Update sequence ID if required
     if (restoreSequence) {
-      GlobalData.CURRENT_SEQ_OBJECT_ID = GlobalData.stateManager.States[GlobalData.stateManager.CurrentStateID].CURRENT_SEQ_OBJECT_ID;
+      T3Gv.CURRENT_SEQ_OBJECT_ID = T3Gv.stateManager.States[T3Gv.stateManager.CurrentStateID].CURRENT_SEQ_OBJECT_ID;
     }
 
     // Restore previous state and update history if necessary
-    GlobalData.stateManager.RestorePrevState();
+    T3Gv.stateManager.RestorePrevState();
     if (!restoreSequence) {
-      GlobalData.stateManager.AddToHistoryState();
+      T3Gv.stateManager.AddToHistoryState();
     }
 
-    const currentStateID = GlobalData.stateManager.CurrentStateID;
+    const currentStateID = T3Gv.stateManager.CurrentStateID;
     this.RebuildURLs(currentStateID + 1, false);
     this.ResizeSVGDocument();
     this.UpdateLineHops(true);
 
     // Update spell check settings if changed
-    const sessionBlock = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, false);
+    const sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
     if (spellCheckEnabled !== sessionBlock.EnableSpellCheck) {
       SDUI.Commands.MainController.Document.SetSpellCheck(sessionBlock.EnableSpellCheck, false);
     }
 
     // Update ruler settings if necessary
-    const rulerSettings = GlobalData.docHandler.rulerSettings;
-    if (GlobalData.docHandler.RulersNotEqual(sessionObject.rulerSettings, rulerSettings)) {
-      GlobalData.docHandler.SetRulers(sessionObject.rulerSettings, true);
+    const rulerSettings = T3Gv.docHandler.rulerSettings;
+    if (T3Gv.docHandler.RulersNotEqual(sessionObject.rulerSettings, rulerSettings)) {
+      T3Gv.docHandler.SetRulers(sessionObject.rulerSettings, true);
     }
 
     // Update page settings if changed
-    if (GlobalData.docHandler.PagesNotEqual(sessionObject.Page, GlobalData.optManager.theContentHeader.Page)) {
-      GlobalData.optManager.theContentHeader.Page = Utils1.DeepCopy(sessionObject.Page);
+    if (T3Gv.docHandler.PagesNotEqual(sessionObject.Page, T3Gv.optManager.theContentHeader.Page)) {
+      T3Gv.optManager.theContentHeader.Page = Utils1.DeepCopy(sessionObject.Page);
     }
 
     // Ensure an active outline is selected if no selection exists
@@ -4477,16 +4477,16 @@ class OptHandler {
 
     // Unregister text editor events, render objects and restore active text edit if necessary
     this.TEUnregisterEvents(true);
-    GlobalData.optManager.InUndo = true;
+    T3Gv.optManager.InUndo = true;
     this.RenderAllSVGObjects();
-    GlobalData.optManager.InUndo = false;
+    T3Gv.optManager.InUndo = false;
 
     if (tedSessionAfter.theActiveTextEditObjectID !== -1) {
       this.ResetActiveTextEditAfterUndo();
     }
 
     // Update display coordinates based on target selection if available
-    const targetSelect = GlobalData.optManager.GetTargetSelect();
+    const targetSelect = T3Gv.optManager.GetTargetSelect();
     if (targetSelect >= 0) {
       const selectedObject = this.GetObjectPtr(targetSelect, false);
       let dimensions = null;
@@ -4494,16 +4494,16 @@ class OptHandler {
         dimensions = selectedObject.GetDimensionsForDisplay();
         this.ShowFrame(true);
       }
-      GlobalData.optManager.UpdateDisplayCoordinates(dimensions, null, null, selectedObject);
+      T3Gv.optManager.UpdateDisplayCoordinates(dimensions, null, null, selectedObject);
     } else {
       this.ShowFrame(false);
     }
 
     // Update selection attributes and comments panels
     this.UpdateSelectionAttributes(selectedList);
-    GlobalData.optManager.CommentIdleTab();
-    GlobalData.optManager.Comment_UpdatePanel(null);
-    GlobalData.optManager.Comment_UpdateDropDown();
+    T3Gv.optManager.CommentIdleTab();
+    T3Gv.optManager.Comment_UpdatePanel(null);
+    T3Gv.optManager.Comment_UpdateDropDown();
 
     // Save changed blocks if state was not open before undo
     if (!isStateOpen) {
@@ -4515,15 +4515,15 @@ class OptHandler {
   }
 
   ClearFutureUndoStates() {
-    GlobalData.stateManager.ClearFutureUndoStates();
+    T3Gv.stateManager.ClearFutureUndoStates();
   }
 
   UnbindDragDropOrStamp() {
     console.log('O.Opt UnbindDragDropOrStamp - Input: No parameters');
 
-    if (GlobalData.optManager.MainAppHammer) {
-      GlobalData.optManager.MainAppHammer.dispose();
-      GlobalData.optManager.MainAppHammer = null;
+    if (T3Gv.optManager.MainAppHammer) {
+      T3Gv.optManager.MainAppHammer.dispose();
+      T3Gv.optManager.MainAppHammer = null;
     }
 
     console.log('O.Opt UnbindDragDropOrStamp - Output: DragDrop or Stamp unbound');
@@ -4579,14 +4579,14 @@ class OptHandler {
     }
 
     // Fix any circular references in hooks
-    GlobalData.optManager.FixAnyCircularHooks();
+    T3Gv.optManager.FixAnyCircularHooks();
 
     // Get session data and save original snap setting
     const sessionData = this.GetObjectPtr(this.theSEDSessionBlockID, false);
-    const originalSnapEnabled = GlobalData.docHandler.documentConfig.enableSnap;
+    const originalSnapEnabled = T3Gv.docHandler.documentConfig.enableSnap;
 
     // Disable snapping during link updates
-    GlobalData.docHandler.documentConfig.enableSnap = false;
+    T3Gv.docHandler.documentConfig.enableSnap = false;
 
     // First pass: Delete marked links
     for (linkIndex = links.length - 1; linkIndex >= 0 && !(linkIndex >= links.length); linkIndex--) {
@@ -4648,7 +4648,7 @@ class OptHandler {
           // If tree top is found, mark it for movement
           if (/*Business.FindTreeTop(targetObject, linkHasMoveFlag, treeTopInfo)*/ 1 &&
             treeTopInfo.topshape >= 0) {
-            GlobalData.optManager.SetLinkFlag(
+            T3Gv.optManager.SetLinkFlag(
               treeTopInfo.topshape,
               ConstantData.LinkFlags.SED_L_MOVE
             );
@@ -4942,7 +4942,7 @@ class OptHandler {
     }
 
     // Restore original snap setting
-    GlobalData.docHandler.documentConfig.enableSnap = originalSnapEnabled;
+    T3Gv.docHandler.documentConfig.enableSnap = originalSnapEnabled;
 
     console.log("O.Opt UpdateLinks - Output: 0 (Success)");
     return 0;
@@ -4955,7 +4955,7 @@ class OptHandler {
     const hookIds = initialLinkObject
       ? [initialLinkObject.BlockID]
       : (() => {
-        const links = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLinksBlockID, false);
+        const links = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, false);
         let ids: number[] = [];
         const linksCount = links.length;
         for (let i = 0; i < linksCount; i++) {
@@ -4983,7 +4983,7 @@ class OptHandler {
     ) {
       // Add current id to visited list
       visited.push(currentId);
-      const currentObject = GlobalData.optManager.GetObjectPtr(currentId, false);
+      const currentObject = T3Gv.optManager.GetObjectPtr(currentId, false);
       if (!currentObject) return;
       const hooksCount = currentObject.hooks.length;
       for (let j = 0; j < hooksCount; j++) {
@@ -5018,17 +5018,17 @@ class OptHandler {
 
     // Process the found circular hook pairs
     (function processCircularHooks(hookPairs: Array<{ objectId: number; hookObjectId: number }>) {
-      const links = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLinksBlockID, false);
+      const links = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, false);
       const hookPairsCount = hookPairs.length;
       for (let i = 0; i < hookPairsCount; i++) {
-        const currentObj = GlobalData.optManager.GetObjectPtr(hookPairs[i].objectId, true);
-        const hookObj = GlobalData.optManager.GetObjectPtr(hookPairs[i].hookObjectId);
+        const currentObj = T3Gv.optManager.GetObjectPtr(hookPairs[i].objectId, true);
+        const hookObj = T3Gv.optManager.GetObjectPtr(hookPairs[i].hookObjectId);
         if (hookObj instanceof Connector) {
-          GlobalData.optManager.DeleteObjects([hookObj.BlockID], false);
+          T3Gv.optManager.DeleteObjects([hookObj.BlockID], false);
           continue;
         }
         currentObj.hooks = currentObj.hooks.filter(h => h.objid != hookPairs[i].hookObjectId);
-        const linkIndex = GlobalData.optManager.FindExactLink(links, hookPairs[i].hookObjectId, hookPairs[i].objectId);
+        const linkIndex = T3Gv.optManager.FindExactLink(links, hookPairs[i].hookObjectId, hookPairs[i].objectId);
         if (linkIndex >= 0) {
           links[linkIndex].flags = Utils2.SetFlag(links[linkIndex].flags, ConstantData.LinkFlags.SED_L_DELT, true);
         }
@@ -5042,7 +5042,7 @@ class OptHandler {
     console.log('O.Opt PostObjectDraw - Input:', event);
 
     let affectedObjects = [];
-    let actionObject = GlobalData.objectStore.GetObject(this.theActionStoredObjectID);
+    let actionObject = T3Gv.objectStore.GetObject(this.theActionStoredObjectID);
 
     if (actionObject != null) {
       if (actionObject.Data.Frame == null || (actionObject.Data.Frame.width < 10 && actionObject.Data.Frame.height < 10)) {
@@ -5051,7 +5051,7 @@ class OptHandler {
       } else {
         actionObject.Data.sizedim.width = actionObject.Data.Frame.width;
         actionObject.Data.sizedim.height = actionObject.Data.Frame.height;
-        GlobalData.stateManager.ReplaceInCurrentState(this.theActionStoredObjectID, actionObject);
+        T3Gv.stateManager.ReplaceInCurrentState(this.theActionStoredObjectID, actionObject);
 
         if (actionObject.Data.objecttype !== ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
           affectedObjects.push(this.theActionStoredObjectID);
@@ -5094,8 +5094,8 @@ class OptHandler {
     this.ResetObjectDraw();
     // this.UpdateTools();
 
-    if (GlobalData.gBusinessManager.PostObjectDrawHook) {
-      GlobalData.gBusinessManager.PostObjectDrawHook(event);
+    if (T3Gv.gBusinessManager.PostObjectDrawHook) {
+      T3Gv.gBusinessManager.PostObjectDrawHook(event);
     }
 
     this.theActionStoredObjectID = -1;
@@ -5111,18 +5111,18 @@ class OptHandler {
         if (guides[guideKey]) {
           const labelId = guideKey + 'label';
           const backgroundId = guideKey + 'back';
-          let guideElement = GlobalData.optManager.svgHighlightLayer.GetElementByID(guideKey);
-          let labelElement = GlobalData.optManager.svgHighlightLayer.GetElementByID(labelId);
-          let backgroundElement = GlobalData.optManager.svgHighlightLayer.GetElementByID(backgroundId);
+          let guideElement = T3Gv.optManager.svgHighlightLayer.GetElementByID(guideKey);
+          let labelElement = T3Gv.optManager.svgHighlightLayer.GetElementByID(labelId);
+          let backgroundElement = T3Gv.optManager.svgHighlightLayer.GetElementByID(backgroundId);
 
           if (guideElement) {
-            GlobalData.optManager.svgHighlightLayer.RemoveElement(guideElement);
+            T3Gv.optManager.svgHighlightLayer.RemoveElement(guideElement);
           }
           if (labelElement) {
-            GlobalData.optManager.svgHighlightLayer.RemoveElement(labelElement);
+            T3Gv.optManager.svgHighlightLayer.RemoveElement(labelElement);
           }
           if (backgroundElement) {
-            GlobalData.optManager.svgHighlightLayer.RemoveElement(backgroundElement);
+            T3Gv.optManager.svgHighlightLayer.RemoveElement(backgroundElement);
           }
 
           if (guides[guideKey].otherhits) {
@@ -5131,18 +5131,18 @@ class OptHandler {
               const otherHit = otherHits[index];
               const otherLabelId = guideKey + otherHit.ID.toString() + 'label';
               const otherBackgroundId = guideKey + otherHit.ID.toString() + 'back';
-              guideElement = GlobalData.optManager.svgHighlightLayer.GetElementByID(guideKey + otherHit.ID.toString());
-              labelElement = GlobalData.optManager.svgHighlightLayer.GetElementByID(otherLabelId);
-              backgroundElement = GlobalData.optManager.svgHighlightLayer.GetElementByID(otherBackgroundId);
+              guideElement = T3Gv.optManager.svgHighlightLayer.GetElementByID(guideKey + otherHit.ID.toString());
+              labelElement = T3Gv.optManager.svgHighlightLayer.GetElementByID(otherLabelId);
+              backgroundElement = T3Gv.optManager.svgHighlightLayer.GetElementByID(otherBackgroundId);
 
               if (guideElement) {
-                GlobalData.optManager.svgHighlightLayer.RemoveElement(guideElement);
+                T3Gv.optManager.svgHighlightLayer.RemoveElement(guideElement);
               }
               if (labelElement) {
-                GlobalData.optManager.svgHighlightLayer.RemoveElement(labelElement);
+                T3Gv.optManager.svgHighlightLayer.RemoveElement(labelElement);
               }
               if (backgroundElement) {
-                GlobalData.optManager.svgHighlightLayer.RemoveElement(backgroundElement);
+                T3Gv.optManager.svgHighlightLayer.RemoveElement(backgroundElement);
               }
             }
           }
@@ -5301,7 +5301,7 @@ class OptHandler {
         const result: number[] = [];
         const notVisibleFlag = ConstantData.ObjFlags.SEDO_NotVisible;
         for (let index = 0; index < objectIds.length; index++) {
-          const objectRef = GlobalData.optManager.GetObjectPtr(objectIds[index], false);
+          const objectRef = T3Gv.optManager.GetObjectPtr(objectIds[index], false);
           if (objectRef && (objectRef.flags & notVisibleFlag) === 0) {
             result.push(objectIds[index]);
           }
@@ -5310,7 +5310,7 @@ class OptHandler {
       })(visibleObjectIds);
 
       // Sort the dirty list based on the ordering in the visible list.
-      GlobalData.optManager.theDirtyList.sort((objectId1, objectId2) => {
+      T3Gv.optManager.theDirtyList.sort((objectId1, objectId2) => {
         return visibleObjectIds.indexOf(objectId1) < visibleObjectIds.indexOf(objectId2) ? -1 : 1;
       });
 
@@ -5345,7 +5345,7 @@ class OptHandler {
       }
 
       // If a reordering of the dirty list is needed, reassign each SVG element to its new position.
-      if (GlobalData.optManager.DirtyListReOrder) {
+      if (T3Gv.optManager.DirtyListReOrder) {
         const count = filteredVisibleObjectIds.length;
         for (let idx = 0; idx < count; idx++) {
           const id = filteredVisibleObjectIds[idx];
@@ -5386,7 +5386,7 @@ class OptHandler {
     let needMinWidthEnforcement = false;
 
     // Get the layers manager to check layer settings
-    const layersManager = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
+    const layersManager = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
 
     // Check for edge layers and their visibility
     if (layersManager.layers[layersManager.activelayer].flags & ConstantData.LayerFlags.SDLF_UseEdges) {
@@ -5410,9 +5410,9 @@ class OptHandler {
 
     let newWidth;
     let newHeight;
-    let sessionData = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, false);
-    let paperSize = GlobalData.optManager.theContentHeader.Page.papersize;
-    let margins = GlobalData.optManager.theContentHeader.Page.margins;
+    let sessionData = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+    let paperSize = T3Gv.optManager.theContentHeader.Page.papersize;
+    let margins = T3Gv.optManager.theContentHeader.Page.margins;
     let pageWidth = paperSize.x - (margins.left + margins.right);
     let pageHeight = paperSize.y - (margins.top + margins.bottom);
     let newDocumentSize = {};
@@ -5431,12 +5431,12 @@ class OptHandler {
 
     // Apply minimum size constraints if using edges but not on edge layer
     if (shouldUseEdges && !isUsingEdgeLayer) {
-      if (newHeight < GlobalData.optManager.theContentHeader.Page.minsize.y) {
-        newHeight = GlobalData.optManager.theContentHeader.Page.minsize.y;
+      if (newHeight < T3Gv.optManager.theContentHeader.Page.minsize.y) {
+        newHeight = T3Gv.optManager.theContentHeader.Page.minsize.y;
         needMinHeightEnforcement = true;
       }
-      if (newWidth < GlobalData.optManager.theContentHeader.Page.minsize.x) {
-        newWidth = GlobalData.optManager.theContentHeader.Page.minsize.x;
+      if (newWidth < T3Gv.optManager.theContentHeader.Page.minsize.x) {
+        newWidth = T3Gv.optManager.theContentHeader.Page.minsize.x;
         needMinWidthEnforcement = true;
       }
     }
@@ -5518,21 +5518,21 @@ class OptHandler {
           }
 
           if (!(this.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto)) {
-            GlobalData.optManager.theContentHeader.Page.minsize.y = newDocumentSize.y;
-            GlobalData.optManager.theContentHeader.Page.minsize.x = newDocumentSize.x;
+            T3Gv.optManager.theContentHeader.Page.minsize.y = newDocumentSize.y;
+            T3Gv.optManager.theContentHeader.Page.minsize.x = newDocumentSize.x;
           }
         } else {
-          GlobalData.optManager.theContentHeader.Page.minsize.x = pageWidth;
-          GlobalData.optManager.theContentHeader.Page.minsize.y = pageHeight;
+          T3Gv.optManager.theContentHeader.Page.minsize.x = pageWidth;
+          T3Gv.optManager.theContentHeader.Page.minsize.y = pageHeight;
         }
       }
 
       // Apply minimum size constraints
-      if (newDocumentSize.x < GlobalData.optManager.theContentHeader.Page.minsize.x) {
-        newDocumentSize.x = GlobalData.optManager.theContentHeader.Page.minsize.x;
+      if (newDocumentSize.x < T3Gv.optManager.theContentHeader.Page.minsize.x) {
+        newDocumentSize.x = T3Gv.optManager.theContentHeader.Page.minsize.x;
       }
-      if (newDocumentSize.y < GlobalData.optManager.theContentHeader.Page.minsize.y) {
-        newDocumentSize.y = GlobalData.optManager.theContentHeader.Page.minsize.y;
+      if (newDocumentSize.y < T3Gv.optManager.theContentHeader.Page.minsize.y) {
+        newDocumentSize.y = T3Gv.optManager.theContentHeader.Page.minsize.y;
       }
     }
 
@@ -5545,7 +5545,7 @@ class OptHandler {
 
     // Handle document resize
     if (documentSizeChanged) {
-      if (GlobalData.docHandler.CheckScaleToFit()) {
+      if (T3Gv.docHandler.CheckScaleToFit()) {
         this.ResizeSVGDocument();
       }
     } else {
@@ -5569,7 +5569,7 @@ class OptHandler {
         shouldPreserve = false;
       }
 
-      sessionData = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, shouldPreserve);
+      sessionData = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, shouldPreserve);
       this.UpdateEdgeLayers([], sessionData.dim, newDocumentSize);
       sessionData.dim.x = newDocumentSize.x;
       sessionData.dim.y = newDocumentSize.y;
@@ -5601,7 +5601,7 @@ class OptHandler {
     let heightPadding = 0;
 
     // Get layers manager to check layer settings
-    const layersManager = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
+    const layersManager = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
 
     // Initialize empty enclosing rectangle
     let enclosingRect = {
@@ -5637,11 +5637,11 @@ class OptHandler {
           heightPadding = 25;
 
           const objectsInEdgeLayer = objectsFromEdgeLayers.length;
-          const sessionData = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, false);
+          const sessionData = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
 
           // Check for annotations near the bottom of the document
           for (let i = 0; i < objectsInEdgeLayer; i++) {
-            objectData = GlobalData.optManager.GetObjectPtr(objectsFromEdgeLayers[i], false);
+            objectData = T3Gv.optManager.GetObjectPtr(objectsFromEdgeLayers[i], false);
             if (objectData &&
               objectData.objecttype === ConstantData.ObjectTypes.SD_OBJT_ANNOTATION &&
               objectData.Frame.y + objectData.Frame.height >= sessionData.dim.y - ConstantData.Defines.AnnoHotDist) {
@@ -5664,7 +5664,7 @@ class OptHandler {
         continue;
       }
 
-      const objectBlock = GlobalData.objectStore.GetObject(objectId);
+      const objectBlock = T3Gv.objectStore.GetObject(objectId);
       if (objectBlock == null) {
         continue;
       }
@@ -5766,7 +5766,7 @@ class OptHandler {
           }
           // If in multiple selection mode and object already selected, remove it
           else if (isMultipleSelection) {
-            const objectInList = GlobalData.optManager.GetObjectPtr(objectId, false);
+            const objectInList = T3Gv.optManager.GetObjectPtr(objectId, false);
             if (objectInList) {
               objectInList.ShowOrHideDimensions(false);
             }
@@ -6017,7 +6017,7 @@ class OptHandler {
       // Add enclosed objects to the hook list
       const enclosedObjects = object.GetListOfEnclosedObjects(true);
       if (enclosedObjects.length) {
-        GlobalData.optManager.JoinHookList(hookList, enclosedObjects);
+        T3Gv.optManager.JoinHookList(hookList, enclosedObjects);
       }
     }
 
@@ -6136,7 +6136,7 @@ class OptHandler {
       scrollX = (visibleRect.x - (viewportCenterX - objectCenterX)) * docInfo.docToScreenScale;
       scrollY = (visibleRect.y - offsetY) * docInfo.docToScreenScale;
 
-      GlobalData.docHandler.SetScroll(scrollX, scrollY);
+      T3Gv.docHandler.SetScroll(scrollX, scrollY);
       console.log("O.Opt ScrollObjectIntoView - Output: Centered object", { scrollX, scrollY });
       return;
     }
@@ -6179,7 +6179,7 @@ class OptHandler {
     scrollX *= docInfo.docToScreenScale;
     scrollY *= docInfo.docToScreenScale;
 
-    GlobalData.docHandler.SetScroll(scrollX, scrollY);
+    T3Gv.docHandler.SetScroll(scrollX, scrollY);
     console.log("O.Opt ScrollObjectIntoView - Output: Scrolled to make object visible", { scrollX, scrollY });
   }
 
@@ -6210,7 +6210,7 @@ class OptHandler {
     console.log("O.Opt LM_MoveClick - Input:", event);
 
     if (
-      GlobalData.optManager.IsWheelClick(event) ||
+      T3Gv.optManager.IsWheelClick(event) ||
       ConstantData.DocumentContext.SpacebarDown
     ) {
       EvtUtil.Evt_WorkAreaHammerDragStart(event);
@@ -6230,7 +6230,7 @@ class OptHandler {
 
       // Close nudge panel if open
       if (this.NudgeOpen) {
-        GlobalData.optManager.CloseOpenNudge();
+        T3Gv.optManager.CloseOpenNudge();
       }
 
       // Set up the move operation
@@ -6255,17 +6255,17 @@ class OptHandler {
 
       // Set edit mode if not in a modal operation
       if (this.currentModalOperation === ConstantData2.ModalOperations.NONE) {
-        GlobalData.optManager.SetEditMode(ConstantData.EditState.DRAGSHAPE);
+        T3Gv.optManager.SetEditMode(ConstantData.EditState.DRAGSHAPE);
       }
 
       // Register event handlers for drag operations
-      GlobalData.optManager.WorkAreaHammer.on('drag', EvtUtil.Evt_ShapeDrag);
-      GlobalData.optManager.WorkAreaHammer.on('dragend', EvtUtil.Evt_ShapeDragEnd);
+      T3Gv.optManager.WorkAreaHammer.on('drag', EvtUtil.Evt_ShapeDrag);
+      T3Gv.optManager.WorkAreaHammer.on('dragend', EvtUtil.Evt_ShapeDragEnd);
 
       console.log("O.Opt LM_MoveClick - Output: Move operation set up successfully");
     } catch (error) {
-      GlobalData.optManager.LM_Move_ExceptionCleanup(error);
-      GlobalData.optManager.ExceptionCleanup(error);
+      T3Gv.optManager.LM_Move_ExceptionCleanup(error);
+      T3Gv.optManager.ExceptionCleanup(error);
       console.log("O.Opt LM_MoveClick - Error:", error);
       throw error;
     }
@@ -6304,7 +6304,7 @@ class OptHandler {
     let isOneClickTextObject = false;
 
     // Reset move state
-    GlobalData.optManager.MoveDuplicated = false;
+    T3Gv.optManager.MoveDuplicated = false;
 
     // Find the SVG element from the event target
     svgElement = this.svgObjectLayer.FindElementByDOMElement(event.currentTarget);
@@ -6320,7 +6320,7 @@ class OptHandler {
 
     // Get object ID and verify it's a valid drawing object
     const objectId = svgElement.GetID();
-    const drawingObjectRef = GlobalData.optManager.GetObjectPtr(objectId, false);
+    const drawingObjectRef = T3Gv.optManager.GetObjectPtr(objectId, false);
     if (!(drawingObjectRef && drawingObjectRef instanceof BaseDrawingObject)) {
       console.log("O.Opt LM_SetupMove - Output: false (Not a valid drawing object)");
       return false;
@@ -6386,7 +6386,7 @@ class OptHandler {
       this.theDragTargetID = this.GetEventShapeParent(this.theDragTargetID);
       this.theDragTargetID = Business.SelectContainerParent(this.theDragTargetID);
 
-      targetObject = GlobalData.objectStore.GetObject(this.theDragTargetID);
+      targetObject = T3Gv.objectStore.GetObject(this.theDragTargetID);
       const isRightClick = this.IsRightClick(event);
 
       // Handle special cases for target object
@@ -6403,7 +6403,7 @@ class OptHandler {
               tableObject.cells[cellIndex].flags & ListManager.Table.CellFlags.SDT_F_NoText &&
               !isRightClick
             ) {
-              GlobalData.optManager.StartRubberBandSelect(event);
+              T3Gv.optManager.StartRubberBandSelect(event);
               console.log("O.Opt LM_SetupMove - Output: false (Started rubber band select on swimlane)");
               return false;
             }
@@ -6412,7 +6412,7 @@ class OptHandler {
             clickedElementId === ConstantData.SVGElementClass.SHAPE &&
             !isRightClick
           ) {
-            GlobalData.optManager.StartRubberBandSelect(event);
+            T3Gv.optManager.StartRubberBandSelect(event);
             console.log("O.Opt LM_SetupMove - Output: false (Started rubber band select on frame container)");
             return false;
           }
@@ -6538,7 +6538,7 @@ class OptHandler {
 
       // Handle one-click text objects
       if (isOneClickTextObject) {
-        GlobalData.optManager.ActivateTextEdit(svgElement.svgObj.SDGObj, event, false);
+        T3Gv.optManager.ActivateTextEdit(svgElement.svgObj.SDGObj, event, false);
         console.log("O.Opt LM_SetupMove - Output: false (Activated text edit)");
         return false;
       }
@@ -6557,7 +6557,7 @@ class OptHandler {
     }
 
     // Get updated target object
-    targetObject = GlobalData.objectStore.GetObject(this.theDragTargetID);
+    targetObject = T3Gv.objectStore.GetObject(this.theDragTargetID);
     if (targetObject == null) {
       console.log("O.Opt LM_SetupMove - Output: false (Target object is null)");
       return false;
@@ -6698,7 +6698,7 @@ class OptHandler {
       this.theDragElementList.push(currentId);
 
       // Store target bounding box for snapping
-      if (GlobalData.docHandler.documentConfig.enableSnap &&
+      if (T3Gv.docHandler.documentConfig.enableSnap &&
         currentId === this.theDragTargetID) {
         this.theDragTargetBBox = $.extend(true, {}, objectFrame);
       }
@@ -6706,7 +6706,7 @@ class OptHandler {
 
     // Handle auto-grow constraints
     if (this.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto) {
-      this.theDragEnclosingRect = GlobalData.optManager.GetListSRect(this.theMoveList);
+      this.theDragEnclosingRect = T3Gv.optManager.GetListSRect(this.theMoveList);
     }
 
     // Setup move tracking
@@ -6720,14 +6720,14 @@ class OptHandler {
     console.log('O.Opt LM_Move_ExceptionCleanup - Input:', error);
 
     // Clean up resources
-    GlobalData.optManager.LinkParams = null;
-    GlobalData.optManager.theDragBBoxList = [];
-    GlobalData.optManager.theDragElementList = [];
-    GlobalData.optManager.theMoveList = null;
-    GlobalData.optManager.theDragEnclosingRect = null;
-    GlobalData.optManager.dragGotMove = false;
-    GlobalData.optManager.UnbindShapeMoveHammerEvents();
-    GlobalData.optManager.ResetAutoScrollTimer();
+    T3Gv.optManager.LinkParams = null;
+    T3Gv.optManager.theDragBBoxList = [];
+    T3Gv.optManager.theDragElementList = [];
+    T3Gv.optManager.theMoveList = null;
+    T3Gv.optManager.theDragEnclosingRect = null;
+    T3Gv.optManager.dragGotMove = false;
+    T3Gv.optManager.UnbindShapeMoveHammerEvents();
+    T3Gv.optManager.ResetAutoScrollTimer();
     Collab.UnLockMessages();
     Collab.UnBlockMessages();
 
@@ -6740,9 +6740,9 @@ class OptHandler {
   UnbindShapeMoveHammerEvents() {
     console.log('O.Opt UnbindShapeMoveHammerEvents - Input: No parameters');
 
-    if (GlobalData.optManager.WorkAreaHammer) {
-      GlobalData.optManager.WorkAreaHammer.off('drag');
-      GlobalData.optManager.WorkAreaHammer.off('dragend');
+    if (T3Gv.optManager.WorkAreaHammer) {
+      T3Gv.optManager.WorkAreaHammer.off('drag');
+      T3Gv.optManager.WorkAreaHammer.off('dragend');
     }
 
     console.log('O.Opt UnbindShapeMoveHammerEvents - Output: Events unbound');
@@ -6751,10 +6751,10 @@ class OptHandler {
   GetEventShapeParent(objectId) {
     console.log('O.Opt GetEventShapeParent - Input:', objectId);
 
-    const object = GlobalData.optManager.GetObjectPtr(objectId);
+    const object = T3Gv.optManager.GetObjectPtr(objectId);
 
     if (object && object.objecttype === ConstantData.ObjectTypes.SD_OBJT_NG_EVENT_LABEL) {
-      const associatedObject = GlobalData.optManager.GetObjectPtr(object.associd);
+      const associatedObject = T3Gv.optManager.GetObjectPtr(object.associd);
 
       if (associatedObject && associatedObject.objecttype === ConstantData.ObjectTypes.SD_OBJT_NG_EVENT) {
         console.log('O.Opt GetEventShapeParent - Output:', object.associd);
@@ -6800,7 +6800,7 @@ class OptHandler {
     }
 
     // Get the selected list and check if object is already selected
-    const selectedList = GlobalData.objectStore.GetObject(this.theSelectedListBlockID).Data;
+    const selectedList = T3Gv.objectStore.GetObject(this.theSelectedListBlockID).Data;
     const indexInSelectedList = $.inArray(objectId, selectedList);
 
     // Prepare array with object to select
@@ -6993,7 +6993,7 @@ class OptHandler {
     console.log("O.Opt LM_MovePreTrack - Input:", { objectsToMove, event });
 
     // Get the session data
-    const sessionData = GlobalData.optManager.GetObjectPtr(this.theSEDSessionBlockID, false);
+    const sessionData = T3Gv.optManager.GetObjectPtr(this.theSEDSessionBlockID, false);
 
     // Check for alt key press
     const isAltKeyPressed = event.gesture && event.gesture.srcEvent && event.gesture.srcEvent.altKey;
@@ -7004,7 +7004,7 @@ class OptHandler {
 
     // Disable auto-insert if multiple objects are selected or alt key is pressed
     if (this.LinkParams.AutoInsert) {
-      const selectedObjects = this.GetObjectPtr(GlobalData.optManager.theSelectedListBlockID, false);
+      const selectedObjects = this.GetObjectPtr(T3Gv.optManager.theSelectedListBlockID, false);
       if (selectedObjects.length > 1) {
         this.LinkParams.AutoInsert = false;
       }
@@ -7018,7 +7018,7 @@ class OptHandler {
     const drawingObject = this.GetObjectPtr(this.theDragTargetID, false);
     if (drawingObject) {
       // Store original object state for reference
-      GlobalData.optManager.ob = Utils1.DeepCopy(drawingObject);
+      T3Gv.optManager.ob = Utils1.DeepCopy(drawingObject);
 
       // Handle case where object has a single hook that's not a move target
       if (drawingObject.hooks.length === 1 &&
@@ -7069,8 +7069,8 @@ class OptHandler {
         const offsetRect = $.extend(true, {}, objectRect);
 
         // Apply current drag offsets
-        offsetRect.x += GlobalData.optManager.theDragDeltaX;
-        offsetRect.y += GlobalData.optManager.theDragDeltaY;
+        offsetRect.x += T3Gv.optManager.theDragDeltaX;
+        offsetRect.y += T3Gv.optManager.theDragDeltaY;
 
         // Check for potential snap targets
         const snapOptions = {};
@@ -7100,7 +7100,7 @@ class OptHandler {
 
   AllowAutoInsert() {
     console.log("O.Opt AllowAutoInsert - Input: No parameters");
-    const result = GlobalData.gBusinessManager.AllowAutoInsert();
+    const result = T3Gv.gBusinessManager.AllowAutoInsert();
     console.log("O.Opt AllowAutoInsert - Output:", result);
     return result;
   }
@@ -7123,9 +7123,9 @@ class OptHandler {
     console.log("O.Opt AllowSnapToShapes - Input: No parameters");
 
     // Get session data (unused in function but was in original code)
-    GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, false);
+    T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
 
-    const result = GlobalData.docHandler.documentConfig.snapToShapes;
+    const result = T3Gv.docHandler.documentConfig.snapToShapes;
     console.log("O.Opt AllowSnapToShapes - Output:", result);
     return result;
   }
@@ -7170,8 +7170,8 @@ class OptHandler {
         // Check if we need to duplicate objects (Ctrl+drag)
         if (this.DragDuplicate(event)) {
           // Get selection list and session data
-          const selectedList = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSelectedListBlockID, true);
-          const sessionData = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, true);
+          const selectedList = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSelectedListBlockID, true);
+          const sessionData = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, true);
 
           // Store current selection for duplication
           selectedList.length = 0;
@@ -7199,7 +7199,7 @@ class OptHandler {
           }
 
           // Reset lists and prepare for moving the duplicates
-          GlobalData.optManager.MoveDuplicated = true;
+          T3Gv.optManager.MoveDuplicated = true;
           this.theMoveList.length = 0;
           this.theDragElementList.length = 0;
           this.theDragBBoxList.length = 0;
@@ -7293,16 +7293,16 @@ class OptHandler {
     // Handle early exit conditions
     if (!moveData && (
       Utils2.StopPropagationAndDefaults(event),
-      GlobalData.optManager.UnbindShapeMoveHammerEvents(),
+      T3Gv.optManager.UnbindShapeMoveHammerEvents(),
       this.ResetAutoScrollTimer(),
-      GlobalData.optManager.SetEditMode(ConstantData.EditState.DEFAULT),
+      T3Gv.optManager.SetEditMode(ConstantData.EditState.DEFAULT),
       this.DynamicSnapsRemoveGuides(this.Dynamic_Guides),
       this.Dynamic_Guides = null,
       !this.dragGotMove || this.CheckDragIsOverCustomLibrary(event)
     )) {
       // Handle dropping over custom library
       if (this.CheckDragIsOverCustomLibrary(event)) {
-        const selectedList = this.GetObjectPtr(GlobalData.optManager.theSelectedListBlockID, false);
+        const selectedList = this.GetObjectPtr(T3Gv.optManager.theSelectedListBlockID, false);
 
         // Add moved objects to selection if not already there
         for (let i = 0; i < this.theMoveList.length; i++) {
@@ -7344,13 +7344,13 @@ class OptHandler {
       theMoveList: [],
       thePointList: [],
       theDragDeltaX: this.theDragDeltaX,
-      MoveDuplicated: GlobalData.optManager.MoveDuplicated
+      MoveDuplicated: T3Gv.optManager.MoveDuplicated
     };
 
     // Update positions of all moved objects
     for (let i = 0; i < objectCount; i++) {
       const objectId = this.theMoveList[i];
-      const drawingObject = GlobalData.objectStore.GetObject(objectId).Data;
+      const drawingObject = T3Gv.objectStore.GetObject(objectId).Data;
 
       // Get the object's new position either from collaboration data or from drag operation
       if (moveData) {
@@ -7415,7 +7415,7 @@ class OptHandler {
     // Build and send collaboration message
     let collabMessage = null;
     if (Collab.AllowMessage()) {
-      moveMessageData.LinkParams = Utils1.DeepCopy(GlobalData.optManager.LinkParams);
+      moveMessageData.LinkParams = Utils1.DeepCopy(T3Gv.optManager.LinkParams);
       collabMessage = Collab.BuildMessage(
         ConstantData.CollabMessages.MoveObjects,
         moveMessageData,
@@ -7439,7 +7439,7 @@ class OptHandler {
     // Handle duplicate operation tracking
     if (!moveData && this.LastOpDuplicate) {
       wasLastOpDuplicate = true;
-      const sessionData = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, true);
+      const sessionData = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, true);
       sessionData.dupdisp.x += this.theDragDeltaX;
       sessionData.dupdisp.y += this.theDragDeltaY;
     }
@@ -7538,8 +7538,8 @@ class OptHandler {
         (this.LinkParams.ConnectIndex >= 0 || this.LinkParams.InitialHook >= 0)) {
 
         // Allow flow chart business logic to handle the hook if needed
-        if (GlobalData.gFlowChartManager) {
-          flowChartHookResult = GlobalData.gFlowChartManager.FlowChartHook(
+        if (T3Gv.gFlowChartManager) {
+          flowChartHookResult = T3Gv.gFlowChartManager.FlowChartHook(
             this.theDragTargetID,
             this.LinkParams.InitialHook,
             this.LinkParams.ConnectIndex,
@@ -7583,7 +7583,7 @@ class OptHandler {
       } else {
         // Get business manager for the object
         const businessManager = Business.GetSelectionBusinessManager(this.theDragTargetID);
-        const activeManager = businessManager || GlobalData.gBusinessManager;
+        const activeManager = businessManager || T3Gv.gBusinessManager;
 
         // Handle floor plan specific logic
         if (activeManager instanceof FloorPlan) {
@@ -7931,8 +7931,8 @@ class OptHandler {
       this.theDragDeltaY = 0;
 
       // Handle drop-on-line or auto-insert modes
-      if (GlobalData.optManager.LinkParams.DropOnLine ||
-        GlobalData.optManager.LinkParams.AutoInsert) {
+      if (T3Gv.optManager.LinkParams.DropOnLine ||
+        T3Gv.optManager.LinkParams.AutoInsert) {
 
         // Create a copy of the frame at the new position
         frameCopy = $.extend(true, {}, targetObject.Frame);
@@ -7949,7 +7949,7 @@ class OptHandler {
         hasConnection = this.FindConnect(
           this.theDragTargetID,
           targetObject,
-          GlobalData.optManager.LinkParams.cpt,
+          T3Gv.optManager.LinkParams.cpt,
           true,
           true,
           false,
@@ -7974,17 +7974,17 @@ class OptHandler {
 
       // Check for standard connections or joins
       hasConnection = this.FindConnect(
-        GlobalData.optManager.theDragTargetID,
+        T3Gv.optManager.theDragTargetID,
         targetObject,
         hookPoints,
         true,
         false,
-        GlobalData.optManager.LinkParams.AllowJoin,
+        T3Gv.optManager.LinkParams.AllowJoin,
         position
       );
 
       // Apply drag deltas if a connection or join was found
-      if (hasConnection || GlobalData.optManager.LinkParams.JoinIndex >= 0) {
+      if (hasConnection || T3Gv.optManager.LinkParams.JoinIndex >= 0) {
         position.x += this.theDragDeltaX;
         position.y += this.theDragDeltaY;
       }
@@ -8056,7 +8056,7 @@ class OptHandler {
     }
 
     // Get session data and check flags
-    const sessionData = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, false);
+    const sessionData = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
     if (sessionData) {
       // Check if attach-to-line is allowed
       allowDropOnLine = sessionData.flags & ConstantData.SessionFlags.SEDS_AttLink &&
@@ -8088,7 +8088,7 @@ class OptHandler {
       // Apply flipping if needed
       if (drawingObject.extraflags & (extraFlags.SEDE_FlipHoriz | extraFlags.SEDE_FlipVert)) {
         const flipRect = new Rectangle(0, 0, centerDimension, centerDimension);
-        GlobalData.optManager.FlipPoints(flipRect, drawingObject.extraflags, attachmentPoints);
+        T3Gv.optManager.FlipPoints(flipRect, drawingObject.extraflags, attachmentPoints);
       }
 
       // Get perimeter points and adjust for movement
@@ -8156,16 +8156,16 @@ class OptHandler {
 
     // Helper function to constrain movement within bounds
     const constrainMovementToBounds = () => {
-      if (GlobalData.optManager.theDragDeltaX < -GlobalData.optManager.theMoveBounds.x) {
-        GlobalData.optManager.theDragDeltaX = -GlobalData.optManager.theMoveBounds.x;
+      if (T3Gv.optManager.theDragDeltaX < -T3Gv.optManager.theMoveBounds.x) {
+        T3Gv.optManager.theDragDeltaX = -T3Gv.optManager.theMoveBounds.x;
       }
-      if (GlobalData.optManager.theDragDeltaY < -GlobalData.optManager.theMoveBounds.y) {
-        GlobalData.optManager.theDragDeltaY = -GlobalData.optManager.theMoveBounds.y;
+      if (T3Gv.optManager.theDragDeltaY < -T3Gv.optManager.theMoveBounds.y) {
+        T3Gv.optManager.theDragDeltaY = -T3Gv.optManager.theMoveBounds.y;
       }
     };
 
     // Handle pinned rectangle constraints if applicable
-    if (GlobalData.optManager.PinRect) {
+    if (T3Gv.optManager.PinRect) {
       const position = {
         x: mouseX,
         y: mouseY
@@ -8176,18 +8176,18 @@ class OptHandler {
     }
 
     // Calculate the delta (amount of movement)
-    GlobalData.optManager.theDragDeltaX = mouseX - GlobalData.optManager.theDragStartX;
-    GlobalData.optManager.theDragDeltaY = mouseY - GlobalData.optManager.theDragStartY;
+    T3Gv.optManager.theDragDeltaX = mouseX - T3Gv.optManager.theDragStartX;
+    T3Gv.optManager.theDragDeltaY = mouseY - T3Gv.optManager.theDragStartY;
     constrainMovementToBounds();
 
     // Calculate new bounds after movement for auto-growth
     let newBoundsLimit = {
-      x: GlobalData.optManager.theDragDeltaX + GlobalData.optManager.theMoveBounds.x + GlobalData.optManager.theMoveBounds.width,
-      y: GlobalData.optManager.theDragDeltaY + GlobalData.optManager.theMoveBounds.y + GlobalData.optManager.theMoveBounds.height
+      x: T3Gv.optManager.theDragDeltaX + T3Gv.optManager.theMoveBounds.x + T3Gv.optManager.theMoveBounds.width,
+      y: T3Gv.optManager.theDragDeltaY + T3Gv.optManager.theMoveBounds.y + T3Gv.optManager.theMoveBounds.height
     };
 
     // Apply auto-growth if necessary
-    newBoundsLimit = GlobalData.optManager.DoAutoGrowDrag(newBoundsLimit);
+    newBoundsLimit = T3Gv.optManager.DoAutoGrowDrag(newBoundsLimit);
 
     // Get the list of objects being moved
     const objectsToMove = this.theMoveList;
@@ -8220,7 +8220,7 @@ class OptHandler {
     }
 
     // Get the target object being dragged
-    let targetObject = GlobalData.optManager.GetObjectPtr(this.theDragTargetID, false);
+    let targetObject = T3Gv.optManager.GetObjectPtr(this.theDragTargetID, false);
     let snapOffset = { x: null, y: null };
     const currentPosition = { x: mouseX, y: mouseY };
 
@@ -8239,8 +8239,8 @@ class OptHandler {
     if (!isSnapDisabled && this.AllowSnapToShapes()) {
       objectRect = targetObject.GetSnapRect();
       targetRect = $.extend(true, {}, objectRect);
-      targetRect.x += GlobalData.optManager.theDragDeltaX;
-      targetRect.y += GlobalData.optManager.theDragDeltaY;
+      targetRect.x += T3Gv.optManager.theDragDeltaX;
+      targetRect.y += T3Gv.optManager.theDragDeltaY;
 
       const snapOptions = {};
       const snapTargetId = targetObject.CanSnapToShapes(snapOptions);
@@ -8249,8 +8249,8 @@ class OptHandler {
         // Get snap target rectangle
         objectRect = this.GetObjectPtr(snapTargetId, false).GetSnapRect();
         adjustedTargetRect = $.extend(true, {}, objectRect);
-        adjustedTargetRect.x += GlobalData.optManager.theDragDeltaX;
-        adjustedTargetRect.y += GlobalData.optManager.theDragDeltaY;
+        adjustedTargetRect.x += T3Gv.optManager.theDragDeltaX;
+        adjustedTargetRect.y += T3Gv.optManager.theDragDeltaY;
 
         // Create dynamic guides for snapping
         const dynamicGuides = new ListManager.Dynamic_Guides();
@@ -8268,13 +8268,13 @@ class OptHandler {
         if (snapOffset.x !== null) {
           currentPosition.x += snapOffset.x;
           adjustedTargetRect.x += snapOffset.x;
-          GlobalData.optManager.theDragDeltaX = currentPosition.x - GlobalData.optManager.theDragStartX;
+          T3Gv.optManager.theDragDeltaX = currentPosition.x - T3Gv.optManager.theDragStartX;
         }
 
         if (snapOffset.y !== null) {
           currentPosition.y += snapOffset.y;
           adjustedTargetRect.y += snapOffset.y;
-          GlobalData.optManager.theDragDeltaY = currentPosition.y - GlobalData.optManager.theDragStartY;
+          T3Gv.optManager.theDragDeltaY = currentPosition.y - T3Gv.optManager.theDragStartY;
         }
 
         constrainMovementToBounds();
@@ -8282,92 +8282,92 @@ class OptHandler {
     }
 
     // Handle grid snapping if enabled
-    if (GlobalData.docHandler.documentConfig.enableSnap && !isSnapDisabled) {
+    if (T3Gv.docHandler.documentConfig.enableSnap && !isSnapDisabled) {
       objectRect = targetObject.GetSnapRect();
       targetRect = $.extend(true, {}, objectRect);
-      targetRect.x += GlobalData.optManager.theDragDeltaX;
-      targetRect.y += GlobalData.optManager.theDragDeltaY;
+      targetRect.x += T3Gv.optManager.theDragDeltaX;
+      targetRect.y += T3Gv.optManager.theDragDeltaY;
 
       // Try custom snapping first
       if (targetObject && targetObject.CustomSnap(
         targetObject.Frame.x,
         targetObject.Frame.y,
-        GlobalData.optManager.theDragDeltaX,
-        GlobalData.optManager.theDragDeltaY,
+        T3Gv.optManager.theDragDeltaX,
+        T3Gv.optManager.theDragDeltaY,
         false,
         currentPosition
       )) {
         if (snapOffset.x === null) {
-          GlobalData.optManager.theDragDeltaX = currentPosition.x - GlobalData.optManager.theDragStartX;
+          T3Gv.optManager.theDragDeltaX = currentPosition.x - T3Gv.optManager.theDragStartX;
         }
 
         if (snapOffset.y === null) {
-          GlobalData.optManager.theDragDeltaY = currentPosition.y - GlobalData.optManager.theDragStartY;
+          T3Gv.optManager.theDragDeltaY = currentPosition.y - T3Gv.optManager.theDragStartY;
         }
 
         constrainMovementToBounds();
       }
       // Use center snapping if enabled
-      else if (GlobalData.docHandler.documentConfig.centerSnap) {
+      else if (T3Gv.docHandler.documentConfig.centerSnap) {
         // Snap based on object center
-        mousePosition.x = objectRect.x + GlobalData.optManager.theDragDeltaX + objectRect.width / 2;
-        mousePosition.y = objectRect.y + GlobalData.optManager.theDragDeltaY + objectRect.height / 2;
-        mousePosition = GlobalData.docHandler.SnapToGrid(mousePosition);
+        mousePosition.x = objectRect.x + T3Gv.optManager.theDragDeltaX + objectRect.width / 2;
+        mousePosition.y = objectRect.y + T3Gv.optManager.theDragDeltaY + objectRect.height / 2;
+        mousePosition = T3Gv.docHandler.SnapToGrid(mousePosition);
 
         if (snapOffset.x === null) {
-          GlobalData.optManager.theDragDeltaX = mousePosition.x - objectRect.x - objectRect.width / 2;
+          T3Gv.optManager.theDragDeltaX = mousePosition.x - objectRect.x - objectRect.width / 2;
         }
 
         if (snapOffset.y === null) {
-          GlobalData.optManager.theDragDeltaY = mousePosition.y - objectRect.y - objectRect.height / 2;
+          T3Gv.optManager.theDragDeltaY = mousePosition.y - objectRect.y - objectRect.height / 2;
         }
       }
       // Use regular rect snapping
       else {
         targetRect = $.extend(true, {}, objectRect);
-        targetRect.x += GlobalData.optManager.theDragDeltaX;
-        targetRect.y += GlobalData.optManager.theDragDeltaY;
+        targetRect.x += T3Gv.optManager.theDragDeltaX;
+        targetRect.y += T3Gv.optManager.theDragDeltaY;
 
-        const snapResult = GlobalData.docHandler.SnapRect(targetRect);
+        const snapResult = T3Gv.docHandler.SnapRect(targetRect);
 
         if (snapOffset.x === null) {
-          GlobalData.optManager.theDragDeltaX += snapResult.x;
+          T3Gv.optManager.theDragDeltaX += snapResult.x;
         }
 
         if (snapOffset.y === null) {
-          GlobalData.optManager.theDragDeltaY += snapResult.y;
+          T3Gv.optManager.theDragDeltaY += snapResult.y;
         }
       }
 
       // Handle enhanced snap (shift key) - constrain to horizontal or vertical
       if (isEnhancedSnap) {
-        if (Math.abs(GlobalData.optManager.theDragDeltaX) >= Math.abs(GlobalData.optManager.theDragDeltaY)) {
-          GlobalData.optManager.theDragDeltaY = 0;
+        if (Math.abs(T3Gv.optManager.theDragDeltaX) >= Math.abs(T3Gv.optManager.theDragDeltaY)) {
+          T3Gv.optManager.theDragDeltaY = 0;
         } else {
-          GlobalData.optManager.theDragDeltaX = 0;
+          T3Gv.optManager.theDragDeltaX = 0;
         }
       }
     }
 
     // Get session data and check if auto-grow is disabled
-    const sessionData = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, false);
+    const sessionData = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
 
-    if (GlobalData.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto) {
+    if (T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto) {
       // Constrain to document dimensions
-      const rightEdge = GlobalData.optManager.theMoveBounds.x +
-        GlobalData.optManager.theMoveBounds.width +
-        GlobalData.optManager.theDragDeltaX;
+      const rightEdge = T3Gv.optManager.theMoveBounds.x +
+        T3Gv.optManager.theMoveBounds.width +
+        T3Gv.optManager.theDragDeltaX;
 
       if (rightEdge > sessionData.dim.x) {
-        GlobalData.optManager.theDragDeltaX -= rightEdge - sessionData.dim.x;
+        T3Gv.optManager.theDragDeltaX -= rightEdge - sessionData.dim.x;
       }
 
-      const bottomEdge = GlobalData.optManager.theMoveBounds.y +
-        GlobalData.optManager.theMoveBounds.height +
-        GlobalData.optManager.theDragDeltaY;
+      const bottomEdge = T3Gv.optManager.theMoveBounds.y +
+        T3Gv.optManager.theMoveBounds.height +
+        T3Gv.optManager.theDragDeltaY;
 
       if (bottomEdge > sessionData.dim.y) {
-        GlobalData.optManager.theDragDeltaY -= bottomEdge - sessionData.dim.y;
+        T3Gv.optManager.theDragDeltaY -= bottomEdge - sessionData.dim.y;
       }
     }
 
@@ -8379,21 +8379,21 @@ class OptHandler {
 
     // Zero out deltas if skip scrolling is requested
     if (skipScrolling === true) {
-      GlobalData.optManager.theDragDeltaX = 0;
-      GlobalData.optManager.theDragDeltaY = 0;
+      T3Gv.optManager.theDragDeltaX = 0;
+      T3Gv.optManager.theDragDeltaY = 0;
     }
 
     // Move each object in the move list
     for (index = 0; index < objectCount; ++index) {
-      objectRect = GlobalData.optManager.theDragBBoxList[index];
+      objectRect = T3Gv.optManager.theDragBBoxList[index];
 
       // Special handling for the target selection
       if (objectsToMove[index] === targetSelectionId) {
         targetObject = this.GetObjectPtr(targetSelectionId, false);
 
         let displayDimensions = {
-          x: objectRect.x + GlobalData.optManager.theDragDeltaX,
-          y: objectRect.y + GlobalData.optManager.theDragDeltaY,
+          x: objectRect.x + T3Gv.optManager.theDragDeltaX,
+          y: objectRect.y + T3Gv.optManager.theDragDeltaY,
           width: objectRect.width,
           height: objectRect.height
         };
@@ -8401,8 +8401,8 @@ class OptHandler {
         if (targetObject) {
           // Get dimensions for display from the object
           displayDimensions = targetObject.GetDimensionsForDisplay();
-          displayDimensions.x += GlobalData.optManager.theDragDeltaX;
-          displayDimensions.y += GlobalData.optManager.theDragDeltaY;
+          displayDimensions.x += T3Gv.optManager.theDragDeltaX;
+          displayDimensions.y += T3Gv.optManager.theDragDeltaY;
 
           // Update hooked objects if connected
           if ((this.LinkParams && this.LinkParams.ConnectIndex >= 0) ||
@@ -8433,13 +8433,13 @@ class OptHandler {
         selectionAttributes.leftstr = this.GetLengthInRulerUnits(
           selectionAttributes.left,
           false,
-          GlobalData.docHandler.rulerSettings.originx,
+          T3Gv.docHandler.rulerSettings.originx,
           showFeetAsInches
         );
         selectionAttributes.topstr = this.GetLengthInRulerUnits(
           selectionAttributes.top,
           false,
-          GlobalData.docHandler.rulerSettings.originy,
+          T3Gv.docHandler.rulerSettings.originy,
           showFeetAsInches
         );
 
@@ -8453,17 +8453,17 @@ class OptHandler {
       }
 
       // Update SVG element position
-      svgElement = GlobalData.optManager.GetSVGDragElement(index);
+      svgElement = T3Gv.optManager.GetSVGDragElement(index);
       if (svgElement) {
         svgElement.SetPos(
-          objectRect.x + GlobalData.optManager.theDragDeltaX,
-          objectRect.y + GlobalData.optManager.theDragDeltaY
+          objectRect.x + T3Gv.optManager.theDragDeltaX,
+          objectRect.y + T3Gv.optManager.theDragDeltaY
         );
 
         // Send collaboration event for the move
         const newRect = {
-          x: objectRect.x + GlobalData.optManager.theDragDeltaX,
-          y: objectRect.y + GlobalData.optManager.theDragDeltaY,
+          x: objectRect.x + T3Gv.optManager.theDragDeltaX,
+          y: objectRect.y + T3Gv.optManager.theDragDeltaY,
           width: objectRect.width,
           height: objectRect.height
         };
@@ -8477,8 +8477,8 @@ class OptHandler {
     }
 
     console.log("O.Opt HandleObjectDragMoveCommon - Output:", {
-      deltaX: GlobalData.optManager.theDragDeltaX,
-      deltaY: GlobalData.optManager.theDragDeltaY,
+      deltaX: T3Gv.optManager.theDragDeltaX,
+      deltaY: T3Gv.optManager.theDragDeltaY,
       objectsProcessed: objectCount
     });
   }
@@ -8536,7 +8536,7 @@ class OptHandler {
     console.log("O.Opt SetShapeOriginNoDirty - Input:", { objectId, newX, newY });
 
     const originalPosition = {};
-    const objectData = GlobalData.objectStore.PreserveBlock(objectId).Data;
+    const objectData = T3Gv.objectStore.PreserveBlock(objectId).Data;
 
     originalPosition.x = objectData.Frame.x;
     originalPosition.y = objectData.Frame.y;
@@ -8724,17 +8724,17 @@ class OptHandler {
             let angle180 = (textAngle + 180) % 360;
 
             // Choose the angle with the smallest difference to current rotation
-            textAngle = GlobalData.optManager.GetAngleSmallestDiff(textAngle, shapeAngle) <
-              GlobalData.optManager.GetAngleSmallestDiff(angle180, shapeAngle) ?
+            textAngle = T3Gv.optManager.GetAngleSmallestDiff(textAngle, shapeAngle) <
+              T3Gv.optManager.GetAngleSmallestDiff(angle180, shapeAngle) ?
               textAngle : angle180;
 
             // Only update if angle difference is significant
             if (Math.abs(shapeAngle - textAngle) > 2 &&
               Math.abs(shapeAngle - Math.abs(textAngle - 180)) > 2) {
 
-              GlobalData.objectStore.PreserveBlock(links[linkIndex].hookid);
+              T3Gv.objectStore.PreserveBlock(links[linkIndex].hookid);
               hookObject.RotationAngle = textAngle;
-              GlobalData.optManager.AddToDirtyList(hookObject.BlockID);
+              T3Gv.optManager.AddToDirtyList(hookObject.BlockID);
             }
           }
         }
@@ -8834,7 +8834,7 @@ class OptHandler {
       const table = drawingObject.GetTable(false);
 
       if (table) {
-        const cellIndex = GlobalData.optManager.Table_GetCellClicked(drawingObject, eventPosition);
+        const cellIndex = T3Gv.optManager.Table_GetCellClicked(drawingObject, eventPosition);
 
         if (cellIndex >= 0) {
           const cell = table.cells[cellIndex];
@@ -8892,7 +8892,7 @@ class OptHandler {
     const usableHeight = originalDimensions.y - 2 * edgeAnnotationDistance;
 
     // Get layers manager from the object store
-    const layersManager = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
+    const layersManager = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
     const layers = layersManager.layers;
     const numberOfLayers = layersManager.nlayers;
 
@@ -8919,7 +8919,7 @@ class OptHandler {
           }
 
           // Get the object and check if it needs edge updates
-          currentObject = GlobalData.optManager.GetObjectPtr(objectId, false);
+          currentObject = T3Gv.optManager.GetObjectPtr(objectId, false);
           if (currentObject) {
             // Determine which edges the object needs
             needsLeftEdge = currentObject.Frame.x < leftEdgeOffset;
@@ -8939,7 +8939,7 @@ class OptHandler {
 
     // Redraw if any objects were updated
     if (needsRedraw) {
-      GlobalData.optManager.RenderDirtySVGObjects();
+      T3Gv.optManager.RenderDirtySVGObjects();
     }
 
     // Restore the original dirty list
@@ -8955,10 +8955,10 @@ class OptHandler {
     console.log("O.Opt ResizeSVGDocument - Input: No parameters");
 
     // Get the session data from stored object
-    const sessionData = GlobalData.objectStore.GetObject(this.theSEDSessionBlockID).Data;
+    const sessionData = T3Gv.objectStore.GetObject(this.theSEDSessionBlockID).Data;
 
     // Resize the document to the dimensions specified in session data
-    GlobalData.docHandler.ResizeDocument(sessionData.dim.x, sessionData.dim.y);
+    T3Gv.docHandler.ResizeDocument(sessionData.dim.x, sessionData.dim.y);
 
     console.log("O.Opt ResizeSVGDocument - Output: Document resized to", sessionData.dim);
   }
@@ -8979,7 +8979,7 @@ class OptHandler {
       const elementId = targetElement.GetID();
       const elementUserData = targetElement.GetUserData();
       const objectId = svgElement.GetID();
-      const drawingObject = GlobalData.optManager.GetObjectPtr(objectId, false);
+      const drawingObject = T3Gv.optManager.GetObjectPtr(objectId, false);
 
       // Validate that we have a drawing object
       if (!(drawingObject && drawingObject instanceof BaseDrawingObject)) {
@@ -9017,19 +9017,19 @@ class OptHandler {
     console.log("O.Opt HandleObjectDragDoAutoScroll - Input: Starting auto-scroll");
 
     // Schedule next auto-scroll
-    GlobalData.optManager.autoScrollTimerID = this.autoScrollTimer.setTimeout("HandleObjectDragDoAutoScroll", 100);
+    T3Gv.optManager.autoScrollTimerID = this.autoScrollTimer.setTimeout("HandleObjectDragDoAutoScroll", 100);
 
     // Convert window coordinates to document coordinates
-    const documentCoords = GlobalData.optManager.svgDoc.ConvertWindowToDocCoords(
-      GlobalData.optManager.autoScrollXPos,
-      GlobalData.optManager.autoScrollYPos
+    const documentCoords = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(
+      T3Gv.optManager.autoScrollXPos,
+      T3Gv.optManager.autoScrollYPos
     );
 
     // Scroll to the position
-    GlobalData.docHandler.ScrollToPosition(documentCoords.x, documentCoords.y);
+    T3Gv.docHandler.ScrollToPosition(documentCoords.x, documentCoords.y);
 
     // Continue object dragging at the new position
-    GlobalData.optManager.HandleObjectDragMoveCommon(documentCoords.x, documentCoords.y);
+    T3Gv.optManager.HandleObjectDragMoveCommon(documentCoords.x, documentCoords.y);
 
     console.log("O.Opt HandleObjectDragDoAutoScroll - Output: Position updated", documentCoords);
   }
@@ -9041,12 +9041,12 @@ class OptHandler {
     console.log("O.Opt PreDragDropOrStamp - Input: No parameters");
 
     // Clean up existing hammer instance if it exists
-    if (GlobalData.optManager.MainAppHammer) {
-      GlobalData.optManager.UnbindDragDropOrStamp();
+    if (T3Gv.optManager.MainAppHammer) {
+      T3Gv.optManager.UnbindDragDropOrStamp();
     }
 
     // Create a new hammer instance for the main application element
-    GlobalData.optManager.MainAppHammer = Hammer(GlobalData.optManager.MainAppElement);
+    T3Gv.optManager.MainAppHammer = Hammer(T3Gv.optManager.MainAppElement);
 
     console.log("O.Opt PreDragDropOrStamp - Output: Hammer manager created for drag/drop operations");
   }
@@ -9071,7 +9071,7 @@ class OptHandler {
 
     // Check if object is inside a container cell
     if (drawingObject instanceof ShapeContainer) {
-      const cellContainer = GlobalData.optManager.ContainerIsInCell(drawingObject);
+      const cellContainer = T3Gv.optManager.ContainerIsInCell(drawingObject);
       if (cellContainer) {
         drawingObject = cellContainer.obj;
         objectId = drawingObject.BlockID;
@@ -9140,7 +9140,7 @@ class OptHandler {
         let expandedViewId;
         const cellForExpandedView = drawingObject.IsNoteCell(userData);
         expandedViewId = cellForExpandedView ? cellForExpandedView.ExpandedViewID : drawingObject.ExpandedViewID;
-        GlobalData.optManager.ShowExpandedView(expandedViewId, event);
+        T3Gv.optManager.ShowExpandedView(expandedViewId, event);
         console.log("O.Opt LM_ShapeIconClick - Output: false (Expanded view shown)");
         break;
 
@@ -9156,7 +9156,7 @@ class OptHandler {
           }
         }
 
-        GlobalData.optManager.EditComments(commentId);
+        T3Gv.optManager.EditComments(commentId);
         console.log("O.Opt LM_ShapeIconClick - Output: false (Comment edit opened)");
         break;
 
@@ -9251,8 +9251,8 @@ class OptHandler {
     // Handle tables
     const table = drawingObject.GetTable(false);
     if (table && event) {
-      const cellIndex = GlobalData.optManager.Table_GetCellClicked(drawingObject, event);
-      if (cellIndex >= 0 && !GlobalData.optManager.Table_AllowCellTextEdit(table, cellIndex)) {
+      const cellIndex = T3Gv.optManager.Table_GetCellClicked(drawingObject, event);
+      if (cellIndex >= 0 && !T3Gv.optManager.Table_AllowCellTextEdit(table, cellIndex)) {
         console.log('O.Opt ActivateTextEdit - Output: Cell text editing not allowed');
         return;
       }
@@ -9334,7 +9334,7 @@ class OptHandler {
 
         // Create a new text object
         const newTextObject = new TextObject({});
-        const newTextBlock = GlobalData.objectStore.CreateBlock(
+        const newTextBlock = T3Gv.objectStore.CreateBlock(
           ConstantData.StoredObjectType.LM_TEXT_OBJECT,
           newTextObject
         );
@@ -9384,7 +9384,7 @@ class OptHandler {
           // Move text element to front if not attached to something
           if ((drawingObject.TextFlags & ConstantData.TextFlags.SED_TF_AttachA) == 0 &&
             (drawingObject.TextFlags & ConstantData.TextFlags.SED_TF_AttachB) == 0) {
-            GlobalData.optManager.svgObjectLayer.MoveElementToFront(svgElement);
+            T3Gv.optManager.svgObjectLayer.MoveElementToFront(svgElement);
           }
         }
       }
@@ -9520,8 +9520,8 @@ class OptHandler {
     // If no object has been created yet, create it when cursor is within document boundaries
     if (this.theActionStoredObjectID < 0) {
       // Check if cursor is within document boundaries
-      if (clientX < GlobalData.optManager.svgDoc.docInfo.dispX ||
-        clientY < GlobalData.optManager.svgDoc.docInfo.dispY) {
+      if (clientX < T3Gv.optManager.svgDoc.docInfo.dispX ||
+        clientY < T3Gv.optManager.svgDoc.docInfo.dispY) {
         console.log(`O.Opt StampObjectMove - Output: Cursor outside document boundaries`);
         return;
       }
@@ -9587,19 +9587,19 @@ class OptHandler {
       }
 
       // Set up drag end handler
-      GlobalData.Evt_StampObjectDragEnd = EvtUtil.Evt_StampObjectDragEndFactory(useDefaultStyle);
+      T3Gv.Evt_StampObjectDragEnd = EvtUtil.Evt_StampObjectDragEndFactory(useDefaultStyle);
 
       // Initialize hammer.js for gesture handling
-      if (!GlobalData.optManager.MainAppHammer) {
-        GlobalData.optManager.PreDragDropOrStamp();
+      if (!T3Gv.optManager.MainAppHammer) {
+        T3Gv.optManager.PreDragDropOrStamp();
       }
 
       // Disable default work area hammer to prevent conflicts
       this.WorkAreaHammer.enable(false);
 
       // Register event handlers for shape dragging
-      GlobalData.optManager.MainAppHammer.on('mousemove', EvtUtil.Evt_StampObjectDrag);
-      GlobalData.optManager.MainAppHammer.on('dragend', GlobalData.Evt_StampObjectDragEnd);
+      T3Gv.optManager.MainAppHammer.on('mousemove', EvtUtil.Evt_StampObjectDrag);
+      T3Gv.optManager.MainAppHammer.on('dragend', T3Gv.Evt_StampObjectDragEnd);
 
       // Initialize tracking and prepare for movement
       this.LM_StampPreTrack();
@@ -9608,8 +9608,8 @@ class OptHandler {
       console.log("O.Opt DragDropNewShape - Output: Drag and drop initialized");
     } catch (error) {
       console.log("O.Opt DragDropNewShape - Error:", error);
-      GlobalData.optManager.CancelModalOperation();
-      GlobalData.optManager.ExceptionCleanup(error);
+      T3Gv.optManager.CancelModalOperation();
+      T3Gv.optManager.ExceptionCleanup(error);
       throw error;
     }
   }
@@ -9666,9 +9666,9 @@ class OptHandler {
 
     // Bind mouse event handlers for stamping operation
     $(window).bind('mousemove', EvtUtil.Evt_MouseStampObjectMove);
-    GlobalData.SDJS_LM_MouseStampObjectDone = EvtUtil.Evt_MouseStampObjectDoneFactory(useDefaultStyle);
-    $(window).bind('mousedown', GlobalData.SDJS_LM_MouseStampObjectDone);
-    $(window).bind('click', GlobalData.SDJS_LM_MouseStampObjectDone);
+    T3Gv.SDJS_LM_MouseStampObjectDone = EvtUtil.Evt_MouseStampObjectDoneFactory(useDefaultStyle);
+    $(window).bind('mousedown', T3Gv.SDJS_LM_MouseStampObjectDone);
+    $(window).bind('click', T3Gv.SDJS_LM_MouseStampObjectDone);
 
     // Prepare for stamping
     this.LM_StampPreTrack();
@@ -9687,17 +9687,17 @@ class OptHandler {
 
     try {
       // Get document information
-      const docInfo = GlobalData.optManager.svgDoc.docInfo;
+      const docInfo = T3Gv.optManager.svgDoc.docInfo;
       let isOutsideWorkArea = false;
       const objectsToSelect = [];
 
       // Reset auto-scroll timer
-      GlobalData.optManager.ResetAutoScrollTimer();
+      T3Gv.optManager.ResetAutoScrollTimer();
 
       // Check if cursor is outside document boundaries
       if (event.clientX >= docInfo.dispX + docInfo.dispWidth ||
-        event.clientX < GlobalData.optManager.svgDoc.docInfo.dispX ||
-        event.clientY < GlobalData.optManager.svgDoc.docInfo.dispY) {
+        event.clientX < T3Gv.optManager.svgDoc.docInfo.dispX ||
+        event.clientY < T3Gv.optManager.svgDoc.docInfo.dispY) {
 
         isOutsideWorkArea = true;
       }
@@ -9734,10 +9734,10 @@ class OptHandler {
         const isConnectOperation = this.LinkParams && this.LinkParams.SConnectIndex >= 0;
         const isSnappingOverridden = this.OverrideSnaps(event);
 
-        if (GlobalData.docHandler.documentConfig.enableSnap &&
+        if (T3Gv.docHandler.documentConfig.enableSnap &&
           !isConnectOperation &&
           !isSnappingOverridden) {
-          docCoordinates = GlobalData.docHandler.SnapToGrid(docCoordinates);
+          docCoordinates = T3Gv.docHandler.SnapToGrid(docCoordinates);
         }
       }
 
@@ -9778,7 +9778,7 @@ class OptHandler {
 
           // Special handling for frame objects
           if (this.theDrawShape.objecttype === ConstantData.ObjectTypes.SD_OBJT_FRAME) {
-            const zList = GlobalData.optManager.ZListPreserve();
+            const zList = T3Gv.optManager.ZListPreserve();
             replacedObjectId = this.ReplaceSpecialObject(
               this.theDrawShape,
               this.theActionStoredObjectID,
@@ -9809,8 +9809,8 @@ class OptHandler {
       this.SetLinkFlagsOnFilledClosedPolylines();
 
       // Special handling for floor plans
-      if (GlobalData.gBusinessManager instanceof FloorPlan) {
-        GlobalData.gBusinessManager.EnsureCubicleBehindOutline(this.theActionStoredObjectID);
+      if (T3Gv.gBusinessManager instanceof FloorPlan) {
+        T3Gv.gBusinessManager.EnsureCubicleBehindOutline(this.theActionStoredObjectID);
       }
 
       // Reset edit mode and clean up event handlers
@@ -9887,9 +9887,9 @@ class OptHandler {
       console.log("O.Opt MouseStampObjectDone - Output: Stamp operation completed successfully");
     } catch (error) {
       console.log("O.Opt MouseStampObjectDone - Error:", error);
-      GlobalData.optManager.CancelModalOperation();
-      GlobalData.optManager.DragDrop_ExceptionCleanup();
-      GlobalData.optManager.ExceptionCleanup(error);
+      T3Gv.optManager.CancelModalOperation();
+      T3Gv.optManager.DragDrop_ExceptionCleanup();
+      T3Gv.optManager.ExceptionCleanup(error);
     }
   }
 
@@ -9905,7 +9905,7 @@ class OptHandler {
 
     // Handle the specific object if provided
     if (objectId) {
-      object = GlobalData.optManager.GetObjectPtr(objectId, false);
+      object = T3Gv.optManager.GetObjectPtr(objectId, false);
 
       // Set flags if it's a closed polyline
       if (object &&
@@ -9913,7 +9913,7 @@ class OptHandler {
         object.polylist &&
         object.polylist.closed) {
 
-        GlobalData.optManager.SetLinkFlag(
+        T3Gv.optManager.SetLinkFlag(
           objectId,
           ConstantData.LinkFlags.SED_L_MOVE | ConstantData.LinkFlags.SED_L_CHANGE
         );
@@ -9939,7 +9939,7 @@ class OptHandler {
               hookedObject.polylist &&
               hookedObject.polylist.closed) {
 
-              GlobalData.optManager.SetLinkFlag(
+              T3Gv.optManager.SetLinkFlag(
                 moveObject.hooks[hookIndex].objid,
                 ConstantData.LinkFlags.SED_L_MOVE | ConstantData.LinkFlags.SED_L_CHANGE
               );
@@ -9982,7 +9982,7 @@ class OptHandler {
       $(window).unbind('mousedown');
       $(window).unbind('click');
       $(window).unbind('mousemove', EvtUtil.Evt_MouseStampObjectMove);
-      GlobalData.optManager.WorkAreaHammer.enable(true);
+      T3Gv.optManager.WorkAreaHammer.enable(true);
     }
 
     // Reset all stamp-related properties
@@ -10005,8 +10005,8 @@ class OptHandler {
     console.log('O.Opt DragDrop_ExceptionCleanup - Input: No parameters');
 
     // Reset empty lists
-    GlobalData.optManager.EmptyEMFList = [];
-    GlobalData.optManager.EmptySymbolList = [];
+    T3Gv.optManager.EmptyEMFList = [];
+    T3Gv.optManager.EmptySymbolList = [];
 
     // Unlock collaboration messages
     Collab.UnLockMessages();
@@ -10051,7 +10051,7 @@ class OptHandler {
 
     // Unbind events if requested
     if (shouldUnbindEvents) {
-      GlobalData.optManager.UnbindDragDropOrStamp();
+      T3Gv.optManager.UnbindDragDropOrStamp();
     }
 
     // Reset all stamp-related properties
@@ -10073,7 +10073,7 @@ class OptHandler {
     console.log("O.Opt LM_StampPreTrack - Input: No parameters");
 
     // Get the session data (not directly used in this function)
-    GlobalData.optManager.GetObjectPtr(this.theSEDSessionBlockID, false);
+    T3Gv.optManager.GetObjectPtr(this.theSEDSessionBlockID, false);
 
     // Initialize link parameters
     this.LinkParams = new LinkParameters();
@@ -10106,10 +10106,10 @@ class OptHandler {
     try {
       let isTextOnlyObject = false;
       Utils2.StopPropagationAndDefaults(event);
-      GlobalData.optManager.ResetAutoScrollTimer();
+      T3Gv.optManager.ResetAutoScrollTimer();
 
       let index, objectCount, currentObject, replacedObjectId;
-      const docInfo = GlobalData.optManager.svgDoc.docInfo;
+      const docInfo = T3Gv.optManager.svgDoc.docInfo;
       let isOutsideWorkArea = false;
       const objectsToSelect = [];
 
@@ -10118,11 +10118,11 @@ class OptHandler {
         isOutsideWorkArea = true;
       }
 
-      if (event.gesture.center.clientX < GlobalData.optManager.svgDoc.docInfo.dispX) {
+      if (event.gesture.center.clientX < T3Gv.optManager.svgDoc.docInfo.dispX) {
         isOutsideWorkArea = true;
       }
 
-      if (event.gesture.center.clientY < GlobalData.optManager.svgDoc.docInfo.dispY) {
+      if (event.gesture.center.clientY < T3Gv.optManager.svgDoc.docInfo.dispY) {
         isOutsideWorkArea = true;
       }
 
@@ -10158,8 +10158,8 @@ class OptHandler {
         const isConnectOperation = this.LinkParams && this.LinkParams.SConnectIndex >= 0;
         const isSnappingOverridden = this.OverrideSnaps(event);
 
-        if (GlobalData.docHandler.documentConfig.enableSnap && !isConnectOperation && !isSnappingOverridden) {
-          docCoordinates = GlobalData.docHandler.SnapToGrid(docCoordinates);
+        if (T3Gv.docHandler.documentConfig.enableSnap && !isConnectOperation && !isSnappingOverridden) {
+          docCoordinates = T3Gv.docHandler.SnapToGrid(docCoordinates);
         }
       }
 
@@ -10209,7 +10209,7 @@ class OptHandler {
 
           // Special handling for frame objects
           if (this.theDrawShape.objecttype === ConstantData.ObjectTypes.SD_OBJT_FRAME) {
-            const zList = GlobalData.optManager.ZListPreserve();
+            const zList = T3Gv.optManager.ZListPreserve();
             replacedObjectId = this.ReplaceSpecialObject(
               this.theDrawShape,
               this.theActionStoredObjectID,
@@ -10259,7 +10259,7 @@ class OptHandler {
 
       // Reset edit mode and prepare selection
       this.SetEditMode(ConstantData.EditState.DEFAULT);
-      GlobalData.optManager.UnbindDragDropOrStamp();
+      T3Gv.optManager.UnbindDragDropOrStamp();
 
       if (!isTextOnlyObject) {
         objectsToSelect.push(this.theActionStoredObjectID);
@@ -10268,7 +10268,7 @@ class OptHandler {
       // Get business manager for the target object
       let businessManager = Business.GetSelectionBusinessManager(targetObjectId);
       if (businessManager == null) {
-        businessManager = GlobalData.gBusinessManager;
+        businessManager = T3Gv.gBusinessManager;
       }
 
       // Handle floor plan special case
@@ -10346,9 +10346,9 @@ class OptHandler {
       console.log("O.Opt DragDropObjectDone - Output: Drag-drop operation completed successfully");
     } catch (error) {
       console.log("O.Opt DragDropObjectDone - Error:", error);
-      GlobalData.optManager.CancelModalOperation();
-      GlobalData.optManager.DragDrop_ExceptionCleanup();
-      GlobalData.optManager.ExceptionCleanup(error);
+      T3Gv.optManager.CancelModalOperation();
+      T3Gv.optManager.DragDrop_ExceptionCleanup();
+      T3Gv.optManager.ExceptionCleanup(error);
       throw error;
     }
   }
@@ -10368,7 +10368,7 @@ class OptHandler {
     // Add the new object
     if ((newObjectID = this.AddNewObject(this.theDrawShape, useDefaultStyle, false)) >= 0) {
       this.theActionStoredObjectID = newObjectID;
-      let visibleZList = GlobalData.optManager.VisibleZList();
+      let visibleZList = T3Gv.optManager.VisibleZList();
       this.theDragBBoxList = [];
       this.theDragElementList = [];
 
@@ -10407,13 +10407,13 @@ class OptHandler {
             this.theDragElementList.push(moveObjectID);
 
             // Set up snap target if enabled
-            if (GlobalData.docHandler.documentConfig.enableSnap &&
+            if (T3Gv.docHandler.documentConfig.enableSnap &&
               moveObjectID === this.theActionStoredObjectID) {
               this.theDragTargetBBox = $.extend(true, {}, svgFrame);
             }
 
             // Calculate enclosing rectangle
-            this.theDragEnclosingRect = GlobalData.optManager.GetListSRect(
+            this.theDragEnclosingRect = T3Gv.optManager.GetListSRect(
               this.theMoveList,
               false,
               true
@@ -10424,7 +10424,7 @@ class OptHandler {
       // Handle objects with native data
       else if (hasNativeData) {
         let newObject = this.GetObjectPtr(newObjectID, false);
-        let sessionBlock = GlobalData.optManager.GetObjectPtr(this.theSEDSessionBlockID, false);
+        let sessionBlock = T3Gv.optManager.GetObjectPtr(this.theSEDSessionBlockID, false);
         let hasImageURL = newObject.ImageURL && newObject.ImageURL.length > 0;
 
         // Apply curvature if applicable
@@ -10446,8 +10446,8 @@ class OptHandler {
         this.LinkParams.lpCircList.push(this.theActionStoredObjectID);
       }
 
-      GlobalData.optManager.ShowFrame(true);
-      GlobalData.optManager.ShowXY(true);
+      T3Gv.optManager.ShowFrame(true);
+      T3Gv.optManager.ShowXY(true);
     }
 
     console.log(`O.Opt MouseAddNewShape - Output: New object created with ID:`, newObjectID);
@@ -10460,20 +10460,20 @@ class OptHandler {
     console.log("O.Opt HandleStampDragDoAutoScroll - Input: Starting auto-scroll");
 
     // Schedule next auto-scroll
-    GlobalData.optManager.autoScrollTimerID = this.autoScrollTimer.setTimeout(
+    T3Gv.optManager.autoScrollTimerID = this.autoScrollTimer.setTimeout(
       'HandleStampDragDoAutoScroll',
       100
     );
 
     // Convert window coordinates to document coordinates
-    const documentCoords = GlobalData.optManager.svgDoc.ConvertWindowToDocCoords(
-      GlobalData.optManager.autoScrollXPos,
-      GlobalData.optManager.autoScrollYPos
+    const documentCoords = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(
+      T3Gv.optManager.autoScrollXPos,
+      T3Gv.optManager.autoScrollYPos
     );
 
     // Scroll to the position and update the stamp object
-    GlobalData.docHandler.ScrollToPosition(documentCoords.x, documentCoords.y);
-    GlobalData.optManager.StampObjectMoveCommon(documentCoords.x, documentCoords.y);
+    T3Gv.docHandler.ScrollToPosition(documentCoords.x, documentCoords.y);
+    T3Gv.optManager.StampObjectMoveCommon(documentCoords.x, documentCoords.y);
 
     console.log("O.Opt HandleStampDragDoAutoScroll - Output: Position updated", documentCoords);
   }
@@ -10492,8 +10492,8 @@ class OptHandler {
     if (this.theActionStoredObjectID < 0) {
       if (
         !(
-          event.clientX >= GlobalData.optManager.svgDoc.docInfo.dispX &&
-          event.clientY >= GlobalData.optManager.svgDoc.docInfo.dispY
+          event.clientX >= T3Gv.optManager.svgDoc.docInfo.dispX &&
+          event.clientY >= T3Gv.optManager.svgDoc.docInfo.dispY
         )
       ) {
         console.log("O.Opt MouseStampObjectMove - Output: Cursor outside document boundaries");
@@ -10542,8 +10542,8 @@ class OptHandler {
     // Handle visibility based on object position
     if (this.theActionStoredObjectID > 0) {
       const isOutsideViewport =
-        windowCoords.x < GlobalData.optManager.svgDoc.docInfo.dispX ||
-        windowCoords.y < GlobalData.optManager.svgDoc.docInfo.dispY;
+        windowCoords.x < T3Gv.optManager.svgDoc.docInfo.dispX ||
+        windowCoords.y < T3Gv.optManager.svgDoc.docInfo.dispY;
 
       if (isOutsideViewport) {
         if (this.NewObjectVisible) {
@@ -10551,7 +10551,7 @@ class OptHandler {
           if (this.theMoveList && this.theMoveList.length) {
             for (let i = 0; i < this.theMoveList.length; ++i) {
               objectId = this.theMoveList[i];
-              dragElement = GlobalData.optManager.GetSVGDragElement(i);
+              dragElement = T3Gv.optManager.GetSVGDragElement(i);
               if (dragElement) {
                 dragElement.SetVisible(false);
               }
@@ -10561,8 +10561,8 @@ class OptHandler {
           }
 
           this.NewObjectVisible = false;
-          GlobalData.optManager.ShowFrame(false);
-          GlobalData.optManager.ShowXY(false);
+          T3Gv.optManager.ShowFrame(false);
+          T3Gv.optManager.ShowXY(false);
         }
         console.log("O.Opt StampObjectMoveCommon - Output: Object outside viewport, hidden");
         return;
@@ -10573,7 +10573,7 @@ class OptHandler {
         if (this.theMoveList && this.theMoveList.length) {
           for (let i = 0; i < this.theMoveList.length; ++i) {
             objectId = this.theMoveList[i];
-            dragElement = GlobalData.optManager.GetSVGDragElement(i);
+            dragElement = T3Gv.optManager.GetSVGDragElement(i);
             if (dragElement) {
               dragElement.SetVisible(true);
             }
@@ -10583,8 +10583,8 @@ class OptHandler {
         }
 
         this.NewObjectVisible = true;
-        GlobalData.optManager.ShowFrame(true);
-        GlobalData.optManager.ShowXY(true);
+        T3Gv.optManager.ShowFrame(true);
+        T3Gv.optManager.ShowXY(true);
       }
     }
 
@@ -10642,13 +10642,13 @@ class OptHandler {
     }
 
     // Handle grid snapping if enabled
-    if (GlobalData.docHandler.documentConfig.enableSnap && !isSnapDisabled && !isTextOnlyObject) {
+    if (T3Gv.docHandler.documentConfig.enableSnap && !isSnapDisabled && !isTextOnlyObject) {
       let objectRect, targetRect;
 
       // Get appropriate rectangles based on whether we're moving multiple objects
       if (this.theMoveList && this.theMoveList.length) {
         objectIndex = this.theMoveList.indexOf(this.theActionStoredObjectID);
-        targetRect = Utils1.DeepCopy(GlobalData.optManager.theDragBBoxList[objectIndex]);
+        targetRect = Utils1.DeepCopy(T3Gv.optManager.theDragBBoxList[objectIndex]);
         objectRect = drawingObject.GetSnapRect();
       } else {
         targetRect = Utils1.DeepCopy(this.theActionBBox);
@@ -10684,8 +10684,8 @@ class OptHandler {
           // Custom snap handled by the object
         }
         // Apply center snap if enabled
-        else if (GlobalData.docHandler.documentConfig.centerSnap) {
-          const snapResult = GlobalData.docHandler.SnapToGrid(currentPosition);
+        else if (T3Gv.docHandler.documentConfig.centerSnap) {
+          const snapResult = T3Gv.docHandler.SnapToGrid(currentPosition);
           if (snapOffset.x === null) {
             currentPosition.x = snapResult.x;
           }
@@ -10695,7 +10695,7 @@ class OptHandler {
         }
         // Apply standard grid snapping
         else {
-          const snapResult = GlobalData.docHandler.SnapRect(snapRect);
+          const snapResult = T3Gv.docHandler.SnapRect(snapRect);
           if (snapOffset.x === null) {
             currentPosition.x += snapResult.x;
           }
@@ -10718,7 +10718,7 @@ class OptHandler {
         y: currentPosition.y + objectRect.height / 2
       };
 
-      centerPoint = GlobalData.optManager.DoAutoGrowDrag(centerPoint);
+      centerPoint = T3Gv.optManager.DoAutoGrowDrag(centerPoint);
 
       // Update position based on center point
       currentPosition.x = centerPoint.x - objectRect.width / 2;
@@ -10737,7 +10737,7 @@ class OptHandler {
       }
 
       // Get the target rectangle
-      objectRect = GlobalData.optManager.theDragBBoxList[objectIndex];
+      objectRect = T3Gv.optManager.theDragBBoxList[objectIndex];
 
       // Update the shape origin
       drawingObject.SetShapeOrigin(objectRect.x + xOffset, objectRect.y + yOffset);
@@ -10747,7 +10747,7 @@ class OptHandler {
 
       // Update display coordinates
       const dimensionsData = drawingObject.GetDimensionsForDisplay();
-      GlobalData.optManager.UpdateDisplayCoordinates(
+      T3Gv.optManager.UpdateDisplayCoordinates(
         dimensionsData,
         currentPosition,
         ConstantData.CursorTypes.Plus,
@@ -10767,13 +10767,13 @@ class OptHandler {
       selectionAttrs.leftstr = this.GetLengthInRulerUnits(
         selectionAttrs.left,
         false,
-        GlobalData.docHandler.rulerSettings.originx,
+        T3Gv.docHandler.rulerSettings.originx,
         showFeetAsInches
       );
       selectionAttrs.topstr = this.GetLengthInRulerUnits(
         selectionAttrs.top,
         false,
-        GlobalData.docHandler.rulerSettings.originy,
+        T3Gv.docHandler.rulerSettings.originy,
         showFeetAsInches
       );
 
@@ -10784,13 +10784,13 @@ class OptHandler {
 
         if (object) {
           if (objectId !== this.theActionStoredObjectID) {
-            objectRect = GlobalData.optManager.theDragBBoxList[i];
+            objectRect = T3Gv.optManager.theDragBBoxList[i];
             if (!objectRect) continue;
 
             object.SetShapeOrigin(objectRect.x + xOffset, objectRect.y + yOffset);
           }
 
-          dragElement = GlobalData.optManager.GetSVGDragElement(i);
+          dragElement = T3Gv.optManager.GetSVGDragElement(i);
 
           // Handle SVG fragment symbols
           if (!dragElement &&
@@ -10798,12 +10798,12 @@ class OptHandler {
             object.SVGFragment) {
 
             if (!visibleList) {
-              visibleList = GlobalData.optManager.VisibleZList();
+              visibleList = T3Gv.optManager.VisibleZList();
             }
 
             listIndex = visibleList.indexOf(objectId);
             this.AddSVGObject(listIndex, objectId, true, false);
-            dragElement = GlobalData.optManager.svgObjectLayer.GetElementByID(objectId);
+            dragElement = T3Gv.optManager.svgObjectLayer.GetElementByID(objectId);
           }
 
           if (dragElement) {
@@ -10824,7 +10824,7 @@ class OptHandler {
         y: currentPosition.y + dragEnclosingRect.height / 2
       };
 
-      centerPoint = GlobalData.optManager.DoAutoGrowDrag(centerPoint);
+      centerPoint = T3Gv.optManager.DoAutoGrowDrag(centerPoint);
 
       // Update position based on center point
       currentPosition.x = centerPoint.x - dragEnclosingRect.width / 2;
@@ -10855,7 +10855,7 @@ class OptHandler {
 
       // Update display coordinates
       const dimensionsData = drawingObject.GetDimensionsForDisplay();
-      GlobalData.optManager.UpdateDisplayCoordinates(
+      T3Gv.optManager.UpdateDisplayCoordinates(
         dimensionsData,
         currentPosition,
         ConstantData.CursorTypes.Move,
@@ -10875,13 +10875,13 @@ class OptHandler {
       selectionAttrs.leftstr = this.GetLengthInRulerUnits(
         selectionAttrs.left,
         false,
-        GlobalData.docHandler.rulerSettings.originx,
+        T3Gv.docHandler.rulerSettings.originx,
         showFeetAsInches
       );
       selectionAttrs.topstr = this.GetLengthInRulerUnits(
         selectionAttrs.top,
         false,
-        GlobalData.docHandler.rulerSettings.originy,
+        T3Gv.docHandler.rulerSettings.originy,
         showFeetAsInches
       );
 
@@ -10988,16 +10988,16 @@ class OptHandler {
       const getTextDimensions = (objectId) => {
         if (objectId == null) return null;
 
-        let svgElement = GlobalData.optManager.svgObjectLayer.GetElementByID(objectId);
+        let svgElement = T3Gv.optManager.svgObjectLayer.GetElementByID(objectId);
 
         // Create text element if it doesn't exist
         if (svgElement == null) {
-          svgElement = GlobalData.optManager.svgDoc.CreateShape(
+          svgElement = T3Gv.optManager.svgDoc.CreateShape(
             ConstantData.CreateShapeType.SHAPECONTAINER
           );
           svgElement.SetID(shapeObject.BlockID);
-          GlobalData.optManager.svgObjectLayer.AddElement(svgElement, 0);
-          shapeObject.LM_AddSVGTextObject(GlobalData.optManager.svgDoc, svgElement);
+          T3Gv.optManager.svgObjectLayer.AddElement(svgElement, 0);
+          shapeObject.LM_AddSVGTextObject(T3Gv.optManager.svgDoc, svgElement);
         }
 
         if (svgElement) {
@@ -11111,7 +11111,7 @@ class OptHandler {
     this.theDragDeltaY = 0;
 
     // Check for drop-on-line or auto-insert connection
-    const linkParams = GlobalData.optManager.LinkParams;
+    const linkParams = T3Gv.optManager.LinkParams;
     if ((linkParams.DropOnLine || linkParams.AutoInsert) &&
       this.FindConnect(
         this.theActionStoredObjectID,
@@ -11140,7 +11140,7 @@ class OptHandler {
 
     // Check for regular connection or join
     if (this.FindConnect(
-      GlobalData.optManager.theActionStoredObjectID,
+      T3Gv.optManager.theActionStoredObjectID,
       drawingObject,
       hookPoints,
       true,
@@ -11269,7 +11269,7 @@ class OptHandler {
     const childConnectors = [];
 
     // Keep finding children until there are no more
-    while (GlobalData.optManager.FindChildArrayByIndex(objectId, searchInfo, linksList) > 0) {
+    while (T3Gv.optManager.FindChildArrayByIndex(objectId, searchInfo, linksList) > 0) {
       childConnectors.push(searchInfo.id);
     }
 
@@ -11336,10 +11336,10 @@ class OptHandler {
   SD_GetVisioTextChild(objectId) {
     console.log("O.Opt SD_GetVisioTextChild - Input:", objectId);
 
-    const parentObject = GlobalData.optManager.GetObjectPtr(objectId);
+    const parentObject = T3Gv.optManager.GetObjectPtr(objectId);
 
     if (parentObject && parentObject.TextFlags & ConstantData.TextFlags.SED_TF_AttachD) {
-      const associatedObject = GlobalData.optManager.GetObjectPtr(parentObject.associd);
+      const associatedObject = T3Gv.optManager.GetObjectPtr(parentObject.associd);
 
       if (associatedObject &&
         associatedObject.moreflags & ConstantData.ObjMoreFlags.SED_MF_VisioText) {
@@ -11393,7 +11393,7 @@ class OptHandler {
     console.log("O.Opt SetObjectAttributes - Input:", { objectId, attributes });
 
     // Get a preserved copy of the object for modification
-    const objectBlock = GlobalData.objectStore.PreserveBlock(objectId);
+    const objectBlock = T3Gv.objectStore.PreserveBlock(objectId);
 
     // Apply the properties to the object
     this.ApplyProperties(attributes, objectBlock.Data);
@@ -11781,7 +11781,7 @@ class OptHandler {
     var n, o, s, l, S, c, u, p, d, D, g, h, m, C, y, f = null, L = null, I = null, T = null, b = [], M = [], P = !1, R = [], A = !1, _ = ConstantData.ActionTriggerType.LINEEND, E = {
       x: 0,
       y: 0
-    }, w = {}, F = ConstantData.Defines.SED_KnobSize, v = -1, G = GlobalData.optManager.ActiveVisibleZList(), N = !1;
+    }, w = {}, F = ConstantData.Defines.SED_KnobSize, v = -1, G = T3Gv.optManager.ActiveVisibleZList(), N = !1;
 
     f = this.GetObjectPtr(e, !0);
     if (f == null) return -1;
@@ -11820,7 +11820,7 @@ class OptHandler {
       }
 
       f.CalcFrame();
-      GlobalData.optManager.AddToDirtyList(f.BlockID);
+      T3Gv.optManager.AddToDirtyList(f.BlockID);
       this.SetLinkFlag(e, ConstantData.LinkFlags.SED_L_MOVE);
       this.MaintainLink(e, f, null, _, !1);
       return k;
@@ -12044,7 +12044,7 @@ class OptHandler {
           I.EndPoint.y = I.StartPoint.y,
           I instanceof PolyLine && !0 !== i && I.MaintainDimensionThroughPolygonOpennessChange(I.polylist.closed),
           I.objecttype !== ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL && this.OpenShapeEdit(I.BlockID),
-          GlobalData.optManager.AddToDirtyList(I.BlockID))
+          T3Gv.optManager.AddToDirtyList(I.BlockID))
     } else {
       if (r === ConstantData.HookPts.SED_KTL) {
         for (n = 1; n < o; n++) {
@@ -12124,7 +12124,7 @@ class OptHandler {
           I.EndPoint.y = I.StartPoint.y,
           I.objecttype !== ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL && this.OpenShapeEdit(I.BlockID),
           I instanceof PolyLine && !0 !== i && I.MaintainDimensionThroughPolygonOpennessChange(I.polylist.closed),
-          GlobalData.optManager.AddToDirtyList(I.BlockID))
+          T3Gv.optManager.AddToDirtyList(I.BlockID))
     }
     if (I.CalcFrame(),
       P)
@@ -12133,12 +12133,12 @@ class OptHandler {
         Collab.ClearCreateList(),
         Collab.AddToCreateList(c),
         N = !0,
-        GlobalData.optManager.AddToDirtyList(c);
+        T3Gv.optManager.AddToDirtyList(c);
     else {
-      var O = GlobalData.optManager.VisibleZList().indexOf(c);
+      var O = T3Gv.optManager.VisibleZList().indexOf(c);
       O >= 0 && this.AddSVGObject(O, c, !0, !0)
     }
-    for ((I = GlobalData.optManager.GetObjectPtr(c, !1)) && I.DataID < 0 && (I.DataID = h,
+    for ((I = T3Gv.optManager.GetObjectPtr(c, !1)) && I.DataID < 0 && (I.DataID = h,
       f.DataID === h ? (I.TextDirection = f.TextDirection,
         f.DataID = -1) : L.DataID === h && (I.TextDirection = L.TextDirection,
           L.DataID = -1),
@@ -12163,10 +12163,10 @@ class OptHandler {
       G.splice(B, 1),
         G.splice(v, 0, c),
         N = !0,
-        GlobalData.optManager.AddToDirtyList(c)
+        T3Gv.optManager.AddToDirtyList(c)
     }
     return I instanceof PolyLineContainer && I.MoveBehindAllLinked() && (N = !0),
-      N && (GlobalData.optManager.IsTopMostVisibleLayer() ? GlobalData.optManager.RenderDirtySVGObjects() : GlobalData.optManager.RenderAllSVGObjects()),
+      N && (T3Gv.optManager.IsTopMostVisibleLayer() ? T3Gv.optManager.RenderDirtySVGObjects() : T3Gv.optManager.RenderAllSVGObjects()),
       c
   }
 
@@ -12412,7 +12412,7 @@ class OptHandler {
     let isTouchInterface = false;
 
     // Check if we're already on a mobile platform
-    if (GlobalData.optManager.isMobilePlatform) {
+    if (T3Gv.optManager.isMobilePlatform) {
       isTouchInterface = true;
     }
     // Handle gesture events (from Hammer.js)
@@ -12465,7 +12465,7 @@ class OptHandler {
     let objectIndex, objectCount, objectId, svgElement, overlayId;
     let overlayElement, objectData, hookCount, hookId, hookObject;
     let parentObjects = [];
-    let layersManager = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
+    let layersManager = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
 
     if (objectIds != null) {
       // Process each object ID in the array
@@ -12475,7 +12475,7 @@ class OptHandler {
         objectId = objectIds[objectIndex];
 
         // Get the object from storage
-        const objectBlock = GlobalData.objectStore.GetObject(objectId);
+        const objectBlock = T3Gv.objectStore.GetObject(objectId);
 
         if (objectBlock) {
           objectData = objectBlock.Data;
@@ -12547,14 +12547,14 @@ class OptHandler {
         switch (parentObjects[objectIndex].objecttype) {
           case ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART:
             if (layersManager.layers[layersManager.activelayer].zList.indexOf(parentObjects[objectIndex].BlockID) >= 0) {
-              GlobalData.optManager.UpdateLinks();
-              GlobalData.optManager.GanttFormat(parentObjects[objectIndex].BlockID, true, false, true, null);
+              T3Gv.optManager.UpdateLinks();
+              T3Gv.optManager.GanttFormat(parentObjects[objectIndex].BlockID, true, false, true, null);
             }
             break;
 
           case ConstantData.ObjectTypes.SD_OBJT_NG_TIMELINE:
-            if (GlobalData.optManager.GetObjectPtr(parentObjects[objectIndex].BlockID) != null) {
-              GlobalData.optManager.Timeline_Format(parentObjects[objectIndex]);
+            if (T3Gv.optManager.GetObjectPtr(parentObjects[objectIndex].BlockID) != null) {
+              T3Gv.optManager.Timeline_Format(parentObjects[objectIndex]);
             }
             break;
         }
@@ -12572,7 +12572,7 @@ class OptHandler {
     console.log("O.Opt RemoveFromAllZLists - Input:", objectId);
 
     // Get the layers manager with preserved state
-    const layersManager = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, true);
+    const layersManager = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, true);
     const numberOfLayers = layersManager.nlayers;
 
     // Search through all layers for the object
@@ -12599,8 +12599,8 @@ class OptHandler {
     console.log("O.Opt RemoveFromSelectedList - Input:", objectId);
 
     // Get the current selected list (without preserving state)
-    const selectedList = GlobalData.optManager.GetObjectPtr(
-      GlobalData.optManager.theSelectedListBlockID,
+    const selectedList = T3Gv.optManager.GetObjectPtr(
+      T3Gv.optManager.theSelectedListBlockID,
       false
     );
 
@@ -12610,8 +12610,8 @@ class OptHandler {
     // Only proceed if the object is actually in the list
     if (objectIndex !== -1) {
       // Get a preserved copy of the selected list for modification
-      const preservedList = GlobalData.optManager.GetObjectPtr(
-        GlobalData.optManager.theSelectedListBlockID,
+      const preservedList = T3Gv.optManager.GetObjectPtr(
+        T3Gv.optManager.theSelectedListBlockID,
         true
       );
 
@@ -12619,15 +12619,15 @@ class OptHandler {
       preservedList.splice(objectIndex, 1);
 
       // If this object was the target selection, clear the target selection
-      const sessionData = GlobalData.optManager.GetObjectPtr(
-        GlobalData.optManager.theSEDSessionBlockID,
+      const sessionData = T3Gv.optManager.GetObjectPtr(
+        T3Gv.optManager.theSEDSessionBlockID,
         false
       );
 
       if (objectId === sessionData.tselect) {
         // Get preserved session data and clear the target selection
-        const preservedSessionData = GlobalData.optManager.GetObjectPtr(
-          GlobalData.optManager.theSEDSessionBlockID,
+        const preservedSessionData = T3Gv.optManager.GetObjectPtr(
+          T3Gv.optManager.theSEDSessionBlockID,
           true
         );
         preservedSessionData.tselect = -1;
@@ -12644,7 +12644,7 @@ class OptHandler {
   ZList() {
     console.log("O.Opt ZList - Input: No parameters");
 
-    const layersManager = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
+    const layersManager = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
     let allObjectIds = [];
 
     // Iterate through all layers from bottom to top (reverse order)
@@ -12715,7 +12715,7 @@ class OptHandler {
   FrontMostLayerZListPreserve() {
     console.log("O.Opt FrontMostLayerZListPreserve - Input: No parameters");
 
-    const layersManager = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, true);
+    const layersManager = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, true);
     const frontMostLayerZList = layersManager.layers[0].zList;
 
     console.log("O.Opt FrontMostLayerZListPreserve - Output: Retrieved front-most layer Z-list with",
@@ -12937,7 +12937,7 @@ class OptHandler {
         childConnectorId = Business.GetParentConnector(sourceObject.BlockID, null);
         if (childConnectorId >= 0) {
           // Get the connector object
-          connectorObject = GlobalData.optManager.GetObjectPtr(childConnectorId, false);
+          connectorObject = T3Gv.optManager.GetObjectPtr(childConnectorId, false);
           if (!connectorObject) {
             console.log("O.Opt CN_ChangeHook - Output: Failed (no connector object)");
             return;
@@ -12987,7 +12987,7 @@ class OptHandler {
           }
 
           // Find child array for the current object
-          connectorId = GlobalData.optManager.FindChildArray(sourceObject.BlockID, -1);
+          connectorId = T3Gv.optManager.FindChildArray(sourceObject.BlockID, -1);
 
           // Create a new connector if needed
           if (connectorId < 0) {
@@ -13002,7 +13002,7 @@ class OptHandler {
             connectorId = Business.AddConnector(100, 100, connectorStyle, sourceObject.BlockID);
 
             if (connectorId >= 0) {
-              childConnector = GlobalData.optManager.GetObjectPtr(connectorId, true);
+              childConnector = T3Gv.optManager.GetObjectPtr(connectorId, true);
             }
 
             if (!childConnector) {
@@ -13028,7 +13028,7 @@ class OptHandler {
             }
 
             // Update the hook for the new connector
-            GlobalData.optManager.UpdateHook(
+            T3Gv.optManager.UpdateHook(
               connectorId,
               -1,
               sourceObject.BlockID,
@@ -13038,9 +13038,9 @@ class OptHandler {
             );
 
             // Update link flags and format the connector
-            GlobalData.optManager.SetLinkFlag(sourceObject.BlockID, ConstantData.LinkFlags.SED_L_MOVE);
+            T3Gv.optManager.SetLinkFlag(sourceObject.BlockID, ConstantData.LinkFlags.SED_L_MOVE);
             childConnector.Pr_Format(connectorId);
-            GlobalData.optManager.AddToDirtyList(connectorId);
+            T3Gv.optManager.AddToDirtyList(connectorId);
           }
 
           // Special handling for mind map connectors
@@ -13056,7 +13056,7 @@ class OptHandler {
         sourceObject.hooks.length >= 2
       ) {
         const endPoint = new Point(0, 0);
-        endPoint.x = GlobalData.optManager.GetDependencyLineEndX(sourceObject);
+        endPoint.x = T3Gv.optManager.GetDependencyLineEndX(sourceObject);
         endPoint.y = sourceObject.EndPoint.y;
 
         // Update the SVG element if it exists
@@ -13083,11 +13083,11 @@ class OptHandler {
       };
 
       // Find all child connectors and delete those without shapes
-      while (GlobalData.optManager.FindChildArrayByIndex(sourceObject.BlockID, searchInfo) >= 0) {
+      while (T3Gv.optManager.FindChildArrayByIndex(sourceObject.BlockID, searchInfo) >= 0) {
         connectorId = searchInfo.id;
-        if (connectorId >= 0 && GlobalData.optManager.CN_GetNShapes(connectorId) === 0) {
+        if (connectorId >= 0 && T3Gv.optManager.CN_GetNShapes(connectorId) === 0) {
           objectsToDelete.push(connectorId);
-          GlobalData.optManager.DeleteObjects(objectsToDelete, false);
+          T3Gv.optManager.DeleteObjects(objectsToDelete, false);
         }
       }
     }
@@ -13399,7 +13399,7 @@ class OptHandler {
             // Add any enclosed objects for container shapes
             const enclosedObjects = hookObject.GetListOfEnclosedObjects(true);
             if (enclosedObjects.length) {
-              GlobalData.optManager.JoinHookList(hookList, enclosedObjects);
+              T3Gv.optManager.JoinHookList(hookList, enclosedObjects);
             }
 
             // Update the bounding rectangle if provided
@@ -13547,7 +13547,7 @@ class OptHandler {
 
     // Helper function to check if source object has a hook to target object
     function hasHookToTarget(sourceId, targetId) {
-      const sourceObject = GlobalData.optManager.GetObjectPtr(sourceId, false);
+      const sourceObject = T3Gv.optManager.GetObjectPtr(sourceId, false);
 
       // Check each hook in the source object
       for (let hookIndex = 0; hookIndex < sourceObject.hooks.length; hookIndex++) {
@@ -13696,15 +13696,15 @@ class OptHandler {
       shapeObject.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.SHAPE
     ) {
       // Find child array for the shape
-      const childConnectorId = GlobalData.optManager.FindChildArray(shapeId, connectorId);
+      const childConnectorId = T3Gv.optManager.FindChildArray(shapeId, connectorId);
 
       if (childConnectorId >= 0) {
         // Check if the connector has no shapes attached
-        if (GlobalData.optManager.CN_GetNShapes(childConnectorId) === 0) {
+        if (T3Gv.optManager.CN_GetNShapes(childConnectorId) === 0) {
           // Delete the orphaned connector
           const objectsToDelete = [];
           objectsToDelete.push(childConnectorId);
-          GlobalData.optManager.DeleteObjects(objectsToDelete, false);
+          T3Gv.optManager.DeleteObjects(objectsToDelete, false);
 
           console.log("O.Opt CleanupHooks - Output: Deleted orphaned connector", childConnectorId);
           return;
@@ -13885,7 +13885,7 @@ class OptHandler {
       ];
 
       // Calculate the angle between the reference points and rotate to align horizontally
-      let angle = GlobalData.optManager.SD_GetCounterClockwiseAngleBetween2Points(startRef, endRef);
+      let angle = T3Gv.optManager.SD_GetCounterClockwiseAngleBetween2Points(startRef, endRef);
       Utils3.RotatePointsAboutPoint(resultPoints[0], -angle, resultPoints);
 
       // Calculate the midpoint with proportional distance
@@ -13947,14 +13947,14 @@ class OptHandler {
 
     while (--outlineCount > 0 && --segmentCount > 0) {
       // Calculate angle between current segments
-      const currentAngle = GlobalData.optManager.SD_GetCounterClockwiseAngleBetween2Points(
+      const currentAngle = T3Gv.optManager.SD_GetCounterClockwiseAngleBetween2Points(
         outlinePoints[outlineCount - 1],
         outlinePoints[outlineCount]
       );
 
       // Check if original and outline angles match
       if (!areAnglesClose(
-        GlobalData.optManager.SD_GetCounterClockwiseAngleBetween2Points(
+        T3Gv.optManager.SD_GetCounterClockwiseAngleBetween2Points(
           points[segmentCount - 1],
           points[segmentCount]
         ),
@@ -13964,7 +13964,7 @@ class OptHandler {
         // Try to find a matching angle and insert interpolated points
         for (pointIndex = segmentCount - 1; pointIndex >= 0; pointIndex--) {
           if (areAnglesClose(
-            GlobalData.optManager.SD_GetCounterClockwiseAngleBetween2Points(
+            T3Gv.optManager.SD_GetCounterClockwiseAngleBetween2Points(
               points[pointIndex],
               points[segmentCount]
             ),
@@ -14474,7 +14474,7 @@ class OptHandler {
     }
 
     // Fix any circular references in hooks
-    GlobalData.optManager.FixAnyCircularHooks(sourceObject);
+    T3Gv.optManager.FixAnyCircularHooks(sourceObject);
 
     // Process each hook in the source object
     for (let hookIndex = 0; hookIndex < sourceObject.hooks.length; hookIndex++) {
@@ -14608,7 +14608,7 @@ class OptHandler {
     const shapeBounds = {};
 
     // Get a preserved copy of the shape object for modification
-    const shapeObject = GlobalData.objectStore.PreserveBlock(shapeId);
+    const shapeObject = T3Gv.objectStore.PreserveBlock(shapeId);
 
     // Initialize auto-grow if settings provided
     this.InitializeAutoGrowDrag(autoGrowSettings);
@@ -15132,8 +15132,8 @@ class OptHandler {
 
   RotateShapes(angleDegrees: number, selectionOverride?: any[]) {
     console.log("O.Opt RotateShapes - Input:", { angleDegrees, selectionOverride });
-    let selectedList = GlobalData.optManager.GetObjectPtr(this.theSelectedListBlockID, false);
-    let sedSession = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, false);
+    let selectedList = T3Gv.optManager.GetObjectPtr(this.theSelectedListBlockID, false);
+    let sedSession = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
     if (selectionOverride) {
       selectedList = selectionOverride;
     }
@@ -15190,7 +15190,7 @@ class OptHandler {
             if (shape instanceof PolyLineContainer || shape.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
               // Remove hooked objects related to container rotation
               for (removeIndex = selectedList.length - 1; removeIndex >= 0; removeIndex--) {
-                obj = GlobalData.optManager.GetObjectPtr(selectedList[removeIndex], false);
+                obj = T3Gv.optManager.GetObjectPtr(selectedList[removeIndex], false);
                 if (obj && obj.hooks.length && obj.hooks[0].objid === shape.BlockID) {
                   selectedList.splice(removeIndex, 1);
                 }
@@ -15227,7 +15227,7 @@ class OptHandler {
                 shape.CalcFrame();
               } else {
                 // Rotate BaseLine using midpoint and radius rotation
-                GlobalData.optManager.ob = Utils1.DeepCopy(shape);
+                T3Gv.optManager.ob = Utils1.DeepCopy(shape);
                 let midX = (shape.StartPoint.x + shape.EndPoint.x) / 2;
                 let midY = (shape.StartPoint.y + shape.EndPoint.y) / 2;
                 let distance = Math.sqrt(
@@ -15241,15 +15241,15 @@ class OptHandler {
                 shape.EndPoint.x = midX + Math.cos(rotationRadians) * distance;
                 shape.EndPoint.y = midY + Math.sin(rotationRadians) * distance;
                 shape.AfterRotateShape(shape.BlockID);
-                GlobalData.optManager.ob = {};
+                T3Gv.optManager.ob = {};
               }
             } else {
               // For non-baseline objects, update rotation and optionally adjust Visio text child
               shape.RotationAngle = angleDegrees;
               shape.UpdateFrame(shape.Frame);
-              let textChildId = GlobalData.optManager.SD_GetVisioTextChild(selectedList[tempCounter]);
+              let textChildId = T3Gv.optManager.SD_GetVisioTextChild(selectedList[tempCounter]);
               if (textChildId >= 0) {
-                textChild = GlobalData.optManager.GetObjectPtr(textChildId, true);
+                textChild = T3Gv.optManager.GetObjectPtr(textChildId, true);
                 if (textChild) {
                   if (textChild.VisioRotationDiff) {
                     textChild.RotationAngle = angleDegrees - textChild.VisioRotationDiff;
@@ -15298,15 +15298,15 @@ class OptHandler {
     if (clearTimer) {
       this.ClearActionArrowTimer(objectId);
     } else {
-      const targetObject = GlobalData.optManager.GetObjectPtr(objectId, false);
+      const targetObject = T3Gv.optManager.GetObjectPtr(objectId, false);
       if (targetObject) {
         targetObject.actionArrowHideTimerID = -1;
       }
     }
 
-    if (GlobalData.optManager.FromOverlayLayer) {
+    if (T3Gv.optManager.FromOverlayLayer) {
       setTimeout(() => {
-        GlobalData.optManager.SetActionArrowTimer(objectId);
+        T3Gv.optManager.SetActionArrowTimer(objectId);
       }, 0);
     } else {
       this.ClearOverlayElementsByID(actionArrowId);
@@ -15318,10 +15318,10 @@ class OptHandler {
   ClearActionArrowTimer(objectId: number) {
     console.log("O.Opt ClearActionArrowTimer - Input:", objectId);
     if (objectId >= 0) {
-      const targetObject = GlobalData.optManager.GetObjectPtr(objectId, false);
+      const targetObject = T3Gv.optManager.GetObjectPtr(objectId, false);
       if (targetObject) {
         if (targetObject.actionArrowHideTimerID >= 0) {
-          GlobalData.optManager.actionArrowHideTimer.clearTimeout(targetObject.actionArrowHideTimerID);
+          T3Gv.optManager.actionArrowHideTimer.clearTimeout(targetObject.actionArrowHideTimerID);
           targetObject.actionArrowHideTimerID = -1;
           console.log("O.Opt ClearActionArrowTimer - Timer cleared for object", objectId);
         } else {
@@ -15340,12 +15340,12 @@ class OptHandler {
     console.log("O.Opt ClearOverlayElementsByID - Input:", { elementID, resetHighlight });
 
     // Get list of overlay elements matching the provided ID
-    const overlayElementList = GlobalData.optManager.svgOverlayLayer.GetElementListWithID(elementID);
+    const overlayElementList = T3Gv.optManager.svgOverlayLayer.GetElementListWithID(elementID);
     const elementCount = overlayElementList.length;
 
     // Remove each overlay element from the SVG overlay layer
     for (let index = 0; index < elementCount; ++index) {
-      GlobalData.optManager.svgOverlayLayer.RemoveElement(overlayElementList[index]);
+      T3Gv.optManager.svgOverlayLayer.RemoveElement(overlayElementList[index]);
     }
 
     // If resetHighlight flag is true and there is a currently highlighted shape, reset its effects and cursors
@@ -15364,7 +15364,7 @@ class OptHandler {
     console.log("O.Opt AlignShapes - Input:", { alignmentType });
     let offsetX, offsetY;
     let alignmentPerformed = false;
-    const selectedObjects = GlobalData.objectStore.GetObject(this.theSelectedListBlockID).Data;
+    const selectedObjects = T3Gv.objectStore.GetObject(this.theSelectedListBlockID).Data;
     const numSelected = selectedObjects.length;
 
     if (numSelected !== 0) {
@@ -15492,10 +15492,10 @@ class OptHandler {
           Collab.BeginSecondaryEdit();
         }
         if (!preserveSelection) {
-          GlobalData.optManager.CloseEdit();
+          T3Gv.optManager.CloseEdit();
         }
         let deleteResult, nextSelect = Business.GetNextSelect(), deleteList = [];
-        const selectedObjects = GlobalData.objectStore.PreserveBlock(this.theSelectedListBlockID).Data;
+        const selectedObjects = T3Gv.objectStore.PreserveBlock(this.theSelectedListBlockID).Data;
         const objectsToDelete = objectIds || selectedObjects;
 
         deleteResult = this.AddtoDelete(objectsToDelete, false, null);
@@ -15533,7 +15533,7 @@ class OptHandler {
 
   AreSelectedObjects(): boolean {
     console.log("O.Opt AreSelectedObjects - Input: No parameters");
-    const selectedObjects = GlobalData.objectStore.GetObject(this.theSelectedListBlockID);
+    const selectedObjects = T3Gv.objectStore.GetObject(this.theSelectedListBlockID);
     const hasSelection = selectedObjects !== null && selectedObjects.Data.length !== 0;
     console.log("O.Opt AreSelectedObjects - Output:", hasSelection);
     return hasSelection;
@@ -15558,7 +15558,7 @@ class OptHandler {
     let helperValue: number = -1;
 
     for (currentIndex = 0; currentIndex < objectCount; currentIndex++) {
-      currentObj = GlobalData.optManager.GetObjectPtr(objectIds[currentIndex], false);
+      currentObj = T3Gv.optManager.GetObjectPtr(objectIds[currentIndex], false);
       if (currentObj != null) {
         // Save the current object's id
         tempId = objectIds[currentIndex];
@@ -15682,8 +15682,8 @@ class OptHandler {
                   tempId = deleteInfo.parentshape;
                 } else if (tempObj._IsFlowChartConnector && tempObj._IsFlowChartConnector()) {
                   childIds = [];
-                  let childArray = GlobalData.optManager.FindChildArray(objectIds[currentIndex], -1);
-                  let childObj = GlobalData.optManager.GetObjectPtr(childArray, false);
+                  let childArray = T3Gv.optManager.FindChildArray(objectIds[currentIndex], -1);
+                  let childObj = T3Gv.optManager.GetObjectPtr(childArray, false);
                   if (childObj == null) {
                     childObj = tempObj;
                   }
@@ -15744,7 +15744,7 @@ class OptHandler {
             }
             let childSearchIndex: number = -1;
             for (let j = 0; j < repeatCount; j++) {
-              let childId = GlobalData.optManager.FindChildArray(objectIds[currentIndex], childSearchIndex);
+              let childId = T3Gv.optManager.FindChildArray(objectIds[currentIndex], childSearchIndex);
               if (childId >= 0) {
                 let childObj = this.GetObjectPtr(childId, true);
                 if (childObj && childObj.arraylist && (childObj.arraylist.hook.length <= connectorDefines.SEDA_NSkip || (childObj.flags & ConstantData.ObjFlags.SEDO_NotVisible))) {
@@ -15783,8 +15783,8 @@ class OptHandler {
             }
           }
           if (!flagSkip) {
-            let childConnectorCount = GlobalData.optManager.FindAllChildConnectors(tempId).length;
-            let allChildConnectors = GlobalData.optManager.FindAllChildConnectors(tempId);
+            let childConnectorCount = T3Gv.optManager.FindAllChildConnectors(tempId).length;
+            let allChildConnectors = T3Gv.optManager.FindAllChildConnectors(tempId);
             for (let idx = 0; idx < childConnectorCount; idx++) {
               hasContainerConnector = true;
               let childConnectorObj = this.GetObjectPtr(allChildConnectors[idx], false);
@@ -15828,7 +15828,7 @@ class OptHandler {
               }
             }
             if (currentObj.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.LINE) {
-              let childShapeList = GlobalData.optManager.FindAllChildObjects(currentObj.BlockID, ConstantData.DrawingObjectBaseClass.SHAPE, ConstantData.ObjectTypes.SD_OBJT_MULTIPLICITY);
+              let childShapeList = T3Gv.optManager.FindAllChildObjects(currentObj.BlockID, ConstantData.DrawingObjectBaseClass.SHAPE, ConstantData.ObjectTypes.SD_OBJT_MULTIPLICITY);
               if (childShapeList && childShapeList.length) {
                 for (let idx = 0; idx < childShapeList.length; idx++) {
                   if (objectIds.indexOf(childShapeList[idx]) < 0) {
@@ -15838,7 +15838,7 @@ class OptHandler {
               }
             }
             if (!isForced) {
-              let childLineList = GlobalData.optManager.FindAllChildObjects(currentObj.BlockID, ConstantData.DrawingObjectBaseClass.LINE, null);
+              let childLineList = T3Gv.optManager.FindAllChildObjects(currentObj.BlockID, ConstantData.DrawingObjectBaseClass.LINE, null);
               if (childLineList && childLineList.length) {
                 for (let idx = 0; idx < childLineList.length; idx++) {
                   if (objectIds.indexOf(childLineList[idx]) < 0) {
@@ -15996,8 +15996,8 @@ class OptHandler {
       }
       var J = Utils2.Pt2Rect(n.StartPoint, n.EndPoint),
         x = Utils2.Pt2Rect(o.StartPoint, o.EndPoint),
-        O = GlobalData.optManager.GetPolyLineLinks(M[0], 0),
-        B = GlobalData.optManager.GetPolyLineLinks(M[1], 0);
+        O = T3Gv.optManager.GetPolyLineLinks(M[0], 0),
+        B = T3Gv.optManager.GetPolyLineLinks(M[1], 0);
       for (r = n.hooks.length, i = 0; i < r; i++) n.hooks[i].objid != e.BlockID ? _ = n.hooks[i].objid : p = i;
       for (r = o.hooks.length, i = 0; i < r; i++) o.hooks[i].objid != e.BlockID ? (E = o.hooks[i].objid, d = i) : D = i;
       if (_ >= 0 && E >= 0 && _ != E) return o.hooks[d].hookpt === ConstantData.HookPts.SED_KTL ? (
@@ -16051,7 +16051,7 @@ class OptHandler {
         2 === T &&
         function () {
           var t,
-            a = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
+            a = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
           Utils2.IsEqual(L.y, f.y, 2) ? (
             e.Frame.width + a.def.h_arraywidth,
             0,
@@ -16272,7 +16272,7 @@ class OptHandler {
   IsPlanningDocument() {
     console.log("O.Opt IsPlanningDocument - Input: no parameters");
 
-    const layersManager = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
+    const layersManager = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
     const numberOfLayers = layersManager.nlayers;
     let planningDocumentType = 0;
     const layers = layersManager.layers;
@@ -16305,22 +16305,22 @@ class OptHandler {
     console.log("O.Opt Redo - Input:", { shouldCancelModalOperation });
 
     // Validate state manager exists
-    if (null === GlobalData.stateManager) {
+    if (null === T3Gv.stateManager) {
       throw new Error('stateManager is null');
     }
 
     // Handle modal operations
     if (shouldCancelModalOperation) {
-      GlobalData.optManager.CancelModalOperation();
+      T3Gv.optManager.CancelModalOperation();
     }
     // Check if we're already at the last state
-    else if (GlobalData.stateManager.CurrentStateID + 1 >= GlobalData.stateManager.States.length) {
+    else if (T3Gv.stateManager.CurrentStateID + 1 >= T3Gv.stateManager.States.length) {
       console.log("O.Opt Redo - Output: false (already at last state)");
       return false;
     }
 
     // Get the session data
-    const sessionData = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, false);
+    const sessionData = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
     const wasSpellCheckEnabled = sessionData.EnableSpellCheck;
     const hadNoRecentSymbols = sessionData.RecentSymbols.length === 0;
 
@@ -16337,7 +16337,7 @@ class OptHandler {
     }
 
     // Get layers manager and remember current layer type
-    const layersManager = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, false);
+    const layersManager = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, false);
     const previousLayerType = layersManager.layers[layersManager.activelayer].layertype;
 
     // Clean up URLs before state change
@@ -16347,20 +16347,20 @@ class OptHandler {
     const isStateOpen = Utils1.IsStateOpen();
 
     // Restore the next state and add to history
-    GlobalData.stateManager.RestoreNextState();
-    GlobalData.stateManager.AddToHistoryState();
+    T3Gv.stateManager.RestoreNextState();
+    T3Gv.stateManager.AddToHistoryState();
 
-    const currentStateId = GlobalData.stateManager.CurrentStateID;
+    const currentStateId = T3Gv.stateManager.CurrentStateID;
 
     // Rebuild URLs for the new state
-    this.RebuildURLs(GlobalData.stateManager.CurrentStateID - 1, true);
+    this.RebuildURLs(T3Gv.stateManager.CurrentStateID - 1, true);
 
     // Resize and update the SVG document
     this.ResizeSVGDocument();
     this.UpdateLineHops(true);
 
     // Get updated session data after state restoration
-    const updatedSessionData = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, false);
+    const updatedSessionData = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
 
     // Update spell check if needed
     if (wasSpellCheckEnabled !== updatedSessionData.EnableSpellCheck) {
@@ -16368,14 +16368,14 @@ class OptHandler {
     }
 
     // Update rulers if changed
-    const currentRulerSettings = GlobalData.docHandler.rulerSettings;
-    if (GlobalData.docHandler.RulersNotEqual(updatedSessionData.rulerSettings, currentRulerSettings)) {
-      GlobalData.docHandler.SetRulers(updatedSessionData.rulerSettings, true);
+    const currentRulerSettings = T3Gv.docHandler.rulerSettings;
+    if (T3Gv.docHandler.RulersNotEqual(updatedSessionData.rulerSettings, currentRulerSettings)) {
+      T3Gv.docHandler.SetRulers(updatedSessionData.rulerSettings, true);
     }
 
     // Update page settings if changed
-    if (GlobalData.docHandler.PagesNotEqual(updatedSessionData.Page, GlobalData.optManager.theContentHeader.Page)) {
-      GlobalData.optManager.theContentHeader.Page = Utils1.DeepCopy(updatedSessionData.Page);
+    if (T3Gv.docHandler.PagesNotEqual(updatedSessionData.Page, T3Gv.optManager.theContentHeader.Page)) {
+      T3Gv.optManager.theContentHeader.Page = Utils1.DeepCopy(updatedSessionData.Page);
     }
 
     // Get the current selection list
@@ -16391,9 +16391,9 @@ class OptHandler {
 
     // Clean up text editor events and render all SVG objects
     this.TEUnregisterEvents(true);
-    GlobalData.optManager.InUndo = true;
+    T3Gv.optManager.InUndo = true;
     this.RenderAllSVGObjects();
-    GlobalData.optManager.InUndo = false;
+    T3Gv.optManager.InUndo = false;
 
     // Get the updated session data
     const newSessionData = this.GetObjectPtr(this.theSEDSessionBlockID, false);
@@ -16404,7 +16404,7 @@ class OptHandler {
     }
 
     // Update target selection display
-    const targetSelectionId = GlobalData.optManager.GetTargetSelect();
+    const targetSelectionId = T3Gv.optManager.GetTargetSelect();
     if (targetSelectionId >= 0) {
       const targetObject = this.GetObjectPtr(targetSelectionId, false);
       let dimensionsForDisplay = null;
@@ -16414,13 +16414,13 @@ class OptHandler {
         this.ShowFrame(true);
       }
 
-      GlobalData.optManager.UpdateDisplayCoordinates(dimensionsForDisplay, null, null, targetObject);
+      T3Gv.optManager.UpdateDisplayCoordinates(dimensionsForDisplay, null, null, targetObject);
     } else {
       this.ShowFrame(false);
     }
 
     // Handle layer type changes
-    const updatedLayersManager = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, false);
+    const updatedLayersManager = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, false);
     const newLayerType = updatedLayersManager.layers[updatedLayersManager.activelayer].layertype;
 
     if (previousLayerType != newLayerType) {
@@ -16451,9 +16451,9 @@ class OptHandler {
     this.UpdateSelectionAttributes(selectedList);
 
     // Update UI components
-    GlobalData.optManager.CommentIdleTab();
-    GlobalData.optManager.Comment_UpdatePanel(null);
-    GlobalData.optManager.Comment_UpdateDropDown();
+    T3Gv.optManager.CommentIdleTab();
+    T3Gv.optManager.Comment_UpdatePanel(null);
+    T3Gv.optManager.Comment_UpdateDropDown();
 
     // Save changed blocks if state wasn't open
     if (!isStateOpen) {
@@ -16534,7 +16534,7 @@ class OptHandler {
       }
 
       // Case 2: We're in dimension editing mode
-      if (GlobalData.optManager.bInDimensionEdit) {
+      if (T3Gv.optManager.bInDimensionEdit) {
         if (this.theTextClipboard && this.theTextClipboard.text) {
           activeEditor = this.svgDoc.GetActiveEdit();
           if (activeEditor) {
@@ -16559,7 +16559,7 @@ class OptHandler {
       // Case 4: Handle image clipboard content
       if (this.theImageClipboard &&
         this.theContentHeader.ClipboardType === ConstantData.ClipboardType.Image) {
-        GlobalData.optManager.SetBackgroundImage(this.theImageClipboard, 0);
+        T3Gv.optManager.SetBackgroundImage(this.theImageClipboard, 0);
         console.log("O.Opt PasteObjects - Output: Image pasted as background");
         return;
       }
@@ -16671,27 +16671,27 @@ class OptHandler {
   SetVirtualKeyboardLifter(editor: any) {
     console.log("O.Opt SetVirtualKeyboardLifter - Input:", editor);
 
-    if (GlobalData.optManager.isAndroid || GlobalData.gDebugMobileTextDialog) {
+    if (T3Gv.optManager.isAndroid || T3Gv.gDebugMobileTextDialog) {
       editor.SetVirtualKeyboardHook(
         function (editorInstance: any, proxyElement: any) {
           console.log("O.Opt MobileTextDialogTrigger Callback - Input:", editorInstance, proxyElement);
-          GlobalData.optManager.MobileTextDialogTrigger(editorInstance, proxyElement);
+          T3Gv.optManager.MobileTextDialogTrigger(editorInstance, proxyElement);
           console.log("O.Opt MobileTextDialogTrigger Callback - Output");
         },
         null
       );
     } else {
-      if (!GlobalData.optManager.WorkAreaTextInputProxy) {
-        GlobalData.optManager.WorkAreaTextInputProxy = $('#SDTS_TouchProxy');
+      if (!T3Gv.optManager.WorkAreaTextInputProxy) {
+        T3Gv.optManager.WorkAreaTextInputProxy = $('#SDTS_TouchProxy');
       }
-      GlobalData.optManager.WorkAreaTextInputProxy.val('');
+      T3Gv.optManager.WorkAreaTextInputProxy.val('');
       editor.SetVirtualKeyboardHook(
         function (editorInstance: any, proxyElement: any) {
           console.log("O.Opt VirtualKeyboardLifter Callback - Input:", editorInstance, proxyElement);
-          GlobalData.optManager.VirtualKeyboardLifter(editorInstance, proxyElement);
+          T3Gv.optManager.VirtualKeyboardLifter(editorInstance, proxyElement);
           console.log("O.Opt VirtualKeyboardLifter Callback - Output");
         },
-        GlobalData.optManager.WorkAreaTextInputProxy
+        T3Gv.optManager.WorkAreaTextInputProxy
       );
     }
 
@@ -16708,12 +16708,12 @@ class OptHandler {
       let forceUpdate = false;
 
       // Check if the previously stored frame exists and is different.
-      if (GlobalData.optManager.theVirtualKeyboardLifterElementFrame) {
+      if (T3Gv.optManager.theVirtualKeyboardLifterElementFrame) {
         frameChanged =
-          elementFrame.x !== GlobalData.optManager.theVirtualKeyboardLifterElementFrame.x ||
-          elementFrame.y !== GlobalData.optManager.theVirtualKeyboardLifterElementFrame.y ||
-          elementFrame.width !== GlobalData.optManager.theVirtualKeyboardLifterElementFrame.width ||
-          elementFrame.height !== GlobalData.optManager.theVirtualKeyboardLifterElementFrame.height;
+          elementFrame.x !== T3Gv.optManager.theVirtualKeyboardLifterElementFrame.x ||
+          elementFrame.y !== T3Gv.optManager.theVirtualKeyboardLifterElementFrame.y ||
+          elementFrame.width !== T3Gv.optManager.theVirtualKeyboardLifterElementFrame.width ||
+          elementFrame.height !== T3Gv.optManager.theVirtualKeyboardLifterElementFrame.height;
       } else {
         forceUpdate = true;
       }
@@ -16721,39 +16721,39 @@ class OptHandler {
       // If the frame has changed or there's no previous frame.
       if (frameChanged || forceUpdate) {
         // Convert element frame's top-left coordinates from document to window coordinates.
-        let windowCoords = GlobalData.docHandler.DocObject().ConvertDocToWindowCoords(elementFrame.x, elementFrame.y);
+        let windowCoords = T3Gv.docHandler.DocObject().ConvertDocToWindowCoords(elementFrame.x, elementFrame.y);
 
         // Convert width and height from document lengths to window lengths.
-        let windowWidth = GlobalData.docHandler.DocObject().ConvertDocToWindowLength(elementFrame.width);
+        let windowWidth = T3Gv.docHandler.DocObject().ConvertDocToWindowLength(elementFrame.width);
         if (windowWidth === 0) {
           windowWidth = 1;
         }
-        let windowHeight = GlobalData.docHandler.DocObject().ConvertDocToWindowLength(elementFrame.height);
+        let windowHeight = T3Gv.docHandler.DocObject().ConvertDocToWindowLength(elementFrame.height);
         if (windowHeight === 0) {
           windowHeight = 1;
         }
 
         // Store the updated frame.
-        GlobalData.optManager.theVirtualKeyboardLifterElementFrame = $.extend(true, {}, elementFrame);
+        T3Gv.optManager.theVirtualKeyboardLifterElementFrame = $.extend(true, {}, elementFrame);
 
         // Make the text input proxy visible.
-        GlobalData.optManager.WorkAreaTextInputProxy.css('visibility', 'visible');
+        T3Gv.optManager.WorkAreaTextInputProxy.css('visibility', 'visible');
 
         // Check for debug flag to style differently.
         if (GlobalDatagDebugVirtualKeyboardLifter) {
-          GlobalData.optManager.WorkAreaTextInputProxy.css('background-color', 'yellow');
-          GlobalData.optManager.WorkAreaTextInputProxy.css('opacity', '0.25');
-          GlobalData.optManager.WorkAreaTextInputProxy.css('color', 'black');
-          GlobalData.optManager.WorkAreaTextInputProxy.css('z-index', '1000');
+          T3Gv.optManager.WorkAreaTextInputProxy.css('background-color', 'yellow');
+          T3Gv.optManager.WorkAreaTextInputProxy.css('opacity', '0.25');
+          T3Gv.optManager.WorkAreaTextInputProxy.css('color', 'black');
+          T3Gv.optManager.WorkAreaTextInputProxy.css('z-index', '1000');
           // Adjust vertical position for debug.
           windowCoords.y += windowHeight;
         } else {
-          GlobalData.optManager.WorkAreaTextInputProxy.css('opacity', '0');
-          GlobalData.optManager.WorkAreaTextInputProxy.css('color', 'transparent');
-          GlobalData.optManager.WorkAreaTextInputProxy.css('z-index', '-1000');
-          GlobalData.optManager.WorkAreaTextInputProxy.css('text-align', 'left');
+          T3Gv.optManager.WorkAreaTextInputProxy.css('opacity', '0');
+          T3Gv.optManager.WorkAreaTextInputProxy.css('color', 'transparent');
+          T3Gv.optManager.WorkAreaTextInputProxy.css('z-index', '-1000');
+          T3Gv.optManager.WorkAreaTextInputProxy.css('text-align', 'left');
           // On Mac, adjust the coordinates; otherwise, hide the proxy off-screen.
-          if (GlobalData.optManager.isMac) {
+          if (T3Gv.optManager.isMac) {
             windowCoords.x += windowWidth;
             windowHeight = 1;
           } else {
@@ -16763,26 +16763,26 @@ class OptHandler {
         }
 
         // Apply the calculated CSS positioning and dimensions.
-        GlobalData.optManager.WorkAreaTextInputProxy.css('left', windowCoords.x + 'px');
-        GlobalData.optManager.WorkAreaTextInputProxy.css('top', windowCoords.y + 'px');
-        GlobalData.optManager.WorkAreaTextInputProxy.css('width', windowWidth + 'px');
-        GlobalData.optManager.WorkAreaTextInputProxy.css('height', windowHeight + 'px');
+        T3Gv.optManager.WorkAreaTextInputProxy.css('left', windowCoords.x + 'px');
+        T3Gv.optManager.WorkAreaTextInputProxy.css('top', windowCoords.y + 'px');
+        T3Gv.optManager.WorkAreaTextInputProxy.css('width', windowWidth + 'px');
+        T3Gv.optManager.WorkAreaTextInputProxy.css('height', windowHeight + 'px');
 
         // If it's a forced update, clear the proxy's content.
         if (forceUpdate) {
-          GlobalData.optManager.WorkAreaTextInputProxy.val('');
+          T3Gv.optManager.WorkAreaTextInputProxy.val('');
         }
 
         // Set focus to the proxy to trigger the virtual keyboard.
-        GlobalData.optManager.WorkAreaTextInputProxy.focus();
+        T3Gv.optManager.WorkAreaTextInputProxy.focus();
       }
     } else {
       // When deactivating the virtual keyboard lifter.
-      GlobalData.optManager.theVirtualKeyboardLifterElementFrame = null;
-      GlobalData.optManager.WorkAreaTextInputProxy.css('visibility', 'visible');
-      GlobalData.optManager.WorkAreaTextInputProxy.blur();
-      GlobalData.optManager.WorkAreaTextInputProxy.val('');
-      GlobalData.optManager.WorkAreaTextInputProxy.css('visibility', 'hidden');
+      T3Gv.optManager.theVirtualKeyboardLifterElementFrame = null;
+      T3Gv.optManager.WorkAreaTextInputProxy.css('visibility', 'visible');
+      T3Gv.optManager.WorkAreaTextInputProxy.blur();
+      T3Gv.optManager.WorkAreaTextInputProxy.val('');
+      T3Gv.optManager.WorkAreaTextInputProxy.css('visibility', 'hidden');
     }
 
     console.log("O.Opt VirtualKeyboardLifter - Output: completed");
@@ -17061,7 +17061,7 @@ class OptHandler {
                 // Prepare collaboration message for text edit timeout.
                 const messageData: any = {};
                 messageData.BlockID = session.theActiveTextEditObjectID;
-                const messageTarget = GlobalData.optManager.GetObjectPtr(messageData.BlockID, false);
+                const messageTarget = T3Gv.optManager.GetObjectPtr(messageData.BlockID, false);
                 let tableObj: any = messageTarget.GetTable(false);
 
                 if (tableObj) {
@@ -17092,7 +17092,7 @@ class OptHandler {
       if (lastOp === opConstants.CHAR) {
         clearTimeout(this.textEntryTimer);
         this.textEntryTimer = null;
-        this.textEntryTimer = setTimeout(GlobalData.optManager.TextEdit_PauseTyping, 1000);
+        this.textEntryTimer = setTimeout(T3Gv.optManager.TextEdit_PauseTyping, 1000);
       } else if (shouldUnblock) {
         Collab.UnBlockMessages();
       }
@@ -17294,7 +17294,7 @@ class OptHandler {
           session.theTEWasEdited = true;
         } else {
           // Remove text data from non-text-only objects
-          const textDataBlock = GlobalData.objectStore.GetObject(textDataId);
+          const textDataBlock = T3Gv.objectStore.GetObject(textDataId);
 
           drawingObject = this.GetObjectPtr(session.theActiveTextEditObjectID, true);
           if (drawingObject) {
@@ -17365,7 +17365,7 @@ class OptHandler {
 
       // Complete operation if needed and not prevented
       if (operationRequired && !preventCompleteOperation) {
-        GlobalData.optManager.CompleteOperation(null);
+        T3Gv.optManager.CompleteOperation(null);
       } else {
         this.PreserveUndoState(false);
         this.RenderDirtySVGObjects();
@@ -17441,7 +17441,7 @@ class OptHandler {
       return -1;
     }
 
-    const { rulerSettings, svgDoc } = GlobalData.docHandler;
+    const { rulerSettings, svgDoc } = T3Gv.docHandler;
     const docDpi = svgDoc.docInfo.docDpi;
     const points = rulerSettings.showpixels
       ? (72 * fontSizeValue) / docDpi
@@ -17477,7 +17477,7 @@ class OptHandler {
     console.log("O.Opt SendToBackOfSpecificLayer - Input:", { targetLayerIndex, updateSelectedBlock });
 
     // Get the selected object block from the global object store.
-    const selectedObjectBlock = GlobalData.objectStore.GetObject(this.theSelectedListBlockID);
+    const selectedObjectBlock = T3Gv.objectStore.GetObject(this.theSelectedListBlockID);
     let selectedList = selectedObjectBlock.Data;
     const selectedCount = selectedList.length;
 
@@ -17530,7 +17530,7 @@ class OptHandler {
 
           // If updateSelectedBlock parameter is not specified, update the selected list block.
           if (updateSelectedBlock == null) {
-            const preservedBlock = GlobalData.objectStore.PreserveBlock(this.theSelectedListBlockID);
+            const preservedBlock = T3Gv.objectStore.PreserveBlock(this.theSelectedListBlockID);
             preservedBlock.Data = associatedList;
           }
           // Re-render all SVG objects and complete the operation.
@@ -17554,13 +17554,13 @@ class OptHandler {
   GetFrontBackLayersForSelected() {
     console.log("O.Opt GetFrontBackLayersForSelected - Input:", {});
 
-    const layerManager = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
+    const layerManager = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
     const layers = layerManager.layers;
     const layerCount = layerManager.nlayers;
     let frontmostIndex = -1;
     let backmostIndex = 0;
 
-    const selectedObjects = this.GetObjectPtr(GlobalData.optManager.theSelectedListBlockID, false);
+    const selectedObjects = this.GetObjectPtr(T3Gv.optManager.theSelectedListBlockID, false);
     const selectedCount = selectedObjects.length;
 
     if (selectedCount === 0) {
@@ -17605,7 +17605,7 @@ class OptHandler {
   FindLayerForShapeID(shapeId: number): number {
     console.log("O.Opt FindLayerForShapeID - Input:", { shapeId });
 
-    const layerManager = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
+    const layerManager = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
     const layers = layerManager.layers;
     const layerCount = layerManager.nlayers;
 
@@ -17673,16 +17673,16 @@ class OptHandler {
 
         // Process swimlane objects.
         if (currentObject.IsSwimlane()) {
-          GlobalData.optManager.SwimlaneAddtoDelete(currentObject, associatedIds, true);
+          T3Gv.optManager.SwimlaneAddtoDelete(currentObject, associatedIds, true);
         }
 
         // Process container types.
         switch (currentObject.objecttype) {
           case objectTypes.SD_OBJT_SHAPECONTAINER:
-            GlobalData.optManager.ContainerAddtoDelete(currentObject, associatedIds);
+            T3Gv.optManager.ContainerAddtoDelete(currentObject, associatedIds);
             break;
           case objectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER:
-            GlobalData.optManager.TableContainerAddtoDelete(currentObject, associatedIds);
+            T3Gv.optManager.TableContainerAddtoDelete(currentObject, associatedIds);
             break;
         }
       }
@@ -17699,7 +17699,7 @@ class OptHandler {
    */
   ZListPreserveForLayer(layerIndex: number) {
     console.log("O.Opt ZListPreserveForLayer - Input:", { layerIndex });
-    const layersManager = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, true);
+    const layersManager = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, true);
     const result = layersManager.layers[layerIndex].zList;
     console.log("O.Opt ZListPreserveForLayer - Output:", result);
     return result;
@@ -17802,8 +17802,8 @@ class OptHandler {
     console.log("O.Opt SetBackgroundColor - Input:", {});
 
     // Retrieve the session object background and the document background element.
-    const sessionObject = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, false);
-    const backgroundElement = GlobalData.docHandler.GetBackground();
+    const sessionObject = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+    const backgroundElement = T3Gv.docHandler.GetBackground();
 
     if (sessionObject && backgroundElement) {
       const fillSettings = sessionObject.background.Paint;
@@ -17837,11 +17837,11 @@ class OptHandler {
         const textureId = fillSettings.Texture;
 
         // Check if the texture exists in the texture list.
-        if (GlobalData.optManager.TextureList.Textures[textureId]) {
-          const textureInfo = GlobalData.optManager.TextureList.Textures[textureId];
+        if (T3Gv.optManager.TextureList.Textures[textureId]) {
+          const textureInfo = T3Gv.optManager.TextureList.Textures[textureId];
           textureFill.dim = textureInfo.dim;
           textureFill.url = textureInfo.ImageURL;
-          textureFill.scale = GlobalData.optManager.CalcTextureScale(fillSettings.TextureScale, textureFill.dim.x);
+          textureFill.scale = T3Gv.optManager.CalcTextureScale(fillSettings.TextureScale, textureFill.dim.x);
           sessionObject.background.Paint.TextureScale.Scale = textureFill.scale;
           if (!textureFill.url) {
             textureFill.url = Constants.FilePath_CMSRoot + Constants.FilePath_Textures + textureInfo.filename;
@@ -17874,11 +17874,11 @@ class OptHandler {
   GetBackgroundTransparent(): boolean {
     console.log("O.Opt GetBackgroundTransparent - Input: no parameters");
 
-    const session = GlobalData.optManager.GetObjectPtr(
-      GlobalData.optManager.theSEDSessionBlockID,
+    const session = T3Gv.optManager.GetObjectPtr(
+      T3Gv.optManager.theSEDSessionBlockID,
       false
     );
-    const backgroundElement = GlobalData.docHandler.GetBackground();
+    const backgroundElement = T3Gv.docHandler.GetBackground();
     let isTransparent = true;
 
     if (session && backgroundElement) {
@@ -17936,7 +17936,7 @@ class OptHandler {
   BringToFrontOfSpecificLayer(targetLayerIndex: number, updateSelectedBlock?: any): void {
     console.log("O.Opt BringToFrontOfSpecificLayer - Input:", { targetLayerIndex, updateSelectedBlock });
 
-    const selectedObjectBlock = GlobalData.objectStore.GetObject(this.theSelectedListBlockID);
+    const selectedObjectBlock = T3Gv.objectStore.GetObject(this.theSelectedListBlockID);
     let selectedObjectList = Utils1.DeepCopy(selectedObjectBlock.Data);
     const selectedCount = selectedObjectList.length;
 
@@ -17988,7 +17988,7 @@ class OptHandler {
         }
 
         if (updateSelectedBlock == null) {
-          const preservedSelectedBlock = GlobalData.objectStore.PreserveBlock(this.theSelectedListBlockID);
+          const preservedSelectedBlock = T3Gv.objectStore.PreserveBlock(this.theSelectedListBlockID);
           preservedSelectedBlock.Data = associatedList;
         }
 
@@ -18025,7 +18025,7 @@ class OptHandler {
 
     // If skipValidation is true, use the entire Z-list
     if (skipValidation) {
-      visibleObjectList = GlobalData.optManager.ZList();
+      visibleObjectList = T3Gv.optManager.ZList();
     }
 
     const totalVisibleObjects = visibleObjectList.length;
@@ -18036,7 +18036,7 @@ class OptHandler {
 
     // Get the list of objects to be grouped
     const selectionList = customSelectionList ||
-      GlobalData.objectStore.GetObject(this.theSelectedListBlockID).Data;
+      T3Gv.objectStore.GetObject(this.theSelectedListBlockID).Data;
     const selectionCount = selectionList.length;
 
     if (selectionCount <= 1) {
@@ -18046,7 +18046,7 @@ class OptHandler {
 
     // Get the move list (objects that will be grouped)
     const objectsToGroup = customSelectionList ||
-      GlobalData.optManager.GetMoveList(-1, true, true, false, {}, false);
+      T3Gv.optManager.GetMoveList(-1, true, true, false, {}, false);
 
     // Validate that objects can be grouped
     if (!skipValidation) {
@@ -18108,7 +18108,7 @@ class OptHandler {
 
     // Adjust objects' positions relative to the group's bounding rectangle
     for (objectIndex = 0; objectIndex < filteredObjects.length; ++objectIndex) {
-      currentObject = GlobalData.optManager.GetObjectPtr(filteredObjects[objectIndex], true);
+      currentObject = T3Gv.optManager.GetObjectPtr(filteredObjects[objectIndex], true);
 
       // Store comment IDs for later adjustment
       if (currentObject.CommentID >= 0) {
@@ -18143,7 +18143,7 @@ class OptHandler {
       // If object is already a group symbol, clean up its native data
       if (currentObject.NativeID >= 0 &&
         currentObject.ShapeType === ConstantData.ShapeType.GROUPSYMBOL) {
-        const nativeBlock = GlobalData.objectStore.PreserveBlock(currentObject.NativeID);
+        const nativeBlock = T3Gv.objectStore.PreserveBlock(currentObject.NativeID);
         if (nativeBlock) {
           nativeBlock.Delete();
         }
@@ -18188,7 +18188,7 @@ class OptHandler {
     this.ZListPreserve();
 
     // Add the new group to the document
-    const newGroupId = GlobalData.optManager.AddNewObject(groupSymbol, true, false);
+    const newGroupId = T3Gv.optManager.AddNewObject(groupSymbol, true, false);
 
     // Handle collaboration for the new group
     if (enableCollaboration && Collab.AllowMessage()) {
@@ -18219,8 +18219,8 @@ class OptHandler {
 
     // Remove the grouped objects from z-lists and links
     for (objectIndex = 0; objectIndex < filteredObjects.length; ++objectIndex) {
-      GlobalData.optManager.RemoveFromAllZLists(filteredObjects[objectIndex]);
-      GlobalData.optManager.DeleteLink(
+      T3Gv.optManager.RemoveFromAllZLists(filteredObjects[objectIndex]);
+      T3Gv.optManager.DeleteLink(
         linksList,
         filteredObjects[objectIndex],
         -1,
@@ -18232,7 +18232,7 @@ class OptHandler {
 
     // Handle comments for grouped objects
     if (commentIds.length) {
-      GlobalData.optManager.Comment_Group(commentIds);
+      T3Gv.optManager.Comment_Group(commentIds);
     }
 
     // Get the updated visible list
@@ -18240,7 +18240,7 @@ class OptHandler {
     const updatedVisibleCount = visibleObjectList.length;
 
     // Convert group to native format if available
-    groupSymbol.ConvertToNative(GlobalData.optManager.RichGradients, skipValidation);
+    groupSymbol.ConvertToNative(T3Gv.optManager.RichGradients, skipValidation);
 
     // Send collaboration message if enabled
     if (enableCollaboration && Collab.AllowMessage()) {
@@ -18270,7 +18270,7 @@ class OptHandler {
       const dimensionData = [];
 
       for (let i = 0, len = objectList.length; i < len; i++) {
-        const currentObject = GlobalData.optManager.GetObjectPtr(objectList[i], true);
+        const currentObject = T3Gv.optManager.GetObjectPtr(objectList[i], true);
 
         // Save dimensions that need to be preserved
         if (
@@ -18297,7 +18297,7 @@ class OptHandler {
      */
     function restoreDimensions(objectList, dimensionData) {
       for (let i = 0, len = dimensionData.length; i < len; i++) {
-        const objectToRestore = GlobalData.optManager.GetObjectPtr(
+        const objectToRestore = T3Gv.optManager.GetObjectPtr(
           objectList[dimensionData[i].index],
           true
         );
@@ -18348,11 +18348,11 @@ class OptHandler {
   IsLinkedOutside(linkedObjectIds: number[]): boolean {
     console.log("O.Opt IsLinkedOutside - Input:", { linkedObjectIds });
 
-    const allLinkedObjects = GlobalData.optManager.ZList();
+    const allLinkedObjects = T3Gv.optManager.ZList();
     for (let outerIndex = 0; outerIndex < linkedObjectIds.length; outerIndex++) {
-      const currentObject = GlobalData.optManager.GetObjectPtr(linkedObjectIds[outerIndex], false);
+      const currentObject = T3Gv.optManager.GetObjectPtr(linkedObjectIds[outerIndex], false);
       for (let innerIndex = 0; innerIndex < allLinkedObjects.length; innerIndex++) {
-        const comparedObject = GlobalData.optManager.GetObjectPtr(allLinkedObjects[innerIndex], false);
+        const comparedObject = T3Gv.optManager.GetObjectPtr(allLinkedObjects[innerIndex], false);
         if (comparedObject.associd === currentObject.BlockID && linkedObjectIds.indexOf(comparedObject.BlockID) === -1) {
           console.log("O.Opt IsLinkedOutside - Output:", true);
           return true;
@@ -18374,14 +18374,14 @@ class OptHandler {
   IsGroupNonDelete(): boolean {
     console.log("O.Opt IsGroupNonDelete - Input: no parameters");
 
-    const selectedObjects = GlobalData.optManager.GetObjectPtr(
-      GlobalData.optManager.theSelectedListBlockID,
+    const selectedObjects = T3Gv.optManager.GetObjectPtr(
+      T3Gv.optManager.theSelectedListBlockID,
       false
     );
     let currentObject = null;
 
     for (let index = 0; index < selectedObjects.length; index++) {
-      currentObject = GlobalData.optManager.GetObjectPtr(selectedObjects[index], false);
+      currentObject = T3Gv.optManager.GetObjectPtr(selectedObjects[index], false);
 
       if (currentObject.subtype === ConstantData.ObjectTypes.SD_SUBT_KANBAN_TABLE) {
         console.log("O.Opt IsGroupNonDelete - Output: true");
@@ -18396,7 +18396,7 @@ class OptHandler {
       if (
         currentObject.objecttype === ConstantData.ObjectTypes.SD_OBJT_TIMELINE_EVENT &&
         currentObject.hooks.length > 0 &&
-        GlobalData.optManager.GetObjectPtr(currentObject.hooks[0].objid, false).objecttype === ConstantData.ObjectTypes.SD_OBJT_TIMELINE
+        T3Gv.optManager.GetObjectPtr(currentObject.hooks[0].objid, false).objecttype === ConstantData.ObjectTypes.SD_OBJT_TIMELINE
       ) {
         console.log("O.Opt IsGroupNonDelete - Output: true");
         return true;
@@ -18422,7 +18422,7 @@ class OptHandler {
 
     for (let i = 0; i < objectIdList.length; i++) {
       const objectId = objectIdList[i];
-      const currentObject = GlobalData.optManager.GetObjectPtr(objectId, false);
+      const currentObject = T3Gv.optManager.GetObjectPtr(objectId, false);
       if (currentObject != null) {
         const currentRect = useFrame
           ? currentObject.Frame
@@ -18454,7 +18454,7 @@ class OptHandler {
       console.log("O.Opt UngroupSelectedShapes - Output: false (no active visible shapes)");
       return false;
     }
-    const selectedShapes = GlobalData.objectStore.GetObject(this.theSelectedListBlockID).Data;
+    const selectedShapes = T3Gv.objectStore.GetObject(this.theSelectedListBlockID).Data;
     const numSelectedShapes = selectedShapes.length;
     if (numSelectedShapes === 0) {
       console.log("O.Opt UngroupSelectedShapes - Output: false (no selected shapes)");
@@ -18464,7 +18464,7 @@ class OptHandler {
     let containsGroup = false;
     let currentShape = null;
     for (let index = 0; index < numSelectedShapes; index++) {
-      currentShape = GlobalData.optManager.GetObjectPtr(selectedShapes[index], false);
+      currentShape = T3Gv.optManager.GetObjectPtr(selectedShapes[index], false);
       if (currentShape instanceof GroupSymbol) {
         containsGroup = true;
         break;
@@ -18481,16 +18481,16 @@ class OptHandler {
         const messageObject = {};
         const message = Collab.BuildMessage(ConstantData.CollabMessages.UngroupSelectedShapes, messageObject, true, true);
       }
-      let currentSelectedShapes = GlobalData.optManager.GetObjectPtr(this.theSelectedListBlockID, true).slice(0);
+      let currentSelectedShapes = T3Gv.optManager.GetObjectPtr(this.theSelectedListBlockID, true).slice(0);
       let resultShapeList: number[] = [];
       for (let index = 0; index < numSelectedShapes; index++) {
-        currentShape = GlobalData.optManager.GetObjectPtr(currentSelectedShapes[index], false);
+        currentShape = T3Gv.optManager.GetObjectPtr(currentSelectedShapes[index], false);
         const shapeId = currentSelectedShapes[index];
         if (currentShape instanceof GroupSymbol) {
           resultShapeList = resultShapeList.concat(currentShape.ShapesInGroup);
           this.UngroupShape(shapeId);
         } else if (currentShape.NativeID >= 0) {
-          const ungroupResult = GlobalData.optManager.UngroupNative(shapeId, false, true);
+          const ungroupResult = T3Gv.optManager.UngroupNative(shapeId, false, true);
           if (ungroupResult) {
             if (Collab.AllowMessage()) {
               Collab.AddNewBlockToSecondary(ungroupResult[0]);
@@ -18538,9 +18538,9 @@ class OptHandler {
         console.log("O.Opt FindParentGroup - Output:", currentGroup);
         return currentGroup;
       }
-      child = GlobalData.optManager.GetObjectPtr(groupArray[index], false);
+      child = T3Gv.optManager.GetObjectPtr(groupArray[index], false);
       if (child instanceof GroupSymbol && child.ShapesInGroup) {
-        const parentGroup = GlobalData.optManager.FindParentGroup(targetId, child);
+        const parentGroup = T3Gv.optManager.FindParentGroup(targetId, child);
         if (parentGroup) {
           console.log("O.Opt FindParentGroup - Output:", parentGroup);
           return parentGroup;
@@ -18564,7 +18564,7 @@ class OptHandler {
         Math.abs(shape.RotationAngle % 90) < 20;
     };
 
-    const selectedObjects = GlobalData.objectStore.GetObject(this.theSelectedListBlockID).Data;
+    const selectedObjects = T3Gv.objectStore.GetObject(this.theSelectedListBlockID).Data;
     const count = selectedObjects.length;
 
     if (count !== 0) {
@@ -18921,7 +18921,7 @@ class OptHandler {
    */
   MakeSameSize(sizeOption) {
     console.log("O.Opt MakeSameSize - Input:", { sizeOption });
-    const selectedList = GlobalData.objectStore.GetObject(this.theSelectedListBlockID).Data;
+    const selectedList = T3Gv.objectStore.GetObject(this.theSelectedListBlockID).Data;
     const selectedCount = selectedList.length;
     if (selectedCount <= 1) {
       console.log("O.Opt MakeSameSize - Output:", "Not enough objects selected");
@@ -18964,12 +18964,12 @@ class OptHandler {
         default:
           break;
       }
-      if ((GlobalData.docHandler.documentConfig.centerSnap && GlobalData.docHandler.documentConfig.enableSnap) ||
-        GlobalData.docHandler.documentConfig.enableSnap === false) {
+      if ((T3Gv.docHandler.documentConfig.centerSnap && T3Gv.docHandler.documentConfig.enableSnap) ||
+        T3Gv.docHandler.documentConfig.enableSnap === false) {
         const deltaX = (currentObject.Frame.width - originalFrame.width) / 2;
         const deltaY = (currentObject.Frame.height - originalFrame.height) / 2;
         if (deltaX || deltaY) {
-          GlobalData.optManager.OffsetShape(objectId, -deltaX, -deltaY, 0);
+          T3Gv.optManager.OffsetShape(objectId, -deltaX, -deltaY, 0);
         }
       }
       if (currentObject.rflags) {
@@ -19013,19 +19013,19 @@ class OptHandler {
 
     this.WorkAreaHammerTap = (tapEvent) => {
       try {
-        GlobalData.optManager.SetUIAdaptation(tapEvent);
+        T3Gv.optManager.SetUIAdaptation(tapEvent);
         if (Collab.AllowMessage()) {
           Collab.BeginSecondaryEdit();
         }
-        GlobalData.optManager.AddNewObject(shape, operation, false);
-        const activeLayerZList = GlobalData.optManager.ActiveLayerZList();
+        T3Gv.optManager.AddNewObject(shape, operation, false);
+        const activeLayerZList = T3Gv.optManager.ActiveLayerZList();
         const activeCount = activeLayerZList.length;
-        GlobalData.optManager.theActionStoredObjectID = activeLayerZList[activeCount - 1];
-        GlobalData.optManager.theActionSVGObject = GlobalData.optManager.svgObjectLayer.GetElementByID(GlobalData.optManager.theActionStoredObjectID);
-        GlobalData.optManager.StampTextObjectOnTapDone(tapEvent, operation);
+        T3Gv.optManager.theActionStoredObjectID = activeLayerZList[activeCount - 1];
+        T3Gv.optManager.theActionSVGObject = T3Gv.optManager.svgObjectLayer.GetElementByID(T3Gv.optManager.theActionStoredObjectID);
+        T3Gv.optManager.StampTextObjectOnTapDone(tapEvent, operation);
       } catch (error) {
-        GlobalData.optManager.CancelModalOperation();
-        GlobalData.optManager.ExceptionCleanup(error);
+        T3Gv.optManager.CancelModalOperation();
+        T3Gv.optManager.ExceptionCleanup(error);
         throw error;
       }
     };
@@ -19072,7 +19072,7 @@ class OptHandler {
   StampTextObjectOnTapDone(event, optionalParam) {
     console.log("O.Opt StampTextObjectOnTapDone - Input:", { event, optionalParam });
 
-    GlobalData.optManager.SetUIAdaptation(event);
+    T3Gv.optManager.SetUIAdaptation(event);
 
     let objectIds = [];
     let docCoords = this.svgDoc.ConvertWindowToDocCoords(
@@ -19086,8 +19086,8 @@ class OptHandler {
       if (this.OverrideSnaps(event)) {
         hasValidConnection = true;
       }
-      if (GlobalData.docHandler.documentConfig.enableSnap && !hasValidConnection) {
-        docCoords = GlobalData.docHandler.SnapToGrid(docCoords);
+      if (T3Gv.docHandler.documentConfig.enableSnap && !hasValidConnection) {
+        docCoords = T3Gv.docHandler.SnapToGrid(docCoords);
       }
     }
 
@@ -19279,15 +19279,15 @@ class OptHandler {
     // References to objects and structures we'll need
     let newObject = null;
     let existingObject = null;
-    let linksList = GlobalData.optManager.GetObjectPtr(this.theLinksBlockID, true);
+    let linksList = T3Gv.optManager.GetObjectPtr(this.theLinksBlockID, true);
 
     // Constants for flip operations
     const FLIP_VERTICAL = ConstantData.ExtraFlags.SEDE_FlipVert;
     const FLIP_HORIZONTAL = ConstantData.ExtraFlags.SEDE_FlipHoriz;
 
     // Get the group object
-    const groupObject = GlobalData.optManager.GetObjectPtr(groupId, true);
-    const textChildId = GlobalData.optManager.SD_GetVisioTextChild(groupId);
+    const groupObject = T3Gv.optManager.GetObjectPtr(groupId, true);
+    const textChildId = T3Gv.optManager.SD_GetVisioTextChild(groupId);
 
     // Get the frame of the group and its center point
     const groupFrame = groupObject.Frame;
@@ -19321,12 +19321,12 @@ class OptHandler {
     }
 
     // Get the z-list with preserved state
-    GlobalData.optManager.ZListPreserve();
+    T3Gv.optManager.ZListPreserve();
 
     // Process each shape in the group
     for (index = 0; index < shapeCount; ++index) {
       // Get the current shape from the group
-      const currentShape = GlobalData.optManager.GetObjectPtr(shapesInGroup[index], true);
+      const currentShape = T3Gv.optManager.GetObjectPtr(shapesInGroup[index], true);
 
       // Track comment IDs
       if (currentShape.CommentID >= 0) {
@@ -19361,7 +19361,7 @@ class OptHandler {
       // Convert GroupSymbol to native format if needed
       if (currentShape instanceof GroupSymbol &&
         currentShape.NativeID < 0) {
-        currentShape.ConvertToNative(GlobalData.optManager.RichGradients, false);
+        currentShape.ConvertToNative(T3Gv.optManager.RichGradients, false);
       }
 
       // Scale the object based on group parameters
@@ -19397,7 +19397,7 @@ class OptHandler {
 
       // Scale text if needed
       if (currentShape.DataID !== -1 && scaleY !== 1) {
-        const textStyles = GlobalData.optManager.GetObjectPtr(currentShape.DataID, true).runtimeText.styles;
+        const textStyles = T3Gv.optManager.GetObjectPtr(currentShape.DataID, true).runtimeText.styles;
         const styleCount = textStyles.length;
 
         for (styleIndex = 0; styleIndex < styleCount; ++styleIndex) {
@@ -19416,39 +19416,39 @@ class OptHandler {
 
       // Add to dirty list and rebuild links
       this.AddToDirtyList(shapesInGroup[index]);
-      GlobalData.optManager.RebuildLinks(linksList, shapesInGroup[index]);
+      T3Gv.optManager.RebuildLinks(linksList, shapesInGroup[index]);
     }
 
     // Insert the shapes into the layer at the group's position
-    GlobalData.optManager.InsertObjectsIntoLayerAt(groupId, shapesInGroup);
+    T3Gv.optManager.InsertObjectsIntoLayerAt(groupId, shapesInGroup);
 
     // Maintain links for each shape
     for (index = 0; index < objectsForLinkMaintenance.length; index++) {
-      GlobalData.optManager.ob = objectsForLinkMaintenance[index];
-      existingObject = GlobalData.optManager.GetObjectPtr(objectsForLinkMaintenance[index].BlockID, false);
+      T3Gv.optManager.ob = objectsForLinkMaintenance[index];
+      existingObject = T3Gv.optManager.GetObjectPtr(objectsForLinkMaintenance[index].BlockID, false);
 
       const linkMode = maintainLinksFlag ? 2 : false;
 
-      GlobalData.optManager.MaintainLink(
+      T3Gv.optManager.MaintainLink(
         objectsForLinkMaintenance[index].BlockID,
         existingObject,
-        GlobalData.optManager.ob,
+        T3Gv.optManager.ob,
         ConstantData.ActionTriggerType.FLIP,
         linkMode
       );
     }
 
     // Clear the temporary object reference
-    GlobalData.optManager.ob = {};
+    T3Gv.optManager.ob = {};
 
     // Update link flags for containers
     const containerCount = containerIds.length;
     for (index = 0; index < containerCount; index++) {
-      GlobalData.optManager.SetLinkFlag(containerIds[index], ConstantData.LinkFlags.SED_L_MOVE);
+      T3Gv.optManager.SetLinkFlag(containerIds[index], ConstantData.LinkFlags.SED_L_MOVE);
     }
 
     // Update all links
-    GlobalData.optManager.UpdateLinks();
+    T3Gv.optManager.UpdateLinks();
 
     // Clear the shapes list from the group
     groupObject.ShapesInGroup = [];
@@ -19458,7 +19458,7 @@ class OptHandler {
 
     // Handle text child if present
     if (textChildId >= 0) {
-      existingObject = GlobalData.optManager.GetObjectPtr(textChildId);
+      existingObject = T3Gv.optManager.GetObjectPtr(textChildId);
       existingObject.moreflags = Utils2.SetFlag(
         existingObject.moreflags,
         ConstantData.ObjMoreFlags.SED_MF_VisioText,
@@ -19470,11 +19470,11 @@ class OptHandler {
 
     // Handle comment ungrouping if needed
     if (commentIds.length) {
-      GlobalData.optManager.Comment_Ungroup(commentIds);
+      T3Gv.optManager.Comment_Ungroup(commentIds);
     }
 
     // Render all dirty SVG objects
-    GlobalData.optManager.RenderDirtySVGObjects();
+    T3Gv.optManager.RenderDirtySVGObjects();
 
     console.log("O.Opt UngroupShape - Output: Successfully ungrouped", shapeCount, "shapes");
   }
@@ -19487,11 +19487,11 @@ class OptHandler {
    */
   RebuildLinks(linkList, objectId) {
     console.log("O.Opt RebuildLinks - Input:", { linkList, objectId });
-    const targetObject = GlobalData.optManager.GetObjectPtr(objectId, false);
+    const targetObject = T3Gv.optManager.GetObjectPtr(objectId, false);
     if (targetObject && targetObject.hooks) {
       const hookCount = targetObject.hooks.length;
       for (let hookIndex = 0; hookIndex < hookCount; hookIndex++) {
-        GlobalData.optManager.InsertLink(linkList, objectId, hookIndex, ConstantData.LinkFlags.SED_L_MOVE);
+        T3Gv.optManager.InsertLink(linkList, objectId, hookIndex, ConstantData.LinkFlags.SED_L_MOVE);
       }
     }
     console.log("O.Opt RebuildLinks - Output: Completed");
@@ -19510,7 +19510,7 @@ class OptHandler {
     const layerIndex = this.FindLayerForShapeID(objectId);
     if (layerIndex >= 0) {
       // Retrieve the layers and get the current z-order list for the identified layer.
-      const layers = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, true).layers;
+      const layers = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, true).layers;
       let currentZList = layers[layerIndex].zList;
 
       // Locate the index of the object in the z-order list.
@@ -19539,21 +19539,21 @@ class OptHandler {
     console.log("O.Opt CutObjects - Input:", { isFromCutButton });
     try {
       // If a cut is already in progress from a button and this call is from a button, cancel further processing.
-      if (GlobalData.optManager.CutFromButton && isFromCutButton) {
-        GlobalData.optManager.CutFromButton = false;
+      if (T3Gv.optManager.CutFromButton && isFromCutButton) {
+        T3Gv.optManager.CutFromButton = false;
         console.log("O.Opt CutObjects - Output:", "Cut cancelled due to active cut button state.");
         return;
       }
 
       // Set the cut button flag based on the trigger.
-      GlobalData.optManager.CutFromButton = !isFromCutButton;
+      T3Gv.optManager.CutFromButton = !isFromCutButton;
 
       // Check if we are in a text editing mode or note/dimension edit mode.
       const textEditSession = this.GetObjectPtr(this.theTEDSessionBlockID, false);
       if (
         textEditSession.theActiveTextEditObjectID !== -1 ||
         this.bInNoteEdit ||
-        GlobalData.optManager.bInDimensionEdit
+        T3Gv.optManager.bInDimensionEdit
       ) {
         const activeTextEditor = this.svgDoc.GetActiveEdit();
         if (activeTextEditor) {
@@ -19591,8 +19591,8 @@ class OptHandler {
 
       console.log("O.Opt CutObjects - Output:", "Graphic objects cut completed.");
     } catch (error) {
-      GlobalData.optManager.RestorePrimaryStateManager();
-      GlobalData.optManager.ExceptionCleanup(error);
+      T3Gv.optManager.RestorePrimaryStateManager();
+      T3Gv.optManager.ExceptionCleanup(error);
       console.log("O.Opt CutObjects - Output:", "Error occurred during cut operation.");
       throw error;
     }
@@ -19607,7 +19607,7 @@ class OptHandler {
     console.log("O.Opt CopyObjectsCommon - Input:", { returnBuffer });
 
     // Retrieve the currently selected objects.
-    const selectedObjects = GlobalData.objectStore.GetObject(this.theSelectedListBlockID).Data;
+    const selectedObjects = T3Gv.objectStore.GetObject(this.theSelectedListBlockID).Data;
 
     // If there are selected objects and we're in a MindMap planning document, commit the visual outline.
     if (selectedObjects.length && this.IsPlanningDocument() === ConstantData.LayerTypes.SD_LAYERT_MINDMAP) {
@@ -19681,14 +19681,14 @@ class OptHandler {
   UpdateObjectLayerIndices(updateOptions: { TextureList: any }): void {
     console.log("O.Opt UpdateObjectLayerIndices - Input:", updateOptions);
 
-    const layersManager = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
+    const layersManager = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
     const layers = layersManager.layers;
     const numLayers = layersManager.nlayers;
 
     for (let layerIndex = 0; layerIndex < numLayers; layerIndex++) {
       const zList = layers[layerIndex].zList;
       for (let objectIndex = 0, zListLength = zList.length; objectIndex < zListLength; objectIndex++) {
-        const currentObject = GlobalData.optManager.GetObjectPtr(zList[objectIndex], false);
+        const currentObject = T3Gv.optManager.GetObjectPtr(zList[objectIndex], false);
         if (currentObject) {
           currentObject.Layer = layerIndex;
           currentObject.GetTextures(updateOptions.TextureList);
@@ -19709,7 +19709,7 @@ class OptHandler {
 
     const resultWrapper = { selectedList: [] as number[] };
     // Determine the paste position: use global paste point if set, otherwise get paste position.
-    const pastePosition = GlobalData.optManager.PastePoint || this.GetPastePosition();
+    const pastePosition = T3Gv.optManager.PastePoint || this.GetPastePosition();
     let messagePayload: any = {};
 
     if (Collab.AllowMessage()) {
@@ -19733,7 +19733,7 @@ class OptHandler {
       false
     );
 
-    GlobalData.optManager.PastePoint = null;
+    T3Gv.optManager.PastePoint = null;
     this.CompleteOperation(resultWrapper.selectedList);
 
     if (Collab.AllowMessage()) {
@@ -19760,8 +19760,8 @@ class OptHandler {
     console.log("O.Opt GetPastePosition - Input: no parameters");
 
     const offset = 100;
-    const workArea = GlobalData.docHandler.svgDoc.GetWorkArea();
-    let scale = GlobalData.docHandler.svgDoc.docInfo.docToScreenScale;
+    const workArea = T3Gv.docHandler.svgDoc.GetWorkArea();
+    let scale = T3Gv.docHandler.svgDoc.docInfo.docToScreenScale;
     if (scale == null || scale === 0) {
       scale = 1;
     }
@@ -19772,29 +19772,29 @@ class OptHandler {
     };
 
     if (
-      workArea.scrollX === GlobalData.optManager.TopLeftPasteScrollPos.x &&
-      workArea.scrollY === GlobalData.optManager.TopLeftPasteScrollPos.y
+      workArea.scrollX === T3Gv.optManager.TopLeftPasteScrollPos.x &&
+      workArea.scrollY === T3Gv.optManager.TopLeftPasteScrollPos.y
     ) {
-      pastePosition = GlobalData.optManager.TopLeftPastePos;
+      pastePosition = T3Gv.optManager.TopLeftPastePos;
       pastePosition.x += 50;
       pastePosition.y += 50;
-      GlobalData.optManager.PasteCount++;
-      if (GlobalData.optManager.PasteCount > 5) {
-        GlobalData.optManager.PasteCount = 0;
+      T3Gv.optManager.PasteCount++;
+      if (T3Gv.optManager.PasteCount > 5) {
+        T3Gv.optManager.PasteCount = 0;
         pastePosition = {
           x: (workArea.scrollX + offset) / scale,
           y: (workArea.scrollY + offset) / scale
         };
       }
     } else {
-      GlobalData.optManager.PasteCount = 0;
+      T3Gv.optManager.PasteCount = 0;
     }
 
-    GlobalData.optManager.TopLeftPastePos = {
+    T3Gv.optManager.TopLeftPastePos = {
       x: pastePosition.x,
       y: pastePosition.y
     };
-    GlobalData.optManager.TopLeftPasteScrollPos = {
+    T3Gv.optManager.TopLeftPasteScrollPos = {
       x: workArea.scrollX,
       y: workArea.scrollY
     };
@@ -19817,7 +19817,7 @@ class OptHandler {
     if (
       activeTextEditorSession.theActiveTextEditObjectID !== -1 ||
       this.bInNoteEdit ||
-      GlobalData.optManager.bInDimensionEdit
+      T3Gv.optManager.bInDimensionEdit
     ) {
       const activeEditElement = this.svgDoc.GetActiveEdit();
       if (activeEditElement) {
@@ -19909,9 +19909,9 @@ class OptHandler {
     }
     if (targetObjectId !== -1) {
       businessManager = Business.GetSelectionBusinessManager();
-      const targetObject = GlobalData.objectStore.GetObject(targetObjectId);
+      const targetObject = T3Gv.objectStore.GetObject(targetObjectId);
       const objectData = targetObject.Data;
-      if (businessManager && !GlobalData.optManager.Comment_IsTarget(targetObjectId)) {
+      if (businessManager && !T3Gv.optManager.Comment_IsTarget(targetObjectId)) {
         selectionContexts.push(Resources.Contexts.Automation);
       }
       if (objectData.AllowTextEdit()) {
@@ -20467,7 +20467,7 @@ class OptHandler {
     const FLAG_TITLE_BLOCK = ConstantData.TextFlags.SED_TF_TitleBlock;
 
     // Use provided object list or get all visible objects
-    const visibleObjects = objectList || GlobalData.optManager.VisibleZList();
+    const visibleObjects = objectList || T3Gv.optManager.VisibleZList();
     const objectCount = visibleObjects.length;
 
     let unionRect;
@@ -20477,7 +20477,7 @@ class OptHandler {
 
     // Process each object
     for (let i = 0; i < objectCount; i++) {
-      currentObject = GlobalData.optManager.GetObjectPtr(visibleObjects[i], false);
+      currentObject = T3Gv.optManager.GetObjectPtr(visibleObjects[i], false);
 
       if (currentObject != null) {
         isTitleBlock = false;
@@ -20543,7 +20543,7 @@ class OptHandler {
   GetAutomationContext(businessManager) {
     console.log("O.Opt GetAutomationContext - Input:", businessManager);
 
-    const sessionObject = GlobalData.optManager.GetObjectPtr(this.theSEDSessionBlockID, false);
+    const sessionObject = T3Gv.optManager.GetObjectPtr(this.theSEDSessionBlockID, false);
     let automationContext = Resources.Contexts.Automation;
 
     if (businessManager) {
@@ -20583,8 +20583,8 @@ class OptHandler {
     // Only proceed if there are selected objects
     if (this.AreSelectedObjects()) {
       // Get session object with preservation based on whether this is a repeat operation
-      const sessionObject = GlobalData.optManager.GetObjectPtr(
-        GlobalData.optManager.theSEDSessionBlockID,
+      const sessionObject = T3Gv.optManager.GetObjectPtr(
+        T3Gv.optManager.theSEDSessionBlockID,
         !this.LastOpDuplicate && !editOverride
       );
 
@@ -20604,8 +20604,8 @@ class OptHandler {
       }
 
       // Get the current selection list
-      const selectedList = GlobalData.optManager.GetObjectPtr(
-        GlobalData.optManager.theSelectedListBlockID,
+      const selectedList = T3Gv.optManager.GetObjectPtr(
+        T3Gv.optManager.theSelectedListBlockID,
         false
       );
 
@@ -20681,10 +20681,10 @@ class OptHandler {
     console.log("O.Opt RestorePrimaryStateManager - Input: no parameters");
 
     // Only take action if we're not already using the primary state manager
-    if (!GlobalData.bIsPrimaryStateManager) {
+    if (!T3Gv.bIsPrimaryStateManager) {
       this.RestorePrimaryStateManagerLMMethods();
       SDJS_select_primary_state_manager();
-      GlobalData.optManager.RenderAllSVGObjects();
+      T3Gv.optManager.RenderAllSVGObjects();
     }
 
     console.log("O.Opt RestorePrimaryStateManager - Output: Primary state manager restored");
@@ -20698,7 +20698,7 @@ class OptHandler {
   GetDocDirtyState(): boolean {
     console.log("O.Opt GetDocDirtyState - Input: no parameters");
 
-    const isDirty = GlobalData.optManager.theContentHeader.DocIsDirty;
+    const isDirty = T3Gv.optManager.theContentHeader.DocIsDirty;
 
     console.log("O.Opt GetDocDirtyState - Output:", isDirty);
     return isDirty;
@@ -20717,13 +20717,13 @@ class OptHandler {
     console.log("O.Opt SetDocDirtyState - Input:", { isDirty, allowReplaceWhenClean });
 
     // Set the document dirty state
-    GlobalData.optManager.theContentHeader.DocIsDirty = isDirty;
+    T3Gv.optManager.theContentHeader.DocIsDirty = isDirty;
 
     // Update the AllowReplace flag based on dirty state
     if (isDirty) {
-      GlobalData.optManager.theContentHeader.AllowReplace = false;
+      T3Gv.optManager.theContentHeader.AllowReplace = false;
     } else if (allowReplaceWhenClean === true) {
-      GlobalData.optManager.theContentHeader.AllowReplace = true;
+      T3Gv.optManager.theContentHeader.AllowReplace = true;
     }
 
     console.log("O.Opt SetDocDirtyState - Output: Document dirty state set to", isDirty);
@@ -20754,10 +20754,10 @@ class OptHandler {
 
     // If processing the next state, handle CREATE operations
     if (isNextState) {
-      storedObjectCount = GlobalData.stateManager.States[stateId + 1].StoredObjects.length;
+      storedObjectCount = T3Gv.stateManager.States[stateId + 1].StoredObjects.length;
 
       for (objectIndex = 0; objectIndex < storedObjectCount; objectIndex++) {
-        storedObject = GlobalData.stateManager.States[stateId + 1].StoredObjects[objectIndex];
+        storedObject = T3Gv.stateManager.States[stateId + 1].StoredObjects[objectIndex];
 
         // Handle drawing objects with CREATE operations
         if (storedObject.Type === ConstantData.StoredObjectType.BASE_LM_DRAWING_OBJECT) {
@@ -20765,13 +20765,13 @@ class OptHandler {
             objectData = storedObject.Data;
 
             if (this.IsBlobURL(objectData.ImageURL)) {
-              objectInstance = GlobalData.objectStore.GetObject(storedObject.ID);
+              objectInstance = T3Gv.objectStore.GetObject(storedObject.ID);
 
               if (objectInstance) {
                 objectData = objectInstance.Data;
                 blobBytes = objectData.GetBlobBytes();
                 imageType = FileParser.GetImageBlobType(blobBytes.ImageDir);
-                objectData.ImageURL = GlobalData.optManager.MakeURL(null, blobBytes.Bytes, imageType);
+                objectData.ImageURL = T3Gv.optManager.MakeURL(null, blobBytes.Bytes, imageType);
               }
             }
           }
@@ -20779,7 +20779,7 @@ class OptHandler {
         // Handle table objects with CREATE operations
         else if (storedObject.Type === ConstantData.StoredObjectType.TABLE_OBJECT &&
           storedObject.StateOperationTypeID === Globals.StateOperationType.CREATE) {
-          tableObject = GlobalData.objectStore.GetObject(storedObject.ID);
+          tableObject = T3Gv.objectStore.GetObject(storedObject.ID);
 
           if (tableObject) {
             tableData = tableObject.Data;
@@ -20790,17 +20790,17 @@ class OptHandler {
     }
 
     // Process current state objects
-    storedObjectCount = GlobalData.stateManager.States[stateId].StoredObjects.length;
+    storedObjectCount = T3Gv.stateManager.States[stateId].StoredObjects.length;
 
     for (objectIndex = 0; objectIndex < storedObjectCount; objectIndex++) {
-      storedObject = GlobalData.stateManager.States[stateId].StoredObjects[objectIndex];
+      storedObject = T3Gv.stateManager.States[stateId].StoredObjects[objectIndex];
 
       // Handle drawing objects
       if (storedObject.Type === ConstantData.StoredObjectType.BASE_LM_DRAWING_OBJECT) {
         // Handle DELETE operations
         if (storedObject.StateOperationTypeID === Globals.StateOperationType.DELETE) {
           if (!isNextState) {
-            objectInstance = GlobalData.objectStore.GetObject(storedObject.ID);
+            objectInstance = T3Gv.objectStore.GetObject(storedObject.ID);
 
             if (objectInstance) {
               objectData = objectInstance.Data;
@@ -20808,7 +20808,7 @@ class OptHandler {
               if (objectData.BlobBytesID >= 0 && this.IsBlobURL(objectData.ImageURL)) {
                 blobBytes = objectData.GetBlobBytes();
                 imageType = FileParser.GetImageBlobType(blobBytes.ImageDir);
-                objectData.ImageURL = GlobalData.optManager.MakeURL(null, blobBytes.Bytes, imageType);
+                objectData.ImageURL = T3Gv.optManager.MakeURL(null, blobBytes.Bytes, imageType);
               }
             }
           }
@@ -20816,7 +20816,7 @@ class OptHandler {
         // Handle other operations
         else {
           storedData = storedObject.Data;
-          objectInstance = GlobalData.objectStore.GetObject(storedObject.ID);
+          objectInstance = T3Gv.objectStore.GetObject(storedObject.ID);
 
           if (this.IsBlobURL(storedData.ImageURL)) {
             if (objectInstance) {
@@ -20832,7 +20832,7 @@ class OptHandler {
                     imageType = FileParser.GetImageBlobType(blobBytes.ImageDir);
 
                     if (this.IsBlobURL(objectData.ImageURL)) {
-                      objectData.ImageURL = GlobalData.optManager.MakeURL(null, blobBytes.Bytes, imageType);
+                      objectData.ImageURL = T3Gv.optManager.MakeURL(null, blobBytes.Bytes, imageType);
                     }
                   }
                 }
@@ -20850,7 +20850,7 @@ class OptHandler {
                 imageType = FileParser.GetImageBlobType(blobBytes.ImageDir);
 
                 if (this.IsBlobURL(objectData.ImageURL)) {
-                  objectData.ImageURL = GlobalData.optManager.MakeURL(null, blobBytes.Bytes, imageType);
+                  objectData.ImageURL = T3Gv.optManager.MakeURL(null, blobBytes.Bytes, imageType);
                 }
               }
             }
@@ -20861,16 +20861,16 @@ class OptHandler {
       else if (storedObject.Type === ConstantData.StoredObjectType.TABLE_OBJECT) {
         if (storedObject.StateOperationTypeID === Globals.StateOperationType.DELETE) {
           if (!isNextState) {
-            tableObject = GlobalData.objectStore.GetObject(storedObject.ID);
+            tableObject = T3Gv.objectStore.GetObject(storedObject.ID);
 
             if (tableObject) {
               tableData = tableObject.Data;
-              GlobalData.optManager.Table_RebuildURLs(tableData);
+              T3Gv.optManager.Table_RebuildURLs(tableData);
             }
           }
         } else {
           storedData = storedObject.Data;
-          tableObject = GlobalData.objectStore.GetObject(storedObject.ID);
+          tableObject = T3Gv.objectStore.GetObject(storedObject.ID);
 
           if (tableObject) {
             tableData = tableObject.Data;
@@ -20979,7 +20979,7 @@ class OptHandler {
       this.SelectionState.paste = clipboardType;
 
       // Check if UI should be hidden
-      if (GlobalData.optManager.Table_HideUI(tableObject)) {
+      if (T3Gv.optManager.Table_HideUI(tableObject)) {
         this.SelectionState.IsTargetTable = false;
         this.SelectionState.ntablesselected = 0;
         this.SelectionState.NTableRows = GlobalDatagOptions.newTableRows;
@@ -21298,7 +21298,7 @@ class OptHandler {
                     -textMinDimensions.height - shape.TMargins.top
                   );
               }
-              GlobalData.optManager.SetShapeR(shape);
+              T3Gv.optManager.SetShapeR(shape);
             } else if (shape.TextFlags & ConstantData.TextFlags.SED_TF_AttachB) {
               switch (shape.TextAlign) {
                 case ConstantData.TextAlign.TOPLEFT:
@@ -21320,7 +21320,7 @@ class OptHandler {
                     shape.Frame.height
                   );
               }
-              GlobalData.optManager.SetShapeR(shape);
+              T3Gv.optManager.SetShapeR(shape);
             }
           } else {
             // Variables for positioning and sizing
@@ -21445,7 +21445,7 @@ class OptHandler {
                       let svgFrame = shape.GetSVGFrame(newFrame);
                       textElement.SetPos(textRect.x - svgFrame.x, textRect.y - svgFrame.y);
                       textElement.SetConstraints(
-                        GlobalData.optManager.theContentHeader.MaxWorkDim.x,
+                        T3Gv.optManager.theContentHeader.MaxWorkDim.x,
                         textRect.width,
                         textRect.height
                       );
@@ -21462,7 +21462,7 @@ class OptHandler {
                         y: originalFrame.y + originalFrame.height / 2
                       };
 
-                      let originalRotatedRect = GlobalData.optManager.RotateRect(
+                      let originalRotatedRect = T3Gv.optManager.RotateRect(
                         originalFrame,
                         rotationCenter,
                         shape.RotationAngle
@@ -21473,7 +21473,7 @@ class OptHandler {
                         y: newFrame.y + newFrame.height / 2
                       };
 
-                      let newRotatedRect = GlobalData.optManager.RotateRect(
+                      let newRotatedRect = T3Gv.optManager.RotateRect(
                         newFrame,
                         rotationCenter,
                         shape.RotationAngle

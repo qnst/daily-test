@@ -1,6 +1,6 @@
 
 
-import GlobalData from '../Data/GlobalData'
+import T3Gv from './T3Gv'
 import StateManager from '../Data/State/StateManager'
 import ObjectStore from '../Data/State/ObjectStore'
 import ObjectStoreFactory from '../Data/State/ObjectStoreFactory'
@@ -65,7 +65,7 @@ class DataOpt {
     // test init stateManager is correct
     console.log('re-parse-to-json stateManagerCls', JSON.stringify(stateManagerCls));
 
-    GlobalData.stateManager = stateManagerCls;
+    T3Gv.stateManager = stateManagerCls;
   }
 
   static InitObjectStore() {
@@ -166,7 +166,7 @@ class DataOpt {
     // test init stateManager is correct
     console.log('re-parse-to-json objectStoreCls', JSON.stringify(objectStoreCls));
 
-    GlobalData.objectStore = objectStoreCls;
+    T3Gv.objectStore = objectStoreCls;
   }
 
   static InitCurrentSeqObjectId() {
@@ -177,7 +177,7 @@ class DataOpt {
       return;
     }
 
-    GlobalData.CURRENT_SEQ_OBJECT_ID = currentSeqObjectIdJsonObj;
+    T3Gv.CURRENT_SEQ_OBJECT_ID = currentSeqObjectIdJsonObj;
   }
 
 
@@ -283,26 +283,26 @@ class DataOpt {
 
     debugger
 
-    const VisibleZList = GlobalData.optManager.VisibleZList();
+    const VisibleZList = T3Gv.optManager.VisibleZList();
 
     // save stateManagePrimary
-    //this.SaveData(this.stateManagerPrimaryKey, GlobalData.stateManagerPrimary);
+    //this.SaveData(this.stateManagerPrimaryKey, T3Gv.stateManagerPrimary);
 
     // save objectStorePrimary
-    //this.SaveData(this.objectStorePrimaryKey, GlobalData.objectStorePrimary);
+    //this.SaveData(this.objectStorePrimaryKey, T3Gv.objectStorePrimary);
 
     // save clipboardManager
-    this.SaveData(this.clipboardManagerKey, GlobalData.clipboardManager);
+    this.SaveData(this.clipboardManagerKey, T3Gv.clipboardManager);
 
     // save stateManager
-    this.SaveData(this.stateManagerKey, GlobalData.stateManager);
+    this.SaveData(this.stateManagerKey, T3Gv.stateManager);
 
     // save objectStore
-    this.SaveData(this.objectStoreKey, GlobalData.objectStore);
+    this.SaveData(this.objectStoreKey, T3Gv.objectStore);
 
-    // this.SaveData(this.CURRENT_SEQ_OBJECT_ID_PrimaryKey, GlobalData.CURRENT_SEQ_OBJECT_ID_Primary);
+    // this.SaveData(this.CURRENT_SEQ_OBJECT_ID_PrimaryKey, T3Gv.CURRENT_SEQ_OBJECT_ID_Primary);
 
-    this.SaveData(this.CURRENT_SEQ_OBJECT_IDKey, GlobalData.CURRENT_SEQ_OBJECT_ID);
+    this.SaveData(this.CURRENT_SEQ_OBJECT_IDKey, T3Gv.CURRENT_SEQ_OBJECT_ID);
   }
 
   static SaveToT3000() {
@@ -323,11 +323,11 @@ class DataOpt {
   }
 
   static InitStateAndStore() {
-    GlobalData.stateManager = new StateManager();
-    GlobalData.objectStore = new ObjectStore();
-    GlobalData.CURRENT_SEQ_OBJECT_ID = 0;
-    GlobalData.bIsPrimaryStateManager = true;
-    GlobalData.clipboardManager = new ObjectStoreFactory().Create();
+    T3Gv.stateManager = new StateManager();
+    T3Gv.objectStore = new ObjectStore();
+    T3Gv.CURRENT_SEQ_OBJECT_ID = 0;
+    T3Gv.bIsPrimaryStateManager = true;
+    T3Gv.clipboardManager = new ObjectStoreFactory().Create();
   }
 }
 

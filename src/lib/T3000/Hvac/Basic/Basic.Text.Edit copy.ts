@@ -4,20 +4,20 @@
 
 
 // import Basic from "./Basic.Index";
-// import HvacSVG from "../Hvac.SVG.t2";
+// import T3Svg from "../Hvac.SVG.t2";
 // import "./Basic.Text.Index";
 import $ from "jquery";
 // import SDJS from "../SDJS/SDJS.Index";
 // import SDUI from "../SDUI/SDUI.Index";
 // import GPP from "../gListManager";
 // Basic.Text = {}
-import HvacSVG from "../Helper/SVG.t2";
+import T3Svg from "../Helper/T3Svg";
 import Utils1 from "../Helper/Utils1"
 import Utils2 from "../Helper/Utils2"
 import Utils3 from "../Helper/Utils3"
 import ListManager from "../Data/ListManager";
-import Creator from './Basic.Path.Creator'
-import GlobalData from '../Data/GlobalData'
+import Creator from './B.Path.Creator'
+import GlobalData from '../Data/T3Gv'
 import Resources from "../Data/Resources"
 import ConstantData from "../Data/ConstantData"
 
@@ -257,7 +257,7 @@ class Edit {
           e.gesture.srcEvent &&
           e.gesture.srcEvent.shiftKey
         ),
-      o = GlobalData.optManager.IsRightClick(e),
+      o = T3Gv.optManager.IsRightClick(e),
       s = Date.now();
     if (this.activateInit = !1, this.isActive && !o) {
       var l,

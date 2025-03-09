@@ -1,5 +1,5 @@
 
-import GlobalData from "../GlobalData"
+import T3Gv from "../T3Gv"
 
 class StateBase {
 
@@ -14,7 +14,7 @@ class StateBase {
     this.CreatedBy = createdBy || null;
     this.StateType = stateType || null;
     this.IsOpen = isOpen != null ? isOpen : true;
-    this.CURRENT_SEQ_OBJECT_ID = GlobalData.CURRENT_SEQ_OBJECT_ID;
+    this.CURRENT_SEQ_OBJECT_ID = T3Gv.CURRENT_SEQ_OBJECT_ID;
   }
 }
 

@@ -7,22 +7,22 @@
 // import GPP from "../../gListManager";
 
 
-import BaseLine from './Shape.BaseLine'
+import BaseLine from './S.BaseLine'
 import ListManager from '../Data/ListManager';
 import FileParser from '../Data/FileParser';
 import Utils1 from '../Helper/Utils1';
 import Utils2 from "../Helper/Utils2";
 import Utils3 from "../Helper/Utils3";
-import GlobalData from '../Data/GlobalData';
+import GlobalData from '../Data/T3Gv';
 
 // import Line from '../Basic/Basic.Line'
 
 
 import Point from '../Model/Point'
 
-import Document from '../Basic/Basic.Document'
+import Document from '../Basic/B.Document'
 
-import Element from '../Basic/Basic.Element'
+import Element from '../Basic/B.Element'
 import ConstantData from '../Data/ConstantData'
 
 
@@ -288,7 +288,7 @@ class Line extends BaseLine {
     var s = this.Frame,
       l = this.StyleRecord;
     if (null == (l = this.SVGTokenizerHook(l))) {
-      var S = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
+      var S = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
       S &&
         (l = S.def.style)
     }
@@ -318,7 +318,7 @@ class Line extends BaseLine {
         h = this.GetLineShapePolyPoints(ConstantData.Defines.NPOLYPTS, !0),
         0 !== this.hoplist.nhops
       ) {
-        var m = GlobalData.optManager.InsertHops(this, h, h.length);
+        var m = T3Gv.optManager.InsertHops(this, h, h.length);
         h = h.slice(0, m.npts)
       }
       i.SetPoints(h)
@@ -346,7 +346,7 @@ class Line extends BaseLine {
       this.ApplyStyles(i, l),
       this.ApplyEffects(r, !1, !0),
       this.objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_BAR &&
-      GlobalData.optManager.GanttSetPercentCompleteEffectOnBar(this, i, l),
+      T3Gv.optManager.GanttSetPercentCompleteEffectOnBar(this, i, l),
       r.isShape = !0,
       this.AddIcons(e, r),
       r
@@ -354,8 +354,8 @@ class Line extends BaseLine {
 
   SetCursors() {
     var e,
-      t = GlobalData.optManager.svgObjectLayer.GetElementByID(this.BlockID);
-    GlobalData.optManager.currentModalOperation === ListManager.ModalOperations.ADDCORNER ? (e = t.GetElementByID(ConstantData.SVGElementClass.SLOP)) &&
+      t = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID);
+    T3Gv.optManager.currentModalOperation === ListManager.ModalOperations.ADDCORNER ? (e = t.GetElementByID(ConstantData.SVGElementClass.SLOP)) &&
       e.SetCursor(Element.CursorType.CROSSHAIR) :
       // ListManager.BaseDrawingObject.prototype.SetCursors.call(this)
       // Double ===
@@ -370,10 +370,10 @@ class Line extends BaseLine {
       r,
       i,
       n,
-      o = GlobalData.optManager.svgObjectLayer.GetElementByID(this.BlockID),
+      o = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID),
       s = !1;
     if (!(this.flags & ConstantData.ObjFlags.SEDO_Lock) && o) if (
-      GlobalData.optManager.GetEditMode() === ConstantData.EditState.DEFAULT
+      T3Gv.optManager.GetEditMode() === ConstantData.EditState.DEFAULT
     ) {
       if (
         (i = o.GetElementByID(ConstantData.SVGElementClass.SHAPE)) &&
@@ -402,7 +402,7 @@ class Line extends BaseLine {
         e.SetCursor(Element.CursorType.POINTER),
         (r = o.GetElementByID(ConstantData.SVGElementClass.SLOP)) &&
         r.SetCursor(Element.CursorType.ADD),
-        a = GlobalData.optManager.svgDoc.GetActiveEdit(),
+        a = T3Gv.optManager.svgDoc.GetActiveEdit(),
         this.DataID &&
         this.DataID >= 0 &&
         o.textElem &&
@@ -448,8 +448,8 @@ class Line extends BaseLine {
       n ||
       this.EnforceMinimum(!0);
     var S = !1;
-    GlobalData.optManager.LinkParams &&
-      GlobalData.optManager.LinkParams.ConnectIndex >= 0 &&
+    T3Gv.optManager.LinkParams &&
+      T3Gv.optManager.LinkParams.ConnectIndex >= 0 &&
       (S = !0),
       i &&
       (S = !0),
@@ -523,7 +523,7 @@ class Line extends BaseLine {
     var d = o[0].x - o[1].x,
       D = o[0].y - o[1].y;
     Utils2.sqrt(d * d + D * D);
-    GlobalData.optManager.UpdateDisplayCoordinates(
+    T3Gv.optManager.UpdateDisplayCoordinates(
       this.Frame,
       this.StartPoint,
       ConstantData.CursorTypes.Grow,
@@ -555,8 +555,8 @@ class Line extends BaseLine {
     //   this.EnforceMinimum(!1);
     // var l = !1;
     // if (
-    //   GlobalData.optManager.LinkParams &&
-    //   GlobalData.optManager.LinkParams.ConnectIndex >= 0 &&
+    //   T3Gv.optManager.LinkParams &&
+    //   T3Gv.optManager.LinkParams.ConnectIndex >= 0 &&
     //   (l = !0),
     //   i &&
     //   (l = !0),
@@ -645,13 +645,13 @@ class Line extends BaseLine {
     //     d = n[0].y - n[1].y,
     //     D = (Utils2.sqrt(p * p + d * d), Utils1.DeepCopy(this.EndPoint));
     //   if (
-    //     GlobalData.optManager.UpdateDisplayCoordinates(
+    //     T3Gv.optManager.UpdateDisplayCoordinates(
     //       this.Frame,
     //       D,
     //       ConstantData.CursorTypes.Grow,
     //       this
     //     ),
-    //     GlobalData.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto &&
+    //     T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto &&
     //     (D.x != this.EndPoint.x || D.y != this.EndPoint.y)
     //   ) {
     //     var g = new Error(Resources.Strings.Error_Bounds);
@@ -680,7 +680,7 @@ class Line extends BaseLine {
     this.EndPoint.y = endPointY;
     this.EnforceMinimum(false);
 
-    var linkParamsExist = GlobalData.optManager.LinkParams && GlobalData.optManager.LinkParams.ConnectIndex >= 0;
+    var linkParamsExist = T3Gv.optManager.LinkParams && T3Gv.optManager.LinkParams.ConnectIndex >= 0;
     var adjustForLineAngleSnap = i || linkParamsExist;
 
     if (adjustForLineAngleSnap) {
@@ -772,9 +772,9 @@ class Line extends BaseLine {
       var distance = Utils2.sqrt(deltaX * deltaX + deltaY * deltaY);
       var deepCopiedEndPoint = Utils1.DeepCopy(this.EndPoint);
 
-      GlobalData.optManager.UpdateDisplayCoordinates(this.Frame, deepCopiedEndPoint, ConstantData.CursorTypes.Grow, this);
+      T3Gv.optManager.UpdateDisplayCoordinates(this.Frame, deepCopiedEndPoint, ConstantData.CursorTypes.Grow, this);
 
-      if (GlobalData.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto &&
+      if (T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto &&
         (deepCopiedEndPoint.x != this.EndPoint.x || deepCopiedEndPoint.y != this.EndPoint.y)) {
         var error = new Error(Resources.Strings.Error_Bounds);
         error.name = '1';
@@ -802,7 +802,7 @@ class Line extends BaseLine {
     var t,
       a = {};
     if (
-      GlobalData.optManager.ob = Utils1.DeepCopy(this),
+      T3Gv.optManager.ob = Utils1.DeepCopy(this),
       e & ConstantData.ExtraFlags.SEDE_FlipVert &&
       (
         a.y = this.StartPoint.y,
@@ -819,20 +819,20 @@ class Line extends BaseLine {
       ),
       t
     ) {
-      var r = GlobalData.optManager.svgObjectLayer.GetElementByID(this.BlockID);
+      var r = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID);
       this.UpdateDimensionLines(r),
         - 1 != this.DataID &&
         this.LM_ResizeSVGTextObject(r, this, this.Frame),
-        GlobalData.optManager.ob.Frame &&
-        GlobalData.optManager.MaintainLink(
+        T3Gv.optManager.ob.Frame &&
+        T3Gv.optManager.MaintainLink(
           this.BlockID,
           this,
-          GlobalData.optManager.ob,
+          T3Gv.optManager.ob,
           ConstantData.ActionTriggerType.ROTATE
         ),
-        GlobalData.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE)
+        T3Gv.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE)
     }
-    GlobalData.optManager.ob = {}
+    T3Gv.optManager.ob = {}
   }
 
   AddCorner(e, t) {
@@ -847,7 +847,7 @@ class Line extends BaseLine {
       c = [],
       u = !1;
     if (
-      GlobalData.optManager.ob = Utils1.DeepCopy(this),
+      T3Gv.optManager.ob = Utils1.DeepCopy(this),
       (
         S = [
           {
@@ -887,17 +887,17 @@ class Line extends BaseLine {
         c.push(new Point(S[3].x, S[3].y)),
         u ? (this.StartPoint.x = c[0].x, this.StartPoint.y = c[0].y) : (this.EndPoint.x = c[0].x, this.EndPoint.y = c[0].y),
         this.CalcFrame(),
-        GlobalData.optManager.MaintainLink(
+        T3Gv.optManager.MaintainLink(
           this.BlockID,
           this,
-          GlobalData.optManager.ob,
+          T3Gv.optManager.ob,
           ConstantData.ActionTriggerType.MODIFYSHAPE
         ),
-        GlobalData.optManager.SetLinkFlag(
+        T3Gv.optManager.SetLinkFlag(
           this.BlockID,
           ConstantData.LinkFlags.SED_L_MOVE | ConstantData.LinkFlags.SED_L_CHANGE
         ),
-        GlobalData.optManager.UpdateLinks();
+        T3Gv.optManager.UpdateLinks();
       var D = {
         StartPoint: {
           x: c[0].x,
@@ -914,28 +914,28 @@ class Line extends BaseLine {
       D.StyleRecord = Utils1.DeepCopy(this.StyleRecord);
       var g = new ListManager.Line(D);
       switch (
-      a = GlobalData.optManager.AddNewObject(g, !1, !0),
-      r = u ? GlobalData.optManager.PolyLJoin(
+      a = T3Gv.optManager.AddNewObject(g, !1, !0),
+      r = u ? T3Gv.optManager.PolyLJoin(
         a,
         ConstantData.HookPts.SED_KTL,
         this.BlockID,
         ConstantData.HookPts.SED_KTL,
         !1
-      ) : GlobalData.optManager.PolyLJoin(
+      ) : T3Gv.optManager.PolyLJoin(
         a,
         ConstantData.HookPts.SED_KTL,
         this.BlockID,
         ConstantData.HookPts.SED_KTR,
         !1
       ),
-      i = GlobalData.optManager.GetObjectPtr(r, !1),
-      n = GlobalData.optManager.svgObjectLayer.GetElementByID(r),
-      l = Number(GlobalData.docHandler.rulerSettings.majorScale).toString(),
-      GlobalData.docHandler.rulerSettings.units
+      i = T3Gv.optManager.GetObjectPtr(r, !1),
+      n = T3Gv.optManager.svgObjectLayer.GetElementByID(r),
+      l = Number(T3Gv.docHandler.rulerSettings.majorScale).toString(),
+      T3Gv.docHandler.rulerSettings.units
       ) {
         case ConstantData.RulerUnits.SED_Feet:
           this.Dimensions & ConstantData.DimensionFlags.SED_DF_ShowFeetAsInches ? (
-            l = Number(12 * GlobalData.docHandler.rulerSettings.majorScale).toString(),
+            l = Number(12 * T3Gv.docHandler.rulerSettings.majorScale).toString(),
             l += '"'
           ) : l += '\'';
           break;
@@ -945,7 +945,7 @@ class Line extends BaseLine {
       i.UpdateDimensionFromText(n, l, {
         segment: 2
       }),
-        GlobalData.optManager.AddToDirtyList(this.BlockID),
+        T3Gv.optManager.AddToDirtyList(this.BlockID),
         Collab.ClearCreateList(),
         Collab.AddToCreateList(r),
         Collab.AllowMessage() &&
@@ -957,7 +957,7 @@ class Line extends BaseLine {
           ]),
           Collab.BuildMessage(ConstantData.CollabMessages.AddCorner, p, !1)
         ),
-        GlobalData.optManager.CompleteOperation(null)
+        T3Gv.optManager.CompleteOperation(null)
     }
   }
 
@@ -992,7 +992,7 @@ class Line extends BaseLine {
       ),
       !!d &&
       (
-        GlobalData.optManager.GetObjectPtr(this.BlockID, !0),
+        T3Gv.optManager.GetObjectPtr(this.BlockID, !0),
         (u || p) &&
         this.OffsetShape(u, p),
         (s || l) &&
@@ -1003,7 +1003,7 @@ class Line extends BaseLine {
           (c = this.Frame.height + l),
           this.SetSize(S, c, 0)
         ),
-        GlobalData.optManager.AddToDirtyList(this.BlockID),
+        T3Gv.optManager.AddToDirtyList(this.BlockID),
         !0
       )
   }

@@ -1,12 +1,12 @@
 
-import Document from '../Basic/Basic.Document';
+import Document from '../Basic/B.Document';
 import Models from '../Data/Constant';
 import Hammer from 'hammerjs';
 import * as Utils from '../Helper/Utils1';
 import ContentHeader from '../Model/ContentHeader';
 import UI from './Doc.UI';
-import Path from '../Basic/Basic.Path';
-import HvacSVG from '../Helper/SVG';
+import Path from '../Basic/B.Path';
+import T3Svg from '../Helper/SVG';
 
 //#region
 

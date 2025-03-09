@@ -3,7 +3,7 @@
 import HvacModels from '../Data/Constant';
 import StoredObject from '../Data/State/StoredObject';
 import Globals from '../Data/Globals';
-import GlobalData from '../Data/GlobalData';
+import GlobalData from '../Data/T3Gv';
 import SegmentData from '../Model/SegmentData'
 import ListManager from '../Data/ListManager'
 import Utils2 from './Utils2'
@@ -173,7 +173,7 @@ class Utils1 {
   */
 
   static GenerateObjectID() {
-    return GlobalData.CURRENT_SEQ_OBJECT_ID += 1
+    return T3Gv.CURRENT_SEQ_OBJECT_ID += 1
   }
 
   /*
@@ -218,14 +218,14 @@ class Utils1 {
 
   /*
   IsStateOpen = function () {
-    return GlobalData.stateManager.CurrentStateID > 0 &&
-      GlobalData.stateManager.States[GlobalData.stateManager.CurrentStateID].IsOpen
+    return T3Gv.stateManager.CurrentStateID > 0 &&
+      T3Gv.stateManager.States[T3Gv.stateManager.CurrentStateID].IsOpen
   }
   */
 
   static IsStateOpen() {
-    return GlobalData.stateManager.CurrentStateID > 0 &&
-      GlobalData.stateManager.States[GlobalData.stateManager.CurrentStateID].IsOpen
+    return T3Gv.stateManager.CurrentStateID > 0 &&
+      T3Gv.stateManager.States[T3Gv.stateManager.CurrentStateID].IsOpen
   }
 
   /*

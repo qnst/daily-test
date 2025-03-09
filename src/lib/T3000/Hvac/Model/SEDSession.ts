@@ -5,7 +5,7 @@ import 'reflect-metadata'
 
 import ListManager from "../Data/ListManager"
 import Globals from "../Data/Globals"
-import RulerSettings from "./RulerSettings"
+import RulerConfig from "./RulerConfig"
 import PageRecord from "./PageRecord"
 import Resources from '../Data/Resources'
 import ConstantData from "../Data/ConstantData"
@@ -66,8 +66,8 @@ class SEDSession {
   public CurrentTheme: string;
   public EnableSpellCheck: boolean;
 
-  @Type(() => RulerSettings)
-  public rulerSettings: RulerSettings;
+  @Type(() => RulerConfig)
+  public rulerConfig: RulerConfig;
 
   @Type(() => PageRecord)
   public Page: PageRecord;
@@ -126,7 +126,7 @@ class SEDSession {
     this.fieldmask = 0;
     this.CurrentTheme = '';
     this.EnableSpellCheck = true;
-    this.rulerSettings = new RulerSettings();
+    this.rulerConfig = new RulerConfig();
     this.Page = new PageRecord();
     this.RecentSymbols = [];
     this.CommentListID = -1;

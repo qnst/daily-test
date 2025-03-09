@@ -3,7 +3,7 @@
 
 import Utils1 from '../Helper/Utils1';
 import ConstantData from './ConstantData';
-import GlobalData from './GlobalData';
+import T3Gv from './T3Gv';
 
 
 const Collab = {}
@@ -126,14 +126,14 @@ Collab.AddNewDataTableToSecondary = function (e) {
 Collab.AllowUndo = function () {
   return gListManager.currentModalOperation == ListManager.ModalOperations.NONE &&
     (
-      null != Collab.objectStore ? !(Collab.GlobalData.stateManager.CurrentStateID <= 0) : !(GlobalData.stateManager.CurrentStateID <= 0)
+      null != Collab.objectStore ? !(Collab.T3Gv.stateManager.CurrentStateID <= 0) : !(T3Gv.stateManager.CurrentStateID <= 0)
     )
 }
 
 Collab.AllowRedo = function () {
   return null != Collab.objectStore ? !(
-    Collab.GlobalData.stateManager.CurrentStateID + 1 >= Collab.GlobalData.stateManager.States.length
-  ) : !(GlobalData.stateManager.CurrentStateID + 1 >= GlobalData.stateManager.States.length)
+    Collab.T3Gv.stateManager.CurrentStateID + 1 >= Collab.T3Gv.stateManager.States.length
+  ) : !(T3Gv.stateManager.CurrentStateID + 1 >= T3Gv.stateManager.States.length)
 }
 
 Collab.BeginSecondaryEdit = function () {
@@ -200,9 +200,9 @@ Collab.BeginSecondaryEdit = function () {
 }
 
 Collab.GetUndoState = function () {
-  var e = GlobalData.stateManager.GetUndoState();
+  var e = T3Gv.stateManager.GetUndoState();
   return null != Collab.stateManager &&
-    (e = Collab.GlobalData.stateManager.GetUndoState()),
+    (e = Collab.T3Gv.stateManager.GetUndoState()),
     e
 }
 
@@ -211,9 +211,9 @@ Collab.CloseSecondaryEdit = function (e) {
     if (null != Collab.objectStore) {
       var t = gListManager.GetObjectPtr(gListManager.theSEDSessionBlockID, !1),
         a = t.tselect,
-        r = GlobalData.objectStore.GetObject(gListManager.theSelectedListBlockID),
+        r = T3Gv.objectStore.GetObject(gListManager.theSelectedListBlockID),
         i = Utils1.DeepCopy(r.Data),
-        n = GlobalData.objectStore.GetObject(gListManager.theTEDSessionBlockID),
+        n = T3Gv.objectStore.GetObject(gListManager.theTEDSessionBlockID),
         o = Utils1.DeepCopy(n.Data),
         s = Utils1.DeepCopy(t.def),
         l = t.d_sarrow,
@@ -251,17 +251,17 @@ Collab.CloseSecondaryEdit = function (e) {
                 Collab.SecondarySelection.theSelectedRange = Utils1.DeepCopy(d.GetSelectedRange()),
                 gListManager.TEUnregisterEvents()
               ),
-              (n = GlobalData.objectStore.GetObject(gListManager.theTEDSessionBlockID)).Data.theActiveTextEditObjectID = - 1
+              (n = T3Gv.objectStore.GetObject(gListManager.theTEDSessionBlockID)).Data.theActiveTextEditObjectID = - 1
           }
           o.theActiveTableObjectID >= 0 &&
             (
-              (n = GlobalData.objectStore.GetObject(gListManager.theTEDSessionBlockID)).Data.theActiveTableObjectID = - 1,
+              (n = T3Gv.objectStore.GetObject(gListManager.theTEDSessionBlockID)).Data.theActiveTableObjectID = - 1,
               Collab.SecondarySelection.theActiveTableObjectID = - 1
             )
         }
       } else t.tselect = a,
-        (r = GlobalData.objectStore.GetObject(gListManager.theSelectedListBlockID)).Data = i,
-        (n = GlobalData.objectStore.GetObject(gListManager.theTEDSessionBlockID)).Data = o;
+        (r = T3Gv.objectStore.GetObject(gListManager.theSelectedListBlockID)).Data = i,
+        (n = T3Gv.objectStore.GetObject(gListManager.theTEDSessionBlockID)).Data = o;
       gListManager.theContentHeader = Collab.ContentHeader
     }
     Collab.NewBlockIDs = [],
@@ -292,7 +292,7 @@ Collab.MessageQueue = [],
       a &&
       (
         this.selectedList = Utils1.DeepCopy(
-          GlobalData.objectStore.GetObject(gListManager.theSelectedListBlockID).Data
+          T3Gv.objectStore.GetObject(gListManager.theSelectedListBlockID).Data
         ),
         r = gListManager.GetObjectPtr(gListManager.theSEDSessionBlockID, !1),
         this.tselect = r.tselect,
@@ -380,7 +380,7 @@ Collab.SendMessage = function (e) {
   if (SDUI.AppSettings.UseBackplane) {
     Collab.IsSecondary() &&
       (Collab.WaitingForTheReturnMessage = !0),
-      e.HistoryState = GlobalData.stateManager.HistoryState,
+      e.HistoryState = T3Gv.stateManager.HistoryState,
       // Editor.IsStateOpen() &&
       Utils1.IsStateOpen() &&
       e.HistoryState++;
@@ -2258,7 +2258,7 @@ Collab.Edit_Note = function (e) {
       t.NoteID >= 0
     ) {
       if (o = (n = gListManager.GetObjectPtr(a, !0)).GetTable(!0), l) {
-        var S = GlobalData.objectStore.GetObject(t.NoteID);
+        var S = T3Gv.objectStore.GetObject(t.NoteID);
         t.NoteID = - 1,
           S &&
           S.Delete()
@@ -2540,7 +2540,7 @@ Collab.Text_End = function (e) {
     var u = gListManager.GetObjectPtr(n.DataID, !0);
     if (u) {
       if (e.Data.empty) {
-        var p = GlobalData.objectStore.GetObject(n.DataID);
+        var p = T3Gv.objectStore.GetObject(n.DataID);
         t === n.DataID &&
           (t = - 1, a = - 1),
           n.SetTextObject(- 1),
@@ -2816,7 +2816,7 @@ Collab.ReceiveMessage = function (e) {
         e.tselect = Collab.ValidateShapeID(e.tselect);
       var d = gListManager.GetObjectPtr(gListManager.theSEDSessionBlockID, !1);
       r = d.tselect;
-      var D = GlobalData.objectStore.GetObject(gListManager.theSelectedListBlockID);
+      var D = T3Gv.objectStore.GetObject(gListManager.theSelectedListBlockID);
       i = Utils1.DeepCopy(D.Data);
       var g = gListManager.GetObjectPtr(gListManager.theTEDSessionBlockID, !1);
       if (n = g.theActiveTableObjectID, g.theActiveTableObjectID = - 1, n >= 0) {
@@ -2917,7 +2917,7 @@ Collab.ReceiveMessage = function (e) {
           ) i = l,
             r = s;
           else gListManager.GetObjectPtr(gListManager.theSEDSessionBlockID, !1).tselect = s,
-            GlobalData.objectStore.GetObject(gListManager.theSelectedListBlockID).Data = l,
+            T3Gv.objectStore.GetObject(gListManager.theSelectedListBlockID).Data = l,
             gListManager.ClearSVGOverlayLayer(),
             gListManager.RenderAllSVGSelectionStates();
           Collab.Animation_BuildMessage(
@@ -2931,7 +2931,7 @@ Collab.ReceiveMessage = function (e) {
       }
     },
     m = function () {
-      var t = GlobalData.objectStore.GetObject(gListManager.theSelectedListBlockID),
+      var t = T3Gv.objectStore.GetObject(gListManager.theSelectedListBlockID),
         o = t.Data,
         u = ListManager.Table.CellFlags.SDT_F_Select;
       h(e, !0),
@@ -2991,7 +2991,7 @@ Collab.ReceiveMessage = function (e) {
         case t.Redo:
           var r,
             i,
-            n = GlobalData.stateManager.States[GlobalData.stateManager.CurrentStateID];
+            n = T3Gv.stateManager.States[T3Gv.stateManager.CurrentStateID];
           for (i = n.StoredObjects.length, r = 0; r < i; r++) if (n.StoredObjects[r].ID === a.theActiveTextEditObjectID) {
             d = !0,
               u = null;
@@ -3247,30 +3247,30 @@ Collab.ReceiveMessage = function (e) {
       SDUI.Commands.MainController.Shapes.SetBackgroundTexture(e.Data.textureIndex, e.Data.textureScale);
       break;
     case t.SetPageOrientation:
-      GlobalData.docHandler.SetPageOrientation(e.Data.orientation);
+      T3Gv.docUtil.SetPageOrientation(e.Data.orientation);
       break;
     case t.SetPageMargins:
-      GlobalData.docHandler.SetPageMargins(e.Data.margin);
+      T3Gv.docUtil.SetPageMargins(e.Data.margin);
       break;
     case t.SetCustomPageMargins:
-      GlobalData.docHandler.SetCustomPageMargins(e.Data.left, e.Data.top, e.Data.right, e.Data.bottom);
+      T3Gv.docUtil.SetCustomPageMargins(e.Data.left, e.Data.top, e.Data.right, e.Data.bottom);
       break;
     case t.AddNewLayer:
-      GlobalData.optManager.AddNewLayer(e.Data.layerName, e.Data.bIsVisible, e.Data.bIsClickable),
+      T3Gv.optManager.AddNewLayer(e.Data.layerName, e.Data.bIsVisible, e.Data.bIsClickable),
         SDUI.Commands.MainController.Document.SetLayerTabsOffset(0);
       break;
     case t.SetLayers:
-      GlobalData.optManager.SetLayers(e.Data.layers, e.Data.activelayer),
+      T3Gv.optManager.SetLayers(e.Data.layers, e.Data.activelayer),
         e.Data.activelayer - 3 > 0 ? SDUI.Commands.MainController.Document.SetLayerTabsOffset(e.Data.activelayer - 3) : SDUI.Commands.MainController.Document.SetLayerTabsOffset(0);
       break;
     case t.ShowAllLayers:
-      GlobalData.optManager.ShowAllLayers();
+      T3Gv.optManager.ShowAllLayers();
       break;
     case t.LayerTabClick:
       Collab.LayerTabClick(e);
       break;
     case t.SetWorkArea:
-      GlobalData.optManager.SetWorkArea(
+      T3Gv.optManager.SetWorkArea(
         e.Data.thePagesAcross,
         e.Data.thePagesDown,
         e.Data.theInchesAcross,
@@ -3280,23 +3280,23 @@ Collab.ReceiveMessage = function (e) {
       );
       break;
     case t.CenterOnPage:
-      GlobalData.optManager.CenterOnPage();
+      T3Gv.optManager.CenterOnPage();
       break;
     case t.SetScalePreset:
       SDUI.Commands.MainController.Document.SetScalePreset(e.Data.scaletype, e.Data.preset, !0, e);
       break;
     case t.ScaleDialog:
-      GlobalData.docHandler.SetRulers(e.Data.rulerSettings),
-        GlobalData.optManager.ScaleDrawing(e.Data.oldruler, e.Data.rulerSettings);
+      T3Gv.docUtil.SetRulers(e.Data.rulerConfig),
+        T3Gv.optManager.ScaleDrawing(e.Data.oldruler, e.Data.rulerConfig);
       break;
     case t.InsertTable:
       Collab.InsertTable(e);
       break;
     case t.RemoveTables:
-      GlobalData.optManager.RemoveTables(e);
+      T3Gv.optManager.RemoveTables(e);
       break;
     case t.SetTableProperties:
-      GlobalData.optManager.SetTableProperties(!1, e.Data.nrows, e.Data.ncols);
+      T3Gv.optManager.SetTableProperties(!1, e.Data.nrows, e.Data.ncols);
       break;
     case t.Table_DeleteRows:
       Collab.Table_DeleteRows(e);
@@ -3317,28 +3317,28 @@ Collab.ReceiveMessage = function (e) {
       Collab.Table_InsertDeleteGroupRows(e);
       break;
     case t.Table_JoinCells:
-      GlobalData.optManager.Table_JoinCells(!1, !1, e);
+      T3Gv.optManager.Table_JoinCells(!1, !1, e);
       break;
     case t.Table_SplitCells:
-      GlobalData.optManager.Table_SplitCells(!1);
+      T3Gv.optManager.Table_SplitCells(!1);
       break;
     case t.Table_DistributeRowandCols:
-      GlobalData.optManager.Table_DistributeRowandCols(e.Data.dorow, !1);
+      T3Gv.optManager.Table_DistributeRowandCols(e.Data.dorow, !1);
       break;
     case t.Table_SetCellFlags:
-      GlobalData.optManager.Table_SetCellFlags(e.Data.flag, e.Data.on);
+      T3Gv.optManager.Table_SetCellFlags(e.Data.flag, e.Data.on);
       break;
     case t.SetSDPFlag:
-      GlobalData.gBaseManager.SetSDPFlag(e.Data.flag, e.Data.use);
+      T3Gv.gBaseManager.SetSDPFlag(e.Data.flag, e.Data.use);
       break;
     case t.SetSDPMoreFlag:
-      GlobalData.gBaseManager.SetSDPMoreFlag(e.Data.flag, e.Data.use);
+      T3Gv.gBaseManager.SetSDPMoreFlag(e.Data.flag, e.Data.use);
       break;
     case t.InsertSDONFromImport:
       Collab.InsertSDONFromImport(e);
       break;
     case t.ApplyLineHopDialog:
-      GlobalData.optManager.ApplyLineHopDialog(
+      T3Gv.optManager.ApplyLineHopDialog(
         e.Data.lineHopsSize,
         e.Data.bGlobalLineHops,
         e.Data.bLineHopsStyle,
@@ -3353,10 +3353,10 @@ Collab.ReceiveMessage = function (e) {
       Collab.AddAnnotationLayer(e);
       break;
     case t.RemoveAnnotationLayer:
-      GlobalData.optManager.RemoveAnnotationLayer();
+      T3Gv.optManager.RemoveAnnotationLayer();
       break;
     case t.ShowDimensions:
-      GlobalData.gBaseManager.ShowDimensions();
+      T3Gv.gBaseManager.ShowDimensions();
       break;
     case t.SetBranchStyle:
       Collab.SetBranchStyle(e);
@@ -3365,10 +3365,10 @@ Collab.ReceiveMessage = function (e) {
       Collab.SetChartStyle(e);
       break;
     case t.UpdateGraph:
-      GlobalData.optManager.UpdateGraph(e.Data.d3Settings, e.Data.DataRowID, null, null, !1, e);
+      T3Gv.optManager.UpdateGraph(e.Data.d3Settings, e.Data.DataRowID, null, null, !1, e);
       break;
     case t.UpdateGauge:
-      GlobalData.optManager.UpdateGauge(
+      T3Gv.optManager.UpdateGauge(
         e.Data.d3Settings,
         e.Data.theStyle,
         e.Data.shapeWidth,
@@ -3383,7 +3383,7 @@ Collab.ReceiveMessage = function (e) {
       Collab.SetSpacing(e);
       break;
     case t.SetLineCornerRadiusAll:
-      GlobalData.optManager.SetLineCornerRadiusAll(null, e);
+      T3Gv.optManager.SetLineCornerRadiusAll(null, e);
       break;
     case t.OrgSetTable:
       GlobalDatagOrgChartManager.SetTable(e.Data.name, !1, !1, e);
@@ -3399,7 +3399,7 @@ Collab.ReceiveMessage = function (e) {
       break;
     case t.ReadJSONAPI:
       var I = JSON.parse(e.Data.SDONStr);
-      GlobalData.gBusinessManager.ReadJSONAPI(I, e.Data.UseSelect);
+      T3Gv.gBusinessManager.ReadJSONAPI(I, e.Data.UseSelect);
       break;
     case t.GanttAddTask:
       Collab.GanttAddTask(e);
@@ -3408,22 +3408,22 @@ Collab.ReceiveMessage = function (e) {
       Collab.GanttAddDependency(e);
       break;
     case t.GanttRemoveDependency:
-      GlobalData.optManager.GanttRemoveDependency();
+      T3Gv.optManager.GanttRemoveDependency();
       break;
     case t.GanttIndent:
-      GlobalData.optManager.GanttIndent(e.Data.indent, !0);
+      T3Gv.optManager.GanttIndent(e.Data.indent, !0);
       break;
     case t.GanttSortTasks:
-      GlobalData.optManager.GanttSortTasks(e.Data.resource, e.Data.personName, !0);
+      T3Gv.optManager.GanttSortTasks(e.Data.resource, e.Data.personName, !0);
       break;
     case t.SD_GanttExpandContract:
       Collab.SD_GanttExpandContract(e);
       break;
     case t.GanttSetTimeScale:
-      GlobalData.optManager.GanttSetTimeScale(null, e.Data.iNewTimeScale);
+      T3Gv.optManager.GanttSetTimeScale(null, e.Data.iNewTimeScale);
       break;
     case t.UpdateProjectOptions:
-      GlobalData.optManager.UpdateProjectOptions(
+      T3Gv.optManager.UpdateProjectOptions(
         e.Data.columnMask,
         e.Data.workingdaysMask,
         e.Data.countryEntryMask,
@@ -3431,7 +3431,7 @@ Collab.ReceiveMessage = function (e) {
       );
       break;
     case t.UpdateProjectTimeframe:
-      GlobalData.optManager.UpdateProjectTimeframe(
+      T3Gv.optManager.UpdateProjectTimeframe(
         e.Data.range,
         e.Data.taskStartDateSecs,
         e.Data.changedStartDate,
@@ -3445,7 +3445,7 @@ Collab.ReceiveMessage = function (e) {
       Collab.MakeUniformSize(e);
       break;
     case t.ReverseArrowheads:
-      GlobalData.optManager.ReverseArrowheads();
+      T3Gv.optManager.ReverseArrowheads();
       break;
     case t.AddMultiplicity:
       Collab.AddMultiplicity(e);
@@ -3808,27 +3808,27 @@ Collab.SecondaryToPrimary = function () {
     (
       Collab.ProcessUIOperation &&
       (
-        GlobalData.optManager.CancelModalOperation(),
-        GlobalData.optManager.TEUnregisterEvents(!0),
-        GlobalData.optManager.WorkAreaHammer &&
+        T3Gv.optManager.CancelModalOperation(),
+        T3Gv.optManager.TEUnregisterEvents(!0),
+        T3Gv.optManager.WorkAreaHammer &&
         (
-          GlobalData.optManager.WorkAreaHammer.off('drag'),
-          GlobalData.optManager.WorkAreaHammer.off('dragend'),
-          GlobalData.optManager.WorkAreaHammer.off('dragstart'),
-          GlobalData.optManager.WorkAreaHammer.off('doubletap'),
-          GlobalData.optManager.WorkAreaHammer.off('mousemove'),
-          GlobalData.optManager.WorkAreaHammer.off('tap'),
-          GlobalData.optManager.WorkAreaHammer.off('doubletap'),
-          GlobalData.optManager.WorkAreaHammer.on('dragstart', Evt_WorkAreaHammerDragStart),
-          GlobalData.optManager.WorkAreaHammer.on('tap', Evt_WorkAreaHammerClick)
+          T3Gv.optManager.WorkAreaHammer.off('drag'),
+          T3Gv.optManager.WorkAreaHammer.off('dragend'),
+          T3Gv.optManager.WorkAreaHammer.off('dragstart'),
+          T3Gv.optManager.WorkAreaHammer.off('doubletap'),
+          T3Gv.optManager.WorkAreaHammer.off('mousemove'),
+          T3Gv.optManager.WorkAreaHammer.off('tap'),
+          T3Gv.optManager.WorkAreaHammer.off('doubletap'),
+          T3Gv.optManager.WorkAreaHammer.on('dragstart', Evt_WorkAreaHammerDragStart),
+          T3Gv.optManager.WorkAreaHammer.on('tap', Evt_WorkAreaHammerClick)
         ),
-        GlobalData.optManager.LinkParams = null,
-        GlobalData.optManager.theDragBBoxList = [],
-        GlobalData.optManager.theDragElementList = [],
-        GlobalData.optManager.theMoveList = null,
-        GlobalData.optManager.theDragEnclosingRect = null,
-        GlobalData.optManager.dragGotMove = !1,
-        GlobalData.optManager.ResetAutoScrollTimer(),
+        T3Gv.optManager.LinkParams = null,
+        T3Gv.optManager.theDragBBoxList = [],
+        T3Gv.optManager.theDragElementList = [],
+        T3Gv.optManager.theMoveList = null,
+        T3Gv.optManager.theDragEnclosingRect = null,
+        T3Gv.optManager.dragGotMove = !1,
+        T3Gv.optManager.ResetAutoScrollTimer(),
         Collab.ProcessUIOperation = !1
       ),
       Collab.CloseSecondaryEdit()

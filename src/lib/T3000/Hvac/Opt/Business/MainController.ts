@@ -4,20 +4,22 @@
 // import ShapeController from './ToolOpt'
 import BusinessController from './BusinessController'
 import ConnectionPointsController from './ConnectionPointsController'
-import DocOpt from './DocOpt'
+import DocOpt from '../../Doc/DocOpt'
 import ActiveSelection from './ActiveSelection'
-import GlobalData from '../../Data/GlobalData'
+import T3Gv from '../../Data/T3Gv'
 import Resources from '../../Data/Resources'
 import Clipboard from '../Business/Clipboard'
-import Commands from '../Business/Commands'
+import Commands from './ToolOpt'
 import $ from 'jquery'
-import Utils4 from '../../Helper/Utils4'
+import Utils3 from '../../Helper/Utils3'
 import DataOpt from '../../Data/DataOpt'
 
 import ConstantData from '../../Data/ConstantData'
 import ConstantData2 from '../../Data/ConstantData2'
+import ShapeController from './ShapeController copy'
 
 
+// Do not use this class
 class MainController {
 
   public Shapes: any;
@@ -28,7 +30,7 @@ class MainController {
 
   constructor() {
     this.Selection = new ActiveSelection();
-    // this.Shapes = new ShapeController();
+    this.Shapes = new ShapeController();
     this.Document = new DocOpt();
     this.Business = new BusinessController();
     this.ConnectionPoints = new ConnectionPointsController();
@@ -38,9 +40,10 @@ class MainController {
     console.log('ShowContextualMenu')
   }
 
+  // move this to keyboard util
   HandleKeyDown(e, t, a) {
     // if (!0 !== this.Modals.ModalsVisible()) {
-    if (GlobalData.optManager.bTouchPanStarted && t == ConstantData2.Keys.Space)
+    if (T3Gv.optManager.bTouchPanStarted && t == ConstantData2.Keys.Space)
       return e.stopPropagation(),
         void e.preventDefault();
     var r, i, n, o = [], s = 0, l = 0, S = (t == ConstantData2.Keys.Left_Arrow ||
@@ -69,7 +72,7 @@ class MainController {
       o.indexOf(c) < 0 && o.push(c),
         o.push(Resources.Contexts.All),
         s = o.length,
-        GlobalData.docHandler.IsReadOnly() && ((o = []).push(Resources.Contexts.ReadOnly),
+        T3Gv.docUtil.IsReadOnly() && ((o = []).push(Resources.Contexts.ReadOnly),
           s = o.length);
       for (var u = 0; u < s; u++) {
         var p = o[u]
@@ -102,9 +105,9 @@ class MainController {
         if (i && a != Resources.ModifierKeys.Ctrl)
           break
       }
-      i && (t === ConstantData2.Keys.Escape ? (GlobalData.optManager.DeactivateAllTextEdit(!1),
-        GlobalData.optManager.bInNoteEdit && GlobalData.optManager.Note_CloseEdit(),
-        GlobalData.optManager.RenderAllSVGSelectionStates(),
+      i && (t === ConstantData2.Keys.Escape ? (T3Gv.optManager.DeactivateAllTextEdit(!1),
+        T3Gv.optManager.bInNoteEdit && T3Gv.optManager.Note_CloseEdit(),
+        T3Gv.optManager.RenderAllSVGSelectionStates(),
         e.stopPropagation(),
         e.preventDefault()) : Commands.MainController.Shapes.HandleKeyDown(e, t, a) && (e.stopPropagation(),
           e.preventDefault()))
@@ -113,33 +116,34 @@ class MainController {
   }
 
 
-  SaveAs = function () {
+  // SaveAs = function () {
 
 
 
-    var t = "TestSaveDouble";
-    var a = ".sdr";
-    var CredentialID = "-1";
-    var CurrentFolder = "-1";
+  //   var t = "TestSaveDouble";
+  //   var a = ".sdr";
+  //   var CredentialID = "-1";
+  //   var CurrentFolder = "-1";
 
-    GlobalData.optManager.CloseEdit();
+  //   T3Gv.optManager.CloseEdit();
 
-    // save data to locastorage
-    DataOpt.SaveToLocal();
-
-
-  }
+  //   // save data to locastorage
+  //   DataOpt.SaveToLocal();
 
 
+  // }
+
+
+  // move to keyboard util
   HandleKeyPress = function (e, t) {
     var a = !1;
-    if (GlobalData.optManager.bTouchPanStarted && t == ConstantData2.Keys.Space)
+    if (T3Gv.optManager.bTouchPanStarted && t == ConstantData2.Keys.Space)
       return e.stopPropagation(),
         void e.preventDefault();
     if (true/*!0 !== this.Modals.ModalsVisible()*/)
-      if (1 == Utils4.GetModifierKeys(e) && (67 == t || 99 == t || 88 == t || 120 == t || 86 == t || 118 == t))
+      if (1 == Utils3.GetModifierKeys(e) && (67 == t || 99 == t || 88 == t || 120 == t || 86 == t || 118 == t))
         Clipboard.isFF && Clipboard.FocusOnIEclipboardDiv();
-      else if (!1 !== ConstantData.DocumentContext.CanTypeInWorkArea && !GlobalData.docHandler.IsReadOnly()) {
+      else if (!1 !== ConstantData.DocumentContext.CanTypeInWorkArea && !T3Gv.docUtil.IsReadOnly()) {
         var r = this.Selection.GetSelectionContext();
         r instanceof Array && (a = r.indexOf(Resources.Contexts.Text) >= 0),
           (a || r === Resources.Contexts.Text || r === Resources.Contexts.DimensionText ||

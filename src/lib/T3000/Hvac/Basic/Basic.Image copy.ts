@@ -7,7 +7,7 @@
 // import Basic from "./Basic.Index";
 // import GPP from "../gListManager";
 import $ from 'jquery';
-import HvacSVG from "../Helper/SVG.t2"
+import T3Svg from "../Helper/T3Svg"
 
 import Global from "./Basic.Global";
 import Utils1 from "../Helper/Utils1"
@@ -18,7 +18,7 @@ import ConstantData from "../Data/ConstantData"
 
 
 
-import Element from "./Basic.Element";
+import Element from "./B.Element";
 
 class Image extends Element {
 
@@ -38,7 +38,7 @@ class Image extends Element {
   // Basic.Image.prototype.constructor = Basic.Image,
   CreateElement(e, t) {
     //'use strict';
-    return this.svgObj = new HvacSVG.Container(HvacSVG.create('image')),
+    return this.svgObj = new T3Svg.Container(T3Svg.create('image')),
       this.InitElement(e, t),
       this.svgObj
   }
@@ -49,7 +49,7 @@ class Image extends Element {
       preserveAspectRatio: 'none'
     }),
       this.svgObj.src = e,
-      this.svgObj.attr('xlink:href', e, HvacSVG.xlink)
+      this.svgObj.attr('xlink:href', e, T3Svg.xlink)
   }
 
 }

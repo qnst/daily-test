@@ -1,7 +1,7 @@
 
 import ListManager from "./ListManager";
 import FileParser from "./FileParser";
-import Commands from "../Opt/Business/Commands";
+import Commands from "../Opt/Business/ToolOpt";
 import $ from 'jquery'
 import DefaultStyle from '../Model/DefaultStyle'
 import QuickStyle from "../Model/QuickStyle"
@@ -448,11 +448,11 @@ Resources.SDOAuthIntegration = {
 //   Initial: 3
 // }
 
-Resources.CursorDisplayMode = {
-  None: 0,
-  Show: 1,
-  Hide: 2
-}
+// Resources.CursorDisplayMode = {
+//   None: 0,
+//   Show: 1,
+//   Hide: 2
+// }
 
 Resources.ActionIcons = {
   NONE: 'styles/img/datafields/SVG/none.svg',

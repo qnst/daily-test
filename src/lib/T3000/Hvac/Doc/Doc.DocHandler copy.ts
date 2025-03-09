@@ -1,17 +1,17 @@
 
 
 
-import RulerSettings from '../Model/RulerSettings';
+import RulerSettings from '../Model/RulerConfig';
 import $ from 'jquery';
-import GlobalData from '../Data/GlobalData';
+import GlobalData from '../Data/T3Gv';
 import EvtUtil from '../Event/EvtUtil';
-import Document from '../Basic/Basic.Document';
+import Document from '../Basic/B.Document';
 import Globals from '../Data/Globals';
 import FileParser from '../Data/FileParser';
 // import Global from '../Basic/Basic.Global';
-import '../Helper/HammerTest2';
+import '../Helper/T3Hammer';
 import '../Helper/pathseg';
-import Element from '../Basic/Basic.Element';
+import Element from '../Basic/B.Element';
 import Utils1 from '../Helper/Utils1';
 import Utils2 from '../Helper/Utils2';
 import Utils3 from '../Helper/Utils3';
@@ -121,7 +121,7 @@ class DocHandler {
 
     this.UpdateWorkArea();
     this.rulerSettings = new RulerSettings();
-    this.rulerSettings.fractionaldenominator = GlobalData.optManager.GetFractionDenominator();
+    this.rulerSettings.fractionaldenominator = T3Gv.optManager.GetFractionDenominator();
     this.UpdateRulerVisibility();
 
     $(window).bind('mousemove', EvtUtil.Evt_MouseMove);
@@ -283,7 +283,7 @@ class DocHandler {
 
     if (this.svgDoc) {
       if (this.scaleToFit) {
-        if (GlobalData.optManager.bInAutoScroll) {
+        if (T3Gv.optManager.bInAutoScroll) {
           tempArea = this.svgDoc.GetWorkArea();
           targetDimensions = {
             width: tempArea.docScreenWidth,
@@ -311,10 +311,10 @@ class DocHandler {
           };
         }
       } else if (this.scaleToPage && adjustedRect.width > 0 && adjustedRect.height > 0) {
-        const pageWidth = GlobalData.optManager.theContentHeader.Page.papersize.x -
-          (GlobalData.optManager.theContentHeader.Page.margins.left + GlobalData.optManager.theContentHeader.Page.margins.right);
-        const pageHeight = GlobalData.optManager.theContentHeader.Page.papersize.y -
-          (GlobalData.optManager.theContentHeader.Page.margins.top + GlobalData.optManager.theContentHeader.Page.margins.bottom);
+        const pageWidth = T3Gv.optManager.theContentHeader.Page.papersize.x -
+          (T3Gv.optManager.theContentHeader.Page.margins.left + T3Gv.optManager.theContentHeader.Page.margins.right);
+        const pageHeight = T3Gv.optManager.theContentHeader.Page.papersize.y -
+          (T3Gv.optManager.theContentHeader.Page.margins.top + T3Gv.optManager.theContentHeader.Page.margins.bottom);
 
         tempArea = this.svgDoc.CalcScaleToFit(adjustedRect.width - 20, adjustedRect.height - 20, pageWidth, pageHeight);
         targetDimensions = {
@@ -322,7 +322,7 @@ class DocHandler {
           height: tempArea.height
         };
 
-        if (!GlobalData.optManager.bInAutoScroll && this.svgDoc.docInfo.docScale !== tempArea.scale) {
+        if (!T3Gv.optManager.bInAutoScroll && this.svgDoc.docInfo.docScale !== tempArea.scale) {
           this.svgDoc.SetDocumentScale(tempArea.scale);
           this.IdleZoomUI();
           this.UpdateGrid();
@@ -477,7 +477,7 @@ class DocHandler {
 
   UpdateDocumentUIElementPos = (e, t) => {
     (e || t) &&
-      GlobalData.optManager.UpdateFieldDataTooltipPos(e, t)
+      T3Gv.optManager.UpdateFieldDataTooltipPos(e, t)
   }
 
   SetResolution = (e) => {
@@ -516,9 +516,9 @@ class DocHandler {
       a,
       r,
       i = this.svgDoc.GetWorkArea(),
-      n = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSelectedListBlockID, !1);
+      n = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSelectedListBlockID, !1);
     (
-      r = n.length ? GlobalData.optManager.GetListSRect(n) : GlobalData.optManager.CalcAllObjectEnclosingRect(!1)
+      r = n.length ? T3Gv.optManager.GetListSRect(n) : T3Gv.optManager.CalcAllObjectEnclosingRect(!1)
     ).width ||
       r.height ||
       (r.x = 0, r.y = 0, r.width = i.docWidth, r.height = i.docHeight),
@@ -546,9 +546,9 @@ class DocHandler {
         r,
         i,
         n = this.svgDoc.GetWorkArea(),
-        o = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSelectedListBlockID, !1);
+        o = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSelectedListBlockID, !1);
       (
-        i = o.length ? GlobalData.optManager.GetListSRect(o) : GlobalData.optManager.CalcAllObjectEnclosingRect(!1)
+        i = o.length ? T3Gv.optManager.GetListSRect(o) : T3Gv.optManager.CalcAllObjectEnclosingRect(!1)
       ).width ||
         i.height ||
         (i.x = 0, i.y = 0, i.width = n.docWidth, i.height = n.docHeight),
@@ -594,7 +594,7 @@ class DocHandler {
   }
 
   IdleZoomUI = () => {
-    GlobalData.optManager.UpdateDocumentScale()
+    T3Gv.optManager.UpdateDocumentScale()
   }
 
   SetScroll = (e, t) => {
@@ -679,7 +679,7 @@ class DocHandler {
         (this.rulerSettings.showpixels = e.showpixels),
         t ||
         (
-          sdp = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0),
+          sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0),
           sdp.rulerSettings = Utils1.DeepCopy(this.rulerSettings)
         ),
         this.ResetRulers(),
@@ -697,15 +697,15 @@ class DocHandler {
       if (e) {
         a.Control.removeClass('hide');
         var r,
-          i = GlobalData.optManager.GetTargetSelect();
+          i = T3Gv.optManager.GetTargetSelect();
         if (i > 0) {
-          var n = GlobalData.optManager.GetObjectPtr(i, !1);
+          var n = T3Gv.optManager.GetObjectPtr(i, !1);
           n &&
             n.GetDimensionsForDisplay &&
             (r = n.GetDimensionsForDisplay()),
-            GlobalData.optManager.UpdateDisplayCoordinates(r, null, null, n),
-            GlobalData.optManager.ShowFrame(!0)
-        } else GlobalData.optManager.ShowFrame(!1)
+            T3Gv.optManager.UpdateDisplayCoordinates(r, null, null, n),
+            T3Gv.optManager.ShowFrame(!0)
+        } else T3Gv.optManager.ShowFrame(!1)
       } else a.Control.addClass('hide');
       return !0
     }
@@ -978,11 +978,11 @@ class DocHandler {
         n = this.rulerSettings.nGrid * T,
         e = '',
         t = '',
-        p = GlobalData.optManager.theContentHeader.Page.papersize.x - (
-          GlobalData.optManager.theContentHeader.Page.margins.left + GlobalData.optManager.theContentHeader.Page.margins.right
+        p = T3Gv.optManager.theContentHeader.Page.papersize.x - (
+          T3Gv.optManager.theContentHeader.Page.margins.left + T3Gv.optManager.theContentHeader.Page.margins.right
         ) / 2,
-        d = GlobalData.optManager.theContentHeader.Page.papersize.y - (
-          GlobalData.optManager.theContentHeader.Page.margins.top + GlobalData.optManager.theContentHeader.Page.margins.bottom
+        d = T3Gv.optManager.theContentHeader.Page.papersize.y - (
+          T3Gv.optManager.theContentHeader.Page.margins.top + T3Gv.optManager.theContentHeader.Page.margins.bottom
         ) / 2,
         D = Utils1.RoundCoordLP(f.docScreenWidth + 2 * p * f.docToScreenScale),
         g = Utils1.RoundCoordLP(f.docScreenHeight + 2 * d * f.docToScreenScale),
@@ -1053,12 +1053,12 @@ class DocHandler {
   UpdatePageDividerVisibility = () => {
     console.log("= D.DocHandler UpdatePageDividerVisibility - Input:", {
       showPageDivider: this.documentConfig.showPageDivider,
-      printFlags: GlobalData.optManager.theContentHeader.Page.printflags,
+      printFlags: T3Gv.optManager.theContentHeader.Page.printflags,
       layerExists: !!(this.svgDoc && this.svgDoc.GetLayer(this.pageDividerLayer))
     });
 
     const pageDividerLayer = this.svgDoc ? this.svgDoc.GetLayer(this.pageDividerLayer) : null;
-    const printFlags = GlobalData.optManager.theContentHeader.Page.printflags;
+    const printFlags = T3Gv.optManager.theContentHeader.Page.printflags;
     const shouldShow =
       !(printFlags & FileParser.PrintFlags.SEP_OnePage) &&
       !(printFlags & FileParser.PrintFlags.SEP_CustomPageSize) &&
@@ -1111,17 +1111,17 @@ class DocHandler {
           margins.top = 50;
           margins.bottom = 50;
         }
-      })(GlobalData.optManager.theContentHeader.Page.papersize, GlobalData.optManager.theContentHeader.Page.margins);
+      })(T3Gv.optManager.theContentHeader.Page.papersize, T3Gv.optManager.theContentHeader.Page.margins);
 
       // Calculate effective paper width and height based on margins
       let paperWidth =
-        GlobalData.optManager.theContentHeader.Page.papersize.x -
-        (GlobalData.optManager.theContentHeader.Page.margins.left +
-          GlobalData.optManager.theContentHeader.Page.margins.right);
+        T3Gv.optManager.theContentHeader.Page.papersize.x -
+        (T3Gv.optManager.theContentHeader.Page.margins.left +
+          T3Gv.optManager.theContentHeader.Page.margins.right);
       let paperHeight =
-        GlobalData.optManager.theContentHeader.Page.papersize.y -
-        (GlobalData.optManager.theContentHeader.Page.margins.top +
-          GlobalData.optManager.theContentHeader.Page.margins.bottom);
+        T3Gv.optManager.theContentHeader.Page.papersize.y -
+        (T3Gv.optManager.theContentHeader.Page.margins.top +
+          T3Gv.optManager.theContentHeader.Page.margins.bottom);
 
       // Scale dimensions to screen coordinates
       paperWidth *= workArea.docToScreenScale;
@@ -1186,68 +1186,68 @@ class DocHandler {
 
   RulerTopDoubleClick = (e) => {
     Utils2.StopPropagationAndDefaults(e),
-      GlobalData.docHandler.RulerHandleDoubleClick(e, !1, !0)
+      T3Gv.docHandler.RulerHandleDoubleClick(e, !1, !0)
   }
 
   RulerLeftDoubleClick = (e) => {
     Utils2.StopPropagationAndDefaults(e),
-      GlobalData.docHandler.RulerHandleDoubleClick(e, !0, !1)
+      T3Gv.docHandler.RulerHandleDoubleClick(e, !0, !1)
   }
 
   RulerCenterDoubleClick = (e) => {
     Utils2.StopPropagationAndDefaults(e),
-      GlobalData.docHandler.RulerHandleDoubleClick(e, !0, !0)
+      T3Gv.docHandler.RulerHandleDoubleClick(e, !0, !0)
   }
 
   RulerDragStart = (e) => {
-    if (!GlobalData.docHandler.IsReadOnly()) {
-      if (GlobalData.optManager.IsRightClick(e)) return Utils2.StopPropagationAndDefaults(e),
+    if (!T3Gv.docHandler.IsReadOnly()) {
+      if (T3Gv.optManager.IsRightClick(e)) return Utils2.StopPropagationAndDefaults(e),
         void SDUI.Commands.MainController.ShowDropdown(
           Resources.Controls.Dropdowns.SetScale.Id.toLowerCase(),
           e.gesture.center.clientX,
           e.gesture.center.clientY
         );
-      GlobalData.docHandler.rulerInDrag = !0
+      T3Gv.docHandler.rulerInDrag = !0
     }
   }
 
   RulerTopDrag = (e) => {
     if (
       Utils2.StopPropagationAndDefaults(e),
-      GlobalData.optManager.IsCtrlClick(e)
+      T3Gv.optManager.IsCtrlClick(e)
     ) return Utils2.StopPropagationAndDefaults(e),
-      void GlobalData.docHandler.RulerHandleDoubleClick(e, !1, !0);
-    GlobalData.docHandler.RulerDragGuides(e, !1, !0)
+      void T3Gv.docHandler.RulerHandleDoubleClick(e, !1, !0);
+    T3Gv.docHandler.RulerDragGuides(e, !1, !0)
   }
 
   RulerLeftDrag = (e) => {
     if (
       Utils2.StopPropagationAndDefaults(e),
-      GlobalData.optManager.IsCtrlClick(e)
+      T3Gv.optManager.IsCtrlClick(e)
     ) return Utils2.StopPropagationAndDefaults(e),
-      void GlobalData.docHandler.RulerHandleDoubleClick(e, !0, !1);
-    GlobalData.docHandler.RulerDragGuides(e, !0, !1)
+      void T3Gv.docHandler.RulerHandleDoubleClick(e, !0, !1);
+    T3Gv.docHandler.RulerDragGuides(e, !0, !1)
   }
 
   RulerCenterDrag = (e) => {
     if (
       Utils2.StopPropagationAndDefaults(e),
-      GlobalData.optManager.IsCtrlClick(e)
+      T3Gv.optManager.IsCtrlClick(e)
     ) return Utils2.StopPropagationAndDefaults(e),
-      void GlobalData.docHandler.RulerHandleDoubleClick(e, !0, !0);
-    GlobalData.docHandler.RulerDragGuides(e, !0, !0)
+      void T3Gv.docHandler.RulerHandleDoubleClick(e, !0, !0);
+    T3Gv.docHandler.RulerDragGuides(e, !0, !0)
   }
 
   RulerDragEnd = (e) => {
     Utils2.StopPropagationAndDefaults(e),
-      GlobalData.docHandler.RulerEndGuides()
+      T3Gv.docHandler.RulerEndGuides()
   }
 
   RulerHandleDoubleClick = (e, t, a) => {
 
     console.log('RulerHandleDoubleClick -============', e, t, a);
     //DOUBLE
-    if (!GlobalData.optManager.IsRightClick(e)) {
+    if (!T3Gv.optManager.IsRightClick(e)) {
       var r = {
         originx: this.rulerSettings.originx,
         originy: this.rulerSettings.originy
@@ -1268,8 +1268,8 @@ class DocHandler {
         }
         this.SetRulers(r),
           this.ShowCoordinates(!0);
-        var n = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSelectedListBlockID, !1);
-        GlobalData.optManager.UpdateSelectionAttributes(n)
+        var n = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSelectedListBlockID, !1);
+        T3Gv.optManager.UpdateSelectionAttributes(n)
       }
     }
   }
@@ -1299,7 +1299,7 @@ class DocHandler {
           this.hRulerGuide.SetStrokeColor('black'),
           this.hRulerGuide.SetStrokeWidth(i),
           this.hRulerGuide.SetStrokePattern(n),
-          GlobalData.optManager.svgOverlayLayer.AddElement(this.hRulerGuide)
+          T3Gv.optManager.svgOverlayLayer.AddElement(this.hRulerGuide)
         ),
         a &&
         !this.vRulerGuide &&
@@ -1309,7 +1309,7 @@ class DocHandler {
           this.vRulerGuide.SetStrokeColor('black'),
           this.vRulerGuide.SetStrokeWidth(i),
           this.vRulerGuide.SetStrokePattern(n),
-          GlobalData.optManager.svgOverlayLayer.AddElement(this.vRulerGuide)
+          T3Gv.optManager.svgOverlayLayer.AddElement(this.vRulerGuide)
         ),
         this.rulerGuideWinPos.x = e.gesture.center.clientX,
         this.rulerGuideWinPos.y = e.gesture.center.clientY,
@@ -1327,7 +1327,7 @@ class DocHandler {
         ) &&
         (
           this.rulerGuideScrollTimer = setInterval((() => {
-            GlobalData.docHandler.RulerAutoScrollGuides()
+            T3Gv.docHandler.RulerAutoScrollGuides()
           }), 100)
         )
       )
@@ -1375,12 +1375,12 @@ class DocHandler {
       ),
       this.hRulerGuide &&
       (
-        GlobalData.optManager.svgOverlayLayer.RemoveElement(this.hRulerGuide),
+        T3Gv.optManager.svgOverlayLayer.RemoveElement(this.hRulerGuide),
         this.hRulerGuide = null
       ),
       this.vRulerGuide &&
       (
-        GlobalData.optManager.svgOverlayLayer.RemoveElement(this.vRulerGuide),
+        T3Gv.optManager.svgOverlayLayer.RemoveElement(this.vRulerGuide),
         this.vRulerGuide = null
       ),
       this.rulerInDrag = !1
@@ -1446,26 +1446,26 @@ class DocHandler {
       n = null;
     switch (t.action) {
       case SDF.BlockActions.ClosePage:
-        if (GlobalData.optManager.PageAction.length) switch (GlobalData.optManager.PageAction[0]) {
+        if (T3Gv.optManager.PageAction.length) switch (T3Gv.optManager.PageAction[0]) {
           case r.AddNewPage:
           case r.AddDupPage:
           case r.Insert_Template:
           case r.Insert_Document:
-            GlobalData.optManager.PageAction.length > 1 &&
-              (i = GlobalData.optManager.PageAction[1]),
-              GlobalData.optManager.PageAction.length > 2 &&
-              (n = GlobalData.optManager.PageAction[2]),
-              SDF.AddPage_Create(GlobalData.optManager.PageAction[0], i, n)
+            T3Gv.optManager.PageAction.length > 1 &&
+              (i = T3Gv.optManager.PageAction[1]),
+              T3Gv.optManager.PageAction.length > 2 &&
+              (n = T3Gv.optManager.PageAction[2]),
+              SDF.AddPage_Create(T3Gv.optManager.PageAction[0], i, n)
         }
         break;
       case SDF.BlockActions.AddPage:
-        if (GlobalData.optManager.PageAction.length) switch (GlobalData.optManager.PageAction[0]) {
+        if (T3Gv.optManager.PageAction.length) switch (T3Gv.optManager.PageAction[0]) {
           case r.CompleteAdd:
             SDF.AddPage_Complete();
             break;
           case r.AddNewPage:
           case r.AddDupPage:
-            SDF.AddPage_Create(GlobalData.optManager.PageAction[0], GlobalData.optManager.PageAction[1]);
+            SDF.AddPage_Create(T3Gv.optManager.PageAction[0], T3Gv.optManager.PageAction[1]);
             break;
           case r.AddNewPage_Init:
             SDF.AddPage_Initiate(r.AddNewPage, null);
@@ -1474,43 +1474,43 @@ class DocHandler {
             SDF.AddPage_Initiate(r.AddDupPage, null);
             break;
           case r.Insert_Template_Init:
-            SDF.AddPage_Initiate(r.Insert_Template, null, GlobalData.optManager.PageAction[2]);
+            SDF.AddPage_Initiate(r.Insert_Template, null, T3Gv.optManager.PageAction[2]);
             break;
           case r.Insert_Document_Init:
-            SDF.AddPage_Initiate(r.Insert_Document, null, GlobalData.optManager.PageAction[2])
+            SDF.AddPage_Initiate(r.Insert_Document, null, T3Gv.optManager.PageAction[2])
         }
         break;
       case SDF.BlockActions.ChangePage:
         if (
-          GlobalData.optManager.PageAction.length &&
-          GlobalData.optManager.PageAction[0] === r.CompleteChange
+          T3Gv.optManager.PageAction.length &&
+          T3Gv.optManager.PageAction[0] === r.CompleteChange
         ) SDF.ChangePage_Complete(a);
         break;
       case SDF.BlockActions.RenamePage:
         if (
-          GlobalData.optManager.PageAction.length &&
-          GlobalData.optManager.PageAction[0] === r.CompleteRename
+          T3Gv.optManager.PageAction.length &&
+          T3Gv.optManager.PageAction[0] === r.CompleteRename
         ) SDF.RenamePage_Complete(a);
         break;
       case SDF.BlockActions.CurrentPage:
-        if (GlobalData.optManager.PageAction.length) switch (GlobalData.optManager.PageAction[0]) {
+        if (T3Gv.optManager.PageAction.length) switch (T3Gv.optManager.PageAction[0]) {
           case r.RenamePage:
-            SDF.RenamePage_Initiate(GlobalData.optManager.PageAction[1], GlobalData.optManager.PageAction[2]);
+            SDF.RenamePage_Initiate(T3Gv.optManager.PageAction[1], T3Gv.optManager.PageAction[2]);
             break;
           case r.DeletePage:
-            SDF.DeletePage_Initiate(GlobalData.optManager.PageAction[1])
+            SDF.DeletePage_Initiate(T3Gv.optManager.PageAction[1])
         }
         break;
       case SDF.BlockActions.DeletePage:
         if (
-          GlobalData.optManager.PageAction.length &&
-          GlobalData.optManager.PageAction[0] === r.CompleteDelete
+          T3Gv.optManager.PageAction.length &&
+          T3Gv.optManager.PageAction[0] === r.CompleteDelete
         ) SDF.DeletePage_Complete(a);
         break;
       case SDF.BlockActions.ReorderPages:
         if (
-          GlobalData.optManager.PageAction.length &&
-          GlobalData.optManager.PageAction[0] === r.CompleteReorder
+          T3Gv.optManager.PageAction.length &&
+          T3Gv.optManager.PageAction[0] === r.CompleteReorder
         ) SDF.ReorderPages_Complete(a)
     }
   }
@@ -1532,15 +1532,15 @@ class DocHandler {
 
   SetPageMargins = (e) => {
     try {
-      if (GlobalData.optManager.theContentHeader.Page.margins.left !== e) {
+      if (T3Gv.optManager.theContentHeader.Page.margins.left !== e) {
         if (
           Collab.AllowMessage() &&
           Collab.BeginSecondaryEdit(),
-          GlobalData.optManager.theContentHeader.Page.margins.left = e,
-          GlobalData.optManager.theContentHeader.Page.margins.top = e,
-          GlobalData.optManager.theContentHeader.Page.margins.right = e,
-          GlobalData.optManager.theContentHeader.Page.margins.bottom = e,
-          GlobalData.optManager.FitDocumentWorkAreaToPaperSize(),
+          T3Gv.optManager.theContentHeader.Page.margins.left = e,
+          T3Gv.optManager.theContentHeader.Page.margins.top = e,
+          T3Gv.optManager.theContentHeader.Page.margins.right = e,
+          T3Gv.optManager.theContentHeader.Page.margins.bottom = e,
+          T3Gv.optManager.FitDocumentWorkAreaToPaperSize(),
           Collab.AllowMessage()
         ) {
           var t = {
@@ -1548,7 +1548,7 @@ class DocHandler {
           };
           Collab.BuildMessage(ConstantData.CollabMessages.SetPageMargins, t, !1)
         }
-        GlobalData.optManager.CompleteOperation()
+        T3Gv.optManager.CompleteOperation()
       }
     } catch (e) {
       throw e;
@@ -1560,11 +1560,11 @@ class DocHandler {
       if (
         Collab.AllowMessage() &&
         Collab.BeginSecondaryEdit(),
-        GlobalData.optManager.theContentHeader.Page.margins.left = e,
-        GlobalData.optManager.theContentHeader.Page.margins.top = t,
-        GlobalData.optManager.theContentHeader.Page.margins.right = a,
-        GlobalData.optManager.theContentHeader.Page.margins.bottom = r,
-        GlobalData.optManager.FitDocumentWorkAreaToPaperSize(),
+        T3Gv.optManager.theContentHeader.Page.margins.left = e,
+        T3Gv.optManager.theContentHeader.Page.margins.top = t,
+        T3Gv.optManager.theContentHeader.Page.margins.right = a,
+        T3Gv.optManager.theContentHeader.Page.margins.bottom = r,
+        T3Gv.optManager.FitDocumentWorkAreaToPaperSize(),
         Collab.AllowMessage()
       ) {
         var i = {
@@ -1575,7 +1575,7 @@ class DocHandler {
         };
         Collab.BuildMessage(ConstantData.CollabMessages.SetCustomPageMargins, i, !1)
       }
-      GlobalData.optManager.CompleteOperation()
+      T3Gv.optManager.CompleteOperation()
     } catch (e) {
       throw e;
     }

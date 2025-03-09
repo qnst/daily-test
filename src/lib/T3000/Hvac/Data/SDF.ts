@@ -2,10 +2,10 @@
 
 import ListManager from './ListManager'
 import Utils2 from '../Helper/Utils2'
-import GlobalData from '../Data/GlobalData'
+import T3Gv from './T3Gv'
 import FileParser from '../Data/FileParser'
 // import DataStream from '../Opt/Business/DataStream'
-import T3DataStream from '../Opt/Business/DataStream2'
+import T3DataStream from '../Opt/Business/T3DataStream'
 //import DataStream from 'datastream-js'
 import Resources from '../Data/Resources'
 import Utils1 from '../Helper/Utils1'
@@ -13,10 +13,10 @@ import Utils3 from '../Helper/Utils3'
 import Globals from './Globals'
 import HashController from '../Opt/Business/HashController'
 import $ from 'jquery'
-import RulerSettings from '../Model/RulerSettings'
+import RulerConfig from '../Model/RulerConfig'
 // import Collab from '../Data/Collab'
-import Polygon from '../Basic/Basic.Polygon'
-import PolygonShapeGenerator from "../Opt/Business/PolygonShapeGenerator"
+import Polygon from '../Basic/B.Polygon'
+import PolygonShapeGenerator from "../Opt/Business/PolygonUtil"
 import QuickStyle from '../Model/QuickStyle'
 import SEDSession from '../Model/SEDSession'
 import LayersManager from '../Model/LayersManager'
@@ -41,6 +41,7 @@ import Layer from '../Model/Layer'
 import ConstantData1 from "../Data/ConstantData1"
 import ConstantData2 from './ConstantData2'
 import TextureList from '../Model/TextureList'
+import PolygonConstant from '../Opt/Business/PolygonConstant'
 
 
 class SDF {
@@ -527,20 +528,20 @@ SDF.DecendentTree = [
   ],
   SDF.UnsupportedTypes = [],
   SDF.ReadFileFromBuffer = function (e, t) {
-    GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
+    T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
     var a = SDF.ReadBuffer(e, t, 0, !1, SDF.ReadFileFromBuffer_Complete);
     return a &&
       a != SDF.Errors.WaitingForCallBack ? (
       SDUI.Commands.MainController.ActiveSessionController.ReturnToTemplateDialog = !0,
       SDUI.Commands.MainController.ActiveSessionController.UpdateAlertModal(Resources.Strings['SDRRead_Error_' + a], 1),
-      GlobalData.optManager.ShowLoading(!1),
+      T3Gv.optManager.ShowLoading(!1),
       t.error
     ) : (
       t.WarnMeta && false,
       // Utils.Alert('Metafile not read', null),
       0 === a &&
       (a = SDF.ReadFileFromBuffer_Complete(t)),
-      GlobalData.optManager.ShowLoading(!1),
+      T3Gv.optManager.ShowLoading(!1),
       a
     )
   },
@@ -586,7 +587,7 @@ SDF.DecendentTree = [
         n,
         o = t.zList.length;
       for (a = 0; a < o; a++) if (
-        (r = GlobalData.optManager.GetObjectPtr(t.zList[a], !1)) &&
+        (r = T3Gv.optManager.GetObjectPtr(t.zList[a], !1)) &&
         0 === r.objecttype
       ) {
         var s = r.GetTable(!1);
@@ -604,50 +605,50 @@ SDF.DecendentTree = [
       case Resources.Controls.SmartPanels.Swimlane.Id:
       case Resources.Controls.SmartPanels.UML.Id:
       case Resources.Controls.SmartPanels.WorkflowDiagram.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'FLOWCHART';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'FLOWCHART';
         break;
       case Resources.Controls.SmartPanels.StepChart.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'STEPCHART';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'STEPCHART';
         break;
       case Resources.Controls.SmartPanels.StepChartVertical.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'STEPCHARTV';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'STEPCHARTV';
         break;
       case Resources.Controls.SmartPanels.Orgchart.Id:
       case Resources.Controls.SmartPanels.Sitemap.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'ORGCHART';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'ORGCHART';
         break;
       case Resources.Controls.SmartPanels.BPMN.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'LINEDRAW_BPMN';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'LINEDRAW_BPMN';
         break;
       case Resources.Controls.SmartPanels.ERD.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'LINEDRAW_ERD';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'LINEDRAW_ERD';
         break;
       case Resources.Controls.SmartPanels.UMLClass.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'LINEDRAW_UMLCLASS';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'LINEDRAW_UMLCLASS';
         break;
       case Resources.Controls.SmartPanels.UMLComponent.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'LINEDRAW_UMLCOMPONENT';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'LINEDRAW_UMLCOMPONENT';
         break;
       case Resources.Controls.SmartPanels.UMLDiagram.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'LINEDRAW_UML';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'LINEDRAW_UML';
         break;
       case Resources.Controls.SmartPanels.CauseandEffect.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'CAUSEANDEFFECT';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'CAUSEANDEFFECT';
         break;
       case Resources.Controls.SmartPanels.Class.Id:
       case Resources.Controls.SmartPanels.DescendantTree.Id:
       case Resources.Controls.SmartPanels.Hierarchy.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'DESCENDANT';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'DESCENDANT';
         break;
       case Resources.Controls.SmartPanels.PedigreeChart.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'PEDIGREE';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'PEDIGREE';
         break;
       case Resources.Controls.SmartPanels.DecisionTree.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'DECISIONTREE';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'DECISIONTREE';
         break;
       case Resources.Controls.SmartPanels.Ecomap.Id:
       case Resources.Controls.SmartPanels.Genograms.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'GENOGRAM';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'GENOGRAM';
         break;
       case Resources.Controls.SmartPanels.Landscape.Id:
       case Resources.Controls.SmartPanels.FloorPlan.Id:
@@ -656,33 +657,33 @@ SDF.DecendentTree = [
       case Resources.Controls.SmartPanels.Elevation.Id:
       case Resources.Controls.SmartPanels.Planogram.Id:
       case Resources.Controls.SmartPanels.StorageDesign.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'FLOORPLAN';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'FLOORPLAN';
         break;
       case Resources.Controls.SmartPanels.LineDraw.Id:
       case Resources.Controls.SmartPanels.NetworkDiagramManual.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'LINEDRAW';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'LINEDRAW';
         break;
       case Resources.Controls.SmartPanels.Engineering.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'LINEDRAW_ENGINEERING';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'LINEDRAW_ENGINEERING';
         break;
       case Resources.Controls.SmartPanels.SwimLaneLineDraw.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'LINEDRAW_SWIMLANE';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'LINEDRAW_SWIMLANE';
         break;
       case Resources.Controls.SmartPanels.AWS.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'LINEDRAW_AWS';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'LINEDRAW_AWS';
         break;
       case Resources.Controls.SmartPanels.Azure.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'LINEDRAW_AZURE';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'LINEDRAW_AZURE';
         break;
       case Resources.Controls.SmartPanels.Hubs.Id:
       case Resources.Controls.SmartPanels.Timeline.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'MINDMAP';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'MINDMAP';
         break;
       case Resources.Controls.SmartPanels.ProjectPlanning.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'TASKMAP';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'TASKMAP';
         break;
       case Resources.Controls.SmartPanels.ProjectChart.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'PROJECTCHART';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'PROJECTCHART';
         break;
       case Resources.Controls.SmartPanels.Table.Id:
       case Resources.Controls.SmartPanels.Matrix.Id:
@@ -690,44 +691,44 @@ SDF.DecendentTree = [
       case Resources.Controls.SmartPanels.AuthorityMatrix.Id:
       case Resources.Controls.SmartPanels.BasicMatrix.Id:
       case Resources.Controls.SmartPanels.ResourceTaskMatrix.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'TABLE',
+        T3Gv.optManager.theContentHeader.BusinessModule = 'TABLE',
           a(ConstantData.ObjectTypes.SD_OBJT_BUSLOGIC_TABLE);
         break;
       case Resources.Controls.SmartPanels.PyramidChart.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'TABLEROW',
+        T3Gv.optManager.theContentHeader.BusinessModule = 'TABLEROW',
           a(ConstantData.ObjectTypes.SD_OBJT_BUSLOGIC_TABLEROW);
         break;
       case Resources.Controls.SmartPanels.WireframeDiagram.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'UIELEMENT';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'UIELEMENT';
         break;
       case Resources.Controls.SmartPanels.Charts.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'GRAPH';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'GRAPH';
         break;
       case Resources.Controls.SmartPanels.Gauges.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'GAUGE';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'GAUGE';
         break;
       case Resources.Controls.SmartPanels.Kanban.Id:
       case Resources.Controls.SmartPanels.StickyNotes.Id:
       case Resources.Controls.SmartPanels.Whiteboarding.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'CONTAINER';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'CONTAINER';
         break;
       case Resources.Controls.SmartPanels.Jira.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'JIRA_ISSUESCONTAINER';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'JIRA_ISSUESCONTAINER';
         break;
       case Resources.Controls.SmartPanels.JiraBlockingIssue.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'JIRA_BLOCKINGISSUE';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'JIRA_BLOCKINGISSUE';
         break;
       case Resources.Controls.SmartPanels.JiraEpicDependency.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'JIRA_EPICDEPENDENCY';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'JIRA_EPICDEPENDENCY';
         break;
       case Resources.Controls.SmartPanels.JiraProductRoadmap.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'JIRA_PRODUCTROADMAP';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'JIRA_PRODUCTROADMAP';
         break;
       case Resources.Controls.SmartPanels.JiraPIBoard.Id:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'JIRA_PIBOARD';
+        T3Gv.optManager.theContentHeader.BusinessModule = 'JIRA_PIBOARD';
         break;
       default:
-        GlobalData.optManager.theContentHeader.BusinessModule = 'MANUALCHART'
+        T3Gv.optManager.theContentHeader.BusinessModule = 'MANUALCHART'
     }
   },
   SDF.DeleteOldLayers = function (e) {
@@ -741,10 +742,10 @@ SDF.DecendentTree = [
       case n.SD_LAYERT_TIMELINE:
       case n.SD_LAYERT_MEETING:
         o = o.concat(a.zList),
-          GlobalData.optManager.RemoveLayer(t)
+          T3Gv.optManager.RemoveLayer(t)
     }
     o.length &&
-      GlobalData.optManager.DeleteObjects(o, !0)
+      T3Gv.optManager.DeleteObjects(o, !0)
   },
   SDF.ReadFileFromBuffer_Complete = function (e) {
     var t,
@@ -758,7 +759,7 @@ SDF.DecendentTree = [
       S,
       c = [],
       u = !1,
-      p = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
+      p = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
       d = (ConstantData.DrawingObjectBaseClass.CONNECTOR, 0),
       D = ConstantData.LayerTypes,
       g = ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL,
@@ -768,7 +769,7 @@ SDF.DecendentTree = [
       y = ConstantData.Defines.METRIC_EXTERIOR_WALL;
     if (
       e.isTemplate ? (
-        SDUI.Commands.MainController.Document.IsScaledDrawing(e.rulerSettings) &&
+        SDUI.Commands.MainController.Document.IsScaledDrawing(e.rulerConfig) &&
         (
           e.sdp.moreflags = Utils2.SetFlag(
             e.sdp.moreflags,
@@ -789,28 +790,28 @@ SDF.DecendentTree = [
             p.moreflags & ConstantData.SessionMoreFlags.SEDSM_KeepUnits
           ) &&
           (
-            e.rulerSettings &&
+            e.rulerConfig &&
             (
-              e.rulerSettings = SDUI.Commands.MainController.Document.GetMetricScale(e.rulerSettings)
+              e.rulerConfig = SDUI.Commands.MainController.Document.GetMetricScale(e.rulerConfig)
             ),
             e.sdp.moreflags & ConstantData.SessionMoreFlags.SEDSM_DrawToScale &&
             (u = !0)
           ),
           1 === ConstantData.DocumentContext.UserSettings.PaperSize &&
-          GlobalData.optManager.AccomodateDocumentPaperSize('A4')
+          T3Gv.optManager.AccomodateDocumentPaperSize('A4')
         )
       ) : 'letter' !== e.PaperType &&
-      GlobalData.optManager.AccomodateDocumentPaperSize(e.PaperType),
-      GlobalData.docHandler.ResizeDocument(p.dim.x, p.dim.y),
-      e.rulerSettings &&
+      T3Gv.optManager.AccomodateDocumentPaperSize(e.PaperType),
+      T3Gv.docUtil.ResizeDocument(p.dim.x, p.dim.y),
+      e.rulerConfig &&
       (
-        GlobalData.docHandler.SetRulers(e.rulerSettings),
-        SDUI.Commands.MainController.Document.SetRulerVisibility(e.rulerSettings.show)
+        T3Gv.docUtil.SetRulers(e.rulerConfig),
+        SDUI.Commands.MainController.Document.SetRulerVisibility(e.rulerConfig.show)
       ),
       e.WindowSettings &&
       (
-        e.WindowSettings.wflags & ListManager.WFlags.W_Stf ? e.WindowSettings.wflags & ListManager.WFlags.W_Page ? GlobalData.docHandler.SetSizeToPage(!0) : GlobalData.docHandler.SetSizeToFit(!0) : GlobalData.docHandler.SetZoomFactor(e.WindowSettings.wscale, !0),
-        GlobalData.docHandler.SetScroll(e.WindowSettings.worigin.x, e.WindowSettings.worigin.y)
+        e.WindowSettings.wflags & ListManager.WFlags.W_Stf ? e.WindowSettings.wflags & ListManager.WFlags.W_Page ? T3Gv.docUtil.SetSizeToPage(!0) : T3Gv.docUtil.SetSizeToFit(!0) : T3Gv.docUtil.SetZoomFactor(e.WindowSettings.wscale, !0),
+        T3Gv.docUtil.SetScroll(e.WindowSettings.worigin.x, e.WindowSettings.worigin.y)
       ),
       function () {
         if (0 !== e.IDMap.length) if (
@@ -832,7 +833,7 @@ SDF.DecendentTree = [
         } else {
           t = e.zList.length;
           var l = null;
-          for (a = 0; a < t; a++) l = GlobalData.optManager.GetObjectPtr(e.zList[a], !1),
+          for (a = 0; a < t; a++) l = T3Gv.optManager.GetObjectPtr(e.zList[a], !1),
             e.tLMB.layers[l.Layer].zList.push(e.zList[a])
         }
       }(),
@@ -854,7 +855,7 @@ SDF.DecendentTree = [
           ),
           SDUI.Commands.MainController.Document.SetSpellCheck(
             (
-              GlobalData.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_AutoSpell
+              T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_AutoSpell
             ) > 0,
             !1
           ),
@@ -862,42 +863,42 @@ SDF.DecendentTree = [
         ) : (
           SDUI.Commands.MainController.Document.SetSnapEnable(
             (
-              GlobalData.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_SnapToGridC
+              T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_SnapToGridC
             ) > 0 ||
             (
-              GlobalData.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_SnapToGridTL
+              T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_SnapToGridTL
             ) > 0
           ),
           SDUI.Commands.MainController.Document.ForceCenterSnapEnable(
             (
-              GlobalData.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_SnapToGridC
+              T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_SnapToGridC
             ) > 0
           ),
           SDUI.Commands.MainController.Document.SetGridVisibility(
             (
-              GlobalData.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_ShowGrid
+              T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_ShowGrid
             ) > 0,
             !1
           ),
           SDUI.Commands.MainController.Document.SetPageDividerVisibility(
             (
-              GlobalData.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_ShowPageDividers
+              T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_ShowPageDividers
             ) > 0
           ),
           SDUI.Commands.MainController.Document.SetSpellCheck(
             (
-              GlobalData.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_AutoSpell
+              T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_AutoSpell
             ) > 0,
             !1
           ),
           SDUI.Commands.MainController.Document.ToggleSnapToShape(
             0 == (
-              GlobalData.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_SnapToShapes_Off
+              T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_SnapToShapes_Off
             )
           ),
           SDUI.Commands.MainController.Document.SetRulerVisibility(
             (
-              GlobalData.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_ShowRulers
+              T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_ShowRulers
             ) > 0
           )
         ),
@@ -909,69 +910,69 @@ SDF.DecendentTree = [
       ),
       !e.LoadBlockList
     ) {
-      var f = GlobalData.objectStore.GetObject(GlobalData.optManager.theContentHeader.SDDataID);
+      var f = T3Gv.objectStore.GetObject(T3Gv.optManager.theContentHeader.SDDataID);
       e.SDData ? f ? f.Data.SDData = e.SDData : (
-        f = GlobalData.objectStore.CreateBlock(
+        f = T3Gv.objectStore.CreateBlock(
           ConstantData.StoredObjectType.SDDATA_OBJECT,
           {
             SDData: e.SDData
           }
         ),
-        GlobalData.optManager.theContentHeader.SDDataID = f.ID
+        T3Gv.optManager.theContentHeader.SDDataID = f.ID
       ) : f &&
-      (f.Delete(), GlobalData.optManager.theContentHeader.SDDataID = - 1)
+      (f.Delete(), T3Gv.optManager.theContentHeader.SDDataID = - 1)
     }
     SDF.SetTheme(p),
-      S = GlobalData.optManager.theContentHeader.smartpanelname,
-      GlobalData.optManager.theContentHeader.smartpanelname &&
-      'smartpanel' !== GlobalData.optManager.theContentHeader.smartpanelname &&
-      SDF.MapSmartPanelToBusinessModule(GlobalData.optManager.theContentHeader.smartpanelname, e),
+      S = T3Gv.optManager.theContentHeader.smartpanelname,
+      T3Gv.optManager.theContentHeader.smartpanelname &&
+      'smartpanel' !== T3Gv.optManager.theContentHeader.smartpanelname &&
+      SDF.MapSmartPanelToBusinessModule(T3Gv.optManager.theContentHeader.smartpanelname, e),
       (e.IsLucid || e.IsVisio) &&
       (
-        'LINEDRAW' === GlobalData.optManager.theContentHeader.BusinessModule ||
-          'MANUALCHART' === GlobalData.optManager.theContentHeader.BusinessModule ? (
-          GlobalData.optManager.theContentHeader.BusinessModule = 'LINEDRAW_SWIMLANE',
-          GlobalData.docHandler.rulerSettings.units === ConstantData.RulerUnits.SED_Feet &&
+        'LINEDRAW' === T3Gv.optManager.theContentHeader.BusinessModule ||
+          'MANUALCHART' === T3Gv.optManager.theContentHeader.BusinessModule ? (
+          T3Gv.optManager.theContentHeader.BusinessModule = 'LINEDRAW_SWIMLANE',
+          T3Gv.docUtil.rulerConfig.units === ConstantData.RulerUnits.SED_Feet &&
           (
-            GlobalData.docHandler.rulerSettings.units = ConstantData.RulerUnits.SED_Inches
+            T3Gv.docUtil.rulerConfig.units = ConstantData.RulerUnits.SED_Inches
           ),
           p.def.h_arraywidth = 75,
           p.def.v_arraywidth = 75,
           p.def.arraywd = 25,
           p.def.arrayht = 25
-        ) : 'FLOORPLAN' === GlobalData.optManager.theContentHeader.BusinessModule &&
+        ) : 'FLOORPLAN' === T3Gv.optManager.theContentHeader.BusinessModule &&
         (
           p.flags = Utils2.SetFlag(p.flags, ConstantData.SessionFlags.SEDS_FreeHand, !0)
         )
       );
     var L,
       I,
-      T = GlobalData.optManager.theContentHeader.BusinessModule;
+      T = T3Gv.optManager.theContentHeader.BusinessModule;
     if (
-      GlobalData.optManager.theContentHeader.BusinessModule = '',
+      T3Gv.optManager.theContentHeader.BusinessModule = '',
       SDJS_init_business_manager(T),
-      GlobalData.optManager.theContentHeader.smartpanelname = 'smartpanel',
-      GlobalData.optManager.theContentHeader.smartpanelname
+      T3Gv.optManager.theContentHeader.smartpanelname = 'smartpanel',
+      T3Gv.optManager.theContentHeader.smartpanelname
     ) {
       switch (d) {
 
         case D.SD_LAYERT_MINDMAP:
-          GlobalData.optManager.theContentHeader.smartpanelname = 'mind maps',
+          T3Gv.optManager.theContentHeader.smartpanelname = 'mind maps',
             p.flags = Utils2.SetFlag(p.flags, ConstantData.SessionFlags.SEDS_LLink, !0)
       }
       gBusinessManager instanceof Business.LineDraw ||
         gBusinessManager instanceof Business.FlowChart ||
         (p.def.h_arraywidth = 75, p.def.v_arraywidth = 75);
-      var b = SDF.ToSDJSPanelName(GlobalData.optManager.theContentHeader.smartpanelname);
+      var b = SDF.ToSDJSPanelName(T3Gv.optManager.theContentHeader.smartpanelname);
       SDUI.Commands.MainController.SmartPanels.SetPaletteStatus(e.PaletteStatus),
         SDUI.Commands.MainController.SmartPanels.SetLeftPanelMode(Resources.LeftPanelMode.LEFTPANELMODE_SMARTPANEL),
         SDUI.Commands.MainController.LoadSmartPanel(b);
       var M = [],
-        P = GlobalData.optManager.theContentHeader.lp_list.lib.length;
+        P = T3Gv.optManager.theContentHeader.lp_list.lib.length;
       e.IsVisio &&
         0 === P &&
         (
-          GlobalData.optManager.theContentHeader.lp_list.lib.push(
+          T3Gv.optManager.theContentHeader.lp_list.lib.push(
             new ListManager.LibListEntry('Office\\Standard Shapes.SDL')
           ),
           P = 1
@@ -987,7 +988,7 @@ SDF.DecendentTree = [
         A < P;
         A++
       ) {
-        var _ = GlobalData.optManager.theContentHeader.lp_list.lib[A];
+        var _ = T3Gv.optManager.theContentHeader.lp_list.lib[A];
         if (_.SearchResults) {
           var E = R(e, _.libGuid);
           E &&
@@ -1015,20 +1016,20 @@ SDF.DecendentTree = [
       e.PVersion < SDF.SDF_PVERSION864 &&
       !e.isTemplate &&
       (
-        GlobalData.optManager.theContentHeader.flags = Utils2.SetFlag(
-          GlobalData.optManager.theContentHeader.flags,
+        T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
+          T3Gv.optManager.theContentHeader.flags,
           ConstantData.ContentHeaderFlags.CT_HideLeftPanel,
           !1
         )
       ),
-      GlobalData.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_HideLeftPanel ? SDUI.Commands.MainController.SmartPanels.ToggleLeftPanel(!1, !0) : SDUI.Commands.MainController.SmartPanels.ToggleLeftPanel(!1, !1),
+      T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_HideLeftPanel ? SDUI.Commands.MainController.SmartPanels.ToggleLeftPanel(!1, !0) : SDUI.Commands.MainController.SmartPanels.ToggleLeftPanel(!1, !1),
       null != e.linetoolindex &&
       SDF.WintoJSLineTool(e.linetoolindex),
       null != e.shapetoolindex &&
       (
         e.PVersion <= SDF.SDF_PVERSION863 ? (
           SDF.WintoJSShapeTool(e.shapetoolindex),
-          SDUI.Commands.MainController.Selection.SetShapeTool(ConstantData.SDRShapeTypes.SED_S_Rect)
+          SDUI.Commands.MainController.Selection.SetShapeTool(PolygonConstant.ShapeTypes.RECTANGLE)
         ) : SDUI.Commands.MainController.Selection.SetShapeTool(e.shapetoolindex)
       ),
       null != e.swimlaneformat &&
@@ -1077,15 +1078,15 @@ SDF.DecendentTree = [
     ) switch (d) {
       case D.SD_LAYERT_TIMELINE:
       case D.SD_LAYERT_MEETING:
-        L = GlobalData.optManager.GetLayerIndex(D.SD_LAYERT_GANTT),
+        L = T3Gv.optManager.GetLayerIndex(D.SD_LAYERT_GANTT),
           e.tLMB.activelayer = L,
           d = D.SD_LAYERT_GANTT;
       case D.SD_LAYERT_GANTT:
-        L = GlobalData.optManager.GetLayerIndex(D.SD_LAYERT_GANTT),
+        L = T3Gv.optManager.GetLayerIndex(D.SD_LAYERT_GANTT),
           SDF.OptimizeLinks(e.links, e.tLMB.layers[L].zList);
         break;
       case D.SD_LAYERT_MINDMAP:
-        L = GlobalData.optManager.GetLayerIndex(D.SD_LAYERT_MINDMAP),
+        L = T3Gv.optManager.GetLayerIndex(D.SD_LAYERT_MINDMAP),
           SDF.OptimizeLinks(e.links, e.tLMB.layers[L].zList);
         break;
       default:
@@ -1094,8 +1095,8 @@ SDF.DecendentTree = [
             v,
             G,
             N = e.tLMB.layers[1].zList;
-          for (v = N.length, F = 0; F < v; F++) if ((G = GlobalData.optManager.GetObjectPtr(N[F], !1)) && G.IsSwimlane()) {
-            GlobalData.optManager.RemoveLayer(1),
+          for (v = N.length, F = 0; F < v; F++) if ((G = T3Gv.optManager.GetObjectPtr(N[F], !1)) && /*G.IsSwimlane()*/false) {
+            T3Gv.optManager.RemoveLayer(1),
               e.sdp.flags = Utils2.SetFlag(e.sdp.flags, ConstantData.SessionFlags.SEDS_LockLayers, !1),
               G.moreflags = Utils2.SetFlag(
                 G.moreflags,
@@ -1109,31 +1110,31 @@ SDF.DecendentTree = [
     if (SDF.DeleteOldLayers(e), e.ReadBlocks) {
       for (t = e.noteids.length, a = 0; a < t; a++) e.noteids[a] &&
         !e.usednoteids[a] &&
-        (s = GlobalData.objectStore.GetObject(e.noteids[a])) &&
+        (s = T3Gv.objectStore.GetObject(e.noteids[a])) &&
         s.Delete();
       for (t = e.textids.length, a = 0; a < t; a++) e.textids[a] &&
         !e.usedtextids[a] &&
-        (s = GlobalData.objectStore.GetObject(e.textids[a])) &&
+        (s = T3Gv.objectStore.GetObject(e.textids[a])) &&
         s.Delete();
       for (t = e.imageids.length, a = 0; a < t; a++) e.imageids[a] &&
         !e.usedimageids[a] &&
-        (s = GlobalData.objectStore.GetObject(e.imageids[a].id)) &&
+        (s = T3Gv.objectStore.GetObject(e.imageids[a].id)) &&
         s.Delete();
       for (t = e.tableids.length, a = 0; a < t; a++) e.tableids[a] &&
         !e.usedtableids[a] &&
-        (s = GlobalData.objectStore.GetObject(e.tableids[a])) &&
+        (s = T3Gv.objectStore.GetObject(e.tableids[a])) &&
         s.Delete();
       for (t = e.graphids.length, a = 0; a < t; a++) e.graphids[a] &&
         !e.usedgraphids[a] &&
-        (s = GlobalData.objectStore.GetObject(e.graphids[a])) &&
-        (GlobalData.optManager.graph_DeleteObject(s.Data), s.Delete());
+        (s = T3Gv.objectStore.GetObject(e.graphids[a])) &&
+        (T3Gv.optManager.graph_DeleteObject(s.Data), s.Delete());
       for (t = e.expandedviewids.length, a = 0; a < t; a++) e.expandedviewids[a] &&
         !e.usedexpandedviewids[a] &&
-        (s = GlobalData.objectStore.GetObject(e.expandedviewids[a])) &&
+        (s = T3Gv.objectStore.GetObject(e.expandedviewids[a])) &&
         s.Delete();
       for (t = e.ganttids.length, a = 0; a < t; a++) e.ganttids[a] &&
         !e.usedganttids[a] &&
-        (s = GlobalData.objectStore.GetObject(e.ganttids[a])) &&
+        (s = T3Gv.objectStore.GetObject(e.ganttids[a])) &&
         s.Delete()
     }
     for (
@@ -1153,26 +1154,26 @@ SDF.DecendentTree = [
           void 0 === e.sdp.background.Paint.Texture ? e.sdp.background.Paint.FillType = ConstantData.FillTypes.SDFILL_TRANSPARENT : e.sdp.background.Paint.Texture < e.TextureList.Textures.length ? e.sdp.background.Paint.Texture = e.TextureList.Textures[e.sdp.background.Paint.Texture].index : e.sdp.background.Paint.FillType = ConstantData.FillTypes.SDFILL_TRANSPARENT
         )
       ),
-      GlobalData.optManager.RichGradients = e.RichGradients,
-      GlobalData.optManager.HasBlockDirectory = e.HasBlockDirectory,
-      (r = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLinksBlockID, !0)).length = 0,
+      T3Gv.optManager.RichGradients = e.RichGradients,
+      T3Gv.optManager.HasBlockDirectory = e.HasBlockDirectory,
+      (r = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, !0)).length = 0,
       t = e.links.length,
       a = 0;
       a < t;
       a++
     ) if (e.links[a].targetid === e.links[a].hookid) {
-      var k = GlobalData.optManager.GetObjectPtr(e.links[a].hookid, !0);
+      var k = T3Gv.optManager.GetObjectPtr(e.links[a].hookid, !0);
       if (k) for (o = k.hooks.length - 1; o >= 0; o--) k.hooks[o].objid === e.links[a].targetid &&
         k.hooks.splice(o, 1)
     } else r.push(e.links[a]);
     for (
       (t = e.DeleteList.length) &&
-      (GlobalData.optManager.DeleteObjects(e.DeleteList, !1), e.DeleteList = []),
+      (T3Gv.optManager.DeleteObjects(e.DeleteList, !1), e.DeleteList = []),
       a = 0;
       a < r.length;
       a++
     ) {
-      var U = GlobalData.optManager.GetObjectPtr(r[a].targetid, !1);
+      var U = T3Gv.optManager.GetObjectPtr(r[a].targetid, !1);
       U instanceof ListManager.PolyLine &&
         U.polylist &&
         U.StyleRecord.Line.BThick &&
@@ -1181,15 +1182,15 @@ SDF.DecendentTree = [
         )
     }
     if (
-      GlobalData.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto ? (
-        GlobalData.optManager.theContentHeader.MaxWorkDim.x = e.sdp.dim.x - 2 * ConstantData.Defines.SED_EdgeSlop,
-        GlobalData.optManager.theContentHeader.MaxWorkDim.y = e.sdp.dim.y - 2 * ConstantData.Defines.SED_EdgeSlop
+      T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto ? (
+        T3Gv.optManager.theContentHeader.MaxWorkDim.x = e.sdp.dim.x - 2 * ConstantData.Defines.SED_EdgeSlop,
+        T3Gv.optManager.theContentHeader.MaxWorkDim.y = e.sdp.dim.y - 2 * ConstantData.Defines.SED_EdgeSlop
       ) : (
-        GlobalData.optManager.theContentHeader.MaxWorkDim.x = ConstantData.Defines.MaxWorkDimX,
-        GlobalData.optManager.theContentHeader.MaxWorkDim.y = ConstantData.Defines.MaxWorkDimY
+        T3Gv.optManager.theContentHeader.MaxWorkDim.x = ConstantData.Defines.MaxWorkDimX,
+        T3Gv.optManager.theContentHeader.MaxWorkDim.y = ConstantData.Defines.MaxWorkDimY
       ),
       u
-    ) for (t = e.zList.length, a = 0; a < t; a++) (l = GlobalData.optManager.GetObjectPtr(e.zList[a], !1)).objecttype === g &&
+    ) for (t = e.zList.length, a = 0; a < t; a++) (l = T3Gv.optManager.GetObjectPtr(e.zList[a], !1)).objecttype === g &&
       (
         I = l.StyleRecord.Line.Thickness,
         Utils2.IsEqual(I, h) ? (
@@ -1205,8 +1206,8 @@ SDF.DecendentTree = [
       );
     if (
       (e.IsLucid || e.IsVisio) &&
-      'LINEDRAW_SWIMLANE' === GlobalData.optManager.theContentHeader.BusinessModule
-    ) for (t = e.zList.length, a = 0; a < t; a++) (l = GlobalData.optManager.GetObjectPtr(e.zList[a], !1)).DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.LINE &&
+      'LINEDRAW_SWIMLANE' === T3Gv.optManager.theContentHeader.BusinessModule
+    ) for (t = e.zList.length, a = 0; a < t; a++) (l = T3Gv.optManager.GetObjectPtr(e.zList[a], !1)).DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.LINE &&
       2 === l.hooks.length &&
       0 === l.objecttype &&
       (
@@ -1215,7 +1216,7 @@ SDF.DecendentTree = [
       );
     if (e.IsLucid) {
       for (
-        'LINEDRAW_SWIMLANE' === GlobalData.optManager.theContentHeader.BusinessModule &&
+        'LINEDRAW_SWIMLANE' === T3Gv.optManager.theContentHeader.BusinessModule &&
         (
           ConstantData.DocumentContext.LineTool = Resources.LineToolTypes.SegmentedLine,
           e.sdp.flags = Utils2.SetFlag(e.sdp.flags, ConstantData.SessionFlags.SEDS_AutoInsert, !0)
@@ -1224,25 +1225,25 @@ SDF.DecendentTree = [
         a = 0;
         a < t;
         a++
-      ) l = GlobalData.optManager.GetObjectPtr(e.zList[a], !1),
-        GlobalData.optManager.UngroupVisioShapes(l, e.DeleteList),
+      ) l = T3Gv.optManager.GetObjectPtr(e.zList[a], !1),
+        T3Gv.optManager.UngroupVisioShapes(l, e.DeleteList),
         e.DeleteList.length &&
-        (GlobalData.optManager.DeleteObjects(e.DeleteList, !1), e.DeleteList = []);
+        (T3Gv.optManager.DeleteObjects(e.DeleteList, !1), e.DeleteList = []);
       SDUI.MarketingActionLogger.Log(SDUI.MarketingActionCodes.ImportLucid_Complete)
     } (e.IsLucid || e.IsVisio) &&
       (
-        !GlobalData.optManager.theContentHeader.SDDataID ||
-        GlobalData.optManager.theContentHeader.SDDataID < 0
+        !T3Gv.optManager.theContentHeader.SDDataID ||
+        T3Gv.optManager.theContentHeader.SDDataID < 0
       ) &&
       ListManager.SDData.CreateDefaultSDData(),
-      e.sdp.Page = Utils1.DeepCopy(GlobalData.optManager.theContentHeader.Page),
-      GlobalData.optManager.UpdateLinks(),
-      GlobalData.optManager.UpdateLineHops(!0),
+      e.sdp.Page = Utils1.DeepCopy(T3Gv.optManager.theContentHeader.Page),
+      T3Gv.optManager.UpdateLinks(),
+      T3Gv.optManager.UpdateLineHops(!0),
       GlobalDatagFlowChartManager.UpdateSwimlanes(),
-      GlobalData.optManager.RenderAllSVGObjects();
+      T3Gv.optManager.RenderAllSVGObjects();
     var J,
       x,
-      O = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theTEDSessionBlockID, !1);
+      O = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theTEDSessionBlockID, !1);
     for (
       O.theActiveTextEditObjectID = - 1,
       O.theActiveTableObjectID = - 1,
@@ -1250,29 +1251,29 @@ SDF.DecendentTree = [
       O.theActiveOutlineObjectID = - 1,
       O.theTELastOp = ConstantData.TELastOp.INIT,
       e.sdp.tselect >= 0 &&
-      (c.push(e.sdp.tselect), GlobalData.optManager.SelectObjects(c, !1, !1)),
+      (c.push(e.sdp.tselect), T3Gv.optManager.SelectObjects(c, !1, !1)),
       t = e.zList.length,
       a = 0;
       a < t;
       a++
-    ) if (l = GlobalData.optManager.GetObjectPtr(e.zList[a], !1)) {
+    ) if (l = T3Gv.optManager.GetObjectPtr(e.zList[a], !1)) {
       if (
-        l.IsSwimlane() ? l.extraflags & ConstantData.ExtraFlags.SEDE_NoDelete &&
+        /*l.IsSwimlane()*/false ? l.extraflags & ConstantData.ExtraFlags.SEDE_NoDelete &&
           (
             l.extraflags = Utils2.SetFlag(l.extraflags, ConstantData.ExtraFlags.SEDE_NoDelete, !1)
           ) : l.objecttype === ConstantData.ObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER &&
           (x = l.GetTable(!1)) &&
-        GlobalData.optManager.Table_SortChildContainers(l, x),
-        l.objecttype === ConstantData.ObjectTypes.SD_OBJT_NG_EVENT ? GlobalData.optManager.Timeline_UpdateBlockIDEvent(l) : l.objecttype === ConstantData.ObjectTypes.SD_OBJT_NG_TIMELINE &&
+        T3Gv.optManager.Table_SortChildContainers(l, x),
+        l.objecttype === ConstantData.ObjectTypes.SD_OBJT_NG_EVENT ? T3Gv.optManager.Timeline_UpdateBlockIDEvent(l) : l.objecttype === ConstantData.ObjectTypes.SD_OBJT_NG_TIMELINE &&
           (
-            GlobalData.optManager.Timeline_UpdateBlockID(l),
-            GlobalData.optManager.Timeline_UpdateCellTimes(l)
+            T3Gv.optManager.Timeline_UpdateBlockID(l),
+            T3Gv.optManager.Timeline_UpdateCellTimes(l)
           ),
         l.Dimensions &&
         e.sdp.tselect != l.BlockID &&
         l.Dimensions & ConstantData.DimensionFlags.SED_DF_Select
       ) {
-        var B = GlobalData.optManager.svgObjectLayer.GetElementByID(l.BlockID);
+        var B = T3Gv.optManager.svgObjectLayer.GetElementByID(l.BlockID);
         if (B && l.Dimensions) {
           var H = null;
           for (o = 0, o = B.ElementCount() - 1; o >= 1; o--) (H = B.GetElementByIndex(o)).GetID() != ConstantData.SVGElementClass.DIMENSIONLINE &&
@@ -1283,57 +1284,57 @@ SDF.DecendentTree = [
       if (
         0 === l.objecttype &&
         l.subtype === ConstantData.ObjectSubTypes.SD_SUBT_TASK &&
-        GlobalData.optManager.FixMindmapCelltypes(l),
+        T3Gv.optManager.FixMindmapCelltypes(l),
         SDF.FixObjecttypes(l),
         l.objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART &&
         l.GetGanttInfo()
       ) e.FromWindows &&
-        GlobalData.optManager.GanttCleanUpStyles(l),
-        GlobalData.optManager.ConfirmPlanningFields(l.datasetTableID),
-        GlobalData.optManager.Table_EnsureDateFormatCorrect(l.BlockID, e.AddEMFHash),
+        T3Gv.optManager.GanttCleanUpStyles(l),
+        T3Gv.optManager.ConfirmPlanningFields(l.datasetTableID),
+        T3Gv.optManager.Table_EnsureDateFormatCorrect(l.BlockID, e.AddEMFHash),
         J = l,
-        e.isTemplate ? GlobalData.optManager.PlanningTableUpdateStartDate() : e.sdp.moreflags & ConstantData.SessionMoreFlags.SEDSM_HideLayerTabs &&
-          GlobalData.optManager.UpdateStartDateForHiddenGanttLayer(J.BlockID),
-        GlobalData.optManager.VisibleZList().indexOf(l.BlockID) >= 0 &&
+        e.isTemplate ? T3Gv.optManager.PlanningTableUpdateStartDate() : e.sdp.moreflags & ConstantData.SessionMoreFlags.SEDSM_HideLayerTabs &&
+          T3Gv.optManager.UpdateStartDateForHiddenGanttLayer(J.BlockID),
+        T3Gv.optManager.VisibleZList().indexOf(l.BlockID) >= 0 &&
         (
-          GlobalData.optManager.PlanningTableUpdateGeometry(l, !0, !0),
+          T3Gv.optManager.PlanningTableUpdateGeometry(l, !0, !0),
           e.AddEMFHash &&
           (
-            GlobalData.optManager.GanttUpdateDependencyLines(l.BlockID),
-            GlobalData.optManager.UpdateLinks()
+            T3Gv.optManager.GanttUpdateDependencyLines(l.BlockID),
+            T3Gv.optManager.UpdateLinks()
           ),
-          GlobalData.optManager.RenderDirtySVGObjects()
+          T3Gv.optManager.RenderDirtySVGObjects()
         )
     }
     switch (d) {
       case D.SD_LAYERT_TIMELINE:
       case D.SD_LAYERT_MEETING:
-        GlobalData.optManager.MakeLayerActiveByIndex(GlobalData.optManager.GetLayerIndex(D.SD_LAYERT_GANTT)),
-          GlobalData.optManager.RenderAllSVGObjects()
+        T3Gv.optManager.MakeLayerActiveByIndex(T3Gv.optManager.GetLayerIndex(D.SD_LAYERT_GANTT)),
+          T3Gv.optManager.RenderAllSVGObjects()
     }
     if (J) switch (d) {
       case D.SD_LAYERT_GANTT:
       case D.SD_LAYERT_MINDMAP:
       case D.SD_LAYERT_TIMELINE:
       case D.SD_LAYERT_MEETING:
-        GlobalData.optManager.TrimPersonTable(J.datasetID, J.datasetTableID)
+        T3Gv.optManager.TrimPersonTable(J.datasetID, J.datasetTableID)
     }
     if (
-      GlobalData.optManager.theContentHeader.ParentPageID.length &&
+      T3Gv.optManager.theContentHeader.ParentPageID.length &&
       !0 === SDUI.AppSettings.UseBackplane
     ) {
       var V = SDUI.SDBackplane.CurrentClientSession.PageID,
-        j = SDUI.BackplaneEditorMainController.BackplanePages.GetPageName(GlobalData.optManager.theContentHeader.ParentPageID);
-      V !== GlobalData.optManager.theContentHeader.ParentPageID &&
+        j = SDUI.BackplaneEditorMainController.BackplanePages.GetPageName(T3Gv.optManager.theContentHeader.ParentPageID);
+      V !== T3Gv.optManager.theContentHeader.ParentPageID &&
         SDF.SubProcess_UpdateChild(j),
-        GlobalData.optManager.theContentHeader.ParentPageID = '',
+        T3Gv.optManager.theContentHeader.ParentPageID = '',
         SDF.WriteAllBlocks()
     }
-    GlobalData.optManager.PreserveUndoState(!0),
-      GlobalData.optManager.ResetStateManager(),
-      GlobalData.optManager.theContentHeader.Save_HistoryState = - 1,
-      GlobalData.optManager.ClearFutureUndoStates(),
-      GlobalData.optManager.SetDocDirtyState(!1),
+    T3Gv.optManager.PreserveUndoState(!0),
+      T3Gv.optManager.ResetStateManager(),
+      T3Gv.optManager.theContentHeader.Save_HistoryState = - 1,
+      T3Gv.optManager.ClearFutureUndoStates(),
+      T3Gv.optManager.SetDocDirtyState(!1),
       TestServer.currentblocklist.length = 0,
       TestServer.StateSent = 0,
       ConstantData.DocumentContext.AllowLayers = 0 == (e.sdp.flags & ConstantData.SessionFlags.SEDS_LockLayers),
@@ -1341,10 +1342,10 @@ SDF.DecendentTree = [
       SDUI.Commands.MainController.SmartPanels.SetLeftPanelMode(e.WindowSettings.leftpanelmode),
       SDUI.Commands.MainController.SmartPanels.IdleSmartPanel(!0),
       SDUI.Commands.MainController.Document.IdleLayersTabs(),
-      GlobalData.optManager.ShowLoading(!1),
-      GlobalData.optManager.FitDocumentWorkArea(!0, !1);
-    var z = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSelectedListBlockID, !1);
-    if (GlobalData.optManager.UpdateSelectionAttributes(z), e.isTemplate) {
+      T3Gv.optManager.ShowLoading(!1),
+      T3Gv.optManager.FitDocumentWorkArea(!0, !1);
+    var z = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSelectedListBlockID, !1);
+    if (T3Gv.optManager.UpdateSelectionAttributes(z), e.isTemplate) {
       var W = null;
       if (
         null == (
@@ -1367,9 +1368,9 @@ SDF.DecendentTree = [
       }
     }
     return e.isTemplate &&
-      e.rulerSettings &&
-      e.rulerSettings.useInches &&
-      e.rulerSettings.show &&
+      e.rulerConfig &&
+      e.rulerConfig.useInches &&
+      e.rulerConfig.show &&
       ConstantData.DocumentContext.UserSettings &&
       0 == (
         ConstantData.DocumentContext.UserSettings.HelpTipStatus & Globals.HintFlags.Units
@@ -1434,8 +1435,8 @@ SDF.DecendentTree = [
       n = new SDF.Result;
     gFmtTextObj = null;
     var o,
-      s = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
-      l = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !1);
+      s = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+      l = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1);
     return n.isTemplate = t,
       n.sdp = s,
       n.tLMB = l,
@@ -1444,7 +1445,7 @@ SDF.DecendentTree = [
       i.onload = function (t) {
         try {
           o = this,
-            GlobalData.optManager.ShowLoading(!0),
+            T3Gv.optManager.ShowLoading(!0),
             setTimeout(
               (
                 function () {
@@ -1452,7 +1453,7 @@ SDF.DecendentTree = [
                     if (SDF.IsJSNFJSON(o.result)) {
                       var t = new Blob([o.result]);
                       return ConstantData.DocumentContext.ImportingJSNF = !0,
-                        GlobalData.optManager.ShowLoading(!0),
+                        T3Gv.optManager.ShowLoading(!0),
                         S(),
                         void setTimeout(
                           (
@@ -1482,7 +1483,7 @@ SDF.DecendentTree = [
                   } catch (t) {
                     void 0 !== e.msClose &&
                       e.msClose(),
-                      GlobalData.optManager.ExceptionCleanup(t)
+                      T3Gv.optManager.ExceptionCleanup(t)
                   }
                 }
               ),
@@ -1491,7 +1492,7 @@ SDF.DecendentTree = [
         } catch (t) {
           void 0 !== e.msClose &&
             e.msClose(),
-            GlobalData.optManager.ExceptionCleanup(t)
+            T3Gv.optManager.ExceptionCleanup(t)
         }
       },
       i.readAsArrayBuffer(e),
@@ -1505,7 +1506,7 @@ SDF.DecendentTree = [
               null != e &&
                 - 1 !== SDUI.Commands.MainController.Modals.ActiveModals.indexOf(Resources.Controls.Modals.Loading.Id) &&
                 e.modal('hide'),
-                GlobalData.optManager.ShowLoading(!1)
+                T3Gv.optManager.ShowLoading(!1)
             }
           ),
           2000
@@ -1534,7 +1535,7 @@ SDF.DecendentTree = [
       P = new SDF.Result;
 
     var gFmtTextObj = null;
-    var R = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0),
+    var R = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0),
       A = [];
     P.isTemplate = !1,
       P.IgnoreHeader = !0,
@@ -1574,8 +1575,8 @@ SDF.DecendentTree = [
       (p.x = P.sdp.dim.x, p.y = P.sdp.dim.y),
       _ !== SDF.Errors.WaitingForCallBack
     ) {
-      var E = GlobalData.optManager.IsPlanningDocument(),
-        w = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !0);
+      var E = T3Gv.optManager.IsPlanningDocument(),
+        w = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !0);
       for (
         g = P.zList.length,
         // Collab.AddToCreateList(null, P.zList),
@@ -1583,7 +1584,7 @@ SDF.DecendentTree = [
         h < g;
         h++
       ) {
-        (C = GlobalData.optManager.GetObjectPtr(P.zList[h], !1)).objecttype === ConstantData.ObjectTypes.SD_OBJT_BPMN_POOL &&
+        (C = T3Gv.optManager.GetObjectPtr(P.zList[h], !1)).objecttype === ConstantData.ObjectTypes.SD_OBJT_BPMN_POOL &&
           SDF.ConvertBPMNPool(C);
         var F = - 1;
         C.datasetID >= 0 &&
@@ -1602,7 +1603,7 @@ SDF.DecendentTree = [
           C.ShapeType === ConstantData.ShapeType.GROUPSYMBOL &&
           C.InitialGroupBounds.x < 0 &&
           (C.InitialGroupBounds.x = 1),
-          GlobalData.optManager.AddToDirtyList(P.zList[h]),
+          T3Gv.optManager.AddToDirtyList(P.zList[h]),
           C &&
           0 == (C.flags & ConstantData.ObjFlags.SEDO_NotVisible) &&
           o.selectedList.push(P.zList[h]),
@@ -1617,15 +1618,15 @@ SDF.DecendentTree = [
       }
       if (
         A.length &&
-        GlobalData.optManager.DeleteObjects(A),
+        T3Gv.optManager.DeleteObjects(A),
         P.SDData &&
-        GlobalData.optManager.SDData_Transfer(P.zList, P.SDData, M),
+        T3Gv.optManager.SDData_Transfer(P.zList, P.SDData, M),
         b = P.links.length,
         !l &&
         b > 0
       ) {
         for (
-          m = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLinksBlockID, !0),
+          m = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, !0),
           h = 0;
           h < b;
           h++
@@ -1635,7 +1636,7 @@ SDF.DecendentTree = [
         }))
       }
       var v = 0;
-      for (h = 0; h < g; h++) (C = GlobalData.optManager.GetObjectPtr(P.zList[h], !1)) &&
+      for (h = 0; h < g; h++) (C = T3Gv.optManager.GetObjectPtr(P.zList[h], !1)) &&
         0 == (C.flags & ConstantData.ObjFlags.SEDO_NotVisible) &&
         (
           0 === v ? y = new Rectangle(C.r.x, C.r.y, C.r.width, C.r.height) : Utils2.UnionRect(C.r, y, y),
@@ -1643,7 +1644,7 @@ SDF.DecendentTree = [
           v++
         );
       if (y) {
-        if (s ? (f = y.x < 0 ? - y.x : 0, L = y.y < 0 ? - y.y : 0) : (f = 0, L = 0), f || L) for (h = 0; h < g; h++) (C = GlobalData.optManager.GetObjectPtr(P.zList[h], !1)) &&
+        if (s ? (f = y.x < 0 ? - y.x : 0, L = y.y < 0 ? - y.y : 0) : (f = 0, L = 0), f || L) for (h = 0; h < g; h++) (C = T3Gv.optManager.GetObjectPtr(P.zList[h], !1)) &&
           0 == (C.flags & ConstantData.ObjFlags.SEDO_NotVisible) &&
           C.OffsetShape(f, L);
         if (s) {
@@ -1660,17 +1661,17 @@ SDF.DecendentTree = [
           if (
             y.x + y.width > R.dim.x &&
             (
-              GlobalData.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto ? (f = y.x + y.width - R.dim.x, I = 0) : (I = y.x + y.width, R.dim.x = I)
+              T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto ? (f = y.x + y.width - R.dim.x, I = 0) : (I = y.x + y.width, R.dim.x = I)
             ),
             y.y + y.height > R.dim.y &&
             (
-              GlobalData.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto ? L = y.y + y.height - R.dim.y : (T = y.y + y.height, R.dim.y = T)
+              T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto ? L = y.y + y.height - R.dim.y : (T = y.y + y.height, R.dim.y = T)
             ),
             I ||
             T
           ) {
             var N = (
-              w = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !1)
+              w = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1)
             ).nlayers,
               k = !1,
               U = !1;
@@ -1689,18 +1690,18 @@ SDF.DecendentTree = [
                 break
               }
             U &&
-              GlobalData.optManager.UpdateEdgeLayers([], G, R.dim),
-              GlobalData.docHandler.ResizeDocument(R.dim.x, R.dim.y)
-          } else if (f || L) for (h = 0; h < g; h++) (C = GlobalData.optManager.GetObjectPtr(P.zList[h], !1)) &&
+              T3Gv.optManager.UpdateEdgeLayers([], G, R.dim),
+              T3Gv.docUtil.ResizeDocument(R.dim.x, R.dim.y)
+          } else if (f || L) for (h = 0; h < g; h++) (C = T3Gv.optManager.GetObjectPtr(P.zList[h], !1)) &&
             0 == (C.flags & ConstantData.ObjFlags.SEDO_NotVisible) &&
             C.OffsetShape(- f, - L)
         }
       }
       return !l &&
         s &&
-        GlobalData.optManager.UpdateLinks(),
-        n ? GlobalData.optManager.RenderDirtySVGObjects() : 1 === g &&
-          GlobalData.optManager.RenderDirtySVGObjectsNoSetMouse(),
+        T3Gv.optManager.UpdateLinks(),
+        n ? T3Gv.optManager.RenderDirtySVGObjects() : 1 === g &&
+          T3Gv.optManager.RenderDirtySVGObjectsNoSetMouse(),
         P.error
     }
   },
@@ -1718,27 +1719,27 @@ SDF.DecendentTree = [
       c,
       u,
       p,
-      d = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0),
+      d = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0),
       D = {
         selectedList: []
       };
     for (
-      t = GlobalData.optManager.ZListPreserve(),
+      t = T3Gv.optManager.ZListPreserve(),
       a = e.zList.length,
       Collab.AddToCreateList(null, e.zList),
       r = 0;
       r < a;
       r++
     ) t.push(e.zList[r]),
-      n = GlobalData.optManager.GetObjectPtr(e.zList[r], !1),
-      GlobalData.optManager.AddToDirtyList(e.zList[r]),
+      n = T3Gv.optManager.GetObjectPtr(e.zList[r], !1),
+      T3Gv.optManager.AddToDirtyList(e.zList[r]),
       n &&
       0 == (n.flags & ConstantData.ObjFlags.SEDO_NotVisible) &&
       D.selectedList.push(e.zList[r]),
       (p = n.GetTable(!1)) &&
-      GlobalData.optManager.Table_Format(n, p, n.TextGrow, !1);
+      T3Gv.optManager.Table_Format(n, p, n.TextGrow, !1);
     for (
-      i = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLinksBlockID, !0),
+      i = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, !0),
       u = e.links.length,
       r = 0;
       r < u;
@@ -1748,14 +1749,14 @@ SDF.DecendentTree = [
       return e.targetid - t.targetid
     }));
     var g = 0;
-    for (r = 0; r < a; r++) (n = GlobalData.optManager.GetObjectPtr(e.zList[r], !1)) &&
+    for (r = 0; r < a; r++) (n = T3Gv.optManager.GetObjectPtr(e.zList[r], !1)) &&
       0 == (n.flags & ConstantData.ObjFlags.SEDO_NotVisible) &&
       (
         0 === g ? o = new Rectangle(n.Frame.x, n.Frame.y, n.Frame.width, n.Frame.height) : Utils2.UnionRect(n.Frame, o, o),
         g++
       );
     if (o) {
-      if (s = o.x < 0 ? - o.x : 0, l = o.y < 0 ? - o.y : 0, s || l) for (r = 0; r < a; r++) (n = GlobalData.optManager.GetObjectPtr(e.zList[r], !1)) &&
+      if (s = o.x < 0 ? - o.x : 0, l = o.y < 0 ? - o.y : 0, s || l) for (r = 0; r < a; r++) (n = T3Gv.optManager.GetObjectPtr(e.zList[r], !1)) &&
         0 == (n.flags & ConstantData.ObjFlags.SEDO_NotVisible) &&
         n.OffsetShape(s, l);
       o.x += s,
@@ -1765,10 +1766,10 @@ SDF.DecendentTree = [
         o.y + o.height > d.dim.y &&
         (c = o.y + o.height, d.dim.y = c),
         (S || c) &&
-        GlobalData.docHandler.ResizeDocument(d.dim.x, d.dim.y)
+        T3Gv.docUtil.ResizeDocument(d.dim.x, d.dim.y)
     }
-    return GlobalData.optManager.UpdateLinks(),
-      GlobalData.optManager.RenderDirtySVGObjects(),
+    return T3Gv.optManager.UpdateLinks(),
+      T3Gv.optManager.RenderDirtySVGObjects(),
       e.error
   },
   SDF.ReadTableFromBuffer = function (e) {
@@ -1779,7 +1780,7 @@ SDF.DecendentTree = [
       n = SDF.SDF_MINFVERSION,
       o = new SDF.Result;
     gFmtTextObj = null;
-    var s = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
+    var s = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
     SDF.SetDefaults(s, o),
       o.isTemplate = !1,
       // o.sdp = new ListManager.SEDSession,
@@ -1814,7 +1815,7 @@ SDF.DecendentTree = [
       ),
       o.PVersion = l.codes[0].data.PVersion,
       o.FVersion = l.codes[0].data.FVersion,
-      o.coordScaleFactor = GlobalData.docHandler.svgDoc.docInfo.docDpi / l.codes[0].data.drawres,
+      o.coordScaleFactor = T3Gv.docUtil.svgDoc.docInfo.docDpi / l.codes[0].data.drawres,
       (i = new T3DataStream(e)).endianness = T3DataStream.LITTLE_ENDIAN,
       l = i.readStruct(FileParser.SDR_Parser_Struct),
       i = null,
@@ -1844,7 +1845,7 @@ SDF.DecendentTree = [
     console.log('SDF.ReadTexturesFromBuffer -------- ', e);
     var t = FileParser.SDROpCodesByName;
     var a = new SDF.Result();
-    var r = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
+    var r = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
 
     a.isTemplate = !1;
     // a.sdp = new ListManager.SEDSession();
@@ -1852,7 +1853,7 @@ SDF.DecendentTree = [
     a.sdp.def.style = Utils1.DeepCopy(r.def.style);
     a.isSymbol = !0;
     a.gHash = new HashController();// new SDUI.HashController();
-    a.coordScaleFactor = GlobalData.docHandler.svgDoc.docInfo.docDpi / SDF.DRAWRES;
+    a.coordScaleFactor = T3Gv.docUtil.svgDoc.docInfo.docDpi / SDF.DRAWRES;
     // a.tLMB = new ListManager.LayersManager();
     a.tLMB = new LayersManager();
 
@@ -2042,7 +2043,7 @@ SDF.DecendentTree = [
               $(document).trigger(Constants.Event_EMFsLoaded)
           }
         } catch (e) {
-          GlobalData.optManager.ExceptionCleanup(e)
+          T3Gv.optManager.ExceptionCleanup(e)
         }
       },
       s = 1;
@@ -2128,7 +2129,7 @@ SDF.DecendentTree = [
     (t.ValidateHashesAsync = !0),
     t.PVersion = S.codes[0].data.PVersion,
     t.FVersion = S.codes[0].data.FVersion,
-    t.FVersion < SDF.SDF_FVERSION2022 ? t.coordScaleFactor = GlobalData.docHandler.svgDoc.docInfo.docDpi / S.codes[0].data.drawres : t.coordScaleFactor = 1,
+    t.FVersion < SDF.SDF_FVERSION2022 ? t.coordScaleFactor = T3Gv.docUtil.svgDoc.docInfo.docDpi / S.codes[0].data.drawres : t.coordScaleFactor = 1,
     S.codes[0].data.Platform === FileParser.Platforms.SDF_SDJSBLOCK &&
     (t.ReadBlocks = !0),
     S.codes[0].data.Platform
@@ -2230,7 +2231,7 @@ SDF.DecendentTree = [
       for (
         0 === t.error &&
         (
-          SDF.AppendFontList(GlobalData.optManager.theContentHeader.FontList, t.fontlist),
+          SDF.AppendFontList(T3Gv.optManager.theContentHeader.FontList, t.fontlist),
           SDF.ReMapLinks(t.IDMap, t.links, t, a),
           SDF.UpdateComments(t)
         ),
@@ -2238,7 +2239,7 @@ SDF.DecendentTree = [
         n = 0;
         n < i;
         n++
-      ) if (S = t.zList[n], s = GlobalData.optManager.GetObjectPtr(S, !1)) {
+      ) if (S = t.zList[n], s = T3Gv.optManager.GetObjectPtr(S, !1)) {
         if (
           t.ReadBlocks,
           SDF.ConvertFomOldFF(t, s),
@@ -2343,7 +2344,7 @@ SDF.DecendentTree = [
               ) P.push(new Point(M[I[o]].x, M[I[o]].y));
               else P = Utils1.DeepCopy(M);
               var R;
-              if (!(R = GlobalData.optManager.InflateLine(P, T, !0, !0)) || 0 === R.length) break;
+              if (!(R = T3Gv.optManager.InflateLine(P, T, !0, !0)) || 0 === R.length) break;
               s.StartPoint.x = R[0].x,
                 s.StartPoint.y = R[0].y,
                 s.EndPoint.x = R[R.length - 1].x,
@@ -2378,7 +2379,7 @@ SDF.DecendentTree = [
                   F = - (s.Frame.x * E - s.Frame.x + T),
                   v = - (s.Frame.y * w - s.Frame.y + T);
                 s.ScaleObject(F, v, null, 0, E, w, !1),
-                  GlobalData.optManager.CalcPolyVertices(s)
+                  T3Gv.optManager.CalcPolyVertices(s)
               }
             } else (t.AddEMFHash || t.isTemplate || t.isSymbol || t.IsVisio) &&
               s.UpdateFrame(s.Frame);
@@ -2392,8 +2393,8 @@ SDF.DecendentTree = [
               t.IsVisio &&
               s.moreflags & ConstantData.ObjMoreFlags.SED_MF_VisioText &&
               (
-                c = GlobalData.optManager.SD_GetVisioTextParent(s.BlockID),
-                (u = GlobalData.optManager.GetObjectPtr(c, !1)) &&
+                c = T3Gv.optManager.SD_GetVisioTextParent(s.BlockID),
+                (u = T3Gv.optManager.GetObjectPtr(c, !1)) &&
                 (
                   '' !== u.HyperlinkText &&
                   (s.HyperlinkText = u.HyperlinkText, u.HyperlinkText = ''),
@@ -2405,12 +2406,12 @@ SDF.DecendentTree = [
         var theGraph;
         if (
           null != (theGraph = s.GetGraph(!1)) &&
-          GlobalData.optManager.GraphFormat(s, theGraph, s.Frame, !0),
+          T3Gv.optManager.GraphFormat(s, theGraph, s.Frame, !0),
           l = s.GetTable(!1)
         ) s.subtype !== ConstantData.ObjectSubTypes.SD_SUBT_MEETINGTASK &&
           s.subtype !== ConstantData.ObjectSubTypes.SD_SUBT_MEETINGPERSON &&
           s.objecttype !== ConstantData.ObjectTypes.SD_OBJT_TIMELINE &&
-          GlobalData.optManager.Table_Format(s, l, s.TextGrow, !1);
+          T3Gv.optManager.Table_Format(s, l, s.TextGrow, !1);
         else if (
           s.DataID >= 0 &&
           t.updatetext &&
@@ -2423,8 +2424,8 @@ SDF.DecendentTree = [
               (
                 s.StyleRecord.Fill.Paint.FillType = ConstantData.FillTypes.SDFILL_TRANSPARENT,
                 s.StyleRecord.Line.Thickness = 0,
-                c = GlobalData.optManager.SD_GetVisioTextParent(s.BlockID),
-                (u = GlobalData.optManager.GetObjectPtr(c, !1)) &&
+                c = T3Gv.optManager.SD_GetVisioTextParent(s.BlockID),
+                (u = T3Gv.optManager.GetObjectPtr(c, !1)) &&
                 (
                   u.just = s.just,
                   u.vjust = s.vjust,
@@ -2443,9 +2444,9 @@ SDF.DecendentTree = [
                 )
               )
             ),
-            GlobalData.optManager.AddSVGObject(null, S, !0, !1),
-            GlobalData.optManager.TextResizeCommon(S, !1, !0),
-            p = GlobalData.optManager.svgObjectLayer.GetElementByID(S)
+            T3Gv.optManager.AddSVGObject(null, S, !0, !1),
+            T3Gv.optManager.TextResizeCommon(S, !1, !0),
+            p = T3Gv.optManager.svgObjectLayer.GetElementByID(S)
           )
         ) {
           if (
@@ -2463,17 +2464,17 @@ SDF.DecendentTree = [
                 s.Frame.height;
               s.TextGrow = ConstantData.TextGrowBehavior.HORIZONTAL,
                 s.sizedim.width = ConstantData.Defines.SED_MinDim,
-                GlobalData.optManager.TextResizeCommon(S, !1, !0)
+                T3Gv.optManager.TextResizeCommon(S, !1, !0)
             }
           }
-          GlobalData.optManager.svgObjectLayer.RemoveElement(p),
+          T3Gv.optManager.svgObjectLayer.RemoveElement(p),
             Collab.NoRedrawFromSameEditor = !1
         }
       }
       return !1 === t.isSymbol &&
         (
           t.VisioFileVersion &&
-          (GlobalData.optManager.FileVersion = SDF.SDF_FVERSION2022),
+          (T3Gv.optManager.FileVersion = SDF.SDF_FVERSION2022),
           (
             ListManager.SDData.GetSDDataDatasetIDByName(
               t.SDData,
@@ -2484,7 +2485,7 @@ SDF.DecendentTree = [
               ListManager.DataSetNameList[ListManager.DataSetNameListIndexes.DATASET_FIELDEDDATA]
             ) >= 0
           ) &&
-          (GlobalData.optManager.FileVersion = SDF.SDF_FVERSION2022)
+          (T3Gv.optManager.FileVersion = SDF.SDF_FVERSION2022)
         ),
         t.error
     } catch (e) {
@@ -2501,19 +2502,19 @@ SDF.DecendentTree = [
       r = ConstantData.ConnectorDefines;
     if (!e.isSymbol) {
       if (
-        'Pedigree Charts' === GlobalData.optManager.theContentHeader.smartpanelname &&
+        'Pedigree Charts' === T3Gv.optManager.theContentHeader.smartpanelname &&
         t.DrawingObjectBaseClass == ConstantData.DrawingObjectBaseClass.CONNECTOR &&
         (
           t.objecttype = ConstantData.ObjectTypes.SD_OBJT_PEDIGREE_CONNECTOR
         ),
-        GlobalData.optManager.theContentHeader.smartpanelname &&
-        'descendant trees' === GlobalData.optManager.theContentHeader.smartpanelname.toLowerCase() &&
+        T3Gv.optManager.theContentHeader.smartpanelname &&
+        'descendant trees' === T3Gv.optManager.theContentHeader.smartpanelname.toLowerCase() &&
         t.DrawingObjectBaseClass == ConstantData.DrawingObjectBaseClass.CONNECTOR &&
         (
           t.objecttype = ConstantData.ObjectTypes.SD_OBJT_DESCENDANT_CONNECTOR
         ),
         e.PVersion <= SDF.SDF_PVERSION850 &&
-        'Decision Trees' === GlobalData.optManager.theContentHeader.smartpanelname &&
+        'Decision Trees' === T3Gv.optManager.theContentHeader.smartpanelname &&
         t.DrawingObjectBaseClass == ConstantData.DrawingObjectBaseClass.CONNECTOR &&
         t.arraylist.styleflags & ConstantData.SEDA_Styles.SEDA_Radial &&
         (
@@ -2522,7 +2523,7 @@ SDF.DecendentTree = [
         e.PVersion <= SDF.SDF_PVERSION851
       ) {
         if (
-          'Cause & Effect' === GlobalData.optManager.theContentHeader.smartpanelname
+          'Cause & Effect' === T3Gv.optManager.theContentHeader.smartpanelname
         ) {
           if (
             t.DrawingObjectBaseClass == ConstantData.DrawingObjectBaseClass.CONNECTOR
@@ -2536,7 +2537,7 @@ SDF.DecendentTree = [
                 t.arraylist.hook.length >= ConstantData.ConnectorDefines.SEDA_NSkip
               )
             ) {
-              var i = GlobalData.optManager.GetObjectPtr(t.hooks[0].objid, !1);
+              var i = T3Gv.optManager.GetObjectPtr(t.hooks[0].objid, !1);
               i &&
                 i.arraylist &&
                 i.arraylist.ht > 0 &&
@@ -2554,8 +2555,8 @@ SDF.DecendentTree = [
             !0
           )
         }
-        'Genograms' !== GlobalData.optManager.theContentHeader.smartpanelname &&
-          'Ecomaps' !== GlobalData.optManager.theContentHeader.smartpanelname ||
+        'Genograms' !== T3Gv.optManager.theContentHeader.smartpanelname &&
+          'Ecomaps' !== T3Gv.optManager.theContentHeader.smartpanelname ||
           (
             t.DrawingObjectBaseClass == ConstantData.DrawingObjectBaseClass.CONNECTOR &&
             (
@@ -2575,7 +2576,7 @@ SDF.DecendentTree = [
       if (
         e.PVersion < SDF.SDF_PVERSION853 &&
         (
-          'Step Charts' === GlobalData.optManager.theContentHeader.smartpanelname &&
+          'Step Charts' === T3Gv.optManager.theContentHeader.smartpanelname &&
           t.DrawingObjectBaseClass == ConstantData.DrawingObjectBaseClass.CONNECTOR &&
           (
             a = t.arraylist.styleflags & ConstantData.SEDA_Styles.SEDA_FlowConn &&
@@ -2585,7 +2586,7 @@ SDF.DecendentTree = [
           (
             t.objecttype = ConstantData.ObjectTypes.SD_OBJT_STEPCHARTH_BRANCH
           ),
-          'Step Charts Vertical' === GlobalData.optManager.theContentHeader.smartpanelname &&
+          'Step Charts Vertical' === T3Gv.optManager.theContentHeader.smartpanelname &&
           t.DrawingObjectBaseClass == ConstantData.DrawingObjectBaseClass.CONNECTOR &&
           (
             t.arraylist.styleflags & ConstantData.SEDA_Styles.SEDA_Linear &&
@@ -2630,11 +2631,11 @@ SDF.DecendentTree = [
             t.hooks[0].hookpt === ConstantData.HookPts.SED_LL ? t.arraylist.hook[r.A_Cl].gap = 0 : t.hooks[0].hookpt === ConstantData.HookPts.SED_LR &&
               (t.arraylist.hook[r.A_Cr].gap = 0)
           ),
-          o = (s = GlobalData.optManager.FindAllChildConnectors(t.BlockID, e.links)).length,
+          o = (s = T3Gv.optManager.FindAllChildConnectors(t.BlockID, e.links)).length,
           n = 0;
           n < o;
           n++
-        ) c = (l = GlobalData.optManager.GetObjectPtr(s[n], !0)).arraylist.hook.length - r.SEDA_NSkip,
+        ) c = (l = T3Gv.optManager.GetObjectPtr(s[n], !0)).arraylist.hook.length - r.SEDA_NSkip,
           l.arraylist.styleflags & ConstantData.SEDA_Styles.SEDA_BothSides &&
             0 == (
               l.arraylist.styleflags & ConstantData.SEDA_Styles.SEDA_Stagger
@@ -2664,10 +2665,10 @@ SDF.DecendentTree = [
     if (
       0 == e.objecttype &&
       (
-        'JIRA_ISSUESCONTAINER' !== GlobalData.optManager.theContentHeader.BusinessModule ||
-        GlobalData.optManager.IsJiraIssueShape(e)
+        'JIRA_ISSUESCONTAINER' !== T3Gv.optManager.theContentHeader.BusinessModule ||
+        T3Gv.optManager.IsJiraIssueShape(e)
       )
-    ) switch (GlobalData.optManager.theContentHeader.BusinessModule) {
+    ) switch (T3Gv.optManager.theContentHeader.BusinessModule) {
       case 'JIRA_ISSUESCONTAINER':
         e.objecttype = ConstantData.ObjectTypes.SD_OBJT_JIRA_ISSUES_CONTAINER_ISSUE;
         break;
@@ -2694,10 +2695,10 @@ SDF.DecendentTree = [
         (
           (i = t.textids[e.DataID]) >= 0 ? (
             e.DataID = i,
-            (a = GlobalData.optManager.GetObjectPtr(i, !1)) &&
+            (a = T3Gv.optManager.GetObjectPtr(i, !1)) &&
             (
               r = SDF.TextAlignToJust(e.TextAlign),
-              GlobalData.optManager.SetTextAlignment(a, r.vjust, r.just)
+              T3Gv.optManager.SetTextAlignment(a, r.vjust, r.just)
             )
           ) : e.DataID = - 1
         ),
@@ -2751,18 +2752,18 @@ SDF.DecendentTree = [
       c = !1,
       u = (r = e.Threads).length,
       p = function (e, t) {
-        var a = GlobalData.optManager.GetObjectPtr(e, !1),
-          r = GlobalData.optManager.GetObjectPtr(t, !1);
+        var a = T3Gv.optManager.GetObjectPtr(e, !1),
+          r = T3Gv.optManager.GetObjectPtr(t, !1);
         return a.timestamp - r.timestamp
       };
     for (l = e.ThreadIDs.length, t = 0; t < l; t++) S = e.ThreadIDs[t],
-      SDUI.Utils.GetUser(S, GlobalData.optManager.CommentUserIDs);
+      SDUI.Utils.GetUser(S, T3Gv.optManager.CommentUserIDs);
     for (t = - 1; t < u; t++) if (null != r[t]) {
-      if (i = r[t], - 1 === t) a = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0);
-      else a = GlobalData.optManager.GetObjectPtr(t, !0);
+      if (i = r[t], - 1 === t) a = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0);
+      else a = T3Gv.optManager.GetObjectPtr(t, !0);
       if (a) {
         if (
-          n = GlobalData.optManager.Comment_CreateThread(i[0], e.ReadingGroup).Data
+          n = T3Gv.optManager.Comment_CreateThread(i[0], e.ReadingGroup).Data
         ) {
           for (n.objID = t, s = i.length, o = 1; o < s; o++) n.blocks.push(i[o]);
           s > 1 &&
@@ -2773,7 +2774,7 @@ SDF.DecendentTree = [
       }
     }
     e.isSymbol ? c &&
-      GlobalData.optManager.CommentShowTab(c) : GlobalData.optManager.CommentShowTab(c)
+      T3Gv.optManager.CommentShowTab(c) : T3Gv.optManager.CommentShowTab(c)
   },
 
 
@@ -2808,15 +2809,15 @@ SDF.DecendentTree = [
     for (n = (l = t.length) - 1; n >= 0; n--) (e[t[n].hookid] < 0 || e[t[n].targetid] < 0) &&
       t.splice(n, 1);
     for (l = t.length, n = 0; n < i; n++) if (e[n]) {
-      if (s = e[n], (o = GlobalData.optManager.GetObjectPtr(s, !1)) && o.hooks) for (S = (c = o.hooks.length) - 1; S >= 0; S--) e[o.hooks[S].objid] &&
+      if (s = e[n], (o = T3Gv.optManager.GetObjectPtr(s, !1)) && o.hooks) for (S = (c = o.hooks.length) - 1; S >= 0; S--) e[o.hooks[S].objid] &&
         e[o.hooks[S].objid] > 0 ? (
         o.hooks[S].objid = e[o.hooks[S].objid],
         0 !== l ||
         r ||
         (
           null == D &&
-          (D = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLinksBlockID, !0)),
-          GlobalData.optManager.InsertLink(D, s, S, ConstantData.LinkFlags.SED_L_MOVE)
+          (D = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, !0)),
+          T3Gv.optManager.InsertLink(D, s, S, ConstantData.LinkFlags.SED_L_MOVE)
         ),
         a.IsVisio &&
         o &&
@@ -2824,7 +2825,7 @@ SDF.DecendentTree = [
         o.LineType === ConstantData.LineType.SEGLINE &&
         o.segl &&
         (
-          (u = GlobalData.optManager.GetObjectPtr(o.hooks[S].objid, !1)).RotationAngle &&
+          (u = T3Gv.optManager.GetObjectPtr(o.hooks[S].objid, !1)).RotationAngle &&
           (
             p = {
               x: 0,
@@ -2928,15 +2929,15 @@ SDF.DecendentTree = [
       0 === a.WindowSettings.wscale ? a.WindowSettings.wscale = 1 : a.WindowSettings.wscale /= 1000,
       a.WindowSettings.wflags = e.codes[t].data.wflags,
       null == e.codes[t].data.longflags ? a.IgnoreHeader ||
-        (GlobalData.optManager.theContentHeader.flags = e.codes[t].data.flags) : a.IgnoreHeader ||
+        (T3Gv.optManager.theContentHeader.flags = e.codes[t].data.flags) : a.IgnoreHeader ||
       (
-        GlobalData.optManager.theContentHeader.flags = e.codes[t].data.longflags
+        T3Gv.optManager.theContentHeader.flags = e.codes[t].data.longflags
       ),
       null != e.codes[t].data.dateformat &&
       (
         a.IgnoreHeader ||
         (
-          GlobalData.optManager.theContentHeader.dateformat = e.codes[t].data.dateformat
+          T3Gv.optManager.theContentHeader.dateformat = e.codes[t].data.dateformat
         )
       ),
       t++;
@@ -2959,30 +2960,30 @@ SDF.DecendentTree = [
         case r.SDF_C_SYMBOLSEARCHSTRING:
           a.IgnoreHeader ||
             (
-              GlobalData.optManager.theContentHeader.SymbolSearchString = e.codes[t].data.name
+              T3Gv.optManager.theContentHeader.SymbolSearchString = e.codes[t].data.name
             );
           break;
         case r.SDF_C_PARENTPAGEID:
           a.IgnoreHeader ||
             (
-              GlobalData.optManager.theContentHeader.ParentPageID = e.codes[t].data.name
+              T3Gv.optManager.theContentHeader.ParentPageID = e.codes[t].data.name
             );
           break;
         case r.SDF_C_TASKPANEL:
           if (a.IgnoreHeader) break;
           if (
-            GlobalData.optManager.theContentHeader.smartpanelname = e.codes[t].data.name,
-            SDF.UnsupportedPanels.indexOf(GlobalData.optManager.theContentHeader.smartpanelname) >= 0
+            T3Gv.optManager.theContentHeader.smartpanelname = e.codes[t].data.name,
+            SDF.UnsupportedPanels.indexOf(T3Gv.optManager.theContentHeader.smartpanelname) >= 0
           ) return a.error = SDF.Errors.UnsupportedPanel,
             - 1;
           (a.AddEMFHash || a.isTemplate) &&
             (
-              GlobalData.optManager.theContentHeader.smartpanelname = SDF.RemapPanel(GlobalData.optManager.theContentHeader.smartpanelname)
+              T3Gv.optManager.theContentHeader.smartpanelname = SDF.RemapPanel(T3Gv.optManager.theContentHeader.smartpanelname)
             );
           break;
         case r.SDF_C_BUSINESSMODULE:
           if (a.IgnoreHeader) break;
-          GlobalData.optManager.theContentHeader.BusinessModule = e.codes[t].data.name;
+          T3Gv.optManager.theContentHeader.BusinessModule = e.codes[t].data.name;
           break;
         case r.SDF_C_BEGIN_THEME12:
           if (a.IgnoreHeader) break;
@@ -3007,22 +3008,22 @@ SDF.DecendentTree = [
         case r.SDF_C_EXPORTPATH:
           a.isTemplate ||
             (
-              GlobalData.optManager.theContentHeader.exportpath = e.codes[t].data.name,
+              T3Gv.optManager.theContentHeader.exportpath = e.codes[t].data.name,
               ConstantData.DocumentContext.PublishUrl = e.codes[t].data.name
             );
           break;
         case r.SDF_C_DEFAULTLIBS:
           if (a.isTemplate) break;
-          GlobalData.optManager.theContentHeader.defaultlibs = e.codes[t].data.name;
+          T3Gv.optManager.theContentHeader.defaultlibs = e.codes[t].data.name;
           break;
         case r.SDF_C_ORIGTEMPLATE:
-          GlobalData.optManager.theContentHeader.originaltemplatename = e.codes[t].data.name;
+          T3Gv.optManager.theContentHeader.originaltemplatename = e.codes[t].data.name;
           break;
         case r.SDF_C_PRESENTATION_BACKGROUND:
         case r.SDF_C_PRESENTATION_NAME:
           break;
         case r.SDF_C_IMPORT_SOURCE_PATH:
-          GlobalData.optManager.theContentHeader.importSourcePath = e.codes[t].data.name;
+          T3Gv.optManager.theContentHeader.importSourcePath = e.codes[t].data.name;
           break;
         case r.SDF_C_LIBLIST:
           if (a.IgnoreHeader) break;
@@ -3037,11 +3038,11 @@ SDF.DecendentTree = [
           a.PVersion,
             SDF.SDF_PVERSION804,
             a.PVersion < SDF.SDF_PVERSION816 ? (
-              GlobalData.optManager.theContentHeader.nonworkingdays = ConstantData.Defines.DEFAULT_NONWORKINGDAYS,
-              GlobalData.optManager.theContentHeader.holidaymask = 0
+              T3Gv.optManager.theContentHeader.nonworkingdays = ConstantData.Defines.DEFAULT_NONWORKINGDAYS,
+              T3Gv.optManager.theContentHeader.holidaymask = 0
             ) : (
-              GlobalData.optManager.theContentHeader.nonworkingdays = e.codes[t].data.nonworkingdays,
-              GlobalData.optManager.theContentHeader.holidaymask = e.codes[t].data.holidaymask
+              T3Gv.optManager.theContentHeader.nonworkingdays = e.codes[t].data.nonworkingdays,
+              T3Gv.optManager.theContentHeader.holidaymask = e.codes[t].data.holidaymask
             ),
             a.shapetoolindex = e.codes[t].data.shapetoolindex,
             a.linetoolindex = e.codes[t].data.linetoolindex,
@@ -3064,21 +3065,21 @@ SDF.DecendentTree = [
           break;
         case r.SDF_C_GUIDE:
           if (a.IgnoreHeader) break;
-          GlobalData.optManager.theContentHeader.smarthelpname = e.codes[t].data.name;
+          T3Gv.optManager.theContentHeader.smarthelpname = e.codes[t].data.name;
           break;
         case r.SDF_C_ORGCHARTTABLE:
           if (a.IgnoreHeader) break;
           (
             i = ListManager.WinOrgChartTables.indexOf(e.codes[t].data.name)
-          ) >= 0 ? GlobalData.optManager.theContentHeader.orgcharttable = ListManager.OrgChartTables[i] : (
+          ) >= 0 ? T3Gv.optManager.theContentHeader.orgcharttable = ListManager.OrgChartTables[i] : (
             i = ListManager.WinMindMapTables.indexOf(e.codes[t].data.name)
           ) >= 0 &&
           (
-            GlobalData.optManager.theContentHeader.orgcharttable = ListManager.MindMapTables[i]
+            T3Gv.optManager.theContentHeader.orgcharttable = ListManager.MindMapTables[i]
           ),
             i < 0 &&
             (
-              GlobalData.optManager.theContentHeader.orgcharttable = e.codes[t].data.name
+              T3Gv.optManager.theContentHeader.orgcharttable = e.codes[t].data.name
             );
           break;
         case r.SDF_C_KANBAN_PC_TITLE:
@@ -3086,30 +3087,30 @@ SDF.DecendentTree = [
           break;
         case r.SDF_C_DIMFONT:
           if (a.IgnoreHeader) break;
-          GlobalData.optManager.theContentHeader.DimensionFont.fontName = e.codes[t].data.lfFaceName,
-            GlobalData.optManager.theContentHeader.DimensionFont.fontSize = Math.abs(
+          T3Gv.optManager.theContentHeader.DimensionFont.fontName = e.codes[t].data.lfFaceName,
+            T3Gv.optManager.theContentHeader.DimensionFont.fontSize = Math.abs(
               Math.round(e.codes[t].data.lfHeight * a.coordScaleFactor * 72 / 100)
             ),
-            GlobalData.optManager.theContentHeader.DimensionFont.face = 0,
-            GlobalData.optManager.theContentHeader.DimensionFont.face = Utils2.SetFlag(
-              GlobalData.optManager.theContentHeader.DimensionFont.face,
+            T3Gv.optManager.theContentHeader.DimensionFont.face = 0,
+            T3Gv.optManager.theContentHeader.DimensionFont.face = Utils2.SetFlag(
+              T3Gv.optManager.theContentHeader.DimensionFont.face,
               ConstantData.TextFace.Italic,
               e.codes[t].data.lfItalic
             ),
-            GlobalData.optManager.theContentHeader.DimensionFont.face = Utils2.SetFlag(
-              GlobalData.optManager.theContentHeader.DimensionFont.face,
+            T3Gv.optManager.theContentHeader.DimensionFont.face = Utils2.SetFlag(
+              T3Gv.optManager.theContentHeader.DimensionFont.face,
               ConstantData.TextFace.Bold,
               e.codes[t].data.lfWeight > 400
             ),
             e.codes[t].data.lfUnderline &&
             (
-              GlobalData.optManager.theContentHeader.DimensionFont.face = Utils2.SetFlag(
-                GlobalData.optManager.theContentHeader.DimensionFont.face,
+              T3Gv.optManager.theContentHeader.DimensionFont.face = Utils2.SetFlag(
+                T3Gv.optManager.theContentHeader.DimensionFont.face,
                 ConstantData.TextFace.Underline,
                 e.codes[t].data.lfUnderline
               )
             ),
-            GlobalData.optManager.theContentHeader.DimensionFontStyle = SDF.LogFontToFontStyle(GlobalData.optManager.theContentHeader.DimensionFont),
+            T3Gv.optManager.theContentHeader.DimensionFontStyle = SDF.LogFontToFontStyle(T3Gv.optManager.theContentHeader.DimensionFont),
             0;
           break;
         default:
@@ -3162,29 +3163,29 @@ SDF.WintoJSShapeTool = function (e) {
   },
   SDF.ReadPage = function (e, t) {
     null == e.lpapersize ? (
-      GlobalData.optManager.theContentHeader.Page.papersize.x = SDF.ToSDJSCoords(e.papersize.x, t.coordScaleFactor),
-      GlobalData.optManager.theContentHeader.Page.papersize.y = SDF.ToSDJSCoords(e.papersize.y, t.coordScaleFactor)
+      T3Gv.optManager.theContentHeader.Page.papersize.x = SDF.ToSDJSCoords(e.papersize.x, t.coordScaleFactor),
+      T3Gv.optManager.theContentHeader.Page.papersize.y = SDF.ToSDJSCoords(e.papersize.y, t.coordScaleFactor)
     ) : (
-      GlobalData.optManager.theContentHeader.Page.papersize.x = SDF.ToSDJSCoords(e.lpapersize.x, t.coordScaleFactor),
-      GlobalData.optManager.theContentHeader.Page.papersize.y = SDF.ToSDJSCoords(e.lpapersize.y, t.coordScaleFactor)
+      T3Gv.optManager.theContentHeader.Page.papersize.x = SDF.ToSDJSCoords(e.lpapersize.x, t.coordScaleFactor),
+      T3Gv.optManager.theContentHeader.Page.papersize.y = SDF.ToSDJSCoords(e.lpapersize.y, t.coordScaleFactor)
     ),
-      GlobalData.optManager.theContentHeader.Page.margins.left = SDF.ToSDJSCoords(e.margins.left, t.coordScaleFactor),
-      GlobalData.optManager.theContentHeader.Page.margins.top = SDF.ToSDJSCoords(e.margins.top, t.coordScaleFactor),
-      GlobalData.optManager.theContentHeader.Page.margins.right = SDF.ToSDJSCoords(e.margins.right, t.coordScaleFactor),
-      GlobalData.optManager.theContentHeader.Page.margins.bottom = SDF.ToSDJSCoords(e.margins.bottom, t.coordScaleFactor),
-      GlobalData.optManager.theContentHeader.Page.printflags = e.printflags,
-      null == e.printscale ? GlobalData.optManager.theContentHeader.Page.printscale = 0 : GlobalData.optManager.theContentHeader.Page.printscale = e.printscale,
-      GlobalData.optManager.theContentHeader.Page.landscape = e.landscape,
+      T3Gv.optManager.theContentHeader.Page.margins.left = SDF.ToSDJSCoords(e.margins.left, t.coordScaleFactor),
+      T3Gv.optManager.theContentHeader.Page.margins.top = SDF.ToSDJSCoords(e.margins.top, t.coordScaleFactor),
+      T3Gv.optManager.theContentHeader.Page.margins.right = SDF.ToSDJSCoords(e.margins.right, t.coordScaleFactor),
+      T3Gv.optManager.theContentHeader.Page.margins.bottom = SDF.ToSDJSCoords(e.margins.bottom, t.coordScaleFactor),
+      T3Gv.optManager.theContentHeader.Page.printflags = e.printflags,
+      null == e.printscale ? T3Gv.optManager.theContentHeader.Page.printscale = 0 : T3Gv.optManager.theContentHeader.Page.printscale = e.printscale,
+      T3Gv.optManager.theContentHeader.Page.landscape = e.landscape,
       null == e.MinSize ? (
-        GlobalData.optManager.theContentHeader.Page.minsize.x = GlobalData.optManager.theContentHeader.Page.papersize.x - GlobalData.optManager.theContentHeader.Page.margins.left - GlobalData.optManager.theContentHeader.Page.margins.right,
-        GlobalData.optManager.theContentHeader.Page.minsize.y = GlobalData.optManager.theContentHeader.Page.papersize.y - GlobalData.optManager.theContentHeader.Page.margins.top - GlobalData.optManager.theContentHeader.Page.margins.bottom
+        T3Gv.optManager.theContentHeader.Page.minsize.x = T3Gv.optManager.theContentHeader.Page.papersize.x - T3Gv.optManager.theContentHeader.Page.margins.left - T3Gv.optManager.theContentHeader.Page.margins.right,
+        T3Gv.optManager.theContentHeader.Page.minsize.y = T3Gv.optManager.theContentHeader.Page.papersize.y - T3Gv.optManager.theContentHeader.Page.margins.top - T3Gv.optManager.theContentHeader.Page.margins.bottom
       ) : (
-        GlobalData.optManager.theContentHeader.Page.minsize.x = SDF.ToSDJSCoords(e.MinSize.x, t.coordScaleFactor),
-        GlobalData.optManager.theContentHeader.Page.minsize.y = SDF.ToSDJSCoords(e.MinSize.y, t.coordScaleFactor)
+        T3Gv.optManager.theContentHeader.Page.minsize.x = SDF.ToSDJSCoords(e.MinSize.x, t.coordScaleFactor),
+        T3Gv.optManager.theContentHeader.Page.minsize.y = SDF.ToSDJSCoords(e.MinSize.y, t.coordScaleFactor)
       ),
       t.PaperType = SDJS.DocumentHandler.PrintHandler.CalcPaperTypeFromSize(
-        GlobalData.optManager.theContentHeader.Page.papersize.x,
-        GlobalData.optManager.theContentHeader.Page.papersize.y
+        T3Gv.optManager.theContentHeader.Page.papersize.x,
+        T3Gv.optManager.theContentHeader.Page.papersize.y
       )
   },
   SDF.ToSDJSCoords = function (e, t, a) {
@@ -3374,7 +3375,7 @@ SDF.WintoJSShapeTool = function (e) {
     return 0 === r ? t.DefFont : t.fontlist[0]
   },
   SDF.PointSizeToFontSize = function (e) {
-    return e * GlobalData.optManager.svgDoc.GetWorkArea().docDpi / 72
+    return e * T3Gv.optManager.svgDoc.GetWorkArea().docDpi / 72
   },
   SDF.LogFontToFontRecord = function (e, t, a) {
     e.fontName = t.lfFaceName,
@@ -3421,8 +3422,8 @@ SDF.WintoJSShapeTool = function (e) {
       n = - 1,
       o = - 1;
     for (
-      GlobalData.optManager.theContentHeader.lp_list.lib.length = 0,
-      GlobalData.optManager.theContentHeader.lp_list.selected = e.codes[t].data.selected,
+      T3Gv.optManager.theContentHeader.lp_list.lib.length = 0,
+      T3Gv.optManager.theContentHeader.lp_list.selected = e.codes[t].data.selected,
       a.SearchResults = [],
       a.SearchLibs = [],
       t++;
@@ -3433,33 +3434,33 @@ SDF.WintoJSShapeTool = function (e) {
           a.CurrentSymbol = e.codes[t].data.name;
           break;
         case r.SDF_C_LIBLIST_PATH:
-          GlobalData.optManager.theContentHeader.lp_list.lib.push(new ListManager.LibListEntry(e.codes[t].data.name)),
+          T3Gv.optManager.theContentHeader.lp_list.lib.push(new ListManager.LibListEntry(e.codes[t].data.name)),
             n++;
           break;
         case r.SDF_C_LIBLIST_GUID:
-          GlobalData.optManager.theContentHeader.lp_list.lib.push(new ListManager.LibListEntry('')),
+          T3Gv.optManager.theContentHeader.lp_list.lib.push(new ListManager.LibListEntry('')),
             n++,
-            GlobalData.optManager.theContentHeader.lp_list.lib[n].libGuid = e.codes[t].data.name;
+            T3Gv.optManager.theContentHeader.lp_list.lib[n].libGuid = e.codes[t].data.name;
           break;
         case r.SDF_C_LIBLIST_ENTRY:
           n >= 0 &&
             (
-              GlobalData.optManager.theContentHeader.lp_list.lib[n].scrollpos = e.codes[t].data.value
+              T3Gv.optManager.theContentHeader.lp_list.lib[n].scrollpos = e.codes[t].data.value
             );
           break;
         case r.SDF_C_LIB_COLLAPSED:
           n >= 0 &&
             (
-              GlobalData.optManager.theContentHeader.lp_list.lib[n].Collapsed = e.codes[t].data.value
+              T3Gv.optManager.theContentHeader.lp_list.lib[n].Collapsed = e.codes[t].data.value
             );
           break;
         case r.SDF_C_SEARCHLIB:
           i = e.codes[t].data.name,
             t = SDF.ReadSearchResultLibrary(e, t, a, r),
-            GlobalData.optManager.theContentHeader.lp_list.lib.push(new ListManager.LibListEntry('')),
+            T3Gv.optManager.theContentHeader.lp_list.lib.push(new ListManager.LibListEntry('')),
             n++,
-            GlobalData.optManager.theContentHeader.lp_list.lib[n].SearchResults = !0,
-            GlobalData.optManager.theContentHeader.lp_list.lib[n].libGuid = i;
+            T3Gv.optManager.theContentHeader.lp_list.lib[n].SearchResults = !0,
+            T3Gv.optManager.theContentHeader.lp_list.lib[n].libGuid = i;
           break;
         case r.SDF_C_LIBLIST_SEARCH_RESULT_ID:
           a.SearchResults.push(new ListManager.LibListEntry(e.codes[t].data.name)),
@@ -3669,8 +3670,8 @@ SDF.WintoJSShapeTool = function (e) {
             i ||
             (
               (
-                n = GlobalData.optManager.GetStdTextureCategory(a.TextureList.Categories[s.categoryindex])
-              ) >= 0 ? s.index = GlobalData.optManager.GetStdTextureIndex(n, s.name) : n = GlobalData.optManager.TextureList.Categories.push(a.TextureList.Categories[s.categoryindex]) - 1,
+                n = T3Gv.optManager.GetStdTextureCategory(a.TextureList.Categories[s.categoryindex])
+              ) >= 0 ? s.index = T3Gv.optManager.GetStdTextureIndex(n, s.name) : n = T3Gv.optManager.TextureList.Categories.push(a.TextureList.Categories[s.categoryindex]) - 1,
               s.categoryindex = n
             );
           break;
@@ -3683,7 +3684,7 @@ SDF.WintoJSShapeTool = function (e) {
             s.index < 0 ? (
               s.flags = 0,
               s.filename = '',
-              s.index = GlobalData.optManager.TextureList.Textures.push(s) - 1
+              s.index = T3Gv.optManager.TextureList.Textures.push(s) - 1
             ) : i ||
             o &&
             o.revokeObjectURL &&
@@ -3868,7 +3869,7 @@ SDF.WintoJSShapeTool = function (e) {
     }
     return void 0 !== n &&
       (
-        e.GradientFlags = GlobalData.optManager.SD_AddRichGradient(r.RichGradients, n)
+        e.GradientFlags = T3Gv.optManager.SD_AddRichGradient(r.RichGradients, n)
       ),
       a
   },
@@ -3904,7 +3905,7 @@ SDF.WintoJSShapeTool = function (e) {
       }
       a++
     }
-    return e.FontId = -1/* GlobalData.optManager.GetFontIdByName(e.FontName)*/,
+    return e.FontId = -1/* T3Gv.optManager.GetFontIdByName(e.FontName)*/,
       a
   },
   SDF.ReadStyle = function (e, t, a, r, i) {
@@ -3984,7 +3985,7 @@ SDF.ReadThemeStyleList = function (e, t, a, r, i) {
   SDF.FixDefaults = function (e, t) {
     var a = ConstantData.SessionFlags;
     t.isSymbol ||
-      'Genograms' === GlobalData.optManager.theContentHeader.smartpanelname &&
+      'Genograms' === T3Gv.optManager.theContentHeader.smartpanelname &&
       (
         e.flags = Utils2.SetFlag(e.flags, a.SEDS_LLink, !0),
         e.flags = Utils2.SetFlag(e.flags, a.SEDS_HideConnExpand, !0)
@@ -4129,7 +4130,7 @@ SDF.ReadThemeStyleList = function (e, t, a, r, i) {
           t = SDF.ReadNativeBlock(e, t, a, r, !1);
           break;
         case r.SDF_O_RULER:
-          a.rulerSettings = new RulerSettings(),// new SDJS.DocumentHandler.rulerSettings,
+          a.rulerConfig = new RulerConfig(),// new SDJS.DocumentHandler.rulerConfig,
             SDF.ReadRulers(e.codes[t].data, a);
           break;
         case r.SDF_C_LINEDRAWLIST:
@@ -4465,7 +4466,7 @@ SDF.ReadThemeStyleList = function (e, t, a, r, i) {
       (e.def.style.Border.Thickness = 1),
       e.def.style.Text.FontSize = t.fsize,
       e.def.style.Text.Face = t.face,
-      e.def.style.Text.FontId = -1/* GlobalData.optManager.GetFontIdByName(e.def.fontName)*/,
+      e.def.style.Text.FontId = -1/* T3Gv.optManager.GetFontIdByName(e.def.fontName)*/,
       e.def.just = SDF.W32JustToJS(t.just, !1),
       e.def.vjust = SDF.W32JustToJS(t.vjust, !0),
       l = void 0 === t.d_fpatindex ? FileParser.v6FillTypes.SEOpaqueIndex : t.d_fpatindex,
@@ -4544,27 +4545,27 @@ SDF.ReadThemeStyleList = function (e, t, a, r, i) {
       t.DefTStyle.bullet = 'none'
   },
   SDF.ReadRulers = function (e, t) {
-    t.rulerSettings = new RulerSettings(),// SDJS.DocumentHandler.rulerSettings,
-      t.rulerSettings.useInches = e.inches,
-      t.rulerSettings.major = SDF.ToSDJSCoords(e.Major, t.coordScaleFactor),
+    t.rulerConfig = new RulerConfig(),// SDJS.DocumentHandler.rulerConfig,
+      t.rulerConfig.useInches = e.inches,
+      t.rulerConfig.major = SDF.ToSDJSCoords(e.Major, t.coordScaleFactor),
       t.PVersion < SDF.SDF_POVERSION801 &&
-      (t.rulerSettings.major *= 6),
-      t.rulerSettings.majorScale = e.MajorScale,
-      t.rulerSettings.units = e.units,
-      t.rulerSettings.nTics = e.MinorDenom,
-      t.rulerSettings.nMid = 5 != e.MinorDenom ? 1 : 0,
-      t.rulerSettings.nGrid = e.MinorDenom,
+      (t.rulerConfig.major *= 6),
+      t.rulerConfig.majorScale = e.MajorScale,
+      t.rulerConfig.units = e.units,
+      t.rulerConfig.nTics = e.MinorDenom,
+      t.rulerConfig.nMid = 5 != e.MinorDenom ? 1 : 0,
+      t.rulerConfig.nGrid = e.MinorDenom,
       null != e.dp &&
-      (t.rulerSettings.dp = e.dp),
+      (t.rulerConfig.dp = e.dp),
       null != e.originx ? (
-        t.rulerSettings.originx = e.originx,
-        t.rulerSettings.originy = e.originy
-      ) : (t.rulerSettings.originx = 0, t.rulerSettings.originy = 0),
-      t.rulerSettings.showpixels = !1,
-      e.show ? t.rulerSettings.show = !0 : t.rulerSettings.show = !1,
+        t.rulerConfig.originx = e.originx,
+        t.rulerConfig.originy = e.originy
+      ) : (t.rulerConfig.originx = 0, t.rulerConfig.originy = 0),
+      t.rulerConfig.showpixels = !1,
+      e.show ? t.rulerConfig.show = !0 : t.rulerConfig.show = !1,
       e.showpixels &&
-      (t.rulerSettings.showpixels = !0),
-      e.fractionaldenominator ? t.rulerSettings.fractionaldenominator = e.fractionaldenominator : t.rulerSettings.fractionaldenominator = GlobalData.docHandler.rulerSettings.fractionaldenominator
+      (t.rulerConfig.showpixels = !0),
+      e.fractionaldenominator ? t.rulerConfig.fractionaldenominator = e.fractionaldenominator : t.rulerConfig.fractionaldenominator = T3Gv.docUtil.rulerConfig.fractionaldenominator
   },
   SDF.ReadLineDrawList = function (e, t) {
     var a;
@@ -4711,7 +4712,7 @@ SDF.ReadThemeStyleList = function (e, t, a, r, i) {
             s.hookpt === ConstantData.HookPts.SED_KATD
           ) {
             if (S = !0, !l) {
-              var u = GlobalData.optManager.GetObjectPtr(i.IDMap[s.objid], !1);
+              var u = T3Gv.optManager.GetObjectPtr(i.IDMap[s.objid], !1);
               if (
                 u &&
                 u.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.LINE
@@ -4773,7 +4774,7 @@ SDF.ReadThemeStyleList = function (e, t, a, r, i) {
     for (r = t.length, i = 0; i < r; i++) {
       if (a === (o = t[i])) return e;
       if (
-        (n = GlobalData.optManager.GetObjectPtr(o, !1)) &&
+        (n = T3Gv.optManager.GetObjectPtr(o, !1)) &&
         n.ShapeType === ConstantData.ShapeType.GROUPSYMBOL &&
         (
           l = e < 0 ? o : e,
@@ -4824,42 +4825,42 @@ SDF.ReadThemeStyleList = function (e, t, a, r, i) {
       },
         t.InitialGroupBounds.width = l.width,
         t.InitialGroupBounds.height = l.height;
-      for (o = p.length, n = 0; n < o; n++) if (s = p[n], null != (t = GlobalData.optManager.GetObjectPtr(s, !1))) {
+      for (o = p.length, n = 0; n < o; n++) if (s = p[n], null != (t = T3Gv.optManager.GetObjectPtr(s, !1))) {
         t.SVGFragment = Utils1.DeepCopy(l.SVGFragment),
           t.InitialGroupBounds.width = l.width,
           t.InitialGroupBounds.height = l.height,
           0 === t.StyleRecord.Line.Thickness &&
           (t.StyleRecord.Line.Thickness = 1);
-        var m = GlobalData.optManager.GetAllBlockCopies(s);
+        var m = T3Gv.optManager.GetAllBlockCopies(s);
         for (c = m.length, u = 0; u < c; u++) null == m[u].Data.SVGFragment &&
           (
             m[u].Data.SVGFragment = Utils1.DeepCopy(l.SVGFragment),
             0 === m[u].Data.StyleRecord.Line.Thickness &&
             (m[u].Data.StyleRecord.Line.Thickness = 1)
           );
-        if (GlobalData.optManager.svgObjectLayer.FindElement(s)) {
+        if (T3Gv.optManager.svgObjectLayer.FindElement(s)) {
           var C,
-            y = GlobalData.optManager.VisibleZList(),
-            f = GlobalData.optManager.ActiveVisibleZList(),
+            y = T3Gv.optManager.VisibleZList(),
+            f = T3Gv.optManager.ActiveVisibleZList(),
             L = (y.length, y.indexOf(s)),
             I = f.indexOf(s);
           L < 0 ? (C = SDF.GetObjectParent(- 1, y, s)) >= 0 &&
             (L = y.indexOf(C), I = f.indexOf(C)) : C = y[L],
             - 1 != L &&
             (
-              GlobalData.optManager.currentModalOperation == ListManager.ModalOperations.STAMP ||
-                GlobalData.optManager.currentModalOperation == ListManager.ModalOperations.DRAGDROP ? (
-                GlobalData.optManager.AddSVGObject(L, C, !0, !1),
-                y[L] == GlobalData.optManager.theActionStoredObjectID &&
+              T3Gv.optManager.currentModalOperation == ListManager.ModalOperations.STAMP ||
+                T3Gv.optManager.currentModalOperation == ListManager.ModalOperations.DRAGDROP ? (
+                T3Gv.optManager.AddSVGObject(L, C, !0, !1),
+                y[L] == T3Gv.optManager.theActionStoredObjectID &&
                 (
-                  GlobalData.optManager.theActionSVGObject = GlobalData.optManager.svgObjectLayer.GetElementByID(GlobalData.optManager.theActionStoredObjectID)
+                  T3Gv.optManager.theActionSVGObject = T3Gv.optManager.svgObjectLayer.GetElementByID(T3Gv.optManager.theActionStoredObjectID)
                 )
               ) : d.indexOf(C) < 0 &&
               (d.push(C), D.push(L), g.push(I >= 0))
             )
         }
       }
-      for (c = d.length, u = 0; u < c; u++) GlobalData.optManager.AddSVGObject(D[u], d[u], !0, g[u]);
+      for (c = d.length, u = 0; u < c; u++) T3Gv.optManager.AddSVGObject(D[u], d[u], !0, g[u]);
       S &&
         (S.objectIDs = []),
         SDF.FragmentLoad_RefCount = Math.max(0, SDF.FragmentLoad_RefCount - 1)
@@ -4907,10 +4908,10 @@ SDF.ReadThemeStyleList = function (e, t, a, r, i) {
           o++
         ) {
           l = S[o],
-            (t = GlobalData.optManager.GetObjectPtr(l, !1)).SetBlobBytes(Utils1.DeepCopy(i), FileParser.Image_Dir.dir_png);
+            (t = T3Gv.optManager.GetObjectPtr(l, !1)).SetBlobBytes(Utils1.DeepCopy(i), FileParser.Image_Dir.dir_png);
           var c,
             u,
-            p = GlobalData.optManager.GetAllBlockCopies(l);
+            p = T3Gv.optManager.GetAllBlockCopies(l);
           for (c = p.length, u = 0; u < c; u++) null == p[u].Data.BlobBytes &&
             p[u].Data.BlockID != l &&
             p[u].Data.SetBlobBytes(Utils1.DeepCopy(i), FileParser.Image_Dir.dir_png)
@@ -5038,7 +5039,7 @@ SDF.ReadThemeStyleList = function (e, t, a, r, i) {
         a.LineTextObject = !1
     } else {
       if (!a.ReadBlocks || a.BlockzList.indexOf(n.UniqueID) >= 0) {
-        var N = GlobalData.objectStore.CreateBlock(ConstantData.StoredObjectType.BASE_LM_DRAWING_OBJECT, n);
+        var N = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.BASE_LM_DRAWING_OBJECT, n);
         n = N.Data,
           a.zList.push(N.ID),
           a.objectcount = n.UniqueID,
@@ -5119,7 +5120,7 @@ SDF.ReadThemeStyleList = function (e, t, a, r, i) {
         case r.SDF_C_TEXT:
           if (a.textonline >= 0) if (a.textonline < a.objectcount) {
             if ((S = a.IDMap[a.textonline]) >= 0) if (
-              (l = GlobalData.optManager.GetObjectPtr(S, !1)) &&
+              (l = T3Gv.optManager.GetObjectPtr(S, !1)) &&
               l.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.CONNECTOR
             ) l = n;
             else {
@@ -5439,7 +5440,7 @@ SDF.ReadThemeStyleList = function (e, t, a, r, i) {
             t = SDF.ReadGraph(h, e, t, a, r, r.SDF_C_GRAPH_END);
           break;
         case r.SDF_C_EXPANDEDVIEW:
-          R = GlobalData.objectStore.CreateBlock(
+          R = T3Gv.objectStore.CreateBlock(
             ConstantData.StoredObjectType.EXPANDEDVIEW_OBJECT,
             e.codes[t].data.svg
           ),
@@ -5898,7 +5899,7 @@ SDF.LargeIntToInt32Pair = function (e) {
         Math.abs(R.y) > 0.1 &&
         (i = R.y)
     } else {
-      for (S = e.ShapesInGroup.length, r = 0; r < S; r++) 0 !== (m = GlobalData.optManager.GetObjectPtr(e.ShapesInGroup[r], !1)).RotationAngle ? (
+      for (S = e.ShapesInGroup.length, r = 0; r < S; r++) 0 !== (m = T3Gv.optManager.GetObjectPtr(e.ShapesInGroup[r], !1)).RotationAngle ? (
         p = m.GetPolyPoints(ConstantData.Defines.NPOLYPTS, !1, !1, !0, null),
         d = - m.RotationAngle / (180 / ConstantData.Geometry.PI),
         Utils3.RotatePointsAboutCenter(m.Frame, d, p),
@@ -6018,7 +6019,7 @@ SDF.LargeIntToInt32Pair = function (e) {
       ),
       !a &&
       (n || i)
-    ) for (n = - n, i = - i, r = 0; r < S; r++) (m = GlobalData.optManager.GetObjectPtr(e.ShapesInGroup[r], !1)).OffsetShape(n, i),
+    ) for (n = - n, i = - i, r = 0; r < S; r++) (m = T3Gv.optManager.GetObjectPtr(e.ShapesInGroup[r], !1)).OffsetShape(n, i),
       // m instanceof ListManager.GroupSymbol &&
       // Double ===
       // m instanceof GlobalDataShape.GroupSymbol &&
@@ -6032,9 +6033,9 @@ SDF.LargeIntToInt32Pair = function (e) {
     var H = e.Frame.height;
     H <= 0 &&
       (H = N),
-      (l = GlobalData.optManager.SD_GetVisioTextChild(e.BlockID)) >= 0 &&
+      (l = T3Gv.optManager.SD_GetVisioTextChild(e.BlockID)) >= 0 &&
       (
-        0 !== (C = GlobalData.optManager.GetObjectPtr(l, !1)).hookdisp.x ||
+        0 !== (C = T3Gv.optManager.GetObjectPtr(l, !1)).hookdisp.x ||
           0 !== C.hookdisp.y ? (C.hookdisp.x -= w.x - E.x, C.hookdisp.y -= w.y - E.y) : (
           T = ((M = g.width * C.hooks[0].connect.x / v + g.x) - e.Frame.x) / B,
           C.hooks[0].connect.x = T * v,
@@ -6064,11 +6065,11 @@ SDF.LargeIntToInt32Pair = function (e) {
         e.ConnectPoints[c].x = T * v,
         b = ((P = g.height * e.ConnectPoints[c].y / v + g.y) - e.Frame.y) / H,
         e.ConnectPoints[c].y = b * v;
-      var j = GlobalData.optManager.FindLink(V, e.BlockID, !0);
+      var j = T3Gv.optManager.FindLink(V, e.BlockID, !0);
       if (j >= 0) for (; j < V.length && V[j].targetid === e.BlockID;) {
         if (
           V[j].hookid !== l &&
-          (y = GlobalData.optManager.GetObjectPtr(V[j].hookid, !1))
+          (y = T3Gv.optManager.GetObjectPtr(V[j].hookid, !1))
         ) for (u = y.hooks.length, c = 0; c < u; c++) y.hooks[c].objid === e.BlockID &&
           (
             T = ((M = g.width * y.hooks[c].connect.x / v + g.x) - e.Frame.x) / B,
@@ -6091,6 +6092,7 @@ SDF.LargeIntToInt32Pair = function (e) {
       i,
       n,
       o = new SDF.Result;
+    var gFmtTextObj;
     if (
       // o.sdp = new ListManager.SEDSession,
       o.sdp = new SEDSession(),
@@ -6131,7 +6133,7 @@ SDF.LargeIntToInt32Pair = function (e) {
       e.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.SHAPE &&
       e.ShapeType === ConstantData.ShapeType.GROUPSYMBOL
     ) {
-      if (t.groupcodelist) o.coordScaleFactor = GlobalData.docHandler.svgDoc.docInfo.docDpi / t.groupcodelist.codes[0].data.drawres,
+      if (t.groupcodelist) o.coordScaleFactor = T3Gv.docUtil.svgDoc.docInfo.docDpi / t.groupcodelist.codes[0].data.drawres,
         o.ValidateHashesAsync = !0,
         o.AddEMFHash = !0,
         SDF.ReadBuffer_Complete(t.groupcodelist, o, !0);
@@ -6146,18 +6148,18 @@ SDF.LargeIntToInt32Pair = function (e) {
           ListManager.DataSetNameList[ListManager.DataSetNameListIndexes.DATASET_FIELDEDDATA]
         ) >= 0
       ) {
-        var s = GlobalData.objectStore.GetObject(GlobalData.optManager.theContentHeader.SDDataID);
+        var s = T3Gv.objectStore.GetObject(T3Gv.optManager.theContentHeader.SDDataID);
         if (a.SDData) if (s) {
           var l = s.Data.SDData;
           s.Data.SDData = a.SDData
-        } else s = GlobalData.objectStore.CreateBlock(
+        } else s = T3Gv.objectStore.CreateBlock(
           ConstantData.StoredObjectType.SDDATA_OBJECT,
           {
             SDData: a.SDData
           }
         ),
-          GlobalData.optManager.theContentHeader.SDDataID = s.ID;
-        GlobalData.optManager.SDData_Transfer(o.zList, o.SDData, !1),
+          T3Gv.optManager.theContentHeader.SDDataID = s.ID;
+        T3Gv.optManager.SDData_Transfer(o.zList, o.SDData, !1),
           l &&
           (s.Data.SDData = l)
       }
@@ -6169,18 +6171,18 @@ SDF.LargeIntToInt32Pair = function (e) {
   SDF.ReadTableBlock = function (e, t, a) {
     var r = e.codes[t].data.value,
       i = new ListManager.Table,
-      n = GlobalData.objectStore.CreateBlock(ConstantData.StoredObjectType.TABLE_OBJECT, i);
+      n = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.TABLE_OBJECT, i);
     return n ? (a.tableids[r] = n.ID, n.Data) : null
   },
   SDF.ReadGraphBlock = function (e, t, a) {
     var r = e.codes[t].data.value,
       i = new ListManager.Graph,
-      n = GlobalData.objectStore.CreateBlock(ConstantData.StoredObjectType.GRAPH_OBJECT, i);
+      n = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.GRAPH_OBJECT, i);
     return n ? (a.graphids[r] = n.ID, n.Data) : null
   },
   SDF.ReadExpandedViewBlock = function (e, t, a) {
     var r = e.codes[t].data.value,
-      i = GlobalData.objectStore.CreateBlock(ConstantData.StoredObjectType.EXPANDEDVIEW_OBJECT, '');
+      i = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.EXPANDEDVIEW_OBJECT, '');
     return i ? (a.expandedviewids[r] = i.ID, i) : null
   },
   SDF.ReadCommentBlock = function (e, t, a) {
@@ -6197,7 +6199,7 @@ SDF.LargeIntToInt32Pair = function (e) {
         i.comment = e.codes[t].data.comment,
         a.ThreadIDs.indexOf(i.userID) < 0 &&
         a.ThreadIDs.push(i.userID);
-      var n = GlobalData.objectStore.CreateBlock(ConstantData.StoredObjectType.LM_COMMENT_BLOCK, i);
+      var n = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.LM_COMMENT_BLOCK, i);
       if (n) {
         var o = a.Threads[r];
         return null == o &&
@@ -6211,7 +6213,7 @@ SDF.LargeIntToInt32Pair = function (e) {
 
   SDF.ReadImageBlock = function (e, t, a, r) {
     var i = new ListManager.BlobBytes(e.codes[t].data.imagedir, e.codes[t].data.bytes),
-      n = GlobalData.objectStore.CreateBlock(ConstantData.StoredObjectType.BLOBBYTES_OBJECT, i);
+      n = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.BLOBBYTES_OBJECT, i);
     if (n) {
       var o;
       if (
@@ -6228,7 +6230,7 @@ SDF.LargeIntToInt32Pair = function (e) {
       };
       else {
         var s = FileParser.GetImageBlobType(e.codes[t].data.imagedir),
-          l = GlobalData.optManager.MakeURL(e.codes[t].data.data, null, s);
+          l = T3Gv.optManager.MakeURL(e.codes[t].data.data, null, s);
         o = {
           id: n.ID,
           url: l
@@ -6246,11 +6248,11 @@ SDF.LargeIntToInt32Pair = function (e) {
     else if (
       i &&
       (
-        n = GlobalData.objectStore.CreateBlock(
+        n = T3Gv.objectStore.CreateBlock(
           ConstantData.StoredObjectType.H_NATIVE_OBJECT,
           e.codes[t].data.bytes
         ),
-        o = GlobalData.optManager.GetObjectPtr(l, !1)
+        o = T3Gv.optManager.GetObjectPtr(l, !1)
       )
     ) {
       o.NativeID = n.ID;
@@ -6265,7 +6267,7 @@ SDF.LargeIntToInt32Pair = function (e) {
       o = i ? r.SDF_C_COMMENT_END : r.SDF_C_TEXT_END;
     return n = new TextObject({
     }),
-      i ? GlobalData.objectStore.CreateBlock(ConstantData.StoredObjectType.LM_NOTES_OBJECT, n) : GlobalData.objectStore.CreateBlock(ConstantData.StoredObjectType.LM_TEXT_OBJECT, n),
+      i ? T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.LM_NOTES_OBJECT, n) : T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.LM_TEXT_OBJECT, n),
       t = SDF.ReadText(null, null, n, e, t, a, r, i, o)
   },
   SDF.ReadTextParams = function (e, t, a) {
@@ -6320,7 +6322,7 @@ SDF.LargeIntToInt32Pair = function (e) {
           a.textonline >= 0 &&
           a.textonline < a.objectcount &&
           (i = a.IDMap[a.textonline]) >= 0 &&
-          (n = GlobalData.optManager.GetObjectPtr(i, !1))
+          (n = T3Gv.optManager.GetObjectPtr(i, !1))
         ) switch (n.DrawingObjectBaseClass) {
           case ConstantData.DrawingObjectBaseClass.CONNECTOR:
             break;
@@ -6337,10 +6339,10 @@ SDF.LargeIntToInt32Pair = function (e) {
               n.TextDirection = 0 == (n.TextFlags & ConstantData.TextFlags.SED_TF_HorizText),
               a.textonline = - 1
         }
-        var o = GlobalData.optManager.GetObjectPtr(e.DataID, !1);
+        var o = T3Gv.optManager.GetObjectPtr(e.DataID, !1);
         if (o) {
           var s = SDF.TextAlignToJust(e.TextAlign);
-          GlobalData.optManager.SetTextAlignment(o, s.vjust, null)
+          T3Gv.optManager.SetTextAlignment(o, s.vjust, null)
         }
       }
       t.commentid >= 0 &&
@@ -6356,7 +6358,7 @@ SDF.LargeIntToInt32Pair = function (e) {
     var gFmtTextObj;
     gFmtTextObj ||
       (
-        gFmtTextObj = GlobalData.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.TEXT)
+        gFmtTextObj = T3Gv.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.TEXT)
       );
     var S,
       c,
@@ -7419,67 +7421,60 @@ SDF.LargeIntToInt32Pair = function (e) {
       u,
       p;
     switch (l = e.shapeparam, S = e.Frame.width, c = e.Frame.height, t.dataclass) {
-      case ConstantData.SDRShapeTypes.SED_S_Rect:
+      case PolygonConstant.ShapeTypes.RECTANGLE:
         SDF.SetCurvature(a, e, !1);
-      case ConstantData.SDRShapeTypes.SED_S_Oval:
-      case ConstantData.SDRShapeTypes.SED_S_Circ:
-      case ConstantData.SDRShapeTypes.SED_S_RRect:
+      case PolygonConstant.ShapeTypes.OVAL:
+      case PolygonConstant.ShapeTypes.CIRCLE:
+      case PolygonConstant.ShapeTypes.ROUNDED_RECTANGLE:
         i = t.dataclass;
         break;
-      case ConstantData.SDRShapeTypes.SED_S_Poly:
-        i = ConstantData.SDRShapeTypes.SED_S_Poly;
+      case PolygonConstant.ShapeTypes.POLYGON:
+        i = PolygonConstant.ShapeTypes.POLYGON;
         break;
-      case ConstantData.SDRShapeTypes.SED_S_Diam:
-        i = ConstantData.SDRShapeTypes.SED_S_Poly,
-          // n = ListManager.PolygonShapeGenerator.SED_S_Diam(e.Frame, 0);
-          n = PolygonShapeGenerator.SED_S_Diam(e.Frame, 0);
+      case PolygonConstant.ShapeTypes.DIAMOND:
+        i = PolygonConstant.ShapeTypes.POLYGON,
+          n = PolygonShapeGenerator.generateDiamond(e.Frame, 0);
         break;
-      case ConstantData.SDRShapeTypes.SED_S_Tri:
-        i = ConstantData.SDRShapeTypes.SED_S_Poly,
-          // n = ListManager.PolygonShapeGenerator.SED_S_Tri(e.Frame, 0);
-          n = PolygonShapeGenerator.SED_S_Tri(e.Frame, 0);
+      case PolygonConstant.ShapeTypes.TRIANGLE:
+        i = PolygonConstant.ShapeTypes.POLYGON,
+          n = PolygonShapeGenerator.generateTriangle(e.Frame, 0);
         break;
-      case ConstantData.SDRShapeTypes.SED_S_TriB:
-        i = ConstantData.SDRShapeTypes.SED_S_Poly,
-          // n = ListManager.PolygonShapeGenerator.SED_S_TriB(e.Frame, 0);
-          n = PolygonShapeGenerator.SED_S_TriB(e.Frame, 0);
+      case PolygonConstant.ShapeTypes.TRIANGLE_BOTTOM:
+        i = PolygonConstant.ShapeTypes.POLYGON,
+          n = PolygonShapeGenerator.generateTriangleDown(e.Frame, 0);
         break;
-      case ConstantData.SDRShapeTypes.SED_S_Pgm:
-        i = ConstantData.SDRShapeTypes.SED_S_Poly,
+      case PolygonConstant.ShapeTypes.PARALLELOGRAM:
+        i = PolygonConstant.ShapeTypes.POLYGON,
           l = SDF.ToSDJSCoords(e.shapeparam, a.coordScaleFactor),
           e.shapeparam = l,
-          // n = ListManager.PolygonShapeGenerator.SED_S_Pgm(e.Frame, l);
-          n = PolygonShapeGenerator.SED_S_Pgm(e.Frame, l);
+          n = PolygonShapeGenerator.generateParallelogram(e.Frame, l);
         break;
-      case ConstantData.SDRShapeTypes.SED_S_Pent:
-        i = ConstantData.SDRShapeTypes.SED_S_Poly,
+      case PolygonConstant.ShapeTypes.PENTAGON:
+        i = PolygonConstant.ShapeTypes.POLYGON,
           l = SDF.ToSDJSCoords(e.shapeparam, a.coordScaleFactor),
           e.shapeparam = l,
           (s = S / 2) &&
           (l = S / 2 * (l / s)),
-          // n = ListManager.PolygonShapeGenerator.SED_S_Pent(e.Frame, l);
-          n = PolygonShapeGenerator.SED_S_Pent(e.Frame, l);
+          n = PolygonShapeGenerator.generatePentagon(e.Frame, l);
         break;
-      case ConstantData.SDRShapeTypes.SED_S_PentL:
-        i = ConstantData.SDRShapeTypes.SED_S_Poly,
+      case PolygonConstant.ShapeTypes.PENTAGON_LEFT:
+        i = PolygonConstant.ShapeTypes.POLYGON,
           l = SDF.ToSDJSCoords(e.shapeparam, a.coordScaleFactor),
           e.shapeparam = l,
           (s = c / 2) &&
           (l = c / 2 * (l / s)),
-          // n = ListManager.PolygonShapeGenerator.SED_S_PentL(e.Frame, l);
-          n = PolygonShapeGenerator.SED_S_PentL(e.Frame, l);
+          n = PolygonShapeGenerator.generatePentagonLeft(e.Frame, l);
         break;
-      case ConstantData.SDRShapeTypes.SED_S_Hex:
-        i = ConstantData.SDRShapeTypes.SED_S_Poly,
+      case PolygonConstant.ShapeTypes.HEXAGON:
+        i = PolygonConstant.ShapeTypes.POLYGON,
           l = SDF.ToSDJSCoords(e.shapeparam, a.coordScaleFactor),
           e.shapeparam = l,
           (s = c / 2) &&
           (l = c / 2 * (l / s)),
-          // n = ListManager.PolygonShapeGenerator.SED_S_Hex(e.Frame, l);
-          n = PolygonShapeGenerator.SED_S_Hex(e.Frame, l);
+          n = PolygonShapeGenerator.generateHexagon(e.Frame, l);
         break;
-      case ConstantData.SDRShapeTypes.SED_S_Oct:
-        i = ConstantData.SDRShapeTypes.SED_S_Poly,
+      case PolygonConstant.ShapeTypes.OCTAGON:
+        i = PolygonConstant.ShapeTypes.POLYGON,
           (o = l * c) < (u = l * S) &&
           (u = o),
           c &&
@@ -7487,111 +7482,98 @@ SDF.LargeIntToInt32Pair = function (e) {
           e.shapeparam = l,
           l = u / S,
           o = u / c,
-          // n = ListManager.PolygonShapeGenerator.SED_S_Oct(e.Frame, l, o);
-          n = PolygonShapeGenerator.SED_S_Oct(e.Frame, l, o);
+          n = PolygonShapeGenerator.generateOctagon(e.Frame, l, o);
         break;
-      case ConstantData.SDRShapeTypes.SED_S_ArrR:
-        i = ConstantData.SDRShapeTypes.SED_S_Poly,
+      case PolygonConstant.ShapeTypes.ARROW_RIGHT:
+        i = PolygonConstant.ShapeTypes.POLYGON,
           l = SDF.ToSDJSCoords(e.shapeparam, a.coordScaleFactor),
           e.shapeparam = l,
-          // n = ListManager.PolygonShapeGenerator.SED_S_ArrR(e.Frame, l);
-          n = PolygonShapeGenerator.SED_S_ArrR(e.Frame, l);
+          n = PolygonShapeGenerator.generateRightArrow(e.Frame, l);
         break;
-      case ConstantData.SDRShapeTypes.SED_S_ArrL:
-        i = ConstantData.SDRShapeTypes.SED_S_Poly,
+      case PolygonConstant.ShapeTypes.ARROW_LEFT:
+        i = PolygonConstant.ShapeTypes.POLYGON,
           l = SDF.ToSDJSCoords(e.shapeparam, a.coordScaleFactor),
           e.shapeparam = l,
-          // n = ListManager.PolygonShapeGenerator.SED_S_ArrL(e.Frame, l);
-          n = PolygonShapeGenerator.SED_S_ArrL(e.Frame, l);
+          n = PolygonShapeGenerator.generateLeftArrow(e.Frame, l);
         break;
-      case ConstantData.SDRShapeTypes.SED_S_ArrT:
-        i = ConstantData.SDRShapeTypes.SED_S_Poly,
+      case PolygonConstant.ShapeTypes.ARROW_TOP:
+        i = PolygonConstant.ShapeTypes.POLYGON,
           l = SDF.ToSDJSCoords(e.shapeparam, a.coordScaleFactor),
           e.shapeparam = l,
-          // n = ListManager.PolygonShapeGenerator.SED_S_ArrT(e.Frame, l);
-          n = PolygonShapeGenerator.SED_S_ArrT(e.Frame, l);
+          n = PolygonShapeGenerator.generateTopArrow(e.Frame, l);
         break;
-      case ConstantData.SDRShapeTypes.SED_S_ArrB:
-        i = ConstantData.SDRShapeTypes.SED_S_Poly,
+      case PolygonConstant.ShapeTypes.ARROW_BOTTOM:
+        i = PolygonConstant.ShapeTypes.POLYGON,
           l = SDF.ToSDJSCoords(e.shapeparam, a.coordScaleFactor),
           e.shapeparam = l,
-          // n = ListManager.PolygonShapeGenerator.SED_S_ArrB(e.Frame, l);
-          n = PolygonShapeGenerator.SED_S_ArrB(e.Frame, l);
+          n = PolygonShapeGenerator.generateBottomArrow(e.Frame, l);
         break;
-      case ConstantData.SDRShapeTypes.SED_S_Trap:
-        i = ConstantData.SDRShapeTypes.SED_S_Poly,
+      case PolygonConstant.ShapeTypes.TRAPEZOID:
+        i = PolygonConstant.ShapeTypes.POLYGON,
           l = SDF.ToSDJSCoords(e.shapeparam, a.coordScaleFactor),
           e.shapeparam = l,
-          // n = ListManager.PolygonShapeGenerator.SED_S_Trap(e.Frame, l);
-          n = PolygonShapeGenerator.SED_S_Trap(e.Frame, l);
+          n = PolygonShapeGenerator.generateTrapezoid(e.Frame, l);
         break;
-      case ConstantData.SDRShapeTypes.SED_S_TrapB:
-        i = ConstantData.SDRShapeTypes.SED_S_Poly,
+      case PolygonConstant.ShapeTypes.TRAPEZOID_BOTTOM:
+        i = PolygonConstant.ShapeTypes.POLYGON,
           l = SDF.ToSDJSCoords(e.shapeparam, a.coordScaleFactor),
           e.shapeparam = l,
-          // n = ListManager.PolygonShapeGenerator.SED_S_TrapB(e.Frame, l);
-          n = PolygonShapeGenerator.SED_S_TrapB(e.Frame, l);
+          n = PolygonShapeGenerator.generateTrapezoidDown(e.Frame, l);
         break;
-      case ConstantData.SDRShapeTypes.SED_S_Input:
-        i = ConstantData.SDRShapeTypes.SED_S_Poly,
+      case PolygonConstant.ShapeTypes.INPUT:
+        i = PolygonConstant.ShapeTypes.POLYGON,
           l = SDF.ToSDJSCoords(e.shapeparam, a.coordScaleFactor),
           e.shapeparam = l,
-          // n = ListManager.PolygonShapeGenerator.SED_S_Input(e.Frame, l);
-          n = PolygonShapeGenerator.SED_S_Input(e.Frame, l);
+          n = PolygonShapeGenerator.generateInput(e.Frame, l);
         break;
-      case ConstantData.SDRShapeTypes.SED_S_Term:
-        i = ConstantData.SDRShapeTypes.SED_S_Poly,
-          // n = ListManager.PolygonShapeGenerator.SED_S_Term(e.Frame, l);
-          n = PolygonShapeGenerator.SED_S_Term(e.Frame, l);
+      case PolygonConstant.ShapeTypes.TERMINAL:
+        i = PolygonConstant.ShapeTypes.POLYGON,
+          n = PolygonShapeGenerator.generateTerminal(e.Frame, l);
         break;
-      case ConstantData.SDRShapeTypes.SED_S_Store:
-        i = ConstantData.SDRShapeTypes.SED_S_Poly,
+      case PolygonConstant.ShapeTypes.STORAGE:
+        i = PolygonConstant.ShapeTypes.POLYGON,
           u = SDF.ToSDJSCoords(e.shapeparam, a.coordScaleFactor),
           e.shapeparam = u,
-          // n = ListManager.PolygonShapeGenerator.SED_S_Store(e.Frame, e.shapeparam, u);
-          n = PolygonShapeGenerator.SED_S_Store(e.Frame, e.shapeparam, u);
+          n = PolygonShapeGenerator.generateStorage(e.Frame, e.shapeparam, u);
         break;
-      case ConstantData.SDRShapeTypes.SED_S_Doc:
-        i = ConstantData.SDRShapeTypes.SED_S_Poly,
+      case PolygonConstant.ShapeTypes.DOCUMENT:
+        i = PolygonConstant.ShapeTypes.POLYGON,
           u = SDF.ToSDJSCoords(e.shapeparam, a.coordScaleFactor),
           e.shapeparam = u,
-          // n = ListManager.PolygonShapeGenerator.SED_S_Doc(e.Frame, u);
-          n = PolygonShapeGenerator.SED_S_Doc(e.Frame, u);
+          n = PolygonShapeGenerator.generateDocument(e.Frame, u);
         break;
-      case ConstantData.SDRShapeTypes.SED_S_Delay:
-        i = ConstantData.SDRShapeTypes.SED_S_Poly,
+      case PolygonConstant.ShapeTypes.DELAY:
+        i = PolygonConstant.ShapeTypes.POLYGON,
           u = SDF.ToSDJSCoords(e.shapeparam, a.coordScaleFactor),
           e.shapeparam = u,
-          // n = ListManager.PolygonShapeGenerator.SED_S_Delay(e.Frame, u);
-          n = PolygonShapeGenerator.SED_S_Delay(e.Frame, u);
+          n = PolygonShapeGenerator.generateDelay(e.Frame, u);
         break;
-      case ConstantData.SDRShapeTypes.SED_S_Disp:
-        i = ConstantData.SDRShapeTypes.SED_S_Poly,
+      case PolygonConstant.ShapeTypes.DISPLAY:
+        i = PolygonConstant.ShapeTypes.POLYGON,
           u = SDF.ToSDJSCoords(e.shapeparam, a.coordScaleFactor),
           e.shapeparam = u,
-          // n = ListManager.PolygonShapeGenerator.SED_S_Disp(e.Frame, u)
-          n = PolygonShapeGenerator.SED_S_Disp(e.Frame, u)
+          n = PolygonShapeGenerator.generateDisplay(e.Frame, u)
     }
     switch (
     r & (
       ConstantData.ExtraFlags.SEDE_FlipHoriz | ConstantData.ExtraFlags.SEDE_FlipVert
     ) &&
     n &&
-    (n = GlobalData.optManager.FlipVertexArray(n, r)),
+    (n = T3Gv.optManager.FlipVertexArray(n, r)),
     i
     ) {
-      case ConstantData.SDRShapeTypes.SED_S_Rect:
+      case PolygonConstant.ShapeTypes.RECTANGLE:
         // p = new ListManager.Rect(e);
         // p = new GlobalDataShape.Rect(e);
         p = new Instance.Shape.Rect(e);
         break;
-      case ConstantData.SDRShapeTypes.SED_S_RRect:
+      case PolygonConstant.ShapeTypes.ROUNDED_RECTANGLE:
         // p = new ListManager.RRect(e);
         // p = new GlobalDataShape.RRect(e);
         p = new Instance.Shape.RRect(e);
         break;
-      case ConstantData.SDRShapeTypes.SED_S_Oval:
-      case ConstantData.SDRShapeTypes.SED_S_Circ:
+      case PolygonConstant.ShapeTypes.OVAL:
+      case PolygonConstant.ShapeTypes.CIRCLE:
         // (p = new ListManager.Oval(e)).dataclass = i;
         // (p = new GlobalDataShape.Oval(e)).dataclass = i;
         (p = new Instance.Shape.Oval(e)).dataclass = i;
@@ -7911,7 +7893,7 @@ SDF.ReadGraphAxisLabel = function (e, t, a) {
             );
           break;
         case i.SDF_C_EXPANDEDVIEW:
-          p = GlobalData.objectStore.CreateBlock(
+          p = T3Gv.objectStore.CreateBlock(
             ConstantData.StoredObjectType.EXPANDEDVIEW_OBJECT,
             t.codes[a].data.svg
           ),
@@ -7922,7 +7904,7 @@ SDF.ReadGraphAxisLabel = function (e, t, a) {
           break;
         case i.SDF_C_DRAWJPG:
           o.ImageURL = t.codes[a].data.URL,
-            GlobalData.optManager.Table_CellSetBlobBytes(
+            T3Gv.optManager.Table_CellSetBlobBytes(
               o,
               t.codes[a].data.BlobBytes,
               FileParser.Image_Dir.dir_jpg
@@ -7931,7 +7913,7 @@ SDF.ReadGraphAxisLabel = function (e, t, a) {
         case i.SDF_C_DRAWPREVIEWPNG:
         case i.SDF_C_DRAWPNG:
           o.ImageURL = t.codes[a].data.URL,
-            GlobalData.optManager.Table_CellSetBlobBytes(
+            T3Gv.optManager.Table_CellSetBlobBytes(
               o,
               t.codes[a].data.BlobBytes,
               FileParser.Image_Dir.dir_png
@@ -7940,7 +7922,7 @@ SDF.ReadGraphAxisLabel = function (e, t, a) {
         case i.SDF_C_DRAWSVG:
           o.ImageURL = t.codes[a].data.URL;
           var D = t.codes[a].data.BlobBytes;
-          GlobalData.optManager.Table_CellSetBlobBytes(o, D, FileParser.Image_Dir.dir_svg),
+          T3Gv.optManager.Table_CellSetBlobBytes(o, D, FileParser.Image_Dir.dir_svg),
             o.SVGDim = Utils2.ParseSVGDimensions(D);
           break;
         case i.SDF_C_DRAWMETA:
@@ -8049,7 +8031,7 @@ SDF.ReadGraphAxisLabel = function (e, t, a) {
         );
     var i = SDF.FontIDtoFontRec(e.fontid, t);
     return r.Text.FontName = i.fontName,
-      r.Text.FontId = -1/* GlobalData.optManager.GetFontIdByName(r.Text.FontName)*/,
+      r.Text.FontId = -1/* T3Gv.optManager.GetFontIdByName(r.Text.FontName)*/,
       r.Text.FontSize = e.fsize,
       r.Text.Face = e.face,
       r.Text.Paint.Color = SDF.WinColorToHTML(e.tcolor),
@@ -8110,7 +8092,7 @@ SDF.ReadGraphAxisLabel = function (e, t, a) {
         0 == (a.moreflags & ConstantData.ObjMoreFlags.SED_MF_VisioText) ? (
         h = !0,
         (D = r.IDMap[a.associd]) >= 0 &&
-        (g = GlobalData.optManager.GetObjectPtr(D, !1)) &&
+        (g = T3Gv.optManager.GetObjectPtr(D, !1)) &&
         g.DataID >= 0 &&
         (h = !1),
         h ? (
@@ -8457,66 +8439,66 @@ SDF.ReadGraphAxisLabel = function (e, t, a) {
     var n,
       o = new SDF.WResult,
       s = [];
-    o.sdp = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
-      o.tLMB = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !1),
-      o.ctp = GlobalData.optManager.theContentHeader,
+    o.sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+      o.tLMB = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1),
+      o.ctp = T3Gv.optManager.theContentHeader,
       o.WriteVisio = t,
       r &&
       (o.WriteWin32 = !0),
       SDUI.Commands.MainController.SymbolLibraryBrowser.CurrentLibraryPath ? o.LibraryPathTarget = SDUI.Commands.MainController.SymbolLibraryBrowser.CurrentLibraryPath : o.LibraryPathTarget = SDUI.Commands.MainController.SymbolLibraryBrowser.LibraryPathTarget;
-    var l = GlobalData.docHandler.svgDoc.GetWorkArea();
-    o.WindowSettings.wscale = GlobalData.docHandler.GetZoomFactor(),
+    var l = T3Gv.docUtil.svgDoc.GetWorkArea();
+    o.WindowSettings.wscale = T3Gv.docUtil.GetZoomFactor(),
       o.WindowSettings.worigin.x = l.scrollX,
       o.WindowSettings.worigin.y = l.scrollY,
       o.WindowSettings.wflags = 0,
-      GlobalData.docHandler.scaleToFit ? o.WindowSettings.wflags = ListManager.WFlags.W_Stf : GlobalData.docHandler.scaleToPage &&
+      T3Gv.docUtil.scaleToFit ? o.WindowSettings.wflags = ListManager.WFlags.W_Stf : T3Gv.docUtil.scaleToPage &&
         (o.WindowSettings.wflags = ListManager.WFlags.W_Page),
-      o.docDpi = GlobalData.docHandler.svgDoc.docInfo.docDpi,
+      o.docDpi = T3Gv.docUtil.svgDoc.docInfo.docDpi,
       1 === o.WindowSettings.wscale ? o.WindowSettings.wscale = 0 : o.WindowSettings.wscale *= 1000,
-      GlobalData.optManager.theContentHeader.flags = Utils2.SetFlag(
-        GlobalData.optManager.theContentHeader.flags,
+      T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
+        T3Gv.optManager.theContentHeader.flags,
         ConstantData.ContentHeaderFlags.CT_ShowGrid,
-        GlobalData.docHandler.documentConfig.showGrid
+        T3Gv.docUtil.docConfig.showGrid
       ),
-      GlobalData.optManager.theContentHeader.flags = Utils2.SetFlag(
-        GlobalData.optManager.theContentHeader.flags,
+      T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
+        T3Gv.optManager.theContentHeader.flags,
         ConstantData.ContentHeaderFlags.CT_ShowRulers,
-        GlobalData.docHandler.documentConfig.showRulers
+        T3Gv.docUtil.docConfig.showRulers
       ),
-      GlobalData.optManager.theContentHeader.flags = Utils2.SetFlag(
-        GlobalData.optManager.theContentHeader.flags,
+      T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
+        T3Gv.optManager.theContentHeader.flags,
         ConstantData.ContentHeaderFlags.CT_SnapToGridC,
-        GlobalData.docHandler.documentConfig.centerSnap &&
-        GlobalData.docHandler.documentConfig.enableSnap
+        T3Gv.docUtil.docConfig.centerSnap &&
+        T3Gv.docUtil.docConfig.enableSnap
       ),
-      GlobalData.optManager.theContentHeader.flags = Utils2.SetFlag(
-        GlobalData.optManager.theContentHeader.flags,
+      T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
+        T3Gv.optManager.theContentHeader.flags,
         ConstantData.ContentHeaderFlags.CT_SnapToGridTL,
-        !GlobalData.docHandler.documentConfig.centerSnap &&
-        GlobalData.docHandler.documentConfig.enableSnap
+        !T3Gv.docUtil.docConfig.centerSnap &&
+        T3Gv.docUtil.docConfig.enableSnap
       ),
-      GlobalData.optManager.theContentHeader.flags = Utils2.SetFlag(
-        GlobalData.optManager.theContentHeader.flags,
+      T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
+        T3Gv.optManager.theContentHeader.flags,
         ConstantData.ContentHeaderFlags.CT_ShowPageDividers,
-        GlobalData.docHandler.documentConfig.showPageDivider
+        T3Gv.docUtil.docConfig.showPageDivider
       ),
-      GlobalData.optManager.theContentHeader.flags = Utils2.SetFlag(
-        GlobalData.optManager.theContentHeader.flags,
+      T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
+        T3Gv.optManager.theContentHeader.flags,
         ConstantData.ContentHeaderFlags.CT_SnapToShapes_Off,
-        0 == GlobalData.docHandler.documentConfig.snapToShapes
+        0 == T3Gv.docUtil.docConfig.snapToShapes
       ),
-      GlobalData.optManager.theContentHeader.flags = Utils2.SetFlag(
-        GlobalData.optManager.theContentHeader.flags,
+      T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
+        T3Gv.optManager.theContentHeader.flags,
         ConstantData.ContentHeaderFlags.CT_ShowRulers,
-        GlobalData.docHandler.documentConfig.showRulers
+        T3Gv.docUtil.docConfig.showRulers
       ),
       o.ctp.smartpanelname = SDF.ToSDWinPanelName(ConstantData.DocumentContext.CurrentSmartPanel),
-      GlobalData.optManager.UpdateObjectLayerIndices(o),
-      o.RichGradients = GlobalData.optManager.RichGradients;
-    var S = GlobalData.optManager.ZList();
+      T3Gv.optManager.UpdateObjectLayerIndices(o),
+      o.RichGradients = T3Gv.optManager.RichGradients;
+    var S = T3Gv.optManager.ZList();
     if (
       o.zList = S,
-      n = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLinksBlockID, !1),
+      n = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, !1),
       o.links = Utils1.DeepCopy(n),
       t
     ) {
@@ -8525,8 +8507,8 @@ SDF.ReadGraphAxisLabel = function (e, t, a) {
       var c = new SDJS.Editor.BaseStateManager,
         u = new SDJS.Editor.ObjectStore;
       if (
-        GlobalData.optManager.SwitchToAlternateStateManager(c, u, !0),
-        GlobalData.optManager.IsPlanningDocument()
+        T3Gv.optManager.SwitchToAlternateStateManager(c, u, !0),
+        T3Gv.optManager.IsPlanningDocument()
       ) {
         o.zList = o.tLMB.layers[o.tLMB.activelayer].zList;
         var p = Utils1.DeepCopy(o.tLMB);
@@ -8534,9 +8516,9 @@ SDF.ReadGraphAxisLabel = function (e, t, a) {
           p.activelayer = 0,
           p.nlayers = 1,
           o.tLMB = p
-      } else o.zList = GlobalData.optManager.ZList();
+      } else o.zList = T3Gv.optManager.ZList();
       SDF.ConvertToVisio(o, a),
-        n = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLinksBlockID, !1),
+        n = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, !1),
         o.links = Utils1.DeepCopy(n)
     }
     if (
@@ -8546,14 +8528,14 @@ SDF.ReadGraphAxisLabel = function (e, t, a) {
         window.setTimeout((function () {
           SDF.CleanupVisioRasterization(a)
         }), 3000),
-        GlobalData.optManager.RestorePrimaryStateManager()
+        T3Gv.optManager.RestorePrimaryStateManager()
       ),
       !e
     ) return i;
     window.webkitRequestFileSystem ? SDF.WriteLocalFile(i) : (
       s = S.slice(0),
-      GlobalData.optManager.DeleteObjects(s, !1),
-      GlobalData.optManager.UpdateLinks(),
+      T3Gv.optManager.DeleteObjects(s, !1),
+      T3Gv.optManager.UpdateLinks(),
       SDF.ReadFile(i, !1),
       TestServer.currentblocklist.length = 0,
       TestServer.StateSent = 0
@@ -8561,18 +8543,18 @@ SDF.ReadGraphAxisLabel = function (e, t, a) {
   },
   SDF.WriteSelect = function (e, t, a, r, i) {
     var n = new SDF.WResult;
-    n.sdp = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
-      n.tLMB = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !1),
-      n.ctp = GlobalData.optManager.theContentHeader,
+    n.sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+      n.tLMB = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1),
+      n.ctp = T3Gv.optManager.theContentHeader,
       n.selectonly = !0,
       r &&
       (n.KeepSegDir = !0);
-    GlobalData.docHandler.svgDoc.GetWorkArea();
-    return n.docDpi = GlobalData.docHandler.svgDoc.docInfo.docDpi,
+    T3Gv.docUtil.svgDoc.GetWorkArea();
+    return n.docDpi = T3Gv.docUtil.svgDoc.docInfo.docDpi,
       n.zList = e,
       n.noTables = t,
-      n.RichGradients = GlobalData.optManager.RichGradients,
-      GlobalData.optManager.UpdateObjectLayerIndices(n),
+      n.RichGradients = T3Gv.optManager.RichGradients,
+      T3Gv.optManager.UpdateObjectLayerIndices(n),
       SDF.WriteBuffer(n, !0, !0, i)
   },
   SDF.WriteTableFile = function (e) {
@@ -8582,13 +8564,13 @@ SDF.ReadGraphAxisLabel = function (e, t, a) {
       r = new SDF.WResult,
       i = e.GetTable(!1);
     if (null == i) return null;
-    r.sdp = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
-      r.tLMB = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !1),
-      r.ctp = GlobalData.optManager.theContentHeader,
+    r.sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+      r.tLMB = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1),
+      r.ctp = T3Gv.optManager.theContentHeader,
       r.zList.push(e.BlockID);
-    GlobalData.docHandler.svgDoc.GetWorkArea();
-    r.docDpi = GlobalData.docHandler.svgDoc.docInfo.docDpi,
-      r.coordScaleFactor = SDF.DRAWRES / GlobalData.docHandler.svgDoc.docInfo.docDpi,
+    T3Gv.docUtil.svgDoc.GetWorkArea();
+    r.docDpi = T3Gv.docUtil.svgDoc.docInfo.docDpi,
+      r.coordScaleFactor = SDF.DRAWRES / T3Gv.docUtil.svgDoc.docInfo.docDpi,
       a.endianness = T3DataStream.LITTLE_ENDIAN,
       a.writeCString(SDF.Signature, SDF.Signature.length),
       SDF.Write_SDF_C_VERSION(
@@ -8626,7 +8608,7 @@ SDF.ReadGraphAxisLabel = function (e, t, a) {
         x: 0,
         y: 0
       },
-      this.rulerSettings = null,
+      this.rulerConfig = null,
       this.WriteBlocks = !1,
       this.noTables = !1,
       this.WriteGroupBlock = !1,
@@ -8652,19 +8634,19 @@ SDF.ReadGraphAxisLabel = function (e, t, a) {
       e.WriteVisio ||
         e.WriteWin32 ? (
         SDF.Write_SDF_C_VERSION(n, FileParser.Platforms.SDF_SDJS, SDF.FVERSION2015),
-        e.coordScaleFactor = SDF.DRAWRES / GlobalData.docHandler.svgDoc.docInfo.docDpi
+        e.coordScaleFactor = SDF.DRAWRES / T3Gv.docUtil.svgDoc.docInfo.docDpi
       ) : SDF.Write_SDF_C_VERSION(
         n,
         FileParser.Platforms.SDF_SDJS,
-        GlobalData.optManager.FileVersion
+        T3Gv.optManager.FileVersion
       ),
-      e.rulerSettings = GlobalData.docHandler.rulerSettings,
-      e.rulerSettings.show = GlobalData.docHandler.documentConfig.showRulers,
+      e.rulerConfig = T3Gv.docUtil.rulerConfig,
+      e.rulerConfig.show = T3Gv.docUtil.docConfig.showRulers,
       t
     ) {
       if (SDF.WriteSelectHeader(n, e), e.error) return null
     } else if (SDF.WriteHeader(n, e, null), e.error) return null;
-    return GlobalData.optManager.theContentHeader.SDDataID >= 0 &&
+    return T3Gv.optManager.theContentHeader.SDDataID >= 0 &&
       !r &&
       SDF.WriteSDDATA(n, e),
       SDF.WriteDraw(n, e),
@@ -8718,7 +8700,7 @@ SDF.ReadGraphAxisLabel = function (e, t, a) {
   SDF.WriteHeader = function (e, t, a) {
     var r,
       i = FileParser.SDROpCodesByName,
-      n = ConstantData.DocumentContext.PublishUrl;
+      n = "";// ConstantData.DocumentContext.PublishUrl;
     SDF.write_SDF_C_HEADER(e, t),
       SDF.write_SDF_C_PAGE(e, t),
       null == a &&
@@ -8728,7 +8710,7 @@ SDF.ReadGraphAxisLabel = function (e, t, a) {
         SDF.WriteFontList(e, t),
         SDF.WriteString(
           e,
-          GlobalData.optManager.theContentHeader.importSourcePath,
+          T3Gv.optManager.theContentHeader.importSourcePath,
           i.SDF_C_IMPORT_SOURCE_PATH,
           t
         ),
@@ -8758,7 +8740,7 @@ SDF.ReadGraphAxisLabel = function (e, t, a) {
         - 1 == a.indexOf(i.SDF_C_TASKPANEL) ||
         SDF.WriteString(
           e,
-          GlobalData.optManager.theContentHeader.smartpanelname,
+          T3Gv.optManager.theContentHeader.smartpanelname,
           i.SDF_C_TASKPANEL,
           t
         )
@@ -8767,7 +8749,7 @@ SDF.ReadGraphAxisLabel = function (e, t, a) {
       - 1 == a.indexOf(i.SDF_C_BUSINESSMODULE) ||
       SDF.WriteString(
         e,
-        GlobalData.optManager.theContentHeader.BusinessModule,
+        T3Gv.optManager.theContentHeader.BusinessModule,
         i.SDF_C_BUSINESSMODULE,
         t
       ),
@@ -8775,7 +8757,7 @@ SDF.ReadGraphAxisLabel = function (e, t, a) {
       - 1 == a.indexOf(i.SDF_C_SYMBOLSEARCHSTRING) ||
       SDF.WriteString(
         e,
-        GlobalData.optManager.theContentHeader.SymbolSearchString,
+        T3Gv.optManager.theContentHeader.SymbolSearchString,
         FileParser.SDROpCodesByName.SDF_C_SYMBOLSEARCHSTRING,
         t
       ),
@@ -8784,17 +8766,17 @@ SDF.ReadGraphAxisLabel = function (e, t, a) {
       SDF.WriteUIInfo(e, t),
       null != a &&
       - 1 == a.indexOf(i.SDF_C_ORGCHARTTABLE) ||
-      GlobalData.optManager.theContentHeader.orgcharttable.length &&
+      T3Gv.optManager.theContentHeader.orgcharttable.length &&
       (
         (
-          r = ListManager.OrgChartTables.indexOf(GlobalData.optManager.theContentHeader.orgcharttable)
+          r = ListManager.OrgChartTables.indexOf(T3Gv.optManager.theContentHeader.orgcharttable)
         ) >= 0 ? SDF.WriteString(
           e,
           ListManager.WinOrgChartTables[r],
           i.SDF_C_ORGCHARTTABLE,
           t
         ) : (
-          r = ListManager.MindMapTables.indexOf(GlobalData.optManager.theContentHeader.orgcharttable)
+          r = ListManager.MindMapTables.indexOf(T3Gv.optManager.theContentHeader.orgcharttable)
         ) >= 0 &&
         SDF.WriteString(
           e,
@@ -8805,7 +8787,7 @@ SDF.ReadGraphAxisLabel = function (e, t, a) {
         r < 0 &&
         SDF.WriteString(
           e,
-          GlobalData.optManager.theContentHeader.orgcharttable,
+          T3Gv.optManager.theContentHeader.orgcharttable,
           i.SDF_C_ORGCHARTTABLE,
           t
         )
@@ -8816,15 +8798,15 @@ SDF.ReadGraphAxisLabel = function (e, t, a) {
       null == a &&
       SDF.WriteString(
         e,
-        GlobalData.optManager.theContentHeader.smarthelpname,
+        T3Gv.optManager.theContentHeader.smarthelpname,
         FileParser.SDROpCodesByName.SDF_C_GUIDE,
         t
       ),
       null == a &&
-      GlobalData.optManager.theContentHeader.ParentPageID.length &&
+      T3Gv.optManager.theContentHeader.ParentPageID.length &&
       SDF.WriteString(
         e,
-        GlobalData.optManager.theContentHeader.ParentPageID,
+        T3Gv.optManager.theContentHeader.ParentPageID,
         FileParser.SDROpCodesByName.SDF_C_PARENTPAGEID,
         t
       ),
@@ -8989,10 +8971,10 @@ SDF.ReadGraphAxisLabel = function (e, t, a) {
       linetoolindex: SDF.JStoWinLineTool(ConstantData.DocumentContext.LineTool),
       shapetoolindex: ConstantData.DocumentContext.ShapeTool,
       datetime2007: 0,
-      holidaymask: GlobalData.optManager.theContentHeader.holidaymask,
+      holidaymask: T3Gv.optManager.theContentHeader.holidaymask,
       datetime1: 0,
       datetime2: 0,
-      nonworkingdays: GlobalData.optManager.theContentHeader.nonworkingdays,
+      nonworkingdays: T3Gv.optManager.theContentHeader.nonworkingdays,
       swimlaneformat: ConstantData.DocumentContext.SwimlaneFormat,
       autocontainer: r,
       actascontainer: i,
@@ -9047,7 +9029,7 @@ SDF.ReadGraphAxisLabel = function (e, t, a) {
       r,
       i,
       n,
-      o = GlobalData.optManager.theContentHeader.lp_list;
+      o = T3Gv.optManager.theContentHeader.lp_list;
     r = o.lib.length,
       o.selected;
     var s = {
@@ -9287,20 +9269,20 @@ SDF.WriteLeftPanelMode = function (e, t) {
       n++
     ) {
       if (
-        S = (r = GlobalData.optManager.GetObjectPtr(l[n], !1)) ? r.GetTable(!1) : null,
+        S = (r = T3Gv.optManager.GetObjectPtr(l[n], !1)) ? r.GetTable(!1) : null,
         d(r.StyleRecord.Text.FontName, r.StyleRecord.Text.FontType),
         r &&
         r.DataID >= 0 &&
-        (i = GlobalData.optManager.GetObjectPtr(r.DataID, !1))
+        (i = T3Gv.optManager.GetObjectPtr(r.DataID, !1))
       ) for (o = (s = i.runtimeText).styles.length, a = 0; a < o; a++) d(s.styles[a].font, s.styles[a].type);
-      if (r && r.NoteID >= 0 && (i = GlobalData.optManager.GetObjectPtr(r.NoteID, !1))) for (o = (s = i.runtimeText).styles.length, a = 0; a < o; a++) d(s.styles[a].font, s.styles[a].type);
+      if (r && r.NoteID >= 0 && (i = T3Gv.optManager.GetObjectPtr(r.NoteID, !1))) for (o = (s = i.runtimeText).styles.length, a = 0; a < o; a++) d(s.styles[a].font, s.styles[a].type);
       if (S) for (u = S.cells.length, p = 0; p < u; p++) {
         if (
           d((c = S.cells[p]).Text.FontName, c.Text.FontType),
           c.DataID >= 0 &&
-          (i = GlobalData.optManager.GetObjectPtr(c.DataID, !1))
+          (i = T3Gv.optManager.GetObjectPtr(c.DataID, !1))
         ) for (o = (s = i.runtimeText).styles.length, a = 0; a < o; a++) d(s.styles[a].font, s.styles[a].type);
-        if (c.NoteID >= 0 && (i = GlobalData.optManager.GetObjectPtr(c.NoteID, !1))) for (o = (s = i.runtimeText).styles.length, a = 0; a < o; a++) d(s.styles[a].font, s.styles[a].type)
+        if (c.NoteID >= 0 && (i = T3Gv.optManager.GetObjectPtr(c.NoteID, !1))) for (o = (s = i.runtimeText).styles.length, a = 0; a < o; a++) d(s.styles[a].font, s.styles[a].type)
       }
     }
   },
@@ -9636,7 +9618,7 @@ SDF.WriteLeftPanelMode = function (e, t) {
       SDF.WriteRecentList(e, t),
       SDF.WriteLayers(e, t),
       SDF.WriteLinks(e, t),
-      SDF.WriteTextureList(e, GlobalData.optManager.TextureList, t),
+      SDF.WriteTextureList(e, T3Gv.optManager.TextureList, t),
       SDF.WriteStyleList(e, t.lpStyles, !1, t),
       t.TextStyleIndex >= 0 &&
       (
@@ -9675,7 +9657,7 @@ SDF.WriteLeftPanelMode = function (e, t) {
         ) {
           for (
             o.associd = m,
-            d = (n = GlobalData.optManager.GetObjectPtr(t.UniqueMap[h], !1)).arraylist.styleflags & ConstantData.SEDA_Styles.SEDA_Linear,
+            d = (n = T3Gv.optManager.GetObjectPtr(t.UniqueMap[h], !1)).arraylist.styleflags & ConstantData.SEDA_Styles.SEDA_Linear,
             s = SDF.TextAlignToWin(n.TextAlign),
             l = SDF.SetHookByJust(s.just, s.vjust, o.hooks[0].connect),
             o.hooks[0].hookpt = l.hookpt,
@@ -9697,7 +9679,7 @@ SDF.WriteLeftPanelMode = function (e, t) {
             }
           }
           s.vjust === FileParser.TextJust.TA_CENTER ? o.StyleRecord.Fill.Paint.FillType = ConstantData.FillTypes.SDFILL_SOLID : o.StyleRecord.Fill.Paint.FillType = ConstantData.FillTypes.SDFILL_TRANSPARENT
-        } else (n = GlobalData.optManager.GetObjectPtr(t.UniqueMap[i - 1], !1)) &&
+        } else (n = T3Gv.optManager.GetObjectPtr(t.UniqueMap[i - 1], !1)) &&
           n.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.LINE ? (
           s = SDF.TextAlignToWin(n.TextAlign),
           l = SDF.SetHookByJust(s.just, s.vjust, o.hooks[0].connect),
@@ -9731,7 +9713,7 @@ SDF.WriteLeftPanelMode = function (e, t) {
           o.StyleRecord.Fill.Paint.FillType = ConstantData.FillTypes.SDFILL_TRANSPARENT
         );
         n = o
-      } else (n = GlobalData.optManager.GetObjectPtr(D, !1)) &&
+      } else (n = T3Gv.optManager.GetObjectPtr(D, !1)) &&
         (
           n.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.CONNECTOR ? (h = i, m = n.BlockID) : (h = - 1, m = n.BlockID)
         );
@@ -9745,17 +9727,17 @@ SDF.WriteLeftPanelMode = function (e, t) {
   },
   SDF.WriteRulers = function (e, t) {
     var a = {
-      show: t.rulerSettings.show,
-      inches: t.rulerSettings.useInches,
-      Major: SDF.ToSDWinCoords(t.rulerSettings.major, t.coordScaleFactor),
-      MajorScale: t.rulerSettings.majorScale,
-      MinorDenom: t.rulerSettings.nTics,
-      units: t.rulerSettings.units,
-      dp: t.rulerSettings.dp,
-      originx: t.rulerSettings.originx,
-      originy: t.rulerSettings.originy,
-      showpixels: t.rulerSettings.showpixels,
-      fractionaldenominator: t.rulerSettings.fractionaldenominator
+      show: t.rulerConfig.show,
+      inches: t.rulerConfig.useInches,
+      Major: SDF.ToSDWinCoords(t.rulerConfig.major, t.coordScaleFactor),
+      MajorScale: t.rulerConfig.majorScale,
+      MinorDenom: t.rulerConfig.nTics,
+      units: t.rulerConfig.units,
+      dp: t.rulerConfig.dp,
+      originx: t.rulerConfig.originx,
+      originy: t.rulerConfig.originy,
+      showpixels: t.rulerConfig.showpixels,
+      fractionaldenominator: t.rulerConfig.fractionaldenominator
     },
       r = SDF.Write_CODE(e, FileParser.SDROpCodesByName.SDF_O_RULER);
     e.writeStruct(FileParser.SDF_RULER_Struct_52, a),
@@ -9915,7 +9897,7 @@ SDF.WriteLeftPanelMode = function (e, t) {
       r++
     ) {
       if (
-        (a = GlobalData.optManager.GetObjectPtr(n[r], !1)).tstyleindex = d(a.StyleRecord),
+        (a = T3Gv.optManager.GetObjectPtr(n[r], !1)).tstyleindex = d(a.StyleRecord),
         p = a.GetTable(!1)
       ) {
         var m = p.cells.length;
@@ -10334,29 +10316,29 @@ SDF.WriteEffect = function (e, t, a) {
   },
   SDF.ShapeParamToSDR = function (e, t) {
     var a = 0,
-      r = ConstantData.SDRShapeTypes;
+      r = PolygonConstant.ShapeTypes;
     switch (e.dataclass) {
-      case r.SED_S_Pgm:
-      case r.SED_S_Pent:
-      case r.SED_S_PentL:
-      case r.SED_S_Hex:
+      case r.PARALLELOGRAM:
+      case r.PENTAGON:
+      case r.PENTAGON_LEFT:
+      case r.HEXAGON:
         a = SDF.ToSDWinCoords(e.shapeparam, t.coordScaleFactor);
         break;
-      case r.SED_S_Oct:
+      case r.OCTAGON:
         a = e.shapeparam;
         break;
-      case r.SED_S_ArrL:
-      case r.SED_S_ArrR:
-      case r.SED_S_ArrT:
-      case r.SED_S_ArrB:
-      case r.SED_S_TrapB:
-      case r.SED_S_Trap:
-      case r.SED_S_Input:
-      case r.SED_S_TrapB:
-      case r.SED_S_Doc:
-      case r.SED_S_Store:
-      case r.SED_S_Delay:
-      case r.SED_S_Disp:
+      case r.ARROW_LEFT:
+      case r.ARROW_RIGHT:
+      case r.ARROW_TOP:
+      case r.ARROW_BOTTOM:
+      case r.TRAPEZOID_BOTTOM:
+      case r.TRAPEZOID:
+      case r.INPUT:
+      case r.TRAPEZOID_BOTTOM:
+      case r.DOCUMENT:
+      case r.STORAGE:
+      case r.DELAY:
+      case r.DISPLAY:
         a = SDF.ToSDWinCoords(e.shapeparam, t.coordScaleFactor)
     }
     return a
@@ -10472,7 +10454,7 @@ SDF.WriteEffect = function (e, t, a) {
             break;
           case ConstantData.LineType.POLYLINE:
             g = ConstantData2.ObjectTypes.SED_PolyL,
-              D = ConstantData.SDRShapeTypes.SED_S_Poly;
+              D = PolygonConstant.ShapeTypes.POLYGON;
             break;
           case ConstantData.LineType.FREEHAND:
             g = ConstantData2.ObjectTypes.SED_Freehand
@@ -10513,7 +10495,7 @@ SDF.WriteEffect = function (e, t, a) {
                 p++
               ) M.push(new Point(b[P[p]].x, b[P[p]].y));
             else M = Utils1.DeepCopy(b);
-            b = GlobalData.optManager.InflateLine(M, u.StyleRecord.Line.BThick, !0, !1),
+            b = T3Gv.optManager.InflateLine(M, u.StyleRecord.Line.BThick, !0, !1),
               u.StartPoint = Utils1.DeepCopy(b[0]),
               u.EndPoint = Utils1.DeepCopy(b[b.length - 1]);
             var R = Utils1.DeepCopy(u.polylist.segs);
@@ -10564,34 +10546,34 @@ SDF.WriteEffect = function (e, t, a) {
         c
         ) {
           case ConstantData.ShapeType.RECT:
-            D = ConstantData.SDRShapeTypes.SED_S_Rect;
+            D = PolygonConstant.ShapeTypes.RECTANGLE;
             break;
           case ConstantData.ShapeType.RRECT:
-            D = ConstantData.SDRShapeTypes.SED_S_RRect;
+            D = PolygonConstant.ShapeTypes.ROUNDED_RECTANGLE;
             break;
           case ConstantData.ShapeType.OVAL:
             D = Math.abs(a.Frame.x - a.Frame.y) < 0.2 &&
-              a.ObjGrow === ConstantData.GrowBehavior.PROPORTIONAL ? ConstantData.SDRShapeTypes.SED_S_Circ : ConstantData.SDRShapeTypes.SED_S_Oval;
+              a.ObjGrow === ConstantData.GrowBehavior.PROPORTIONAL ? PolygonConstant.ShapeTypes.CIRCLE : PolygonConstant.ShapeTypes.OVAL;
             break;
           case ConstantData.ShapeType.POLYGON:
             a.dataclass ? (D = a.dataclass, n = SDF.ShapeParamToSDR(a, r)) : (
-              a.dataclass = ConstantData.SDRShapeTypes.SED_S_Poly,
+              a.dataclass = PolygonConstant.ShapeTypes.POLYGON,
               D = a.dataclass
             );
             break;
           case 'CLOSEDPOLY':
-            D = ConstantData.SDRShapeTypes.SED_S_Poly;
+            D = PolygonConstant.ShapeTypes.POLYGON;
             break;
           case ConstantData.ShapeType.GROUPSYMBOL:
-            D = ConstantData.SDRShapeTypes.SED_S_Rect,
+            D = PolygonConstant.ShapeTypes.RECTANGLE,
               T = I.GROUPSYMBOL;
             break;
           case ConstantData.ShapeType.SVGFRAGMENTSYMBOL:
-            D = ConstantData.SDRShapeTypes.SED_S_Rect,
+            D = PolygonConstant.ShapeTypes.RECTANGLE,
               T = I.SVGFRAGMENTSYMBOL;
             break;
           default:
-            D = ConstantData.SDRShapeTypes.SED_S_Rect
+            D = PolygonConstant.ShapeTypes.RECTANGLE
         }
         break;
       case ConstantData.DrawingObjectBaseClass.CONNECTOR:
@@ -10747,7 +10729,7 @@ SDF.WriteEffect = function (e, t, a) {
       }
       u.x = t.hooks[i].connect.x,
         u.y = t.hooks[i].connect.y,
-        l = GlobalData.optManager.GetObjectPtr(t.hooks[i].objid, !1),
+        l = T3Gv.optManager.GetObjectPtr(t.hooks[i].objid, !1),
         SDF.LineIsReversed(l, a, !0) &&
         (u.x = d - u.x, u.y = d - u.y),
         o = null == t.hooks[i].cellid ? ConstantData.Defines.SED_DNULL : t.hooks[i].cellid,
@@ -10783,16 +10765,16 @@ SDF.WriteEffect = function (e, t, a) {
   },
   SDF.TextSizeToPointSize = function (e, t) {
     var a = 0;
-    t ? a = t.docDpi : a = GlobalData.optManager.svgDoc.GetWorkArea().docDpi;
+    t ? a = t.docDpi : a = T3Gv.optManager.svgDoc.GetWorkArea().docDpi;
     return Math.round(72 * e / a)
   },
   SDF.WriteText = function (e, t, a, r, i, n) {
     var o,
       s;
     if (
-      r ? (o = r, s = r.ID) : i ? t ? (o = GlobalData.objectStore.GetObject(t.NoteID), s = t.NoteID) : a &&
-        (o = GlobalData.objectStore.GetObject(a.NoteID), s = a.NoteID) : t ? (o = GlobalData.objectStore.GetObject(t.DataID), s = t.DataID) : a &&
-          (o = GlobalData.objectStore.GetObject(a.DataID), s = a.DataID),
+      r ? (o = r, s = r.ID) : i ? t ? (o = T3Gv.objectStore.GetObject(t.NoteID), s = t.NoteID) : a &&
+        (o = T3Gv.objectStore.GetObject(a.NoteID), s = a.NoteID) : t ? (o = T3Gv.objectStore.GetObject(t.DataID), s = t.DataID) : a &&
+          (o = T3Gv.objectStore.GetObject(a.DataID), s = a.DataID),
       null != o
     ) {
       var l,
@@ -10816,7 +10798,7 @@ SDF.WriteEffect = function (e, t, a) {
         P = [];
       if (!b) {
         if (!r) return;
-        b = GlobalData.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.TEXT).GetRuntimeText()
+        b = T3Gv.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.TEXT).GetRuntimeText()
       }
       for (C = [], 0, d = 0, c = b.charStyles.length, M = new Array(c), l = 0; l < c; l++) M[l] = d;
       for (l = 0; l < b.paraInfo.length; l++) for (
@@ -11062,7 +11044,7 @@ SDF.WriteEffect = function (e, t, a) {
     var a;
     a = SDF.Write_CODE(e, FileParser.SDROpCodesByName.SDF_C_SDDATA64C);
     var r = '';
-    r = GlobalData.optManager.theContentHeader.SDDataID >= 0 ? ListManager.SDData.SaveDataSets(!0, !0) : '<SDDATA></SDDATA>',
+    r = T3Gv.optManager.theContentHeader.SDDataID >= 0 ? ListManager.SDData.SaveDataSets(!0, !0) : '<SDDATA></SDDATA>',
       e.writeUCS2String(r, T3DataStream.LITTLE_ENDIAN, r.length + 1),
       SDF.Write_LENGTH(e, a)
   },
@@ -11413,18 +11395,18 @@ SDF.WriteEffect = function (e, t, a) {
       t.ExpandedViewID >= 0 &&
       (
         a.WriteBlocks ? SDF.WriteExpandedViewID(e, t.ExpandedViewID, a) : (
-          n = GlobalData.optManager.GetObjectPtr(t.ExpandedViewID, !1),
+          n = T3Gv.optManager.GetObjectPtr(t.ExpandedViewID, !1),
           SDF.WriteExpandedView(e, n, a)
         )
       ),
       t.Image
     ) {
-      var u = GlobalData.optManager.GetObjectPtr(t.EMFBlobBytesID, !1);
+      var u = T3Gv.optManager.GetObjectPtr(t.EMFBlobBytesID, !1);
       if (u) SDF.WriteCellImageHeader(e, t, a),
         this.EMFHash &&
         SDF.WriteString8(e, t.EMFHash, FileParser.SDROpCodesByName.SDF_C_EMFHASH, a),
         a.WriteBlocks ? SDF.WriteEMFBlobBytesID(e, t.EMFBlobBytesID, FileParser.Image_Dir.dir_meta, a) : SDF.WriteBlob(e, u.Bytes, FileParser.SDROpCodesByName.SDF_C_DRAWMETA),
-        (i = GlobalData.optManager.GetObjectPtr(t.BlobBytesID, !1)) &&
+        (i = T3Gv.optManager.GetObjectPtr(t.BlobBytesID, !1)) &&
         (
           a.WriteBlocks ? SDF.WriteBlobBytesID(e, t.BlobBytesID, FileParser.Image_Dir.dir_png, a) : SDF.WriteBlob(
             e,
@@ -11433,7 +11415,7 @@ SDF.WriteEffect = function (e, t, a) {
           )
         );
       else if (
-        i = GlobalData.optManager.GetObjectPtr(t.BlobBytesID, !1),
+        i = T3Gv.optManager.GetObjectPtr(t.BlobBytesID, !1),
         SDF.WriteCellImageHeader(e, t, a),
         i
       ) switch (i.ImageDir) {
@@ -11798,7 +11780,7 @@ SDF.GetBlocksByName = function (e, t) {
       n = new ArrayBuffer(10),
       o = new T3DataStream(n);
     for (
-      GlobalData.optManager.Table_Release(!1),
+      T3Gv.optManager.Table_Release(!1),
       e ||
         0 === TestServer.currentblocklist.length ? t = SDF.WriteAllBlocks() : (
         t = [],
@@ -11845,15 +11827,15 @@ SDF.GetBlocksByName = function (e, t) {
     } else {
       var l,
         S = new SDF.Result,
-        c = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
-        u = GlobalData.optManager.ZList();
+        c = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+        u = T3Gv.optManager.ZList();
       S.isTemplate = !1,
         S.sdp = c,
         S.gHash = new HashController(),// new SDUI.HashController,
-        S.tLMB = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !1),
+        S.tLMB = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1),
         l = u.slice(0),
-        GlobalData.optManager.DeleteObjects(l, !1),
-        GlobalData.optManager.UpdateLinks(),
+        T3Gv.optManager.DeleteObjects(l, !1),
+        T3Gv.optManager.UpdateLinks(),
         SDF.DeleteInstances(ConstantData.StoredObjectType.H_NATIVE_OBJECT),
         SDF.ReadFileFromBuffer(o.buffer, S)
     }
@@ -11861,7 +11843,7 @@ SDF.GetBlocksByName = function (e, t) {
   SDF.DeleteInstances = function (e) {
     var t,
       a,
-      r = GlobalData.objectStore.GetObjects(e);
+      r = T3Gv.objectStore.GetObjects(e);
     for (t = r.length, a = 0; a < t; a++) r[a].Delete()
   },
   SDF.ReplaceBlock = function (e) {
@@ -11890,79 +11872,79 @@ SDF.GetBlocksByName = function (e, t) {
         l = new T3DataStream(s),
         S = 6;
       l.endianness = T3DataStream.LITTLE_ENDIAN,
-        o.sdp = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
-        o.ctp = GlobalData.optManager.theContentHeader,
-        o.tLMB = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !1),
+        o.sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+        o.ctp = T3Gv.optManager.theContentHeader,
+        o.tLMB = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1),
         SDUI.Commands.MainController.SymbolLibraryBrowser.CurrentLibraryPath ? o.LibraryPathTarget = SDUI.Commands.MainController.SymbolLibraryBrowser.CurrentLibraryPath : o.LibraryPathTarget = SDUI.Commands.MainController.SymbolLibraryBrowser.LibraryPathTarget,
         o.WriteBlocks = !0;
-      var c = GlobalData.docHandler.svgDoc.GetWorkArea();
-      o.WindowSettings.wscale = GlobalData.docHandler.GetZoomFactor(),
+      var c = T3Gv.docUtil.svgDoc.GetWorkArea();
+      o.WindowSettings.wscale = T3Gv.docUtil.GetZoomFactor(),
         o.WindowSettings.worigin.x = c.scrollX,
         o.WindowSettings.worigin.y = c.scrollY,
         o.WindowSettings.wflags = 0,
-        GlobalData.docHandler.scaleToFit ? o.WindowSettings.wflags = ListManager.WFlags.W_Stf : GlobalData.docHandler.scaleToPage &&
+        T3Gv.docUtil.scaleToFit ? o.WindowSettings.wflags = ListManager.WFlags.W_Stf : T3Gv.docUtil.scaleToPage &&
           (o.WindowSettings.wflags = ListManager.WFlags.W_Page),
-        o.docDpi = GlobalData.docHandler.svgDoc.docInfo.docDpi,
-        GlobalData.optManager.theContentHeader.flags = Utils2.SetFlag(
-          GlobalData.optManager.theContentHeader.flags,
+        o.docDpi = T3Gv.docUtil.svgDoc.docInfo.docDpi,
+        T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
+          T3Gv.optManager.theContentHeader.flags,
           ConstantData.ContentHeaderFlags.CT_ShowGrid,
-          GlobalData.docHandler.documentConfig.showGrid
+          T3Gv.docUtil.docConfig.showGrid
         ),
-        GlobalData.optManager.theContentHeader.flags = Utils2.SetFlag(
-          GlobalData.optManager.theContentHeader.flags,
+        T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
+          T3Gv.optManager.theContentHeader.flags,
           ConstantData.ContentHeaderFlags.CT_ShowRulers,
-          GlobalData.docHandler.documentConfig.showRulers
+          T3Gv.docUtil.docConfig.showRulers
         ),
-        GlobalData.optManager.theContentHeader.flags = Utils2.SetFlag(
-          GlobalData.optManager.theContentHeader.flags,
+        T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
+          T3Gv.optManager.theContentHeader.flags,
           ConstantData.ContentHeaderFlags.CT_SnapToGridC,
-          GlobalData.docHandler.documentConfig.centerSnap &&
-          GlobalData.docHandler.documentConfig.enableSnap
+          T3Gv.docUtil.docConfig.centerSnap &&
+          T3Gv.docUtil.docConfig.enableSnap
         ),
-        GlobalData.optManager.theContentHeader.flags = Utils2.SetFlag(
-          GlobalData.optManager.theContentHeader.flags,
+        T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
+          T3Gv.optManager.theContentHeader.flags,
           ConstantData.ContentHeaderFlags.CT_SnapToGridTL,
-          !GlobalData.docHandler.documentConfig.centerSnap &&
-          GlobalData.docHandler.documentConfig.enableSnap
+          !T3Gv.docUtil.docConfig.centerSnap &&
+          T3Gv.docUtil.docConfig.enableSnap
         ),
-        GlobalData.optManager.theContentHeader.flags = Utils2.SetFlag(
-          GlobalData.optManager.theContentHeader.flags,
+        T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
+          T3Gv.optManager.theContentHeader.flags,
           ConstantData.ContentHeaderFlags.CT_ShowPageDividers,
-          GlobalData.docHandler.documentConfig.showPageDivider
+          T3Gv.docUtil.docConfig.showPageDivider
         ),
-        GlobalData.optManager.theContentHeader.flags = Utils2.SetFlag(
-          GlobalData.optManager.theContentHeader.flags,
+        T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
+          T3Gv.optManager.theContentHeader.flags,
           ConstantData.ContentHeaderFlags.CT_SnapToShapes_Off,
-          0 == GlobalData.docHandler.documentConfig.snapToShapes
+          0 == T3Gv.docUtil.docConfig.snapToShapes
         ),
-        GlobalData.optManager.theContentHeader.flags = Utils2.SetFlag(
-          GlobalData.optManager.theContentHeader.flags,
+        T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
+          T3Gv.optManager.theContentHeader.flags,
           ConstantData.ContentHeaderFlags.CT_ShowRulers,
-          GlobalData.docHandler.documentConfig.showRulers
+          T3Gv.docUtil.docConfig.showRulers
         ),
         1 === o.WindowSettings.wscale ? o.WindowSettings.wscale = 0 : o.WindowSettings.wscale *= 1000,
         o.ctp.smartpanelname = SDF.ToSDWinPanelName(ConstantData.DocumentContext.CurrentSmartPanel),
-        o.rulerSettings = GlobalData.docHandler.rulerSettings,
-        o.rulerSettings.show = GlobalData.docHandler.documentConfig.showRulers,
-        o.fontlist = GlobalData.optManager.theContentHeader.FontList,
-        o.RichGradients = GlobalData.optManager.RichGradients,
+        o.rulerConfig = T3Gv.docUtil.rulerConfig,
+        o.rulerConfig.show = T3Gv.docUtil.docConfig.showRulers,
+        o.fontlist = T3Gv.optManager.theContentHeader.FontList,
+        o.RichGradients = T3Gv.optManager.RichGradients,
         l.endianness = T3DataStream.LITTLE_ENDIAN;
-      var u = GlobalData.objectStore.GetObjects(ConstantData.StoredObjectType.BLOBBYTES_OBJECT),
-        p = GlobalData.objectStore.GetObjects(ConstantData.StoredObjectType.LM_TEXT_OBJECT),
-        d = GlobalData.objectStore.GetObjects(ConstantData.StoredObjectType.LM_NOTES_OBJECT),
-        D = GlobalData.objectStore.GetObjects(ConstantData.StoredObjectType.TABLE_OBJECT),
-        g = GlobalData.objectStore.GetObjects(ConstantData.StoredObjectType.GRAPH_OBJECT),
-        m = GlobalData.objectStore.GetObjects(ConstantData.StoredObjectType.EXPANDEDVIEW_OBJECT),
-        C = GlobalData.objectStore.GetObjects(ConstantData.StoredObjectType.LM_COMMENT_BLOCK),
-        y = GlobalData.optManager.ZList(),
-        f = GlobalData.objectStore.GetObjects(ConstantData.StoredObjectType.H_NATIVE_OBJECT),
-        L = GlobalData.objectStore.GetObjects(ConstantData.StoredObjectType.H_NATIVEWIN_OBJECT);
-      for (r = y.length, i = 0, n = 0; n < r; n++) (t = GlobalData.optManager.GetObjectPtr(y[n], !1)).bInGroup ||
+      var u = T3Gv.objectStore.GetObjects(ConstantData.StoredObjectType.BLOBBYTES_OBJECT),
+        p = T3Gv.objectStore.GetObjects(ConstantData.StoredObjectType.LM_TEXT_OBJECT),
+        d = T3Gv.objectStore.GetObjects(ConstantData.StoredObjectType.LM_NOTES_OBJECT),
+        D = T3Gv.objectStore.GetObjects(ConstantData.StoredObjectType.TABLE_OBJECT),
+        g = T3Gv.objectStore.GetObjects(ConstantData.StoredObjectType.GRAPH_OBJECT),
+        m = T3Gv.objectStore.GetObjects(ConstantData.StoredObjectType.EXPANDEDVIEW_OBJECT),
+        C = T3Gv.objectStore.GetObjects(ConstantData.StoredObjectType.LM_COMMENT_BLOCK),
+        y = T3Gv.optManager.ZList(),
+        f = T3Gv.objectStore.GetObjects(ConstantData.StoredObjectType.H_NATIVE_OBJECT),
+        L = T3Gv.objectStore.GetObjects(ConstantData.StoredObjectType.H_NATIVEWIN_OBJECT);
+      for (r = y.length, i = 0, n = 0; n < r; n++) (t = T3Gv.optManager.GetObjectPtr(y[n], !1)).bInGroup ||
         i++;
       var I = S + u.length + p.length + d.length + h.length + D.length + g.length + m.length + C.length + i + f.length + L.length;
       o.nblocks = I,
         o.BlockAction = SDF.BlockActions.NewDoc,
-        o.state = GlobalData.stateManager.CurrentStateID + GlobalData.stateManager.DroppedStates,
+        o.state = T3Gv.stateManager.CurrentStateID + T3Gv.stateManager.DroppedStates,
         o.delta = 0,
         SDF.WriteBlockWrapper(
           l,
@@ -11978,7 +11960,7 @@ SDF.GetBlocksByName = function (e, t) {
         SDF.Write_SDF_C_VERSION(
           l,
           FileParser.Platforms.SDF_SDJSBLOCK,
-          GlobalData.optManager.FileVersion
+          T3Gv.optManager.FileVersion
         ),
         SDF.SendState(new Uint8Array(l.buffer), o.state),
         a = SDF.WriteHeaderBlock(o, 1, null),
@@ -11987,11 +11969,11 @@ SDF.GetBlocksByName = function (e, t) {
         SDF.SendState(a, o.state),
         a = SDF.WriteSDDataBlock(o, 3),
         SDF.SendState(a, o.state);
-      var T = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !1);
+      var T = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1);
       for (
         a = SDF.WriteLayersBlock(T, o, 4),
         SDF.SendState(a, o.state),
-        e = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLinksBlockID, !1),
+        e = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, !1),
         a = SDF.WriteLinksBlock(e, o, 5),
         SDF.SendState(a, o.state),
         r = u.length,
@@ -12014,7 +11996,7 @@ SDF.GetBlocksByName = function (e, t) {
         SDF.SendState(a, o.state);
       for (S += r, r = D.length, n = 0; n < r; n++) a = SDF.WriteTableBlock(D[n], o, S + n),
         SDF.SendState(a, o.state);
-      for (S += r, r = y.length, i = 0, n = 0; n < r; n++) (t = GlobalData.optManager.GetObjectPtr(y[n], !1)).bInGroup ||
+      for (S += r, r = y.length, i = 0, n = 0; n < r; n++) (t = T3Gv.optManager.GetObjectPtr(y[n], !1)).bInGroup ||
         (
           a = SDF.WriteOBJBlock(t, o, S + i),
           i++,
@@ -12036,7 +12018,7 @@ SDF.GetBlocksByName = function (e, t) {
         SDF.SendState(a, o.state);
       return S += r
     } catch (e) {
-      GlobalData.optManager.Export_ExceptionCleanup(e)
+      T3Gv.optManager.Export_ExceptionCleanup(e)
     }
   },
   SDF.SaveAllBlocks = function (e, t) {
@@ -12049,7 +12031,7 @@ SDF.GetBlocksByName = function (e, t) {
       var a,
         r,
         i,
-        n = GlobalData.optManager.SocketAction.length,
+        n = T3Gv.optManager.SocketAction.length,
         o = ListManager.SocketActions;
       if (n) {
         var s = {
@@ -12057,7 +12039,7 @@ SDF.GetBlocksByName = function (e, t) {
           delta: 0,
           nblocks: 1
         };
-        for (a = 0; a < n; a++) switch (GlobalData.optManager.SocketAction[a]) {
+        for (a = 0; a < n; a++) switch (T3Gv.optManager.SocketAction[a]) {
           case o.SaveAllBlocks:
             SDF.WriteAllBlocks(),
               SDF.HeaderFilters = [],
@@ -12075,41 +12057,41 @@ SDF.GetBlocksByName = function (e, t) {
             break;
           case o.AddDupPage:
           case o.AddNewPage:
-            SDF.AddPage_Initiate(GlobalData.optManager.SocketAction[a], GlobalData.optManager.SocketAction[a + 1]);
+            SDF.AddPage_Initiate(T3Gv.optManager.SocketAction[a], T3Gv.optManager.SocketAction[a + 1]);
             break;
           case o.Insert_Template:
           case o.Insert_Document:
             SDF.AddPage_Initiate(
-              GlobalData.optManager.SocketAction[a],
-              GlobalData.optManager.SocketAction[a + 1],
-              GlobalData.optManager.SocketAction[a + 2]
+              T3Gv.optManager.SocketAction[a],
+              T3Gv.optManager.SocketAction[a + 1],
+              T3Gv.optManager.SocketAction[a + 2]
             );
             break;
           case o.ChangePage:
-            SDF.ChangePage_Initiate(- 1, GlobalData.optManager.SocketAction[a + 1]);
+            SDF.ChangePage_Initiate(- 1, T3Gv.optManager.SocketAction[a + 1]);
             break;
           case o.RenamePage:
             SDF.RenamePage_Initiate(
-              GlobalData.optManager.SocketAction[a + 1],
-              GlobalData.optManager.SocketAction[a + 2]
+              T3Gv.optManager.SocketAction[a + 1],
+              T3Gv.optManager.SocketAction[a + 2]
             );
             break;
           case o.RenamePage_NoSocket:
             SDF.RenamePage_InitiateSocketOpen(
-              GlobalData.optManager.SocketAction[a + 1],
-              GlobalData.optManager.SocketAction[a + 2]
+              T3Gv.optManager.SocketAction[a + 1],
+              T3Gv.optManager.SocketAction[a + 2]
             );
             break;
           case o.DeletePage_NoSocket:
-            SDF.DeletePage_InitiateSocketOpen(GlobalData.optManager.SocketAction[a + 1]);
+            SDF.DeletePage_InitiateSocketOpen(T3Gv.optManager.SocketAction[a + 1]);
             break;
           case o.DeletePage:
-            SDF.DeletePage_Initiate(GlobalData.optManager.SocketAction[a + 1]);
+            SDF.DeletePage_Initiate(T3Gv.optManager.SocketAction[a + 1]);
             break;
           case o.ReorderPages:
-            SDF.ReorderPages_Initiate(GlobalData.optManager.SocketAction[a + 1])
+            SDF.ReorderPages_Initiate(T3Gv.optManager.SocketAction[a + 1])
         }
-        GlobalData.optManager.SocketAction = []
+        T3Gv.optManager.SocketAction = []
       } else {
         SDF.WriteAllBlocks();
         SDF.HeaderFilters = [],
@@ -12123,10 +12105,10 @@ SDF.GetBlocksByName = function (e, t) {
             r = SDF.WriteManifestBlock(i, SDF.BlockActions.CurrentPage),
             SDF.SendState(r, - 1)
           ),
-          GlobalData.optManager.OldFileMetaData &&
+          T3Gv.optManager.OldFileMetaData &&
           (
-            SDF.WriteFileMetadata(GlobalData.optManager.OldFileMetaData),
-            GlobalData.optManager.OldFileMetaData = null
+            SDF.WriteFileMetadata(T3Gv.optManager.OldFileMetaData),
+            T3Gv.optManager.OldFileMetaData = null
           )
       }
       // SDUI.Commands.MainController.PagedSDRController.SetOperationInProgress(!0),
@@ -12233,62 +12215,62 @@ SDF.GetBlocksByName = function (e, t) {
       o = ConstantData.StoredObjectType;
     switch (e.Type) {
       case o.BASE_LM_DRAWING_OBJECT:
-        if ((i = GlobalData.objectStore.GetObject(e.ID)) && !i.Data.bInGroup) {
+        if ((i = T3Gv.objectStore.GetObject(e.ID)) && !i.Data.bInGroup) {
           if (a) return !0;
           n = SDF.WriteOBJBlock(i.Data, t, r)
         }
         break;
       case o.LM_TEXT_OBJECT:
-        if (i = GlobalData.objectStore.GetObject(e.ID)) {
+        if (i = T3Gv.objectStore.GetObject(e.ID)) {
           if (a) return !0;
           n = SDF.WriteTextBlock(i, t, !1, r)
         }
         break;
       case o.LM_NOTES_OBJECT:
-        if (i = GlobalData.objectStore.GetObject(e.ID)) {
+        if (i = T3Gv.objectStore.GetObject(e.ID)) {
           if (a) return !0;
           n = SDF.WriteTextBlock(i, t, !0, r)
         }
         break;
       case o.TABLE_OBJECT:
-        if (i = GlobalData.objectStore.GetObject(e.ID)) {
+        if (i = T3Gv.objectStore.GetObject(e.ID)) {
           if (a) return !0;
           n = SDF.WriteTableBlock(i, t, r)
         }
         break;
       case o.GRAPH_OBJECT:
-        if (i = GlobalData.objectStore.GetObject(e.ID)) {
+        if (i = T3Gv.objectStore.GetObject(e.ID)) {
           if (a) return !0;
           n = SDF.WriteGraphBlock(i, t, r)
         }
         break;
       case o.EXPANDEDVIEW_OBJECT:
-        if (i = GlobalData.objectStore.GetObject(e.ID)) {
+        if (i = T3Gv.objectStore.GetObject(e.ID)) {
           if (a) return !0;
           n = SDF.WriteExpandedViewBlock(i, t, r)
         }
         break;
       case o.LM_COMMENT_BLOCK:
-        if (i = GlobalData.objectStore.GetObject(e.ID)) {
+        if (i = T3Gv.objectStore.GetObject(e.ID)) {
           if (a) return !0;
           n = SDF.WriteCommentBlock(i, t, r)
         }
         break;
 
       case o.BLOBBYTES_OBJECT:
-        if (i = GlobalData.objectStore.GetObject(e.ID)) {
+        if (i = T3Gv.objectStore.GetObject(e.ID)) {
           if (a) return !0;
           n = SDF.WriteImageBlock(i, t, r)
         }
         break;
       case o.H_NATIVE_OBJECT:
-        if (i = GlobalData.objectStore.GetObject(e.ID)) {
+        if (i = T3Gv.objectStore.GetObject(e.ID)) {
           if (a) return !0;
           n = SDF.WriteNativeBlock(i, FileParser.SDROpCodesByName.SDF_C_NATIVEBLOCK, t, r)
         }
         break;
       case o.H_NATIVEWIN_OBJECT:
-        if (i = GlobalData.objectStore.GetObject(e.ID)) {
+        if (i = T3Gv.objectStore.GetObject(e.ID)) {
           if (a) return !0;
           n = SDF.WriteNativeBlock(i, FileParser.SDROpCodesByName.SDF_C_NATIVEWINBLOCK, t, r)
         }
@@ -12299,7 +12281,7 @@ SDF.GetBlocksByName = function (e, t) {
         break;
       case o.SDDATA_OBJECT:
         if (a) return !0;
-        GlobalData.optManager.theContentHeader.SDDataID >= 0 &&
+        T3Gv.optManager.theContentHeader.SDDataID >= 0 &&
           (n = SDF.WriteSDDataBlock(t, r));
         break;
       case o.LAYERS_MANAGER_OBJECT:
@@ -12307,7 +12289,7 @@ SDF.GetBlocksByName = function (e, t) {
         n = SDF.WriteLayersBlock(t.tLMB, t, r);
         break;
       case o.LINKLIST_OBJECT:
-        if (i = GlobalData.objectStore.GetObject(e.ID)) {
+        if (i = T3Gv.objectStore.GetObject(e.ID)) {
           if (a) return !0;
           n = SDF.WriteLinksBlock(i.Data, t, r)
         }
@@ -12347,73 +12329,73 @@ SDF.GetBlocksByName = function (e, t) {
         h = {};
       null == a &&
         (a = e),
-        p = (d = GlobalData.stateManager.States[e].StoredObjects).length,
-        D.sdp = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
-        D.ctp = GlobalData.optManager.theContentHeader,
-        D.tLMB = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !1),
-        D.fontlist = GlobalData.optManager.theContentHeader.FontList,
-        D.RichGradients = GlobalData.optManager.RichGradients,
+        p = (d = T3Gv.stateManager.States[e].StoredObjects).length,
+        D.sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+        D.ctp = T3Gv.optManager.theContentHeader,
+        D.tLMB = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1),
+        D.fontlist = T3Gv.optManager.theContentHeader.FontList,
+        D.RichGradients = T3Gv.optManager.RichGradients,
 
         // Double ===
         // SDUI.Commands.MainController.SymbolLibraryBrowser.CurrentLibraryPath ?
         //  D.LibraryPathTarget = SDUI.Commands.MainController.SymbolLibraryBrowser.CurrentLibraryPath :
         //   D.LibraryPathTarget = SDUI.Commands.MainController.SymbolLibraryBrowser.LibraryPathTarget,
         D.WriteBlocks = !0;
-      var m = GlobalData.docHandler.svgDoc.GetWorkArea();
+      var m = T3Gv.docUtil.svgDoc.GetWorkArea();
       if (
-        D.WindowSettings.wscale = GlobalData.docHandler.GetZoomFactor(),
+        D.WindowSettings.wscale = T3Gv.docUtil.GetZoomFactor(),
         D.WindowSettings.worigin.x = m.scrollX,
         D.WindowSettings.worigin.y = m.scrollY,
         D.WindowSettings.wflags = 0,
-        GlobalData.docHandler.scaleToFit ? D.WindowSettings.wflags = ListManager.WFlags.W_Stf : GlobalData.docHandler.scaleToPage &&
+        T3Gv.docUtil.scaleToFit ? D.WindowSettings.wflags = ListManager.WFlags.W_Stf : T3Gv.docUtil.scaleToPage &&
           (D.WindowSettings.wflags = ListManager.WFlags.W_Page),
-        D.docDpi = GlobalData.docHandler.svgDoc.docInfo.docDpi,
+        D.docDpi = T3Gv.docUtil.svgDoc.docInfo.docDpi,
         1 === D.WindowSettings.wscale ? D.WindowSettings.wscale = 0 : D.WindowSettings.wscale *= 1000,
-        GlobalData.optManager.theContentHeader.flags = Utils2.SetFlag(
-          GlobalData.optManager.theContentHeader.flags,
+        T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
+          T3Gv.optManager.theContentHeader.flags,
           ConstantData.ContentHeaderFlags.CT_ShowGrid,
-          GlobalData.docHandler.documentConfig.showGrid
+          T3Gv.docUtil.docConfig.showGrid
         ),
-        GlobalData.optManager.theContentHeader.flags = Utils2.SetFlag(
-          GlobalData.optManager.theContentHeader.flags,
+        T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
+          T3Gv.optManager.theContentHeader.flags,
           ConstantData.ContentHeaderFlags.CT_ShowRulers,
-          GlobalData.docHandler.documentConfig.showRulers
+          T3Gv.docUtil.docConfig.showRulers
         ),
-        GlobalData.optManager.theContentHeader.flags = Utils2.SetFlag(
-          GlobalData.optManager.theContentHeader.flags,
+        T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
+          T3Gv.optManager.theContentHeader.flags,
           ConstantData.ContentHeaderFlags.CT_SnapToGridC,
-          GlobalData.docHandler.documentConfig.centerSnap &&
-          GlobalData.docHandler.documentConfig.enableSnap
+          T3Gv.docUtil.docConfig.centerSnap &&
+          T3Gv.docUtil.docConfig.enableSnap
         ),
-        GlobalData.optManager.theContentHeader.flags = Utils2.SetFlag(
-          GlobalData.optManager.theContentHeader.flags,
+        T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
+          T3Gv.optManager.theContentHeader.flags,
           ConstantData.ContentHeaderFlags.CT_SnapToGridTL,
-          !GlobalData.docHandler.documentConfig.centerSnap &&
-          GlobalData.docHandler.documentConfig.enableSnap
+          !T3Gv.docUtil.docConfig.centerSnap &&
+          T3Gv.docUtil.docConfig.enableSnap
         ),
-        GlobalData.optManager.theContentHeader.flags = Utils2.SetFlag(
-          GlobalData.optManager.theContentHeader.flags,
+        T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
+          T3Gv.optManager.theContentHeader.flags,
           ConstantData.ContentHeaderFlags.CT_ShowPageDividers,
-          GlobalData.docHandler.documentConfig.showPageDivider
+          T3Gv.docUtil.docConfig.showPageDivider
         ),
-        GlobalData.optManager.theContentHeader.flags = Utils2.SetFlag(
-          GlobalData.optManager.theContentHeader.flags,
+        T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
+          T3Gv.optManager.theContentHeader.flags,
           ConstantData.ContentHeaderFlags.CT_SnapToShapes_Off,
-          0 == GlobalData.docHandler.documentConfig.snapToShapes
+          0 == T3Gv.docUtil.docConfig.snapToShapes
         ),
-        GlobalData.optManager.theContentHeader.flags = Utils2.SetFlag(
-          GlobalData.optManager.theContentHeader.flags,
+        T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
+          T3Gv.optManager.theContentHeader.flags,
           ConstantData.ContentHeaderFlags.CT_ShowRulers,
-          GlobalData.docHandler.documentConfig.showRulers
+          T3Gv.docUtil.docConfig.showRulers
         ),
-        D.ctp.smartpanelname = SDF.ToSDWinPanelName(ConstantData.DocumentContext.CurrentSmartPanel),
-        D.rulerSettings = GlobalData.docHandler.rulerSettings,
-        D.rulerSettings.show = GlobalData.docHandler.documentConfig.showRulers,
+        // D.ctp.smartpanelname = SDF.ToSDWinPanelName(ConstantData.DocumentContext.CurrentSmartPanel),
+        D.rulerConfig = T3Gv.docUtil.rulerConfig,
+        D.rulerConfig.show = T3Gv.docUtil.docConfig.showRulers,
         l = 1,
         t < 0 &&
-        e + 1 < GlobalData.stateManager.States.length
-      ) for (i = GlobalData.stateManager.States[e + 1].StoredObjects.length, n = 0; n < i; n++) if (
-        (o = GlobalData.stateManager.States[e + 1].StoredObjects[n]).StateOperationTypeID === Globals.StateOperationType.CREATE
+        e + 1 < T3Gv.stateManager.States.length
+      ) for (i = T3Gv.stateManager.States[e + 1].StoredObjects.length, n = 0; n < i; n++) if (
+        (o = T3Gv.stateManager.States[e + 1].StoredObjects[n]).StateOperationTypeID === Globals.StateOperationType.CREATE
       ) SDF.GetBlockName(o, !0) &&
         l++;
       else if (
@@ -12432,7 +12414,7 @@ SDF.GetBlocksByName = function (e, t) {
           l++
       }
       for (
-        i = (d = r || GlobalData.stateManager.States[e].StoredObjects).length,
+        i = (d = r || T3Gv.stateManager.States[e].StoredObjects).length,
         n = 0;
         n < i;
         n++
@@ -12443,14 +12425,14 @@ SDF.GetBlocksByName = function (e, t) {
       if (
         D.nblocks = l,
         D.BlockAction = SDF.BlockActions.Normal,
-        D.state = a + GlobalData.stateManager.DroppedStates,
+        D.state = a + T3Gv.stateManager.DroppedStates,
         // D.state === SDF_StateSent &&
         1 === t &&
         (t = 0),
         D.delta = t,
         g = [],
         S = 0,
-        GlobalData.gTestException
+        T3Gv.gTestException
       ) {
         var C = new Error(Resources.Strings.Error_InComplete);
         throw C.name = '1',
@@ -12461,9 +12443,9 @@ SDF.GetBlocksByName = function (e, t) {
         // SDF.SendState(s, D.state),
         S++,
         t < 0 &&
-        e + 1 < GlobalData.stateManager.States.length
-      ) for (i = GlobalData.stateManager.States[e + 1].StoredObjects.length, n = 0; n < i; n++) if (
-        (o = GlobalData.stateManager.States[e + 1].StoredObjects[n]).StateOperationTypeID === Globals.StateOperationType.CREATE
+        e + 1 < T3Gv.stateManager.States.length
+      ) for (i = T3Gv.stateManager.States[e + 1].StoredObjects.length, n = 0; n < i; n++) if (
+        (o = T3Gv.stateManager.States[e + 1].StoredObjects[n]).StateOperationTypeID === Globals.StateOperationType.CREATE
       ) SDF.GetBlockName(o, !0, h) &&
         (
           s = SDF.WriteActionBlock(D, h.type, h.id, SDF.BlockActions.Delete, S),
@@ -12472,7 +12454,7 @@ SDF.GetBlocksByName = function (e, t) {
         );
       else if (
         o.StateOperationTypeID === Globals.StateOperationType.DELETE
-      ) o = GlobalData.objectStore.GetObject(o.ID),
+      ) o = T3Gv.objectStore.GetObject(o.ID),
         (s = SDF.BuildObjectBlock(o, D, !1, S))
       //&&
       // (SDF.SendState(s, D.state), S++, g.push(o.ID));
@@ -12484,7 +12466,7 @@ SDF.GetBlocksByName = function (e, t) {
         }
         u ||
           (
-            o = GlobalData.objectStore.GetObject(o.ID),
+            o = T3Gv.objectStore.GetObject(o.ID),
             (s = SDF.BuildObjectBlock(o, D, !1, S))
             // &&
             // (SDF.SendState(s, D.state), S++)
@@ -12514,7 +12496,7 @@ SDF.GetBlocksByName = function (e, t) {
       //     // SDUI.Commands.MainController.ShowModeless(Resources.Controls.Modals.Hint_AutoSave.Id)
       //   )
     } catch (C) {
-      GlobalData.optManager.Export_ExceptionCleanup(C)
+      T3Gv.optManager.Export_ExceptionCleanup(C)
     }
   },
   SDF.WriteBlockWrapper = function (e, t, a, r, i, n, o, s) {
@@ -12557,10 +12539,10 @@ SDF.GetBlocksByName = function (e, t) {
       ),
       e.sdp.background.Paint.FillType !== ConstantData.FillTypes.SDFILL_TRANSPARENT &&
       SDF.WriteSDFill(n, e.sdp.background, e),
-      (r = GlobalData.optManager.TextureList.Textures.length) > GlobalData.optManager.NStdTextures
+      (r = T3Gv.optManager.TextureList.Textures.length) > T3Gv.optManager.NStdTextures
     ) {
-      for (a = GlobalData.optManager.NStdTextures; a < r; a++) e.TextureList.push(a);
-      SDF.WriteTextureList(n, GlobalData.optManager.TextureList, e)
+      for (a = T3Gv.optManager.NStdTextures; a < r; a++) e.TextureList.push(a);
+      SDF.WriteTextureList(n, T3Gv.optManager.TextureList, e)
     }
     return SDF.WriteRulers(n, e),
       SDF.WriteRecentList(n, e),
@@ -12909,7 +12891,7 @@ SDF.WriteCommentList = function (e, t) {
   var a,
     r,
     i,
-    n = GlobalData.objectStore.GetObjects(ConstantData.StoredObjectType.LM_COMMENT_BLOCK);
+    n = T3Gv.objectStore.GetObjects(ConstantData.StoredObjectType.LM_COMMENT_BLOCK);
   if (n && n.length) for (a = n.length, r = 0; r < a; r++) if (i = n[r]) {
     var o = SDF.Write_CODE(e, FileParser.SDROpCodesByName.SDF_C_CLOUDCOMMENTBLOCK);
     e.writeUint32(SDF.BlockIDtoUniqueID(i.Data.objectID, t)),
@@ -12989,7 +12971,7 @@ SDF.GetSocketClientOptions = function () {
     token: ConstantData.DocumentContext.UserToken,
     docType: SDUI.Commands.MainController.SmartPanels.GetCurrentSmartPanel() ||
       (
-        GlobalData.optManager.theContentHeader.smartpanelname ? GlobalData.optManager.theContentHeader.smartpanelname.replaceAll(' ', '_') : null
+        T3Gv.optManager.theContentHeader.smartpanelname ? T3Gv.optManager.theContentHeader.smartpanelname.replaceAll(' ', '_') : null
       ),
     docId: null == ConstantData.DocumentContext.CloudFileMetadata.DepositoryID ? - 1 : ConstantData.DocumentContext.CloudFileMetadata.DepositoryID,
     docOwner: ConstantData.DocumentContext.CloudFileMetadata.SmartDrawUserID,
@@ -13011,32 +12993,32 @@ SDF.AddPage_Initiate = function (e, t, a) {
   var r = SDUI.Commands.MainController.PagedSDRController.GetManifest(),
     i = !1,
     n = ListManager.SocketActions;
-  GlobalData.optManager.SocketAction = [];
+  T3Gv.optManager.SocketAction = [];
   var o,
     s = !1;
   if (r) {
     if (
-      GlobalData.optManager.CloseEdit(),
-      GlobalData.optManager.svgDoc.GetSpellCheck().InAsyncSpellCheck()
+      T3Gv.optManager.CloseEdit(),
+      T3Gv.optManager.svgDoc.GetSpellCheck().InAsyncSpellCheck()
     ) return void setTimeout((function () {
       SDF.AddPage_Initiate(e, t, a)
     }), 2000);
-    if (GlobalData.optManager.svgDoc.GetSpellCheck().InAsyncSpellCheck()) return;
+    if (T3Gv.optManager.svgDoc.GetSpellCheck().InAsyncSpellCheck()) return;
     if (
       0 === r.TabOrder.length &&
-      (i = !0, s = !1 === GlobalData.optManager.GetDocDirtyState()),
+      (i = !0, s = !1 === T3Gv.optManager.GetDocDirtyState()),
       SDJS.SocketClient.GetStatus() != WebSocket.OPEN &&
       (
-        GlobalData.optManager.SocketAction = [],
+        T3Gv.optManager.SocketAction = [],
         i ? (
-          GlobalData.optManager.SocketAction.push(n.SaveAllBlocks),
-          GlobalData.optManager.SocketAction.push(e),
-          GlobalData.optManager.SocketAction.push(t),
-          GlobalData.optManager.SocketAction.push(a)
+          T3Gv.optManager.SocketAction.push(n.SaveAllBlocks),
+          T3Gv.optManager.SocketAction.push(e),
+          T3Gv.optManager.SocketAction.push(t),
+          T3Gv.optManager.SocketAction.push(a)
         ) : (
-          GlobalData.optManager.SocketAction.push(e),
-          GlobalData.optManager.SocketAction.push(t),
-          GlobalData.optManager.SocketAction.push(a)
+          T3Gv.optManager.SocketAction.push(e),
+          T3Gv.optManager.SocketAction.push(t),
+          T3Gv.optManager.SocketAction.push(a)
         ),
         SDJS.SocketClient.GetStatus() == WebSocket.CLOSED
       )
@@ -13051,7 +13033,7 @@ SDF.AddPage_Initiate = function (e, t, a) {
       delta: 0,
       nblocks: 1
     };
-    return GlobalData.optManager.SetDocReplaceState(!1),
+    return T3Gv.optManager.SetDocReplaceState(!1),
       i ? (
         s &&
         SDF.SaveAllBlocks(null, !0),
@@ -13061,11 +13043,11 @@ SDF.AddPage_Initiate = function (e, t, a) {
         ),
         o = SDF.WriteManifestBlock(r, SDF.BlockActions.AddPage),
         SDF.SendState(o, - 1),
-        GlobalData.optManager.PageAction = [],
+        T3Gv.optManager.PageAction = [],
         e = e === n.AddDupPage ? n.AddDupPage_Init : e === n.Insert_Template ? n.Insert_Template_Init : e === n.Insert_Document ? n.Insert_Document_Init : n.AddNewPage_Init,
-        GlobalData.optManager.PageAction.push(e),
-        GlobalData.optManager.PageAction.push(t),
-        void GlobalData.optManager.PageAction.push(a)
+        T3Gv.optManager.PageAction.push(e),
+        T3Gv.optManager.PageAction.push(t),
+        void T3Gv.optManager.PageAction.push(a)
       ) : (
         o = SDF.WriteActionBlock(
           l,
@@ -13075,10 +13057,10 @@ SDF.AddPage_Initiate = function (e, t, a) {
           0
         ),
         SDF.SendState(o, - 1),
-        GlobalData.optManager.PageAction = [],
-        GlobalData.optManager.PageAction.push(e),
-        GlobalData.optManager.PageAction.push(t),
-        void GlobalData.optManager.PageAction.push(a)
+        T3Gv.optManager.PageAction = [],
+        T3Gv.optManager.PageAction.push(e),
+        T3Gv.optManager.PageAction.push(t),
+        void T3Gv.optManager.PageAction.push(a)
       )
   }
 }
@@ -13088,14 +13070,14 @@ SDF.AddPage_Create = function (e, t, a) {
     i,
     n = ListManager.SocketActions,
     o = SDUI.Commands.MainController.PagedSDRController.GetManifest();
-  GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !0),
-    GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !1),
-    GlobalData.optManager.ZList();
-  switch (GlobalData.optManager.ClearAllObjects(e !== n.AddDupPage), e) {
+  T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !0),
+    T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1),
+    T3Gv.optManager.ZList();
+  switch (T3Gv.optManager.ClearAllObjects(e !== n.AddDupPage), e) {
     case n.Insert_Template:
     case n.Insert_Document:
-      GlobalData.optManager.DeleteAllObjects(),
-        GlobalData.optManager.ResetgListManager()
+      T3Gv.optManager.DeleteAllObjects(),
+        T3Gv.optManager.ResetgListManager()
   }
   var s = o.TabOrder.length;
   for (
@@ -13106,11 +13088,11 @@ SDF.AddPage_Create = function (e, t, a) {
   ) s++;
   switch (
   null != t ? (o.TabOrder.splice(t, 0, r), o.Initial = r) : (o.TabOrder.push(r), o.Initial = r),
-  GlobalData.optManager.PreserveUndoState(!0),
-  GlobalData.optManager.ResetStateManager(),
-  GlobalData.optManager.ClearFutureUndoStates(),
-  GlobalData.optManager.UpdateLinks(),
-  GlobalData.optManager.RenderAllSVGObjects(),
+  T3Gv.optManager.PreserveUndoState(!0),
+  T3Gv.optManager.ResetStateManager(),
+  T3Gv.optManager.ClearFutureUndoStates(),
+  T3Gv.optManager.UpdateLinks(),
+  T3Gv.optManager.RenderAllSVGObjects(),
   e
   ) {
     case n.Insert_Template:
@@ -13118,35 +13100,35 @@ SDF.AddPage_Create = function (e, t, a) {
       return SDUI.Commands.MainController.HintController.UI_Hide(),
         SDUI.Commands.MainController.Symbols.RemoveAllLibraries(),
         gBusinessController.StopAddingWalls(),
-        GlobalData.optManager.SetEditMode(ConstantData.EditState.DEFAULT),
+        T3Gv.optManager.SetEditMode(ConstantData.EditState.DEFAULT),
         void SDF.ReadFile(a, !0, SDF.AddPage_CallBack, o)
   }
-  GlobalData.optManager.SocketAction = [],
+  T3Gv.optManager.SocketAction = [],
     SDF.SaveAllBlocks(null, !0),
     i = SDF.WriteManifestBlock(o, SDF.BlockActions.AddPage),
     SDF.SendState(i, - 1),
-    GlobalData.optManager.PageAction = [],
-    GlobalData.optManager.PageAction.push(n.CompleteAdd),
-    GlobalData.optManager.SetDocDirtyState(!0)
+    T3Gv.optManager.PageAction = [],
+    T3Gv.optManager.PageAction.push(n.CompleteAdd),
+    T3Gv.optManager.SetDocDirtyState(!0)
 }
 
 SDF.AddPage_CallBack = function (e) {
   var t,
     a = ListManager.SocketActions;
-  GlobalData.optManager.SocketAction = [],
+  T3Gv.optManager.SocketAction = [],
     SDF.SaveAllBlocks(null, !0),
     SDF.HeaderFilters.push(FileParser.SDROpCodesByName.SDF_C_LIBLIST7),
-    SDF.SaveChangedBlocks(GlobalData.stateManager.CurrentStateID, 0),
+    SDF.SaveChangedBlocks(T3Gv.stateManager.CurrentStateID, 0),
     t = SDF.WriteManifestBlock(e, SDF.BlockActions.AddPage),
     SDF.SendState(t, - 1),
-    GlobalData.optManager.PageAction = [],
-    GlobalData.optManager.PageAction.push(a.CompleteAdd),
-    GlobalData.optManager.SetDocDirtyState(!0)
+    T3Gv.optManager.PageAction = [],
+    T3Gv.optManager.PageAction.push(a.CompleteAdd),
+    T3Gv.optManager.SetDocDirtyState(!0)
 }
 
 SDF.AddPage_Complete = function () {
   var e = SDUI.Commands.MainController.PagedSDRController.GetManifest();
-  GlobalData.optManager.PageAction = [],
+  T3Gv.optManager.PageAction = [],
     SDUI.Commands.MainController.PagedSDRController.Build(e),
     SDUI.Commands.MainController.PagedSDRController.SetOperationInProgress(!1)
 }
@@ -13155,35 +13137,35 @@ SDF.ChangePage_Initiate = function (e, t) {
   var a,
     r = SDUI.Commands.MainController.PagedSDRController.GetManifest(),
     i = ListManager.SocketActions;
-  if (GlobalData.optManager.SocketAction = [], null !== r) {
+  if (T3Gv.optManager.SocketAction = [], null !== r) {
     if (null == t) {
       var n = r.TabOrder.length;
       if (e < 0 || e >= n) return;
       a = r.TabOrder[e]
     } else a = t;
     if (a !== r.Initial) if (
-      GlobalData.optManager.CloseEdit(),
-      GlobalData.optManager.svgDoc.GetSpellCheck().InAsyncSpellCheck()
+      T3Gv.optManager.CloseEdit(),
+      T3Gv.optManager.svgDoc.GetSpellCheck().InAsyncSpellCheck()
     ) setTimeout((function () {
       SDF.ChangePage_Initiate(e, t)
     }), 2000);
     else if (
       SDJS.SocketClient.GetStatus() == WebSocket.OPEN ||
       (
-        GlobalData.optManager.SocketAction = [],
-        GlobalData.optManager.SocketAction.push(i.ChangePage),
-        GlobalData.optManager.SocketAction.push(a),
+        T3Gv.optManager.SocketAction = [],
+        T3Gv.optManager.SocketAction.push(i.ChangePage),
+        T3Gv.optManager.SocketAction.push(a),
         SDJS.SocketClient.GetStatus() != WebSocket.CLOSED
       )
     ) {
       SDUI.Commands.MainController.PagedSDRController.SetOperationInProgress(!0);
       var o = Utils1.DeepCopy(r);
       o.Initial = a,
-        GlobalData.optManager.SetDocReplaceState(!1);
+        T3Gv.optManager.SetDocReplaceState(!1);
       var s = SDF.WriteManifestBlock(o, SDF.BlockActions.ChangePage);
       SDF.SendState(s, - 1),
-        GlobalData.optManager.PageAction = [],
-        GlobalData.optManager.PageAction.push(ListManager.SocketActions.CompleteChange)
+        T3Gv.optManager.PageAction = [],
+        T3Gv.optManager.PageAction.push(ListManager.SocketActions.CompleteChange)
     } else null != ConstantData.DocumentContext.CloudFileMetadata &&
       null != ConstantData.DocumentContext.CloudFileMetadata.DepositoryID ? SDUI.Commands.MainController.ActiveSessionController.CheckDocumentBeforeOpenSocket() : SDJS.SocketClient.Init({
       }, SDF.GetSocketClientOptions)
@@ -13192,12 +13174,12 @@ SDF.ChangePage_Initiate = function (e, t) {
 
 SDF.ChangePage_Complete = function (e) {
   SDUI.Commands.MainController.PagedSDRController.SetManifest(e),
-    GlobalData.optManager.PageAction = [];
+    T3Gv.optManager.PageAction = [];
   var t,
     a = - 1;
-  GlobalData.optManager.PagesToDelete.length &&
+  T3Gv.optManager.PagesToDelete.length &&
     (
-      t = GlobalData.optManager.PagesToDelete[0],
+      t = T3Gv.optManager.PagesToDelete[0],
       (
         a = SDUI.Commands.MainController.PagedSDRController.GetPageNumber(e.Initial)
       ) >= t &&
@@ -13205,9 +13187,9 @@ SDF.ChangePage_Complete = function (e) {
       (a = 0)
     ),
     SDUI.Commands.MainController.PagedSDRController.ChangePage(a),
-    GlobalData.optManager.PagesToDelete.length &&
+    T3Gv.optManager.PagesToDelete.length &&
     (
-      GlobalData.optManager.PagesToDelete = [],
+      T3Gv.optManager.PagesToDelete = [],
       SDF.DeletePage_Initiate(t)
     )
 }
@@ -13216,26 +13198,26 @@ SDF.RenamePage_Initiate = function (e, t) {
   var a = SDUI.Commands.MainController.PagedSDRController.GetManifest(),
     r = ListManager.SocketActions;
   if (
-    GlobalData.optManager.SocketAction = [],
+    T3Gv.optManager.SocketAction = [],
     SDJS.SocketClient.GetStatus() == WebSocket.OPEN ||
     (
-      GlobalData.optManager.SocketAction = [],
-      GlobalData.optManager.SocketAction.push(r.RenamePage_NoSocket),
-      GlobalData.optManager.SocketAction.push(e),
-      GlobalData.optManager.SocketAction.push(t),
+      T3Gv.optManager.SocketAction = [],
+      T3Gv.optManager.SocketAction.push(r.RenamePage_NoSocket),
+      T3Gv.optManager.SocketAction.push(e),
+      T3Gv.optManager.SocketAction.push(t),
       SDJS.SocketClient.GetStatus() != WebSocket.CLOSED
     )
   ) {
     SDUI.Commands.MainController.PagedSDRController.SetOperationInProgress(!0),
-      GlobalData.optManager.SetDocReplaceState(!1);
+      T3Gv.optManager.SetDocReplaceState(!1);
     var i = Utils1.DeepCopy(a);
     i.TabOrder[e].toLowerCase() === i.Initial.toLowerCase() &&
       (i.Initial = t),
       i.TabOrder[e] = t;
     var n = SDF.WriteManifestBlock(i, SDF.BlockActions.RenamePage);
     SDF.SendState(n, - 1),
-      GlobalData.optManager.PageAction = [],
-      GlobalData.optManager.PageAction.push(ListManager.SocketActions.CompleteRename)
+      T3Gv.optManager.PageAction = [],
+      T3Gv.optManager.PageAction.push(ListManager.SocketActions.CompleteRename)
   } else null != ConstantData.DocumentContext.CloudFileMetadata &&
     null != ConstantData.DocumentContext.CloudFileMetadata.DepositoryID ? SDUI.Commands.MainController.ActiveSessionController.CheckDocumentBeforeOpenSocket() : SDJS.SocketClient.Init({
     }, SDF.GetSocketClientOptions)
@@ -13245,21 +13227,21 @@ SDF.RenamePage_InitiateSocketOpen = function (e, t) {
   var a = SDUI.Commands.MainController.PagedSDRController.GetManifest();
   ListManager.SocketActions;
   if (
-    GlobalData.optManager.SocketAction = [],
+    T3Gv.optManager.SocketAction = [],
     SDJS.SocketClient.GetStatus() == WebSocket.OPEN
   ) {
     var r = SDF.WriteManifestBlock(a, SDF.BlockActions.CurrentPage);
     SDF.SendState(r, - 1),
-      GlobalData.optManager.PageAction = [],
-      GlobalData.optManager.PageAction.push(ListManager.SocketActions.RenamePage),
-      GlobalData.optManager.PageAction.push(e),
-      GlobalData.optManager.PageAction.push(t)
+      T3Gv.optManager.PageAction = [],
+      T3Gv.optManager.PageAction.push(ListManager.SocketActions.RenamePage),
+      T3Gv.optManager.PageAction.push(e),
+      T3Gv.optManager.PageAction.push(t)
   }
 }
 
 SDF.RenamePage_Complete = function (e) {
   SDUI.Commands.MainController.PagedSDRController.SetManifest(e),
-    GlobalData.optManager.PageAction = [],
+    T3Gv.optManager.PageAction = [],
     SDUI.Commands.MainController.PagedSDRController.Build(e),
     SDUI.Commands.MainController.PagedSDRController.SetOperationInProgress(!1)
 }
@@ -13268,23 +13250,23 @@ SDF.DeletePage_Initiate = function (e) {
   var t = SDUI.Commands.MainController.PagedSDRController.GetManifest(),
     a = ListManager.SocketActions;
   if (
-    GlobalData.optManager.SocketAction = [],
+    T3Gv.optManager.SocketAction = [],
     SDJS.SocketClient.GetStatus() == WebSocket.OPEN ||
     (
-      GlobalData.optManager.SocketAction = [],
-      GlobalData.optManager.SocketAction.push(a.DeletePage_NoSocket),
-      GlobalData.optManager.SocketAction.push(e),
+      T3Gv.optManager.SocketAction = [],
+      T3Gv.optManager.SocketAction.push(a.DeletePage_NoSocket),
+      T3Gv.optManager.SocketAction.push(e),
       SDJS.SocketClient.GetStatus() != WebSocket.CLOSED
     )
   ) {
     SDUI.Commands.MainController.PagedSDRController.SetOperationInProgress(!0),
-      GlobalData.optManager.SetDocReplaceState(!1);
+      T3Gv.optManager.SetDocReplaceState(!1);
     var r = Utils1.DeepCopy(t);
     r.TabOrder.splice(e, 1);
     var i = SDF.WriteManifestBlock(r, SDF.BlockActions.DeletePage);
     SDF.SendState(i, - 1),
-      GlobalData.optManager.PageAction = [],
-      GlobalData.optManager.PageAction.push(ListManager.SocketActions.CompleteDelete)
+      T3Gv.optManager.PageAction = [],
+      T3Gv.optManager.PageAction.push(ListManager.SocketActions.CompleteDelete)
   } else null != ConstantData.DocumentContext.CloudFileMetadata &&
     null != ConstantData.DocumentContext.CloudFileMetadata.DepositoryID ? SDUI.Commands.MainController.ActiveSessionController.CheckDocumentBeforeOpenSocket() : SDJS.SocketClient.Init({
     }, SDF.GetSocketClientOptions)
@@ -13294,20 +13276,20 @@ SDF.DeletePage_InitiateSocketOpen = function (e) {
   var t = SDUI.Commands.MainController.PagedSDRController.GetManifest();
   ListManager.SocketActions;
   if (
-    GlobalData.optManager.SocketAction = [],
+    T3Gv.optManager.SocketAction = [],
     SDJS.SocketClient.GetStatus() == WebSocket.OPEN
   ) {
     var a = SDF.WriteManifestBlock(t, SDF.BlockActions.CurrentPage);
     SDF.SendState(a, - 1),
-      GlobalData.optManager.PageAction = [],
-      GlobalData.optManager.PageAction.push(ListManager.SocketActions.DeletePage),
-      GlobalData.optManager.PageAction.push(e)
+      T3Gv.optManager.PageAction = [],
+      T3Gv.optManager.PageAction.push(ListManager.SocketActions.DeletePage),
+      T3Gv.optManager.PageAction.push(e)
   }
 }
 
 SDF.DeletePage_Complete = function (e) {
   SDUI.Commands.MainController.PagedSDRController.SetManifest(e),
-    GlobalData.optManager.PageAction = [],
+    T3Gv.optManager.PageAction = [],
     null != e &&
     1 !== e.TabOrder.length ||
     (e = new Resources.PagedSDRManifest),
@@ -13318,21 +13300,21 @@ SDF.DeletePage_Complete = function (e) {
 SDF.ReorderPages_Initiate = function (e) {
   var t = ListManager.SocketActions;
   if (
-    GlobalData.optManager.SocketAction = [],
+    T3Gv.optManager.SocketAction = [],
     SDJS.SocketClient.GetStatus() == WebSocket.OPEN ||
     (
-      GlobalData.optManager.SocketAction = [],
-      GlobalData.optManager.SocketAction.push(t.ReorderPages),
-      GlobalData.optManager.SocketAction.push(e),
+      T3Gv.optManager.SocketAction = [],
+      T3Gv.optManager.SocketAction.push(t.ReorderPages),
+      T3Gv.optManager.SocketAction.push(e),
       SDJS.SocketClient.GetStatus() != WebSocket.CLOSED
     )
   ) {
     SDUI.Commands.MainController.PagedSDRController.SetOperationInProgress(!0),
-      GlobalData.optManager.SetDocReplaceState(!1);
+      T3Gv.optManager.SetDocReplaceState(!1);
     var a = SDF.WriteManifestBlock(e, SDF.BlockActions.ReorderPages);
     SDF.SendState(a, - 1),
-      GlobalData.optManager.PageAction = [],
-      GlobalData.optManager.PageAction.push(ListManager.SocketActions.CompleteReorder)
+      T3Gv.optManager.PageAction = [],
+      T3Gv.optManager.PageAction.push(ListManager.SocketActions.CompleteReorder)
   } else null != ConstantData.DocumentContext.CloudFileMetadata &&
     null != ConstantData.DocumentContext.CloudFileMetadata.DepositoryID ? SDUI.Commands.MainController.ActiveSessionController.CheckDocumentBeforeOpenSocket() : SDJS.SocketClient.Init({
     }, SDF.GetSocketClientOptions)
@@ -13340,7 +13322,7 @@ SDF.ReorderPages_Initiate = function (e) {
 
 SDF.ReorderPages_Complete = function (e) {
   SDUI.Commands.MainController.PagedSDRController.SetManifest(e),
-    GlobalData.optManager.PageAction = [],
+    T3Gv.optManager.PageAction = [],
     SDUI.Commands.MainController.PagedSDRController.Build(e),
     SDUI.Commands.MainController.PagedSDRController.SetOperationInProgress(!1)
 }
@@ -13359,12 +13341,12 @@ SDF.ConvertToVisio = function (e, t) {
     p = ConstantData.ObjFlags.SEDO_NotVisible;
   for (a = e.zList.length, r = 0; r < a; r++) if (
     n = e.zList[r],
-    !((i = GlobalData.optManager.GetObjectPtr(n, !1)).flags & p) &&
+    !((i = T3Gv.optManager.GetObjectPtr(n, !1)).flags & p) &&
     (c = i.ConvertToVisio(u, t))
   ) for (s = c.length, o = 0; o < s; o++) S.push(c[o]);
   if (e.zList = S, u.length) for (a = e.zList.length, r = 0; r < a; r++) for (
     n = e.zList[r],
-    s = (i = GlobalData.optManager.GetObjectPtr(n, !1)).hooks.length,
+    s = (i = T3Gv.optManager.GetObjectPtr(n, !1)).hooks.length,
     o = 0;
     o < s;
     o++
@@ -13379,7 +13361,7 @@ SDF.RasterizeSVGObjectsForVisioExport = function (e) {
     i,
     n = [],
     o = [],
-    s = GlobalData.optManager.ZList(),
+    s = T3Gv.optManager.ZList(),
     l = [];
   !function e(t, a) {
     var r,
@@ -13388,7 +13370,7 @@ SDF.RasterizeSVGObjectsForVisioExport = function (e) {
     for (r = 0; r < n; ++r) {
       var o;
       i = t[r],
-        (o = GlobalData.optManager.GetObjectPtr(i, !1)).ShapesInGroup &&
+        (o = T3Gv.optManager.GetObjectPtr(i, !1)).ShapesInGroup &&
           o.ShapesInGroup.length ? e(o.ShapesInGroup, a) : a.push(i)
     }
   }(s, l),
@@ -13397,15 +13379,15 @@ SDF.RasterizeSVGObjectsForVisioExport = function (e) {
   for (a = 0; a < t; a++) {
     if (
       i = s[a],
-      (r = GlobalData.optManager.GetObjectPtr(i, !1)).RasterizeSVGShapeForVisio
+      (r = T3Gv.optManager.GetObjectPtr(i, !1)).RasterizeSVGShapeForVisio
     ) if (- 1 != r.TableID) {
       var c,
         u,
         p,
-        d = GlobalData.optManager.GetObjectPtr(r.TableID, !1);
+        d = T3Gv.optManager.GetObjectPtr(r.TableID, !1);
       for (c = d.cells.length, u = 0; u < c; u++) if ((p = d.cells[u]).BlobBytesID >= 0) {
         if (
-          GlobalData.optManager.IsBlobURL(p.ImageURL) &&
+          T3Gv.optManager.IsBlobURL(p.ImageURL) &&
           p.SVGDim &&
           p.SVGDim.width &&
           p.SVGDim.height
@@ -13436,7 +13418,7 @@ SDF.RasterizeSVGObjectsForVisioExport = function (e) {
   if (0 != S) {
     var C = 0;
     i = o[0],
-      (r = GlobalData.optManager.GetObjectPtr(i, !1)).RasterizeSVGShapeForVisio(
+      (r = T3Gv.optManager.GetObjectPtr(i, !1)).RasterizeSVGShapeForVisio(
         (
           function t(a, r, i, s) {
             if (
@@ -13452,7 +13434,7 @@ SDF.RasterizeSVGObjectsForVisioExport = function (e) {
             ) e(n);
             else {
               var l = o[C];
-              GlobalData.optManager.GetObjectPtr(l, !1).RasterizeSVGShapeForVisio(t)
+              T3Gv.optManager.GetObjectPtr(l, !1).RasterizeSVGShapeForVisio(t)
             }
           }
         )
@@ -13486,84 +13468,84 @@ SDF.CleanDataURLs = function () {
     t,
     a,
     r,
-    i = GlobalData.optManager.ZList();
+    i = T3Gv.optManager.ZList();
   for (e = i.length, t = 0; t < e; t++) if (
     r = i[t],
-    null != (a = GlobalData.optManager.GetObjectPtr(r, !1)) &&
+    null != (a = T3Gv.optManager.GetObjectPtr(r, !1)) &&
     (
-      GlobalData.optManager.IsBlobURL(a.ImageURL) &&
-      GlobalData.optManager.DeleteURL(a.ImageURL),
+      T3Gv.optManager.IsBlobURL(a.ImageURL) &&
+      T3Gv.optManager.DeleteURL(a.ImageURL),
       a.UserData &&
       a.UserData.shape &&
       a.UserData.shape.SymbolURL &&
-      GlobalData.optManager.IsBlobURL(a.UserData.shape.SymbolURL) &&
-      GlobalData.optManager.DeleteURL(a.UserData.shape.SymbolURL),
+      T3Gv.optManager.IsBlobURL(a.UserData.shape.SymbolURL) &&
+      T3Gv.optManager.DeleteURL(a.UserData.shape.SymbolURL),
       - 1 != a.TableID
     )
   ) {
     var n,
       o,
       s,
-      l = GlobalData.optManager.GetObjectPtr(a.TableID, !1);
+      l = T3Gv.optManager.GetObjectPtr(a.TableID, !1);
     for (n = l.cells.length, o = 0; o < n; o++) (s = l.cells[o]).BlobBytesID >= 0 &&
-      GlobalData.optManager.IsBlobURL(s.ImageURL) &&
-      GlobalData.optManager.DeleteURL(s.ImageURL)
+      T3Gv.optManager.IsBlobURL(s.ImageURL) &&
+      T3Gv.optManager.DeleteURL(s.ImageURL)
   }
 }
 
 
 SDF.BuildBlockList = function () {
   var e = new SDF.WindowSettings,
-    t = GlobalData.docHandler.svgDoc.GetWorkArea();
-  e.wscale = GlobalData.docHandler.GetZoomFactor(),
+    t = T3Gv.docUtil.svgDoc.GetWorkArea();
+  e.wscale = T3Gv.docUtil.GetZoomFactor(),
     e.worigin.x = t.scrollX,
     e.worigin.y = t.scrollY,
     e.wflags = 0,
     e.leftpanelmode = SDUI.Commands.MainController.SmartPanels.GetLeftPanelMode(),
-    GlobalData.docHandler.scaleToFit ? e.wflags = ListManager.WFlags.W_Stf : GlobalData.docHandler.scaleToPage &&
+    T3Gv.docUtil.scaleToFit ? e.wflags = ListManager.WFlags.W_Stf : T3Gv.docUtil.scaleToPage &&
       (e.wflags = ListManager.WFlags.W_Page),
     1 === e.wscale &&
     (e.wscale = 0);
   var a = SDF.WriteUIInfo(null, null);
-  GlobalData.optManager.theContentHeader.flags = Utils2.SetFlag(
-    GlobalData.optManager.theContentHeader.flags,
+  T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
+    T3Gv.optManager.theContentHeader.flags,
     ConstantData.ContentHeaderFlags.CT_ShowGrid,
-    GlobalData.docHandler.documentConfig.showGrid
+    T3Gv.docUtil.docConfig.showGrid
   ),
-    GlobalData.optManager.theContentHeader.flags = Utils2.SetFlag(
-      GlobalData.optManager.theContentHeader.flags,
+    T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
+      T3Gv.optManager.theContentHeader.flags,
       ConstantData.ContentHeaderFlags.CT_ShowRulers,
-      GlobalData.docHandler.documentConfig.showRulers
+      T3Gv.docUtil.docConfig.showRulers
     ),
-    GlobalData.optManager.theContentHeader.flags = Utils2.SetFlag(
-      GlobalData.optManager.theContentHeader.flags,
+    T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
+      T3Gv.optManager.theContentHeader.flags,
       ConstantData.ContentHeaderFlags.CT_SnapToGridC,
-      GlobalData.docHandler.documentConfig.centerSnap &&
-      GlobalData.docHandler.documentConfig.enableSnap
+      T3Gv.docUtil.docConfig.centerSnap &&
+      T3Gv.docUtil.docConfig.enableSnap
     ),
-    GlobalData.optManager.theContentHeader.flags = Utils2.SetFlag(
-      GlobalData.optManager.theContentHeader.flags,
+    T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
+      T3Gv.optManager.theContentHeader.flags,
       ConstantData.ContentHeaderFlags.CT_SnapToGridTL,
-      !GlobalData.docHandler.documentConfig.centerSnap &&
-      GlobalData.docHandler.documentConfig.enableSnap
+      !T3Gv.docUtil.docConfig.centerSnap &&
+      T3Gv.docUtil.docConfig.enableSnap
     ),
-    GlobalData.optManager.theContentHeader.flags = Utils2.SetFlag(
-      GlobalData.optManager.theContentHeader.flags,
+    T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
+      T3Gv.optManager.theContentHeader.flags,
       ConstantData.ContentHeaderFlags.CT_ShowPageDividers,
-      GlobalData.docHandler.documentConfig.showPageDivider
+      T3Gv.docUtil.docConfig.showPageDivider
     ),
-    GlobalData.optManager.theContentHeader.flags = Utils2.SetFlag(
-      GlobalData.optManager.theContentHeader.flags,
+    T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
+      T3Gv.optManager.theContentHeader.flags,
       ConstantData.ContentHeaderFlags.CT_SnapToShapes_Off,
-      0 == GlobalData.docHandler.documentConfig.snapToShapes
+      0 == T3Gv.docUtil.docConfig.snapToShapes
     );
   var r = {
-    StoredObjects: GlobalData.objectStore.StoredObjects,
+    StoredObjects: T3Gv.objectStore.StoredObjects,
     stateManager: stateManager,
-    theContentHeader: GlobalData.optManager.theContentHeader,
-    RichGradients: GlobalData.optManager.RichGradients,
-    rulerSettings: GlobalData.docHandler.rulerSettings,
-    CommentUserIDs: Utils1.DeepCopy(GlobalData.optManager.CommentUserIDs),
+    theContentHeader: T3Gv.optManager.theContentHeader,
+    RichGradients: T3Gv.optManager.RichGradients,
+    rulerSettings: T3Gv.docUtil.rulerConfig,
+    CommentUserIDs: Utils1.DeepCopy(T3Gv.optManager.CommentUserIDs),
     WindowSettings: e,
     UI_Info: a,
     CURRENT_SEQ_OBJECT_ID: CURRENT_SEQ_OBJECT_ID
@@ -13709,21 +13691,21 @@ SDF.ReadBlockList = function (e) {
       }(s.stateManager);
     for (a = l.length, t = 0; t < a; t++) r = l[t],
       l[t] = o(r);
-    GlobalData.objectStore.StoredObjects = l,
+    T3Gv.objectStore.StoredObjects = l,
       stateManager = S,
       CURRENT_SEQ_OBJECT_ID = s.CURRENT_SEQ_OBJECT_ID,
-      GlobalData.optManager.theContentHeader = s.theContentHeader,
-      GlobalData.optManager.RichGradients = s.RichGradients,
-      GlobalData.optManager.CommentUserIDs = s.CommentUserIDs;
+      T3Gv.optManager.theContentHeader = s.theContentHeader,
+      T3Gv.optManager.RichGradients = s.RichGradients,
+      T3Gv.optManager.CommentUserIDs = s.CommentUserIDs;
     var c = new SDF.Result;
     c.LoadBlockList = !0,
       c.PaperType = SDJS.DocumentHandler.PrintHandler.CalcPaperTypeFromSize(
-        GlobalData.optManager.theContentHeader.Page.papersize.x,
-        GlobalData.optManager.theContentHeader.Page.papersize.y
+        T3Gv.optManager.theContentHeader.Page.papersize.x,
+        T3Gv.optManager.theContentHeader.Page.papersize.y
       ),
-      c.rulerSettings = s.rulerSettings,
+      c.rulerConfig = s.rulerConfig,
       c.WindowSettings = s.WindowSettings,
-      c.sdp = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
+      c.sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
       c.PVersion = SDF.SDF_PVERSION,
       c.FVersion = SDF.SDF_FVERSION,
       s.UI_Info &&
@@ -13744,26 +13726,26 @@ SDF.ReadBlockList = function (e) {
     var u,
       p,
       d = ConstantData.StoredObjectType;
-    for (GlobalData.optManager.CommentIdleTab(), t = 0; t < a; t++) switch ((r = l[t]).Type) {
+    for (T3Gv.optManager.CommentIdleTab(), t = 0; t < a; t++) switch ((r = l[t]).Type) {
       case d.TABLE_OBJECT:
-        GlobalData.optManager.Table_RebuildURLs(r.Data);
+        T3Gv.optManager.Table_RebuildURLs(r.Data);
         break;
       case d.BASE_LM_DRAWING_OBJECT:
         (i = r.Data) &&
           i.BlobBytesID >= 0 &&
-          GlobalData.optManager.IsBlobURL(i.ImageURL) &&
+          T3Gv.optManager.IsBlobURL(i.ImageURL) &&
           (
             u = i.GetBlobBytes(),
             p = FileParser.GetImageBlobType(u.ImageDir),
-            i.ImageURL = GlobalData.optManager.MakeURL(null, u.Bytes, p)
+            i.ImageURL = T3Gv.optManager.MakeURL(null, u.Bytes, p)
           );
         break;
       case d.TED_SESSION_OBJECT:
         (n = r.Data).theActiveTextEditObjectID = - 1,
           n.theActiveTableObjectID >= 0 &&
           (
-            GlobalData.optManager.Table_Release(!1, !0),
-            (i = GlobalData.optManager.GetObjectPtr(n.theActiveTableObjectID, !1)) &&
+            T3Gv.optManager.Table_Release(!1, !0),
+            (i = T3Gv.optManager.GetObjectPtr(n.theActiveTableObjectID, !1)) &&
             (i.DataID = - 1)
           ),
           n.theActiveTableObjectID = - 1,
@@ -13777,7 +13759,7 @@ SDF.ReadBlockList = function (e) {
         r.Data.tselect = - 1
     }
     SDUI.Commands.MainController.CollabOverlayController.InitCollabOverlay(),
-      GlobalData.optManager.RenderAllSVGObjects()
+      T3Gv.optManager.RenderAllSVGObjects()
   }
 }
 

@@ -7,11 +7,11 @@
 // import Basic from "./Basic.Index";
 // import GPP from "../gListManager";
 import $ from 'jquery';
-import HvacSVG from "../Helper/SVG.t2"
+import T3Svg from "../Helper/T3Svg"
 
 import Global from "./Basic.Global";
 
-import Document from "./Basic.Document";
+import Document from "./B.Document";
 import Utils1 from "../Helper/Utils1"
 import Utils2 from "../Helper/Utils2"
 import Utils3 from "../Helper/Utils3"
@@ -80,7 +80,7 @@ class Effects {
         if (!this.element.doc.DefExists(r)) {
           var c,
             u,
-            p = new HvacSVG.Container(HvacSVG.create('filter')),
+            p = new T3Svg.Container(T3Svg.create('filter')),
             d = 'SourceGraphic',
             D = [];
           for (
@@ -105,14 +105,14 @@ class Effects {
               )
             );
           for (
-            h = new HvacSVG.Container(HvacSVG.create('feMerge')),
+            h = new T3Svg.Container(T3Svg.create('feMerge')),
             S = D.length,
             a = 0;
             a < S;
             a++
-          ) (u = new HvacSVG.Element(HvacSVG.create('feMergeNode'))).attr('in', D[a]),
+          ) (u = new T3Svg.Element(T3Svg.create('feMergeNode'))).attr('in', D[a]),
             h.add(u);
-          (u = new HvacSVG.Element(HvacSVG.create('feMergeNode'))).attr('in', d),
+          (u = new T3Svg.Element(T3Svg.create('feMergeNode'))).attr('in', d),
             h.add(u),
             p.add(h),
             this.element.doc.Defs().add(p)
@@ -181,7 +181,7 @@ class Effects {
       )
     ) {
       if (c += a.id + r.id, !this.element.doc.DefExists(c)) {
-        var u = new HvacSVG.Container(HvacSVG.create('filter'));
+        var u = new T3Svg.Container(T3Svg.create('filter'));
         u.attr('id', c),
           u.attr('x', - a.pct),
           u.attr('y', - r.pct),
@@ -322,19 +322,19 @@ class Effects {
         '#000',
       l = t.size ||
         2;
-    (i = new HvacSVG.Element(HvacSVG.create('feFlood'))).attr('flood-color', s),
+    (i = new T3Svg.Element(T3Svg.create('feFlood'))).attr('flood-color', s),
       i.attr('flood-opacity', 0.3),
       i.attr('result', 'flood'),
       e.add(i),
-      (i = new HvacSVG.Element(HvacSVG.create('feComposite'))).attr('in', 'flood'),
+      (i = new T3Svg.Element(T3Svg.create('feComposite'))).attr('in', 'flood'),
       i.attr('in2', 'SourceAlpha'),
       i.attr('operator', 'in'),
       i.attr('result', 'mask'),
       e.add(i),
-      (i = new HvacSVG.Element(HvacSVG.create('feGaussianBlur'))).attr('in', 'mask'),
+      (i = new T3Svg.Element(T3Svg.create('feGaussianBlur'))).attr('in', 'mask'),
       i.attr('stdDeviation', l),
       e.add(i),
-      (i = new HvacSVG.Element(HvacSVG.create('feOffset'))).attr('dx', n),
+      (i = new T3Svg.Element(T3Svg.create('feOffset'))).attr('dx', n),
       i.attr('dy', o),
       i.attr('result', r),
       e.add(i)
@@ -347,16 +347,16 @@ class Effects {
     var i,
       n = t.size ||
         2;
-    (i = new HvacSVG.Element(HvacSVG.create('feFlood'))).attr('flood-color', '#FFF'),
+    (i = new T3Svg.Element(T3Svg.create('feFlood'))).attr('flood-color', '#FFF'),
       i.attr('flood-opacity', 0.3),
       i.attr('result', 'flood'),
       e.add(i),
-      (i = new HvacSVG.Element(HvacSVG.create('feComposite'))).attr('in2', 'flood'),
+      (i = new T3Svg.Element(T3Svg.create('feComposite'))).attr('in2', 'flood'),
       i.attr('in', 'SourceAlpha'),
       i.attr('operator', 'in'),
       i.attr('result', 'mask'),
       e.add(i),
-      (i = new HvacSVG.Element(HvacSVG.create('feGaussianBlur'))).attr('in', 'mask'),
+      (i = new T3Svg.Element(T3Svg.create('feGaussianBlur'))).attr('in', 'mask'),
       i.attr('stdDeviation', n),
       e.add(i)
   }
@@ -364,11 +364,11 @@ class Effects {
   DefineReflect(e, t, a, r) {
     //'use strict';
     var i;
-    (i = new HvacSVG.Element(HvacSVG.create('feFlood'))).attr('flood-color', '#FFF'),
+    (i = new T3Svg.Element(T3Svg.create('feFlood'))).attr('flood-color', '#FFF'),
       i.attr('flood-opacity', 0.3),
       i.attr('result', 'flood'),
       e.add(i),
-      (i = new HvacSVG.Element(HvacSVG.create('feComposite'))).attr('in2', 'flood'),
+      (i = new T3Svg.Element(T3Svg.create('feComposite'))).attr('in2', 'flood'),
       i.attr('in', a),
       i.attr('operator', 'in'),
       i.attr('result', 'mask'),
@@ -384,15 +384,15 @@ class Effects {
         '#fff',
       o = t.size ||
         2;
-    (i = new HvacSVG.Element(HvacSVG.create('feFlood'))).attr('flood-color', n),
+    (i = new T3Svg.Element(T3Svg.create('feFlood'))).attr('flood-color', n),
       i.attr('result', 'flood'),
       e.add(i),
-      (i = new HvacSVG.Element(HvacSVG.create('feComposite'))).attr('in', 'flood'),
+      (i = new T3Svg.Element(T3Svg.create('feComposite'))).attr('in', 'flood'),
       i.attr('in2', 'SourceAlpha'),
       i.attr('operator', 'in'),
       i.attr('result', 'mask'),
       e.add(i),
-      (i = new HvacSVG.Element(HvacSVG.create('feGaussianBlur'))).attr('in', 'mask'),
+      (i = new T3Svg.Element(T3Svg.create('feGaussianBlur'))).attr('in', 'mask'),
       i.attr('stdDeviation', o),
       i.attr('result', r),
       e.add(i)
@@ -434,18 +434,18 @@ class Effects {
     t.type == Effects.BevelType.HARD &&
       (s = 20),
       t.type == Effects.BevelType.BUMP ? (
-        (i = new HvacSVG.Element(HvacSVG.create('feMorphology'))).attr({
+        (i = new T3Svg.Element(T3Svg.create('feMorphology'))).attr({
           in: 'SourceAlpha',
           operator: 'erode',
           radius: o
         }),
         e.add(i),
-        (i = new HvacSVG.Element(HvacSVG.create('feGaussianBlur'))).attr({
+        (i = new T3Svg.Element(T3Svg.create('feGaussianBlur'))).attr({
           stdDeviation: o,
           result: 'blur'
         }),
         e.add(i),
-        (i = new HvacSVG.Element(HvacSVG.create('feComposite'))).attr({
+        (i = new T3Svg.Element(T3Svg.create('feComposite'))).attr({
           in: 'blur',
           in2: 'SourceAlpha',
           operator: 'arithmetic',
@@ -454,37 +454,37 @@ class Effects {
           result: 'inner'
         }),
         e.add(i),
-        (i = new HvacSVG.Element(HvacSVG.create('feComposite'))).attr({
+        (i = new T3Svg.Element(T3Svg.create('feComposite'))).attr({
           in: 'blur',
           in2: 'inner',
           operator: 'in'
         }),
         e.add(i)
       ) : (
-        (i = new HvacSVG.Element(HvacSVG.create('feGaussianBlur'))).attr({
+        (i = new T3Svg.Element(T3Svg.create('feGaussianBlur'))).attr({
           in: 'SourceAlpha',
           stdDeviation: o
         }),
         e.add(i),
-        (i = new HvacSVG.Element(HvacSVG.create('feComposite'))).attr({
+        (i = new T3Svg.Element(T3Svg.create('feComposite'))).attr({
           in2: 'SourceAlpha',
           operator: 'in'
         }),
         e.add(i)
       ),
-      (i = new HvacSVG.Container(HvacSVG.create('feDiffuseLighting'))).attr({
+      (i = new T3Svg.Container(T3Svg.create('feDiffuseLighting'))).attr({
         surfaceScale: s,
         'lighting-color': 'white',
         diffuseConstant: '1',
         result: 'hilite'
       }),
-      (n = new HvacSVG.Element(HvacSVG.create('feDistantLight'))).attr({
+      (n = new T3Svg.Element(T3Svg.create('feDistantLight'))).attr({
         azimuth: l,
         elevation: '40'
       }),
       i.add(n),
       e.add(i),
-      (i = new HvacSVG.Element(HvacSVG.create('feComposite'))).attr({
+      (i = new T3Svg.Element(T3Svg.create('feComposite'))).attr({
         in: a,
         in2: 'hilite',
         k1: 1.5,
@@ -537,48 +537,48 @@ class Effects {
       (c = 1.2),
       o /= 4,
       o = Math.max(Math.min(o, 20), 2),
-      (i = new HvacSVG.Element(HvacSVG.create('feGaussianBlur'))).attr({
+      (i = new T3Svg.Element(T3Svg.create('feGaussianBlur'))).attr({
         in: 'SourceAlpha',
         stdDeviation: o
       }),
       e.add(i),
-      (i = new HvacSVG.Element(HvacSVG.create('feComposite'))).attr({
+      (i = new T3Svg.Element(T3Svg.create('feComposite'))).attr({
         in2: 'SourceAlpha',
         operator: 'in'
       }),
       e.add(i),
-      (i = new HvacSVG.Container(HvacSVG.create('feSpecularLighting'))).attr({
+      (i = new T3Svg.Container(T3Svg.create('feSpecularLighting'))).attr({
         surfaceScale: 20,
         'lighting-color': 'white',
         specularConstant: c,
         specularExponent: 2,
         result: 'hilite'
       }),
-      (n = new HvacSVG.Element(HvacSVG.create('feDistantLight'))).attr({
+      (n = new T3Svg.Element(T3Svg.create('feDistantLight'))).attr({
         azimuth: u,
         elevation: '40'
       }),
       i.add(n),
       e.add(i),
-      (i = new HvacSVG.Element(HvacSVG.create('feFlood'))).attr({
+      (i = new T3Svg.Element(T3Svg.create('feFlood'))).attr({
         'flood-color': S,
         'flood-opacity': 0.7
       }),
       e.add(i),
-      (i = new HvacSVG.Element(HvacSVG.create('feComposite'))).attr({
+      (i = new T3Svg.Element(T3Svg.create('feComposite'))).attr({
         in2: 'SourceAlpha',
         operator: 'in',
         result: 'flood'
       }),
       e.add(i),
-      (i = new HvacSVG.Element(HvacSVG.create('feComposite'))).attr({
+      (i = new T3Svg.Element(T3Svg.create('feComposite'))).attr({
         in: 'hilite',
         in2: 'flood',
         k1: 1.5,
         operator: 'arithmetic'
       }),
       e.add(i),
-      (i = new HvacSVG.Element(HvacSVG.create('feBlend'))).attr({
+      (i = new T3Svg.Element(T3Svg.create('feBlend'))).attr({
         in2: a,
         mode: 'lighten',
         result: r
@@ -594,12 +594,12 @@ class Effects {
         '#fff',
       o = t.size ||
         0;
-    (i = new HvacSVG.Element(HvacSVG.create('feGaussianBlur'))).attr({
+    (i = new T3Svg.Element(T3Svg.create('feGaussianBlur'))).attr({
       in: 'SourceAlpha',
       stdDeviation: o
     }),
       e.add(i),
-      (i = new HvacSVG.Element(HvacSVG.create('feComposite'))).attr({
+      (i = new T3Svg.Element(T3Svg.create('feComposite'))).attr({
         in2: 'SourceAlpha',
         operator: 'arithmetic',
         k2: '-1',
@@ -607,17 +607,17 @@ class Effects {
         result: 'shadowdiff'
       }),
       e.add(i),
-      (i = new HvacSVG.Element(HvacSVG.create('feFlood'))).attr({
+      (i = new T3Svg.Element(T3Svg.create('feFlood'))).attr({
         'flood-color': n,
         'flood-opacity': 1
       }),
       e.add(i),
-      (i = new HvacSVG.Element(HvacSVG.create('feComposite'))).attr({
+      (i = new T3Svg.Element(T3Svg.create('feComposite'))).attr({
         in2: 'shadowdiff',
         operator: 'in'
       }),
       e.add(i),
-      (i = new HvacSVG.Element(HvacSVG.create('feComposite'))).attr({
+      (i = new T3Svg.Element(T3Svg.create('feComposite'))).attr({
         in2: a,
         operator: 'over',
         result: r
@@ -666,17 +666,17 @@ class Effects {
       case Effects.FilterDirection.RIGHTTOP:
         s = - o,
           l = o
-    }(i = new HvacSVG.Element(HvacSVG.create('feGaussianBlur'))).attr({
+    }(i = new T3Svg.Element(T3Svg.create('feGaussianBlur'))).attr({
       in: 'SourceAlpha',
       stdDeviation: o
     }),
       e.add(i),
-      (i = new HvacSVG.Element(HvacSVG.create('feOffset'))).attr({
+      (i = new T3Svg.Element(T3Svg.create('feOffset'))).attr({
         dx: s,
         dy: l
       }),
       e.add(i),
-      (i = new HvacSVG.Element(HvacSVG.create('feComposite'))).attr({
+      (i = new T3Svg.Element(T3Svg.create('feComposite'))).attr({
         in2: 'SourceAlpha',
         operator: 'arithmetic',
         k2: '-1',
@@ -684,17 +684,17 @@ class Effects {
         result: 'shadowdiff'
       }),
       e.add(i),
-      (i = new HvacSVG.Element(HvacSVG.create('feFlood'))).attr({
+      (i = new T3Svg.Element(T3Svg.create('feFlood'))).attr({
         'flood-color': 'black',
         'flood-opacity': 1
       }),
       e.add(i),
-      (i = new HvacSVG.Element(HvacSVG.create('feComposite'))).attr({
+      (i = new T3Svg.Element(T3Svg.create('feComposite'))).attr({
         in2: 'shadowdiff',
         operator: 'in'
       }),
       e.add(i),
-      (i = new HvacSVG.Element(HvacSVG.create('feComposite'))).attr({
+      (i = new T3Svg.Element(T3Svg.create('feComposite'))).attr({
         in2: a,
         operator: 'over',
         result: r
@@ -710,12 +710,12 @@ class Effects {
     var i,
       n = t.color ||
         '000000';
-    (i = new HvacSVG.Element(HvacSVG.create('feFlood'))).attr({
+    (i = new T3Svg.Element(T3Svg.create('feFlood'))).attr({
       'flood-color': n,
       'flood-opacity': 1
     }),
       e.add(i),
-      (i = new HvacSVG.Element(HvacSVG.create('feComposite'))).attr({
+      (i = new T3Svg.Element(T3Svg.create('feComposite'))).attr({
         in2: 'SourceAlpha',
         operator: 'in',
         result: r

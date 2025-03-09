@@ -3,7 +3,7 @@
 // import Basic from "./Basic.Index";
 // import './Basic.Text.Index';
 // import { DefaultFmtText, DefaultStyle, DefaultRuntimeText } from './TextFormatter.Index';
-import HvacSVG from "../Helper/SVG.t2"
+import T3Svg from "../Helper/T3Svg"
 import $ from 'jquery';
 
 import Global from "./Basic.Global"
@@ -18,7 +18,7 @@ import Utils3 from "../Helper/Utils3"
 
 // }
 
-import Spell from './Basic.Text.Spell'
+import Spell from './B.Text.Spell'
 
 import ConstantData from "../Data/ConstantData"
 import DefaultFmtText from '../Model/DefaultFmtText'
@@ -1620,7 +1620,7 @@ class Formatter {
 
   RenderUnderline(e, t) {
     //'use strict';
-    var a = new HvacSVG.Path;
+    var a = new T3Svg.Path;
     a.plot(
       'M' + Global.RoundCoord(e.x) + ',' + (Global.RoundCoord(e.y) + 2) + 'h' + Global.RoundCoord(e.width)
     ),
@@ -1637,7 +1637,7 @@ class Formatter {
       i,
       n,
       o,
-      s = new HvacSVG.Path;
+      s = new T3Svg.Path;
     a = e.x,
       r = e.y + 2,
       i = 1,
@@ -1668,7 +1668,7 @@ class Formatter {
       t++
     ) r = this.renderedDataFields[t],
       i = this.parent.GetDataText(r.fieldID, !0),
-      (a = new HvacSVG.Container(HvacSVG.create('rect'))).move(r.x, r.y),
+      (a = new T3Svg.Container(T3Svg.create('rect'))).move(r.x, r.y),
       a.size(r.width, r.height),
       a.attr('fill', '#A6F8CD'),
       a.attr('stroke-width', 0),
@@ -1882,7 +1882,7 @@ class Formatter {
                 l = o / 2 + 2,
                 a.bindent = o,
                 A ? A.clear() : (
-                  (A = new HvacSVG.Container(HvacSVG.create('text'))).attr('xml:space', 'preserve'),
+                  (A = new T3Svg.Container(T3Svg.create('text'))).attr('xml:space', 'preserve'),
                   A.attr('fill-opacity', 0),
                   I = this.parent.doc.GetFormattingLayer()
                 ),
@@ -2577,7 +2577,7 @@ class Formatter {
       S = {},
       c = !1,
       u = !1,
-      p = new HvacSVG.Container(HvacSVG.create('text'));
+      p = new T3Svg.Container(T3Svg.create('text'));
     return p.attr('xml:space', 'preserve'),
       p.attr('text-anchor', 'start'),
       a = Formatter.CreateTextRunElem(' .', e, t, !1, null),
@@ -2669,7 +2669,7 @@ class Formatter {
 
   static CreateTextRunElem(e, t, a, r, n) {
     var o,
-      s = new HvacSVG.Container(HvacSVG.create('tspan')),
+      s = new T3Svg.Container(T3Svg.create('tspan')),
       l = String(e).replace(/\n/g, ''),
       S = 1;
     l.length ||

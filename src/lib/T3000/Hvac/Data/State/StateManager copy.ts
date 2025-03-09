@@ -1,6 +1,6 @@
 
 import BaseStateManager from './BaseStateManager'
-import GlobalData from '../GlobalData'
+import T3Gv from '../T3Gv'
 import Globals from '../Globals'
 import Utils1 from '../../Helper/Utils1'
 import State from './State'
@@ -12,7 +12,7 @@ class StateManager extends BaseStateManager {
 
   constructor() {
     super();
-    this.maxUndoStates = GlobalData.gMaxUndoStates;
+    this.maxUndoStates = T3Gv.gMaxUndoStates;
   }
 
   PreserveState() {
@@ -30,7 +30,7 @@ class StateManager extends BaseStateManager {
     for (let e = 0; e < i; ++e) {
       const n = r.StoredObjects[e];
       if (n.StateOperationTypeID == t.CREATE) {
-        const o = a(GlobalData.objectStore.GetObject(n.ID));
+        const o = a(T3Gv.objectStore.GetObject(n.ID));
         o.StateOperationTypeID = t.CREATE;
         r.StoredObjects[e] = o;
       }
@@ -48,7 +48,7 @@ class StateManager extends BaseStateManager {
   ExceptionCleanup() {
     if (this.CurrentStateID > 0 && this.States[this.CurrentStateID].IsOpen) {
       this.States[this.CurrentStateID].IsOpen = false;
-      GlobalData.CURRENT_SEQ_OBJECT_ID = this.States[this.CurrentStateID].CURRENT_SEQ_OBJECT_ID;
+      T3Gv.CURRENT_SEQ_OBJECT_ID = this.States[this.CurrentStateID].CURRENT_SEQ_OBJECT_ID;
       this.RestoreObjectStoreFromState();
       this.CurrentStateID--;
       if (this.CurrentStateID < this.States.length - 1) {
@@ -86,30 +86,30 @@ class StateManager extends BaseStateManager {
         s = r[o];
         switch (s.StateOperationTypeID) {
           case e.CREATE:
-            if (GlobalData.objectStore.GetObject(s.ID)) {
-              GlobalData.objectStore.DeleteObject(s.ID, false);
+            if (T3Gv.objectStore.GetObject(s.ID)) {
+              T3Gv.objectStore.DeleteObject(s.ID, false);
             } else {
               i = t(s);
-              GlobalData.objectStore.SaveObject(i, false);
+              T3Gv.objectStore.SaveObject(i, false);
             }
             break;
           case e.DELETE:
-            if (GlobalData.objectStore.GetObject(s.ID)) {
-              GlobalData.objectStore.DeleteObject(s.ID, false);
+            if (T3Gv.objectStore.GetObject(s.ID)) {
+              T3Gv.objectStore.DeleteObject(s.ID, false);
             } else {
               i = t(s);
               i.StateOperationTypeID = e.CREATE;
-              GlobalData.objectStore.SaveObject(i, false);
+              T3Gv.objectStore.SaveObject(i, false);
             }
             break;
           case e.UPDATE:
             const l = t(s);
-            const S = GlobalData.objectStore.GetObject(s.ID);
+            const S = T3Gv.objectStore.GetObject(s.ID);
             const c = t(S);
             if (S.StateOperationTypeID == e.CREATE) {
               c.StateOperationTypeID = e.UPDATE;
             }
-            GlobalData.objectStore.SaveObject(l, false);
+            T3Gv.objectStore.SaveObject(l, false);
             a.StoredObjects[o] = c;
             break;
         }
@@ -201,7 +201,7 @@ class StateManager extends BaseStateManager {
           }
         }
       } else if (this.States.length === 0) {
-        n = new t(GlobalData.stateManager.CurrentStateID + 1, 't3');
+        n = new t(T3Gv.stateManager.CurrentStateID + 1, 't3');
         n.AddStoredObject(e);
         this.States.push(n);
         this.CurrentStateID = n.ID;

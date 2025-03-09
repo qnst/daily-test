@@ -7,10 +7,10 @@
 // import Basic from "./Basic.Index";
 // import GPP from "../gListManager";
 import $ from 'jquery';
-import HvacSVG from "../Helper/SVG.t2"
+import T3Svg from "../Helper/T3Svg"
 
 
-import Path from "./Basic.Path";
+import Path from "./B.Path";
 
 import Global from "./Basic.Global";
 import Utils1 from "../Helper/Utils1"

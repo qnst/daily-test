@@ -8,10 +8,10 @@
 // import SDGraphics from "./../../SDGraphics/SDGraphics.Index";
 // import GPP from '../../gListManager';
 // import $ from 'jquery';
-// import HvacSVG from '../../Hvac.SVG.t2';
+// import T3Svg from '../../Hvac.SVG.t2';
 
 
-import SegmentedLine from './Shape.SegmentedLine'
+import SegmentedLine from './S.SegmentedLine'
 import ListManager from '../Data/ListManager';
 // import Document from '../Basic/Basic.Document';
 // import Utils from '../Helper/Helper.Utils';
@@ -20,16 +20,16 @@ import Utils2 from "../Helper/Utils2";
 import Utils3 from "../Helper/Utils3";
 // import Utils2 from "../Helper/Utils2";
 // import Utils3 from "../Helper/Utils3";
-import GlobalData from '../Data/GlobalData'
+import GlobalData from '../Data/T3Gv'
 // import Collab from '../Data/Collab'
 // import FileParser from '../Data/FileParser'
 // import EvtUtil from "../Event/Event.Default";
 // import Resources from '../Data/Resources'
 // import Element from "../Basic/Basic.Element";
 
-import Document from '../Basic/Basic.Document'
+import Document from '../Basic/B.Document'
 
-import Element from '../Basic/Basic.Element';
+import Element from '../Basic/B.Element';
 import ConstantData from '../Data/ConstantData'
 import PolySeg from '../Model/PolySeg'
 
@@ -104,7 +104,7 @@ class ArcSegmentedLine extends SegmentedLine {
         i = this.GetPolyPoints(ConstantData.Defines.NPOLYPTS, !0),
         0 !== this.hoplist.nhops
       ) {
-        var h = GlobalData.optManager.InsertHops(this, i, i.length);
+        var h = T3Gv.optManager.InsertHops(this, i, i.length);
         i = i.slice(0, h.npts)
       }
       a.SetPoints(i)
@@ -221,7 +221,7 @@ class ArcSegmentedLine extends SegmentedLine {
         a ? (
           h.push(new Point(l, S)),
           h[h.length - 1].notclockwise = !g
-        ) : GlobalData.optManager.EllipseToPoints(h, e / 2, u, l, p, S, g);
+        ) : T3Gv.optManager.EllipseToPoints(h, e / 2, u, l, p, S, g);
       if (!t) for (s = h.length, o = 0; o < s; o++) h[o].x += c.x,
         h[o].y += c.y
     } else h = ListManager.BaseLine.prototype.GetPolyPoints.call(this, e, t, !0, null);
@@ -242,7 +242,7 @@ class ArcSegmentedLine extends SegmentedLine {
             EndPoint: new Point
           };
         r.Frame = Utils2.Pt2Rect(t[0], t[9]);
-        var i = GlobalData.optManager.SD_GetClockwiseAngleBetween2PointsInRadians(t[0], t[9]);
+        var i = T3Gv.optManager.SD_GetClockwiseAngleBetween2PointsInRadians(t[0], t[9]);
         return a.push(new Point(t[0].x, t[0].y)),
           a.push(new Point(t[9].x, t[9].y)),
           a.push(new Point(t[7].x, t[7].y)),

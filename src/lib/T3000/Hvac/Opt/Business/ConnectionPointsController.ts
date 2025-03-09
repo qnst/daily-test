@@ -1,5 +1,6 @@
 
 import ConstantData from "../../Data/ConstantData"
+import T3Constant from "../../Data/T3Constant";
 
 const ConnectionPointsController = function () {
   var e,
@@ -150,7 +151,7 @@ const ConnectionPointsController = function () {
           G.hide(),
           this.ChangeToDefault()
     }
-    return ConstantData.DocumentContext.CanTypeInWorkArea = !1,
+    return T3Constant.DocContext.CanTypeInWorkArea = !1,
       !0
   },
     this.ResetSVGDocument = function () {
@@ -755,7 +756,7 @@ const ConnectionPointsController = function () {
         'Chrome' !== Utils2.BrowserDetect.browser &&
         'Safari' !== Utils2.BrowserDetect.browser ||
         D.append(g),
-        ConstantData.DocumentContext.CanTypeInWorkArea = !0;
+        T3Constant.DocContext.CanTypeInWorkArea = !0;
       try {
         var t = {};
         R === ConstantData.ObjFlags.SEDO_UseConnect ? (t.x = V.x, t.y = V.y) : (t.x = j.x, t.y = j.y),
@@ -781,7 +782,7 @@ const ConnectionPointsController = function () {
         'Chrome' !== Utils2.BrowserDetect.browser &&
         'Safari' !== Utils2.BrowserDetect.browser ||
         D.append(g),
-        ConstantData.DocumentContext.CanTypeInWorkArea = !0
+        T3Constant.DocContext.CanTypeInWorkArea = !0
     }
 }
 

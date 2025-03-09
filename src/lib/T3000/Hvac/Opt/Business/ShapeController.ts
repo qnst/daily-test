@@ -1,23 +1,22 @@
 
 
-import GlobalData from '../../Data/GlobalData'
+import T3Gv from '../../Data/T3Gv'
 import Utils1 from '../../Helper/Utils1'
 import Utils3 from '../../Helper/Utils3'
 import Utils2 from '../../Helper/Utils2'
-import Utils4 from '../../Helper/Utils4'
 import ListManager from '../../Data/ListManager'
 import Resources from '../../Data/Resources'
 import FileParser from '../../Data/FileParser'
 // import RRect from '../../Shape/Shape.RRect'
 // import Oval from '../../Shape/Shape.Oval'
-import Line from '../../Shape/Shape.Line'
-import Rect from '../../Shape/Shape.Rect'
+import Line from '../../Shape/S.Line'
+import Rect from '../../Shape/S.Rect'
 
 import $ from 'jquery'
-import Polygon from '../../Shape/Shape.Polygon'
+import Polygon from '../../Shape/S.Polygon'
 import Commands from '../../Opt/Business/Commands'
-import RRect from '../../Shape/Shape.RRect'
-import Oval from '../../Shape/Shape.Oval'
+import RRect from '../../Shape/S.RRect'
+import Oval from '../../Shape/S.Oval'
 // import Collab from '../../Data/Collab'
 import Clipboard from './Clipboard'
 import ConstantData from '../../Data/ConstantData'
@@ -26,124 +25,93 @@ import PolySeg from '../../Model/PolySeg'
 import Hook from '../../Model/Hook'
 import RightClickData from '../../Model/RightClickData'
 import ConstantData2 from '../../Data/ConstantData2'
-import SVGFragmentSymbol from '../../Shape/Shape.SVGFragmentSymbol'
+import SVGFragmentSymbol from '../../Shape/S.SVGFragmentSymbol'
 import QuickStyle from '../../Model/QuickStyle'
 import Instance from '../../Data/Instance/Instance'
 import PolyList from '../../Model/PolyList'
+import T3Constant from '../../Data/T3Constant'
+
+// legacy do not use this class anymore
+class ToolUtil1 {
 
 
-class ShapeController {
+  /**
+   * Cancels the current modal operation
+   * @param skipMessageHandling - If true, skips handling of collaboration messages
+   * @returns false to indicate operation was cancelled
+   */
+  CancelModalOperation = function (skipMessageHandling?) {
+    console.log("O.ToolOpt CancelModalOperation input:", skipMessageHandling);
 
+    // Commands.MainController.Selection.SetSelectionTool(Resources.Tools.Tool_Select, false);
+    this.SetSelectionTool(ToolConstant.Tools.Tool_Select, false);
+    T3Gv.optManager.CancelModalOperation();
 
-  CancelModalOperation = function (e) {
-    Commands.MainController.Selection.SetSelectionTool(Resources.Tools.Tool_Select, false);
-    GlobalData.optManager.CancelModalOperation();
-    if (!e) {
+    if (!skipMessageHandling) {
       // Collab.UnLockMessages();
       // Collab.UnBlockMessages();
     }
+
+    console.log("O.ToolOpt CancelModalOperation output: false");
     return false;
   }
 
-
-  SetDefaultWallThickness = function (e, t) {
-    console.log('SetDefaultWallThickness 1e =', e);
-    console.log('SetDefaultWallThickness 1t =', t);
-    // debugger
-
-
-    /*
-          var a = 1;
-        GlobalData  gDocumentHandler.rulerSettings.useInches ||
-            (a = ConstantData.Defines.MetricConv),
-            t &&
-            (e = t.Data.thick);
-          var r = e * GlobalData.docHandler.rulerSettings.major / (GlobalData.docHandler.rulerSettings.majorScale * a);
-          Collab.AllowMessage() &&
-            Collab.BeginSecondaryEdit();
-          var i = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
-          if (!Utils2.IsEqual(i.def.wallThickness, r, 0.01) || t) {
-            if (
-              GlobalData.optManager.CloseEdit(!0, !0),
-              i = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0),
-              t ||
-              (i.def.wallThickness = r),
-              Collab.AllowMessage()
-            ) {
-              var n = {
-                thick: e
-              };
-              Collab.BuildMessage(
-                ConstantData.CollabMessages.SetDefaultWallThickness,
-                n,
-                !1,
-                !1
-              )
-            }
-            GlobalData.optManager.CompleteOperation(null)
-          }
-          */
-
-
+  /**
+   * Sets the default wall thickness for the document
+   * @param thickness - The wall thickness value
+   * @param wallObj - Optional wall object containing thickness data
+   * @returns void
+   */
+  SetDefaultWallThickness = function (thickness, wallObj) {
+    console.log("O.ToolOpt SetDefaultWallThickness input:", thickness, wallObj);
 
     var conversionFactor = 1;
-    if (!GlobalData.docHandler.rulerSettings.useInches) {
+    if (!T3Gv.docUtil.rulerConfig.useInches) {
       conversionFactor = ConstantData.Defines.MetricConv;
     }
-    if (t) {
-      e = t.Data.thick;
+
+    if (wallObj) {
+      thickness = wallObj.Data.thick;
     }
 
+    var wallThickness = thickness * T3Gv.docUtil.rulerConfig.major /
+      (T3Gv.docUtil.rulerConfig.majorScale * conversionFactor);
 
-    var wallThickness = e * GlobalData.docHandler.rulerSettings.major / (GlobalData.docHandler.rulerSettings.majorScale * conversionFactor);
+    var sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
 
-    // if (Collab.AllowMessage()) {
-    //   Collab.BeginSecondaryEdit();
-    // }
+    if (!Utils2.IsEqual(sessionBlock.def.wallThickness, wallThickness, 0.01) || wallObj) {
+      T3Gv.optManager.CloseEdit(true, true);
+      sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, true);
 
-    var sessionBlock = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, false);
-
-    if (!Utils2.IsEqual(sessionBlock.def.wallThickness, wallThickness, 0.01) || t) {
-      GlobalData.optManager.CloseEdit(true, true);
-      sessionBlock = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, true);
-
-      if (!t) {
+      if (!wallObj) {
         sessionBlock.def.wallThickness = wallThickness;
       }
 
-      // if (Collab.AllowMessage()) {
-      //   var message = {
-      //     thick: e
-      //   };
-      //   Collab.BuildMessage(ConstantData.CollabMessages.SetDefaultWallThickness, message, false, false);
-      // }
-
-      var sessionBlock = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, false);
-
-
-      GlobalData.optManager.CompleteOperation(null);
+      var sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+      T3Gv.optManager.CompleteOperation(null);
     }
 
+    console.log("O.ToolOpt SetDefaultWallThickness output: void");
   }
 
 
   DrawNewWallShape = function (e, t) {
     console.log('= ShapeController DrawNewWallShape e,t=>', e, t);
-    console.log('= ShapeController DrawNewWallShape gBusinessManager=>', GlobalData.gBusinessManager)
+    console.log('= ShapeController DrawNewWallShape gBusinessManager=>', T3Gv.gBusinessManager)
     // debugger
     var a;
     var r = t != null;
     var i = null;//Double ===  Business.GetSelectionBusinessManager();
 
     if (i == null) {
-      i = GlobalData.gBusinessManager;
+      i = T3Gv.gBusinessManager;
     }
 
     if (i && i.AddWall) {
-      GlobalData.optManager.CloseEdit();
+      T3Gv.optManager.CloseEdit();
       i.ToggleAddingWalls(true);
       a = i.AddWall(r, t);
-      ConstantData.DocumentContext.UsingWallTool = true;
+      T3Constant.DocContext.UsingWallTool = true;
     }
 
     if (r) {
@@ -152,59 +120,33 @@ class ShapeController {
     }
   }
 
+  /**
+   * Handles initiating the process of stamping or drag-dropping a new shape
+   * @param event - The UI event that triggered this action
+   * @param shapeType - The type of shape to create
+   */
+  StampOrDragDropNewShape = function (event, shapeType) {
+    console.log('U.ToolUtil.StampOrDragDropNewShape - Input:', event, shapeType);
 
+    let context;
+    let callbackFunction;
 
-  StampOrDragDropNewShape = function (t, a) {
-    console.log('StampOrDragDropNewShape', t, a);
-    var r, i;
-    GlobalData.optManager.SetUIAdaptation(t);
+    T3Gv.optManager.SetUIAdaptation(event);
 
-    // if (ConstantData.DocumentContext.HTMLFocusControl && ConstantData.DocumentContext.HTMLFocusControl.blur) {
-    //   ConstantData.DocumentContext.HTMLFocusControl.blur();
-    // }
+    // Initialize cancel flag
+    let cancelOperation = false;
 
-    // if (a) {
-    //   ConstantData.DocumentContext.ShapeTool = a;
-    // } else {
-    //   a = ConstantData.DocumentContext.ShapeTool;
-    // }
+    // Prepare for drag-drop or stamp operation
+    T3Gv.optManager.PreDragDropOrStamp();
 
-    // if (gListManager.isMobilePlatform) {
-    //   if (t.type === "pointerdown") {
-    //     e = false;
-    //     gListManager.PreDragDropOrStamp();
-    //     r = this;
-    //     i = this.StampOrDragDropMobileCallback;
-    //     gListManager.StampTimeout = window.setTimeout(i, 200, r, a);
-    //   } else if (t.type === "pointerup") {
-    //     e = true;
-    //   }
-    // } else {
-    // if (t.type === "mousedown" || t.type === "pointerdown" || t.type === "touchstart") {
-    //   if (t.preventDefault) {
-    //     t.preventDefault();
-    //   }
-    //   e = false;
-    //   GlobalData.optManager.PreDragDropOrStamp();
-    //   r = this;
-    //   i = this.StampOrDragDropCallback;
-    //   GlobalData.optManager.StampTimeout = window.setTimeout(i, 200, r, a);
-    // } else if (t.type === "mouseup" || t.type === "pointerup" || t.type === "touchend") {
-    //   e = true;
-    // }  // }
+    // Set up the context and callback
+    context = this;
+    callbackFunction = this.StampOrDragDropCallback;
 
+    // Set a timeout to execute the callback after a short delay
+    T3Gv.optManager.StampTimeout = window.setTimeout(callbackFunction, 200, context, shapeType);
 
-
-
-
-
-    var e = false;
-    GlobalData.optManager.PreDragDropOrStamp();
-    r = this;
-    i = this.StampOrDragDropCallback;
-    GlobalData.optManager.StampTimeout = window.setTimeout(i, 200, r, a);
-
-
+    console.log('U.ToolUtil.StampOrDragDropNewShape - Output: StampTimeout set');
   }
 
 
@@ -219,7 +161,7 @@ class ShapeController {
     switch (
     null == r ? (
       e ? ConstantData.DocumentContext.LineTool = e : e = ConstantData.DocumentContext.LineTool,
-      GlobalData.optManager.forcedotted = t ? Resources.LinePatternData[Resources.Windows_LinePatterns.SEP_Dotted - 1] : null
+      T3Gv.optManager.forcedotted = t ? Resources.LinePatternData[Resources.Windows_LinePatterns.SEP_Dotted - 1] : null
     ) : i = !0,
     e
     ) {
@@ -251,8 +193,8 @@ class ShapeController {
         n = this.DrawNewFreehandLine(i, a, r);
         break;
       case 'moveWall':
-        GlobalData.gBusinessManager &&
-          GlobalData.gBusinessManager.AddWall ? n = GlobalData.gBusinessManager.AddWall(i, r) : (
+        T3Gv.gBusinessManager &&
+          T3Gv.gBusinessManager.AddWall ? n = T3Gv.gBusinessManager.AddWall(i, r) : (
           ConstantData.DocumentContext.LineTool = 'line',
           n = this.DrawNewLine(a, 0, i, r)
         )
@@ -273,7 +215,7 @@ class ShapeController {
     //   } else {
     //     e = ConstantData.DocumentContext.LineTool;
     //   }
-    //   GlobalData.optManager.forcedotted = t ? Resources.LinePatternData[Resources.Windows_LinePatterns.SEP_Dotted - 1] : null;
+    //   T3Gv.optManager.forcedotted = t ? Resources.LinePatternData[Resources.Windows_LinePatterns.SEP_Dotted - 1] : null;
     // } else {
     //   isDrawing = true;
     // }
@@ -329,8 +271,8 @@ class ShapeController {
         newShape = this.DrawNewFreehandLine(isDrawing, a, r);
         break;
       case 'moveWall':
-        if (GlobalData.gBusinessManager && GlobalData.gBusinessManager.AddWall) {
-          newShape = GlobalData.gBusinessManager.AddWall(isDrawing, r);
+        if (T3Gv.gBusinessManager && T3Gv.gBusinessManager.AddWall) {
+          newShape = T3Gv.gBusinessManager.AddWall(isDrawing, r);
         } else {
           // ConstantData.DocumentContext.LineTool = 'line';
           newShape = this.DrawNewLine(a, 0, isDrawing, r);
@@ -343,11 +285,10 @@ class ShapeController {
     }
   }
 
-
   DrawNewLine = function (e, t, a, r) {
     console.log(' => ============DrawNewLineShape 2 e, t, a, r=>', e, t, a, r);
 
-    var i = GlobalData.objectStore.GetObject(GlobalData.optManager.theSEDSessionBlockID).Data,
+    var i = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data,
       n = 0 == (i.def.textflags & ConstantData.TextFlags.SED_TF_HorizText),
       o = i.d_sarrow,
       s = i.d_earrow,
@@ -381,7 +322,7 @@ class ShapeController {
       EndArrowDisp: S,
       ArrowSizeIndex: i.d_arrowsize,
       TextGrow: ConstantData.TextGrowBehavior.HORIZONTAL,
-      TextAlign: ConstantData.DocumentContext.CurrentTextAlignment,
+      TextAlign: T3Constant.DocContext.CurrentTextAlignment,
       TextDirection: n,
       Dimensions: i.dimensions,
       ShortRef: t,
@@ -392,7 +333,7 @@ class ShapeController {
       d = Utils1.DeepCopy(i.def.style);
     if (r && r.Data && r.Data.attributes && r.Data.attributes.StyleRecord) d = Utils1.DeepCopy(r.Data.attributes.StyleRecord);
     else {
-      var D = Utils4.FindStyle(ConstantData.Defines.TextBlockStyle);
+      var D = Utils3.FindStyle(ConstantData.Defines.TextBlockStyle);
       d.Text.Paint.Color = '#000000'//Double D.Text.Paint.Color
     }
     if (
@@ -403,67 +344,72 @@ class ShapeController {
       ),
       a
     ) return p;
-    GlobalData.optManager.DrawNewObject(p, e)
+    T3Gv.optManager.DrawNewObject(p, e)
   }
 
+  /**
+   * Callback function for stamp or drag-drop operations
+   * @param context - The tool utility context
+   * @param shapeType - The type of shape to create
+   */
+  StampOrDragDropCallback = function (context, shapeType) {
+    console.log('U.ToolUtil.StampOrDragDropCallback - Input:', context, shapeType);
 
-  StampOrDragDropCallback = function (t, a) {
-    console.log('StampOrDragDropCallback 1 t=', t);
-    console.log('StampOrDragDropCallback 2 a=', a);
-    //debugger
-    var r;
-    var i = ConstantData.SDRShapeTypes;
+    let isDragDrop;
+    const shapeTypes = PolygonConstant.ShapeTypes;
 
-    GlobalData.optManager.StampTimeout = null;
-    // SDUI.Commands.MainController.Dropdowns.HideAllDropdowns(),
-    if (a !== 'textLabel') {
-      ConstantData.DocumentContext.ShapeTool = a;
+    T3Gv.optManager.StampTimeout = null;
+
+    // Update document context if not a text label
+    if (shapeType !== 'textLabel') {
+      T3Constant.DocContext.ShapeTool = shapeType;
     }
 
-    //Double ===
-    var e = false;
-
-    if (e) {
-      r = false;
-      GlobalData.optManager.UnbindDragDropOrStamp();
+    // Determine if this is a drag-drop operation
+    const cancelOperation = false;
+    if (cancelOperation) {
+      isDragDrop = false;
+      T3Gv.optManager.UnbindDragDropOrStamp();
     } else {
-      r = true;
+      isDragDrop = true;
     }
 
-    switch (a) {
+    // Call appropriate stamping function based on shape type
+    switch (shapeType) {
       case 'textLabel':
-        t.StampTextLabel(false, false);
+        context.StampTextLabel(false, false);
         break;
-      case i.SED_S_Rect:
-        t.StampRectangle(r, false);
+      case shapeTypes.SED_S_Rect:
+        context.StampRectangle(isDragDrop, false);
         break;
-      case i.SED_S_RRect:
-        t.StampRoundRect(r, false);
+      case shapeTypes.SED_S_RRect:
+        context.StampRoundRect(isDragDrop, false);
         break;
-      case i.SED_S_Circ:
-        t.StampCircle(r, true);
+      case shapeTypes.SED_S_Circ:
+        context.StampCircle(isDragDrop, true);
         break;
-      case i.SED_S_Oval:
-        t.StampCircle(r, false);
+      case shapeTypes.SED_S_Oval:
+        context.StampCircle(isDragDrop, false);
         break;
       default:
-        t.StampShape(a, r, false);
+        context.StampShape(shapeType, isDragDrop, false);
     }
-  }
 
+    console.log('U.ToolUtil.StampOrDragDropCallback - Output: completed operation');
+  }
 
   StampRectangle = function (e, t) {
     console.log('StampRectangle 1 e=', e)
     console.log('StampRectangle 2 t=', t)
     var a,
       r,
-      i = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
+      i = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
     t ? (
-      a = ConstantData.Defines.Shape_Square,//ListManager.Model.ts 100
-      r = ConstantData.Defines.Shape_Square//ListManager.Model.ts 100
+      a = ConstantData.Defines.Shape_Square,
+      r = ConstantData.Defines.Shape_Square
     ) : (
-      a = ConstantData.Defines.Shape_Width,//ListManager.Model.ts 150
-      r = ConstantData.Defines.Shape_Height//ListManager.Model.ts 150
+      a = ConstantData.Defines.Shape_Width,
+      r = ConstantData.Defines.Shape_Height
     );
     var n = {
       Frame: {
@@ -472,24 +418,22 @@ class ShapeController {
         width: a,
         height: r
       },
-      TextGrow: ConstantData.TextGrowBehavior.PROPORTIONAL,// ListManager.Model.ts 0
+      TextGrow: ConstantData.TextGrowBehavior.PROPORTIONAL,
       shapeparam: i.def.rrectparam,
-      moreflags: ConstantData.ObjMoreFlags.SED_MF_FixedRR// ListManager.Model.ts 64
+      moreflags: ConstantData.ObjMoreFlags.SED_MF_FixedRR
     };
     t &&
-      (n.ObjGrow = ConstantData.GrowBehavior.PROPORTIONAL); //3
+      (n.ObjGrow = ConstantData.GrowBehavior.PROPORTIONAL);
     var o = new Rect(n);
     console.log('StampRectangle 3 o=', o)
-    // e ? GlobalData.optManager.DragDropNewShape(o, !0, !0, !0, null, null) :
-    //  GlobalData.optManager.MouseStampNewShape(o, !0, !0, !0, null, null)
 
-    GlobalData.optManager.MouseStampNewShape(o, !0, !0, !0, null, null)
+    T3Gv.optManager.MouseStampNewShape(o, !0, !0, !0, null, null)
   }
 
   StampRoundRect = function (e, t) {
     var a,
       r,
-      i = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
+      i = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
     t ? (
       a = ConstantData.Defines.Shape_Square,
       r = ConstantData.Defines.Shape_Square
@@ -511,10 +455,10 @@ class ShapeController {
     t &&
       (n.ObjGrow = ConstantData.GrowBehavior.PROPORTIONAL);
     var o = new RRect(n);
-    // e ? GlobalData.optManager.DragDropNewShape(o, !0, !0, !0, null, null) :
-    //  GlobalData.optManager.MouseStampNewShape(o, !0, !0, !0, null, null)
+    // e ? T3Gv.optManager.DragDropNewShape(o, !0, !0, !0, null, null) :
+    //  T3Gv.optManager.MouseStampNewShape(o, !0, !0, !0, null, null)
 
-    GlobalData.optManager.MouseStampNewShape(o, !0, !0, !0, null, null)
+    T3Gv.optManager.MouseStampNewShape(o, !0, !0, !0, null, null)
   }
 
   StampCircle = function (e, t) {
@@ -554,32 +498,32 @@ class ShapeController {
     var s = new Oval(o);
 
     //  debugger
-    // e ? GlobalData.optManager.DragDropNewShape(s, !0, !0, !0, null, null) :
-    // GlobalData.optManager.MouseStampNewShape(s, !0, !0, !0, null, null)
+    // e ? T3Gv.optManager.DragDropNewShape(s, !0, !0, !0, null, null) :
+    // T3Gv.optManager.MouseStampNewShape(s, !0, !0, !0, null, null)
 
-    GlobalData.optManager.MouseStampNewShape(s, !0, !0, !0, null, null)
+    T3Gv.optManager.MouseStampNewShape(s, !0, !0, !0, null, null)
   }
 
 
   StampTextLabel = function (e, t) {
-    Commands.MainController.Selection.SetSelectionTool(Resources.Tools.Tool_Text, e);
-    var a = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theTEDSessionBlockID, !1);
+    // Commands.MainController.Selection.SetSelectionTool(Resources.Tools.Tool_Text, e);
+    var a = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theTEDSessionBlockID, !1);
     if (t || - 1 == a.theActiveTextEditObjectID) {
       if (!t) {
-        var r = GlobalData.optManager.GetTargetSelect();
+        var r = T3Gv.optManager.GetTargetSelect();
         if (r >= 0) {
-          var i = GlobalData.optManager.GetObjectPtr(r, !1);
+          var i = T3Gv.optManager.GetObjectPtr(r, !1);
           if (i && i.AllowTextEdit()) {
-            var n = GlobalData.optManager.svgObjectLayer.GetElementByID(r);
-            return GlobalData.optManager.ActivateTextEdit(n)
+            var n = T3Gv.optManager.svgObjectLayer.GetElementByID(r);
+            return T3Gv.optManager.ActivateTextEdit(n)
             // ,
-            //   void GlobalData.optManager.UpdateTools()
+            //   void T3Gv.optManager.UpdateTools()
           }
         }
       }
-    } else GlobalData.optManager.DeactivateTextEdit();
-    var o = GlobalData.objectStore.GetObject(GlobalData.optManager.theSEDSessionBlockID).Data,
-      s = Utils4.FindStyle(ConstantData.Defines.TextBlockStyle);
+    } else T3Gv.optManager.DeactivateTextEdit();
+    var o = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data,
+      s = Utils3.FindStyle(ConstantData.Defines.TextBlockStyle);
     null == s &&
       (s = o.def.style);
     var l = {
@@ -608,14 +552,14 @@ class ShapeController {
       c = Utils1.DeepCopy(o.def.style);
     c.Text.Paint = Utils1.DeepCopy(s.Text.Paint),
       S.StyleRecord.Text = c.Text;
-    var u = GlobalData.optManager.CalcDefaultInitialTextStyle(S.StyleRecord.Text),
-      p = GlobalData.optManager.svgDoc.CalcStyleMetrics(u);
-    GlobalData.optManager.stampShapeOffsetX = 0,
-      GlobalData.optManager.stampShapeOffsetY = p.ascent,
+    var u = T3Gv.optManager.CalcDefaultInitialTextStyle(S.StyleRecord.Text),
+      p = T3Gv.optManager.svgDoc.CalcStyleMetrics(u);
+    T3Gv.optManager.stampShapeOffsetX = 0,
+      T3Gv.optManager.stampShapeOffsetY = p.ascent,
       S.Frame.height = p.height,
       e ||
-      GlobalData.optManager.DeactivateTextEdit(!1),
-      GlobalData.optManager.StampNewTextShapeOnTap(S, !1, !1, !1, e, this.StampCallback, {
+      T3Gv.optManager.DeactivateTextEdit(!1),
+      T3Gv.optManager.StampNewTextShapeOnTap(S, !1, !1, !1, e, this.StampCallback, {
         bActivateText: !0
       })
   }
@@ -629,23 +573,23 @@ class ShapeController {
   //   var r,
   //     i;
   //   if (
-  //     GlobalData.optManager.SetUIAdaptation(t),
+  //     T3Gv.optManager.SetUIAdaptation(t),
 
   //     // Resources.ts
   //     ConstantData.DocumentContext.HTMLFocusControl &&
   //     ConstantData.DocumentContext.HTMLFocusControl.blur &&
   //     ConstantData.DocumentContext.HTMLFocusControl.blur(),
   //     a ? ConstantData.DocumentContext.ShapeTool = a : a = ConstantData.DocumentContext.ShapeTool,
-  //     GlobalData.optManager.isMobilePlatform
+  //     T3Gv.optManager.isMobilePlatform
   //   ) {
   //     if (
   //       'pointerdown' == t.type &&
   //       (
   //         e = !1,
-  //         GlobalData.optManager.PreDragDropOrStamp(),
+  //         T3Gv.optManager.PreDragDropOrStamp(),
   //         r = this,
   //         i = this.StampOrDragDropMobileCallback,
-  //         GlobalData.optManager.StampTimeout = window.setTimeout(i, 200, r, a)
+  //         T3Gv.optManager.StampTimeout = window.setTimeout(i, 200, r, a)
   //       ),
   //       'pointerup' == t.type
   //     ) return void (e = !0)
@@ -657,10 +601,10 @@ class ShapeController {
   //       t.preventDefault &&
   //       t.preventDefault(),
   //       e = !1,
-  //       GlobalData.optManager.PreDragDropOrStamp(),
+  //       T3Gv.optManager.PreDragDropOrStamp(),
   //       r = this,
   //       i = this.StampOrDragDropCallback,
-  //       GlobalData.optManager.StampTimeout = window.setTimeout(i, 200, r, a)
+  //       T3Gv.optManager.StampTimeout = window.setTimeout(i, 200, r, a)
   //     ),
   //     'mouseup' == t.type ||
   //     'pointerup' == t.type ||
@@ -671,18 +615,18 @@ class ShapeController {
 
   //   // debugger;
   //   // var r, i;
-  //   // if (GlobalData.optManager.SetUIAdaptation(t),
+  //   // if (T3Gv.optManager.SetUIAdaptation(t),
   //   //   ConstantData.DocumentContext.HTMLFocusControl &&
   //   //   ConstantData.DocumentContext.HTMLFocusControl.blur &&
   //   //   ConstantData.DocumentContext.HTMLFocusControl.blur(),
   //   //   a ? ConstantData.DocumentContext.ShapeTool = a : a = ConstantData.DocumentContext.ShapeTool,
-  //   //   GlobalData.optManager.isMobilePlatform) {
+  //   //   T3Gv.optManager.isMobilePlatform) {
   //   //   if (t.type === 'pointerdown') {
   //   //     e = !1;
-  //   //     GlobalData.optManager.PreDragDropOrStamp();
+  //   //     T3Gv.optManager.PreDragDropOrStamp();
   //   //     r = this;
   //   //     i = this.StampOrDragDropMobileCallback;
-  //   //     GlobalData.optManager.StampTimeout = window.setTimeout(i, 200, r, a);
+  //   //     T3Gv.optManager.StampTimeout = window.setTimeout(i, 200, r, a);
   //   //   } else if (t.type === 'pointerup') {
   //   //     e = !0;
   //   //   }
@@ -690,10 +634,10 @@ class ShapeController {
   //   // } else if (t.type === "click" || t.type === 'mousedown' || t.type === 'pointerdown' || t.type === 'touchstart') {
   //   //   t.preventDefault && t.preventDefault();
   //   //   e = !1;
-  //   //   GlobalData.optManager.PreDragDropOrStamp();
+  //   //   T3Gv.optManager.PreDragDropOrStamp();
   //   //   r = this;
   //   //   i = this.StampOrDragDropCallback;
-  //   //   GlobalData.optManager.StampTimeout = window.setTimeout(i, 200, r, a);
+  //   //   T3Gv.optManager.StampTimeout = window.setTimeout(i, 200, r, a);
   //   // } else if (t.type === 'mouseup' || t.type === 'pointerup' || t.type === 'touchend') {
   //   //   e = !0;
   //   // }
@@ -712,28 +656,28 @@ class ShapeController {
 
 
   //   var r, i;
-  //   if (GlobalData.optManager.SetUIAdaptation(t),
+  //   if (T3Gv.optManager.SetUIAdaptation(t),
   //     ConstantData.DocumentContext.HTMLFocusControl &&
   //     ConstantData.DocumentContext.HTMLFocusControl.blur &&
   //     ConstantData.DocumentContext.HTMLFocusControl.blur(),
   //     a ? ConstantData.DocumentContext.ShapeTool = a : a = ConstantData.DocumentContext.ShapeTool,
-  //     GlobalData.optManager.isMobilePlatform) {
+  //     T3Gv.optManager.isMobilePlatform) {
   //     if (t.type === 'pointerdown') {
   //       e = false;
-  //       GlobalData.optManager.PreDragDropOrStamp();
+  //       T3Gv.optManager.PreDragDropOrStamp();
   //       r = this;
   //       i = this.StampOrDragDropMobileCallback;
-  //       GlobalData.optManager.StampTimeout = window.setTimeout(i, 200, r, a);
+  //       T3Gv.optManager.StampTimeout = window.setTimeout(i, 200, r, a);
   //     } else if (t.type === 'pointerup') {
   //       e = true;
   //     }
   //   } else if (t.type === "click" || t.type === 'mousedown' || t.type === 'pointerdown' || t.type === 'touchstart') {
   //     t.preventDefault && t.preventDefault();
   //     e = false;
-  //     GlobalData.optManager.PreDragDropOrStamp();
+  //     T3Gv.optManager.PreDragDropOrStamp();
   //     r = this;
   //     i = this.StampOrDragDropCallback;
-  //     GlobalData.optManager.StampTimeout = window.setTimeout(i, 200, r, a);
+  //     T3Gv.optManager.StampTimeout = window.setTimeout(i, 200, r, a);
   //   } else if (t.type === 'mouseup' || t.type === 'pointerup' || t.type === 'touchend') {
   //     e = true;
   //   }
@@ -745,14 +689,14 @@ class ShapeController {
 
   StampShape = function (e, t) {
     var a,
-      r = ConstantData.SDRShapeTypes,
+      r = PolygonConstant.ShapeTypes,
       i = {
         x: - 1000,
         y: - 1000,
         width: ConstantData.Defines.Shape_Width,
         height: ConstantData.Defines.Shape_Height
       },
-      n = GlobalData.optManager.GetShapeParams(e, i);
+      n = T3Gv.optManager.GetShapeParams(e, i);
 
     console.log('StampShape====== n>', n);
     n.bIsSquare ? (
@@ -791,39 +735,39 @@ class ShapeController {
           // (a = new ListManager.Polygon(o)).dataclass = n.dataclass
           (a = new Polygon(o)).dataclass = n.dataclass
     }
-    // t ? GlobalData.optManager.DragDropNewShape(a, !0, !0, !0, null, null) :
-    // GlobalData.optManager.MouseStampNewShape(a, !0, !0, !0, null, null)
-    GlobalData.optManager.MouseStampNewShape(a, !0, !0, !0, null, null)
+    // t ? T3Gv.optManager.DragDropNewShape(a, !0, !0, !0, null, null) :
+    // T3Gv.optManager.MouseStampNewShape(a, !0, !0, !0, null, null)
+    T3Gv.optManager.MouseStampNewShape(a, !0, !0, !0, null, null)
 
   }
 
 
   RotateShapes = function (e) {
     try {
-      GlobalData.optManager.CloseEdit(),
-        GlobalData.optManager.RotateShapes(parseInt(e, 10))
+      T3Gv.optManager.CloseEdit(),
+        T3Gv.optManager.RotateShapes(parseInt(e, 10))
     } catch (e) {
-      GlobalData.optManager.ExceptionCleanup(e)
+      T3Gv.optManager.ExceptionCleanup(e)
       throw e;
     }
   }
 
   AlignShapes = function (e) {
     try {
-      GlobalData.optManager.CloseEdit(),
-        GlobalData.optManager.AlignShapes(e)
+      T3Gv.optManager.CloseEdit(),
+        T3Gv.optManager.AlignShapes(e)
     } catch (e) {
-      GlobalData.optManager.ExceptionCleanup(e);
+      T3Gv.optManager.ExceptionCleanup(e);
       throw e;
     }
   }
 
   DeleteSelectedObjects = function () {
     try {
-      GlobalData.optManager.CloseEdit(),
-        GlobalData.optManager.DeleteSelectedObjects()
+      T3Gv.optManager.CloseEdit(),
+        T3Gv.optManager.DeleteSelectedObjects()
     } catch (e) {
-      GlobalData.optManager.ExceptionCleanup(e);
+      T3Gv.optManager.ExceptionCleanup(e);
       throw e;
     }
   }
@@ -838,19 +782,19 @@ class ShapeController {
             return !1;
           Collab.BuildMessage(ConstantData.CollabMessages.Undo, null, !1)
         } else
-          GlobalData.optManager.Undo() && Collab.BuildMessage(ConstantData.CollabMessages.Undo, null, !1);
+          T3Gv.optManager.Undo() && Collab.BuildMessage(ConstantData.CollabMessages.Undo, null, !1);
       else
-        GlobalData.optManager.Undo()
+        T3Gv.optManager.Undo()
     } catch (e) {
-      GlobalData.optManager.ExceptionCleanup(e)
+      T3Gv.optManager.ExceptionCleanup(e)
     }
       */
 
     try {
-      GlobalData.optManager.Undo()
+      T3Gv.optManager.Undo()
     }
     catch (e) {
-      GlobalData.optManager.ExceptionCleanup(e);
+      T3Gv.optManager.ExceptionCleanup(e);
       throw e;
     }
   }
@@ -860,20 +804,20 @@ class ShapeController {
     //   if (Collab.AllowMessage()) if (Collab.IsSecondary()) {
     //     if (!Collab.AllowRedo()) return !1;
     //     Collab.BuildMessage(ConstantData.CollabMessages.Redo, null, !1)
-    //   } else GlobalData.optManager.Redo() &&
+    //   } else T3Gv.optManager.Redo() &&
     //     Collab.BuildMessage(ConstantData.CollabMessages.Redo, null, !1);
-    //   else GlobalData.optManager.Redo()
+    //   else T3Gv.optManager.Redo()
     // } catch (e) {
-    //   GlobalData.optManager.ExceptionCleanup(e);
+    //   T3Gv.optManager.ExceptionCleanup(e);
     //   throw e;
     // }
-    GlobalData.optManager.Redo()
+    T3Gv.optManager.Redo()
   }
 
 
   Copy = function () {
 
-    // GlobalData.optManager.CopyObjects();
+    // T3Gv.optManager.CopyObjects();
     // return;
 
     try {
@@ -884,11 +828,11 @@ class ShapeController {
         throw e
       }
       e ||
-        GlobalData.optManager.CopyObjects()
+        T3Gv.optManager.CopyObjects()
     } catch (e) {
 
-      GlobalData.optManager.RestorePrimaryStateManager();
-      GlobalData.optManager.ExceptionCleanup(e);
+      T3Gv.optManager.RestorePrimaryStateManager();
+      T3Gv.optManager.ExceptionCleanup(e);
       throw e
     }
   }
@@ -896,7 +840,7 @@ class ShapeController {
 
   Cut = function () {
 
-    // GlobalData.optManager.CutObjects()
+    // T3Gv.optManager.CutObjects()
     // return;
 
     // debugger
@@ -909,11 +853,11 @@ class ShapeController {
         throw e
       }
       e ||
-        GlobalData.optManager.CutObjects()
+        T3Gv.optManager.CutObjects()
     } catch (e) {
       throw e
-      GlobalData.optManager.RestorePrimaryStateManager(),
-        GlobalData.optManager.ExceptionCleanup(e)
+      T3Gv.optManager.RestorePrimaryStateManager(),
+        T3Gv.optManager.ExceptionCleanup(e)
     }
   }
 
@@ -921,27 +865,27 @@ class ShapeController {
   Paste = function (e) {
     /*
     try {
-      GlobalData.optManager.PastePoint = null,
+      T3Gv.optManager.PastePoint = null,
         e &&
-        GlobalData.optManager.RightClickParams &&
-        (GlobalData.optManager.PastePoint = GlobalData.optManager.RightClickParams.HitPt),
+        T3Gv.optManager.RightClickParams &&
+        (T3Gv.optManager.PastePoint = T3Gv.optManager.RightClickParams.HitPt),
         Clipboard.PasteFromUIaction()
     } catch (e) {
       throw e
-      GlobalData.optManager.ExceptionCleanup(e)
+      T3Gv.optManager.ExceptionCleanup(e)
     }
     */
 
     // debugger
 
     try {
-      GlobalData.optManager.PastePoint = null;
-      if (e && GlobalData.optManager.RightClickParams) {
-        GlobalData.optManager.PastePoint = GlobalData.optManager.RightClickParams.HitPt;
+      T3Gv.optManager.PastePoint = null;
+      if (e && T3Gv.optManager.RightClickParams) {
+        T3Gv.optManager.PastePoint = T3Gv.optManager.RightClickParams.HitPt;
       }
       Clipboard.PasteFromUIaction();
     } catch (error) {
-      GlobalData.optManager.ExceptionCleanup(error);
+      T3Gv.optManager.ExceptionCleanup(error);
       throw error;
     }
 
@@ -951,20 +895,20 @@ class ShapeController {
 
   SendToBackOf = function () {
     try {
-      GlobalData.optManager.CloseEdit();
-      GlobalData.optManager.SendToBackOf();
+      T3Gv.optManager.CloseEdit();
+      T3Gv.optManager.SendToBackOf();
     } catch (e) {
-      GlobalData.optManager.ExceptionCleanup(e);
+      T3Gv.optManager.ExceptionCleanup(e);
       throw e
     }
   }
 
   BringToFrontOf = function () {
     try {
-      GlobalData.optManager.CloseEdit();
-      GlobalData.optManager.BringToFrontOf();
+      T3Gv.optManager.CloseEdit();
+      T3Gv.optManager.BringToFrontOf();
     } catch (e) {
-      GlobalData.optManager.ExceptionCleanup(e);
+      T3Gv.optManager.ExceptionCleanup(e);
       throw e
     }
   }
@@ -972,92 +916,92 @@ class ShapeController {
 
   GroupSelectedShapes = function () {
     try {
-      GlobalData.optManager.CloseEdit();
-      GlobalData.optManager.GroupSelectedShapes(!1, null, !1, !1, !0);
+      T3Gv.optManager.CloseEdit();
+      T3Gv.optManager.GroupSelectedShapes(!1, null, !1, !1, !0);
     } catch (e) {
-      GlobalData.optManager.ExceptionCleanup(e);
+      T3Gv.optManager.ExceptionCleanup(e);
       throw e;
     }
   }
 
   UngroupSelectedShapes = function () {
     try {
-      GlobalData.optManager.CloseEdit();
-      GlobalData.optManager.UngroupSelectedShapes();
+      T3Gv.optManager.CloseEdit();
+      T3Gv.optManager.UngroupSelectedShapes();
     } catch (e) {
-      GlobalData.optManager.ExceptionCleanup(e);
+      T3Gv.optManager.ExceptionCleanup(e);
       throw e;
     }
   }
 
   FlipHorizontal = function () {
     try {
-      GlobalData.optManager.CloseEdit();
-      GlobalData.optManager.FlipShapes(ConstantData.ExtraFlags.SEDE_FlipHoriz);
+      T3Gv.optManager.CloseEdit();
+      T3Gv.optManager.FlipShapes(ConstantData.ExtraFlags.SEDE_FlipHoriz);
     } catch (e) {
-      GlobalData.optManager.ExceptionCleanup(e);
+      T3Gv.optManager.ExceptionCleanup(e);
       throw e;
     }
   }
 
   FlipVertical = function () {
     try {
-      GlobalData.optManager.CloseEdit();
-      GlobalData.optManager.FlipShapes(ConstantData.ExtraFlags.SEDE_FlipVert);
+      T3Gv.optManager.CloseEdit();
+      T3Gv.optManager.FlipShapes(ConstantData.ExtraFlags.SEDE_FlipVert);
     } catch (e) {
-      GlobalData.optManager.ExceptionCleanup(e);
+      T3Gv.optManager.ExceptionCleanup(e);
       throw e;
     }
   }
 
   MakeSameSize = function (e) {
     try {
-      GlobalData.optManager.CloseEdit(),
-        GlobalData.optManager.MakeSameSize(parseInt(e, 10))
+      T3Gv.optManager.CloseEdit(),
+        T3Gv.optManager.MakeSameSize(parseInt(e, 10))
     } catch (e) {
-      GlobalData.optManager.ExceptionCleanup(e)
+      T3Gv.optManager.ExceptionCleanup(e)
     }
   }
 
   GetSelectionContext = function () {
     try {
-      return GlobalData.optManager.GetSelectionContext()
+      return T3Gv.optManager.GetSelectionContext()
     } catch (e) {
-      GlobalData.optManager.ExceptionCleanup(e)
+      T3Gv.optManager.ExceptionCleanup(e)
     }
   }
 
   IsActiveTextEdit = function () {
     try {
-      return - 1 != GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theTEDSessionBlockID, !1).theActiveTextEditObjectID
+      return - 1 != T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theTEDSessionBlockID, !1).theActiveTextEditObjectID
     } catch (e) {
-      GlobalData.optManager.ExceptionCleanup(e)
+      T3Gv.optManager.ExceptionCleanup(e)
     }
   }
 
   HandleKeyDown = function (e, t, a) {
     try {
-      return GlobalData.optManager.HandleKeyDown(e, t, a)
+      return T3Gv.optManager.HandleKeyDown(e, t, a)
     } catch (e) {
-      GlobalData.optManager.ExceptionCleanup(e)
+      T3Gv.optManager.ExceptionCleanup(e)
     }
   }
 
 
   Duplicate = function () {
     try {
-      GlobalData.optManager.DuplicateObjects()
+      T3Gv.optManager.DuplicateObjects()
     } catch (e) {
-      GlobalData.optManager.RestorePrimaryStateManager(),
-        GlobalData.optManager.ExceptionCleanup(e)
+      T3Gv.optManager.RestorePrimaryStateManager(),
+        T3Gv.optManager.ExceptionCleanup(e)
     }
   }
 
   HandleKeyPress = function (e, t) {
     try {
-      return GlobalData.optManager.HandleKeyPress(e, t)
+      return T3Gv.optManager.HandleKeyPress(e, t)
     } catch (e) {
-      GlobalData.optManager.ExceptionCleanup(e)
+      T3Gv.optManager.ExceptionCleanup(e)
     }
   }
 
@@ -1079,11 +1023,11 @@ class ShapeController {
     //       !1
     //     )
     //   );
-    //   if (null == (i = GlobalData.optManager.BuildSymbolObject(e, - 1))) return
+    //   if (null == (i = T3Gv.optManager.BuildSymbolObject(e, - 1))) return
     // }
     // if (
-    //   null == GlobalData.optManager.theDrawShape &&
-    //   (GlobalData.optManager.theDrawShape = i),
+    //   null == T3Gv.optManager.theDrawShape &&
+    //   (T3Gv.optManager.theDrawShape = i),
     //   i.SymbolData.HasNative
     // ) {
     //   if (null == i.nativeDataArrayBuffer) return void (
@@ -1097,7 +1041,7 @@ class ShapeController {
     //     )
     //   )
     // } else {
-    //   var n = GlobalData.optManager.GetSymbolFormat(i.SymbolData),
+    //   var n = T3Gv.optManager.GetSymbolFormat(i.SymbolData),
     //     o = Globals.SymbolFormats;
     //   switch (n) {
     //     case o.EMF:
@@ -1145,8 +1089,8 @@ class ShapeController {
   }
 
   StampOrDragDropNewSymbol = function (e, t) {
-    GlobalData.optManager.ReplaceSymbolID = null;
-    // var a = GlobalData.optManager.BuildSymbolObject(e, t);
+    T3Gv.optManager.ReplaceSymbolID = null;
+    // var a = T3Gv.optManager.BuildSymbolObject(e, t);
 
     var svgF0 = '<g><g fill="##FILLCOLOR=#7F7F7F##" transform="translate(0,0)"><g class="pump"> <circle stroke="##LINECOLOR=#000000##" cy="16" cx="15.955" r="9.9609003" class="pump-background" /> <g transform="translate(16,16)"> <path d="M -5,8.1369 V -8.1191 L 9.078,0.0091 Z" class="rotating-middle" stroke="##LINECOLOR=#000000##" stroke-width="##LINETHICK=1##"/></g></g></g></g>';
     var svgF1 = '<g  class="heat-pump" stroke-linejoin="round"  stroke="#000"  transform="translate(39 -2.3842e-7)"  fill="currentColor" > <rect  class="inner" height="27.718"  width="27.718"  y="2.141"  x="-36.859" stroke-width="1.0868" ></rect>  <g transform="matrix(1.0276 0 0 1.0276 -39.441 -.44130)"  stroke-linecap="round"  stroke-miterlimit="1"  stroke-width="1.3509" > <path d="m16.234 16.944 8.6837-6.894-8.6837-6.894v3.447h-13.152v6.894h13.152z" fill="#ce2824" ></path> <path d="m15.766 28.844-8.6837-6.894 8.6837-6.894v3.447h13.152v6.894h-13.152z" fill="#3238db"></path></g></g>';
@@ -1157,15 +1101,15 @@ class ShapeController {
 
     if (tempData) {
       // var r = (a.ExtraFlags & ConstantData.ExtraFlags.SEDE_NoColor) > 0;
-      // t ? GlobalData.optManager.DragDropNewShape(a, !0, !0, r, null, null) : GlobalData.optManager.MouseStampNewShape(a, !0, !0, r, null, null)
-      GlobalData.optManager.DragDropNewShape(tempData, !0, !0, false, null, null)
+      // t ? T3Gv.optManager.DragDropNewShape(a, !0, !0, r, null, null) : T3Gv.optManager.MouseStampNewShape(a, !0, !0, r, null, null)
+      T3Gv.optManager.DragDropNewShape(tempData, !0, !0, false, null, null)
     }
   }
 
 
   DrawNewSegLine = function (e, t, a) {
     var r,
-      i = GlobalData.objectStore.GetObject(GlobalData.optManager.theSEDSessionBlockID).Data,
+      i = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data,
       n = 0 == (i.def.textflags & ConstantData.TextFlags.SED_TF_HorizText),
       o = i.d_sarrow,
       s = i.d_earrow,
@@ -1195,7 +1139,7 @@ class ShapeController {
         ArrowSizeIndex: i.d_arrowsize,
         CurveAdjust: 7,
         TextGrow: ConstantData.TextGrowBehavior.HORIZONTAL,
-        TextAlign: ConstantData.DocumentContext.CurrentTextAlignment,
+        TextAlign: T3Constant.DocContext.CurrentTextAlignment,
         TextDirection: n,
         Dimensions: i.dimensions,
         curveparam: i.def.curveparam,
@@ -1205,7 +1149,7 @@ class ShapeController {
       u = Utils1.DeepCopy(i.def.style);
     if (a && a.Data && a.Data.attributes && a.Data.attributes.StyleRecord) u = Utils1.DeepCopy(a.Data.attributes.StyleRecord);
     else {
-      var p = Utils4.FindStyle(ConstantData.Defines.TextBlockStyle);
+      var p = Utils3.FindStyle(ConstantData.Defines.TextBlockStyle);
       u.Text.Paint.Color = p.Text.Paint.Color
     }
     if (
@@ -1216,12 +1160,12 @@ class ShapeController {
       ),
       e
     ) return c;
-    GlobalData.optManager.DrawNewObject(c, t)
+    T3Gv.optManager.DrawNewObject(c, t)
   }
 
   DrawNewArcSegLine = function (e, t, a) {
     var r,
-      i = GlobalData.objectStore.GetObject(GlobalData.optManager.theSEDSessionBlockID).Data,
+      i = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data,
       n = 0 == (i.def.textflags & ConstantData.TextFlags.SED_TF_HorizText),
       o = i.d_sarrow,
       s = i.d_earrow,
@@ -1251,7 +1195,7 @@ class ShapeController {
         ArrowSizeIndex: i.d_arrowsize,
         CurveAdjust: 7,
         TextGrow: ConstantData.TextGrowBehavior.HORIZONTAL,
-        TextAlign: ConstantData.DocumentContext.CurrentTextAlignment,
+        TextAlign: T3Constant.DocContext.CurrentTextAlignment,
         TextDirection: n,
         Dimensions: i.dimensions,
         bOverrideDefaultStyleOnDraw: !0
@@ -1260,7 +1204,7 @@ class ShapeController {
       u = Utils1.DeepCopy(i.def.style);
     if (a && a.Data && a.Data.attributes && a.Data.attributes.StyleRecord) u = Utils1.DeepCopy(a.Data.attributes.StyleRecord);
     else {
-      var p = Utils4.FindStyle(ConstantData.Defines.TextBlockStyle);
+      var p = Utils3.FindStyle(ConstantData.Defines.TextBlockStyle);
       u.Text.Paint.Color = p.Text.Paint.Color
     }
     if (
@@ -1271,12 +1215,12 @@ class ShapeController {
       ),
       e
     ) return c;
-    GlobalData.optManager.DrawNewObject(c, t)
+    T3Gv.optManager.DrawNewObject(c, t)
   }
 
   DrawNewPolyLine = function (e, t, a) {
     var r,
-      i = GlobalData.objectStore.GetObject(GlobalData.optManager.theSEDSessionBlockID).Data,
+      i = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data,
       n = 0 == (i.def.textflags & ConstantData.TextFlags.SED_TF_HorizText),
       o = i.d_sarrow,
       s = i.d_earrow,
@@ -1309,7 +1253,7 @@ class ShapeController {
             CurveAdjust: 7,
             polylist: new PolyList(),
             TextGrow: ConstantData.TextGrowBehavior.HORIZONTAL,
-            TextAlign: ConstantData.DocumentContext.CurrentTextAlignment,
+            TextAlign: T3Constant.DocContext.CurrentTextAlignment,
             TextDirection: n,
             Dimensions: i.dimensions,
             extraflags: ConstantData.ExtraFlags.SEDE_SideKnobs,
@@ -1326,18 +1270,18 @@ class ShapeController {
       u = Utils1.DeepCopy(i.def.style);
     if (a && a.Data && a.Data.attributes && a.Data.attributes.StyleRecord) u = Utils1.DeepCopy(a.Data.attributes.StyleRecord);
     else {
-      var p = Utils4.FindStyle(ConstantData.Defines.TextBlockStyle);
+      var p = Utils3.FindStyle(ConstantData.Defines.TextBlockStyle);
       u.Text.Paint.Color = p.Text.Paint.Color
     }
     if (c.StyleRecord = u, e) return c;
-    GlobalData.optManager.DrawNewObject(c, t)
+    T3Gv.optManager.DrawNewObject(c, t)
   }
 
   DrawNewPolyLineContainer = function (e, t, a) {
     var r,
-      i = GlobalData.objectStore.GetObject(GlobalData.optManager.theSEDSessionBlockID).Data,
+      i = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data,
       n = (
-        GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
+        T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
         0 == (i.def.textflags & ConstantData.TextFlags.SED_TF_HorizText)
       );
     a ? r = Utils1.DeepCopy(a.Data.attributes) : (
@@ -1365,7 +1309,7 @@ class ShapeController {
           CurveAdjust: 7,
           polylist: new PolyList(),
           TextGrow: ConstantData.TextGrowBehavior.HORIZONTAL,
-          TextAlign: ConstantData.DocumentContext.CurrentTextAlignment,
+          TextAlign: T3Constant.DocContext.CurrentTextAlignment,
           TextDirection: n,
           Dimensions: i.dimensions
         }
@@ -1378,11 +1322,11 @@ class ShapeController {
     );
     var o = new Instance.Shape.PolyLineContainer(r);
     if (e) return o;
-    GlobalData.optManager.DrawNewObject(o, t)
+    T3Gv.optManager.DrawNewObject(o, t)
   }
 
   DrawNewFreehandLine = function (e, t, a) {
-    var r = GlobalData.objectStore.GetObject(GlobalData.optManager.theSEDSessionBlockID).Data;
+    var r = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data;
     a ? attributes = Utils1.DeepCopy(a.Data.attributes) : (
       attributes = {
         Frame: {
@@ -1418,12 +1362,12 @@ class ShapeController {
       i.StyleRecord = n,
       e
     ) return i;
-    GlobalData.optManager.DrawNewObject(i, t)
+    T3Gv.optManager.DrawNewObject(i, t)
   }
 
   DrawNewArcLine = function (e, t, a) {
     var r,
-      i = GlobalData.objectStore.GetObject(GlobalData.optManager.theSEDSessionBlockID).Data,
+      i = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data,
       n = 0 == (i.def.textflags & ConstantData.TextFlags.SED_TF_HorizText),
       o = i.d_sarrow,
       s = i.d_earrow,
@@ -1453,7 +1397,7 @@ class ShapeController {
         ArrowSizeIndex: i.d_arrowsize,
         CurveAdjust: 7,
         TextGrow: ConstantData.TextGrowBehavior.HORIZONTAL,
-        TextAlign: ConstantData.DocumentContext.CurrentTextAlignment,
+        TextAlign: T3Constant.DocContext.CurrentTextAlignment,
         TextDirection: n,
         Dimensions: i.dimensions,
         bOverrideDefaultStyleOnDraw: !0
@@ -1462,7 +1406,7 @@ class ShapeController {
       u = Utils1.DeepCopy(i.def.style);
     if (a && a.Data && a.Data.attributes && a.Data.attributes.StyleRecord) u = Utils1.DeepCopy(a.Data.attributes.StyleRecord);
     else {
-      var p = Utils4.FindStyle(ConstantData.Defines.TextBlockStyle);
+      var p = Utils3.FindStyle(ConstantData.Defines.TextBlockStyle);
       u.Text.Paint.Color = p.Text.Paint.Color
     }
     if (
@@ -1473,10 +1417,10 @@ class ShapeController {
       ),
       e
     ) return c;
-    GlobalData.optManager.DrawNewObject(c, t)
+    T3Gv.optManager.DrawNewObject(c, t)
   }
 
 }
 
-export default ShapeController
+export default ToolUtil1
 

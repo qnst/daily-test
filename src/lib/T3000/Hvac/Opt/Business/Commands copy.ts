@@ -1,7 +1,7 @@
 
 
 import MainController from './MainController'
-import GlobalData from '../../Data/GlobalData'
+import GlobalData from '../../Data/T3Gv'
 import ListManager from '../../Data/ListManager';
 import Resources from '../../Data/Resources';
 import Utils2 from '../../Helper/Utils2';
@@ -19,8 +19,8 @@ class Commands {
 
   static MainController = new MainController();
 
-  SD_Select = (e) => {
-    console.log('SD_Select', e);
+  SelectAct = (e) => {
+    console.log('SelectAct', e);
     // debugger
 
     const selectionToolSticky = ConstantData.DocumentContext.SelectionToolSticky;
@@ -30,7 +30,7 @@ class Commands {
     Commands.MainController.Shapes.CancelModalOperation();
 
     if (selectionToolSticky) {
-      GlobalData.optManager.ResetObjectDraw();
+      T3Gv.optManager.ResetObjectDraw();
     }
 
     const selectionModeAttr = e.currentTarget.attributes.getNamedItem(ConstantData.Constants.Attr_SelectionMode);
@@ -42,16 +42,16 @@ class Commands {
           isMultipleSelection = true;
           break;
         case 'all':
-          GlobalData.optManager.SelectAllObjects();
+          T3Gv.optManager.SelectAllObjects();
           return;
         case 'lines':
-          GlobalData.optManager.SelectAllObjects([
+          T3Gv.optManager.SelectAllObjects([
             ConstantData.DrawingObjectBaseClass.LINE,
             ConstantData.DrawingObjectBaseClass.CONNECTOR
           ]);
           break;
         case 'shapes':
-          GlobalData.optManager.SelectAllObjects([ConstantData.DrawingObjectBaseClass.SHAPE]);
+          T3Gv.optManager.SelectAllObjects([ConstantData.DrawingObjectBaseClass.SHAPE]);
           break;
       }
     }
@@ -64,11 +64,11 @@ class Commands {
     }
 
     // Double Test
-    // GlobalData.optManager.CloseEdit();
+    // T3Gv.optManager.CloseEdit();
   }
 
-  SD_Line_SetDefaultWallThickness = (e) => {
-    console.log('SD_Line_SetDefaultWallThickness 1', e);
+  LineSetDefaultWallThicknessAct = (e) => {
+    console.log('LineSetDefaultWallThicknessAct 1', e);
 
     /*
     if (null == e) return !1;
@@ -120,7 +120,7 @@ class Commands {
   }
 
   /*
-  SD_StampShapeFromTool: function (e) {
+  StampShapeFromToolAct: function (e) {
     if (
       SDUI.Commands.MainController.Shapes.CancelModalOperation(),
       null == e
@@ -138,9 +138,9 @@ class Commands {
   }
   */
 
-  SD_StampShapeFromTool = (e, type) => {
+  StampShapeFromToolAct = (e, type) => {
 
-    console.log('SD_StampShapeFromTool', e, type);
+    console.log('StampShapeFromToolAct', e, type);
 
     // if (
     //   Commands.MainController.Shapes.CancelModalOperation(),
@@ -183,7 +183,7 @@ class Commands {
     Commands.MainController.Shapes.StampOrDragDropNewShape(e,/* null*/type)
 
 
-    // console.log('SD_StampShapeFromTool', e);
+    // console.log('StampShapeFromToolAct', e);
 
     //   if (
     //     SDUI.Commands.MainController.Shapes.CancelModalOperation(),
@@ -207,7 +207,7 @@ class Commands {
     //     ) : SDUI.Commands.MainController.Shapes.StampOrDragDropNewShape(e,/* null2*/type)
   }
 
-  SD_Tool_Line = (e) => {
+  ToolLineAct = (e) => {
     // if (
     //   SDUI.Commands.MainController.Shapes.CancelModalOperation(),
     //   null == e
@@ -244,7 +244,7 @@ class Commands {
     Commands.MainController.Shapes.DrawNewLineShape(2, !1, !1)
   }
 
-  SD_Rotate = (event, angle) => {
+  RotateAct = (event, angle) => {
     if (null == angle)
       return null;
     // var t = e.currentTarget.attributes.getNamedItem('angle'/*SDUI.Constants.Attr_RotationAngle*/).value;
@@ -252,7 +252,7 @@ class Commands {
     Commands.MainController.Shapes.RotateShapes(360 - t)
   }
 
-  SD_Shape_Align = (e) => {
+  ShapeAlignAct = (e) => {
     if (null == e)
       return null;
     // var t = e.currentTarget.attributes.getNamedItem(SDUI.Constants.Attr_ShapeAlign).value;
@@ -260,24 +260,24 @@ class Commands {
     Commands.MainController.Shapes.AlignShapes(t)
   }
 
-  SD_Group = (e) => {
+  GroupAct = (e) => {
     Commands.MainController.Shapes.GroupSelectedShapes()
   }
 
 
-  SD_Ungroup = (e) => {
+  UngroupAct = (e) => {
     Commands.MainController.Shapes.UngroupSelectedShapes()
   }
 
-  SD_Shape_Flip_Horizontal = (e) => {
+  ShapeFlipHorizontalAct = (e) => {
     Commands.MainController.Shapes.FlipHorizontal()
   }
 
-  SD_Shape_Flip_Vertical = (e) => {
+  ShapeFlipVerticalAct = (e) => {
     Commands.MainController.Shapes.FlipVertical()
   }
 
-  SD_MakeSameSize = (e, samesizeoption) => {
+  MakeSameSizeAct = (e, samesizeoption) => {
     // if (null == e)
     //   return !1;
     // var t = e.currentTarget.attributes.getNamedItem(SDUI.Constants.Attr_SameSizeOption);
@@ -285,63 +285,63 @@ class Commands {
     Commands.MainController.Shapes.MakeSameSize(t)
   }
 
-  SD_Shape_BringToFront = (e) => {
+  ShapeBringToFrontAct = (e) => {
     Commands.MainController.Shapes.BringToFrontOf()
   }
 
-  SD_Shape_SendToBack = (e) => {
+  ShapeSendToBackAct = (e) => {
     Commands.MainController.Shapes.SendToBackOf()
   }
 
-  SD_Paste = (e) => {
+  PasteAct = (e) => {
     // Utils2.FlashUIControl(Resources.Controls.Ribbon_Home.Paste.Id);
     Commands.MainController.Shapes.Paste(!1)
   }
 
-  SD_PasteRightClick = (e) => {
+  PasteActRightClickAct = (e) => {
     // Utils2.FlashUIControl(Resources.Controls.Ribbon_Home.Paste.Id),
     Commands.MainController.Shapes.Paste(!0)
   }
 
-  SD_Copy = (e) => {
+  CopyAct = (e) => {
     // Utils2.FlashUIControl(Resources.Controls.Ribbon_Home.Copy.Id),
     Commands.MainController.Shapes.Copy()
   }
 
-  SD_Cut = (e) => {
+  CutAct = (e) => {
     // Utils2.FlashUIControl(Resources.Controls.Ribbon_Home.Cut.Id),
     Commands.MainController.Shapes.Cut()
   }
 
-  SD_Delete = (e) => {
+  DeleteAct = (e) => {
     Commands.MainController.Shapes.DeleteSelectedObjects()
   }
 
-  SD_Undo = (e) => {
+  UndoAct = (e) => {
     Commands.MainController.Shapes.Undo()
   }
 
-  SD_Redo = (e) => {
+  RedoAct = (e) => {
     Commands.MainController.Shapes.Redo()
   }
 
-  SD_CommitFilePickerSelection = (e) => {
+  CommitFilePickerSelectionAct = (e) => {
     Commands.MainController.SaveAs()
   }
 
-  SD_Duplicate = (e) => {
+  DuplicateAct = (e) => {
     Commands.MainController.Shapes.Duplicate()
   }
 
-  SD_MeasureDistance = (e) => {
-    GlobalData.gBusinessManager.AddMeasureLine(e)
+  MeasureDistanceAct = (e) => {
+    T3Gv.gBusinessManager.AddMeasureLine(e)
   }
 
-  SD_MeasureArea = (e) => {
-    GlobalData.gBusinessManager.AddMeasureArea(e)
+  MeasureAreaAct = (e) => {
+    T3Gv.gBusinessManager.AddMeasureArea(e)
   }
 
-  SD_ClickSymbol = (e) => {
+  ClickSymbolAct = (e) => {
     // if (
     //   SDUI.Commands.MainController.Shapes.CancelDragOperation(),
     //   null == e
@@ -358,7 +358,7 @@ class Commands {
     Commands.MainController.Shapes.SD_PreLoad_Symbol("d6e019b9-110d-4990-8897-eade69451d92", false, null, true)
   }
 
-  SD_DragDropSymbol = (e) => {
+  DragDropSymbolAct = (e) => {
     // if (null == e) return !1;
     // var t = e.currentTarget.attributes.getNamedItem(SDUI.Constants.Attr_SymbolId);
     // null != t &&

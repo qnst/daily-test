@@ -1,6 +1,6 @@
 
 // import Basic from "./Basic.Index";
-import HvacSVG from "../Helper/SVG.t2"
+import T3Svg from "../Helper/T3Svg"
 // import { RotatePoint } from "../Common";
 import $ from "jquery";
 // import GPP from "../gListManager";
@@ -9,9 +9,9 @@ import $ from "jquery";
 // import '../../app-t5/pathseg';
 import "../Helper/pathseg"
 
-import Container from "./Basic.Container";
+import Container from "./B.Container";
 import Global from "./Basic.Global"
-import Creator from "./Basic.Path.Creator";
+import Creator from "./B.Path.Creator";
 import Utils1 from "../Helper/Utils1"
 import Utils2 from "../Helper/Utils2"
 import Utils3 from "../Helper/Utils3"
@@ -65,19 +65,19 @@ class Path extends Container {
   // Basic.Path.prototype = new Basic.Container,
   // Basic.Path.prototype.constructor = Basic.Path,
   CreateElement(svgDoc, parent) {
-    // return this.svgObj = new HvacSVG.Container(HvacSVG.create('g')),
-    //   this.pathElem = new HvacSVG.Path,
+    // return this.svgObj = new T3Svg.Container(T3Svg.create('g')),
+    //   this.pathElem = new T3Svg.Path,
     //   this.svgObj.add(this.pathElem),
-    //   this.arrowAreaElem = new HvacSVG.Container(HvacSVG.create('g')),
+    //   this.arrowAreaElem = new T3Svg.Container(T3Svg.create('g')),
     //   this.svgObj.add(this.arrowAreaElem),
     //   this.InitElement(e, t),
     //   this.svgObj
 
 
-    this.svgObj = new HvacSVG.Container(HvacSVG.create('g'));
-    this.pathElem = new HvacSVG.Path;
+    this.svgObj = new T3Svg.Container(T3Svg.create('g'));
+    this.pathElem = new T3Svg.Path;
     this.svgObj.add(this.pathElem);
-    this.arrowAreaElem = new HvacSVG.Container(HvacSVG.create('g'));
+    this.arrowAreaElem = new T3Svg.Container(T3Svg.create('g'));
     this.svgObj.add(this.arrowAreaElem);
     this.InitElement(svgDoc, parent);
     return this.svgObj;
@@ -434,7 +434,7 @@ class Path extends Container {
       ),
       isNaN(C) &&
       (C = 1),
-      (u = new HvacSVG.Container(HvacSVG.create('g'))).parts = [],
+      (u = new T3Svg.Container(T3Svg.create('g'))).parts = [],
       a &&
       e.flippedGeometry &&
       (T = e.flippedGeometry),
@@ -444,7 +444,7 @@ class Path extends Container {
     ) {
       switch (g = !1, T[i].type) {
         case 'RECT':
-          h = new HvacSVG.Path,
+          h = new T3Svg.Path,
             d = 'M',
             o = T[i].pathData.x * I + y.x,
             s = T[i].pathData.y * I + y.y,
@@ -474,7 +474,7 @@ class Path extends Container {
             g = !0;
           break;
         case 'OVAL':
-          h = new HvacSVG.Path,
+          h = new T3Svg.Path,
             d = 'M',
             o = T[i].pathData.x * I + y.x,
             s = T[i].pathData.y * I + y.y,
@@ -494,7 +494,7 @@ class Path extends Container {
             g = !0;
           break;
         case 'PATH':
-          if (h = new HvacSVG.Path, d = '', p = T[i].pathData, !Array.isArray(p)) continue;
+          if (h = new T3Svg.Path, d = '', p = T[i].pathData, !Array.isArray(p)) continue;
           for (n = 0; n < p.length; n++) {
             if (D = p[n], !Array.isArray(D) || D.length < 1) {
               d = '';
@@ -824,7 +824,7 @@ class Path extends Container {
       var e,
         t,
         a = this.doc.GetFormattingLayer();
-      (t = new HvacSVG.Path).plot(this.origPathData),
+      (t = new T3Svg.Path).plot(this.origPathData),
         a.svgObj.add(t),
         e = t.node.getBBox(),
         a.svgObj.remove(t),

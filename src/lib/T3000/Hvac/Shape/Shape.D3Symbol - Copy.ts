@@ -1,11 +1,11 @@
 
 
 
-import Element from '../Basic/Basic.Element';
-import BaseSymbol from '../Basic/Basic.Symbol';
+import Element from '../Basic/B.Element';
+import BaseSymbol from '../Basic/B.Symbol';
 import ListManager from '../Data/ListManager';
-import GlobalData from '../Data/GlobalData'
-import BaseShape from './Shape.BaseShape';
+import GlobalData from '../Data/T3Gv'
+import BaseShape from './S.BaseShape';
 import ConstantData from '../Data/ConstantData'
 
 class D3Symbol extends BaseSymbol {
@@ -102,7 +102,7 @@ class D3Symbol extends BaseSymbol {
       i.SetMirror(o),
       s &&
       i.SetFlip(s),
-      GlobalData.optManager.bDrawEffects &&
+      T3Gv.optManager.bDrawEffects &&
       this.SetEffects(i, !1, !1),
       a
   }
@@ -236,11 +236,11 @@ class D3Symbol extends BaseSymbol {
   SetParamValue(e, t) {
     var a = this.d3Settings ? this.d3Settings.renderSettings : null;
     if (a && a[e]) {
-      GlobalData.optManager.GetObjectPtr(this.BlockID, !0);
+      T3Gv.optManager.GetObjectPtr(this.BlockID, !0);
       a[e].value = t,
         a[e].dataMap = null,
         this.UpdateSizeFromSettings(),
-        GlobalData.optManager.AddToDirtyList(this.BlockID)
+        T3Gv.optManager.AddToDirtyList(this.BlockID)
     }
   }
 
@@ -257,11 +257,11 @@ class D3Symbol extends BaseSymbol {
           a.height = r.height,
           this.UpdateFrame(a),
           this.Resize(
-            GlobalData.optManager.svgObjectLayer.GetElementByID(this.BlockID),
+            T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID),
             a,
             this
           ),
-          GlobalData.optManager.AddToDirtyList(this.BlockID)
+          T3Gv.optManager.AddToDirtyList(this.BlockID)
         )
     }
   }
@@ -338,10 +338,10 @@ class D3Symbol extends BaseSymbol {
   SetDataMap(e, t) {
     var a = this.d3Settings ? this.d3Settings.renderSettings : null;
     if (a && a[e]) {
-      GlobalData.optManager.GetObjectPtr(this.BlockID, !0);
+      T3Gv.optManager.GetObjectPtr(this.BlockID, !0);
       a[e].dataMap = t,
         this.UpdateSizeFromSettings(),
-        GlobalData.optManager.AddToDirtyList(this.BlockID)
+        T3Gv.optManager.AddToDirtyList(this.BlockID)
     }
   }
 
@@ -416,14 +416,14 @@ class D3Symbol extends BaseSymbol {
         this.UpdateFrame(t)
     }
     var l = ListManager.BaseShape.prototype.Resize.call(this, e, t, a);
-    return this.RenderControl(GlobalData.optManager.svgDoc, e),
+    return this.RenderControl(T3Gv.optManager.svgDoc, e),
       l
   }
 
   ChangeTextAttributes(e, t, a, r, i, n, o, s) {
-    GlobalData.optManager.GetActiveTextEdit() == this.BlockID ? t = null : e = null,
+    T3Gv.optManager.GetActiveTextEdit() == this.BlockID ? t = null : e = null,
       ListManager.BaseDrawingObject.prototype.ChangeTextAttributes.call(this, e, t, a, r, i, n, o, s),
-      GlobalData.optManager.AddToDirtyList(this.BlockID)
+      T3Gv.optManager.AddToDirtyList(this.BlockID)
   }
 
   CreateActionTriggers(e, t, a, r) {
@@ -440,7 +440,7 @@ class D3Symbol extends BaseSymbol {
       (
         ListManager.BaseDrawingObject.prototype.RefreshFromFieldData.call(this, e),
         this.UpdateSizeFromSettings(),
-        GlobalData.optManager.AddToDirtyList(this.BlockID),
+        T3Gv.optManager.AddToDirtyList(this.BlockID),
         !0
       )
   }
@@ -448,8 +448,8 @@ class D3Symbol extends BaseSymbol {
   RasterizeSVGShapeForVisio(e) {
     var t = this.BlockID;
     this.UpdateSizeFromSettings();
-    var a = GlobalData.optManager.svgObjectLayer.GetElementByID(t);
-    if (a || (a = GlobalData.optManager.svgObjectLayer.GetElementByIDInGroup(t))) {
+    var a = T3Gv.optManager.svgObjectLayer.GetElementByID(t);
+    if (a || (a = T3Gv.optManager.svgObjectLayer.GetElementByIDInGroup(t))) {
       var r = a.svgObj.node,
         i = r.innerHTML;
       if (i) {
@@ -506,7 +506,7 @@ class D3Symbol extends BaseSymbol {
     var a = [
       this.BlockID
     ],
-      r = GlobalData.objectStore.PreserveBlock(this.BlockID);
+      r = T3Gv.objectStore.PreserveBlock(this.BlockID);
     if (null == r) return a;
     if (!t) return a;
     var i = t[this.BlockID];

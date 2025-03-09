@@ -1,20 +1,26 @@
 
 
 import MainController from './MainController'
-import GlobalData from '../../Data/GlobalData'
+import T3Gv from '../../Data/T3Gv'
 import ListManager from '../../Data/ListManager';
 import Resources from '../../Data/Resources';
 import Utils2 from '../../Helper/Utils2';
 
 import ConstantData from '../../Data/ConstantData'
+import ShapeController from './ShapeController';
+import ToolUtil from './ToolUtil';
+import ToolUtil1 from './ShapeController';
 
-
+// remove this class
+// update name to ToolOpt
 class Commands {
+  public tul: ToolUtil1
 
-  public MainController: any;
+  // public MainController: any;
 
   constructor() {
-    this.MainController = new MainController();
+    // this.MainController = new MainController();
+    this.tul = new ToolUtil1();
   }
 
   static MainController = new MainController();
@@ -30,7 +36,7 @@ class Commands {
     Commands.MainController.Shapes.CancelModalOperation();
 
     if (selectionToolSticky) {
-      GlobalData.optManager.ResetObjectDraw();
+      T3Gv.optManager.ResetObjectDraw();
     }
 
     const selectionModeAttr = e.currentTarget.attributes.getNamedItem(ConstantData.Constants.Attr_SelectionMode);
@@ -42,16 +48,16 @@ class Commands {
           isMultipleSelection = true;
           break;
         case 'all':
-          GlobalData.optManager.SelectAllObjects();
+          T3Gv.optManager.SelectAllObjects();
           return;
         case 'lines':
-          GlobalData.optManager.SelectAllObjects([
+          T3Gv.optManager.SelectAllObjects([
             ConstantData.DrawingObjectBaseClass.LINE,
             ConstantData.DrawingObjectBaseClass.CONNECTOR
           ]);
           break;
         case 'shapes':
-          GlobalData.optManager.SelectAllObjects([ConstantData.DrawingObjectBaseClass.SHAPE]);
+          T3Gv.optManager.SelectAllObjects([ConstantData.DrawingObjectBaseClass.SHAPE]);
           break;
       }
     }
@@ -64,7 +70,7 @@ class Commands {
     }
 
     // Double Test
-    // GlobalData.optManager.CloseEdit();
+    // T3Gv.optManager.CloseEdit();
   }
 
   SD_Line_SetDefaultWallThickness = (e) => {
@@ -137,7 +143,6 @@ class Commands {
     ) : SDUI.Commands.MainController.Shapes.StampOrDragDropNewShape(e, null)
   }
   */
-
   SD_StampShapeFromTool = (e, type) => {
 
     console.log('SD_StampShapeFromTool', e, type);
@@ -180,7 +185,10 @@ class Commands {
     // }
 
 
-    Commands.MainController.Shapes.StampOrDragDropNewShape(e,/* null*/type)
+    // Commands.MainController.Shapes.StampOrDragDropNewShape(e,/* null*/type)
+    //new ShapeController().StampOrDragDropNewShape(e, type);
+
+    new ToolUtil1().StampOrDragDropNewShape(e, type);
 
 
     // console.log('SD_StampShapeFromTool', e);
@@ -205,6 +213,20 @@ class Commands {
     //       SDUI.Commands.MainController.Selection.SetShapeTool(shapeType),
     //       SDUI.Commands.MainController.Shapes.StampOrDragDropNewShape(e, shapeType)
     //     ) : SDUI.Commands.MainController.Shapes.StampOrDragDropNewShape(e,/* null2*/type)
+  }
+
+  /**
+ * Creates a new shape from the selected tool
+ * @param event - The DOM event that triggered the action
+ * @param shapeType - The type of shape to create
+ * @returns void
+ */
+  StampShapeFromToolAct(event, shapeType) {
+    console.log('O.ToolOpt.StampShapeFromToolAct - Input:', { event, shapeType });
+
+    this.tul.StampOrDragDropNewShape(event, shapeType);
+
+    console.log('O.ToolOpt.StampShapeFromToolAct - Output: Created shape of type', shapeType);
   }
 
   SD_Tool_Line = (e) => {
@@ -334,11 +356,11 @@ class Commands {
   }
 
   SD_MeasureDistance = (e) => {
-    GlobalData.gBusinessManager.AddMeasureLine(e)
+    T3Gv.gBusinessManager.AddMeasureLine(e)
   }
 
   SD_MeasureArea = (e) => {
-    GlobalData.gBusinessManager.AddMeasureArea(e)
+    T3Gv.gBusinessManager.AddMeasureArea(e)
   }
 
   SD_ClickSymbol = (e) => {

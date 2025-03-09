@@ -3,11 +3,11 @@
 // import OptHandler from "../Opt/Opt.OptHandler1";
 // import * as Utils from '../Helper/Helper.Utils';
 
-import GlobalData from '../Data/GlobalData';
+import T3Gv from '../Data/T3Gv';
 import StateManager from '../Data/State/StateManager';
 import ObjectStore from '../Data/State/ObjectStore';
 import ObjectStoreFactory from '../Data/State/ObjectStoreFactory';
-import DocHandler from './Doc.DocHandler';
+import DocUtil from './DocUtil';
 import OptHandler from '../Opt/Opt.OptHandler';
 import Base from '../Opt/Business/Base';
 import FloorPlan from '../Opt/Business/FloorPlan';
@@ -16,27 +16,27 @@ import Resources from '../Data/Resources';
 import $ from 'jquery';
 import Commands from '../Opt/Business/Commands'
 
-import BaseLine from '../Shape/Shape.BaseLine';
-import PolyLine from '../Shape/Shape.PolyLine';
-import Polygon from '../Shape/Shape.Polygon';
-import BaseShape from '../Shape/Shape.BaseShape';
-import Line from '../Shape/Shape.Line';
-import ArcLine from '../Shape/Shape.ArcLine';
-import SegmentedLine from '../Shape/Shape.SegmentedLine';
-import SVGFragmentSymbol from '../Shape/Shape.SVGFragmentSymbol';
-import PolyLineContainer from '../Shape/Shape.PolyLineContainer';
-import ShapeContainer from '../Shape/Shape.ShapeContainer';
+import BaseLine from '../Shape/S.BaseLine';
+import PolyLine from '../Shape/S.PolyLine';
+import Polygon from '../Shape/S.Polygon';
+import BaseShape from '../Shape/S.BaseShape';
+import Line from '../Shape/S.Line';
+import ArcLine from '../Shape/S.ArcLine';
+import SegmentedLine from '../Shape/S.SegmentedLine';
+import SVGFragmentSymbol from '../Shape/S.SVGFragmentSymbol';
+import PolyLineContainer from '../Shape/S.PolyLineContainer';
+import ShapeContainer from '../Shape/S.ShapeContainer';
 
-import Container from '../Basic/Basic.Container';
+import Container from '../Basic/B.Container';
 
 import Clipboard from '../Opt/Business/Clipboard'
-import D3Symbol from '../Shape/Shape.D3Symbol'
-import Connector from '../Shape/Shape.Connector'
+import D3Symbol from '../Shape/S.D3Symbol'
+import Connector from '../Shape/S.Connector'
 import Events from '../Event/Events'
-import Oval from '../Shape/Shape.Oval'
-import Rect from '../Shape/Shape.Rect'
-import RRect from '../Shape/Shape.RRect'
-import GroupSymbol from '../Shape/Shape.GroupSymbol'
+import Oval from '../Shape/S.Oval'
+import Rect from '../Shape/S.Rect'
+import RRect from '../Shape/S.RRect'
+import GroupSymbol from '../Shape/S.GroupSymbol'
 import Utils2 from '../Helper/Utils2';
 import Utils1 from '../Helper/Utils1'
 import Instance from '../Data/Instance/Instance';
@@ -44,6 +44,8 @@ import Instance from '../Data/Instance/Instance';
 import Shape from '../Data/Instance/Shape';
 import Basic from '../Data/Instance/Basic';
 import DataOpt from '../Data/DataOpt';
+import EvtOpt from "../Event/EvtOpt"
+import ToolOpt from '../Opt/Business/ToolOpt';
 
 declare global {
 
@@ -92,19 +94,19 @@ class UI {
 
   // SDJS_select_primary_state_manager = () => {
 
-  //   GlobalData.stateManager = GlobalData.stateManagerPrimary;
-  //   GlobalData.objectStore = GlobalData.objectStorePrimary;
-  //   GlobalData.CURRENT_SEQ_OBJECT_ID = GlobalData.CURRENT_SEQ_OBJECT_ID_Primary;
-  //   GlobalData.bIsPrimaryStateManager = true;
+  //   T3Gv.stateManager = T3Gv.stateManagerPrimary;
+  //   T3Gv.objectStore = T3Gv.objectStorePrimary;
+  //   T3Gv.CURRENT_SEQ_OBJECT_ID = T3Gv.CURRENT_SEQ_OBJECT_ID_Primary;
+  //   T3Gv.bIsPrimaryStateManager = true;
   // }
 
   // SDJS_init_state_manager = () => {
-  //   GlobalData.stateManagerPrimary = new StateManager();
-  //   GlobalData.objectStorePrimary = new ObjectStore();
+  //   T3Gv.stateManagerPrimary = new StateManager();
+  //   T3Gv.objectStorePrimary = new ObjectStore();
   //   this.SDJS_select_primary_state_manager();
-  //   GlobalData.clipboardManager = new ObjectStoreFactory().Create();
+  //   T3Gv.clipboardManager = new ObjectStoreFactory().Create();
   //   // SDJS.Editor.PatchArrayBufferSlice();
-  //   GlobalData.CURRENT_SEQ_OBJECT_ID = 0;
+  //   T3Gv.CURRENT_SEQ_OBJECT_ID = 0;
 
   //   console.log('=== SDJS_init_state_manager -> GPP', GPP);
   // }
@@ -112,62 +114,62 @@ class UI {
   SDJS_init_document_handler = () => {
     //
     // if (
-    //   GlobalData.docHandler = new SDJS.DocumentHandler,
+    //   T3Gv.docHandler = new SDJS.DocumentHandler,
     //   $(document).on('SDJS.Socket.OnOpen', SDF.SaveAllBlocks),
     //   $(document).on(
     //     'SDJS.Socket.OnStatusMessage',
-    //     GlobalData.docHandler.HandleSocketStatus
+    //     T3Gv.docHandler.HandleSocketStatus
     //   ),
     //   $(document).on(
     //     'SDJS.Socket.OnDocumentChangeMessage',
-    //     GlobalData.docHandler.HandleSocketNewDocument
+    //     T3Gv.docHandler.HandleSocketNewDocument
     //   ),
     //   $(document).on(
     //     'SDJS.Socket.SDJS.Socket.OnSocketCommandMessage',
-    //     GlobalData.docHandler.HandleSocketCommand
+    //     T3Gv.docHandler.HandleSocketCommand
     //   ),
-    //   $(window).on('hashchange', GlobalData.docHandler.HandleHashChange),
-    //   null === GlobalData.docHandler
+    //   $(window).on('hashchange', T3Gv.docHandler.HandleHashChange),
+    //   null === T3Gv.docHandler
     // ) throw new Error('Got null value for gDocumentHandler');
 
-    GlobalData.docHandler = new DocHandler();
+    T3Gv.docUtil = new DocUtil();
   }
 
   SDJS_init_list_manager = () => {
     //
     // console.log('SDJS_init_list_manager');
-    // if (null === (GlobalData.optManager = new ListManager.LM)) throw new Error('Got null value for gList');
+    // if (null === (T3Gv.optManager = new ListManager.LM)) throw new Error('Got null value for gList');
     // // new SDJSError({
     // //   source: 'ListManager constructor',
     // //   message: 'Got null value for gListManager'
     // // });
 
-    // GlobalData.optManager.Initialize()
-    GlobalData.optManager = new OptHandler();// new ListManager.LM
-    GlobalData.optManager.Initialize()
+    // T3Gv.optManager.Initialize()
+    T3Gv.optManager = new OptHandler();// new ListManager.LM
+    T3Gv.optManager.Initialize()
   }
 
   SDJS_init_business_manager = (e) => {
-    GlobalData.gBaseManager = new Base();
-    GlobalData.gFloorplanManager = new FloorPlan();
-    // GlobalData.gFloorplanWallManager = new FloorPlan_Wall();
-    GlobalData.gBusinessManager = GlobalData.gFloorplanManager;
+    T3Gv.gBaseManager = new Base();
+    T3Gv.gFloorplanManager = new FloorPlan();
+    // T3Gv.gFloorplanWallManager = new FloorPlan_Wall();
+    T3Gv.gBusinessManager = T3Gv.gFloorplanManager;
   }
 
 
   SDJS_init_business_manager2 = (e) => {
 
 
-    if (GlobalData.optManager) {
+    if (T3Gv.optManager) {
       if (e !== null) {
-        if (e !== GlobalData.optManager.theContentHeader.BusinessModule) {
-          GlobalData.gBusinessManager = null;
-          GlobalData.optManager.SetBusinessModule(e);
+        if (e !== T3Gv.optManager.theContentHeader.BusinessModule) {
+          T3Gv.gBusinessManager = null;
+          T3Gv.optManager.SetBusinessModule(e);
         }
 
-        if (GlobalData.gBaseManager === null) {
-          GlobalData.gBaseManager = new Base();
-          // Business.Objects.BASE = GlobalData.gBaseManager;
+        if (T3Gv.gBaseManager === null) {
+          T3Gv.gBaseManager = new Base();
+          // Business.Objects.BASE = T3Gv.gBaseManager;
         }
 
         // if (GlobalDatagFlowChartManager === null) {
@@ -175,14 +177,14 @@ class UI {
         //   Business.Objects.FLOWCHART = GlobalDatagFlowChartManager;
         // }
 
-        if (GlobalData.gFloorplanManager === null) {
-          GlobalData.gFloorplanManager = new FloorPlan();
-          // Business.Objects.FLOORPLAN = GlobalData.gFloorplanManager;
+        if (T3Gv.gFloorplanManager === null) {
+          T3Gv.gFloorplanManager = new FloorPlan();
+          // Business.Objects.FLOORPLAN = T3Gv.gFloorplanManager;
         }
 
-        // if (GlobalData.gFloorplanWallManager === null) {
-        //   GlobalData.gFloorplanWallManager = new FloorPlan_Wall();
-        //   // Business.Objects.FLOORPLAN_WALL = GlobalData.gFloorplanWallManager;
+        // if (T3Gv.gFloorplanWallManager === null) {
+        //   T3Gv.gFloorplanWallManager = new FloorPlan_Wall();
+        //   // Business.Objects.FLOORPLAN_WALL = T3Gv.gFloorplanWallManager;
         // }
 
         // if (gOrgChartManager === null) {
@@ -397,10 +399,10 @@ class UI {
         //   }
         // }
 
-        GlobalData.gBusinessManager = GlobalData.gFloorplanManager;
+        T3Gv.gBusinessManager = T3Gv.gFloorplanManager;
 
-        if (GlobalData.gBusinessManager === null) {
-          GlobalData.gBusinessManager = new Base();
+        if (T3Gv.gBusinessManager === null) {
+          T3Gv.gBusinessManager = new Base();
         }
       }
     }
@@ -439,17 +441,20 @@ class UI {
     window.onkeyup = Events.OnKeyUp;
     window.onkeypress = Events.OnKeyPress;
 
-    Resources.KeyboardCommand.prototype.BuildCommands();
+    // Resources.KeyboardCommand.prototype.BuildCommands();
 
 
     //Double ===
 
 
-    window.gDocumentHandler = GlobalData.docHandler;
-    window.gBusinessManager = GlobalData.gBusinessManager;
+    window.gDocumentHandler = T3Gv.docUtil;
+    window.gBusinessManager = T3Gv.gBusinessManager;
 
 
     this.EventTest();
+
+
+    // new EvtOpt().BuildCtlAction();
 
     this.InitInstance();
 
@@ -460,19 +465,19 @@ class UI {
     console.log('=== Global data === Instance1', Instance)
 
     // GlobalDataShape = null;
-    // GlobalData.docHandler = null;
-    // GlobalData.optManager = null;
+    // T3Gv.docHandler = null;
+    // T3Gv.optManager = null;
 
     // localStorage.setItem('GPP1', JSON.stringify(GPP))
 
     DataOpt.InitStoredData()
 
 
-    //GlobalData.optManager.CloseEdit(!1, !0);
-    // GlobalData.optManager.ResizeSVGDocument();
-    GlobalData.optManager.RenderAllSVGObjects();
-    // GlobalData.optManager.RenderDirtySVGObjects();
-    // GlobalData.optManager.RenderLastSVGObject();
+    //T3Gv.optManager.CloseEdit(!1, !0);
+    // T3Gv.optManager.ResizeSVGDocument();
+    T3Gv.optManager.RenderAllSVGObjects();
+    // T3Gv.optManager.RenderDirtySVGObjects();
+    // T3Gv.optManager.RenderLastSVGObject();
 
 
 
@@ -485,19 +490,19 @@ class UI {
 
 
 
-      document.getElementById('test_btn_select').addEventListener('click', function () {
+      document.getElementById('btn_try_select').addEventListener('click', function () {
         console.log('11111111111111111111111111111111111111')
 
         new Commands().SD_Select(event)
       });
 
-      document.getElementById('test_btn_try_library').addEventListener('click', function () {
+      document.getElementById('btn_try_library').addEventListener('click', function () {
         new Commands().SD_ClickSymbol(event);
         new Commands().SD_DragDropSymbol(event);
       });
 
 
-      document.getElementById('test_btn_try_line').addEventListener('click', function () {
+      document.getElementById('btn_try_line').addEventListener('click', function () {
         console.log('222222222222222222222222222222222222222')
 
         new Commands().SD_Tool_Line(event)
@@ -506,13 +511,13 @@ class UI {
 
         //ListManager.LM.prototype.DrawNewObject
         //this.WorkAreaHammer.on('dragstart', Evt_WorkAreaHammerDrawStart);
-        //GlobalData.optManager.StartNewObjectDraw(e)
+        //T3Gv.optManager.StartNewObjectDraw(e)
 
 
         // ListManager.LM.prototype.RubberBandSelectMoveCommon
 
         // // Double ===
-        // if(GlobalData.optManager.theRubberBand===null){
+        // if(T3Gv.optManager.theRubberBand===null){
         //   return;
         // }
 
@@ -530,8 +535,8 @@ class UI {
 
       });
 
-      document.getElementById('test_btn_try_line1').addEventListener('click', function () {
-        console.log('test_btn_try_line1')
+      document.getElementById('btn_try_line1').addEventListener('click', function () {
+        console.log('btn_try_line1')
 
         //   case 'line':
         //   newShape = this.DrawNewLine(a, 0, isDrawing, r);
@@ -566,13 +571,13 @@ class UI {
 
         //ListManager.LM.prototype.DrawNewObject
         //this.WorkAreaHammer.on('dragstart', Evt_WorkAreaHammerDrawStart);
-        //GlobalData.optManager.StartNewObjectDraw(e)
+        //T3Gv.optManager.StartNewObjectDraw(e)
 
 
         // ListManager.LM.prototype.RubberBandSelectMoveCommon
 
         // // Double ===
-        // if(GlobalData.optManager.theRubberBand===null){
+        // if(T3Gv.optManager.theRubberBand===null){
         //   return;
         // }
 
@@ -593,8 +598,8 @@ class UI {
 
       // SDUI.Commands.ts
 
-      document.getElementById('test_btn_try_wall').addEventListener('click', function () {
-        console.log('test_btn_try_wall')
+      document.getElementById('btn_try_wall').addEventListener('click', function () {
+        console.log('btn_try_wall')
 
         // Interior Wall 4" linethickness="0.33333" Exterior Wall 6 linethickness="0.5"
         // Metric Interior Wall 150mm linethickness="0.15" linethickness="0.2"
@@ -602,8 +607,8 @@ class UI {
 
       });
 
-      document.getElementById('test_btn_try_Rect').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_Rect SED_S_Rect: 2')
+      document.getElementById('btn_try_Rect').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_Rect SED_S_Rect: 2')
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
 
@@ -646,12 +651,12 @@ class UI {
 
         // SDUI.Commands.MainController.Shapes.StampOrDragDropNewShape(e, shapeType)
         // SDUI.ShapeController.ts => StampOrDragDropNewShape
-        // GlobalData.optManager.PreDragDropOrStamp()
+        // T3Gv.optManager.PreDragDropOrStamp()
         // this.StampOrDragDropCallback
-        // GlobalData.optManager.StampTimeout = window.setTimeout(i, 200, r, a)
+        // T3Gv.optManager.StampTimeout = window.setTimeout(i, 200, r, a)
 
-        // ==>  GlobalData.optManager.DragDropNewShape(o, !0, !0, !0, null, null)
-        // ==>  GlobalData.optManager.MouseStampNewShape(o, !0, !0, !0, null, null)
+        // ==>  T3Gv.optManager.DragDropNewShape(o, !0, !0, !0, null, null)
+        // ==>  T3Gv.optManager.MouseStampNewShape(o, !0, !0, !0, null, null)
 
 
         //StampOrDragDropNewShape
@@ -676,8 +681,8 @@ class UI {
 
       });
 
-      document.getElementById('test_btn_try_Oval').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_Oval SED_S_Oval: 4')
+      document.getElementById('btn_try_Oval').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_Oval SED_S_Oval: 4')
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
         new Commands().SD_StampShapeFromTool(event, 4)
@@ -686,8 +691,8 @@ class UI {
       });
 
 
-      document.getElementById('test_btn_try_Image').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_Image SED_S_Image: 1')
+      document.getElementById('btn_try_Image').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_Image SED_S_Image: 1')
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
         new Commands().SD_StampShapeFromTool(event, 1)
@@ -696,8 +701,8 @@ class UI {
       });
 
 
-      document.getElementById('test_btn_try_Circ').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_Circ SED_S_Circ: 9')
+      document.getElementById('btn_try_Circ').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_Circ SED_S_Circ: 9')
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
         new Commands().SD_StampShapeFromTool(event, 9)
@@ -705,8 +710,8 @@ class UI {
 
       });
 
-      document.getElementById('test_btn_try_Text').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_Text SED_S_Text: 0')
+      document.getElementById('btn_try_Text').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_Text SED_S_Text: 0')
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
         new Commands().SD_StampShapeFromTool(event, 'textLabel')
@@ -714,17 +719,17 @@ class UI {
 
       });
 
-      document.getElementById('test_btn_try_ArrR').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_ArrR SED_S_ArrR: 10')
+      document.getElementById('btn_try_ArrR').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_ArrR SED_S_ArrR: 10')
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
-        new Commands().SD_StampShapeFromTool(event, 10)
+        new Commands().StampShapeFromToolAct(event, 10)
         var shapeType = 5;
 
       });
 
-      document.getElementById('test_btn_try_ArrL').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_ArrL SED_S_ArrL: 11')
+      document.getElementById('btn_try_ArrL').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_ArrL SED_S_ArrL: 11')
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
         new Commands().SD_StampShapeFromTool(event, 11)
@@ -732,8 +737,8 @@ class UI {
 
       });
 
-      document.getElementById('test_btn_try_ArrT').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_ArrT SED_S_ArrT: 12')
+      document.getElementById('btn_try_ArrT').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_ArrT SED_S_ArrT: 12')
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
         new Commands().SD_StampShapeFromTool(event, 12)
@@ -741,8 +746,8 @@ class UI {
 
       });
 
-      document.getElementById('test_btn_try_ArrB').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_ArrB SED_S_ArrB: 13')
+      document.getElementById('btn_try_ArrB').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_ArrB SED_S_ArrB: 13')
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
         new Commands().SD_StampShapeFromTool(event, 13)
@@ -750,8 +755,8 @@ class UI {
 
       });
 
-      document.getElementById('test_btn_try_Roate45').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_Roate45 45')
+      document.getElementById('btn_try_Roate45').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_Roate45 45')
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
         new Commands().SD_Rotate(event, 45)
@@ -760,8 +765,8 @@ class UI {
       });
 
 
-      document.getElementById('test_btn_try_Roate90').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_Roate90 90')
+      document.getElementById('btn_try_Roate90').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_Roate90 90')
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
         new Commands().SD_Rotate(event, 90)
@@ -769,8 +774,8 @@ class UI {
 
       });
 
-      document.getElementById('test_btn_try_Align_lefts').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_Align_lefts Align_lefts')
+      document.getElementById('btn_try_Align_lefts').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_Align_lefts Align_lefts')
         //shapealign="lefts"
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
@@ -785,8 +790,8 @@ class UI {
       });
 
 
-      document.getElementById('test_btn_try_Align_centers').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_Align_centers Align_rights')
+      document.getElementById('btn_try_Align_centers').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_Align_centers Align_rights')
         //shapealign="rights"
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
@@ -798,8 +803,8 @@ class UI {
 
       });
 
-      document.getElementById('test_btn_try_Align_tops').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_Align_tops Align_tops')
+      document.getElementById('btn_try_Align_tops').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_Align_tops Align_tops')
         //shapealign="tops"
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
@@ -808,8 +813,8 @@ class UI {
 
       });
 
-      document.getElementById('test_btn_try_Align_middles').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_Align_middles Align_middles')
+      document.getElementById('btn_try_Align_middles').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_Align_middles Align_middles')
         //shapealign="middles"
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
@@ -818,8 +823,8 @@ class UI {
 
       });
 
-      document.getElementById('test_btn_try_Align_bottoms').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_Align_bottoms Align_bottoms')
+      document.getElementById('btn_try_Align_bottoms').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_Align_bottoms Align_bottoms')
         //shapealign="bottoms"
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
@@ -828,24 +833,24 @@ class UI {
 
       });
 
-      document.getElementById('test_btn_try_Group').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_Group Group')
+      document.getElementById('btn_try_Group').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_Group Group')
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
         new Commands().SD_Group(event)
 
       });
 
-      document.getElementById('test_btn_try_Ungroup').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_Ungroup Ungroup')
+      document.getElementById('btn_try_Ungroup').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_Ungroup Ungroup')
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
         new Commands().SD_Ungroup(event)
 
       });
 
-      document.getElementById('test_btn_try_Flip_Horizontal').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_Flip_Horizontal Flip_Horizontal')
+      document.getElementById('btn_try_Flip_Horizontal').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_Flip_Horizontal Flip_Horizontal')
         //shapealign="rights"
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
@@ -855,8 +860,8 @@ class UI {
       });
 
 
-      document.getElementById('test_btn_try_Flip_Vertical').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_Flip_Vertical Flip_Horizontal')
+      document.getElementById('btn_try_Flip_Vertical').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_Flip_Vertical Flip_Horizontal')
         //shapealign="rights"
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
@@ -865,8 +870,8 @@ class UI {
 
       });
 
-      document.getElementById('test_btn_try_Same_Height').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_Same_Height Same_Height')
+      document.getElementById('btn_try_Same_Height').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_Same_Height Same_Height')
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
         //samesizeoption="1" Make Same Height
@@ -874,8 +879,8 @@ class UI {
 
       });
 
-      document.getElementById('test_btn_try_Same_Width').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_Same_Width Same_Width')
+      document.getElementById('btn_try_Same_Width').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_Same_Width Same_Width')
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
         //samesizeoption="2" Make Same Width
@@ -883,8 +888,8 @@ class UI {
 
       });
 
-      document.getElementById('test_btn_try_Same_Both').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_Same_Both Same_Both')
+      document.getElementById('btn_try_Same_Both').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_Same_Both Same_Both')
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
         //samesizeoption="3" Both
@@ -892,8 +897,8 @@ class UI {
 
       });
 
-      document.getElementById('test_btn_try_BringToFront').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_BringToFront BringToFront')
+      document.getElementById('btn_try_BringToFront').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_BringToFront BringToFront')
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
         new Commands().SD_Shape_BringToFront(event)
@@ -901,8 +906,8 @@ class UI {
 
       });
 
-      document.getElementById('test_btn_try_SendToBack').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_SendToBack SendToBack')
+      document.getElementById('btn_try_SendToBack').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_SendToBack SendToBack')
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
         new Commands().SD_Shape_SendToBack(event)
@@ -910,8 +915,8 @@ class UI {
 
       });
 
-      document.getElementById('test_btn_try_Paste').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_Paste Paste')
+      document.getElementById('btn_try_Paste').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_Paste Paste')
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
         new Commands().SD_Paste(event)
@@ -919,24 +924,24 @@ class UI {
       });
 
 
-      document.getElementById('test_btn_try_Copy').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_Copy Copy')
+      document.getElementById('btn_try_Copy').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_Copy Copy')
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
         new Commands().SD_Copy(event)
 
       });
 
-      document.getElementById('test_btn_try_Cut').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_Cut Cut')
+      document.getElementById('btn_try_Cut').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_Cut Cut')
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
         new Commands().SD_Cut(event)
 
       });
 
-      document.getElementById('test_btn_try_Delete').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_Delete Delete')
+      document.getElementById('btn_try_Delete').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_Delete Delete')
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
         new Commands().SD_Delete(event)
@@ -944,8 +949,8 @@ class UI {
       });
 
 
-      document.getElementById('test_btn_try_Undo').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_Undo Undo')
+      document.getElementById('btn_try_Undo').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_Undo Undo')
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
         new Commands().SD_Undo(event)
@@ -953,8 +958,8 @@ class UI {
       });
 
 
-      document.getElementById('test_btn_try_Redo').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_Redo Redo')
+      document.getElementById('btn_try_Redo').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_Redo Redo')
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
         new Commands().SD_Redo(event)
@@ -963,16 +968,16 @@ class UI {
 
 
 
-      document.getElementById('test_btn_try_Save').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_Save save')
+      document.getElementById('btn_try_Save').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_Save save')
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
         new Commands().SD_CommitFilePickerSelection(event)
 
       });
 
-      document.getElementById('test_btn_try_Duplicate').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_Duplicate Duplicate')
+      document.getElementById('btn_try_Duplicate').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_Duplicate Duplicate')
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
         new Commands().SD_Duplicate(event)
@@ -982,8 +987,8 @@ class UI {
 
 
 
-      document.getElementById('test_btn_try_Clear').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_Clear Clear')
+      document.getElementById('btn_try_Clear').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_Clear Clear')
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
         // new Commands().SD_Duplicate(event)
@@ -994,8 +999,8 @@ class UI {
 
 
 
-      document.getElementById('test_btn_try_Measure').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_Measure Measure')
+      document.getElementById('btn_try_Measure').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_Measure Measure')
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
         // new Commands().SD_Duplicate(event)
@@ -1005,8 +1010,8 @@ class UI {
       });
 
 
-      document.getElementById('test_btn_try_AreaMeasure').addEventListener('pointerdown', function (e) {
-        console.log('test_btn_try_AreaMeasure AreaMeasure')
+      document.getElementById('btn_try_AreaMeasure').addEventListener('pointerdown', function (e) {
+        console.log('btn_try_AreaMeasure AreaMeasure')
         // debugger
         // SDUI.Commands.RibbonCommands.SD_StampShapeClick(event)
         // new Commands().SD_Duplicate(event)

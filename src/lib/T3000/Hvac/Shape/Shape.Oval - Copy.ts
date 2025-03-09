@@ -9,25 +9,25 @@
 // import SDGraphics from "./../../SDGraphics/SDGraphics.Index";
 // import GPP from '../../gListManager';
 // import $ from 'jquery';
-// import HvacSVG from '../../Hvac.SVG.t2';
+// import T3Svg from '../../Hvac.SVG.t2';
 
 
 
 
-import BaseShape from './Shape.BaseShape'
+import BaseShape from './S.BaseShape'
 import Utils1 from '../Helper/Utils1';
 import Utils2 from "../Helper/Utils2";
 import Utils3 from "../Helper/Utils3";// import Utils3 from "../Helper/Utils3";
-import GlobalData from '../Data/GlobalData'
+import GlobalData from '../Data/T3Gv'
 // import Collab from '../Data/Collab'
 import FileParser from '../Data/FileParser'
 // import EvtUtil from "../Event/Event.Default";
 // import Resources from '../Data/Resources'
 // import Element from "../Basic/Basic.Element";
 
-import Document from '../Basic/Basic.Document'
+import Document from '../Basic/B.Document'
 
-import Element from '../Basic/Basic.Element';
+import Element from '../Basic/B.Element';
 import ListManager from '../Data/ListManager'
 import $ from 'jquery'
 import Point from '../Model/Point'
@@ -124,7 +124,7 @@ class Oval extends BaseShape {
     a.isShape = !0;
     var D = this.GetTable(!1);
     return D &&
-      GlobalData.optManager.LM_AddSVGTableObject(this, e, a, D),
+      T3Gv.optManager.LM_AddSVGTableObject(this, e, a, D),
       this.DataID >= 0 &&
       this.LM_AddSVGTextObject(e, a),
       a
@@ -146,13 +146,13 @@ class Oval extends BaseShape {
       S.y = 0,
       S.height = c.height,
       S.width = c.width / 2,
-      GlobalData.optManager.PolyYCurve(l, S, e, 0, 0, 0, 0, !1),
+      T3Gv.optManager.PolyYCurve(l, S, e, 0, 0, 0, 0, !1),
       l.pop(),
       S.x = 0,
       S.y = c.height,
       S.width = c.width / 2,
       S.height = - c.height,
-      GlobalData.optManager.PolyYCurve(l, S, e, 0, 0, 0, 0, !0),
+      T3Gv.optManager.PolyYCurve(l, S, e, 0, 0, 0, 0, !0),
       l.pop(),
       !t
     ) for (s = l.length, n = 0; n < s; n++) l[n].x += c.x,
@@ -163,13 +163,13 @@ class Oval extends BaseShape {
   ExtendLines() {
     var e = this.GetTable(!1);
     e &&
-      GlobalData.optManager.Table_ExtendLines(this, e)
+      T3Gv.optManager.Table_ExtendLines(this, e)
   }
 
   ExtendCell(e, t, a) {
     var r = this.GetTable(!1);
     if (r) {
-      var i = GlobalData.optManager.Table_ExtendCell(this, r, e, t, a);
+      var i = T3Gv.optManager.Table_ExtendCell(this, r, e, t, a);
       if (i) {
         var n,
           o,
@@ -213,7 +213,7 @@ class Oval extends BaseShape {
       return y = this.BaseDrawingObject_GetPerimPts(e, t, a, !1, i, n);
     var L = this.GetTable(!1);
     if (null != i && L) {
-      var I = GlobalData.optManager.Table_GetPerimPts(this, L, i, t);
+      var I = T3Gv.optManager.Table_GetPerimPts(this, L, i, t);
       if (I) return y = I,
         r ||
         (

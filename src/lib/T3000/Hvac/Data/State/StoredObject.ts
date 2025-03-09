@@ -1,10 +1,8 @@
 
 
 import Globals from "../Globals"
-import GlobalData from "../GlobalData"
+import T3Gv from "../T3Gv"
 import Utils1 from "../../Helper/Utils1"
-import Utils2 from "../../Helper/Utils2"
-import Utils3 from "../../Helper/Utils3"
 
 class StoredObject {
 
@@ -31,9 +29,9 @@ class StoredObject {
       return this;
     }
 
-    if (undefined !== GlobalData.objectStore && true === this.IsPersisted) {
+    if (undefined !== T3Gv.objectStore && true === this.IsPersisted) {
       if (- 1 != this.ID) {
-        var n = GlobalData.objectStore.GetObject(this.ID);
+        var n = T3Gv.objectStore.GetObject(this.ID);
         if (undefined !== n) {
           if (n == null) {
             return null;
@@ -43,20 +41,20 @@ class StoredObject {
             n.Data = data ? this.Data : n.Data;
             n.Dirty = isDirty ? this.Dirty : n.Dirty;
             n.StateOperationTypeID = Globals.StateOperationType.UPDATE;
-            GlobalData.objectStore.SaveObject(n);
+            T3Gv.objectStore.SaveObject(n);
 
             return n;
           }
         }
       } else {
         this.StateOperationTypeID = Globals.StateOperationType.CREATE;
-        GlobalData.objectStore.SaveObject(this);
+        T3Gv.objectStore.SaveObject(this);
       }
     }
   }
 
   Delete = () => {
-    GlobalData.objectStore.DeleteObject(this.ID)
+    T3Gv.objectStore.DeleteObject(this.ID)
   }
 }
 

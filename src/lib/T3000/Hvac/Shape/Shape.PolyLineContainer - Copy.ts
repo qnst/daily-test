@@ -9,29 +9,29 @@
 // import SDGraphics from "./../../SDGraphics/SDGraphics.Index";
 // import GPP from '../../gListManager';
 // import $ from 'jquery';
-// import HvacSVG from '../../Hvac.SVG.t2';
+// import T3Svg from '../../Hvac.SVG.t2';
 
 import Utils1 from '../Helper/Utils1';
 import Utils2 from "../Helper/Utils2";
 import Utils3 from "../Helper/Utils3";
-import GlobalData from '../Data/GlobalData'
+import GlobalData from '../Data/T3Gv'
 import Collab from '../Data/Collab'
 import FileParser from '../Data/FileParser'
 import EvtUtil from "../Event/EvtUtil";
 import Resources from '../Data/Resources'
 // import Element from "../Basic/Basic.Element";
 
-import PolyLine from "./Shape.PolyLine"
+import PolyLine from "./S.PolyLine"
 
 import ListManager from '../Data/ListManager'
 import Global from '../Basic/Basic.Global'
-import BaseLine from "./Shape.BaseLine";
+import BaseLine from "./S.BaseLine";
 import Point from '../Model/Point'
-import BaseShape from '../Shape/Shape.BaseShape'
+import BaseShape from './S.BaseShape'
 
-import Document from '../Basic/Basic.Document'
+import Document from '../Basic/B.Document'
 
-import Element from '../Basic/Basic.Element';
+import Element from '../Basic/B.Element';
 import Instance from '../Data/Instance/Instance';
 import ConstantData from '../Data/ConstantData'
 import PolySeg from '../Model/PolySeg'
@@ -188,7 +188,7 @@ class PolyLineContainer extends PolyLine {
                 g.push(new Point(this.polylist.segs[n - 1].pt.x, this.polylist.segs[n - 1].pt.y)),
                   g.push(D),
                   g.push(new Point(this.polylist.segs[n].pt.x, this.polylist.segs[n].pt.y));
-                o = GlobalData.optManager.SD_GetCounterClockwiseAngleBetween2Points(g[0], g[2]);
+                o = T3Gv.optManager.SD_GetCounterClockwiseAngleBetween2Points(g[0], g[2]);
                 Utils3.RotatePointsAboutPoint(g[1], -o, g);
                 var h = new Point(g[1].x, g[1].y)
                   , m = d.GetGeometryBBox();
@@ -233,14 +233,14 @@ class PolyLineContainer extends PolyLine {
   MostlyContains(e) {
     "use strict";
     var t, a = 0, r = !1, i = {}, n = e.GetPolyPoints(ConstantData.Defines.NPOLYPTS, !1, !1, !1);
-    if (GlobalData.optManager.ActiveVisibleZList().indexOf(e.BlockID) < 0)
+    if (T3Gv.optManager.ActiveVisibleZList().indexOf(e.BlockID) < 0)
       return !1;
     0 !== e.RotationAngle && (a = -e.RotationAngle / (180 / ConstantData.Geometry.PI),
       Utils3.RotatePointsAboutCenter(e.Frame, a, n));
     var o = this.GetPolyPoints(ConstantData.Defines.NPOLYPTS, !1, !1, !1)
       , s = n.length;
     for (t = 0; t < s; t++)
-      if (GlobalData.optManager.PolyPtInPolygon(o, n[t])) {
+      if (T3Gv.optManager.PolyPtInPolygon(o, n[t])) {
         r = !0;
         break
       }
@@ -257,36 +257,36 @@ class PolyLineContainer extends PolyLine {
 
   InterceptMoveOperation(e) {
     "use strict";
-    var t, a = [], r = GlobalData.optManager.ZList(), i = 0, n = !1;
+    var t, a = [], r = T3Gv.optManager.ZList(), i = 0, n = !1;
     try {
-      var o = GlobalData.optManager.svgObjectLayer.FindElementByDOMElement(e.currentTarget);
+      var o = T3Gv.optManager.svgObjectLayer.FindElementByDOMElement(e.currentTarget);
       if (!o)
         return !1;
       var s = o.GetTargetForEvent(e).GetID()
-        , l = GlobalData.optManager.svgDoc.ConvertWindowToDocCoords(e.gesture.center.clientX, e.gesture.center.clientY);
+        , l = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(e.gesture.center.clientX, e.gesture.center.clientY);
       if (s === ConstantData.SVGElementClass.DIMENSIONTEXT)
         return !0;
       if (-1 === this.PolyHitSeg(l) && (n = !0),
         n) {
-        for (GlobalData.optManager.ClearSelectionClick(),
+        for (T3Gv.optManager.ClearSelectionClick(),
           a.push(this.BlockID),
           i = 0; i < r.length; i++)
-          if (t = GlobalData.optManager.GetObjectPtr(r[i], !1)) {
+          if (t = T3Gv.optManager.GetObjectPtr(r[i], !1)) {
             if (this.BlockID === t.BlockID)
               continue;
             if (t.hooks.length)
               continue;
             this.MostlyContains(t) && a.push(t.BlockID)
           }
-        return GlobalData.optManager.SelectObjects(a, !1, !1),
-          GlobalData.optManager.PostMoveSelectID = this.BlockID,
-          GlobalData.optManager.HideAllSVGSelectionStates(),
+        return T3Gv.optManager.SelectObjects(a, !1, !1),
+          T3Gv.optManager.PostMoveSelectID = this.BlockID,
+          T3Gv.optManager.HideAllSVGSelectionStates(),
           !1
       }
       return !1
     } catch (e) {
       this.LM_ActionClick_ExceptionCleanup(e);
-      GlobalData.optManager.ExceptionCleanup(e);
+      T3Gv.optManager.ExceptionCleanup(e);
       throw e;
     }
     return !0
@@ -295,34 +295,34 @@ class PolyLineContainer extends PolyLine {
   SetupInterceptMove(e) {
     "use strict";
     var t;
-    GlobalData.optManager.theEventTimestamp = Date.now(),
+    T3Gv.optManager.theEventTimestamp = Date.now(),
       e.stopPropagation();
-    var a = GlobalData.optManager.svgObjectLayer.FindElementByDOMElement(e.currentTarget);
+    var a = T3Gv.optManager.svgObjectLayer.FindElementByDOMElement(e.currentTarget);
     if (null === a)
       return !1;
     var r = a.ID;
-    GlobalData.optManager.theActionStoredObjectID = r;
-    GlobalData.objectStore.PreserveBlock(r);
+    T3Gv.optManager.theActionStoredObjectID = r;
+    T3Gv.objectStore.PreserveBlock(r);
     var i = ConstantData.ActionTriggerType.MOVEPOLYSEG;
-    GlobalData.optManager.theActionTriggerID = i,
+    T3Gv.optManager.theActionTriggerID = i,
       this.LM_ActionPreTrack(r, i),
-      GlobalData.optManager.theActionSVGObject = a;
-    var n = GlobalData.optManager.svgDoc.ConvertWindowToDocCoords(e.gesture.center.clientX, e.gesture.center.clientY);
-    n = GlobalData.optManager.DoAutoGrowDrag(n),
+      T3Gv.optManager.theActionSVGObject = a;
+    var n = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(e.gesture.center.clientX, e.gesture.center.clientY);
+    n = T3Gv.optManager.DoAutoGrowDrag(n),
       t = new HitResult(-1, 0, null),
       this.Hit(n, !1, !1, t),
-      GlobalData.optManager.theActionTriggerData = {
+      T3Gv.optManager.theActionTriggerData = {
         hitSegment: t.segment + 1,
         moveAngle: 9999
       };
     var o = n.x
       , s = n.y
       , l = this.GetSVGFrame();
-    return GlobalData.optManager.theActionBBox = $.extend(!0, {}, l),
-      GlobalData.optManager.theActionNewBBox = $.extend(!0, {}, l),
-      GlobalData.optManager.HideAllSVGSelectionStates(),
-      GlobalData.optManager.theActionStartX = o,
-      GlobalData.optManager.theActionStartY = s,
+    return T3Gv.optManager.theActionBBox = $.extend(!0, {}, l),
+      T3Gv.optManager.theActionNewBBox = $.extend(!0, {}, l),
+      T3Gv.optManager.HideAllSVGSelectionStates(),
+      T3Gv.optManager.theActionStartX = o,
+      T3Gv.optManager.theActionStartY = s,
       t = new HitResult(-1, 0, null),
       this.Hit(n, !1, !1, t),
       !0
@@ -403,7 +403,7 @@ class PolyLineContainer extends PolyLine {
             x: 0,
             y: 0
           };
-          GlobalData.optManager.GetIntersectPt(h[0], h[1], m[0], m[1], null, y) && g.push(new Point(y.x, y.y))
+          T3Gv.optManager.GetIntersectPt(h[0], h[1], m[0], m[1], null, y) && g.push(new Point(y.x, y.y))
         } else {
           var f = [];
           d(f = Utils1.DeepCopy(h), t),
@@ -429,16 +429,16 @@ class PolyLineContainer extends PolyLine {
 
   MovePolySeg(e, t, a, r, i) {
     "use strict";
-    this.AdjustPolySeg(e, GlobalData.optManager.theActionStartX, GlobalData.optManager.theActionStartY, t, a, i, !1, 2, 1e3) && (this.rflags = Utils2.SetFlag(this.rflags, ConstantData.FloatingPointDim.SD_FP_Width, !1),
+    this.AdjustPolySeg(e, T3Gv.optManager.theActionStartX, T3Gv.optManager.theActionStartY, t, a, i, !1, 2, 1e3) && (this.rflags = Utils2.SetFlag(this.rflags, ConstantData.FloatingPointDim.SD_FP_Width, !1),
       this.rflags = Utils2.SetFlag(this.rflags, ConstantData.FloatingPointDim.SD_FP_Height, !1),
-      GlobalData.optManager.theActionStartX = t,
-      GlobalData.optManager.theActionStartY = a)
+      T3Gv.optManager.theActionStartX = t,
+      T3Gv.optManager.theActionStartY = a)
   }
 
   AfterModifyShape(e, t) {
     var a = this;
     t === ConstantData.ActionTriggerType.MOVEPOLYSEG && function (e) {
-      var t, r, i = GlobalData.optManager.theActionTriggerData.moveAngle, n = a.GetPolyPoints(ConstantData.Defines.NPOLYPTS, !1, !0, !1, null), o = n.length, s = 0, l = -1, S = !1, c = a.StyleRecord.Line.Thickness;
+      var t, r, i = T3Gv.optManager.theActionTriggerData.moveAngle, n = a.GetPolyPoints(ConstantData.Defines.NPOLYPTS, !1, !0, !1, null), o = n.length, s = 0, l = -1, S = !1, c = a.StyleRecord.Line.Thickness;
       if (0 !== i) {
         i = 360 - i;
         var u = 2 * Math.PI * (i / 360);
@@ -496,8 +496,8 @@ class PolyLineContainer extends PolyLine {
                 a.AdjustLineStart(null, D, g, ConstantData.ActionTriggerType.LINESTART))) : 2 === e && Utils2.IsEqual(n[1].x, r, c) && Utils2.IsEqual(n[0].x, r, c) && (a.polylist.segs.splice(1, 1),
                   S = !0)
       }
-      S && GlobalData.optManager.AddToDirtyList(a.BlockID)
-    }(GlobalData.optManager.theActionTriggerData.hitSegment);
+      S && T3Gv.optManager.AddToDirtyList(a.BlockID)
+    }(T3Gv.optManager.theActionTriggerData.hitSegment);
     // ListManager.BaseLine.prototype.AfterModifyShape.call(this, e, t)
     // Double === TODO
     // super.AfterModifyShape(e, t);
@@ -506,15 +506,15 @@ class PolyLineContainer extends PolyLine {
 
 
   BaseLine_AfterModifyShape(e, t) {
-    if (GlobalData.optManager.theActionSVGObject) {
-      var a = GlobalData.optManager.theActionSVGObject.GetElementByID(ConstantData.Defines.EllipseAxes);
+    if (T3Gv.optManager.theActionSVGObject) {
+      var a = T3Gv.optManager.theActionSVGObject.GetElementByID(ConstantData.Defines.EllipseAxes);
       null != a &&
-        GlobalData.optManager.theActionSVGObject.RemoveElement(a)
+        T3Gv.optManager.theActionSVGObject.RemoveElement(a)
     }
-    GlobalData.optManager.ob.Frame &&
+    T3Gv.optManager.ob.Frame &&
       (
-        GlobalData.optManager.MaintainLink(e, this, GlobalData.optManager.ob, t),
-        GlobalData.optManager.ob = {}
+        T3Gv.optManager.MaintainLink(e, this, T3Gv.optManager.ob, t),
+        T3Gv.optManager.ob = {}
       ),
       this.rflags &&
       (
@@ -525,8 +525,8 @@ class PolyLineContainer extends PolyLine {
           !1
         )
       ),
-      GlobalData.optManager.SetLinkFlag(e, ConstantData.LinkFlags.SED_L_MOVE),
-      GlobalData.optManager.UpdateLinks(),
+      T3Gv.optManager.SetLinkFlag(e, ConstantData.LinkFlags.SED_L_MOVE),
+      T3Gv.optManager.UpdateLinks(),
       this.arcobj &&
       (this.arcobj = null)
   }
@@ -543,13 +543,13 @@ class PolyLineContainer extends PolyLine {
     if (a.angleChange)
       return this.UpdateLineAngleDimensionFromText(e, t, a);
     if (d = a.segment,
-      c = GlobalData.optManager.ob = Utils1.DeepCopy(this),
-      GlobalData.optManager.GetObjectPtr(this.BlockID, !0),
-      GlobalData.optManager.ShowSVGSelectionState(this.BlockID, !1),
+      c = T3Gv.optManager.ob = Utils1.DeepCopy(this),
+      T3Gv.optManager.GetObjectPtr(this.BlockID, !0),
+      T3Gv.optManager.ShowSVGSelectionState(this.BlockID, !1),
       (r = this.GetDimensionValueFromString(t, d)) >= 0 && (D = this.GetDimensionLengthFromValue(r)),
       D <= 0 || r < 0)
-      return GlobalData.optManager.AddToDirtyList(this.BlockID),
-        void GlobalData.optManager.RenderDirtySVGObjects();
+      return T3Gv.optManager.AddToDirtyList(this.BlockID),
+        void T3Gv.optManager.RenderDirtySVGObjects();
     for (g.hitSegment = d + 1,
       g.hitSegment >= this.polylist.segs.length && (this.polylist.closed ? g.hitSegment = 1 : (g.hitSegment = d,
         T = !0)),
@@ -562,7 +562,7 @@ class PolyLineContainer extends PolyLine {
       h = this.polylist.closed &&
         // this instanceof ListManager.PolyLineContainer
         this instanceof PolyLineContainer
-        ? GlobalData.optManager.InflateLine(i, this.StyleRecord.Line.BThick, this.polylist.closed, this.Dimensions & ConstantData.DimensionFlags.SED_DF_Exterior) : Utils1.DeepCopy(i),
+        ? T3Gv.optManager.InflateLine(i, this.StyleRecord.Line.BThick, this.polylist.closed, this.Dimensions & ConstantData.DimensionFlags.SED_DF_Exterior) : Utils1.DeepCopy(i),
       p = 0; p < h.length; p++)
       h[p].x += this.Frame.x,
         h[p].y += this.Frame.y;
@@ -587,12 +587,12 @@ class PolyLineContainer extends PolyLine {
       m = h[d].x,
       C = h[d].y,
       this.AdjustPolySeg(e, s, l, m, C, g, !0, 0),
-      GlobalData.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
+      T3Gv.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
       u = this.hooks.length,
       p = 0; p < u; p++)
-      GlobalData.optManager.SetLinkFlag(this.hooks[p].objid, ConstantData.LinkFlags.SED_L_MOVE);
-    GlobalData.optManager.ActionTriggerData = d,
-      GlobalData.optManager.MaintainLink(this.BlockID, this, c, ConstantData.ActionTriggerType.POLYLNODE);
+      T3Gv.optManager.SetLinkFlag(this.hooks[p].objid, ConstantData.LinkFlags.SED_L_MOVE);
+    T3Gv.optManager.ActionTriggerData = d,
+      T3Gv.optManager.MaintainLink(this.BlockID, this, c, ConstantData.ActionTriggerType.POLYLNODE);
     var M = {
       wdDim: -1,
       htDim: -1
@@ -618,7 +618,7 @@ class PolyLineContainer extends PolyLine {
         this.StartPoint.y += I,
         this.EndPoint.x += L,
         this.EndPoint.y += I,
-        GlobalData.optManager.SetObjectFrame(this.BlockID, f)),
+        T3Gv.optManager.SetObjectFrame(this.BlockID, f)),
       this.UpdateDrawing(e),
       -1 != this.DataID && this.LM_ResizeSVGTextObject(e, this, this.Frame)
   }
@@ -676,10 +676,10 @@ class PolyLineContainer extends PolyLine {
   }
 
   SetCursors() {
-    var e, t = GlobalData.optManager.svgObjectLayer.GetElementByID(this.BlockID);
-    GlobalData.optManager.currentModalOperation === ListManager.ModalOperations.SPLITWALL &&
+    var e, t = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID);
+    T3Gv.optManager.currentModalOperation === ListManager.ModalOperations.SPLITWALL &&
       this.polylist && this.polylist.segs.length >= 3 ||
-      GlobalData.optManager.currentModalOperation === ListManager.ModalOperations.ADDCORNER ?
+      T3Gv.optManager.currentModalOperation === ListManager.ModalOperations.ADDCORNER ?
       (e = t.GetElementByID(ConstantData.SVGElementClass.SLOP)) &&
       e.SetCursor(SDGraphics.Element.CursorType.CROSSHAIR) :
 
@@ -695,16 +695,16 @@ class PolyLineContainer extends PolyLine {
   BaseShape_SetCursors() {
     var e,
       t,
-      a = GlobalData.optManager.svgObjectLayer.GetElementByID(this.BlockID),
+      a = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID),
       r = (this.TextFlags & ConstantData.TextFlags.SED_TF_OneClick) > 0;
-    switch (GlobalData.optManager.GetEditMode()) {
+    switch (T3Gv.optManager.GetEditMode()) {
       case ConstantData.EditState.DEFAULT:
-        var i = GlobalData.optManager.Table_GetActiveID(),
+        var i = T3Gv.optManager.Table_GetActiveID(),
           n = this.GetTable(!1);
         n &&
-          (r || this.BlockID === i) ? GlobalData.optManager.Table_SetCursors(a, this, n, !1) : (
+          (r || this.BlockID === i) ? T3Gv.optManager.Table_SetCursors(a, this, n, !1) : (
           n &&
-          GlobalData.optManager.Table_SetCursors(a, this, n, !0),
+          T3Gv.optManager.Table_SetCursors(a, this, n, !0),
           // ListManager.BaseDrawingObject.prototype.SetCursors.call(this),
           // Double === TODO
           // super.SetCursors(),
@@ -738,10 +738,10 @@ class PolyLineContainer extends PolyLine {
       r,
       i,
       n,
-      o = GlobalData.optManager.svgObjectLayer.GetElementByID(this.BlockID),
+      o = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID),
       s = !1;
     if (!(this.flags & ConstantData.ObjFlags.SEDO_Lock) && o) if (
-      GlobalData.optManager.GetEditMode() === ConstantData.EditState.DEFAULT
+      T3Gv.optManager.GetEditMode() === ConstantData.EditState.DEFAULT
     ) {
       if (
         (i = o.GetElementByID(ConstantData.SVGElementClass.SHAPE)) &&
@@ -770,7 +770,7 @@ class PolyLineContainer extends PolyLine {
         e.SetCursor(Element.CursorType.POINTER),
         (r = o.GetElementByID(ConstantData.SVGElementClass.SLOP)) &&
         r.SetCursor(Element.CursorType.ADD),
-        a = GlobalData.optManager.svgDoc.GetActiveEdit(),
+        a = T3Gv.optManager.svgDoc.GetActiveEdit(),
         this.DataID &&
         this.DataID >= 0 &&
         o.textElem &&
@@ -804,66 +804,66 @@ class PolyLineContainer extends PolyLine {
 
   GetListOfEnclosedObjects(e, t) {
     "use strict";
-    var a, r, i = GlobalData.optManager.ActiveVisibleZList(), n = [];
+    var a, r, i = T3Gv.optManager.ActiveVisibleZList(), n = [];
     if (!this.polylist.closed)
       return n;
     this.GetPolyPoints(ConstantData.Defines.NPOLYPTS, !1, !0, !0, null);
     for (a = 0; a < i.length; a++)
-      r = GlobalData.optManager.GetObjectPtr(i[a], !1),
+      r = T3Gv.optManager.GetObjectPtr(i[a], !1),
         this.BlockID !== r.BlockID && (!t && r.hooks.length || (this.MostlyContains(r) || t && 1 === r.hooks.length && r.hooks[0].objid === this.BlockID) && n.push(r.BlockID));
     return n
   }
 
   AfterRotateShape(e) {
     "use strict";
-    var t = GlobalData.optManager.theRotateEndRotation;
+    var t = T3Gv.optManager.theRotateEndRotation;
     this.RotateAllInContainer(e, t),
       this.rflags && (this.rflags = Utils2.SetFlag(this.rflags, ConstantData.FloatingPointDim.SD_FP_Width, !1),
         this.rflags = Utils2.SetFlag(this.rflags, ConstantData.FloatingPointDim.SD_FP_Height, !1)),
-      GlobalData.optManager.AddToDirtyList(e),
-      GlobalData.optManager.RenderDirtySVGObjects()
+      T3Gv.optManager.AddToDirtyList(e),
+      T3Gv.optManager.RenderDirtySVGObjects()
   }
 
   RotateAllInContainer(e, t) {
     "use strict";
-    GlobalData.optManager.ActiveVisibleZList();
+    T3Gv.optManager.ActiveVisibleZList();
     var a, r, i, n, o = [];
-    GlobalData.objectStore.PreserveBlock(GlobalData.optManager.theSelectedListBlockID);
-    var s = GlobalData.objectStore.GetObject(GlobalData.optManager.theSelectedListBlockID)
+    T3Gv.objectStore.PreserveBlock(T3Gv.optManager.theSelectedListBlockID);
+    var s = T3Gv.objectStore.GetObject(T3Gv.optManager.theSelectedListBlockID)
       , l = s.Data;
     if (n = Utils1.DeepCopy(l),
-      GlobalData.optManager.ClearSelectionClick(),
+      T3Gv.optManager.ClearSelectionClick(),
       (o = this.GetListOfEnclosedObjects(!1, !0)).push(this.BlockID),
       o.length <= 1) {
-      var S = GlobalData.optManager.theRotateStartRotation
-        , c = GlobalData.optManager.theRotateEndRotation;
-      return GlobalData.optManager.ob = Utils1.DeepCopy(this),
-        GlobalData.optManager.theRotateStartRotation = 0,
-        GlobalData.optManager.theRotateEndRotation = t,
-        GlobalData.optManager.theRotateStartPoint.x = this.RotateKnobPt.x,
-        GlobalData.optManager.theRotateStartPoint.y = this.RotateKnobPt.y,
-        GlobalData.optManager.theRotatePivotX = this.Frame.x + this.Frame.width / 2,
-        GlobalData.optManager.theRotatePivotY = this.Frame.y + this.Frame.height / 2,
+      var S = T3Gv.optManager.theRotateStartRotation
+        , c = T3Gv.optManager.theRotateEndRotation;
+      return T3Gv.optManager.ob = Utils1.DeepCopy(this),
+        T3Gv.optManager.theRotateStartRotation = 0,
+        T3Gv.optManager.theRotateEndRotation = t,
+        T3Gv.optManager.theRotateStartPoint.x = this.RotateKnobPt.x,
+        T3Gv.optManager.theRotateStartPoint.y = this.RotateKnobPt.y,
+        T3Gv.optManager.theRotatePivotX = this.Frame.x + this.Frame.width / 2,
+        T3Gv.optManager.theRotatePivotY = this.Frame.y + this.Frame.height / 2,
         // ListManager.PolyLine.prototype.AfterRotateShape.call(this, e),
         // Double === TODO
         super.AfterRotateShape(e),
-        GlobalData.optManager.theRotateStartRotation = S,
-        GlobalData.optManager.theRotateEndRotation = c,
-        GlobalData.optManager.SelectObjects(o, !1, !1),
-        GlobalData.optManager.ob = {},
+        T3Gv.optManager.theRotateStartRotation = S,
+        T3Gv.optManager.theRotateEndRotation = c,
+        T3Gv.optManager.SelectObjects(o, !1, !1),
+        T3Gv.optManager.ob = {},
         o
     }
-    GlobalData.optManager.SelectObjects(o, !1, !1);
-    var u = GlobalData.optManager.GroupSelectedShapes(!0, null, !1, !1, !1);
-    (l = (s = GlobalData.objectStore.GetObject(GlobalData.optManager.theSelectedListBlockID)).Data).length;
-    return a = GlobalData.optManager.GetObjectPtr(u, !0),
-      GlobalData.optManager.svgObjectLayer.GetElementByID(a.BlockID).SetRotation(t),
+    T3Gv.optManager.SelectObjects(o, !1, !1);
+    var u = T3Gv.optManager.GroupSelectedShapes(!0, null, !1, !1, !1);
+    (l = (s = T3Gv.objectStore.GetObject(T3Gv.optManager.theSelectedListBlockID)).Data).length;
+    return a = T3Gv.optManager.GetObjectPtr(u, !0),
+      T3Gv.optManager.svgObjectLayer.GetElementByID(a.BlockID).SetRotation(t),
       a.RotationAngle = t,
-      GlobalData.optManager.UngroupShape(a.BlockID, !0),
+      T3Gv.optManager.UngroupShape(a.BlockID, !0),
       i = o.pop(),
-      GlobalData.optManager.SelectObjects(n, !1, !1),
-      (r = GlobalData.optManager.GetObjectPtr(i, !1)).UpdateFrame(),
-      r && (r.r.x < 0 || r.r.y < 0) && (GlobalData.optManager.Undo(),
+      T3Gv.optManager.SelectObjects(n, !1, !1),
+      (r = T3Gv.optManager.GetObjectPtr(i, !1)).UpdateFrame(),
+      r && (r.r.x < 0 || r.r.y < 0) && (T3Gv.optManager.Undo(),
         Collab.UnLockMessages(),
         Collab.UnBlockMessages()),
       o
@@ -872,7 +872,7 @@ class PolyLineContainer extends PolyLine {
   GetPointsForAreaDimension() {
     "use strict";
     var e = this.GetPolyPoints(ConstantData.Defines.NPOLYPTS, !1, !1, !1, null);
-    return this.Dimensions & ConstantData.DimensionFlags.SED_DF_Exterior ? GlobalData.optManager.InflateLine(e, this.StyleRecord.Line.BThick, this.polylist.closed, !0) : GlobalData.optManager.InflateLine(e, this.StyleRecord.Line.BThick, this.polylist.closed, !1)
+    return this.Dimensions & ConstantData.DimensionFlags.SED_DF_Exterior ? T3Gv.optManager.InflateLine(e, this.StyleRecord.Line.BThick, this.polylist.closed, !0) : T3Gv.optManager.InflateLine(e, this.StyleRecord.Line.BThick, this.polylist.closed, !1)
   }
 
   GetDimensionPoints() {
@@ -897,17 +897,17 @@ class PolyLineContainer extends PolyLine {
         S.x = c.x + n / 2,
         S.y = c.y,
         t.push(new Point(S.x, S.y)),
-        e = GlobalData.optManager.SD_GetCounterClockwiseAngleBetween2Points(new Point(0, 0), new Point(this.Frame.width, this.Frame.height)),
+        e = T3Gv.optManager.SD_GetCounterClockwiseAngleBetween2Points(new Point(0, 0), new Point(this.Frame.width, this.Frame.height)),
         Utils3.RotatePointsAboutPoint(c, e, t)
     } else
       r = this.GetPolyPoints(ConstantData.Defines.NPOLYPTS, !0, !0, !1, null),
-        t = this.polylist.closed ? GlobalData.optManager.InflateLine(r, this.StyleRecord.Line.BThick, this.polylist.closed, this.Dimensions & ConstantData.DimensionFlags.SED_DF_Exterior) : Utils1.DeepCopy(r);
+        t = this.polylist.closed ? T3Gv.optManager.InflateLine(r, this.StyleRecord.Line.BThick, this.polylist.closed, this.Dimensions & ConstantData.DimensionFlags.SED_DF_Exterior) : Utils1.DeepCopy(r);
     return t
   }
 
   CustomSnap(e, t, a, r, i, n) {
     "use strict";
-    var o, s, l, S, c, u, p, d, D, g, h, m = null, C = 32768, y = 32768, f = 32768, L = 32768, I = -1, T = GlobalData.optManager.ZList(), b = [], M = {};
+    var o, s, l, S, c, u, p, d, D, g, h, m = null, C = 32768, y = 32768, f = 32768, L = 32768, I = -1, T = T3Gv.optManager.ZList(), b = [], M = {};
     for (b = this.GetPolyPoints(ConstantData.Defines.NPOLYPTS, !0, !0, !1, null),
       o = 0; o < b.length; o++)
       b[o].x += e,
@@ -925,17 +925,17 @@ class PolyLineContainer extends PolyLine {
     for (Utils2.GetPolyRect(M, b),
       o = 0; o < T.length; o++)
       if (T[o] !== this.BlockID) {
-        if (GlobalData.optManager.theMoveList && GlobalData.optManager.theMoveList.length) {
+        if (T3Gv.optManager.theMoveList && T3Gv.optManager.theMoveList.length) {
           var R = !1;
-          for (s = 0; s < GlobalData.optManager.theMoveList.length; s++)
-            if (GlobalData.optManager.theMoveList[s] === T[o]) {
+          for (s = 0; s < T3Gv.optManager.theMoveList.length; s++)
+            if (T3Gv.optManager.theMoveList[s] === T[o]) {
               R = !0;
               break
             }
           if (R)
             continue
         }
-        if ((m = GlobalData.optManager.GetObjectPtr(T[o], !1))
+        if ((m = T3Gv.optManager.GetObjectPtr(T[o], !1))
           // instanceof ListManager.PolyLineContainer)
           instanceof PolyLineContainer)
           for (I >= 0 ? (l = I,
@@ -975,7 +975,7 @@ class PolyLineContainer extends PolyLine {
                 m.SnapPointToSegment(E, w),
                   C = w.x - _.x,
                   y = w.y - _.y;
-                var F = GlobalData.optManager.SD_GetCounterClockwiseAngleBetween2Points(b[s - 1], b[s]);
+                var F = T3Gv.optManager.SD_GetCounterClockwiseAngleBetween2Points(b[s - 1], b[s]);
                 (F = F / (2 * Math.PI) * 360) > 180 && (F -= 180),
                   F % 90 < 1 || F % 90 > 89 ? F >= 89 && F <= 91 ? Math.abs(C) > .02 && (Math.min(Math.abs(f), Math.abs(C)) === Math.abs(C) && (f = C),
                     y = 32768,
@@ -1073,7 +1073,7 @@ class PolyLineContainer extends PolyLine {
       this.Dimensions = Utils2.SetFlag(this.Dimensions, ConstantData.DimensionFlags.SED_DF_AllSeg, !0)),
       r = e ? !(this.Dimensions & ConstantData.DimensionFlags.SED_DF_Exterior) : this.Dimensions & ConstantData.DimensionFlags.SED_DF_Exterior;
     var i;
-    if ((i = GlobalData.optManager.InflateLine(a, this.StyleRecord.Line.Thickness / 2, !0, r)) && i.length === this.polylist.segs.length)
+    if ((i = T3Gv.optManager.InflateLine(a, this.StyleRecord.Line.Thickness / 2, !0, r)) && i.length === this.polylist.segs.length)
       for (this.StartPoint.x = i[0].x,
         this.StartPoint.y = i[0].y,
         this.EndPoint.x = i[i.length - 1].x,
@@ -1106,7 +1106,7 @@ class PolyLineContainer extends PolyLine {
           o.push(new Point(r[s[t]].x, r[s[t]].y));
       else
         o = Utils1.DeepCopy(r);
-      r = GlobalData.optManager.InflateLine(o, Math.abs(n), !0, n >= 0),
+      r = T3Gv.optManager.InflateLine(o, Math.abs(n), !0, n >= 0),
         i.StartPoint.x = r[0].x,
         i.StartPoint.y = r[0].y,
         i.EndPoint.x = r[r.length - 1].x,
@@ -1163,7 +1163,7 @@ class PolyLineContainer extends PolyLine {
           o.push(new Point(r[s[t]].x, r[s[t]].y));
       else
         o = Utils1.DeepCopy(r);
-      r = GlobalData.optManager.InflateLine(o, Math.abs(n), !0, n >= 0),
+      r = T3Gv.optManager.InflateLine(o, Math.abs(n), !0, n >= 0),
         i.StartPoint.x = r[0].x,
         i.StartPoint.y = r[0].y,
         i.EndPoint.x = r[r.length - 1].x,

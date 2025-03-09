@@ -8,7 +8,7 @@
 // import Basic from "./Basic.Index";
 // import GPP from "../gListManager";
 import $ from 'jquery';
-import HvacSVG from "../Helper/SVG.t2"
+import T3Svg from "../Helper/T3Svg"
 
 
 import Global from "./Basic.Global";
@@ -47,7 +47,7 @@ class Style {
 
   static CalcImageSize(e, t, a, r) {
     //'use strict';
-    var i = GlobalData.docHandler ? GlobalData.docHandler.svgDoc : null,
+    var i = T3Gv.docHandler ? T3Gv.docHandler.svgDoc : null,
       n = Style.GetCachedImageSize(e);
     if (n) return i &&
       i.ImageLoad_AddRef(),
@@ -117,7 +117,7 @@ class Style {
   static GetBitmapDimensions(e, t, a) {
     //'use strict';
     var r = new Image,
-      i = GlobalData.docHandler ? GlobalData.docHandler.svgDoc : null;
+      i = T3Gv.docHandler ? T3Gv.docHandler.svgDoc : null;
     i &&
       i.ImageLoad_AddRef(),
       r.onload = function () {
@@ -151,7 +151,7 @@ class Style {
 
   static GetSVGDimensions(e, t, a) {
     //'use strict';
-    var r = GlobalData.docHandler ? GlobalData.docHandler.svgDoc : null;
+    var r = T3Gv.docHandler ? T3Gv.docHandler.svgDoc : null;
     r &&
       r.ImageLoad_AddRef(),
       $.ajax({

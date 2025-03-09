@@ -1,6 +1,6 @@
 
 import BaseStateManager from './BaseStateManager'
-import GlobalData from '../GlobalData'
+import T3Gv from '../T3Gv'
 import Globals from '../Globals'
 import Utils1 from '../../Helper/Utils1'
 import State from './State'
@@ -12,7 +12,7 @@ class StateManager extends BaseStateManager {
 
   constructor() {
     super();
-    this.maxUndoStates = GlobalData.gMaxUndoStates;
+    this.maxUndoStates = T3Gv.gMaxUndoStates;
   }
 
   PreserveState() {
@@ -30,7 +30,7 @@ class StateManager extends BaseStateManager {
     for (let index = 0; index < totalStoredObjects; ++index) {
       const storedObject = currentState.StoredObjects[index];
       if (storedObject.StateOperationTypeID === globalStateOperation.CREATE) {
-        const clonedObject = cloneBlock(GlobalData.objectStore.GetObject(storedObject.ID));
+        const clonedObject = cloneBlock(T3Gv.objectStore.GetObject(storedObject.ID));
         clonedObject.StateOperationTypeID = globalStateOperation.CREATE;
         currentState.StoredObjects[index] = clonedObject;
       }
@@ -48,7 +48,7 @@ class StateManager extends BaseStateManager {
   ExceptionCleanup() {
     if (this.CurrentStateID > 0 && this.States[this.CurrentStateID].IsOpen) {
       this.States[this.CurrentStateID].IsOpen = false;
-      GlobalData.CURRENT_SEQ_OBJECT_ID = this.States[this.CurrentStateID].CURRENT_SEQ_OBJECT_ID;
+      T3Gv.CURRENT_SEQ_OBJECT_ID = this.States[this.CurrentStateID].CURRENT_SEQ_OBJECT_ID;
       this.RestoreObjectStoreFromState();
       this.CurrentStateID--;
       if (this.CurrentStateID < this.States.length - 1) {
@@ -86,32 +86,32 @@ class StateManager extends BaseStateManager {
 
         switch (storedObject.StateOperationTypeID) {
           case operationTypes.CREATE:
-            if (GlobalData.objectStore.GetObject(storedObject.ID)) {
-              GlobalData.objectStore.DeleteObject(storedObject.ID, false);
+            if (T3Gv.objectStore.GetObject(storedObject.ID)) {
+              T3Gv.objectStore.DeleteObject(storedObject.ID, false);
             } else {
               clonedObject = cloneBlock(storedObject);
-              GlobalData.objectStore.SaveObject(clonedObject, false);
+              T3Gv.objectStore.SaveObject(clonedObject, false);
             }
             break;
 
           case operationTypes.DELETE:
-            if (GlobalData.objectStore.GetObject(storedObject.ID)) {
-              GlobalData.objectStore.DeleteObject(storedObject.ID, false);
+            if (T3Gv.objectStore.GetObject(storedObject.ID)) {
+              T3Gv.objectStore.DeleteObject(storedObject.ID, false);
             } else {
               clonedObject = cloneBlock(storedObject);
               clonedObject.StateOperationTypeID = operationTypes.CREATE;
-              GlobalData.objectStore.SaveObject(clonedObject, false);
+              T3Gv.objectStore.SaveObject(clonedObject, false);
             }
             break;
 
           case operationTypes.UPDATE:
             const updatedClone = cloneBlock(storedObject);
-            const currentGlobalObject = GlobalData.objectStore.GetObject(storedObject.ID);
+            const currentGlobalObject = T3Gv.objectStore.GetObject(storedObject.ID);
             const globalClone = cloneBlock(currentGlobalObject);
             if (currentGlobalObject.StateOperationTypeID === operationTypes.CREATE) {
               globalClone.StateOperationTypeID = operationTypes.UPDATE;
             }
-            GlobalData.objectStore.SaveObject(updatedClone, false);
+            T3Gv.objectStore.SaveObject(updatedClone, false);
             currentState.StoredObjects[index] = globalClone;
             break;
         }
@@ -214,7 +214,7 @@ class StateManager extends BaseStateManager {
           }
         }
       } else if (this.States.length === 0) {
-        newState = new StateClass(GlobalData.stateManager.CurrentStateID + 1, 't3');
+        newState = new StateClass(T3Gv.stateManager.CurrentStateID + 1, 't3');
         newState.AddStoredObject(newObject);
         this.States.push(newState);
         this.CurrentStateID = newState.ID;

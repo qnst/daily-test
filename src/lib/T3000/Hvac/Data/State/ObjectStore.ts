@@ -1,7 +1,7 @@
 
 
 import Globals from "../Globals"
-import GlobalData from "../GlobalData"
+import T3Gv from "../T3Gv"
 import Utils1 from "../../Helper/Utils1"
 import StoredObject from "./StoredObject"
 
@@ -44,7 +44,7 @@ class ObjectStore {
       }
 
       if (isAddToState) {
-        GlobalData.stateManager.AddToCurrentState(object);
+        T3Gv.stateManager.AddToCurrentState(object);
       }
 
       return object.ID;
@@ -91,7 +91,7 @@ class ObjectStore {
         const deleteObject = this.GetObject(objectId);
         deleteObject.StateOperationTypeID = Globals.StateOperationType.DELETE;
         if (needAddToCurrent) {
-          GlobalData.stateManager.AddToCurrentState(deleteObject);
+          T3Gv.stateManager.AddToCurrentState(deleteObject);
         }
         this.StoredObjects.splice(deleteIndex, 1);
       }

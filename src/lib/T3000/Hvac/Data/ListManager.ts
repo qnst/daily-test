@@ -1,7 +1,7 @@
 
 import Resources from './Resources';
 import Globals from './Globals';
-import RulerSettings from '../Model/RulerSettings'
+import RulerSettings from '../Model/RulerConfig'
 import FileParser from '../Data/FileParser'
 import QuickStyle from '../Model/QuickStyle'
 import ConstantData from './ConstantData'

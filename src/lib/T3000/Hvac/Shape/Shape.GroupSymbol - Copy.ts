@@ -10,16 +10,16 @@
 // import SDGraphics from "./../../SDGraphics/SDGraphics.Index";
 // import GPP from '../../gListManager';
 // import $ from 'jquery';
-// import HvacSVG from '../../Hvac.SVG.t2';
+// import T3Svg from '../../Hvac.SVG.t2';
 
 
 
 
-import BaseSymbol from './Shape.BaseSymbol'
+import BaseSymbol from './S.BaseSymbol'
 import Utils1 from '../Helper/Utils1';
 import Utils2 from "../Helper/Utils2";
 import Utils3 from "../Helper/Utils3";
-import GlobalData from '../Data/GlobalData'
+import GlobalData from '../Data/T3Gv'
 import Collab from '../Data/Collab'
 import FileParser from '../Data/FileParser'
 import EvtUtil from "../Event/EvtUtil";
@@ -28,16 +28,16 @@ import ListManager from '../Data/ListManager';
 import { List } from 'echarts';
 // import Element from "../Basic/Basic.Element";
 
-import Document from '../Basic/Basic.Document'
+import Document from '../Basic/B.Document'
 
-import Element from '../Basic/Basic.Element';
+import Element from '../Basic/B.Element';
 
 import WResult from '../Model/WResult'
 
 import SDF from '../Data/SDF'
 import Globals from '../Data/Globals'
 import $ from 'jquery'
-import Effects from '../Basic/Basic.Element.Effects'
+import Effects from '../Basic/B.Element.Effects'
 import Instance from '../Data/Instance/Instance'
 import ConstantData from '../Data/ConstantData'
 
@@ -105,7 +105,7 @@ class GroupSymbol extends BaseSymbol {
         ++n
       ) {
         var f = this.ShapesInGroup[n];
-        S = (u = GlobalData.optManager.GetObjectPtr(f, !1)).Dimensions,
+        S = (u = T3Gv.optManager.GetObjectPtr(f, !1)).Dimensions,
           u.Dimensions = 0,
           (p = u.CreateShape(e)) &&
           (
@@ -157,8 +157,8 @@ class GroupSymbol extends BaseSymbol {
 
   SetObjectStyle(e) {
     if (!e.ImageURL || '' === e.ImageURL) {
-      var t = GlobalData.optManager.ApplyColorFilter(e, this, this.StyleRecord, this.colorfilter);
-      GlobalData.optManager.ApplyGroupProperties(t, this)
+      var t = T3Gv.optManager.ApplyColorFilter(e, this, this.StyleRecord, this.colorfilter);
+      T3Gv.optManager.ApplyGroupProperties(t, this)
     }
   }
 
@@ -170,7 +170,7 @@ class GroupSymbol extends BaseSymbol {
       p = !1;
     if (0 !== u) {
       if (o) var d = o;
-      else d = GlobalData.optManager.svgObjectLayer.GetElementByID(this.BlockID);
+      else d = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID);
       var D,
         g;
       if (
@@ -202,7 +202,7 @@ class GroupSymbol extends BaseSymbol {
           ++h
         ) {
           var m;
-          (m = GlobalData.optManager.GetObjectPtr(c[h], !0)) &&
+          (m = T3Gv.optManager.GetObjectPtr(c[h], !0)) &&
             0 == (
               m.colorfilter & FileParser.SDRColorFilters.SD_NOCOLOR_TEXT
             ) &&
@@ -218,11 +218,11 @@ class GroupSymbol extends BaseSymbol {
             )
         }
         if (p) {
-          GlobalData.optManager.AddToDirtyList(this.BlockID);
+          T3Gv.optManager.AddToDirtyList(this.BlockID);
           var C = this.Frame.width / this.InitialGroupBounds.width,
             y = this.Frame.height / this.InitialGroupBounds.height;
           if (
-            this.InitialGroupBounds = GlobalData.optManager.GetListSRect(c),
+            this.InitialGroupBounds = T3Gv.optManager.GetListSRect(c),
             !isNaN(C) &&
             !isNaN(y)
           ) {
@@ -232,7 +232,7 @@ class GroupSymbol extends BaseSymbol {
               this.UpdateFrame(f)
           }
         }
-        this.ConvertToNative(GlobalData.optManager.RichGradients, !1)
+        this.ConvertToNative(T3Gv.optManager.RichGradients, !1)
       }
     }
   }
@@ -241,7 +241,7 @@ class GroupSymbol extends BaseSymbol {
     var t,
       a,
       r = this.ShapesInGroup.length;
-    for (t = 0; t < r; t++) (a = GlobalData.optManager.GetObjectPtr(this.ShapesInGroup[t], !1)) &&
+    for (t = 0; t < r; t++) (a = T3Gv.optManager.GetObjectPtr(this.ShapesInGroup[t], !1)) &&
       a.GetTextures(e)
   }
 
@@ -255,7 +255,7 @@ class GroupSymbol extends BaseSymbol {
       }, this.prevBBox),
       n = $.extend(!0, {
       }, t),
-      o = GlobalData.optManager.svgDoc.CalculateRotatedOffsetForResize(i, n, r);
+      o = T3Gv.optManager.svgDoc.CalculateRotatedOffsetForResize(i, n, r);
     e.SetSize(t.width, t.height),
       e.SetPos(t.x + o.x, t.y + o.y);
     var s = e.GetElementByID(ConstantData.SVGElementClass.SHAPE);
@@ -295,7 +295,7 @@ class GroupSymbol extends BaseSymbol {
       Element.CursorType.RESIZE_LB,
       Element.CursorType.RESIZE_L
     ];
-    if (GlobalData.optManager.Table_GetActiveID() === this.BlockID) return null;
+    if (T3Gv.optManager.Table_GetActiveID() === this.BlockID) return null;
     var n,
       o,
       s = e.CreateShape(Document.CreateShapeType.GROUP),
@@ -443,7 +443,7 @@ class GroupSymbol extends BaseSymbol {
             a = null;
           return e.hooks.length &&
             (
-              (t = GlobalData.optManager.GetObjectPtr(e.hooks[0].objid, !1)) &&
+              (t = T3Gv.optManager.GetObjectPtr(e.hooks[0].objid, !1)) &&
               t.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.CONNECTOR ||
               t &&
               // t instanceof ListManager.ShapeContainer
@@ -484,7 +484,7 @@ class GroupSymbol extends BaseSymbol {
         w,
         F,
         v,
-        G = GlobalData.optManager.ShapeToPolyLine(this.BlockID, !1, !0, _).GetPolyPoints(ConstantData.Defines.NPOLYPTS, !0, !0, !1, []);
+        G = T3Gv.optManager.ShapeToPolyLine(this.BlockID, !1, !0, _).GetPolyPoints(ConstantData.Defines.NPOLYPTS, !0, !0, !1, []);
       if (G) for (
         R.shapeType = Document.CreateShapeType.OVAL,
         R.knobID = ConstantData.ActionTriggerType.MOVEPOLYSEG,
@@ -508,7 +508,7 @@ class GroupSymbol extends BaseSymbol {
     var N = h.width < 44,
       k = this.hooks.length > 0;
     if (k) {
-      var U = GlobalData.optManager.GetObjectPtr(this.hooks[0].objid, !1);
+      var U = T3Gv.optManager.GetObjectPtr(this.hooks[0].objid, !1);
       U &&
         U.DrawingObjectBaseClass !== ConstantData.DrawingObjectBaseClass.CONNECTOR &&
         (k = !1)
@@ -517,7 +517,7 @@ class GroupSymbol extends BaseSymbol {
       !(
         this.NoRotate() ||
         this.NoGrow() ||
-        GlobalData.optManager.bTouchInitiated ||
+        T3Gv.optManager.bTouchInitiated ||
         R.locked ||
         N ||
         k
@@ -542,7 +542,7 @@ class GroupSymbol extends BaseSymbol {
       this.Dimensions & ConstantData.DimensionFlags.SED_DF_Standoff &&
       this.CanUseStandOffDimensionLines()
     ) {
-      var x = GlobalData.optManager.svgObjectLayer.GetElementByID(this.BlockID);
+      var x = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID);
       this.CreateDimensionAdjustmentKnobs(s, x, R)
     }
     return s.SetSize(m, C),
@@ -558,11 +558,11 @@ class GroupSymbol extends BaseSymbol {
 
   ContainsText() {
     if (this.DataID >= 0) return !1;
-    if (GlobalData.optManager.SD_GetVisioTextChild(this.BlockID) >= 0) return !1;
+    if (T3Gv.optManager.SD_GetVisioTextChild(this.BlockID) >= 0) return !1;
     var e,
       t = this.ShapesInGroup.length;
     for (e = 0; e < t; e++) if (
-      GlobalData.optManager.GetObjectPtr(this.ShapesInGroup[e], !1).ContainsText()
+      T3Gv.optManager.GetObjectPtr(this.ShapesInGroup[e], !1).ContainsText()
     ) return !0;
     return !1
   }
@@ -578,27 +578,27 @@ class GroupSymbol extends BaseSymbol {
     if (S.RichGradients = e, i = this.ShapesInGroup.length) {
       for (n = 0; n < i; n++) s = this.ShapesInGroup[n],
         S.zList.push(this.ShapesInGroup[n]),
-        (o = GlobalData.optManager.GetObjectPtr(s, !1)).layer = this.Layer,
+        (o = T3Gv.optManager.GetObjectPtr(s, !1)).layer = this.Layer,
         o.GetTextures(S.TextureList);
-      S.sdp = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
-        S.tLMB = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !1),
-        S.ctp = GlobalData.optManager.theContentHeader,
+      S.sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+        S.tLMB = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1),
+        S.ctp = T3Gv.optManager.theContentHeader,
         S.GroupOffset.x = 0,
         S.GroupOffset.y = 0,
         S.WriteGroupBlock = !0,
-        S.fontlist = GlobalData.optManager.theContentHeader.FontList,
+        S.fontlist = T3Gv.optManager.theContentHeader.FontList,
         t &&
         (S.WriteVisio = !0);
-      GlobalData.docHandler.svgDoc.GetWorkArea();
-      S.docDpi = GlobalData.docHandler.svgDoc.docInfo.docDpi;
+      T3Gv.docHandler.svgDoc.GetWorkArea();
+      S.docDpi = T3Gv.docHandler.svgDoc.docInfo.docDpi;
       var c = SDF.WriteBuffer(S, !0, !0, !0);
       if (!0 === a) return c;
       c &&
         (l = new Uint8Array(c)) &&
         (
-          this.NativeID >= 0 ? (r = GlobalData.objectStore.PreserveBlock(this.NativeID)) &&
+          this.NativeID >= 0 ? (r = T3Gv.objectStore.PreserveBlock(this.NativeID)) &&
             (r.Data = l) : (
-            r = GlobalData.objectStore.CreateBlock(ConstantData.StoredObjectType.H_NATIVE_OBJECT, l),
+            r = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.H_NATIVE_OBJECT, l),
             this.NativeID = r.ID
           )
         )
@@ -619,18 +619,18 @@ class GroupSymbol extends BaseSymbol {
         this.TextFlags & ConstantData.TextFlags.SED_TF_AttachA
       ) &&
       (t.WriteBlocks || (l = - 1)),
-      s.RichGradients = GlobalData.optManager.RichGradients,
+      s.RichGradients = T3Gv.optManager.RichGradients,
       SDF.WriteTextParams(e, this, l, t),
       t.WriteBlocks
     ) SDF.WriteNativeID(e, this.NativeID, t);
     else if (this.NativeID, a = this.ShapesInGroup.length) {
       for (r = 0; r < a; r++) o = this.ShapesInGroup[r],
         s.zList.push(this.ShapesInGroup[r]),
-        (n = GlobalData.optManager.GetObjectPtr(o, !1)).layer = this.Layer,
+        (n = T3Gv.optManager.GetObjectPtr(o, !1)).layer = this.Layer,
         n.GetTextures(s.TextureList);
-      s.sdp = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
-        s.tLMB = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !1),
-        s.ctp = GlobalData.optManager.theContentHeader,
+      s.sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+        s.tLMB = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1),
+        s.ctp = T3Gv.optManager.theContentHeader,
         this.InitialGroupBounds.x > 0 ||
           this.InitialGroupBounds.y > 0 ? (
           s.GroupOffset.x = this.Frame.x + t.GroupOffset.x,
@@ -642,8 +642,8 @@ class GroupSymbol extends BaseSymbol {
         s.WriteGroupBlock = t.WriteGroupBlock,
         s.WriteVisio = t.WriteVisio,
         s.WriteWin32 = t.WriteWin32;
-      GlobalData.docHandler.svgDoc.GetWorkArea();
-      s.docDpi = GlobalData.docHandler.svgDoc.docInfo.docDpi;
+      T3Gv.docHandler.svgDoc.GetWorkArea();
+      s.docDpi = T3Gv.docHandler.svgDoc.docInfo.docDpi;
       var S = SDF.WriteBuffer(s, !0, !0, !0);
       i = SDF.Write_CODE(e, FileParser.SDROpCodesByName.SDF_C_NATIVESTORAGE),
         FileParser.write_nativebuffer(e, S),
@@ -664,13 +664,13 @@ class GroupSymbol extends BaseSymbol {
       S = [],
       c = !1,
       u = this,
-      p = GlobalData.optManager.SD_GetVisioTextChild(this.BlockID);
+      p = T3Gv.optManager.SD_GetVisioTextChild(this.BlockID);
     if (p > 0) {
-      var d = GlobalData.optManager.GetObjectPtr(p, !1);
+      var d = T3Gv.optManager.GetObjectPtr(p, !1);
       d &&
         (
           r = this.ShapesInGroup[0],
-          (i = GlobalData.optManager.GetObjectPtr(r, !1)).DataID < 0 &&
+          (i = T3Gv.optManager.GetObjectPtr(r, !1)).DataID < 0 &&
           (
             i.DataID = d.DataID,
             i.trect = Utils1.DeepCopy(d.trect),
@@ -706,7 +706,7 @@ class GroupSymbol extends BaseSymbol {
       ++a
     ) if (
         r = this.ShapesInGroup[a],
-        i = GlobalData.optManager.GetObjectPtr(r, !1),
+        i = T3Gv.optManager.GetObjectPtr(r, !1),
         c &&
         i.ScaleObject(0, 0, m, 0, g, h, !0),
         l = i.ConvertToVisio(e, t)
@@ -721,8 +721,8 @@ class GroupSymbol extends BaseSymbol {
       a,
       r = this.ShapesInGroup,
       i = r.length;
-    for (e = 0; e < i; ++e) (t = GlobalData.optManager.GetObjectPtr(r[e], !1)) &&
-      (a = GlobalData.objectStore.GetObject(r[e]), t.DeleteObject(), a && a.Delete());
+    for (e = 0; e < i; ++e) (t = T3Gv.optManager.GetObjectPtr(r[e], !1)) &&
+      (a = T3Gv.objectStore.GetObject(r[e]), t.DeleteObject(), a && a.Delete());
     // ListManager.BaseDrawingObject.prototype.DeleteObject.call(this)
     // Double === TODO
     this.BaseDrawingObject_DeleteObject()
@@ -740,60 +740,60 @@ class GroupSymbol extends BaseSymbol {
       a = null,
       r = [];
     if (- 1 != this.TableID) {
-      var i = GlobalData.optManager.GetObjectPtr(this.TableID, !0);
+      var i = T3Gv.optManager.GetObjectPtr(this.TableID, !0);
       i &&
-        GlobalData.optManager.Table_DeleteObject(i),
-        (e = GlobalData.objectStore.GetObject(this.TableID)) &&
+        T3Gv.optManager.Table_DeleteObject(i),
+        (e = T3Gv.objectStore.GetObject(this.TableID)) &&
         e.Delete()
     }
     - 1 != this.DataID &&
-      (e = GlobalData.objectStore.GetObject(this.DataID)) &&
+      (e = T3Gv.objectStore.GetObject(this.DataID)) &&
       e.Delete(),
       - 1 != this.NoteID &&
-      (e = GlobalData.objectStore.GetObject(this.NoteID)) &&
+      (e = T3Gv.objectStore.GetObject(this.NoteID)) &&
       e.Delete(),
       - 1 != this.NativeID &&
-      (e = GlobalData.objectStore.GetObject(this.NativeID)) &&
+      (e = T3Gv.objectStore.GetObject(this.NativeID)) &&
       e.Delete(),
       - 1 != this.GanttInfoID &&
-      (e = GlobalData.objectStore.GetObject(this.GanttInfoID)) &&
+      (e = T3Gv.objectStore.GetObject(this.GanttInfoID)) &&
       e.Delete(),
       - 1 != this.BlobBytesID &&
       (
-        (e = GlobalData.objectStore.GetObject(this.BlobBytesID)) &&
+        (e = T3Gv.objectStore.GetObject(this.BlobBytesID)) &&
         e.Delete(),
-        GlobalData.optManager.IsBlobURL(this.ImageURL) &&
-        GlobalData.optManager.DeleteURL(this.ImageURL)
+        T3Gv.optManager.IsBlobURL(this.ImageURL) &&
+        T3Gv.optManager.DeleteURL(this.ImageURL)
       ),
       - 1 != this.EMFBlobBytesID &&
-      (e = GlobalData.objectStore.GetObject(this.EMFBlobBytesID)) &&
+      (e = T3Gv.objectStore.GetObject(this.EMFBlobBytesID)) &&
       e.Delete(),
       - 1 != this.OleBlobBytesID &&
-      (e = GlobalData.objectStore.GetObject(this.OleBlobBytesID)) &&
+      (e = T3Gv.objectStore.GetObject(this.OleBlobBytesID)) &&
       e.Delete(),
       // this.RemoveFieldData(!0),
       // Double === TODO
       this.BaseDrawingObject_RemoveFieldData(!0),
       this.hooks.length &&
       (
-        !(t = GlobalData.optManager.GetObjectPtr(this.hooks[0].objid, !1)) ||
+        !(t = T3Gv.optManager.GetObjectPtr(this.hooks[0].objid, !1)) ||
         t.objecttype !== ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL ||
         t.Dimensions & ConstantData.DimensionFlags.SED_DF_HideHookedObjDimensions ||
         (
           r = Utils1.DeepCopy(this.hooks),
           this.hooks = [],
-          a = GlobalData.optManager.svgObjectLayer.GetElementByID(t.BlockID),
+          a = T3Gv.optManager.svgObjectLayer.GetElementByID(t.BlockID),
           t.UpdateDimensionLines(a),
           this.hooks = r
         )
       ),
       this.CommentID >= 0 &&
-      GlobalData.optManager.CommentObjectDelete(this)
+      T3Gv.optManager.CommentObjectDelete(this)
   }
 
   BaseDrawingObject_RemoveFieldData(e, t) {
     if (this.HasFieldData() && (!t || this.fieldDataTableID == t)) {
-      GlobalData.optManager.GetObjectPtr(this.BlockID, !0);
+      T3Gv.optManager.GetObjectPtr(this.BlockID, !0);
       e &&
         (
           this.fieldDataElemID < 0 ? ListManager.SDData.DeleteFieldedDataTable(this.fieldDataTableID) : ListManager.SDData.FieldedDataDelRecord(this.fieldDataTableID, this.fieldDataElemID)
@@ -802,7 +802,7 @@ class GroupSymbol extends BaseSymbol {
         this.fieldDataTableID = - 1,
         this.fieldDataElemID = - 1,
         this.dataStyleOverride = null,
-        GlobalData.optManager.AddToDirtyList(this.BlockID),
+        T3Gv.optManager.AddToDirtyList(this.BlockID),
         // this.RefreshFromFieldData()
         // Double === TODO
         this.BaseDrawingObject_RefreshFromFieldData()
@@ -823,7 +823,7 @@ class GroupSymbol extends BaseSymbol {
           r = !0
         ),
         ListManager.SDData.FieldedDataHasRulesForRecord(this.fieldDataTableID, this.fieldDataElemID) &&
-        (GlobalData.optManager.AddToDirtyList(this.BlockID), r = !0),
+        (T3Gv.optManager.AddToDirtyList(this.BlockID), r = !0),
         r
       )
   }
@@ -832,10 +832,10 @@ class GroupSymbol extends BaseSymbol {
     if (
       (
         e = e ||
-        GlobalData.optManager.svgObjectLayer.GetElementByID(this.BlockID)
+        T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID)
       ) &&
-      GlobalData.optManager.bDrawEffects &&
-      !GlobalData.optManager.bTokenizeStyle
+      T3Gv.optManager.bDrawEffects &&
+      !T3Gv.optManager.bTokenizeStyle
     ) {
       var r = e.shapeGroup ||
         e,
@@ -873,7 +873,7 @@ class GroupSymbol extends BaseSymbol {
       r,
       i = this.ShapesInGroup,
       n = i.length;
-    for (a = 0; a < n; ++a) (r = GlobalData.optManager.GetObjectPtr(i[a], !1)) &&
+    for (a = 0; a < n; ++a) (r = T3Gv.optManager.GetObjectPtr(i[a], !1)) &&
       r.RemoveFieldData(e, t)
   }
 
@@ -886,7 +886,7 @@ class GroupSymbol extends BaseSymbol {
       ListManager.BaseSymbol.prototype.HasFieldDataInText.call(this, e)
     ) return !0;
     for (t = 0; t < i; ++t) if (
-      (a = GlobalData.optManager.GetObjectPtr(r[t], !1)) &&
+      (a = T3Gv.optManager.GetObjectPtr(r[t], !1)) &&
       a.HasFieldDataInText(e)
     ) return !0;
     return !1
@@ -901,7 +901,7 @@ class GroupSymbol extends BaseSymbol {
       ListManager.BaseSymbol.prototype.HasFieldDataRules.call(this, e)
     ) return !0;
     for (t = 0; t < i; ++t) if (
-      (a = GlobalData.optManager.GetObjectPtr(r[t], !1)) &&
+      (a = T3Gv.optManager.GetObjectPtr(r[t], !1)) &&
       a.HasFieldDataRules(e)
     ) return !0;
     return !1
@@ -916,7 +916,7 @@ class GroupSymbol extends BaseSymbol {
       ListManager.BaseSymbol.prototype.HasFieldDataForTable.call(this, e)
     ) return !0;
     for (t = 0; t < i; ++t) if (
-      (a = GlobalData.optManager.GetObjectPtr(r[t], !1)) &&
+      (a = T3Gv.optManager.GetObjectPtr(r[t], !1)) &&
       a.HasFieldDataForTable(e)
     ) return !0;
     return !1
@@ -932,7 +932,7 @@ class GroupSymbol extends BaseSymbol {
     ) return !0;
     if (!a) return !1;
     for (r = 0; r < o; ++r) if (
-      (i = GlobalData.optManager.GetObjectPtr(n[r], !1)) &&
+      (i = T3Gv.optManager.GetObjectPtr(n[r], !1)) &&
       i.HasFieldDataRecord(e, t, a)
     ) return !0;
     return !1
@@ -949,7 +949,7 @@ class GroupSymbol extends BaseSymbol {
         t = !0
       ),
       this.HasFieldDataRules(e) &&
-      (GlobalData.optManager.AddToDirtyList(this.BlockID), t = !0),
+      (T3Gv.optManager.AddToDirtyList(this.BlockID), t = !0),
       t
   }
 
@@ -963,7 +963,7 @@ class GroupSymbol extends BaseSymbol {
       t = 0;
       t < i;
       ++t
-    ) (a = GlobalData.optManager.GetObjectPtr(r[t], !1)) &&
+    ) (a = T3Gv.optManager.GetObjectPtr(r[t], !1)) &&
       a.RemapDataFields(e)
   }
 

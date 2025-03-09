@@ -47,10 +47,10 @@ function DeltaPoints(e, t) {
   return (a = Math.abs(e.x - t.x)) > (r = Math.abs(e.y - t.y)) ? a : r
 }
 
-// var objectStore = GlobalData.objectStore;
+// var objectStore = T3Gv.objectStore;
 SDUI.CMSContent = new SDUI.CMSContentController;
 
-// Update objectStore to GlobalData.objectStore
+// Update objectStore to T3Gv.objectStore
 
 ListManager.LM = function () {
 };
@@ -95,9 +95,9 @@ ListManager.LM.prototype.LoadStdTextures = function () {
             var a,
               r,
               i;
-            for (a = t.Textures.length, r = 0; r < a; r++) (i = t.Textures[r]).filename = GlobalData.optManager.GetTextureFileName(t.Categories[i.categoryindex], i.name, i.imagetype);
-            GlobalData.optManager.TextureList = t,
-              GlobalData.optManager.NStdTextures = a
+            for (a = t.Textures.length, r = 0; r < a; r++) (i = t.Textures[r]).filename = T3Gv.optManager.GetTextureFileName(t.Categories[i.categoryindex], i.name, i.imagetype);
+            T3Gv.optManager.TextureList = t,
+              T3Gv.optManager.NStdTextures = a
           }
         }
       }
@@ -287,7 +287,7 @@ ListManager.LM.prototype.Initialize = function () {
       this.theHtmlClipboard = null,
       this.CutFromButton = !1,
       this.theImageClipboard = null;
-    var e = GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.SELECTEDLIST_OBJECT, []);
+    var e = T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.SELECTEDLIST_OBJECT, []);
     if (null === e) throw new SDJSError({
       source: 'ListManager.LMInitialize',
       message: 'Got null value for theSelectedListBlock'
@@ -322,7 +322,7 @@ ListManager.LM.prototype.Initialize = function () {
       r.d_earrowdisp = !1,
       r.d_arrowsize = 1,
       r.CurrentTheme = SDUI.Commands.MainController.Theme.GetCurrentTheme();
-    var i = GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.SED_SESSION_OBJECT, r);
+    var i = T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.SED_SESSION_OBJECT, r);
     this.theSEDSessionBlockID = i.ID;
     var n = new ListManager.LayersManager,
       o = new ListManager.Layer;
@@ -330,13 +330,13 @@ ListManager.LM.prototype.Initialize = function () {
       n.layers.push(o),
       n.nlayers = 1,
       n.activelayer = 0;
-    var s = GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.LAYERS_MANAGER_OBJECT, n);
+    var s = T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.LAYERS_MANAGER_OBJECT, n);
     this.theLayersManagerBlockID = s.ID,
       this.SelectionState = new ListManager.SelectionAttributes;
     var l = new ListManager.TEDSession,
-      S = GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.TED_SESSION_OBJECT, l);
+      S = T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.TED_SESSION_OBJECT, l);
     this.theTEDSessionBlockID = S.ID;
-    var c = GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.LINKLIST_OBJECT, []);
+    var c = T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.LINKLIST_OBJECT, []);
     if (null === c) throw new SDJSError({
       source: 'ListManager.LMInitialize',
       message: 'Got null value for theLinksBlock'
@@ -359,8 +359,8 @@ ListManager.LM.prototype.Initialize = function () {
       this.bBuildingSymbols = !1,
       this.bTokenizeStyle = !1,
       this.bDrawEffects = !0,
-      this.initialStateID = GlobalData.stateManager.CurrentStateID,
-      this.nObjectStoreStart = GlobalData.objectStore.StoredObjects.length,
+      this.initialStateID = T3Gv.stateManager.CurrentStateID,
+      this.nObjectStoreStart = T3Gv.objectStore.StoredObjects.length,
       this.cachedHeight = null,
       this.cachedWidth = null,
       this.bInDimensionEdit = !1,
@@ -562,7 +562,7 @@ ListManager.LM.prototype.Initialize = function () {
     this.CutFromButton = false;
     this.theImageClipboard = null;
 
-    const selectedListBlock = GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.SELECTEDLIST_OBJECT, []);
+    const selectedListBlock = T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.SELECTEDLIST_OBJECT, []);
     if (selectedListBlock === null) {
       // throw new SDJSError({ source: 'ListManager.LMInitialize', message: 'Got null value for theSelectedListBlock' });
       throw new Error('Got null value for theSelectedListBlock');
@@ -609,7 +609,7 @@ ListManager.LM.prototype.Initialize = function () {
     sedSession.d_arrowsize = 1;
     sedSession.CurrentTheme = SDUI.Commands.MainController.Theme.GetCurrentTheme();
 
-    const sedSessionBlock = GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.SED_SESSION_OBJECT, sedSession);
+    const sedSessionBlock = T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.SED_SESSION_OBJECT, sedSession);
     this.theSEDSessionBlockID = sedSessionBlock.ID;
 
     const layersManager = new LayersManager();
@@ -619,16 +619,16 @@ ListManager.LM.prototype.Initialize = function () {
     layersManager.nlayers = 1;
     layersManager.activelayer = 0;
 
-    const layersManagerBlock = GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.LAYERS_MANAGER_OBJECT, layersManager);
+    const layersManagerBlock = T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.LAYERS_MANAGER_OBJECT, layersManager);
     this.theLayersManagerBlockID = layersManagerBlock.ID;
 
     this.SelectionState = new ListManager.SelectionAttributes();
 
     const tedSession = new TEDSession();
-    const tedSessionBlock = GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.TED_SESSION_OBJECT, tedSession);
+    const tedSessionBlock = T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.TED_SESSION_OBJECT, tedSession);
     this.theTEDSessionBlockID = tedSessionBlock.ID;
 
-    const linksBlock = GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.LINKLIST_OBJECT, []);
+    const linksBlock = T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.LINKLIST_OBJECT, []);
     if (linksBlock === null) {
       // throw new SDJSError({ source: 'ListManager.LMInitialize', message: 'Got null value for theLinksBlock' });
       throw new Error('Got null value for theLinksBlock');
@@ -652,8 +652,8 @@ ListManager.LM.prototype.Initialize = function () {
     this.bBuildingSymbols = false;
     this.bTokenizeStyle = false;
     this.bDrawEffects = true;
-    this.initialStateID = GlobalData.stateManager.CurrentStateID;
-    this.nObjectStoreStart = GlobalData.objectStore.StoredObjects.length;
+    this.initialStateID = T3Gv.stateManager.CurrentStateID;
+    this.nObjectStoreStart = T3Gv.objectStore.StoredObjects.length;
     this.cachedHeight = null;
     this.cachedWidth = null;
     this.bInDimensionEdit = false;
@@ -708,7 +708,7 @@ ListManager.LM.prototype.ResetgListManager = function (e) {
   this.curHiliteShape = - 1,
     this.bInNoteEdit = !1,
     this.curNoteShape = - 1, //
-    this.initialStateID = GlobalData.stateManager.CurrentStateID,
+    this.initialStateID = T3Gv.stateManager.CurrentStateID,
     this.NoUndo = !1,
     this.EmptySymbolList = [],
     this.EmptyEMFList = [],
@@ -848,8 +848,8 @@ ListManager.LM.prototype.ScaleNewNativeSymbolList = function (e, t, a) {
     ) {
       S = !0,
         48,
-        GlobalData.optManager.GetDrawingScale(GlobalData.docHandler.rulerSettings),
-        GlobalData.docHandler.rulerSettings.useInches ||
+        T3Gv.optManager.GetDrawingScale(T3Gv.docHandler.rulerSettings),
+        T3Gv.docHandler.rulerSettings.useInches ||
         Utils2.IsEqual(n.StyleRecord.Line.Thickness, STANDARD_INTERIOR_WALL) &&
         (
           n.StyleRecord.Line.Thickness = METRIC_INTERIOR_WALL,
@@ -955,13 +955,13 @@ ListManager.LM.prototypeAddNewNativeSymbol = function (e, t, a) {
       selectedList: []
     },
     S = 0,
-    c = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
+    c = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
     u = ConstantData.TextFlags;
   if (e.nativeDataArrayBuffer) {
     e.SymbolData &&
       e.SymbolData.ShapeData.ObjectAttributeFlags & ListManager.LibraryFlags.SEDL_Scale &&
       (S = ConstantData.LayerFlags.SDLF_UseEdges);
-    var p = GlobalData.optManager.ZListPreserve(S),
+    var p = T3Gv.optManager.ZListPreserve(S),
       d = p.length;
     if (
       SDF.ReadSymbolFromBuffer(
@@ -990,7 +990,7 @@ ListManager.LM.prototypeAddNewNativeSymbol = function (e, t, a) {
           'VisioStencil' !== e.SymbolData.ChangedBy &&
           1 === g &&
           e.SymbolData.Id !== ConstantData.Defines.Floorplan_WallOpeningID &&
-          GlobalData.gBaseManager.UpdateShapeList(
+          T3Gv.gBaseManager.UpdateShapeList(
             this.GetObjectPtr(s, !1),
             e.SymbolData.Id,
             e.SymbolData.Title,
@@ -1063,17 +1063,17 @@ ListManager.LM.prototypeAddNewNativeSymbol = function (e, t, a) {
             this.ReplaceObjectHooks(n, a),
             (n = this.GetObjectPtr(s, !0)).objecttype === ConstantData.ObjectTypes.SD_OBJT_FRAME
           ) {
-            p = GlobalData.optManager.ZListPreserve();
-            var C = GlobalData.optManager.ReplaceSpecialObject(n, n.BlockID, p, n.objecttype);
+            p = T3Gv.optManager.ZListPreserve();
+            var C = T3Gv.optManager.ReplaceSpecialObject(n, n.BlockID, p, n.objecttype);
             if (C) {
               var y = [
                 C
               ];
-              GlobalData.optManager.DeleteObjects(y, !1),
+              T3Gv.optManager.DeleteObjects(y, !1),
                 n.UpdateFrame(n.Frame)
             }
           }
-          GlobalData.optManager.AddToDirtyList(s)
+          T3Gv.optManager.AddToDirtyList(s)
         } else this.theDrawShape = n
       }
     }
@@ -1084,10 +1084,10 @@ ListManager.LM.prototypeAddNewNativeSymbol = function (e, t, a) {
 ListManager.LM.prototype.MarkAllAllVisibleHigherLayerObjectsDirty = function () {
   var e,
     t,
-    a = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !1);
+    a = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1);
   for (e = a.activelayer - 1; e >= 0; e--) if (
     !(!a.layers[e].flags & ConstantData.LayerFlags.SDLF_Visible)
-  ) for (t = 0; t < a.layers[e].zList.length; t++) GlobalData.optManager.AddToDirtyList(a.layers[e].zList[t])
+  ) for (t = 0; t < a.layers[e].zList.length; t++) T3Gv.optManager.AddToDirtyList(a.layers[e].zList[t])
 }
 
 
@@ -1132,7 +1132,7 @@ ListManager.LM.prototypeSwimlaneAddtoDelete = function (e, t, a) {
 }
 
 ListManager.LM.prototypeTimelineAddtoDelete = function (e, t, a) {
-  let r = GlobalData.gBusinessManager.GetChartObjectList(e.BlockID),
+  let r = T3Gv.gBusinessManager.GetChartObjectList(e.BlockID),
     n = r.length;
   for (i = 0; i < n; i++) t.indexOf(r[i]) < 0 &&
     t.push(r[i]);
@@ -1191,7 +1191,7 @@ ListManager.LM.prototypeAddtoDelete = function (e, t, a) {
       SDJS.ConnectorDefines.SEDA_NSkip,
       SDJS.ConnectorDefines
     );
-  for (i = e.length, r = 0; r < i; r++) if (null != (n = GlobalData.optManager.GetObjectPtr(e[r], !1))) if (
+  for (i = e.length, r = 0; r < i; r++) if (null != (n = T3Gv.optManager.GetObjectPtr(e[r], !1))) if (
     y = e[r],
     n.objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART ? this.GanttAddtoDelete(e, t, n) : n.objecttype === ConstantData.ObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER ? this.TableContainerAddtoDelete(n, e) : n.IsSwimlane() ? (this.SwimlaneAddtoDelete(n, e), i = e.length) : n.objecttype === ConstantData.ObjectTypes.SD_OBJT_NG_TIMELINE ? this.TimelineAddtoDelete(n, e) : n instanceof ListManager.ShapeContainer &&
       (this.ContainerAddtoDelete(n, e), P = !0),
@@ -1249,7 +1249,7 @@ ListManager.LM.prototypeAddtoDelete = function (e, t, a) {
   );
   else {
     if (p = !1, (s = Business.GetParentConnector(e[r], null)) >= 0) {
-      if (P = !0, l = GlobalData.optManager.GetObjectPtr(s, !1)) {
+      if (P = !0, l = T3Gv.optManager.GetObjectPtr(s, !1)) {
         var w = {};
         if (
           this.IsConnectorEndShape(n, l, w) &&
@@ -1277,8 +1277,8 @@ ListManager.LM.prototypeAddtoDelete = function (e, t, a) {
         ) p = gGenogramManager.DeleteConnector(l, e, r, A),
           y = A.parentshape;
         else if (l._IsFlowChartConnector()) _ = [],
-          f = GlobalData.optManager.FindChildArray(e[r], - 1),
-          null == (L = GlobalData.optManager.GetObjectPtr(f, !1)) &&
+          f = T3Gv.optManager.FindChildArray(e[r], - 1),
+          null == (L = T3Gv.optManager.GetObjectPtr(f, !1)) &&
           (L = l),
           l.objecttype === ConstantData.ObjectTypes.SD_OBJT_STEPCHARTV_BRANCH ||
             L.objecttype === ConstantData.ObjectTypes.SD_OBJT_STEPCHARTV_BRANCH ? gStepChartVManager &&
@@ -1313,7 +1313,7 @@ ListManager.LM.prototypeAddtoDelete = function (e, t, a) {
             break
           }
         } else 0 === l.hooks.length &&
-          GlobalData.optManager.CN_GetNShapes(s) <= 1 &&
+          T3Gv.optManager.CN_GetNShapes(s) <= 1 &&
           - 1 === e.indexOf(s) &&
           e.push(s)
       }
@@ -1325,7 +1325,7 @@ ListManager.LM.prototypeAddtoDelete = function (e, t, a) {
         m = 0;
         m < F;
         m++
-      ) if ((o = GlobalData.optManager.FindChildArray(e[r], I)) >= 0) {
+      ) if ((o = T3Gv.optManager.FindChildArray(e[r], I)) >= 0) {
         if (
           (d = this.GetObjectPtr(o, !0)) &&
           d.arraylist &&
@@ -1369,7 +1369,7 @@ ListManager.LM.prototypeAddtoDelete = function (e, t, a) {
       I = o
     }
     if (!p) for (
-      b = (o = GlobalData.optManager.FindAllChildConnectors(y)).length,
+      b = (o = T3Gv.optManager.FindAllChildConnectors(y)).length,
       m = 0;
       m < b;
       m++
@@ -1407,7 +1407,7 @@ ListManager.LM.prototypeAddtoDelete = function (e, t, a) {
     if (
       n.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.LINE
     ) {
-      var J = GlobalData.optManager.FindAllChildObjects(
+      var J = T3Gv.optManager.FindAllChildObjects(
         n.BlockID,
         ConstantData.DrawingObjectBaseClass.SHAPE,
         ConstantData.ObjectTypes.SD_OBJT_MULTIPLICITY
@@ -1420,7 +1420,7 @@ ListManager.LM.prototypeAddtoDelete = function (e, t, a) {
     }
     if (!t) for (
       b = (
-        T = GlobalData.optManager.FindAllChildObjects(n.BlockID, ConstantData.DrawingObjectBaseClass.LINE, null)
+        T = T3Gv.optManager.FindAllChildObjects(n.BlockID, ConstantData.DrawingObjectBaseClass.LINE, null)
       ).length,
       c = 0;
       c < b;
@@ -1436,7 +1436,7 @@ ListManager.LM.prototypeAddtoDelete = function (e, t, a) {
 
 
   ListManager.LM.prototypeDeleteBlock = function (e) {
-    var t = GlobalData.objectStore.GetObject(e);
+    var t = T3Gv.objectStore.GetObject(e);
     t &&
       t.Delete()
   }
@@ -1447,7 +1447,7 @@ ListManager.LM.prototypeDeleteAllObjects = function () {
   var e,
     t,
     a = Globals.StoredObjectType;
-  for (e = GlobalData.objectStore.StoredObjects.length - 1; e >= 0; e--) switch ((t = GlobalData.objectStore.StoredObjects[e]).Type) {
+  for (e = T3Gv.objectStore.StoredObjects.length - 1; e >= 0; e--) switch ((t = T3Gv.objectStore.StoredObjects[e]).Type) {
     case a.SED_SESSION_OBJECT:
       t.Data.tselect = - 1;
       break;
@@ -1466,9 +1466,9 @@ ListManager.LM.prototypeDeleteAllObjects = function () {
     default:
       t.Delete()
   }
-  GlobalData.optManager.ResetStateManager(),
+  T3Gv.optManager.ResetStateManager(),
     SDJS_reinit_state_manager_id(),
-    GlobalData.optManager.theContentHeader.Save_HistoryState = - 1
+    T3Gv.optManager.theContentHeader.Save_HistoryState = - 1
 }
 
 ListManager.LM.prototypeClearAllObjects = function (e) {
@@ -1479,7 +1479,7 @@ ListManager.LM.prototypeClearAllObjects = function (e) {
     n = this.ZList(),
     o = [],
     s = !1,
-    l = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !1),
+    l = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1),
     S = - 1,
     c = - 1,
     u = ListManager.Trello.TrelloArchiveCard;
@@ -1522,7 +1522,7 @@ ListManager.LM.prototypeClearAllObjects = function (e) {
         s &&
         this.AddtoDelete(o, !1, null),
         this.DeleteObjects(o, !1),
-        GlobalData.optManager.CommentIdleTab(),
+        T3Gv.optManager.CommentIdleTab(),
         this.CompleteOperation(null, !0)
       )
   }
@@ -1530,7 +1530,7 @@ ListManager.LM.prototypeClearAllObjects = function (e) {
 }
 
 ListManager.LM.prototypeResetStateManager = function () {
-  GlobalData.stateManager.ResetToSpecificState(this.initialStateID)
+  T3Gv.stateManager.ResetToSpecificState(this.initialStateID)
 }
 
 ListManager.LM.prototypeSwitchToAlternateStateManager = function (e, t, a) {
@@ -1703,7 +1703,7 @@ ListManager.LM.prototypeAlternateStateManagerMacroTest3 = function () {
 }
 
 ListManager.LM.prototypeAddNewLayerAtFront = function (e, t, a) {
-  var r = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0);
+  var r = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0);
   if (r.nlayers >= ConstantData.Defines.MaxUserLayers) return Utils2.Alert(Resources.Strings.MaxLayersReached, null),
     !1;
   var i = new Layer();
@@ -1719,26 +1719,26 @@ ListManager.LM.prototypeAddNewLayerAtFront = function (e, t, a) {
 }
 
 ListManager.LM.prototypeMakeLayerActiveByIndex = function (e) {
-  GlobalData.optManager.CloseEdit();
-  var t = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
+  T3Gv.optManager.CloseEdit();
+  var t = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
   t.moreflags & ConstantData.SessionMoreFlags.SEDSM_HideLayerTabs &&
     (
       (
-        t = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0)
+        t = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0)
       ).moreflags = Utils2.SetFlag(
         t.moreflags,
         ConstantData.SessionMoreFlags.SEDSM_HideLayerTabs,
         !1
       )
     );
-  var a = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1),
+  var a = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1),
     r = a.nlayers,
     i = a.layers,
     n = a.layers[a.activelayer].layertype;
   if (e >= 0 && e < r) {
     if (n === ConstantData.LayerTypes.SD_LAYERT_MINDMAP) ListManager.TaskMap.CommitVisualOutline();
     switch (
-    (a = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0)).activelayer = e,
+    (a = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0)).activelayer = e,
     i[a.activelayer].layertype
     ) {
       case ConstantData.LayerTypes.SD_LAYERT_MINDMAP:
@@ -1765,7 +1765,7 @@ ListManager.LM.prototypeMakeLayerActiveByIndex = function (e) {
           SDF.ChangeHeader(FileParser.SDROpCodesByName.SDF_C_TASKPANEL)
         ),
           SDUI.Commands.MainController.SmartPanels.SetLeftPanelMode(Resources.LeftPanelMode.LEFTPANELMODE_SMARTPANEL),
-          GlobalData.optManager.GanttLoadLayer()
+          T3Gv.optManager.GanttLoadLayer()
     }
     this.AdjustSelectedListAfterLayerChange()
   }
@@ -1797,7 +1797,7 @@ ListManager.LM.prototypeAddNewLayer = function (e, t, a) {
 ListManager.LM.prototypeAdjustSelectedListAfterLayerChange = function () {
   var e,
     t,
-    a = this.GetObjectPtr(GlobalData.optManager.theSelectedListBlockID, !0),
+    a = this.GetObjectPtr(T3Gv.optManager.theSelectedListBlockID, !0),
     r = this.GetTargetSelect(),
     i = a.length,
     n = [];
@@ -1814,7 +1814,7 @@ ListManager.LM.prototypeAdjustSelectedListAfterLayerChange = function () {
 
 ListManager.LM.prototypeSwitchToNextLayer = function () {
   this.CloseEdit();
-  var e = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0);
+  var e = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0);
   e.activelayer--,
     e.activelayer < 0 &&
     (e.activelayer = e.nlayers - 1),
@@ -1825,7 +1825,7 @@ ListManager.LM.prototypeSwitchToNextLayer = function () {
 
 ListManager.LM.prototypeSwitchToPreviousLayer = function () {
   this.CloseEdit();
-  var e = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0);
+  var e = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0);
   e.activelayer++,
     e.activelayer >= e.nlayers &&
     (e.activelayer = 0),
@@ -1836,7 +1836,7 @@ ListManager.LM.prototypeSwitchToPreviousLayer = function () {
 
 ListManager.LM.prototypeRotateLayerStack = function (e) {
   this.CloseEdit();
-  var t = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0).layers,
+  var t = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0).layers,
     a = t.shift();
   t.push(a),
     this.AdjustSelectedListAfterLayerChange(),
@@ -1847,7 +1847,7 @@ ListManager.LM.prototypeRotateLayerStack = function (e) {
 
 ListManager.LM.prototypeToggleCurrentLayerVisible = function () {
   this.CloseEdit();
-  var e = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0);
+  var e = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0);
   e.layers[e.activelayer].flags ^= ConstantData.LayerFlags.SDLF_Visible,
     this.RenderAllSVGObjects(),
     this.CompleteOperation(null)
@@ -1855,7 +1855,7 @@ ListManager.LM.prototypeToggleCurrentLayerVisible = function () {
 
 ListManager.LM.prototypeToggleCurrentLayerClickable = function () {
   this.CloseEdit();
-  var e = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0);
+  var e = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0);
   e.layers[e.activelayer].flags ^= ConstantData.LayerFlags.SDLF_Active,
     this.RenderAllSVGObjects(),
     this.CompleteOperation(null)
@@ -1864,32 +1864,32 @@ ListManager.LM.prototypeToggleCurrentLayerClickable = function () {
   ,
 
   ListManager.LM.prototype.BackMostLayerZListPreserve = function () {
-    var e = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0);
+    var e = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0);
     return e.layers[e.nlayers - 1].zList
   }
 
 
 
 ListManager.LM.prototypeGetLayerCount = function () {
-  return GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1).nlayers
+  return T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1).nlayers
 }
 
 ListManager.LM.prototypeGetActiveLayerIndex = function () {
-  var e = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1);
+  var e = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1);
   return e.activelayer >= e.nlayers &&
     (e.activelayer = e.nlayers - 1),
     e.activelayer
 }
 
 ListManager.LM.prototypeGetLayerInfoByIndex = function (e) {
-  var t = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1);
+  var t = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1);
   return e > t.nLayers - 1 ? null : t.layers[e]
 }
 
 ListManager.LM.prototypeGetLayerIndex = function (e) {
   var t,
     a,
-    r = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1);
+    r = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1);
   for (a = r.layers.length, t = 0; t < a; t++) if (r.layers[t].layertype === e) return t;
   return - 1
 }
@@ -1900,12 +1900,12 @@ ListManager.LM.prototypeIsTopMostLayer = function () {
  ,
   ListManager.LM.prototype.ShowAllLayers = function () {
     var e,
-      t = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1),
+      t = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1),
       a = (t.layers, t.nlayers);
     this.CloseEdit(),
       Collab.AllowMessage() &&
       Collab.BeginSecondaryEdit();
-    var r = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0),
+    var r = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0),
       i = r.layers[r.activelayer];
     for (e = 0; e < a; ++e) (i = r.layers[e]).flags |= ConstantData.LayerFlags.SDLF_Visible,
       i.flags |= ConstantData.LayerFlags.SDLF_Active;
@@ -1918,7 +1918,7 @@ ListManager.LM.prototypeIsTopMostLayer = function () {
 
 ListManager.LM.prototypeAreAllLayersVisible = function () {
   var e,
-    t = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1),
+    t = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1),
     a = this.GetLayerCount();
   for (e = 0; e < a; ++e) if (
     !(t.layers[e].flags & ConstantData.LayerFlags.SDLF_Visible)
@@ -1929,7 +1929,7 @@ ListManager.LM.prototypeAreAllLayersVisible = function () {
 
 ListManager.LM.prototypeGetLayerNames = function () {
   var e,
-    t = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1),
+    t = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1),
     a = t.layers,
     r = t.nlayers,
     i = [];
@@ -1938,7 +1938,7 @@ ListManager.LM.prototypeGetLayerNames = function () {
 }
 
 ListManager.LM.prototypeGetLayers = function () {
-  var e = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1).layers;
+  var e = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1).layers;
   return Utils1.DeepCopy(e)
 }
 
@@ -1946,7 +1946,7 @@ ListManager.LM.prototypeSetLayers = function (e, t) {
   this.CloseEdit,
     Collab.AllowMessage() &&
     Collab.BeginSecondaryEdit();
-  var a = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0);
+  var a = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0);
   if (
     a.layers = Utils1.DeepCopy(e),
     a.nlayers = a.layers.length,
@@ -1968,11 +1968,11 @@ ListManager.LM.prototypeSetLayers = function (e, t) {
 
 ListManager.LM.prototypeRemoveLayer = function (e) {
   if (
-    (t = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1)).layers.length > e &&
+    (t = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1)).layers.length > e &&
     t.layers.length > 1
   ) {
     var t,
-      a = (t = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0)).layers[e].zList;
+      a = (t = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0)).layers[e].zList;
     t.layers.splice(e, 1),
       t.nlayers--,
       t.activelayer >= e &&
@@ -2021,11 +2021,11 @@ ListManager.LM.prototypeImportBackgroundLayerImage = function (e, t) {
     r,
     i = - 1,
     n = function () {
-      GlobalData.optManager.MakeLayerActiveByIndex(i),
+      T3Gv.optManager.MakeLayerActiveByIndex(i),
         o.layers[i].flags = Utils2.SetFlag(o.layers[i].flags, ConstantData.LayerFlags.SDLF_NoAdd, !1),
-        GlobalData.optManager.SetBackgroundImage(e, !1, t, !0)
+        T3Gv.optManager.SetBackgroundImage(e, !1, t, !0)
     },
-    o = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !1);
+    o = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1);
   if (o) {
     for (a = 0; a < o.layers.length; a++) if (
       o.layers[a].layertype === ConstantData.LayerTypes.SD_LAYERT_BACKGROUND
@@ -2037,11 +2037,11 @@ ListManager.LM.prototypeImportBackgroundLayerImage = function (e, t) {
       Collab.AllowMessage() &&
       (
         Collab.BeginSecondaryEdit(),
-        o = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !0)
+        o = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !0)
       ),
       i < 0
-    ) GlobalData.optManager.AddNewLayerAtFront(Resources.Strings.BackgroundLayer, !0, !1),
-      GlobalData.optManager.RotateLayerStack(!0),
+    ) T3Gv.optManager.AddNewLayerAtFront(Resources.Strings.BackgroundLayer, !0, !1),
+      T3Gv.optManager.RotateLayerStack(!0),
       i = o.layers.length - 1,
       o.layers[i].layertype = ConstantData.LayerTypes.SD_LAYERT_BACKGROUND;
     else {
@@ -2049,7 +2049,7 @@ ListManager.LM.prototypeImportBackgroundLayerImage = function (e, t) {
         'Delete existing image?',
         0,
         (function () {
-          GlobalData.optManager.DeleteObjects(r),
+          T3Gv.optManager.DeleteObjects(r),
             n()
         })
       );
@@ -2065,8 +2065,8 @@ ListManager.LM.prototypeAddAnnotationLayer = function (e) {
     r = function (e) {
       // try {
       var t,
-        r = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !0),
-        i = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
+        r = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !0),
+        i = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
         n = 0,
         o = - 1,
         s = '',
@@ -2075,8 +2075,8 @@ ListManager.LM.prototypeAddAnnotationLayer = function (e) {
       if (e) {
         if (r) for (s = r.layers[r.activelayer].name, t = 0; t < r.layers.length; t++) if (r.layers[t].name == Resources.Strings.Annotation) return void Utils2.Alert(Resources.Strings.AnnotationLayerAlreadyPresent, null);
         for (
-          GlobalData.optManager.AddNewLayerAtFront(Resources.Strings.Annotation, !0, !1),
-          GlobalData.optManager.RotateLayerStack(!0),
+          T3Gv.optManager.AddNewLayerAtFront(Resources.Strings.Annotation, !0, !1),
+          T3Gv.optManager.RotateLayerStack(!0),
           t = 0;
           t < r.nlayers;
           t++
@@ -2086,7 +2086,7 @@ ListManager.LM.prototypeAddAnnotationLayer = function (e) {
             ConstantData.LayerFlags.SDLF_UseEdges,
             !0
           ),
-            GlobalData.optManager.MakeLayerActiveByIndex(t);
+            T3Gv.optManager.MakeLayerActiveByIndex(t);
           break
         }
         if (
@@ -2094,7 +2094,7 @@ ListManager.LM.prototypeAddAnnotationLayer = function (e) {
           n = SDF.ReadSymbolFromBuffer(e, null, null, 4, !1, !1, {
             selectedList: []
           }, !1, !0, !1, !1, !1, l, !1)
-        ) return GlobalData.optManager.Undo(!0),
+        ) return T3Gv.optManager.Undo(!0),
           Collab.UnLockMessages(),
           void Collab.UnBlockMessages();
         if (s.length > 0) for (t = 0; t < r.layers.length; t++) if (r.layers[t].name == s) {
@@ -2105,23 +2105,23 @@ ListManager.LM.prototypeAddAnnotationLayer = function (e) {
           annotationLayer = t;
           break
         }
-        GlobalData.optManager.MakeLayerActiveByIndex(o),
-          GlobalData.optManager.UpdateEdgeLayers([], l, S),
-          GlobalData.optManager.MakeLayerActiveByIndex(annotationLayer),
-          GlobalData.optManager.theContentHeader.Page.minsize = {
+        T3Gv.optManager.MakeLayerActiveByIndex(o),
+          T3Gv.optManager.UpdateEdgeLayers([], l, S),
+          T3Gv.optManager.MakeLayerActiveByIndex(annotationLayer),
+          T3Gv.optManager.theContentHeader.Page.minsize = {
             x: 0,
             y: 0
           },
-          GlobalData.optManager.FitDocumentWorkArea(!1, !1),
-          GlobalData.optManager.MakeLayerActiveByIndex(o),
-          GlobalData.optManager.theContentHeader.Page.minsize.x = i.dim.x,
-          GlobalData.optManager.theContentHeader.Page.minsize.y = i.dim.y,
-          GlobalData.optManager.FitDocumentWorkArea(!1, !1),
-          GlobalData.optManager.theContentHeader.Page.minsize.x = l.x,
-          GlobalData.optManager.theContentHeader.Page.minsize.y = l.y
+          T3Gv.optManager.FitDocumentWorkArea(!1, !1),
+          T3Gv.optManager.MakeLayerActiveByIndex(o),
+          T3Gv.optManager.theContentHeader.Page.minsize.x = i.dim.x,
+          T3Gv.optManager.theContentHeader.Page.minsize.y = i.dim.y,
+          T3Gv.optManager.FitDocumentWorkArea(!1, !1),
+          T3Gv.optManager.theContentHeader.Page.minsize.x = l.x,
+          T3Gv.optManager.theContentHeader.Page.minsize.y = l.y
       }
       if (
-        GlobalData.optManager.AdjustSelectedListAfterLayerChange(),
+        T3Gv.optManager.AdjustSelectedListAfterLayerChange(),
         Collab.AllowMessage() &&
         !a
       ) {
@@ -2134,30 +2134,30 @@ ListManager.LM.prototypeAddAnnotationLayer = function (e) {
           ),
           Collab.BuildMessage(ConstantData.CollabMessages.AddAnnotationLayer, c, !1)
       }
-      GlobalData.optManager.CompleteOperation(null, !1),
-        GlobalData.optManager.RenderAllSVGObjects()
+      T3Gv.optManager.CompleteOperation(null, !1),
+        T3Gv.optManager.RenderAllSVGObjects()
       // } catch (n) {
-      //   GlobalData.optManager.theContentHeader.Page.minsize.x = i.dim.x,
-      //     GlobalData.optManager.theContentHeader.Page.minsize.y = i.dim.y,
-      //     GlobalData.optManager.ExceptionCleanup(n),
+      //   T3Gv.optManager.theContentHeader.Page.minsize.x = i.dim.x,
+      //     T3Gv.optManager.theContentHeader.Page.minsize.y = i.dim.y,
+      //     T3Gv.optManager.ExceptionCleanup(n),
       //     Collab.UnBlockMessages()
       // }
     },
-    i = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !1);
+    i = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1);
   if (i) for (t = 0; t < i.layers.length; t++) if (i.layers[t].name == Resources.Strings.Annotation) return void Utils2.Alert(Resources.Strings.AnnotationLayerAlreadyPresent, null);
   if (
-    GlobalData.optManager.CloseEdit(),
+    T3Gv.optManager.CloseEdit(),
     Collab.AllowMessage() &&
     Collab.BeginSecondaryEdit(),
     null == ListManager.AnnotationLayerBuffer
   ) {
-    var n = 'FLOORPLAN' == GlobalData.optManager.theContentHeader.BusinessModule ? Resources.Strings.AnnotationLayerArchSDR : Resources.Strings.AnnotationLayerSDR;
+    var n = 'FLOORPLAN' == T3Gv.optManager.theContentHeader.BusinessModule ? Resources.Strings.AnnotationLayerArchSDR : Resources.Strings.AnnotationLayerSDR;
     SDUI.CMSContent.GetAnnotationLayer(SDUI.AppSettings.ContentSource, n, r)
   } else r(ListManager.AnnotationLayerBuffer)
 }
 
 ListManager.LM.prototypeLoadAnnotationLayer = function () {
-  var e = 'FLOORPLAN' == GlobalData.optManager.theContentHeader.BusinessModule ? Resources.Strings.AnnotationLayerArchSDR : Resources.Strings.AnnotationLayerSDR;
+  var e = 'FLOORPLAN' == T3Gv.optManager.theContentHeader.BusinessModule ? Resources.Strings.AnnotationLayerArchSDR : Resources.Strings.AnnotationLayerSDR;
   SDUI.CMSContent.GetAnnotationLayer(
     SDUI.AppSettings.ContentSource,
     e,
@@ -2169,7 +2169,7 @@ ListManager.LM.prototypeLoadAnnotationLayer = function () {
 
 ListManager.LM.prototypeRemoveAnnotationLayer = function (e, t) {
   var a,
-    r = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !1),
+    r = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1),
     i = - 1;
   if (r) {
     for (a = 0; a < r.nlayers; a++) if (r.layers[a].flags & ConstantData.LayerFlags.SDLF_UseEdges) {
@@ -2183,14 +2183,14 @@ ListManager.LM.prototypeRemoveAnnotationLayer = function (e, t) {
           this.CloseEdit(),
           Collab.AllowMessage() &&
           Collab.BeginSecondaryEdit(),
-          r = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !0),
-          GlobalData.optManager.DeleteObjects(r.layers[i].zList, !1),
+          r = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !0),
+          T3Gv.optManager.DeleteObjects(r.layers[i].zList, !1),
           r.layers.splice(i, 1),
           r.nlayers--,
           r.activelayer >= i &&
           (r.activelayer--, r.activelayer < 0 && (r.activelayer = 0)),
-          GlobalData.optManager.FitDocumentWorkArea(!1, !1),
-          GlobalData.optManager.AdjustSelectedListAfterLayerChange(),
+          T3Gv.optManager.FitDocumentWorkArea(!1, !1),
+          T3Gv.optManager.AdjustSelectedListAfterLayerChange(),
           t
         )
       )
@@ -2199,8 +2199,8 @@ ListManager.LM.prototypeRemoveAnnotationLayer = function (e, t) {
         Collab.BuildMessage(ConstantData.CollabMessages.RemoveAnnotationLayer, {
         }, !1)
       }
-      GlobalData.optManager.CompleteOperation(),
-        GlobalData.optManager.RenderAllSVGObjects()
+      T3Gv.optManager.CompleteOperation(),
+        T3Gv.optManager.RenderAllSVGObjects()
     }
   }
 },
@@ -2229,7 +2229,7 @@ ListManager.LM.prototypeRemoveAnnotationLayer = function (e, t) {
       ),
       n
     ) return o;
-    var s = GlobalData.optManager.currentModalOperation === ListManager.ModalOperations.FORMATPAINTER;
+    var s = T3Gv.optManager.currentModalOperation === ListManager.ModalOperations.FORMATPAINTER;
     if (o.EndArrowID || o.StartArrowID) {
       if (r & i.SD_NOCOLOR_LINEARROW) {
         var l = o.StyleRecord;
@@ -2411,7 +2411,7 @@ ListManager.LM.prototypeSetSelectedObjectAttributesCommon = function (e, t) {
   var a = !1,
     r = !1;
   null == t &&
-    (t = GlobalData.objectStore.GetObject(this.theSelectedListBlockID).Data);
+    (t = T3Gv.objectStore.GetObject(this.theSelectedListBlockID).Data);
   var i,
     n = t.length;
   0 === n &&
@@ -2423,7 +2423,7 @@ ListManager.LM.prototypeSetSelectedObjectAttributesCommon = function (e, t) {
   if (e.StyleRecord && e.StyleRecord.Text) var S = Utils1.DeepCopy(e.StyleRecord.Text),
     c = Utils1.DeepCopy(l.Text);
   for (i = 0; i < n; ++i) {
-    var u = GlobalData.objectStore.PreserveBlock(t[i]).Data;
+    var u = T3Gv.objectStore.PreserveBlock(t[i]).Data;
     if (null != u) {
       if (
         u.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.SHAPE
@@ -2497,7 +2497,7 @@ ListManager.LM.prototypeSetSelectedObjectAttributes = function (e, t, a) {
   var n,
     o = !1;
   if (
-    GlobalData.optManager.RightClickSetOpacity = a,
+    T3Gv.optManager.RightClickSetOpacity = a,
     e.StyleRecord &&
     e.StyleRecord.Line &&
     null != e.StyleRecord.Line.Thickness
@@ -2510,7 +2510,7 @@ ListManager.LM.prototypeSetSelectedObjectAttributes = function (e, t, a) {
   var l = this.GetObjectPtr(this.theSEDSessionBlockID, !0);
   o &&
     (n = l.def.style.Line.Thickness);
-  var S = GlobalData.optManager.ApplyColorFilter(e, null, l.def.style, 0);
+  var S = T3Gv.optManager.ApplyColorFilter(e, null, l.def.style, 0);
   1 != t &&
     (
       S.segl &&
@@ -2545,7 +2545,7 @@ ListManager.LM.prototypeSetSelectedObjectAttributes = function (e, t, a) {
       )
     ),
     a ? r &&
-      (GlobalData.optManager.UnsentAttributeMessage = r) : (r && Collab.SendMessage(r), this.CompleteOperation(null))
+      (T3Gv.optManager.UnsentAttributeMessage = r) : (r && Collab.SendMessage(r), this.CompleteOperation(null))
 },
 
 
@@ -2582,7 +2582,7 @@ ListManager.LM.prototypeSetSelectedObjectAttributes = function (e, t, a) {
         (S = !0, this.AddToDirtyList(l[i]));
       if (S) {
         if (Collab.AllowMessage()) {
-          var c = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
+          var c = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
             u = {
               nrows: t,
               ncols: a
@@ -2611,15 +2611,15 @@ ListManager.LM.prototypeInsertTable = function (e, t, a) {
     this.CloseEdit(),
     r = l.length
   ) for (i = 0; i < r; i++) s = (n = this.GetObjectPtr(l[i], !1)).GetTable(!1),
-    GlobalData.optManager.Table_HideUI(n) ||
-    GlobalData.optManager.Table_NoTableUI(s) ||
+    T3Gv.optManager.Table_HideUI(n) ||
+    T3Gv.optManager.Table_NoTableUI(s) ||
     (
       (o = n.InsertNewTable(t, a, !0)) ? (S = !0, this.AddToDirtyList(l[i])) : n.GetTable(!1) &&
         (o = !0)
     );
   if (!o) {
-    var u = GlobalData.optManager.CalcWorkAreaUL(50, 50),
-      p = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
+    var u = T3Gv.optManager.CalcWorkAreaUL(50, 50),
+      p = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
       d = {
         Frame: {
           x: u.x,
@@ -2630,7 +2630,7 @@ ListManager.LM.prototypeInsertTable = function (e, t, a) {
         TextGrow: ConstantData.TextGrowBehavior.VERTICAL
       },
       D = new ListManager.Rect(d),
-      g = GlobalData.optManager.AddNewObject(D, !0, !0);
+      g = T3Gv.optManager.AddNewObject(D, !0, !0);
     if (
       (c = []).push(g),
       Collab.AddNewBlockToSecondary(g),
@@ -2647,7 +2647,7 @@ ListManager.LM.prototypeInsertTable = function (e, t, a) {
         nrows: t,
         ncols: a
       };
-      p = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
+      p = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
       m.StyleRecord = Utils1.DeepCopy(p.def.style),
         h &&
         (m.CreateList = h),
@@ -2696,8 +2696,8 @@ ListManager.LM.prototypeFreezeProperties = function () {
 
 ListManager.LM.prototypeSetLineCornerRadiusAll = function (e, t) {
   t ||
-    GlobalData.optManager.CloseEdit();
-  var a = GlobalData.optManager.ZList(),
+    T3Gv.optManager.CloseEdit();
+  var a = T3Gv.optManager.ZList(),
     r = {},
     i = {};
   t ? (
@@ -2711,7 +2711,7 @@ ListManager.LM.prototypeSetLineCornerRadiusAll = function (e, t) {
   if (
     Collab.AllowMessage() &&
     Collab.BeginSecondaryEdit(),
-    GlobalData.optManager.SetSelectedObjectAttributesCommon(n, a),
+    T3Gv.optManager.SetSelectedObjectAttributesCommon(n, a),
     t ||
     (
       sdp = this.GetObjectPtr(this.theSEDSessionBlockID, !0),
@@ -2724,7 +2724,7 @@ ListManager.LM.prototypeSetLineCornerRadiusAll = function (e, t) {
     };
     Collab.BuildMessage(ConstantData.CollabMessages.SetLineCornerRadiusAll, o, !1)
   }
-  GlobalData.optManager.CompleteOperation()
+  T3Gv.optManager.CompleteOperation()
 }
 
 ListManager.LM.prototypeSetColorFilter = function (e, t) {
@@ -2838,23 +2838,23 @@ ListManager.LM.prototypeSetTheme = function (e, t) {
 }
 
 ListManager.LM.prototypeSetStartArrowID = function (e) {
-  GlobalData.objectStore.GetObject(this.theSEDSessionBlockID).Data.d_sarrow = e
+  T3Gv.objectStore.GetObject(this.theSEDSessionBlockID).Data.d_sarrow = e
 }
 
 ListManager.LM.prototypeSetEndArrowID = function (e) {
-  GlobalData.objectStore.GetObject(this.theSEDSessionBlockID).Data.d_earrow = e
+  T3Gv.objectStore.GetObject(this.theSEDSessionBlockID).Data.d_earrow = e
 }
 
 ListManager.LM.prototypeSetStartArrowDisp = function (e) {
-  GlobalData.objectStore.GetObject(this.theSEDSessionBlockID).Data.d_sarrowdisp = e
+  T3Gv.objectStore.GetObject(this.theSEDSessionBlockID).Data.d_sarrowdisp = e
 }
 
 ListManager.LM.prototypeSetEndArrowDisp = function (e) {
-  GlobalData.objectStore.GetObject(this.theSEDSessionBlockID).Data.d_earrowdisp = e
+  T3Gv.objectStore.GetObject(this.theSEDSessionBlockID).Data.d_earrowdisp = e
 }
 
 ListManager.LM.prototypeSetArrowSizeIndex = function (e) {
-  GlobalData.objectStore.GetObject(this.theSEDSessionBlockID).Data.d_arrowsize = e
+  T3Gv.objectStore.GetObject(this.theSEDSessionBlockID).Data.d_arrowsize = e
 },
   ,
   ListManager.LM.prototype.SetBackgroundImage = function (e, t, a, r, i) {
@@ -2879,8 +2879,8 @@ ListManager.LM.prototypeSetArrowSizeIndex = function (e) {
         var i,
           n = [];
         if (!a && e > 0 && t > 0) {
-          var o = GlobalData.optManager.bitmapImportDestHeight,
-            s = GlobalData.optManager.bitmapImportDestWidth;
+          var o = T3Gv.optManager.bitmapImportDestHeight,
+            s = T3Gv.optManager.bitmapImportDestWidth;
           Collab.AllowMessage() &&
             Collab.BeginSecondaryEdit(),
             o = t,
@@ -2942,12 +2942,12 @@ ListManager.LM.prototypeSetArrowSizeIndex = function (e) {
               (y.CreateList = m),
               Collab.BuildMessage(ConstantData.CollabMessages.AddShape_ImportPicture, y, !1)
           }
-          var f = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !1);
+          var f = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1);
           f &&
             f.layers[f.activelayer].layertype === ConstantData.LayerTypes.SD_LAYERT_BACKGROUND &&
             (
               (
-                f = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !0)
+                f = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !0)
               ).layers[f.activelayer].flags = Utils2.SetFlag(
                 f.layers[f.activelayer].flags,
                 ConstantData.LayerFlags.SDLF_NoAdd,
@@ -2955,7 +2955,7 @@ ListManager.LM.prototypeSetArrowSizeIndex = function (e) {
               )
             ),
             r &&
-            GlobalData.optManager.RenderAllSVGObjects(),
+            T3Gv.optManager.RenderAllSVGObjects(),
             u.CompleteOperation(n)
         }
       },
@@ -2974,13 +2974,13 @@ ListManager.LM.prototypeSetArrowSizeIndex = function (e) {
         ) C = n.Data.BlockID;
         else {
           var D,
-            C = GlobalData.optManager.GetTargetSelect(),
+            C = T3Gv.optManager.GetTargetSelect(),
             y = !1;
           r &&
             (C = - 1),
             C >= 0 &&
             (
-              D = GlobalData.optManager.GetObjectPtr(C, !1),
+              D = T3Gv.optManager.GetObjectPtr(C, !1),
               g.indexOf(D.objecttype) < 0 &&
                 h.indexOf(D.subtype) < 0 ? D.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.SHAPE &&
               (
@@ -2990,16 +2990,16 @@ ListManager.LM.prototypeSetArrowSizeIndex = function (e) {
               ) : (C = - 1, y = !1)
             )
         }
-        if (y || n) if ((D = GlobalData.optManager.GetObjectPtr(C, !1)).GetTable(!1)) GlobalData.optManager.Table_ImportPicture(C, e, o, a, s, null, i);
+        if (y || n) if ((D = T3Gv.optManager.GetObjectPtr(C, !1)).GetTable(!1)) T3Gv.optManager.Table_ImportPicture(C, e, o, a, s, null, i);
         else {
           Collab.AllowMessage() &&
             Collab.BeginSecondaryEdit(),
-            D = GlobalData.optManager.GetObjectPtr(C, !0),
+            D = T3Gv.optManager.GetObjectPtr(C, !0),
             d &&
             (D.SVGDim = s),
             u.DeleteTargetTextObject(C),
-            GlobalData.optManager.IsBlobURL(D.ImageURL) &&
-            (GlobalData.optManager.DeleteURL(D.ImageURL), D.ImageURL = ''),
+            T3Gv.optManager.IsBlobURL(D.ImageURL) &&
+            (T3Gv.optManager.DeleteURL(D.ImageURL), D.ImageURL = ''),
             D.ImageURL = e;
           var f = FileParser.GetImageDir(S);
           if (
@@ -3007,7 +3007,7 @@ ListManager.LM.prototypeSetArrowSizeIndex = function (e) {
             D.SetBlobBytes(a, f),
             D.ImageHeader = new ListManager.ImageRecord,
             D.TextFlags = Utils2.SetFlag(D.TextFlags, ConstantData.TextFlags.SED_TF_None, !0),
-            GlobalData.optManager.AddToDirtyList(C),
+            T3Gv.optManager.AddToDirtyList(C),
             Collab.AllowMessage()
           ) {
             var L = {
@@ -3018,10 +3018,10 @@ ListManager.LM.prototypeSetArrowSizeIndex = function (e) {
             L.SVGDim = Utils1.DeepCopy(s),
               Collab.BuildMessage(ConstantData.CollabMessages.Shape_ImportPicture, L, !1)
           }
-          GlobalData.optManager.CompleteOperation(null)
+          T3Gv.optManager.CompleteOperation(null)
         } else d ? m(s.width, s.height, null) : SDGraphics.Element.Style.CalcImageSize(e, m)
         // } catch (e) {
-        //   GlobalData.optManager.ExceptionCleanup(e)
+        //   T3Gv.optManager.ExceptionCleanup(e)
         // }
       };
     if (a) {
@@ -3038,9 +3038,9 @@ ListManager.LM.prototypeSetArrowSizeIndex = function (e) {
             m(a.Data.width, a.Data.height, !1)
       }
     } else {
-      var f = GlobalData.optManager.GetTargetSelect();
+      var f = T3Gv.optManager.GetTargetSelect();
       if (0 === t && (s = !1, p = !0, f >= 0)) if (
-        n = GlobalData.optManager.GetObjectPtr(f, !1),
+        n = T3Gv.optManager.GetObjectPtr(f, !1),
         g.indexOf(n.objecttype) < 0 &&
         h.indexOf(n.subtype) < 0
       ) {
@@ -3054,7 +3054,7 @@ ListManager.LM.prototypeSetArrowSizeIndex = function (e) {
           void SDUI.Commands.MainController.ShowModal(Resources.Controls.Modals.InsertBitmap.Id)
       } else f = - 1;
       f >= 0 &&
-        (n = GlobalData.optManager.GetObjectPtr(f, !1)).DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.SHAPE &&
+        (n = T3Gv.optManager.GetObjectPtr(f, !1)).DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.SHAPE &&
         (
           n instanceof ListManager.BaseSymbol != !1 ||
           n.SymbolURL ||
@@ -3062,12 +3062,12 @@ ListManager.LM.prototypeSetArrowSizeIndex = function (e) {
         ),
         s &&
         (
-          (n = GlobalData.optManager.GetObjectPtr(f, !1)).GetTable(!1) ? (o = GlobalData.optManager.Table_GetImportPictureDim(f)) &&
+          (n = T3Gv.optManager.GetObjectPtr(f, !1)).GetTable(!1) ? (o = T3Gv.optManager.Table_GetImportPictureDim(f)) &&
             (D = o.x, d = o.y) : (D = n.Frame.width, d = n.Frame.height)
         );
       var L = new ListManager.Bitmap_Importer;
       L &&
-        L.importBitmap(e, D, d, GlobalData.optManager.bitmapImportDPI, C)
+        L.importBitmap(e, D, d, T3Gv.optManager.bitmapImportDPI, C)
     }
   }
 
@@ -3076,14 +3076,14 @@ ListManager.LM.prototypeSetObjectHyperlink = function (e, t) {
   Collab.AllowMessage() &&
     Collab.BeginSecondaryEdit(),
     e = this.GetObjectPtr(e.BlockID, !0);
-  var r = GlobalData.optManager.SD_GetVisioTextChild(e.BlockID);
+  var r = T3Gv.optManager.SD_GetVisioTextChild(e.BlockID);
   r >= 0 &&
     (e = this.GetObjectPtr(r, !0)),
     t = t ||
     '';
   var i = e.GetTable(!0);
   if (i && i.select >= 0) {
-    var n = GlobalData.optManager.Table_GetActiveID();
+    var n = T3Gv.optManager.Table_GetActiveID();
     e.BlockID === n &&
       (this.Table_SetHyperlink(i, t), a = !0)
   }
@@ -3102,7 +3102,7 @@ ListManager.LM.prototypeSetObjectHyperlink = function (e, t) {
 ListManager.LM.prototypeSetShapeMoreFlags = function (e, t, a) {
   Collab.AllowMessage() &&
     Collab.BeginSecondaryEdit();
-  var r = GlobalData.optManager.GetObjectPtr(e, !0);
+  var r = T3Gv.optManager.GetObjectPtr(e, !0);
   if (r) {
     if (
       r.moreflags = Utils2.SetFlag(r.moreflags, t, a),
@@ -3115,7 +3115,7 @@ ListManager.LM.prototypeSetShapeMoreFlags = function (e, t, a) {
       };
       Collab.BuildMessage(ConstantData.CollabMessages.SetShapeMoreFlags, i, !1)
     }
-    GlobalData.optManager.CompleteOperation()
+    T3Gv.optManager.CompleteOperation()
   }
 }
 
@@ -3136,7 +3136,7 @@ ListManager.LM.prototypeSetShapeProperties = function (e, t, a) {
   if (o) {
     if (
       r = (
-        S = a ? GlobalData.optManager.ZList() : this.GetObjectPtr(this.theSelectedListBlockID, !1)
+        S = a ? T3Gv.optManager.ZList() : this.GetObjectPtr(this.theSelectedListBlockID, !1)
       ).length
     ) for (i = 0; i < r; i++) if (
       n = this.GetObjectPtr(S[i], !1),
@@ -3268,7 +3268,7 @@ ListManager.LM.prototypeSetTargetConnectionPoints = function (e, t, a) {
         } else (i = this.GetObjectPtr(e, !1)) &&
           (
             (n = i.GetTable(!1)) &&
-            GlobalData.optManager.Table_PasteFormat(e, GlobalData.optManager.FormatPainterStyle, !1),
+            T3Gv.optManager.Table_PasteFormat(e, T3Gv.optManager.FormatPainterStyle, !1),
             !0 !== this.FormatPainterSticky &&
             this.SetFormatPainter(!0, !1)
           );
@@ -3330,16 +3330,16 @@ ListManager.LM.prototypeSetTargetConnectionPoints = function (e, t, a) {
           this.SetFormatPainter(!0, !1),
           !0;
         if (
-          (r = GlobalData.optManager.Table_GetActiveID()) != e &&
+          (r = T3Gv.optManager.Table_GetActiveID()) != e &&
           t &&
           i &&
           n &&
           (this.Table_Load(e), r = e),
           r >= 0
         ) return g === ConstantData.SVGElementClass.SLOP ? (
-          GlobalData.optManager.Table_PasteFormat(r, GlobalData.optManager.FormatPainterStyle, !0),
-          !0 !== GlobalData.optManager.FormatPainterSticky &&
-          GlobalData.optManager.SetFormatPainter(!0, !1),
+          T3Gv.optManager.Table_PasteFormat(r, T3Gv.optManager.FormatPainterStyle, !0),
+          !0 !== T3Gv.optManager.FormatPainterSticky &&
+          T3Gv.optManager.SetFormatPainter(!0, !1),
           !0
         ) : g === ConstantData.Defines.TableRowHit ||
           g === ConstantData.Defines.TableColHit ? (this.Table_SetupAction(t, r, g, D.GetUserData()), !0) : (
@@ -3358,12 +3358,12 @@ ListManager.LM.prototypeSetTargetConnectionPoints = function (e, t, a) {
 
 
   ListManager.LM.prototype.SDJS_LM_SetupMobileReadOnlyEvents = function () {
-    GlobalData.optManager.isMobilePlatform &&
+    T3Gv.optManager.isMobilePlatform &&
       this.WorkAreaHammer.on('doubletap', SDJS_LM_WorkAreaHammerMobileDoubleTap)
   }
 
 ListManager.LM.prototypeSDJS_LM_ClearMobileReadOnlyEvents = function () {
-  GlobalData.optManager.isMobilePlatform &&
+  T3Gv.optManager.isMobilePlatform &&
     this.WorkAreaHammer.off('doubletap')
 },
 
@@ -3444,11 +3444,11 @@ ListManager.LM.prototypeSDJS_LM_ClearMobileReadOnlyEvents = function () {
           s--
         ) if (
             a = e.otherhits[s],
-            GlobalData.optManager.GetObjectPtr(a.ID, !1).GetSnapRect(),
+            T3Gv.optManager.GetObjectPtr(a.ID, !1).GetSnapRect(),
             s > 0 ? (
               r = e.otherhits[s - 1],
-              i = GlobalData.optManager.GetObjectPtr(r.ID, !1).GetSnapRect()
-            ) : (r = e, i = GlobalData.optManager.GetObjectPtr(e.ID, !1).GetSnapRect()),
+              i = T3Gv.optManager.GetObjectPtr(r.ID, !1).GetSnapRect()
+            ) : (r = e, i = T3Gv.optManager.GetObjectPtr(e.ID, !1).GetSnapRect()),
             e.leftright
           ) if (e.aboveleft) switch (a.distance -= r.distance + i.height, e.edge) {
             case P.TA_LEFT:
@@ -3538,11 +3538,11 @@ ListManager.LM.prototypeSDJS_LM_ClearMobileReadOnlyEvents = function () {
           C = e.GetPolyPoints(ConstantData.Defines.NPOLYPTS, !1, !1, !1, null);
         hits = [];
         for (
-          var y = GlobalData.optManager.PolyLIntersect(a, r, C, C.length);
+          var y = T3Gv.optManager.PolyLIntersect(a, r, C, C.length);
           y.bSuccess &&
           (m.push(y.ipt), !((h += y.lpseg) > C.length - 1));
         ) o = C.slice(h),
-          y = GlobalData.optManager.PolyLIntersect(a, r, o, o.length);
+          y = T3Gv.optManager.PolyLIntersect(a, r, o, o.length);
         if (i) {
           for (l = m.length, s = 0; s < l; s++) m[s].y <= t.y ? (c = t.y - m[s].y, (null == u || c < u) && (u = c, d = s)) : m[s].y >= p &&
             (c = m[s].y - p, (null == D || c < D) && (D = c, g = s));
@@ -3574,7 +3574,7 @@ ListManager.LM.prototypeSDJS_LM_ClearMobileReadOnlyEvents = function () {
             n = e.StyleRecord.Line.BThick;
           if (
             Utils2.InflateRect(i, - n, - n),
-            GlobalData.optManager.IsRectEnclosed(i, t)
+            T3Gv.optManager.IsRectEnclosed(i, t)
           ) {
             var o = {
               x: f.x,
@@ -3877,7 +3877,7 @@ ListManager.LM.prototypeSDJS_LM_ClearMobileReadOnlyEvents = function () {
           x: null,
           y: null
         };
-        if (GlobalData.docHandler.documentConfig.centerSnap) {
+        if (T3Gv.docHandler.documentConfig.centerSnap) {
           var H = [
             'above_center',
             'below_center',
@@ -3951,9 +3951,9 @@ ListManager.LM.prototypeSDJS_LM_ClearMobileReadOnlyEvents = function () {
         x: 0,
         y: 0
       },
-        u = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
+        u = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
         p = '#2C75F9',
-        d = Utils1.DeepCopy(GlobalData.optManager.theContentHeader.DimensionFontStyle);
+        d = Utils1.DeepCopy(T3Gv.optManager.theContentHeader.DimensionFontStyle);
       d.color = p;
       var D = this.svgDoc.docInfo.docToScreenScale;
       this.svgDoc.docInfo.docScale,
@@ -3961,18 +3961,18 @@ ListManager.LM.prototypeSDJS_LM_ClearMobileReadOnlyEvents = function () {
       var g = function (e) {
         var t = e + 'label',
           a = e + 'back',
-          r = GlobalData.optManager.svgHighlightLayer.GetElementByID(e),
-          i = GlobalData.optManager.svgHighlightLayer.GetElementByID(t),
-          n = GlobalData.optManager.svgHighlightLayer.GetElementByID(a);
+          r = T3Gv.optManager.svgHighlightLayer.GetElementByID(e),
+          i = T3Gv.optManager.svgHighlightLayer.GetElementByID(t),
+          n = T3Gv.optManager.svgHighlightLayer.GetElementByID(a);
         r &&
-          GlobalData.optManager.svgHighlightLayer.RemoveElement(r),
+          T3Gv.optManager.svgHighlightLayer.RemoveElement(r),
           i &&
-          GlobalData.optManager.svgHighlightLayer.RemoveElement(i),
+          T3Gv.optManager.svgHighlightLayer.RemoveElement(i),
           n &&
-          GlobalData.optManager.svgHighlightLayer.RemoveElement(n)
+          T3Gv.optManager.svgHighlightLayer.RemoveElement(n)
       },
         h = function (t, r) {
-          var l = GlobalData.optManager.GetObjectPtr(t.ID, !1);
+          var l = T3Gv.optManager.GetObjectPtr(t.ID, !1);
           if (null != l) {
             var D,
               g,
@@ -3980,20 +3980,20 @@ ListManager.LM.prototypeSDJS_LM_ClearMobileReadOnlyEvents = function () {
               m = l.GetSnapRect(),
               C = m.y + m.height,
               y = m.x + m.width,
-              f = 1 / GlobalData.optManager.svgDoc.GetWorkArea().docScale,
+              f = 1 / T3Gv.optManager.svgDoc.GetWorkArea().docScale,
               L = 3 * f + ',' + 6 * f;
             patterncenter = 12 * f + ',' + 6 * f;
             var I,
               T,
               b,
-              M = GlobalData.optManager.svgHighlightLayer.GetElementByID(r),
+              M = T3Gv.optManager.svgHighlightLayer.GetElementByID(r),
               P = !1,
               R = null;
             if (
               t.leftright ? t.edge === S.TA_LEFT ? (
                 t.label &&
                 (
-                  R = GlobalData.optManager.GetLengthInRulerUnits(t.distance, !1, 0, 0),
+                  R = T3Gv.optManager.GetLengthInRulerUnits(t.distance, !1, 0, 0),
                   c.x = a.x
                 ),
                 t.aboveleft ? null != t.pt ? (D = {
@@ -4029,7 +4029,7 @@ ListManager.LM.prototypeSDJS_LM_ClearMobileReadOnlyEvents = function () {
               ) : t.edge === S.TA_RIGHT ? (
                 t.label &&
                 (
-                  R = GlobalData.optManager.GetLengthInRulerUnits(t.distance, !1, 0, 0),
+                  R = T3Gv.optManager.GetLengthInRulerUnits(t.distance, !1, 0, 0),
                   c.x = n
                 ),
                 t.aboveleft ? null != t.pt ? (D = {
@@ -4121,11 +4121,11 @@ ListManager.LM.prototypeSDJS_LM_ClearMobileReadOnlyEvents = function () {
                   x: o,
                   y: m.y
                 }, c.y = i + t.distance / 2),
-                R = GlobalData.optManager.GetLengthInRulerUnits(t.distance, !1, 0, 0)
+                R = T3Gv.optManager.GetLengthInRulerUnits(t.distance, !1, 0, 0)
               ) : t.edge === S.TA_TOP ? (
                 t.label &&
                 (
-                  R = GlobalData.optManager.GetLengthInRulerUnits(t.distance, !1, 0, 0),
+                  R = T3Gv.optManager.GetLengthInRulerUnits(t.distance, !1, 0, 0),
                   c.y = a.y
                 ),
                 t.aboveleft ? null != t.pt ? (D = {
@@ -4160,7 +4160,7 @@ ListManager.LM.prototypeSDJS_LM_ClearMobileReadOnlyEvents = function () {
               ) : t.edge === S.TA_BOTTOM ? (
                 t.label &&
                 (
-                  R = GlobalData.optManager.GetLengthInRulerUnits(t.distance, !1, 0, 0),
+                  R = T3Gv.optManager.GetLengthInRulerUnits(t.distance, !1, 0, 0),
                   c.y = i
                 ),
                 t.aboveleft ? null != t.pt ? (D = {
@@ -4251,20 +4251,20 @@ ListManager.LM.prototypeSDJS_LM_ClearMobileReadOnlyEvents = function () {
                   x: m.x,
                   y: s
                 }, c.x = n + t.distance / 2),
-                R = GlobalData.optManager.GetLengthInRulerUnits(t.distance, !1, 0, 0)
+                R = T3Gv.optManager.GetLengthInRulerUnits(t.distance, !1, 0, 0)
               ),
               D
             ) if (
                 null == M &&
                 (
                   (
-                    M = GlobalData.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.LINE)
+                    M = T3Gv.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.LINE)
                   ).SetFillColor('none'),
                   M.SetStrokeColor(p),
                   M.SetStrokeWidth(f),
                   P ? M.SetStrokePattern(patterncenter) : M.SetStrokePattern(L),
                   M.SetID(r),
-                  GlobalData.optManager.svgHighlightLayer.AddElement(M)
+                  T3Gv.optManager.svgHighlightLayer.AddElement(M)
                 ),
                 M.SetPoints(D.x, D.y, g.x, g.y),
                 T = r + 'label',
@@ -4272,20 +4272,20 @@ ListManager.LM.prototypeSDJS_LM_ClearMobileReadOnlyEvents = function () {
                 R
               ) {
                 if (
-                  I = GlobalData.optManager.svgHighlightLayer.GetElementByID(T),
-                  A = GlobalData.optManager.svgHighlightLayer.GetElementByID(b),
+                  I = T3Gv.optManager.svgHighlightLayer.GetElementByID(T),
+                  A = T3Gv.optManager.svgHighlightLayer.GetElementByID(b),
                   null == I
                 ) {
                   var A;
                   (
-                    A = GlobalData.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.RECT)
+                    A = T3Gv.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.RECT)
                   ).SetID(b),
                     A.SetStrokeWidth(0);
                   var _ = u.background.Paint.Color;
                   A.SetFillColor(_),
-                    GlobalData.optManager.svgHighlightLayer.AddElement(A),
-                    I = GlobalData.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.TEXT),
-                    GlobalData.optManager.svgHighlightLayer.AddElement(I),
+                    T3Gv.optManager.svgHighlightLayer.AddElement(A),
+                    I = T3Gv.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.TEXT),
+                    T3Gv.optManager.svgHighlightLayer.AddElement(I),
                     I.SetID(T),
                     I.SetRenderingEnabled(!1),
                     I.SetText(R),
@@ -4297,12 +4297,12 @@ ListManager.LM.prototypeSDJS_LM_ClearMobileReadOnlyEvents = function () {
                 A.SetPos(c.x - E.width / 2 - 2, c.y - E.height / 2 - 2),
                   A.SetSize(E.width + 4, E.height + 4),
                   I.SetPos(c.x - E.width / 2, c.y - E.height / 2)
-              } else I = GlobalData.optManager.svgHighlightLayer.GetElementByID(T),
-                A = GlobalData.optManager.svgHighlightLayer.GetElementByID(b),
+              } else I = T3Gv.optManager.svgHighlightLayer.GetElementByID(T),
+                A = T3Gv.optManager.svgHighlightLayer.GetElementByID(b),
                 I &&
-                GlobalData.optManager.svgHighlightLayer.RemoveElement(I),
+                T3Gv.optManager.svgHighlightLayer.RemoveElement(I),
                 A &&
-                GlobalData.optManager.svgHighlightLayer.RemoveElement(A)
+                T3Gv.optManager.svgHighlightLayer.RemoveElement(A)
           }
         };
       for (r in e) {
@@ -4351,18 +4351,18 @@ ListManager.LM.prototypeSDJS_LM_ClearMobileReadOnlyEvents = function () {
  ,
   ListManager.LM.prototype.SetDocumentScaleToFit = function (e) {
     this.svgDoc &&
-      GlobalData.docHandler.SetSizeToFit(e)
+      T3Gv.docHandler.SetSizeToFit(e)
   }
 
 ListManager.LM.prototypeSetDocumentScaleToPage = function (e) {
   this.svgDoc &&
-    GlobalData.docHandler.SetSizeToPage(e)
+    T3Gv.docHandler.SetSizeToPage(e)
 },
 
 
   ,
   ListManager.LM.prototype.GetDocumentScale = function () {
-    if (this.svgDoc) return GlobalData.docHandler.GetZoomFactor()
+    if (this.svgDoc) return T3Gv.docHandler.GetZoomFactor()
   }
 
 
@@ -4512,11 +4512,11 @@ ListManager.LM.prototypeGetFontImportName = function (e) {
 
 ListManager.LM.prototypeSetActionArrowTimer = function (e) {
   if (!(e < 0)) {
-    var t = GlobalData.optManager.GetObjectPtr(e, !1);
+    var t = T3Gv.optManager.GetObjectPtr(e, !1);
     t &&
       (
         this.ClearActionArrowTimer(e),
-        t.actionArrowHideTimerID = GlobalData.optManager.actionArrowHideTimer.setTimeout('RemoveActionArrows', 500, e)
+        t.actionArrowHideTimerID = T3Gv.optManager.actionArrowHideTimer.setTimeout('RemoveActionArrows', 500, e)
       )
   }
 },
@@ -4549,11 +4549,11 @@ ListManager.LM.prototypeSetActionArrowTimer = function (e) {
     }, s.push(l));
     var u,
       p = s.length,
-      d = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
-      D = GlobalData.docHandler.DocObject().GetWorkArea().dispDpiX / GlobalData.docHandler.DocObject().GetWorkArea().docDpi;
+      d = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+      D = T3Gv.docHandler.DocObject().GetWorkArea().dispDpiX / T3Gv.docHandler.DocObject().GetWorkArea().docDpi;
     e ? (
       (
-        u = GlobalData.optManager.GetSRect(!1, !1, null) ||
+        u = T3Gv.optManager.GetSRect(!1, !1, null) ||
         {
           x: 0,
           y: 0,
@@ -4729,7 +4729,7 @@ ListManager.LM.prototypeGeneratePreviewViaWebService = function () {
 ListManager.LM.prototypeGeneratePreviewlSVG = function (e) {
   return (e = e || Resources.SDJSExportType.SVG) == Resources.SDJSExportType.SVG ? this.ExportSVGXML(!0, 12, !1, !1, !1, {
     exportLinks: !0
-  }) : GlobalData.docHandler.GetPrintHandler().CreatePrintHTML(e)
+  }) : T3Gv.docHandler.GetPrintHandler().CreatePrintHTML(e)
 }
 
 
@@ -4875,32 +4875,32 @@ ListManager.LM.prototypeGeneratePreviewToFile = function () {
       l,
       S;
     if (SDJS.Editor.IsStateOpen()) for (
-      n = GlobalData.stateManager.CurrentStateID,
-      a = GlobalData.stateManager.States.length - 2;
+      n = T3Gv.stateManager.CurrentStateID,
+      a = T3Gv.stateManager.States.length - 2;
       a >= 0;
       a--
-    ) for (t = GlobalData.stateManager.States[a].StoredObjects.length, r = 0; r < t; r++) if (
-      (i = GlobalData.stateManager.States[a].StoredObjects[r]).ID === e &&
+    ) for (t = T3Gv.stateManager.States[a].StoredObjects.length, r = 0; r < t; r++) if (
+      (i = T3Gv.stateManager.States[a].StoredObjects[r]).ID === e &&
       i.StateOperationTypeID == Globals.StateOperationType.CREATE
     ) {
       for (
-        GlobalData.stateManager.States[a].StoredObjects.splice(r, 1),
-        GlobalData.stateManager.PreserveState(),
-        SDF.SaveChangedBlocks(GlobalData.stateManager.CurrentStateID, 0, GlobalData.stateManager.CurrentStateID - 1),
-        s = GlobalData.stateManager.States[n].StoredObjects.length,
+        T3Gv.stateManager.States[a].StoredObjects.splice(r, 1),
+        T3Gv.stateManager.PreserveState(),
+        SDF.SaveChangedBlocks(T3Gv.stateManager.CurrentStateID, 0, T3Gv.stateManager.CurrentStateID - 1),
+        s = T3Gv.stateManager.States[n].StoredObjects.length,
         o = 0;
         o < s;
         o++
-      ) (l = GlobalData.stateManager.States[n].StoredObjects[o]).ID === e ||
+      ) (l = T3Gv.stateManager.States[n].StoredObjects[o]).ID === e ||
         l.Type === Globals.StoredObjectType.LAYERS_MANAGER_OBJECT ||
         l.Type === Globals.StoredObjectType.SED_SESSION_OBJECT ||
         l.Type === Globals.StoredObjectType.SELECTEDLIST_OBJECT ||
         l.Type === Globals.StoredObjectType.TED_SESSION_OBJECT ||
         (
-          (S = this.FindBlock(GlobalData.stateManager.States[a].StoredObjects, l.ID)) >= 0 ? GlobalData.stateManager.States[a].StoredObjects[S] = l : GlobalData.stateManager.States[a].StoredObjects.push(l)
+          (S = this.FindBlock(T3Gv.stateManager.States[a].StoredObjects, l.ID)) >= 0 ? T3Gv.stateManager.States[a].StoredObjects[S] = l : T3Gv.stateManager.States[a].StoredObjects.push(l)
         );
-      return GlobalData.stateManager.States.pop(),
-        void (GlobalData.stateManager.CurrentStateID = GlobalData.stateManager.States.length - 1)
+      return T3Gv.stateManager.States.pop(),
+        void (T3Gv.stateManager.CurrentStateID = T3Gv.stateManager.States.length - 1)
     }
   }
 
@@ -4913,13 +4913,13 @@ ListManager.LM.prototypeAddEMFBlockToUndo = function (e, t) {
     s,
     l,
     S;
-  if (GlobalData.stateManager.States[GlobalData.stateManager.CurrentStateID].IsOpen) for (
-    o = GlobalData.stateManager.CurrentStateID,
-    r = GlobalData.stateManager.States.length - 1;
+  if (T3Gv.stateManager.States[T3Gv.stateManager.CurrentStateID].IsOpen) for (
+    o = T3Gv.stateManager.CurrentStateID,
+    r = T3Gv.stateManager.States.length - 1;
     r >= 0;
     r--
-  ) for (a = GlobalData.stateManager.States[r].StoredObjects.length, i = 0; i < a; i++) if (
-    (n = GlobalData.stateManager.States[r].StoredObjects[i]).ID === e &&
+  ) for (a = T3Gv.stateManager.States[r].StoredObjects.length, i = 0; i < a; i++) if (
+    (n = T3Gv.stateManager.States[r].StoredObjects[i]).ID === e &&
     n.StateOperationTypeID == Globals.StateOperationType.CREATE
   ) {
     if (
@@ -4929,16 +4929,16 @@ ListManager.LM.prototypeAddEMFBlockToUndo = function (e, t) {
       delete n.Data.EMFHash,
       r === o
     ) return;
-    for (l = GlobalData.stateManager.States[o].StoredObjects.length, s = 0; s < l; s++) (S = GlobalData.stateManager.States[o].StoredObjects[s]).ID === t &&
+    for (l = T3Gv.stateManager.States[o].StoredObjects.length, s = 0; s < l; s++) (S = T3Gv.stateManager.States[o].StoredObjects[s]).ID === t &&
       (
-        GlobalData.stateManager.States[r].StoredObjects.push(S),
-        GlobalData.stateManager.States[o].StoredObjects.splice(s, 1)
+        T3Gv.stateManager.States[r].StoredObjects.push(S),
+        T3Gv.stateManager.States[o].StoredObjects.splice(s, 1)
       );
     return void (
-      0 === (l = GlobalData.stateManager.States[o].StoredObjects.length) &&
+      0 === (l = T3Gv.stateManager.States[o].StoredObjects.length) &&
       (
-        GlobalData.stateManager.States.pop(),
-        GlobalData.stateManager.CurrentStateID = GlobalData.stateManager.States.length - 1
+        T3Gv.stateManager.States.pop(),
+        T3Gv.stateManager.CurrentStateID = T3Gv.stateManager.States.length - 1
       )
     )
   }
@@ -4951,33 +4951,33 @@ ListManager.LM.prototypeGetAllBlockCopies = function (e) {
     i,
     n,
     o = [];
-  for (t = GlobalData.stateManager.States.length, a = 0; a < t; a++) for (r = GlobalData.stateManager.States[a].StoredObjects.length, i = 0; i < r; i++) (n = GlobalData.stateManager.States[a].StoredObjects[i]).ID === e &&
+  for (t = T3Gv.stateManager.States.length, a = 0; a < t; a++) for (r = T3Gv.stateManager.States[a].StoredObjects.length, i = 0; i < r; i++) (n = T3Gv.stateManager.States[a].StoredObjects[i]).ID === e &&
     o.push(n);
   return o
 },
 
 
   ListManager.LM.prototype.ResetUndoStates = function () {
-    if (null === GlobalData.stateManager) throw new Error('stateManager is null');
+    if (null === T3Gv.stateManager) throw new Error('stateManager is null');
     // new SDJSError({
     //   source: 'ListManager.ResetUndoStates',
     //   message: 'stateManager is null'
     // });
-    GlobalData.stateManager.ResetUndoStates()
+    T3Gv.stateManager.ResetUndoStates()
   },
 
 
   ListManager.LM.prototype.NudgeSelectedObjects = function (e, t, a) {
     var r,
       i,
-      n = GlobalData.objectStore.GetObject(this.theSelectedListBlockID).Data,
+      n = T3Gv.objectStore.GetObject(this.theSelectedListBlockID).Data,
       o = n.length,
       s = this.GetTargetSelect();
     if (0 !== o) {
-      GlobalData.optManager.Dynamic_Guides &&
+      T3Gv.optManager.Dynamic_Guides &&
         (
-          GlobalData.optManager.DynamicSnaps_RemoveGuides(GlobalData.optManager.Dynamic_Guides),
-          GlobalData.optManager.Dynamic_Guides = null
+          T3Gv.optManager.DynamicSnaps_RemoveGuides(T3Gv.optManager.Dynamic_Guides),
+          T3Gv.optManager.Dynamic_Guides = null
         );
       var l,
         S,
@@ -5051,7 +5051,7 @@ ListManager.LM.prototypeGetAllBlockCopies = function (e) {
                 i.SetTextGrow(ConstantData.TextGrowBehavior.VERTICAL)
               ),
               i.SetSize(d, D, ConstantData.ActionTriggerType.LINELENGTH),
-              GlobalData.optManager.MaintainLink(i.BlockID, i, r, ConstantData.ActionTriggerType.LINEEND)
+              T3Gv.optManager.MaintainLink(i.BlockID, i, r, ConstantData.ActionTriggerType.LINEEND)
           } else e &&
             i.Frame.x + e,
             t &&
@@ -5059,7 +5059,7 @@ ListManager.LM.prototypeGetAllBlockCopies = function (e) {
             this.OffsetShape(C, e, t, ConstantData.ActionTriggerType.TABLE_SELECT);
           if (this.AddToDirtyList(C, !a), C === s) {
             var y = i.GetDimensionsForDisplay();
-            GlobalData.optManager.UpdateDisplayCoordinates(y, null, null, i)
+            T3Gv.optManager.UpdateDisplayCoordinates(y, null, null, i)
           }
           if (i && 1 === i.hooks.length && !a) {
             var f = this.GetObjectPtr(i.hooks[0].objid, !1);
@@ -5098,7 +5098,7 @@ ListManager.LM.prototypeGetAllBlockCopies = function (e) {
     var t,
       a,
       r = !1,
-      i = GlobalData.objectStore.GetObject(this.theSelectedListBlockID).Data,
+      i = T3Gv.objectStore.GetObject(this.theSelectedListBlockID).Data,
       n = i.length;
     if (0 !== n) {
       var o = this.GetTargetSelect(),
@@ -5175,8 +5175,8 @@ ListManager.LM.prototypeGetAllBlockCopies = function (e) {
   }
 
 ListManager.LM.prototypeRotateShapes = function (e, t) {
-  var a = GlobalData.optManager.GetObjectPtr(this.theSelectedListBlockID, !1),
-    r = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
+  var a = T3Gv.optManager.GetObjectPtr(this.theSelectedListBlockID, !1),
+    r = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
   t &&
     (a = t);
   var i,
@@ -5239,7 +5239,7 @@ ListManager.LM.prototypeRotateShapes = function (e, t) {
         if (
           d instanceof ListManager.PolyLineContainer ||
           d.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL
-        ) for (p = a.length - 1; p >= 0; p--) obj = GlobalData.optManager.GetObjectPtr(a[p], !1),
+        ) for (p = a.length - 1; p >= 0; p--) obj = T3Gv.optManager.GetObjectPtr(a[p], !1),
           obj &&
           obj.hooks.length &&
           obj.hooks[0].objid === d.BlockID &&
@@ -5268,7 +5268,7 @@ ListManager.LM.prototypeRotateShapes = function (e, t) {
             d.EndPoint.y = f[L - 1].y,
             d.CalcFrame()
         } else {
-            GlobalData.optManager.ob = Utils1.DeepCopy(d);
+            T3Gv.optManager.ob = Utils1.DeepCopy(d);
             var I = (d.StartPoint.x + d.EndPoint.x) / 2,
               T = (d.StartPoint.y + d.EndPoint.y) / 2,
               b = Math.sqrt(
@@ -5281,11 +5281,11 @@ ListManager.LM.prototypeRotateShapes = function (e, t) {
               d.EndPoint.x = I + Math.cos(s) * b,
               d.EndPoint.y = T + Math.sin(s) * b,
               d.AfterRotateShape(d.BlockID),
-              GlobalData.optManager.ob = {}
+              T3Gv.optManager.ob = {}
           } else d.RotationAngle = e,
             d.UpdateFrame(d.Frame),
-            (i = GlobalData.optManager.SD_GetVisioTextChild(a[u])) >= 0 &&
-            (n = GlobalData.optManager.GetObjectPtr(i, !0)) &&
+            (i = T3Gv.optManager.SD_GetVisioTextChild(a[u])) >= 0 &&
+            (n = T3Gv.optManager.GetObjectPtr(i, !0)) &&
             (
               n.VisioRotationDiff ? n.RotationAngle = e - n.VisioRotationDiff : n.RotationAngle = e,
               n.UpdateFrame(n.Frame),
@@ -5320,7 +5320,7 @@ ListManager.LM.prototypeRotateShapes = function (e, t) {
 
 
 ListManager.LM.prototypeLock = function (e, t) {
-  var a = GlobalData.objectStore.GetObject(this.theSelectedListBlockID).Data,
+  var a = T3Gv.objectStore.GetObject(this.theSelectedListBlockID).Data,
     r = a.length;
   if (0 !== r || t) {
     var i,
@@ -5372,7 +5372,7 @@ ListManager.LM.prototypeLock = function (e, t) {
       P = {},
       R = 0,
       A = 0,
-      _ = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !1),
+      _ = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1),
       E = (_.layers[_.activelayer].layertype, !1);
     switch (
     gSelectionManager = Business.GetSelectionBusinessManager(t, !1),
@@ -5386,42 +5386,42 @@ ListManager.LM.prototypeLock = function (e, t) {
     if (null != (o = this.GetObjectPtr(t, !1))) {
       for (
         l = (e.ExtraFlags & ConstantData.ExtraFlags.SEDE_NoColor) > 0,
-        S = GlobalData.optManager.AddNewObject(e, l, !0),
+        S = T3Gv.optManager.AddNewObject(e, l, !0),
         e.SymbolData &&
         e.SymbolData.ShapeData.ObjectAttributeFlags & ListManager.LibraryFlags.SEDL_NoColor &&
         (r = !1),
-        D = GlobalData.optManager.EmptySymbolList.length,
+        D = T3Gv.optManager.EmptySymbolList.length,
         p = 0;
         p < D;
         p++
-      ) GlobalData.optManager.EmptySymbolList[p].BlockID === S &&
+      ) T3Gv.optManager.EmptySymbolList[p].BlockID === S &&
         (
-          GlobalData.optManager.EmptySymbolList[p].BlockID = t,
+          T3Gv.optManager.EmptySymbolList[p].BlockID = t,
           i ||
           (E = !0),
-          GlobalData.optManager.ReplaceSymbolID = GlobalData.optManager.EmptySymbolList[p].SymbolID,
+          T3Gv.optManager.ReplaceSymbolID = T3Gv.optManager.EmptySymbolList[p].SymbolID,
           a.push(S)
         );
       if (!E) {
-        for (D = GlobalData.optManager.EmptyEMFList.length, p = 0; p < D; p++) GlobalData.optManager.EmptyEMFList[p].BlockID === S &&
-          (GlobalData.optManager.EmptyEMFList[p].BlockID = t);
+        for (D = T3Gv.optManager.EmptyEMFList.length, p = 0; p < D; p++) T3Gv.optManager.EmptyEMFList[p].BlockID === S &&
+          (T3Gv.optManager.EmptyEMFList[p].BlockID = t);
         if (
-          GlobalData.optManager.theMoveList &&
-          (D = GlobalData.optManager.theMoveList.length)
+          T3Gv.optManager.theMoveList &&
+          (D = T3Gv.optManager.theMoveList.length)
         ) {
-          for (p = 0; p < D; p++) f = GlobalData.optManager.theMoveList[p],
-            (y = GlobalData.optManager.GetObjectPtr(f, !1)) &&
+          for (p = 0; p < D; p++) f = T3Gv.optManager.theMoveList[p],
+            (y = T3Gv.optManager.GetObjectPtr(f, !1)) &&
             (
               0 === p ? P = Utils1.DeepCopy(y.Frame) : Utils2.UnionRect(P, y.r, P)
             );
-          if (R = 0, A = 0, P.x < M && (R = M - P.x), P.y < M && (A = M - P.y), R || A) for (p = 0; p < D; p++) f = GlobalData.optManager.theMoveList[p],
-            (y = GlobalData.optManager.GetObjectPtr(f, !1)) &&
+          if (R = 0, A = 0, P.x < M && (R = M - P.x), P.y < M && (A = M - P.y), R || A) for (p = 0; p < D; p++) f = T3Gv.optManager.theMoveList[p],
+            (y = T3Gv.optManager.GetObjectPtr(f, !1)) &&
             (y.OffsetShape(R, A), this.AddToDirtyList(f))
         }
         if (
-          s = GlobalData.objectStore.PreserveBlock(t),
-          (C = (m = GlobalData.objectStore.GetObject(S)).Data).SymbolID ? GlobalData.optManager.ReplaceSymbolID = C.SymbolID : C.SymbolURL &&
-            (GlobalData.optManager.ReplaceSymbolID = C.EMFHash),
+          s = T3Gv.objectStore.PreserveBlock(t),
+          (C = (m = T3Gv.objectStore.GetObject(S)).Data).SymbolID ? T3Gv.optManager.ReplaceSymbolID = C.SymbolID : C.SymbolURL &&
+            (T3Gv.optManager.ReplaceSymbolID = C.EMFHash),
           o.TableID >= 0 &&
           0 == (
             C.TextFlags & (
@@ -5440,7 +5440,7 @@ ListManager.LM.prototypeLock = function (e, t) {
           );
         else {
           C.SetShapeOrigin(o.Frame.x + R, o.Frame.y + A);
-          var w = GlobalData.optManager.svgObjectLayer.GetElementByID(C.BlockID);
+          var w = T3Gv.optManager.svgObjectLayer.GetElementByID(C.BlockID);
           w &&
             w.SetPos(o.Frame.x + R, o.Frame.y + A)
         }
@@ -5500,8 +5500,8 @@ ListManager.LM.prototypeLock = function (e, t) {
 ListManager.LM.prototypeBPMN_SwitchSymbol = function (e, t, a) {
   var r,
     i = [];
-  if (!((r = GlobalData.optManager.GetTargetSelect()) < 0)) {
-    var n = GlobalData.optManager.GetObjectPtr(r, !1),
+  if (!((r = T3Gv.optManager.GetTargetSelect()) < 0)) {
+    var n = T3Gv.optManager.GetObjectPtr(r, !1),
       o = n.objecttype,
       s = n.subtype;
     if (null == a && (a = gLineDrawBPMNManager.GetSymbolID(n, e, t)), null != a) {
@@ -5512,16 +5512,16 @@ ListManager.LM.prototypeBPMN_SwitchSymbol = function (e, t, a) {
           objecttype: e,
           subtype: t
         },
-          S = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
+          S = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
         l.def = Utils1.DeepCopy(S.def);
         var c = Collab.BuildMessage(ConstantData.CollabMessages.BPMN_SwitchSymbol, l, !0, !0)
       }
-      var u = GlobalData.optManager.BuildSymbolObject(a, - 1);
+      var u = T3Gv.optManager.BuildSymbolObject(a, - 1);
       u &&
         (
-          GlobalData.optManager.ReplaceSymbol(u, n.BlockID, i, !1, !1, !0),
-          GlobalData.optManager.DeleteObjects(i),
-          (n = GlobalData.optManager.GetObjectPtr(r, !0)).objecttype = o,
+          T3Gv.optManager.ReplaceSymbol(u, n.BlockID, i, !1, !1, !0),
+          T3Gv.optManager.DeleteObjects(i),
+          (n = T3Gv.optManager.GetObjectPtr(r, !0)).objecttype = o,
           n.subtype = s,
           null != e &&
           (n.objecttype = e),
@@ -5561,7 +5561,7 @@ ListManager.LM.prototypeChangeToSymbol = function (e, t) {
       }
       return !0
     },
-    d = GlobalData.objectStore.GetObject(GlobalData.optManager.theSelectedListBlockID).Data,
+    d = T3Gv.objectStore.GetObject(T3Gv.optManager.theSelectedListBlockID).Data,
     D = d.length;
   if (0 !== D) if (
     null == e &&
@@ -5570,7 +5570,7 @@ ListManager.LM.prototypeChangeToSymbol = function (e, t) {
   ) {
     var g = [];
     for (a = 0; a < D; a++) i = d[a],
-      (r = GlobalData.optManager.GetObjectPtr(i, !1)) instanceof ListManager.BaseShape &&
+      (r = T3Gv.optManager.GetObjectPtr(i, !1)) instanceof ListManager.BaseShape &&
       p(r) &&
       g.push(i);
     if (0 !== g.length) {
@@ -5588,42 +5588,42 @@ ListManager.LM.prototypeChangeToSymbol = function (e, t) {
             h.nativeDataString = Collab.BufferToString(m.nativeDataArrayBuffer),
             h.SymbolData = Utils1.DeepCopy(m.SymbolData)
           );
-        var C = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
+        var C = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
         h.def = Utils1.DeepCopy(C.def);
         var y = Collab.BuildMessage(ConstantData.CollabMessages.ChangeToSymbol, h, !0, !0)
       }
       for (a = 0; a < D; a++) i = g[a],
-        (r = GlobalData.optManager.GetObjectPtr(i, !1)) instanceof ListManager.BaseShape &&
-        (n = GlobalData.optManager.BuildSymbolObject(e, - 1)) &&
+        (r = T3Gv.optManager.GetObjectPtr(i, !1)) instanceof ListManager.BaseShape &&
+        (n = T3Gv.optManager.BuildSymbolObject(e, - 1)) &&
         (
           c = !0,
-          r = GlobalData.optManager.GetObjectPtr(i, !0),
-          GlobalData.optManager.CancelModalOperation(),
+          r = T3Gv.optManager.GetObjectPtr(i, !0),
+          T3Gv.optManager.CancelModalOperation(),
           bUseDefaultStyle = (n.ExtraFlags & ConstantData.ExtraFlags.SEDE_NoColor) > 0,
           o = Utils1.DeepCopy(r.Frame),
-          GlobalData.optManager.ReplaceSymbol(n, i, s, !0, t),
-          r = GlobalData.optManager.GetObjectPtr(i, !1),
-          GlobalData.optManager.SetLinkFlag(i, ConstantData.LinkFlags.SED_L_MOVE),
+          T3Gv.optManager.ReplaceSymbol(n, i, s, !0, t),
+          r = T3Gv.optManager.GetObjectPtr(i, !1),
+          T3Gv.optManager.SetLinkFlag(i, ConstantData.LinkFlags.SED_L_MOVE),
           (
-            GlobalData.docHandler.documentConfig.centerSnap &&
-            GlobalData.docHandler.documentConfig.enableSnap ||
-            !1 === GlobalData.docHandler.documentConfig.enableSnap
+            T3Gv.docHandler.documentConfig.centerSnap &&
+            T3Gv.docHandler.documentConfig.enableSnap ||
+            !1 === T3Gv.docHandler.documentConfig.enableSnap
           ) &&
           (
             l = (r.Frame.width - o.width) / 2,
             S = (r.Frame.height - o.height) / 2,
             (l || S) &&
-            GlobalData.optManager.OffsetShape(i, - l, - S, 0)
+            T3Gv.optManager.OffsetShape(i, - l, - S, 0)
           )
         );
       c ? (
         Collab.AllowMessage() &&
         Collab.SendMessage(y),
-        GlobalData.optManager.theMoveList = [],
-        GlobalData.optManager.DeleteObjects(s),
-        0 === GlobalData.optManager.EmptySymbolList.length &&
-        0 === GlobalData.optManager.EmptyEMFList.length &&
-        GlobalData.optManager.CompleteOperation()
+        T3Gv.optManager.theMoveList = [],
+        T3Gv.optManager.DeleteObjects(s),
+        0 === T3Gv.optManager.EmptySymbolList.length &&
+        0 === T3Gv.optManager.EmptyEMFList.length &&
+        T3Gv.optManager.CompleteOperation()
       ) : Utils2.Alert(Resources.Strings.Error_NoSymbolReplace, null)
     } else Utils2.Alert(Resources.Strings.NoChangeShape, null)
   } else Utils2.Alert(Resources.Strings.NoChangeShape, null)
@@ -5636,7 +5636,7 @@ ListManager.LM.prototype.ChangeShape = function (e, t, a) {
   if (null == t) {
     if (
       0 === (
-        i = (r = GlobalData.objectStore.GetObject(this.theSelectedListBlockID).Data).length
+        i = (r = T3Gv.objectStore.GetObject(this.theSelectedListBlockID).Data).length
       )
     ) return
   } else {
@@ -5774,12 +5774,12 @@ ListManager.LM.prototype.ChangeShape = function (e, t, a) {
     c.ChangeShape(e, n, o, s, l) &&
       (p = !0),
       u = this.GetObjectPtr(r[S], !1),
-      GlobalData.optManager.SetLinkFlag(
+      T3Gv.optManager.SetLinkFlag(
         u.BlockID,
         ConstantData.LinkFlags.SED_L_MOVE | ConstantData.LinkFlags.SED_L_CHANGE
       ),
       u.hooks.length &&
-      GlobalData.optManager.SetLinkFlag(u.hooks[0].objid, ConstantData.LinkFlags.SED_L_MOVE),
+      T3Gv.optManager.SetLinkFlag(u.hooks[0].objid, ConstantData.LinkFlags.SED_L_MOVE),
       this.AddToDirtyList(u.BlockID)
   }
   if (Collab.AllowMessage()) {
@@ -5794,7 +5794,7 @@ ListManager.LM.prototype.ChangeShape = function (e, t, a) {
 }
 
 ListManager.LM.prototypeChangeLineType = function (e, t, a, r) {
-  var i = GlobalData.objectStore.GetObject(this.theSelectedListBlockID),
+  var i = T3Gv.objectStore.GetObject(this.theSelectedListBlockID),
     n = ConstantData.LineType,
     o = i.Data,
     s = o.length;
@@ -5900,17 +5900,17 @@ ListManager.LM.prototypeChangeToLine = function (e, t, a) {
     default:
       return !1
   }
-  var u = GlobalData.objectStore.PreserveBlock(e.BlockID);
+  var u = T3Gv.objectStore.PreserveBlock(e.BlockID);
   return null != u &&
     (
       r.BlockID = e.BlockID,
       u.Data = r,
       r.CalcFrame(),
-      GlobalData.optManager.SetLinkFlag(
+      T3Gv.optManager.SetLinkFlag(
         s,
         ConstantData.LinkFlags.SED_L_MOVE | ConstantData.LinkFlags.SED_L_CHANGE
       ),
-      GlobalData.optManager.MaintainLink(r.BlockID, r, l, ConstantData.ActionTriggerType.MODIFYSHAPE),
+      T3Gv.optManager.MaintainLink(r.BlockID, r, l, ConstantData.ActionTriggerType.MODIFYSHAPE),
       this.AddToDirtyList(r.BlockID),
       !0
     )
@@ -5946,7 +5946,7 @@ ListManager.LM.prototypeChangeToSegLine = function (e, t, a, r) {
         (s.polylist = null),
         void 0 !== s.CurveAdjust &&
         (s.CurveAdjust = null);
-      var p = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
+      var p = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
       s.curveparam = p.def.curveparam,
         i = new ListManager.SegmentedLine(s);
       break;
@@ -5960,7 +5960,7 @@ ListManager.LM.prototypeChangeToSegLine = function (e, t, a, r) {
     default:
       return !1
   }
-  var d = GlobalData.objectStore.PreserveBlock(e.BlockID);
+  var d = T3Gv.objectStore.PreserveBlock(e.BlockID);
   if (null == d) return !1;
   i.BlockID = e.BlockID,
     d.Data = i;
@@ -6027,7 +6027,7 @@ ListManager.LM.prototypeChangeToSegLine = function (e, t, a, r) {
       c != i.segl.firstdir &&
         (
           i.hooks[y].connect = this.SegLFaceToConnect(i.segl.firstdir),
-          GlobalData.optManager.SetLinkFlag(
+          T3Gv.optManager.SetLinkFlag(
             i.hooks[y].objid,
             ConstantData.LinkFlags.SED_L_MOVE | ConstantData.LinkFlags.SED_L_CHANGE
           )
@@ -6037,7 +6037,7 @@ ListManager.LM.prototypeChangeToSegLine = function (e, t, a, r) {
       u != i.segl.lastdir &&
         (
           i.hooks[y].connect = this.SegLFaceToConnect(i.segl.lastdir),
-          GlobalData.optManager.SetLinkFlag(
+          T3Gv.optManager.SetLinkFlag(
             i.hooks[y].objid,
             ConstantData.LinkFlags.SED_L_MOVE | ConstantData.LinkFlags.SED_L_CHANGE
           )
@@ -6045,11 +6045,11 @@ ListManager.LM.prototypeChangeToSegLine = function (e, t, a, r) {
   }
   return i.SegLFormat(i.EndPoint, ConstantData.ActionTriggerType.LINEEND, 0),
     i.CalcFrame(),
-    GlobalData.optManager.SetLinkFlag(
+    T3Gv.optManager.SetLinkFlag(
       n,
       ConstantData.LinkFlags.SED_L_MOVE | ConstantData.LinkFlags.SED_L_CHANGE
     ),
-    GlobalData.optManager.MaintainLink(i.BlockID, i, o, ConstantData.ActionTriggerType.MODIFYSHAPE),
+    T3Gv.optManager.MaintainLink(i.BlockID, i, o, ConstantData.ActionTriggerType.MODIFYSHAPE),
     this.AddToDirtyList(i.BlockID),
     !0
 }
@@ -6080,7 +6080,7 @@ ListManager.LM.prototypeSegLFaceToConnect = function (e) {
 
 
 ListManager.LM.prototypeSpaceEvenly = function (e) {
-  var t = GlobalData.objectStore.GetObject(this.theSelectedListBlockID).Data,
+  var t = T3Gv.objectStore.GetObject(this.theSelectedListBlockID).Data,
     a = t.length;
   if (!(a <= 2)) {
     var r,
@@ -6124,8 +6124,8 @@ ListManager.LM.prototypeSpaceEvenly = function (e) {
           L.sort(
             (
               function (e, t) {
-                var a = GlobalData.optManager.GetObjectPtr(e, !1),
-                  r = GlobalData.optManager.GetObjectPtr(t, !1);
+                var a = T3Gv.optManager.GetObjectPtr(e, !1),
+                  r = T3Gv.optManager.GetObjectPtr(t, !1);
                 return a.Frame.y - r.Frame.y
               }
             )
@@ -6159,8 +6159,8 @@ ListManager.LM.prototypeSpaceEvenly = function (e) {
           I.sort(
             (
               function (e, t) {
-                var a = GlobalData.optManager.GetObjectPtr(e, !1),
-                  r = GlobalData.optManager.GetObjectPtr(t, !1);
+                var a = T3Gv.optManager.GetObjectPtr(e, !1),
+                  r = T3Gv.optManager.GetObjectPtr(t, !1);
                 return a.Frame.x - r.Frame.x
               }
             )
@@ -6197,7 +6197,7 @@ ListManager.LM.prototypeChangeWidth = function (e) {
     a = - 1,
     r = null;
   this.cachedWidth = null;
-  var i = GlobalData.objectStore.GetObject(this.theSelectedListBlockID).Data,
+  var i = T3Gv.objectStore.GetObject(this.theSelectedListBlockID).Data,
     n = i.length;
   if (0 !== n) {
     Collab.BeginSecondaryEdit();
@@ -6243,7 +6243,7 @@ ListManager.LM.prototypeChangeHeight = function (e) {
     a = - 1,
     r = null;
   this.cachedHeight = null;
-  var i = GlobalData.objectStore.GetObject(this.theSelectedListBlockID).Data,
+  var i = T3Gv.objectStore.GetObject(this.theSelectedListBlockID).Data,
     n = i.length;
   if (0 !== n) {
     Collab.BeginSecondaryEdit();
@@ -6292,18 +6292,18 @@ ListManager.LM.prototypeChangeHeight = function (e) {
       if (null !== r) {
         var i,
           n;
-        i = GlobalData.docHandler.rulerSettings.useInches &&
-          GlobalData.docHandler.rulerSettings.units == Resources.RulerUnits.SED_Feet ? this.ConvertToFeet(e) : this.NumberIsFloat(e, !0) ? parseFloat(e) : 0,
-          t ? GlobalData.docHandler.rulerSettings.originx &&
+        i = T3Gv.docHandler.rulerSettings.useInches &&
+          T3Gv.docHandler.rulerSettings.units == Resources.RulerUnits.SED_Feet ? this.ConvertToFeet(e) : this.NumberIsFloat(e, !0) ? parseFloat(e) : 0,
+          t ? T3Gv.docHandler.rulerSettings.originx &&
             (
-              n = 100 * GlobalData.docHandler.rulerSettings.originx,
-              GlobalData.docHandler.rulerSettings.useInches ||
+              n = 100 * T3Gv.docHandler.rulerSettings.originx,
+              T3Gv.docHandler.rulerSettings.useInches ||
               (n /= ConstantData.Defines.MetricConv),
               e = (i += this.GetLengthInUnits(n)).toFixed(2)
-            ) : GlobalData.docHandler.rulerSettings.originy &&
+            ) : T3Gv.docHandler.rulerSettings.originy &&
           (
-            n = 100 * GlobalData.docHandler.rulerSettings.originy,
-            GlobalData.docHandler.rulerSettings.useInches ||
+            n = 100 * T3Gv.docHandler.rulerSettings.originy,
+            T3Gv.docHandler.rulerSettings.useInches ||
             (n /= ConstantData.Defines.MetricConv),
             e = (i += this.GetLengthInUnits(n)).toFixed(2)
           );
@@ -6325,7 +6325,7 @@ ListManager.LM.prototypeChangeHeight = function (e) {
         }
         this.CompleteOperation(null);
         var c = r.GetDimensionsForDisplay();
-        GlobalData.optManager.UpdateDisplayCoordinates(c, null, null, r)
+        T3Gv.optManager.UpdateDisplayCoordinates(c, null, null, r)
       }
     }
   }
@@ -6353,8 +6353,8 @@ ListManager.LM.prototypeCenterOnPage = function (e, t, a) {
     I = ListManager.ShapeCenteringOptions,
     T = ConstantData.ObjFlags.SEDO_NotVisible,
     b = ConstantData.TextFlags.SED_TF_TitleBlock,
-    M = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
-    P = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !1),
+    M = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+    P = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1),
     R = P.activelayer,
     A = P.layers[R].zList;
   for (m = P.nlayers, D = 0; D < m; D++) if (
@@ -6397,10 +6397,10 @@ ListManager.LM.prototypeCenterOnPage = function (e, t, a) {
     u = (S /= 2) - r.y,
     e &&
     (c = e.x - r.x, u = e.y - r.y),
-    GlobalData.docHandler.documentConfig.centerSnap ? (C.x = c + p.x + p.width / 2, C.y = u + p.y + p.height / 2) : (C.x = c + p.x, C.y = u + p.y),
+    T3Gv.docHandler.documentConfig.centerSnap ? (C.x = c + p.x + p.width / 2, C.y = u + p.y + p.height / 2) : (C.x = c + p.x, C.y = u + p.y),
     y.x = C.x,
     y.y = C.y,
-    c += (y = GlobalData.docHandler.SnapToGrid(y)).x - C.x,
+    c += (y = T3Gv.docHandler.SnapToGrid(y)).x - C.x,
     u += y.y - C.y,
     t
     ) {
@@ -6429,7 +6429,7 @@ ListManager.LM.prototypeCenterOnPage = function (e, t, a) {
         h === _
       ) {
         var F = g.GetDimensionsForDisplay();
-        GlobalData.optManager.UpdateDisplayCoordinates(F, null, null, g);
+        T3Gv.optManager.UpdateDisplayCoordinates(F, null, null, g);
         var v = new ListManager.SelectionAttributes;
         v.left = F.x,
           v.top = F.y,
@@ -6437,8 +6437,8 @@ ListManager.LM.prototypeCenterOnPage = function (e, t, a) {
           v.height = F.height,
           v.widthstr = this.GetLengthInRulerUnits(v.width),
           v.heightstr = this.GetLengthInRulerUnits(v.height),
-          v.leftstr = this.GetLengthInRulerUnits(v.left, !1, GlobalData.docHandler.rulerSettings.originx, !1),
-          v.topstr = this.GetLengthInRulerUnits(v.top, !1, GlobalData.docHandler.rulerSettings.originy, !1),
+          v.leftstr = this.GetLengthInRulerUnits(v.left, !1, T3Gv.docHandler.rulerSettings.originx, !1),
+          v.topstr = this.GetLengthInRulerUnits(v.top, !1, T3Gv.docHandler.rulerSettings.originy, !1),
           SDUI.Commands.MainController.UpdateRibbonDimensions(v)
       }
     }
@@ -6478,7 +6478,7 @@ ListManager.LM.prototypeHookedObjectMovingDebounced = function (e, t) {
 
 
 ListManager.LM.prototypeBringSelectedToFront = function () {
-  var e = GlobalData.objectStore.GetObject(this.theSelectedListBlockID).Data,
+  var e = T3Gv.objectStore.GetObject(this.theSelectedListBlockID).Data,
     t = e.length;
   if (0 !== t) {
     var a = this.AddAssoctoList(e);
@@ -6513,7 +6513,7 @@ ListManager.LM.prototypeBringSelectedToFront = function () {
 }
 
 ListManager.LM.prototypeSendSelectedToBack = function () {
-  var e = GlobalData.objectStore.GetObject(this.theSelectedListBlockID).Data,
+  var e = T3Gv.objectStore.GetObject(this.theSelectedListBlockID).Data,
     t = e.length;
   if (0 !== t) {
     var a = this.AddAssoctoList(e);
@@ -6548,7 +6548,7 @@ ListManager.LM.prototypeSendSelectedToBack = function () {
 }
 
 ListManager.LM.prototypeBringToFrontOfTargetLayer = function () {
-  var e = GlobalData.objectStore.GetObject(this.theSelectedListBlockID).Data,
+  var e = T3Gv.objectStore.GetObject(this.theSelectedListBlockID).Data,
     t = e.length;
   if (0 !== t) {
     var a = this.AddAssoctoList(e);
@@ -6587,7 +6587,7 @@ ListManager.LM.prototypeBringToFrontOfTargetLayer = function () {
 }
 
 ListManager.LM.prototypeSendToBackOfTargetLayer = function () {
-  var e = GlobalData.objectStore.GetObject(this.theSelectedListBlockID).Data,
+  var e = T3Gv.objectStore.GetObject(this.theSelectedListBlockID).Data,
     t = e.length;
   if (0 !== t) {
     var a = this.AddAssoctoList(e);
@@ -6645,7 +6645,7 @@ ListManager.LM.prototypeMoveObjectsToLayer = function (e) {
 
 ListManager.LM.prototypePutBehindObject = function (e, t) {
   var a,
-    r = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0),
+    r = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0),
     i = r.layers[r.activelayer].zList,
     n = i.indexOf(e),
     o = i.indexOf(t);
@@ -6657,27 +6657,27 @@ ListManager.LM.prototypePutBehindObject = function (e, t) {
 
 ListManager.LM.prototypePutInFrontofObject = function (e, t) {
   var a,
-    r = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0),
+    r = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0),
     i = r.layers[r.activelayer].zList,
     n = i.indexOf(e),
     o = i.indexOf(t);
   if (n >= 0 && o >= 0) if (o < n) {
     for (a = o; a < n; a++) i[a] = i[a + 1],
-      GlobalData.optManager.AddToDirtyList(i[a]);
+      T3Gv.optManager.AddToDirtyList(i[a]);
     i[n] = t,
-      GlobalData.optManager.AddToDirtyList(t)
+      T3Gv.optManager.AddToDirtyList(t)
   } else {
     for (a = o; a > n + 1; a--) i[a] = i[a - 1],
-      GlobalData.optManager.AddToDirtyList(i[a]);
+      T3Gv.optManager.AddToDirtyList(i[a]);
     i[n + 1] = t,
-      GlobalData.optManager.AddToDirtyList(t)
+      T3Gv.optManager.AddToDirtyList(t)
   }
 }
 
 ListManager.LM.prototypeBringObjectToFrontofLayer = function (e) {
   var t,
     a,
-    r = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0),
+    r = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0),
     i = r.layers[r.activelayer].zList,
     n = i.indexOf(e);
   if (a = i.length, n >= 0) {
@@ -6700,12 +6700,12 @@ ListManager.LM.prototypeSerializeGroupForClipboard = function (e) {
       S = null,
       c = null,
       u = null;
-    for (t = 0; t < r; ++t) - 1 != (n = GlobalData.objectStore.GetObject(a[t])).Data.DataID ? (
-      s = GlobalData.objectStore.GetObject(n.Data.DataID),
+    for (t = 0; t < r; ++t) - 1 != (n = T3Gv.objectStore.GetObject(a[t])).Data.DataID ? (
+      s = T3Gv.objectStore.GetObject(n.Data.DataID),
       l = Utils1.DeepCopy(s.Data)
     ) : l = null,
       - 1 != n.Data.NoteID ? (
-        S = GlobalData.objectStore.GetObject(n.Data.NoteID),
+        S = T3Gv.objectStore.GetObject(n.Data.NoteID),
         c = Utils1.DeepCopy(S.Data)
       ) : c = null,
       (o = Utils1.DeepCopy(n.Data)) instanceof ListManager.GroupSymbol ? (
@@ -6780,7 +6780,7 @@ ListManager.LM.prototypeFilterFiletoClipboard = function (e, t) {
           if (
             o = Utils1.DeepCopy(t.groupData[a].text),
             null === (
-              s = GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.LM_TEXT_OBJECT, o)
+              s = T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.LM_TEXT_OBJECT, o)
             )
           ) throw new Error('PasteObjects got a null new text block allocation')
 
@@ -6794,7 +6794,7 @@ ListManager.LM.prototypeFilterFiletoClipboard = function (e, t) {
           if (
             l = Utils1.DeepCopy(t.groupData[a].note),
             null === (
-              S = GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.LM_NOTES_OBJECT, l)
+              S = T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.LM_NOTES_OBJECT, l)
             )
           ) throw new
             Error('PasteObjects got a null new text block allocation for a note')
@@ -6808,7 +6808,7 @@ ListManager.LM.prototypeFilterFiletoClipboard = function (e, t) {
           n instanceof ListManager.GroupSymbol &&
           this.DeserializeGroupForClipboard(n, t.groupData[a]),
           null === (
-            i = GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.BASE_LM_DRAWING_OBJECT, n)
+            i = T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.BASE_LM_DRAWING_OBJECT, n)
           )
         ) throw new Error('PasteObjects got a null new block allocation')
 
@@ -6832,14 +6832,14 @@ ListManager.LM.prototypeDuplicateObjects = function (e, t) {
     this.CloseEdit(),
     this.AreSelectedObjects()
   ) {
-    var r = GlobalData.optManager.GetObjectPtr(
-      GlobalData.optManager.theSEDSessionBlockID,
+    var r = T3Gv.optManager.GetObjectPtr(
+      T3Gv.optManager.theSEDSessionBlockID,
       !1 === this.LastOpDuplicate &&
       !t
     );
     e ? (r.dupdisp.x = 0, r.dupdisp.y = 0) : t ? (r.dupdisp.x = t.Data.dupdisp.x, r.dupdisp.y = t.Data.dupdisp.y) : this.LastOpDuplicate ||
       (r.dupdisp.x = 50, r.dupdisp.y = 50);
-    var i = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSelectedListBlockID, !1);
+    var i = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSelectedListBlockID, !1);
     if (!t && Collab.AllowMessage()) {
       var n = {
         fromMove: e
@@ -6894,7 +6894,7 @@ ListManager.LM.prototypeDuplicateObjects = function (e, t) {
 
   ,
   ListManager.LM.prototype.GetBackgroundFill = function () {
-    var e = GlobalData.optManager.GetObjectPtr(this.theSEDSessionBlockID, !1);
+    var e = T3Gv.optManager.GetObjectPtr(this.theSEDSessionBlockID, !1);
     return Utils1.DeepCopy(e.background)
   }
 
@@ -6911,8 +6911,8 @@ ListManager.LM.prototypeGetSelectedStyle = function (e, t) {
     u,
     p,
     d,
-    D = GlobalData.optManager.GetObjectPtr(this.theSEDSessionBlockID, !1),
-    g = GlobalData.optManager.GetObjectPtr(this.theSelectedListBlockID, !1),
+    D = T3Gv.optManager.GetObjectPtr(this.theSEDSessionBlockID, !1),
+    g = T3Gv.optManager.GetObjectPtr(this.theSelectedListBlockID, !1),
     h = !1,
     m = !1,
     C = ConstantData.DrawingObjectBaseClass,
@@ -6962,7 +6962,7 @@ ListManager.LM.prototypeGetSelectedStyle = function (e, t) {
     );
   else for (r = 0; r < a; r++) if (p = g[r], s = this.GetObjectPtr(p, !1)) {
     if (
-      u = (c = GlobalData.optManager.SD_GetVisioTextChild(p)) >= 0 ? this.GetObjectPtr(c, !1) : s,
+      u = (c = T3Gv.optManager.SD_GetVisioTextChild(p)) >= 0 ? this.GetObjectPtr(c, !1) : s,
       t &&
       (
         y ? s.GetArrowheadSelection(t) &&
@@ -7054,7 +7054,7 @@ ListManager.LM.prototypeGetSelectedProperties = function () {
     c,
     u,
     p,
-    d = GlobalData.optManager.GetObjectPtr(this.theSelectedListBlockID, !1),
+    d = T3Gv.optManager.GetObjectPtr(this.theSelectedListBlockID, !1),
     D = (
       ConstantData.DrawingObjectBaseClass,
       ConstantData.TextFlags
@@ -7065,7 +7065,7 @@ ListManager.LM.prototypeGetSelectedProperties = function () {
     (g.hastable = !0),
     a = (
       (
-        l = (S = GlobalData.optManager.SD_GetVisioTextChild(s)) >= 0 ? this.GetObjectPtr(S, !1) : u
+        l = (S = T3Gv.optManager.SD_GetVisioTextChild(s)) >= 0 ? this.GetObjectPtr(S, !1) : u
       ).TextFlags & D.SED_TF_OneClick
     ) > 0,
     r = (l.TextFlags & D.SED_TF_None) > 0,
@@ -7244,12 +7244,12 @@ ListManager.LM.prototype.SelectAllObjects = function (e) {
     var a,
       r,
       i,
-      n = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSelectedListBlockID, !t),
+      n = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSelectedListBlockID, !t),
       o = e.length,
       s = this.GetObjectPtr(this.theSEDSessionBlockID, !t);
     for (a = 0; a < o; a++) - 1 !== (r = n.indexOf(e[a])) &&
       (
-        GlobalData.optManager.ShowSVGSelectionState(e[a], !1),
+        T3Gv.optManager.ShowSVGSelectionState(e[a], !1),
         n.splice(r, 1),
         e[a] === s.tselect &&
         (s.tselect = - 1)
@@ -7301,7 +7301,7 @@ ListManager.LM.prototype.CalcDocumentWorkAreaSize = function (e) {
     a,
     r = !1,
     i = !1,
-    n = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1);
+    n = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1);
   for (
     n.layers[n.activelayer].flags & ConstantData.LayerFlags.SDLF_UseEdges &&
     (r = !0),
@@ -7320,8 +7320,8 @@ ListManager.LM.prototype.CalcDocumentWorkAreaSize = function (e) {
   t = this.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto ? this.CalcAllObjectEnclosingRect(i && !r, !0) : this.CalcAllObjectEnclosingRect(!1, !1);
   var o,
     s,
-    l = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
-    S = GlobalData.optManager.theContentHeader.Page.margins,
+    l = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+    S = T3Gv.optManager.theContentHeader.Page.margins,
     c = e.x - (S.left + S.right),
     u = e.y - (S.top + S.bottom),
     p = {};
@@ -7354,36 +7354,36 @@ ListManager.LM.prototype.CalcDocumentWorkAreaSize = function (e) {
       (d < g && (p.x = g * c), D < h && (p.y = h * u))
   } else p.x = t.x + t.width,
     p.y = t.y + t.height,
-    p.x < GlobalData.optManager.theContentHeader.Page.minsize.x &&
-    (p.x = GlobalData.optManager.theContentHeader.Page.minsize.x),
-    p.y < GlobalData.optManager.theContentHeader.Page.minsize.y &&
-    (p.y = GlobalData.optManager.theContentHeader.Page.minsize.y);
+    p.x < T3Gv.optManager.theContentHeader.Page.minsize.x &&
+    (p.x = T3Gv.optManager.theContentHeader.Page.minsize.x),
+    p.y < T3Gv.optManager.theContentHeader.Page.minsize.y &&
+    (p.y = T3Gv.optManager.theContentHeader.Page.minsize.y);
   return p
 },
 
   ListManager.LM.prototype.FitDocumentWorkAreaToPaperSize = function () {
-    GlobalData.optManager.ZListPreserve(ConstantData.LayerFlags.SDLF_UseEdges);
-    var e = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0),
-      t = GlobalData.optManager.theContentHeader.Page.papersize;
-    e.Page = Utils1.DeepCopy(GlobalData.optManager.theContentHeader.Page);
+    T3Gv.optManager.ZListPreserve(ConstantData.LayerFlags.SDLF_UseEdges);
+    var e = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0),
+      t = T3Gv.optManager.theContentHeader.Page.papersize;
+    e.Page = Utils1.DeepCopy(T3Gv.optManager.theContentHeader.Page);
     var a = this.CalcDocumentWorkAreaSize(t);
     a.x !== e.dim.x ||
       a.y !== e.dim.y ? (
-      e = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0),
+      e = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0),
       this.UpdateEdgeLayers([], e.dim, a),
       e.dim.x = a.x,
       e.dim.y = a.y,
       this.theContentHeader.Page.minsize.x = e.dim.x,
       this.theContentHeader.Page.minsize.y = e.dim.y,
       this.ResizeSVGDocument()
-    ) : GlobalData.docHandler.CheckScaleToFit() &&
+    ) : T3Gv.docHandler.CheckScaleToFit() &&
     this.ResizeSVGDocument()
   }
 
 ListManager.LM.prototypeSD_GetPageDimensions = function () {
-  this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
-  var e = GlobalData.optManager.theContentHeader.Page.papersize,
-    t = GlobalData.optManager.theContentHeader.Page.margins;
+  this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
+  var e = T3Gv.optManager.theContentHeader.Page.papersize,
+    t = T3Gv.optManager.theContentHeader.Page.margins;
   return {
     width: e.x - (t.left + t.right),
     height: e.y - (t.top + t.bottom)
@@ -7394,12 +7394,12 @@ ListManager.LM.prototypeAccomodateDocumentPaperSize = function (e) {
   var t,
     a,
     r,
-    i = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
+    i = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
     n = {},
     o = ConstantData.Defines.MetricConv,
-    s = GlobalData.optManager.theContentHeader.Page.margins,
+    s = T3Gv.optManager.theContentHeader.Page.margins,
     l = this.theContentHeader.Page.papersize,
-    S = GlobalData.docHandler.svgDoc.GetWorkArea(),
+    S = T3Gv.docHandler.svgDoc.GetWorkArea(),
     c = (l.x, s.left, s.right, l.y, s.top, s.bottom, !1);
   switch (e) {
     case 'A4':
@@ -7419,16 +7419,16 @@ ListManager.LM.prototypeAccomodateDocumentPaperSize = function (e) {
       n.x = S.docDpi * SDJS.DocumentHandler.PrintHandler.PageSize.A4.pageHeight / o,
       this.theContentHeader.Page.papersize = n,
       t = (n.x * a - i.dim.x) / a,
-      GlobalData.optManager.theContentHeader.Page.margins.left = t / 2,
-      GlobalData.optManager.theContentHeader.Page.margins.right = t / 2,
+      T3Gv.optManager.theContentHeader.Page.margins.left = t / 2,
+      T3Gv.optManager.theContentHeader.Page.margins.right = t / 2,
       t = (n.y * r - i.dim.y) / r,
-      GlobalData.optManager.theContentHeader.Page.margins.top = t / 2,
-      GlobalData.optManager.theContentHeader.Page.margins.bottom = t / 2
+      T3Gv.optManager.theContentHeader.Page.margins.top = t / 2,
+      T3Gv.optManager.theContentHeader.Page.margins.bottom = t / 2
     ) : (
-    GlobalData.optManager.theContentHeader.Page.margins.left = 50,
-    GlobalData.optManager.theContentHeader.Page.margins.right = 50,
-    GlobalData.optManager.theContentHeader.Page.margins.top = 50,
-    GlobalData.optManager.theContentHeader.Page.margins.bottom = 50
+    T3Gv.optManager.theContentHeader.Page.margins.left = 50,
+    T3Gv.optManager.theContentHeader.Page.margins.right = 50,
+    T3Gv.optManager.theContentHeader.Page.margins.top = 50,
+    T3Gv.optManager.theContentHeader.Page.margins.bottom = 50
   ) : i.dim.y % 1000 != 0 &&
   i.dim.x % 750 != 0 ||
   (
@@ -7439,25 +7439,25 @@ ListManager.LM.prototypeAccomodateDocumentPaperSize = function (e) {
       n.y = S.docDpi * SDJS.DocumentHandler.PrintHandler.PageSize.A4.pageHeight / o,
       this.theContentHeader.Page.papersize = n,
       t = (n.x * a - i.dim.x) / a,
-      GlobalData.optManager.theContentHeader.Page.margins.left = t / 2,
-      GlobalData.optManager.theContentHeader.Page.margins.right = t / 2,
+      T3Gv.optManager.theContentHeader.Page.margins.left = t / 2,
+      T3Gv.optManager.theContentHeader.Page.margins.right = t / 2,
       t = (n.y * r - i.dim.y) / r,
-      GlobalData.optManager.theContentHeader.Page.margins.top = t / 2,
-      GlobalData.optManager.theContentHeader.Page.margins.bottom = t / 2
+      T3Gv.optManager.theContentHeader.Page.margins.top = t / 2,
+      T3Gv.optManager.theContentHeader.Page.margins.bottom = t / 2
     ) : (
-      GlobalData.optManager.theContentHeader.Page.margins.left = 50,
-      GlobalData.optManager.theContentHeader.Page.margins.right = 50,
-      GlobalData.optManager.theContentHeader.Page.margins.top = 50,
-      GlobalData.optManager.theContentHeader.Page.margins.bottom = 50
+      T3Gv.optManager.theContentHeader.Page.margins.left = 50,
+      T3Gv.optManager.theContentHeader.Page.margins.right = 50,
+      T3Gv.optManager.theContentHeader.Page.margins.top = 50,
+      T3Gv.optManager.theContentHeader.Page.margins.bottom = 50
     )
   )
 }
 
 ListManager.LM.prototypeSetDocumentPaperSize = function (e, t) {
-  GlobalData.optManager.AccomodateDocumentPaperSize(t),
+  T3Gv.optManager.AccomodateDocumentPaperSize(t),
     this.theContentHeader.Page.papersize = e,
     this.FitDocumentWorkAreaToPaperSize(),
-    GlobalData.docHandler.DocumentPageSizeChanged();
+    T3Gv.docHandler.DocumentPageSizeChanged();
   var a = 0;
   switch (t) {
     case 'A4':
@@ -7474,7 +7474,7 @@ ListManager.LM.prototypeSetDocumentPaperSize = function (e, t) {
     SDUI.FileSource.UpdateUserSetting(r),
     ConstantData.DocumentContext.UserSettings &&
     (ConstantData.DocumentContext.UserSettings.PaperSize = a),
-    GlobalData.optManager.CompleteOperation()
+    T3Gv.optManager.CompleteOperation()
 }
 
 ListManager.LM.prototypeGetContrastingColorName = function (e) {
@@ -7489,7 +7489,7 @@ ListManager.LM.prototypeGetContrastingColorName = function (e) {
 
   ListManager.LM.prototypeSetShapeOrigin = function (e, t, a) {
     var r = {},
-      i = GlobalData.objectStore.PreserveBlock(e).Data;
+      i = T3Gv.objectStore.PreserveBlock(e).Data;
     r.x = i.Frame.x,
       r.y = i.Frame.y,
       i.SetShapeOrigin(t, a),
@@ -7793,7 +7793,7 @@ ListManager.LM.prototypeIntersectPointOfLineAndRectangle = function (e, t, a) {
     S = - 1,
     c = - 1;
   for (o = Utils2.PolyFromRect(a), i = 1; i < o.length; i++) s = o.slice(i - 1, i + 1),
-    (n = GlobalData.optManager.PolyLIntersect(e, t, s, 2)) &&
+    (n = T3Gv.optManager.PolyLIntersect(e, t, s, 2)) &&
     n.bSuccess &&
     l.push(new Point(n.ipt.x, n.ipt.y));
   if (0 == l.length) return null;
@@ -8117,7 +8117,7 @@ ListManager.LM.prototypeLines_AddCurve = function (e, t, a, r, i, n) {
     S.y = i,
     S.width = n,
     S.height = - 2 * n,
-    GlobalData.optManager.PolyYCurve(l, S, 20, 0, 0, 0, - n, !0),
+    T3Gv.optManager.PolyYCurve(l, S, 20, 0, 0, 0, - n, !0),
     o = l.length - 1;
     o >= 0;
     o--
@@ -8128,14 +8128,14 @@ ListManager.LM.prototypeLines_AddCurve = function (e, t, a, r, i, n) {
     S.y = i + 2 * n,
     S.width = n,
     S.height = - 2 * n,
-    GlobalData.optManager.PolyYCurve(s, S, 20, 0, 0, - n, 0, !0)
+    T3Gv.optManager.PolyYCurve(s, S, 20, 0, 0, - n, 0, !0)
   ) : t > 0 &&
     a < 0 ? (
     S.x = r,
     S.y = i - 2 * n,
     S.width = - n,
     S.height = 2 * n,
-    GlobalData.optManager.PolyYCurve(s, S, 20, 0, 0, n, 0, !0)
+    T3Gv.optManager.PolyYCurve(s, S, 20, 0, 0, n, 0, !0)
   ) : t < 0 &&
   a < 0 &&
   (
@@ -8143,29 +8143,29 @@ ListManager.LM.prototypeLines_AddCurve = function (e, t, a, r, i, n) {
     S.y = i + 2 * n,
     S.width = - n,
     S.height = - 2 * n,
-    GlobalData.optManager.PolyYCurve(s, S, 20, 0, 0, - n, 0, !0)
+    T3Gv.optManager.PolyYCurve(s, S, 20, 0, 0, - n, 0, !0)
   );
   else if (t > 0 && a > 0) S.x = r - n,
     S.y = i,
     S.width = n,
     S.height = 2 * n,
-    GlobalData.optManager.PolyYCurve(s, S, 20, 0, 0, 0, n, !1);
+    T3Gv.optManager.PolyYCurve(s, S, 20, 0, 0, 0, n, !1);
   else if (t < 0 && a > 0) S.x = r,
     S.y = i,
     S.width = n,
     S.height = 2 * n,
-    GlobalData.optManager.PolyYCurve(s, S, 20, 0, 0, 0, n, !0);
+    T3Gv.optManager.PolyYCurve(s, S, 20, 0, 0, 0, n, !0);
   else if (t > 0 && a < 0) S.x = r - n,
     S.y = i,
     S.width = n,
     S.height = - 2 * n,
-    GlobalData.optManager.PolyYCurve(s, S, 20, 0, 0, 0, - n, !1);
+    T3Gv.optManager.PolyYCurve(s, S, 20, 0, 0, 0, - n, !1);
   else if (t < 0 && a < 0) for (
     S.x = r,
     S.y = i - 2 * n,
     S.width = n,
     S.height = 2 * n,
-    GlobalData.optManager.PolyYCurve(l, S, 20, 0, 0, n, 0, !0),
+    T3Gv.optManager.PolyYCurve(l, S, 20, 0, 0, n, 0, !0),
     o = l.length - 1;
     o >= 0;
     o--
@@ -8246,18 +8246,18 @@ ListManager.LM.prototypeLines_MaintainDist = function (e, t, a, r) {
 
 
   ListManager.LM.prototypeGetDocReplaceState = function () {
-    return GlobalData.optManager.theContentHeader.AllowReplace
+    return T3Gv.optManager.theContentHeader.AllowReplace
   }
 
 ListManager.LM.prototypeSetDocReplaceState = function (e) {
-  GlobalData.optManager.theContentHeader.AllowReplace = e
+  T3Gv.optManager.theContentHeader.AllowReplace = e
 }
 
 ListManager.LM.prototypeDocAllowSpell = function () {
   return (
-    GlobalData.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_AutoSpell
+    T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_AutoSpell
   ) > 0 &&
-    !GlobalData.docHandler.IsReadOnly()
+    !T3Gv.docHandler.IsReadOnly()
 },
 
 
@@ -8384,7 +8384,7 @@ ListManager.LM.prototypePolyLineToShape = function (e, t) {
     l,
     S,
     c = {},
-    u = GlobalData.objectStore.PreserveBlock(e);
+    u = T3Gv.objectStore.PreserveBlock(e);
   if (null != u) {
     for (
       s = (
@@ -8438,7 +8438,7 @@ ListManager.LM.prototypeShapeToPolyLine = function (e, t, a, r) {
     }, i.Frame);
   else {
     null == (i = this.GetObjectPtr(e, !1)).polylist ? (i.polylist = i.GetPolyList(), i.StartPoint = {}, i.EndPoint = {}) : s = !0;
-    var c = GlobalData.objectStore.PreserveBlock(e);
+    var c = T3Gv.objectStore.PreserveBlock(e);
     if (null == c) return;
     i = c.Data,
       S = $.extend(!0, {
@@ -8447,7 +8447,7 @@ ListManager.LM.prototypeShapeToPolyLine = function (e, t, a, r) {
   if (s) {
     if (!i.polylist) return null;
     if (
-      GlobalData.optManager.GetClosedPolyDim(i),
+      T3Gv.optManager.GetClosedPolyDim(i),
       !Utils2.IsEqual(i.polylist.dim.x, S.width)
     ) {
       var u = Utils1.DeepCopy(i);
@@ -8540,7 +8540,7 @@ ListManager.LM.prototypeScaleToRuler = function (e, t, a, r, i, n) {
     S,
     c = 1,
     u = 1,
-    p = GlobalData.docHandler.rulerSettings.major,
+    p = T3Gv.docHandler.rulerSettings.major,
     d = this.GetObjectPtr(this.theSEDSessionBlockID, !1);
   switch (a) {
     case Resources.RulerUnits.SED_Feet:
@@ -8551,33 +8551,33 @@ ListManager.LM.prototypeScaleToRuler = function (e, t, a, r, i, n) {
       !0,
         0.1,
         u = 0.1,
-        GlobalData.docHandler.rulerSettings.useInches ||
-        (u /= GlobalData.docHandler.rulerSettings.metricConv);
+        T3Gv.docHandler.rulerSettings.useInches ||
+        (u /= T3Gv.docHandler.rulerSettings.metricConv);
       break;
     case Resources.RulerUnits.SED_Cm:
       !0,
         1,
         u = 1,
-        GlobalData.docHandler.rulerSettings.useInches ||
-        (u /= GlobalData.docHandler.rulerSettings.metricConv);
+        T3Gv.docHandler.rulerSettings.useInches ||
+        (u /= T3Gv.docHandler.rulerSettings.metricConv);
       break;
     case Resources.RulerUnits.SED_M:
       !0,
         100,
         u = 100,
-        GlobalData.docHandler.rulerSettings.useInches ||
-        (u /= GlobalData.docHandler.rulerSettings.metricConv);
+        T3Gv.docHandler.rulerSettings.useInches ||
+        (u /= T3Gv.docHandler.rulerSettings.metricConv);
       break;
     default:
       u = 1,
         1
   }
-  switch (GlobalData.docHandler.rulerSettings.units) {
+  switch (T3Gv.docHandler.rulerSettings.units) {
     case Resources.RulerUnits.SED_Feet:
       c = 12,
         12,
-        GlobalData.docHandler.rulerSettings.useInches ||
-        (c *= GlobalData.docHandler.rulerSettings.metricConv);
+        T3Gv.docHandler.rulerSettings.useInches ||
+        (c *= T3Gv.docHandler.rulerSettings.metricConv);
       break;
     case Resources.RulerUnits.SED_Mm:
       !0,
@@ -8597,11 +8597,11 @@ ListManager.LM.prototypeScaleToRuler = function (e, t, a, r, i, n) {
     default:
       c = 1,
         1,
-        GlobalData.docHandler.rulerSettings.useInches ||
-        (c *= GlobalData.docHandler.rulerSettings.metricConv)
+        T3Gv.docHandler.rulerSettings.useInches ||
+        (c *= T3Gv.docHandler.rulerSettings.metricConv)
   }
   if (
-    s = e * (o = u / (c *= GlobalData.docHandler.rulerSettings.majorScale)) * p,
+    s = e * (o = u / (c *= T3Gv.docHandler.rulerSettings.majorScale)) * p,
     l = t * o * p,
     n ||
     s < ConstantData.Defines.SED_MinDim &&
@@ -8635,36 +8635,36 @@ ListManager.LM.prototypeCalcTextureScale = function (e, t) {
       n = 12;
       break;
     case Resources.RulerUnits.SED_Mm:
-      n = 0.1 / GlobalData.docHandler.rulerSettings.metricConv;
+      n = 0.1 / T3Gv.docHandler.rulerSettings.metricConv;
       break;
     case Resources.RulerUnits.SED_Cm:
-      n = 1 / GlobalData.docHandler.rulerSettings.metricConv;
+      n = 1 / T3Gv.docHandler.rulerSettings.metricConv;
       break;
     case Resources.RulerUnits.SED_M:
-      n = 100 / GlobalData.docHandler.rulerSettings.metricConv;
+      n = 100 / T3Gv.docHandler.rulerSettings.metricConv;
       break;
     default:
       n = 1
   }
-  switch (GlobalData.docHandler.rulerSettings.units) {
+  switch (T3Gv.docHandler.rulerSettings.units) {
     case Resources.RulerUnits.SED_Feet:
       i = 12;
       break;
     case Resources.RulerUnits.SED_Mm:
-      i = 0.1 / GlobalData.docHandler.rulerSettings.metricConv;
+      i = 0.1 / T3Gv.docHandler.rulerSettings.metricConv;
       break;
     case Resources.RulerUnits.SED_Cm:
-      i = 1 / GlobalData.docHandler.rulerSettings.metricConv;
+      i = 1 / T3Gv.docHandler.rulerSettings.metricConv;
       break;
     case Resources.RulerUnits.SED_M:
-      i = 100 / GlobalData.docHandler.rulerSettings.metricConv;
+      i = 100 / T3Gv.docHandler.rulerSettings.metricConv;
       break;
     default:
       i = 1
   }
-  return a = n / (i *= GlobalData.docHandler.rulerSettings.majorScale),
-    GlobalData.docHandler.rulerSettings.useInches ||
-    (a /= GlobalData.docHandler.rulerSettings.metricConv),
+  return a = n / (i *= T3Gv.docHandler.rulerSettings.majorScale),
+    T3Gv.docHandler.rulerSettings.useInches ||
+    (a /= T3Gv.docHandler.rulerSettings.metricConv),
     (r = e.RWidth * a * 100 / (t < 1 ? 1 : t)) < 0.01 &&
     (r = 0.01),
     r > 1000 &&
@@ -8879,11 +8879,11 @@ ListManager.LM.prototypeSetWorkArea = function (e, t, a, r, i, n) {
       p,
       d,
       D,
-      g = GlobalData.optManager.ActiveVisibleZList(),
+      g = T3Gv.optManager.ActiveVisibleZList(),
       h = g.length;
     for (u = 0; u < h; u++) D = g[u],
-      (d = (p = this.GetObjectPtr(D, !1)).GetTable(!1)) ? GlobalData.optManager.Table_Format(p, d, p.TextGrow, !1) : p.DataID >= 0 &&
-        GlobalData.optManager.TextResizeCommon(D, !1, !0)
+      (d = (p = this.GetObjectPtr(D, !1)).GetTable(!1)) ? T3Gv.optManager.Table_Format(p, d, p.TextGrow, !1) : p.DataID >= 0 &&
+        T3Gv.optManager.TextResizeCommon(D, !1, !0)
   }
   if (Collab.AllowMessage()) {
     var m = {
@@ -8900,7 +8900,7 @@ ListManager.LM.prototypeSetWorkArea = function (e, t, a, r, i, n) {
 }
 
 ListManager.LM.prototypeResetDrawingDimensions = function (e, t) {
-  var a = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0),
+  var a = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0),
     r = {
       x: e,
       y: t
@@ -8913,7 +8913,7 @@ ListManager.LM.prototypeResetDrawingDimensions = function (e, t) {
 
 ListManager.LM.prototypeGetFractionStringGranularity = function (e) {
 
-  return GlobalData.docHandler.rulerSettings.fractionaldenominator >= 1 ? 1 / GlobalData.docHandler.rulerSettings.fractionaldenominator : GlobalData.docHandler.rulerSettings.majorScale <= 1 ? 1 / 16 : GlobalData.docHandler.rulerSettings.majorScale <= 2 ? 1 / 8 : GlobalData.docHandler.rulerSettings.majorScale <= 4 ? 1 / 4 : GlobalData.docHandler.rulerSettings.majorScale <= 8 ? 0.5 : 1
+  return T3Gv.docHandler.rulerSettings.fractionaldenominator >= 1 ? 1 / T3Gv.docHandler.rulerSettings.fractionaldenominator : T3Gv.docHandler.rulerSettings.majorScale <= 1 ? 1 / 16 : T3Gv.docHandler.rulerSettings.majorScale <= 2 ? 1 / 8 : T3Gv.docHandler.rulerSettings.majorScale <= 4 ? 1 / 4 : T3Gv.docHandler.rulerSettings.majorScale <= 8 ? 0.5 : 1
 },
   ,
   ListManager.LM.prototype.NumberIsFloat = function (e, t) {
@@ -8963,9 +8963,9 @@ ListManager.LM.prototypeConvertToFeet = function (e) {
 
 ListManager.LM.prototypeUnitsToCoord = function (e, t) {
 
-  GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
+  T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
   var a = this.GetToUnits();
-  return e += t * GlobalData.docHandler.rulerSettings.majorScale,
+  return e += t * T3Gv.docHandler.rulerSettings.majorScale,
     e /= a
 },
 
@@ -8977,8 +8977,8 @@ ListManager.LM.prototypeUnitsToCoord = function (e, t) {
       i = 0;
     if (0 === e.length) return 0;
     if (
-      GlobalData.docHandler.rulerSettings.useInches &&
-      GlobalData.docHandler.rulerSettings.units == Resources.RulerUnits.SED_Feet &&
+      T3Gv.docHandler.rulerSettings.useInches &&
+      T3Gv.docHandler.rulerSettings.units == Resources.RulerUnits.SED_Feet &&
       !t
     ) {
       if ((r = this.ConvertToFeet(e)) < 0 && !a) return !1
@@ -8987,7 +8987,7 @@ ListManager.LM.prototypeUnitsToCoord = function (e, t) {
       r = parseFloat(e)
     }
     return (
-      i = GlobalData.docHandler.rulerSettings.showpixels ? r : this.UnitsToCoord(r, 0)
+      i = T3Gv.docHandler.rulerSettings.showpixels ? r : this.UnitsToCoord(r, 0)
     ) > 400000 &&
       (i = - 1),
       i
@@ -9038,16 +9038,16 @@ ListManager.LM.prototypeIsRectangularPolygon = function (e) {
 ListManager.LM.prototypeUpdateAllDimensionLines = function (e) {
   var t,
     a,
-    r = GlobalData.optManager.ActiveVisibleZList(),
+    r = T3Gv.optManager.ActiveVisibleZList(),
     i = null,
     n = null;
-  for (t = r.length, a = 0; a < t; a++) (i = GlobalData.optManager.GetObjectPtr(r[a], !1)) &&
+  for (t = r.length, a = 0; a < t; a++) (i = T3Gv.optManager.GetObjectPtr(r[a], !1)) &&
     (
-      n = GlobalData.optManager.svgObjectLayer.GetElementByID(i.BlockID),
+      n = T3Gv.optManager.svgObjectLayer.GetElementByID(i.BlockID),
       i.UpdateDimensionLines(n)
     );
   e &&
-    GlobalData.optManager.CompleteOperation()
+    T3Gv.optManager.CompleteOperation()
 },
 
   ListManager.LM.prototype.SD_ScaleObjectsToNewScale = function (e) {
@@ -9060,8 +9060,8 @@ ListManager.LM.prototypeUpdateAllDimensionLines = function (e) {
       s,
       l,
       S,
-      c = GlobalData.optManager.ZList(),
-      u = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1);
+      c = T3Gv.optManager.ZList(),
+      u = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1);
     S = u.nlayers;
     var p = [];
     for (t = 0; t < S; t++) if (
@@ -9074,7 +9074,7 @@ ListManager.LM.prototypeUpdateAllDimensionLines = function (e) {
     for (a = c.length, t = 0; t < a; t++) if (
       r = c[t],
       !(p.indexOf(r) >= 0) &&
-      (i = GlobalData.optManager.GetObjectPtr(r, !0))
+      (i = T3Gv.optManager.GetObjectPtr(r, !0))
     ) {
       if (
         i.RemoveDimensionLines(this.svgObjectLayer.GetElementByID(r)),
@@ -9082,7 +9082,7 @@ ListManager.LM.prototypeUpdateAllDimensionLines = function (e) {
         i.DataID >= 0
       ) {
         for (
-          n = (o = GlobalData.optManager.GetObjectPtr(i.DataID, !0).runtimeText.styles).length,
+          n = (o = T3Gv.optManager.GetObjectPtr(i.DataID, !0).runtimeText.styles).length,
           s = 0;
           s < n;
           ++s
@@ -9090,32 +9090,32 @@ ListManager.LM.prototypeUpdateAllDimensionLines = function (e) {
         (l = i.GetTable(!0)) &&
           this.Table_ScaleTable(i, l, e, e)
       }
-      GlobalData.optManager.AddToDirtyList(r)
+      T3Gv.optManager.AddToDirtyList(r)
     }
-    GlobalData.optManager.CompleteOperation()
+    T3Gv.optManager.CompleteOperation()
   }
 
 ListManager.LM.prototype.ScaleDrawing = function (e, t) {
   var a = this.GetDrawingScale(t),
     r = this.GetDrawingScale(e),
     n = !1,
-    o = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1),
-    s = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0);
+    o = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1),
+    s = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0);
   if (r !== a) o.layers[o.activelayer].flags & ConstantData.LayerFlags.SDLF_UseEdges &&
     o.activelayer > 0 &&
-    GlobalData.optManager.MakeLayerActiveByIndex(0),
+    T3Gv.optManager.MakeLayerActiveByIndex(0),
     this.SD_ScaleObjectsToNewScale(r / a),
     n = !0,
     s.def.style.Line.Thickness = 1,
     gBusinessController.StopAddingWalls(null, !0),
-    GlobalData.docHandler.MaintainView();
+    T3Gv.docHandler.MaintainView();
   else {
-    var l = GlobalData.optManager.ZList();
-    for (i = 0; i < l.length; i++) obj = GlobalData.optManager.GetObjectPtr(l[i], !0),
+    var l = T3Gv.optManager.ZList();
+    for (i = 0; i < l.length; i++) obj = T3Gv.optManager.GetObjectPtr(l[i], !0),
       0 !== obj.Dimensions &&
-      GlobalData.optManager.AddToDirtyList(l[i]);
-    GlobalData.optManager.RenderDirtySVGObjects(),
-      GlobalData.optManager.PreserveUndoState(!1)
+      T3Gv.optManager.AddToDirtyList(l[i]);
+    T3Gv.optManager.RenderDirtySVGObjects(),
+      T3Gv.optManager.PreserveUndoState(!1)
   }
   return n
 }
@@ -9135,7 +9135,7 @@ ListManager.LM.prototypeShowExpandedView = function (e, t) {
   var a = this.GetObjectPtr(e, !1);
   a &&
     (
-      GlobalData.optManager.ActiveExpandedView = a,
+      T3Gv.optManager.ActiveExpandedView = a,
       SDUI.Commands.MainController.ShowDropdown(
         Resources.Controls.Dropdowns.ExpandedViewContainer.Id,
         t.gesture.center.clientX,
@@ -9215,8 +9215,8 @@ ListManager.LM.prototypeCreateD3Symbol = function (e) {
       (obj.StyleRecord.Line.Thickness = c),
       u &&
       (obj.StyleRecord.Text.Paint.Color = o(u)),
-      GlobalData.optManager.AddToDirtyList(obj.BlockID),
-      GlobalData.optManager.CompleteOperation()
+      T3Gv.optManager.AddToDirtyList(obj.BlockID),
+      T3Gv.optManager.CompleteOperation()
     )
 }
 
@@ -9262,7 +9262,7 @@ ListManager.LM.prototypeD3_UpdateGraphSize = function (e, t, a) {
 }
 
 ListManager.LM.prototypeDontAllowInsertD3 = function () {
-  var e = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !1);
+  var e = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1);
   switch (e.layers[e.activelayer].layertype) {
     case ConstantData.LayerTypes.SD_LAYERT_GANTT:
     case ConstantData.LayerTypes.SD_LAYERT_MINDMAP:
@@ -9328,7 +9328,7 @@ ListManager.LM.prototypeAddGaugeToShape = function (e, t, a) {
           i = [];
         switch (
         r.d3Settings.moduleID = 'LinearGauge',
-        r.d3Settings = GlobalData.optManager.D3_GetDefaultParams(r.d3Settings.moduleID),
+        r.d3Settings = T3Gv.optManager.D3_GetDefaultParams(r.d3Settings.moduleID),
         i.push({
           Name: 'noUnits',
           Value: !1
@@ -9619,7 +9619,7 @@ ListManager.LM.prototypeAddGaugeToShape = function (e, t, a) {
           i = [];
         switch (
         r.d3Settings.moduleID = 'RadialGauge',
-        r.d3Settings = GlobalData.optManager.D3_GetDefaultParams(r.d3Settings.moduleID),
+        r.d3Settings = T3Gv.optManager.D3_GetDefaultParams(r.d3Settings.moduleID),
         e
         ) {
           case D.RadialSimpleFull:
@@ -9965,17 +9965,17 @@ ListManager.LM.prototypeAddGaugeToShape = function (e, t, a) {
       }(a.Settings)
   } else null != a.Settings &&
     M(a.Settings);
-  GlobalData.optManager.D3_UpdateParamSize(r.d3Settings, c, u),
+  T3Gv.optManager.D3_UpdateParamSize(r.d3Settings, c, u),
     c = r.d3Settings.renderSettings.width.value,
     u = r.d3Settings.renderSettings.height.value,
     e.Frame.width == c &&
     e.Frame.height == u ||
     (e.SetSize(c, u, - 1), r.Frame.width = c, r.Frame.height = u);
   var _ = new ListManager.D3Symbol(r);
-  GlobalData.optManager.ReplaceSymbol(_, e.BlockID, S, !1, !1),
+  T3Gv.optManager.ReplaceSymbol(_, e.BlockID, S, !1, !1),
     a.ShowDataTable &&
     _.SetFieldDataRecord(n, i, !1),
-    GlobalData.optManager.DeleteObjects(S)
+    T3Gv.optManager.DeleteObjects(S)
 },
 
 
@@ -10011,7 +10011,7 @@ ListManager.LM.prototypeAddGaugeToShape = function (e, t, a) {
           var t = [];
           switch (
           r.d3Settings.moduleID = 'LineChart',
-          r.d3Settings = GlobalData.optManager.D3_GetDefaultParams(r.d3Settings.moduleID),
+          r.d3Settings = T3Gv.optManager.D3_GetDefaultParams(r.d3Settings.moduleID),
           t.push({
             Name: VS.LineChart_Properties.LegendPos,
             Value: 'topright'
@@ -10040,7 +10040,7 @@ ListManager.LM.prototypeAddGaugeToShape = function (e, t, a) {
           var t = [];
           switch (
           r.d3Settings.moduleID = 'PieChart',
-          r.d3Settings = GlobalData.optManager.D3_GetDefaultParams(r.d3Settings.moduleID),
+          r.d3Settings = T3Gv.optManager.D3_GetDefaultParams(r.d3Settings.moduleID),
           null == (c = a.DataTableRowID) &&
           (c = 1),
           l = 400,
@@ -10082,7 +10082,7 @@ ListManager.LM.prototypeAddGaugeToShape = function (e, t, a) {
           var t = [];
           switch (
           r.d3Settings.moduleID = 'BarChart',
-          r.d3Settings = GlobalData.optManager.D3_GetDefaultParams(r.d3Settings.moduleID),
+          r.d3Settings = T3Gv.optManager.D3_GetDefaultParams(r.d3Settings.moduleID),
           t.push({
             Name: VS.BarChart_Properties.LegendPos,
             Value: 'topright'
@@ -10128,7 +10128,7 @@ ListManager.LM.prototypeAddGaugeToShape = function (e, t, a) {
           var t = [];
           switch (
           r.d3Settings.moduleID = 'SankeyChart',
-          r.d3Settings = GlobalData.optManager.D3_GetDefaultParams(r.d3Settings.moduleID),
+          r.d3Settings = T3Gv.optManager.D3_GetDefaultParams(r.d3Settings.moduleID),
           t.push({
             Name: VS.SankeyChart_Properties.TitlePos,
             Value: 'topleft'
@@ -10187,7 +10187,7 @@ ListManager.LM.prototypeAddGaugeToShape = function (e, t, a) {
       (n = 400),
       o < l &&
       (o = l),
-      GlobalData.optManager.D3_UpdateGraphSize(r.d3Settings, n, o),
+      T3Gv.optManager.D3_UpdateGraphSize(r.d3Settings, n, o),
       n = r.d3Settings.renderSettings.width.value,
       o = r.d3Settings.renderSettings.height.value,
       e.Frame.width == n &&
@@ -10210,15 +10210,15 @@ ListManager.LM.prototypeAddGaugeToShape = function (e, t, a) {
       }
       p.SetFieldDataRecord(d, S)
     }
-    GlobalData.optManager.ReplaceSymbol(p, e.BlockID, i, !1, !1),
-      GlobalData.optManager.DeleteObjects(i)
+    T3Gv.optManager.ReplaceSymbol(p, e.BlockID, i, !1, !1),
+      T3Gv.optManager.DeleteObjects(i)
   }
 
 ListManager.LM.prototypeInsertGraph = function (e) {
   var t = function (t, a) {
-    var r = GlobalData.optManager.GetPastePosition(),
+    var r = T3Gv.optManager.GetPastePosition(),
       i = (
-        GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
+        T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
         Utils2.RemoveExtension(a)
       );
     i &&
@@ -10236,10 +10236,10 @@ ListManager.LM.prototypeInsertGraph = function (e) {
       o = new ListManager.Rect(n);
     Collab.AllowMessage() &&
       Collab.BeginSecondaryEdit();
-    var s = GlobalData.optManager.AddNewObject(o, !0, !0),
+    var s = T3Gv.optManager.AddNewObject(o, !0, !0),
       l = [];
     l.push(s);
-    var S = GlobalData.optManager.GetObjectPtr(s, !0),
+    var S = T3Gv.optManager.GetObjectPtr(s, !0),
       c = Resources.FindStyle(ConstantData.Defines.D3Style);
     c &&
       (S.StyleRecord = Utils1.DeepCopy(c));
@@ -10261,7 +10261,7 @@ ListManager.LM.prototypeInsertGraph = function (e) {
         ]
     }
     if (
-      GlobalData.optManager.AddGraphToShape(S, null, u),
+      T3Gv.optManager.AddGraphToShape(S, null, u),
       Collab.AllowMessage()
     ) {
       var p = {};
@@ -10271,14 +10271,14 @@ ListManager.LM.prototypeInsertGraph = function (e) {
         (p.CreateList = [], p.CreateList.push(s)),
         Collab.BuildMessage(ConstantData.CollabMessages.InsertGraph, p, !1)
     }
-    GlobalData.optManager.CompleteOperation(l),
+    T3Gv.optManager.CompleteOperation(l),
       SDUI.Commands.MainController.Shapes.ReturnToSmartPanelMode('GRAPH')
   };
   if (
     ShowModalCallBack = function () {
       SDUI.Commands.MainController.ImportController.SetImportDataCallBack(t)
     },
-    !GlobalData.optManager.DontAllowInsertD3()
+    !T3Gv.optManager.DontAllowInsertD3()
   ) {
     var a = Resources.Controls.Modals.ImportData.Id,
       r = Constants.Css_ImportLineBarDataHelperImage;
@@ -10317,8 +10317,8 @@ ListManager.LM.prototypeIsGraph = function (e) {
 ListManager.LM.prototypeGetLastTargetShape = function (e) {
   var t,
     a,
-    r = GlobalData.optManager.ActiveVisibleZList();
-  for (t = r.length - 1; t >= 0; t--) if (a = r[t], e(GlobalData.optManager.GetObjectPtr(a, !1))) return a;
+    r = T3Gv.optManager.ActiveVisibleZList();
+  for (t = r.length - 1; t >= 0; t--) if (a = r[t], e(T3Gv.optManager.GetObjectPtr(a, !1))) return a;
   return - 1
 }
 
@@ -10327,7 +10327,7 @@ ListManager.LM.prototypeEditGraph = function () {
     t;
   (e = this.GetTargetSelect()) < 0 &&
     (e = this.GetLastTargetShape(this.IsGraph)) >= 0 &&
-    GlobalData.optManager.SetTargetSelect(e, !1),
+    T3Gv.optManager.SetTargetSelect(e, !1),
     e >= 0 &&
       (t = this.GetObjectPtr(e, !1)) &&
       t.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.SHAPE &&
@@ -10352,16 +10352,16 @@ ListManager.LM.prototypeUpdateGraph = function (e, t, a, r, i, n) {
       }
       o.d3Settings = Utils1.DeepCopy(e),
         o.SetFieldDataRecord(n, l),
-        GlobalData.optManager.AddToDirtyList(o.BlockID),
-        GlobalData.optManager.RenderDirtySVGObjects();
-      var u = GlobalData.optManager.svgObjectLayer.GetElementByID(o.BlockID);
+        T3Gv.optManager.AddToDirtyList(o.BlockID),
+        T3Gv.optManager.RenderDirtySVGObjects();
+      var u = T3Gv.optManager.svgObjectLayer.GetElementByID(o.BlockID);
       if (
         o.Resize(u, o.Frame, o),
-        GlobalData.optManager.AddToDirtyList(o.BlockID),
+        T3Gv.optManager.AddToDirtyList(o.BlockID),
         S >= 0 &&
         (
           ListManager.SDData.DeleteFieldedDataTable(S),
-          GlobalData.optManager.ClearShapesFieldData(S),
+          T3Gv.optManager.ClearShapesFieldData(S),
           SDUI.Commands.MainController.DataPanel._curTableID = n,
           SDUI.Commands.MainController.DataPanel.UpdateData(!0)
         ),
@@ -10375,7 +10375,7 @@ ListManager.LM.prototypeUpdateGraph = function (e, t, a, r, i, n) {
         p.d3Settings = Utils1.DeepCopy(e),
           Collab.BuildMessage(ConstantData.CollabMessages.UpdateGraph, p, !1)
       }
-      GlobalData.optManager.CompleteOperation(),
+      T3Gv.optManager.CompleteOperation(),
         i &&
         SDUI.Commands.MainController.SmartPanels.SetLeftPanelMode(Resources.LeftPanelMode.LEFTPANELMODE_SMARTPANEL)
     };
@@ -10416,7 +10416,7 @@ ListManager.LM.prototypeEditGauge = function () {
     t;
   (e = this.GetTargetSelect()) < 0 &&
     (e = this.GetLastTargetShape(this.IsGauge)) >= 0 &&
-    GlobalData.optManager.SetTargetSelect(e, !1),
+    T3Gv.optManager.SetTargetSelect(e, !1),
     e >= 0 &&
       (t = this.GetObjectPtr(e, !1)) &&
       t.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.SHAPE &&
@@ -10424,9 +10424,9 @@ ListManager.LM.prototypeEditGauge = function () {
 }
 
 ListManager.LM.prototypeInsertGauge = function (e) {
-  var t = GlobalData.optManager.GetPastePosition();
-  GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
-  if (!GlobalData.optManager.DontAllowInsertD3()) {
+  var t = T3Gv.optManager.GetPastePosition();
+  T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
+  if (!T3Gv.optManager.DontAllowInsertD3()) {
     var a = {
       Frame: {
         x: t.x,
@@ -10439,10 +10439,10 @@ ListManager.LM.prototypeInsertGauge = function (e) {
       r = new ListManager.Rect(a);
     Collab.AllowMessage() &&
       Collab.BeginSecondaryEdit();
-    var i = GlobalData.optManager.AddNewObject(r, !0, !0),
+    var i = T3Gv.optManager.AddNewObject(r, !0, !0),
       n = [];
     n.push(i);
-    var o = GlobalData.optManager.GetObjectPtr(i, !0),
+    var o = T3Gv.optManager.GetObjectPtr(i, !0),
       s = Resources.FindStyle(ConstantData.Defines.D3Style);
     s &&
       (o.StyleRecord = Utils1.DeepCopy(s));
@@ -10451,7 +10451,7 @@ ListManager.LM.prototypeInsertGauge = function (e) {
       GaugeType: e
     };
     if (
-      GlobalData.optManager.AddGaugeToShape(o, {
+      T3Gv.optManager.AddGaugeToShape(o, {
       }, l),
       Collab.AllowMessage()
     ) {
@@ -10462,7 +10462,7 @@ ListManager.LM.prototypeInsertGauge = function (e) {
         (S.CreateList = [], S.CreateList.push(i)),
         Collab.BuildMessage(ConstantData.CollabMessages.InsertGauge, S, !1)
     }
-    GlobalData.optManager.CompleteOperation(n),
+    T3Gv.optManager.CompleteOperation(n),
       SDUI.Commands.MainController.Shapes.ReturnToSmartPanelMode('GAUGE')
   }
 }
@@ -10504,19 +10504,19 @@ ListManager.LM.prototypeUpdateGauge = function (e, t, a, r, i) {
       ),
       obj.d3Settings = Utils1.DeepCopy(e),
       obj.StyleRecord = Utils1.DeepCopy(t),
-      GlobalData.optManager.AddToDirtyList(n),
-      GlobalData.optManager.RenderDirtySVGObjects(),
+      T3Gv.optManager.AddToDirtyList(n),
+      T3Gv.optManager.RenderDirtySVGObjects(),
       obj.Frame.width != a ||
       obj.Frame.height != r
     ) {
       var o = Utils1.DeepCopy(obj.Frame);
       o.width = a,
         o.height = r;
-      var s = GlobalData.optManager.svgObjectLayer.GetElementByID(obj.BlockID);
+      var s = T3Gv.optManager.svgObjectLayer.GetElementByID(obj.BlockID);
       obj.Resize(s, o, obj)
     }
     if (
-      GlobalData.optManager.AddToDirtyList(n),
+      T3Gv.optManager.AddToDirtyList(n),
       Collab.AllowMessage() &&
       !i
     ) {
@@ -10529,7 +10529,7 @@ ListManager.LM.prototypeUpdateGauge = function (e, t, a, r, i) {
         l.theStyle = Utils1.DeepCopy(t),
         Collab.BuildMessage(ConstantData.CollabMessages.UpdateGauge, l, !1)
     }
-    GlobalData.optManager.CompleteOperation()
+    T3Gv.optManager.CompleteOperation()
   }
 }
 
@@ -10538,7 +10538,7 @@ ListManager.LM.prototypeGetAllContainers = function (e) {
     a,
     r = e.length,
     i = [];
-  for (t = 0; t < r; t++) (a = GlobalData.optManager.GetObjectPtr(e[t], !1)) &&
+  for (t = 0; t < r; t++) (a = T3Gv.optManager.GetObjectPtr(e[t], !1)) &&
     a.moreflags & ConstantData.ObjMoreFlags.SED_MF_Container &&
     i.push(e[t]);
   return i
@@ -10572,25 +10572,25 @@ ListManager.LM.prototypeInsertFrameContainer = function (e, t, a, r) {
     m = ConstantData.Defines.FrameGap,
     C = null,
     y = null,
-    f = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
+    f = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
     L = ConstantData.ObjMoreFlags.SED_MF_AutoContainer,
     I = f.def.rrectparam,
     T = [];
   if (r && (L = r.Data.AutoContainer, I = r.Data.shapeparam), null != e) {
-    var b = GlobalData.optManager.GetObjectPtr(e, !1);
+    var b = T3Gv.optManager.GetObjectPtr(e, !1);
     b &&
       b.ParentFrameID >= 0 &&
-      null == (y = GlobalData.optManager.GetObjectPtr(b.ParentFrameID, !1)) &&
-      ((b = GlobalData.optManager.GetObjectPtr(e, !0)).ParentFrameID = - 1),
+      null == (y = T3Gv.optManager.GetObjectPtr(b.ParentFrameID, !1)) &&
+      ((b = T3Gv.optManager.GetObjectPtr(e, !0)).ParentFrameID = - 1),
       null == (g = Business.GetSelectionBusinessManager(e, !1)) &&
-      (g = GlobalData.gBusinessManager),
+      (g = T3Gv.gBusinessManager),
       C = g.GetFrameBusinessName()
   }
   var M,
     P,
     R,
     A,
-    _ = GlobalData.optManager.ActiveVisibleZList();
+    _ = T3Gv.optManager.ActiveVisibleZList();
   for (
     s = (n = this.GetObjectPtr(this.theSelectedListBlockID, !1)).length,
     o = 0;
@@ -10612,7 +10612,7 @@ ListManager.LM.prototypeInsertFrameContainer = function (e, t, a, r) {
   if (s = h.length, !y) for (o = 0; o < s; o++) for (
     P = h[o],
     null == (g = Business.GetSelectionBusinessManager(P, !1)) &&
-    (g = GlobalData.gBusinessManager),
+    (g = T3Gv.gBusinessManager),
     d = (M = g.GetChartObjectList(P)).length,
     p = 0;
     p < d;
@@ -10678,10 +10678,10 @@ ListManager.LM.prototypeInsertFrameContainer = function (e, t, a, r) {
             !0
           )
         );
-      var l = GlobalData.optManager.AddNewObject(s, !0, !0);
+      var l = T3Gv.optManager.AddNewObject(s, !0, !0);
       return Collab.AddNewBlockToSecondary(l),
         T.push(l),
-        (i = GlobalData.optManager.GetObjectPtr(l, !0)).StyleRecord.Fill.Paint.FillType = ConstantData.FillTypes.SDFILL_SOLID,
+        (i = T3Gv.optManager.GetObjectPtr(l, !0)).StyleRecord.Fill.Paint.FillType = ConstantData.FillTypes.SDFILL_SOLID,
         i.StyleRecord.Fill.Paint.Color = ConstantData.Defines.FrameFillColor,
         i.StyleRecord.Line.Paint.Color = ConstantData.Defines.FrameLineColor,
         i.StyleRecord.Line.Paint.FillType = ConstantData.FillTypes.SDFILL_SOLID,
@@ -10695,20 +10695,20 @@ ListManager.LM.prototypeInsertFrameContainer = function (e, t, a, r) {
           ConstantData.ObjMoreFlags.SED_MF_Container,
           !0
         ),
-        GlobalData.optManager.PutBehindObject(r, l),
-        GlobalData.optManager.AddToDirtyList(l),
+        T3Gv.optManager.PutBehindObject(r, l),
+        T3Gv.optManager.AddToDirtyList(l),
         l
     }(l, ConstantData.ObjectTypes.SD_OBJT_FRAME_CONTAINER, u, C);
     if (!r && !Collab.IsProcessingMessage()) {
       var v = [];
       v.push(F),
-        GlobalData.optManager.SelectObjects(v, !1, !0)
+        T3Gv.optManager.SelectObjects(v, !1, !0)
     }
     t ||
       (
         Collab.AllowMessage() &&
         Collab.SendMessage(w),
-        GlobalData.optManager.CompleteOperation()
+        T3Gv.optManager.CompleteOperation()
       )
   }
   return F
@@ -10768,10 +10768,10 @@ ListManager.LM.prototypeInsertSwimlane = function (e, t, a, r, i) {
         for (
           D = P.rows[0],
           m = P.rows[1],
-          GlobalData.optManager.theActionTable = P,
-          dim = GlobalData.optManager.Table_GrowRow(P, 0, f - D.frame.height, !1),
-          GlobalData.optManager.theActionTable = null,
-          GlobalData.optManager.Table_FixRow(P, 0),
+          T3Gv.optManager.theActionTable = P,
+          dim = T3Gv.optManager.Table_GrowRow(P, 0, f - D.frame.height, !1),
+          T3Gv.optManager.theActionTable = null,
+          T3Gv.optManager.Table_FixRow(P, 0),
           t > 0 ? (n = b * t, o = b * a) : n = u,
           e.SetSize(n, p, 0),
           e.objecttype === S.SD_OBJT_SWIMLANE_ROWS &&
@@ -10786,20 +10786,20 @@ ListManager.LM.prototypeInsertSwimlane = function (e, t, a, r, i) {
             g.DataID = c[h].DataID,
             g.fill = c[h].HFill,
             P.cells[m.start + h].fill = c[h].LFill
-          ) : g.DataID = GlobalData.optManager.CreateTextBlock(e, Resources.Strings.SwimlaneLabel),
+          ) : g.DataID = T3Gv.optManager.CreateTextBlock(e, Resources.Strings.SwimlaneLabel),
           y.push(D.start + h);
         for (h = D.ncells; h < I; h++) (g = P.cells[h]).flags = d,
           g.celltype = ListManager.Table.CellTypes.SDT_CT_ROWREPEATER;
-        GlobalData.optManager.Table_ReformatText(e, P, 0, 0, y),
-          GlobalData.optManager.Table_BuildFills(e, P, null);
+        T3Gv.optManager.Table_ReformatText(e, P, 0, 0, y),
+          T3Gv.optManager.Table_BuildFills(e, P, null);
         break;
       case S.SD_OBJT_SWIMLANE_ROWS:
         for (
-          GlobalData.optManager.theActionTable = P,
-          dim = GlobalData.optManager.Table_GrowColumn(e, P, 0, L - P.cells[0].frame.width, e.TextGrow, !1, !1, !1),
-          GlobalData.optManager.theActionTable = null,
+          T3Gv.optManager.theActionTable = P,
+          dim = T3Gv.optManager.Table_GrowColumn(e, P, 0, L - P.cells[0].frame.width, e.TextGrow, !1, !1, !1),
+          T3Gv.optManager.theActionTable = null,
           col = P.cols[0],
-          GlobalData.optManager.Table_FixColumn(P, 0),
+          T3Gv.optManager.Table_FixColumn(P, 0),
           o = t > 0 ? T * t : p,
           e.SetSize(u, o, 0),
           e.objecttype === S.SD_OBJT_SWIMLANE_COLS &&
@@ -10816,28 +10816,28 @@ ListManager.LM.prototypeInsertSwimlane = function (e, t, a, r, i) {
               g.DataID = l[h].DataID,
               g.fill = l[h].HFill,
               P.cells[D.start + 1].fill = l[h].LFill
-            ) : g.DataID = GlobalData.optManager.CreateTextBlock(e, Resources.Strings.SwimlaneLabel),
+            ) : g.DataID = T3Gv.optManager.CreateTextBlock(e, Resources.Strings.SwimlaneLabel),
             g.celltype = ListManager.Table.CellTypes.SDT_CT_ROWREPEATER,
             y.push(D.start),
             R = 1;
             R < D.ncells;
             R++
           ) (g = P.cells[D.start + R]).flags = d;
-        GlobalData.optManager.Table_ReformatText(e, P, 0, 0, y),
-          GlobalData.optManager.Table_BuildFills(e, P, null);
+        T3Gv.optManager.Table_ReformatText(e, P, 0, 0, y),
+          T3Gv.optManager.Table_BuildFills(e, P, null);
         break;
       default:
         for (
           D = P.rows[0],
-          GlobalData.optManager.theActionTable = P,
-          dim = GlobalData.optManager.Table_GrowRow(P, 0, f - D.frame.height, !1),
-          GlobalData.optManager.theActionTable = null,
-          GlobalData.optManager.Table_FixRow(P, 0),
-          GlobalData.optManager.theActionTable = P,
-          dim = GlobalData.optManager.Table_GrowColumn(e, P, 0, L - P.cells[0].frame.width, e.TextGrow, !1, !1, !1),
-          GlobalData.optManager.theActionTable = null,
+          T3Gv.optManager.theActionTable = P,
+          dim = T3Gv.optManager.Table_GrowRow(P, 0, f - D.frame.height, !1),
+          T3Gv.optManager.theActionTable = null,
+          T3Gv.optManager.Table_FixRow(P, 0),
+          T3Gv.optManager.theActionTable = P,
+          dim = T3Gv.optManager.Table_GrowColumn(e, P, 0, L - P.cells[0].frame.width, e.TextGrow, !1, !1, !1),
+          T3Gv.optManager.theActionTable = null,
           col = P.cols[0],
-          GlobalData.optManager.Table_FixColumn(P, 0),
+          T3Gv.optManager.Table_FixColumn(P, 0),
           n = t > 0 ? L + (b - 1) * t : u,
           o = a > 0 ? f + (T - 1) * a : p,
           e.SetSize(n, o, 0),
@@ -10853,7 +10853,7 @@ ListManager.LM.prototypeInsertSwimlane = function (e, t, a, r, i) {
             R++
           ) m = P.rows[R],
             P.cells[m.start + h].fill = c[h - 1].LFill;
-          else g.DataID = GlobalData.optManager.CreateTextBlock(e, Resources.Strings.SwimlaneLabel),
+          else g.DataID = T3Gv.optManager.CreateTextBlock(e, Resources.Strings.SwimlaneLabel),
             l &&
             l.length &&
             (g.fill = l[h - 1].HFill);
@@ -10878,7 +10878,7 @@ ListManager.LM.prototypeInsertSwimlane = function (e, t, a, r, i) {
               g.fill = c[h - 1].HFill
             }
             if (0 === h) continue;
-            g.DataID = GlobalData.optManager.CreateTextBlock(e, Resources.Strings.SwimlaneLabel)
+            g.DataID = T3Gv.optManager.CreateTextBlock(e, Resources.Strings.SwimlaneLabel)
           }
           for (
             g.celltype = ListManager.Table.CellTypes.SDT_CT_ROWREPEATER,
@@ -10888,22 +10888,22 @@ ListManager.LM.prototypeInsertSwimlane = function (e, t, a, r, i) {
             R++
           ) (g = P.cells[D.start + R]).flags = d
         }
-        GlobalData.optManager.Table_ReformatText(e, P, 0, 0, y),
-          GlobalData.optManager.Table_BuildFills(e, P, null)
+        T3Gv.optManager.Table_ReformatText(e, P, 0, 0, y),
+          T3Gv.optManager.Table_BuildFills(e, P, null)
     }
   },
     m = function (n) {
-      var o = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
+      var o = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
         s = (
-          GlobalData.docHandler.svgDoc.GetWorkArea(),
-          GlobalData.docHandler.svgDoc.docInfo.docToScreenScale
+          T3Gv.docHandler.svgDoc.GetWorkArea(),
+          T3Gv.docHandler.svgDoc.docInfo.docToScreenScale
         );
       null != s &&
         0 !== s ||
         (s = 1);
       var l = [],
-        c = GlobalData.optManager.GetPastePosition(),
-        d = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !0),
+        c = T3Gv.optManager.GetPastePosition(),
+        d = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !0),
         D = d.layers[d.activelayer].zList,
         m = D.length > 0 &&
           0 === d.swimlanelist.length;
@@ -10915,7 +10915,7 @@ ListManager.LM.prototypeInsertSwimlane = function (e, t, a, r, i) {
         T = o.def.rrectparam,
         b = Business.GetSelectionBusinessManager(null, !1);
       null == b &&
-        (b = GlobalData.gBusinessManager);
+        (b = T3Gv.gBusinessManager);
       var M = SDJS_Business_GetModuleName(b),
         P = {
           x: c.x,
@@ -10944,7 +10944,7 @@ ListManager.LM.prototypeInsertSwimlane = function (e, t, a, r, i) {
         ),
         R
       ) {
-        var A = GlobalData.optManager.GetObjectPtr(R.ID, !1);
+        var A = T3Gv.optManager.GetObjectPtr(R.ID, !1);
         M = A.BusinessName,
           P.x = A.Frame.x,
           P.y = A.Frame.y,
@@ -10981,7 +10981,7 @@ ListManager.LM.prototypeInsertSwimlane = function (e, t, a, r, i) {
           x: P.x + P.width / 2,
           y: P.y + P.height / 2
         };
-        P = GlobalData.optManager.RotateRectAboutCenter(P, E, 270)
+        P = T3Gv.optManager.RotateRectAboutCenter(P, E, 270)
       }
       var w = {
         Frame: P,
@@ -11015,11 +11015,11 @@ ListManager.LM.prototypeInsertSwimlane = function (e, t, a, r, i) {
             (A.moreflags & ConstantData.ObjMoreFlags.SED_MF_Frame_Group) > 0
           )
         );
-      var v = GlobalData.optManager.AddNewObject(F, !0, !0);
+      var v = T3Gv.optManager.AddNewObject(F, !0, !0);
       if (
         Collab.AddNewBlockToSecondary(v),
         g.push(v),
-        obj = GlobalData.optManager.GetObjectPtr(v, !0),
+        obj = T3Gv.optManager.GetObjectPtr(v, !0),
         obj.BusinessName = M,
         obj.StyleRecord.Fill.Paint.FillType = ConstantData.FillTypes.SDFILL_SOLID,
         A ? (
@@ -11050,7 +11050,7 @@ ListManager.LM.prototypeInsertSwimlane = function (e, t, a, r, i) {
           )
         ),
         m &&
-        GlobalData.optManager.PutBehindObject(C, v),
+        T3Gv.optManager.PutBehindObject(C, v),
         h(obj, n),
         y &&
         L(obj.BlockID, null, null, !0),
@@ -11081,12 +11081,12 @@ ListManager.LM.prototypeInsertSwimlane = function (e, t, a, r, i) {
           (k.CreateList = g),
           Collab.BuildMessage(ConstantData.CollabMessages.InsertSwimlane, k, !0)
       }
-      if (l.length && GlobalData.optManager.DeleteObjects(l, !1), null == r) {
+      if (l.length && T3Gv.optManager.DeleteObjects(l, !1), null == r) {
         var U = [];
         U.push(v),
-          GlobalData.optManager.SelectObjects(U, !1, !0)
+          T3Gv.optManager.SelectObjects(U, !1, !0)
       }
-      GlobalData.optManager.CompleteOperation()
+      T3Gv.optManager.CompleteOperation()
     },
     C = function (e, t, a) {
       var r,
@@ -11145,14 +11145,14 @@ ListManager.LM.prototypeInsertSwimlane = function (e, t, a, r, i) {
         f = !1;
       if (
         (
-          !(s = GlobalData.optManager.GetObjectPtr(n, !1)) ||
+          !(s = T3Gv.optManager.GetObjectPtr(n, !1)) ||
           s.objecttype !== r ||
           s.RotationAngle !== o
         ) &&
         (
           Collab.AllowMessage() &&
           Collab.BeginSecondaryEdit(),
-          (s = GlobalData.optManager.GetObjectPtr(n, !1)) &&
+          (s = T3Gv.optManager.GetObjectPtr(n, !1)) &&
           (l = s.GetTable(!0))
         )
       ) {
@@ -11188,10 +11188,10 @@ ListManager.LM.prototypeInsertSwimlane = function (e, t, a, r, i) {
         }
         if (s.RotationAngle !== o) var I = Utils1.DeepCopy(s.r);
         if (
-          (s = GlobalData.optManager.GetObjectPtr(n, !0)).RotationAngle = o,
+          (s = T3Gv.optManager.GetObjectPtr(n, !0)).RotationAngle = o,
           l &&
-          GlobalData.optManager.Table_DeleteObject(l),
-          (u = GlobalData.objectStore.GetObject(s.TableID)) &&
+          T3Gv.optManager.Table_DeleteObject(l),
+          (u = T3Gv.objectStore.GetObject(s.TableID)) &&
           u.Delete(),
           s.TableID = - 1,
           h(s, r, p, d, D),
@@ -11211,11 +11211,11 @@ ListManager.LM.prototypeInsertSwimlane = function (e, t, a, r, i) {
         }
         I &&
           s.OffsetShape(I.x - s.r.x, I.y - s.r.y),
-          GlobalData.optManager.CompleteOperation()
+          T3Gv.optManager.CompleteOperation()
       }
     },
     L = function (t, a, r, i) {
-      var n = GlobalData.optManager.GetObjectPtr(t, !1);
+      var n = T3Gv.optManager.GetObjectPtr(t, !1);
       if (n && n.objecttype === S.SD_OBJT_SWIMLANE_COLS) {
         var o = n.GetTable(!1);
         if (o && o.cells[0].celltype !== c.SD_CT_SWIMLANE_TITLE) {
@@ -11227,20 +11227,20 @@ ListManager.LM.prototypeInsertSwimlane = function (e, t, a, r, i) {
             p = Utils1.DeepCopy(o.cells[o.rows[1].start].fill);
           if (n.RotationAngle) var d = Utils1.DeepCopy(n.r);
           for (
-            o = (n = GlobalData.optManager.GetObjectPtr(t, !0)).GetTable(!0),
-            GlobalData.optManager.Table_AddRows(n, o, 0, 0, !0, !1, !1),
+            o = (n = T3Gv.optManager.GetObjectPtr(t, !0)).GetTable(!0),
+            T3Gv.optManager.Table_AddRows(n, o, 0, 0, !0, !1, !1),
             null != a &&
             (o.cells[0].DataID = a),
             r &&
             (o.cells[0].fill = r),
-            GlobalData.optManager.Table_JoinHorizontally(n, o, 0, o.cols.length - 1, 0, 0),
+            T3Gv.optManager.Table_JoinHorizontally(n, o, 0, o.cols.length - 1, 0, 0),
             o.cells[0].celltype = c.SD_CT_SWIMLANE_TITLE,
             l = (u = o.rows[1]).ncells,
             s = 0;
             s < l;
             s++
           ) o.cells[u.start + s].fill = Utils1.DeepCopy(p);
-          if (GlobalData.optManager.Table_BuildFills(n, o, null), i) return;
+          if (T3Gv.optManager.Table_BuildFills(n, o, null), i) return;
           if (Collab.AllowMessage()) {
             var D = {
               swimlanetype: e
@@ -11249,7 +11249,7 @@ ListManager.LM.prototypeInsertSwimlane = function (e, t, a, r, i) {
           }
           d &&
             n.OffsetShape(d.x - n.r.x, d.y - n.r.y),
-            GlobalData.optManager.CompleteOperation()
+            T3Gv.optManager.CompleteOperation()
         }
       }
     };
@@ -11289,14 +11289,14 @@ ListManager.LM.prototypeInsertSwimlane = function (e, t, a, r, i) {
       !function (t) {
         var a = ConstantData.Defines.FrameTitleHeight,
           r = ConstantData.Defines.FrameGap,
-          i = GlobalData.optManager.GetObjectPtr(t, !1);
+          i = T3Gv.optManager.GetObjectPtr(t, !1);
         if (i) {
           var n = i.GetTable(!1);
           if (null == n) {
             if (i.r.y - a < r) {
               Collab.AllowMessage() &&
                 Collab.BeginSecondaryEdit(),
-                i = GlobalData.optManager.GetObjectPtr(t, !0),
+                i = T3Gv.optManager.GetObjectPtr(t, !0),
                 Utils1.DeepCopy(i.r);
               var o = i.FramezList;
               i.OffsetShape(0, a + r - i.r.y, o)
@@ -11304,22 +11304,22 @@ ListManager.LM.prototypeInsertSwimlane = function (e, t, a, r, i) {
             var s = Utils1.DeepCopy(i.trect);
             if (
               i.InsertNewTable(2, 1, 2),
-              (n = i.GetTable(!0)).cells[0].DataID = GlobalData.optManager.CreateTextBlock(i, Resources.Strings.FrameTitle),
+              (n = i.GetTable(!0)).cells[0].DataID = T3Gv.optManager.CreateTextBlock(i, Resources.Strings.FrameTitle),
               row = n.rows[0],
-              GlobalData.optManager.theActionTable = n,
-              GlobalData.optManager.Table_GrowRow(n, 0, a - row.frame.height, !1),
-              GlobalData.optManager.theActionTable = null,
-              GlobalData.optManager.Table_FixRow(n, 0),
+              T3Gv.optManager.theActionTable = n,
+              T3Gv.optManager.Table_GrowRow(n, 0, a - row.frame.height, !1),
+              T3Gv.optManager.theActionTable = null,
+              T3Gv.optManager.Table_FixRow(n, 0),
               n.cells[0].celltype = ListManager.Table.CellTypes.SD_CT_SWIMLANE_TITLE,
               i.TextFlags = Utils2.SetFlag(i.TextFlags, ConstantData.TextFlags.SED_TF_None, !1),
               row = n.rows[1],
-              GlobalData.optManager.theActionTable = n,
-              GlobalData.optManager.Table_GrowRow(n, 1, s.height - row.frame.height, !1),
-              GlobalData.optManager.theActionTable = null,
+              T3Gv.optManager.theActionTable = n,
+              T3Gv.optManager.Table_GrowRow(n, 1, s.height - row.frame.height, !1),
+              T3Gv.optManager.theActionTable = null,
               n.cells[1].flags = ListManager.Table.CellFlags.SDT_F_NoText,
               i.OffsetShape(0, - a),
-              GlobalData.optManager.SetLinkFlag(t, ConstantData.LinkFlags.SED_L_MOVE),
-              GlobalData.optManager.AddToDirtyList(t, !0),
+              T3Gv.optManager.SetLinkFlag(t, ConstantData.LinkFlags.SED_L_MOVE),
+              T3Gv.optManager.AddToDirtyList(t, !0),
               Collab.AllowMessage()
             ) {
               var l = {
@@ -11327,14 +11327,14 @@ ListManager.LM.prototypeInsertSwimlane = function (e, t, a, r, i) {
               };
               Collab.BuildMessage(ConstantData.CollabMessages.InsertSwimlane, l, !0)
             }
-            GlobalData.optManager.CompleteOperation()
+            T3Gv.optManager.CompleteOperation()
           }
         }
       }(l);
       break;
     case 'RemoveTitleRow':
       !function (t) {
-        var a = GlobalData.optManager.GetObjectPtr(t, !1);
+        var a = T3Gv.optManager.GetObjectPtr(t, !1);
         if (a && a.objecttype === S.SD_OBJT_SWIMLANE_COLS) {
           var r = a.GetTable(!1);
           if (r && r.cells[0].celltype === c.SD_CT_SWIMLANE_TITLE) {
@@ -11346,15 +11346,15 @@ ListManager.LM.prototypeInsertSwimlane = function (e, t, a, r, i) {
               s = Utils1.DeepCopy(r.cells[0].fill);
             if (a.RotationAngle) var l = Utils1.DeepCopy(a.r);
             for (
-              r = (a = GlobalData.optManager.GetObjectPtr(t, !0)).GetTable(!0),
-              GlobalData.optManager.Table_RemoveRows(a, r, 0, 0),
+              r = (a = T3Gv.optManager.GetObjectPtr(t, !0)).GetTable(!0),
+              T3Gv.optManager.Table_RemoveRows(a, r, 0, 0),
               n = (o = r.rows[0]).ncells,
               i = 0;
               i < n;
               i++
             ) r.cells[o.start + i].fill = Utils1.DeepCopy(s);
             if (
-              GlobalData.optManager.Table_BuildFills(a, r, null),
+              T3Gv.optManager.Table_BuildFills(a, r, null),
               0 === r.cells[0].hline.Thickness
             ) {
               r.rows[0].selected = !0;
@@ -11366,7 +11366,7 @@ ListManager.LM.prototypeInsertSwimlane = function (e, t, a, r, i) {
                 }
               },
                 p = Utils1.DeepCopy(u);
-              GlobalData.optManager.Table_ApplyProperties(a, u, p, !0),
+              T3Gv.optManager.Table_ApplyProperties(a, u, p, !0),
                 r.rows[0].selected = !1
             }
             if (Collab.AllowMessage()) {
@@ -11377,30 +11377,30 @@ ListManager.LM.prototypeInsertSwimlane = function (e, t, a, r, i) {
             }
             l &&
               a.OffsetShape(l.x - a.r.x, l.y - a.r.y),
-              GlobalData.optManager.CompleteOperation()
+              T3Gv.optManager.CompleteOperation()
           }
         }
       }(l);
       break;
     case 'RemoveFrameTitleRow':
       !function (t) {
-        var a = GlobalData.optManager.GetObjectPtr(t, !1);
+        var a = T3Gv.optManager.GetObjectPtr(t, !1);
         if (a && a.objecttype === S.SD_OBJT_FRAME_CONTAINER) {
           var r = a.GetTable(!1);
           if (r) {
             Collab.AllowMessage() &&
               Collab.BeginSecondaryEdit();
-            var i = (r = (a = GlobalData.optManager.GetObjectPtr(t, !0)).GetTable(!0)).cells[1].fill;
+            var i = (r = (a = T3Gv.optManager.GetObjectPtr(t, !0)).GetTable(!0)).cells[1].fill;
             if (
               a.StyleRecord.Fill = i,
-              GlobalData.optManager.Table_DeleteObject(r),
+              T3Gv.optManager.Table_DeleteObject(r),
               a.TextFlags = Utils2.SetFlag(a.TextFlags, ConstantData.TextFlags.SED_TF_None, !0),
               a.TextFlags = Utils2.SetFlag(a.TextFlags, ConstantData.TextFlags.SED_TF_OneClick, !1),
-              theDataBlockToDelete = GlobalData.objectStore.GetObject(a.TableID),
+              theDataBlockToDelete = T3Gv.objectStore.GetObject(a.TableID),
               theDataBlockToDelete &&
               theDataBlockToDelete.Delete(),
               a.TableID = - 1,
-              GlobalData.optManager.AddToDirtyList(t),
+              T3Gv.optManager.AddToDirtyList(t),
               Collab.AllowMessage()
             ) {
               var n = {
@@ -11408,7 +11408,7 @@ ListManager.LM.prototypeInsertSwimlane = function (e, t, a, r, i) {
               };
               Collab.BuildMessage(ConstantData.CollabMessages.InsertSwimlane, n, !0)
             }
-            GlobalData.optManager.CompleteOperation()
+            T3Gv.optManager.CompleteOperation()
           }
         }
       }(l)
@@ -11427,15 +11427,15 @@ ListManager.LM.prototypeSwimLane_Operation = function (e, t, a, r, i) {
     p;
   Collab.AllowMessage() &&
     Collab.BeginSecondaryEdit();
-  var d = GlobalData.optManager.GetObjectPtr(e, !1);
+  var d = T3Gv.optManager.GetObjectPtr(e, !1);
   if (d) {
     var D = d.GetTable(!1);
     if (D) switch (
       i ||
-      GlobalData.optManager.CloseEdit(),
+      T3Gv.optManager.CloseEdit(),
       d.moreflags & ConstantData.ObjMoreFlags.SED_MF_AutoContainer &&
       (
-        (d = GlobalData.optManager.GetObjectPtr(e, !0)).moreflags = Utils2.SetFlag(
+        (d = T3Gv.optManager.GetObjectPtr(e, !0)).moreflags = Utils2.SetFlag(
           d.moreflags,
           ConstantData.ObjMoreFlags.SED_MF_AutoContainer,
           !1
@@ -11465,17 +11465,17 @@ ListManager.LM.prototypeSwimLane_Operation = function (e, t, a, r, i) {
                 x: s.x + s.width / 2,
                 y: s.y + s.height / 2
               },
-              n = (s = GlobalData.optManager.RotateRectAboutCenter(s, S, - d.RotationAngle)).y - n,
+              n = (s = T3Gv.optManager.RotateRectAboutCenter(s, S, - d.RotationAngle)).y - n,
               Business.ShiftShapesInSwimlane(d, n, ConstantData.ActionArrow.DOWN, o)
             ) : (
               n += s.x,
               Business.ShiftShapesInSwimlane(d, n, ConstantData.ActionArrow.RIGHT, o)
             ),
-            GlobalData.optManager.Table_InsertColumns('InsertColLeft' === t, e, !1, !1, !0, !0),
+            T3Gv.optManager.Table_InsertColumns('InsertColLeft' === t, e, !1, !1, !0, !0),
             D.select = - 1,
             Collab.AllowMessage() &&
             Collab.SendMessage(i),
-            GlobalData.optManager.CompleteOperation();
+            T3Gv.optManager.CompleteOperation();
           break;
         case 'InsertRow':
         case 'InsertRowLeft':
@@ -11493,11 +11493,11 @@ ListManager.LM.prototypeSwimLane_Operation = function (e, t, a, r, i) {
             (n += o),
             n += d.trect.y,
             Business.ShiftShapesInSwimlane(d, n, ConstantData.ActionArrow.DOWN, o),
-            GlobalData.optManager.Table_InsertRows('InsertRowLeft' === t, e, !1, !1, !0),
+            T3Gv.optManager.Table_InsertRows('InsertRowLeft' === t, e, !1, !1, !0),
             D.select = - 1,
             Collab.AllowMessage() &&
             Collab.SendMessage(i),
-            GlobalData.optManager.CompleteOperation();
+            T3Gv.optManager.CompleteOperation();
           break;
         case 'DeleteCol':
           if (Collab.AllowMessage()) g = {
@@ -11517,7 +11517,7 @@ ListManager.LM.prototypeSwimLane_Operation = function (e, t, a, r, i) {
                 x: s.x + s.width / 2,
                 y: s.y + s.height / 2
               },
-              u = (s = GlobalData.optManager.RotateRectAboutCenter(s, S, - d.RotationAngle)).y - c,
+              u = (s = T3Gv.optManager.RotateRectAboutCenter(s, S, - d.RotationAngle)).y - c,
               p = s.y - l,
               Business.DeleteShapesInSwimlane(d, u, p, ConstantData.ActionArrow.DOWN)
             ) : (
@@ -11525,11 +11525,11 @@ ListManager.LM.prototypeSwimLane_Operation = function (e, t, a, r, i) {
               l = r > 0 ? d.trect.x + D.cols[r - 1].x : d.trect.x,
               Business.DeleteShapesInSwimlane(d, l, c, ConstantData.ActionArrow.RIGHT)
             ),
-            GlobalData.optManager.Table_DeleteColumns(e, !1, !0, !0),
+            T3Gv.optManager.Table_DeleteColumns(e, !1, !0, !0),
             D.select = - 1,
             Collab.AllowMessage() &&
             Collab.SendMessage(i),
-            GlobalData.optManager.CompleteOperation();
+            T3Gv.optManager.CompleteOperation();
           break;
         case 'DeleteRow':
           if (Collab.AllowMessage()) g = {
@@ -11542,12 +11542,12 @@ ListManager.LM.prototypeSwimLane_Operation = function (e, t, a, r, i) {
           D.select = a * D.cols.length,
             p = (u = d.trect.y + D.rows[a].frame.y) + D.rows[a].frame.height,
             Business.DeleteShapesInSwimlane(d, u, p, ConstantData.ActionArrow.DOWN),
-            GlobalData.optManager.Table_DeleteRows(e, !1, !0),
+            T3Gv.optManager.Table_DeleteRows(e, !1, !0),
             D.select = - 1,
             Collab.AllowMessage() &&
             Collab.SendMessage(i),
-            GlobalData.optManager.AddToDirtyList(e),
-            GlobalData.optManager.CompleteOperation()
+            T3Gv.optManager.AddToDirtyList(e),
+            T3Gv.optManager.CompleteOperation()
       }
   }
 }
@@ -11563,7 +11563,7 @@ ListManager.LM.prototypeAddMultiplicity = function (e, t) {
         a,
         r,
         i,
-        o = GlobalData.optManager.FindAllChildObjects(
+        o = T3Gv.optManager.FindAllChildObjects(
           e.BlockID,
           ConstantData.DrawingObjectBaseClass.SHAPE,
           n.SD_OBJT_MULTIPLICITY
@@ -11572,7 +11572,7 @@ ListManager.LM.prototypeAddMultiplicity = function (e, t) {
         l = - 1;
       for (t = o.length, a = 0; a < t; a++) if (
         i = o[a],
-        (r = GlobalData.optManager.GetObjectPtr(i, !1)) &&
+        (r = T3Gv.optManager.GetObjectPtr(i, !1)) &&
         r.objecttype === n.SD_OBJT_MULTIPLICITY
       ) if (0 === r.hooks[0].connect.x) s = i;
         else l = i;
@@ -11605,15 +11605,15 @@ ListManager.LM.prototypeAddMultiplicity = function (e, t) {
       a.StyleRecord.Line.Thickness = 0;
       var r = new ListManager.Rect(a),
         i = (
-          GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
-          GlobalData.optManager.CalcDefaultInitialTextStyle(r.StyleRecord.Text)
+          T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+          T3Gv.optManager.CalcDefaultInitialTextStyle(r.StyleRecord.Text)
         ),
-        o = GlobalData.optManager.svgDoc.CalcStyleMetrics(i);
+        o = T3Gv.optManager.svgDoc.CalcStyleMetrics(i);
       r.Frame.height = o.height,
         r.Frame.width = 5 * o.width,
         r.UpdateFrame(r.Frame);
-      var s = GlobalData.optManager.AddNewObject(r, !1, !0, e),
-        l = GlobalData.optManager.GetObjectPtr(s, !1);
+      var s = T3Gv.optManager.AddNewObject(r, !1, !0, e),
+        l = T3Gv.optManager.GetObjectPtr(s, !1);
       return l.objecttype = n.SD_OBJT_MULTIPLICITY,
         l
     },
@@ -11632,10 +11632,10 @@ ListManager.LM.prototypeAddMultiplicity = function (e, t) {
         x: 0,
         y: 0
       };
-      GlobalData.optManager.UpdateHook(p.BlockID, - 1, r, ConstantData.HookPts.SED_KCB, D, null),
+      T3Gv.optManager.UpdateHook(p.BlockID, - 1, r, ConstantData.HookPts.SED_KCB, D, null),
         p.flags = Utils2.SetFlag(p.flags, ConstantData.ObjFlags.SEDO_Assoc, !0),
         p.associd = i.BlockID,
-        GlobalData.optManager.SetLinkFlag(r, ConstantData.LinkFlags.SED_L_MOVE),
+        T3Gv.optManager.SetLinkFlag(r, ConstantData.LinkFlags.SED_L_MOVE),
         u = !0
     }
     if (d.right < 0) if (null != (p = l(' M '))) {
@@ -11643,10 +11643,10 @@ ListManager.LM.prototypeAddMultiplicity = function (e, t) {
         x: o,
         y: o
       };
-      GlobalData.optManager.UpdateHook(p.BlockID, - 1, r, ConstantData.HookPts.SED_KCB, D, null),
+      T3Gv.optManager.UpdateHook(p.BlockID, - 1, r, ConstantData.HookPts.SED_KCB, D, null),
         p.flags = Utils2.SetFlag(p.flags, ConstantData.ObjFlags.SEDO_Assoc, !0),
         p.associd = i.BlockID,
-        GlobalData.optManager.SetLinkFlag(r, ConstantData.LinkFlags.SED_L_MOVE),
+        T3Gv.optManager.SetLinkFlag(r, ConstantData.LinkFlags.SED_L_MOVE),
         u = !0
     }
   }
@@ -11657,11 +11657,11 @@ ListManager.LM.prototypeAddMultiplicity = function (e, t) {
 }
 
 ListManager.LM.prototypeMultiplicity_SwitchSides = function (e, t, a) {
-  var r = GlobalData.optManager.GetObjectPtr(e, !1),
+  var r = T3Gv.optManager.GetObjectPtr(e, !1),
     i = null;
   return r &&
     r.hooks.length &&
-    (i = GlobalData.optManager.GetObjectPtr(r.hooks[0].objid, !1)),
+    (i = T3Gv.optManager.GetObjectPtr(r.hooks[0].objid, !1)),
     !(
       !i ||
       !r ||
@@ -11670,12 +11670,12 @@ ListManager.LM.prototypeMultiplicity_SwitchSides = function (e, t, a) {
     (
       t ||
       (
-        r = GlobalData.optManager.GetObjectPtr(e, !0),
-        i = GlobalData.optManager.GetObjectPtr(r.hooks[0].objid, !0),
+        r = T3Gv.optManager.GetObjectPtr(e, !0),
+        i = T3Gv.optManager.GetObjectPtr(r.hooks[0].objid, !0),
         0 === r.subtype ? r.subtype = ConstantData.ObjectSubTypes.SD_SUBT_MULTIPLICITY_FLIPPED : r.subtype = 0,
-        GlobalData.optManager.SetLinkFlag(i.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
+        T3Gv.optManager.SetLinkFlag(i.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
         a ||
-        GlobalData.optManager.CompleteOperation()
+        T3Gv.optManager.CompleteOperation()
       ),
       !0
     )
@@ -11684,7 +11684,7 @@ ListManager.LM.prototypeMultiplicity_SwitchSides = function (e, t, a) {
 ListManager.LM.prototypeIsJiraIssueShape = function (e) {
   var t = e.GetTable();
   return !!t &&
-    GlobalData.optManager.Table_GetCellWithType(t, ListManager.Table.CellTypes.SD_CT_JIRA_ISSUEKEY)
+    T3Gv.optManager.Table_GetCellWithType(t, ListManager.Table.CellTypes.SD_CT_JIRA_ISSUEKEY)
 }
 
 ListManager.LM.prototypeInsertSDONFromImport = function (e, t, a, r) {
@@ -11697,29 +11697,29 @@ ListManager.LM.prototypeInsertSDONFromImport = function (e, t, a, r) {
   else n = Business.GetSelectionBusinessManager();
   if (
     null == n &&
-    (n = GlobalData.gBusinessManager),
-    t = !GlobalData.optManager.ImportContext ||
-    'Replace' !== GlobalData.optManager.ImportContext.context,
+    (n = T3Gv.gBusinessManager),
+    t = !T3Gv.optManager.ImportContext ||
+    'Replace' !== T3Gv.optManager.ImportContext.context,
     Collab.AllowMessage()
   ) {
     var o = SDJS_Business_GetModuleName(n);
     null == o &&
       (o = ''),
       Collab.BeginSecondaryEdit(),
-      GlobalData.optManager.ImportContext &&
-      GlobalData.optManager.ImportContext.deleteList &&
+      T3Gv.optManager.ImportContext &&
+      T3Gv.optManager.ImportContext.deleteList &&
       (
-        GlobalData.optManager.ImportContext.deleteList = GlobalData.optManager.GetShapesToReplace(GlobalData.optManager.ImportContext.contextId)
+        T3Gv.optManager.ImportContext.deleteList = T3Gv.optManager.GetShapesToReplace(T3Gv.optManager.ImportContext.contextId)
       );
-    this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0);
+    this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0);
     var s = {
       SDONStr: e,
       append: t,
       SelectionManagerName: o
     };
-    GlobalData.optManager.ImportContext &&
+    T3Gv.optManager.ImportContext &&
       (
-        s.ImportContext = Utils1.DeepCopy(GlobalData.optManager.ImportContext)
+        s.ImportContext = Utils1.DeepCopy(T3Gv.optManager.ImportContext)
       ),
       null != i.importType &&
       (s.importType = i.importType);
@@ -11730,8 +11730,8 @@ ListManager.LM.prototypeInsertSDONFromImport = function (e, t, a, r) {
   }
   t ||
     (
-      GlobalData.optManager.ImportContext &&
-        GlobalData.optManager.ImportContext.deleteList ? GlobalData.optManager.DeleteObjects(GlobalData.optManager.ImportContext.deleteList) : GlobalData.optManager.ClearAllObjects(!0),
+      T3Gv.optManager.ImportContext &&
+        T3Gv.optManager.ImportContext.deleteList ? T3Gv.optManager.DeleteObjects(T3Gv.optManager.ImportContext.deleteList) : T3Gv.optManager.ClearAllObjects(!0),
       ListManager.SDData.ClearEmptyFieldedDataTables(ListManager.SDData.FieldedDataSourceTypes.SDON),
       ListManager.SDData.ClearEmptyFieldedDataTables(ListManager.SDData.FieldedDataSourceTypes.AUTO)
     ),
@@ -11739,8 +11739,8 @@ ListManager.LM.prototypeInsertSDONFromImport = function (e, t, a, r) {
     SDJS.API.ColorList = [],
     SDJS.API.DataList = [],
     SDJS.API.NImagesToLoad = 0,
-    SavegBusinessManager = GlobalData.gBusinessManager,
-    SaveBusinessModule = GlobalData.optManager.theContentHeader.BusinessModule,
+    SavegBusinessManager = T3Gv.gBusinessManager,
+    SaveBusinessModule = T3Gv.optManager.theContentHeader.BusinessModule,
     null != i.LoadedSymbols &&
     (SDJS.API.SymbolList = i.LoadedSymbols),
     $(document).on(
@@ -11748,15 +11748,15 @@ ListManager.LM.prototypeInsertSDONFromImport = function (e, t, a, r) {
       (
         function () {
           $(document).off(Constants.IFrame_Command_SDONLoadComplete),
-            GlobalData.optManager.SetDocDirtyState(!0),
+            T3Gv.optManager.SetDocDirtyState(!0),
             a &&
             a()
         }
       )
     );
   try {
-    null == GlobalData.optManager.PastePos &&
-      (GlobalData.optManager.PastePos = GlobalData.optManager.GetPastePosition()),
+    null == T3Gv.optManager.PastePos &&
+      (T3Gv.optManager.PastePos = T3Gv.optManager.GetPastePosition()),
       SDJS.API.FixExternalSDON(i),
       n.ReadJSONAPI(i, null, null, t, a, r),
       S &&
@@ -11767,15 +11767,15 @@ ListManager.LM.prototypeInsertSDONFromImport = function (e, t, a, r) {
           S.Data.CreateList = [],
           S.Data.CreateList = S.Data.CreateList.concat(Collab.CreateList)
         ),
-        S.Data.pastepos = Utils1.DeepCopy(GlobalData.optManager.PastePos),
+        S.Data.pastepos = Utils1.DeepCopy(T3Gv.optManager.PastePos),
         Collab.SendMessage(S)
       ),
-      GlobalData.optManager.PastePos = null
+      T3Gv.optManager.PastePos = null
   } catch (e) {
-    return GlobalData.gBusinessManager = SavegBusinessManager,
-      GlobalData.optManager.theContentHeader.BusinessModule = SaveBusinessModule,
-      GlobalData.optManager.ImportContext = null,
-      GlobalData.optManager.PastePos = null,
+    return T3Gv.gBusinessManager = SavegBusinessManager,
+      T3Gv.optManager.theContentHeader.BusinessModule = SaveBusinessModule,
+      T3Gv.optManager.ImportContext = null,
+      T3Gv.optManager.PastePos = null,
       $(document).off(Constants.IFrame_Command_SDONLoadComplete),
       !1
   }
@@ -11803,24 +11803,24 @@ ListManager.LM.prototypeGetShapesToReplace = function (e) {
         a,
         r,
         n = [],
-        o = GlobalData.optManager.GetTargetSelect();
+        o = T3Gv.optManager.GetTargetSelect();
       return o >= 0 &&
         Business.GetSelectionBusinessManager(o, !0) === e &&
         (
-          (t = GlobalData.optManager.GetObjectPtr(o, !1)).IsSwimlane() &&
+          (t = T3Gv.optManager.GetObjectPtr(o, !1)).IsSwimlane() &&
           (r = t),
           t &&
           t.ParentFrameID >= 0 &&
-          (a = GlobalData.optManager.GetObjectPtr(t.ParentFrameID, !1)).IsSwimlane() &&
+          (a = T3Gv.optManager.GetObjectPtr(t.ParentFrameID, !1)).IsSwimlane() &&
           (r = a),
           null != r &&
           (
             n = n.concat(r.FramezList),
-            GlobalData.optManager.ImportContext.ContainerID = r.BlockID,
+            T3Gv.optManager.ImportContext.ContainerID = r.BlockID,
             i.x = r.trect.x + ConstantData.Defines.FrameGap,
             i.y = r.trect.y + ConstantData.Defines.FrameGap,
-            GlobalData.optManager.ImportContext &&
-            (GlobalData.optManager.ImportContext.TopLeft = i)
+            T3Gv.optManager.ImportContext &&
+            (T3Gv.optManager.ImportContext.TopLeft = i)
           )
         ),
         n
@@ -11831,7 +11831,7 @@ ListManager.LM.prototypeGetShapesToReplace = function (e) {
         r,
         i,
         n,
-        o = GlobalData.optManager.GetTargetSelect(),
+        o = T3Gv.optManager.GetTargetSelect(),
         s = function (e) {
           var t,
             a;
@@ -11840,21 +11840,21 @@ ListManager.LM.prototypeGetShapesToReplace = function (e) {
         };
       if (o >= 0 && Business.GetSelectionBusinessManager(o, !0) === e) {
         if (
-          (t = GlobalData.optManager.GetObjectPtr(o, !1)).objecttype === ConstantData.ObjectTypes.SD_OBJT_SHAPECONTAINER
-        ) return GlobalData.optManager.ImportContext.SmartContainerID = t.BlockID,
-          GlobalData.optManager.ImportContext.SmartContainerChildID = s(t),
+          (t = T3Gv.optManager.GetObjectPtr(o, !1)).objecttype === ConstantData.ObjectTypes.SD_OBJT_SHAPECONTAINER
+        ) return T3Gv.optManager.ImportContext.SmartContainerID = t.BlockID,
+          T3Gv.optManager.ImportContext.SmartContainerChildID = s(t),
           [];
         if (
           t &&
           t.hooks.length &&
-          (a = GlobalData.optManager.GetObjectPtr(t.hooks[0].objid, !1)) &&
+          (a = T3Gv.optManager.GetObjectPtr(t.hooks[0].objid, !1)) &&
           a.objecttype === ConstantData.ObjectTypes.SD_OBJT_SHAPECONTAINER
-        ) return GlobalData.optManager.ImportContext.SmartContainerID = a.BlockID,
-          GlobalData.optManager.ImportContext.SmartContainerChildID = s(a),
+        ) return T3Gv.optManager.ImportContext.SmartContainerID = a.BlockID,
+          T3Gv.optManager.ImportContext.SmartContainerChildID = s(a),
           []
       }
       var l,
-        S = GlobalData.optManager.ActiveVisibleZList(),
+        S = T3Gv.optManager.ActiveVisibleZList(),
         c = 0,
         u = - 1,
         p = [];
@@ -11864,10 +11864,10 @@ ListManager.LM.prototypeGetShapesToReplace = function (e) {
         r < i &&
         (
           n = S[r],
-          (t = GlobalData.optManager.GetObjectPtr(n, !1)) &&
+          (t = T3Gv.optManager.GetObjectPtr(n, !1)) &&
           t.objecttype === ConstantData.ObjectTypes.SD_OBJT_SHAPECONTAINER &&
           (
-            (l = GlobalData.optManager.ContainerIsInCell(t)) ? p.indexOf(l.obj.BlockID) < 0 &&
+            (l = T3Gv.optManager.ContainerIsInCell(t)) ? p.indexOf(l.obj.BlockID) < 0 &&
               (p.push(l.obj.BlockID), c++, u = n) : (c++, u = n)
           ),
           !(c > 1)
@@ -11875,15 +11875,15 @@ ListManager.LM.prototypeGetShapesToReplace = function (e) {
         r++
       );
       if (1 === c) {
-        if ((a = GlobalData.optManager.GetObjectPtr(u, !1)) && a.ContainerList) {
+        if ((a = T3Gv.optManager.GetObjectPtr(u, !1)) && a.ContainerList) {
           var d = a.ContainerList.List;
-          if (0 === (i = d.length) || 1 === i && d[0].id < 0) return GlobalData.optManager.ImportContext.SmartContainerID = a.BlockID,
-            GlobalData.optManager.ImportContext.SmartContainerChildID = - 1,
+          if (0 === (i = d.length) || 1 === i && d[0].id < 0) return T3Gv.optManager.ImportContext.SmartContainerID = a.BlockID,
+            T3Gv.optManager.ImportContext.SmartContainerChildID = - 1,
             [];
           for (r = (i = d.length) - 1; r >= 0; r--) return n = d[r].id,
             Business.GetSelectionBusinessManager(n, !0) === e ? (
-              GlobalData.optManager.ImportContext.SmartContainerID = a.BlockID,
-              GlobalData.optManager.ImportContext.SmartContainerChildID = n,
+              T3Gv.optManager.ImportContext.SmartContainerID = a.BlockID,
+              T3Gv.optManager.ImportContext.SmartContainerChildID = n,
               []
             ) : []
         }
@@ -11892,8 +11892,8 @@ ListManager.LM.prototypeGetShapesToReplace = function (e) {
       return []
     };
   switch (
-  GlobalData.optManager.ImportContext &&
-  (GlobalData.optManager.ImportContext.contextId = e),
+  T3Gv.optManager.ImportContext &&
+  (T3Gv.optManager.ImportContext.contextId = e),
   e
   ) {
     case 'decisiontree':
@@ -11907,26 +11907,26 @@ ListManager.LM.prototypeGetShapesToReplace = function (e) {
     case 'timeline':
     case 'm-timelineVisualizer':
       t = gTimelineManager,
-        GlobalData.optManager.ImportContext &&
-        (GlobalData.optManager.ImportContext.ForceFrame = !0);
+        T3Gv.optManager.ImportContext &&
+        (T3Gv.optManager.ImportContext.ForceFrame = !0);
       break;
     case 'erd':
     case 'm-erdVisualizer':
       t = gLineDrawERDManager,
-        GlobalData.optManager.ImportContext &&
-        (GlobalData.optManager.ImportContext.ForceFrame = !0);
+        T3Gv.optManager.ImportContext &&
+        (T3Gv.optManager.ImportContext.ForceFrame = !0);
       break;
     case 'classdiagram':
     case 'm-classDiagramVisualizer':
       t = gLineDrawUMLClassManager,
-        GlobalData.optManager.ImportContext &&
-        (GlobalData.optManager.ImportContext.ForceFrame = !0);
+        T3Gv.optManager.ImportContext &&
+        (T3Gv.optManager.ImportContext.ForceFrame = !0);
       break;
     case 'umlsequence':
     case 'umlstate':
       t = gLineDrawUMLManager,
-        GlobalData.optManager.ImportContext &&
-        (GlobalData.optManager.ImportContext.ForceFrame = !0);
+        T3Gv.optManager.ImportContext &&
+        (T3Gv.optManager.ImportContext.ForceFrame = !0);
       break;
     case 'm-importtext':
       t = gTaskMapManager;
@@ -11953,13 +11953,13 @@ ListManager.LM.prototypeGetShapesToReplace = function (e) {
     default:
       return
   }
-  var l = GlobalData.optManager.GetTargetSelect();
+  var l = T3Gv.optManager.GetTargetSelect();
   if (
     l >= 0 &&
     (a = Business.GetSelectionBusinessManager(l, !0)) === t
   ) {
     n = !0;
-    var S = GlobalData.optManager.GetObjectPtr(l, !1);
+    var S = T3Gv.optManager.GetObjectPtr(l, !1);
     if (S && S.IsSwimlane()) r = r.concat(S.FramezList),
       i.x = S.trect.x + ConstantData.Defines.FrameGap,
       i.y = S.trect.y + ConstantData.Defines.FrameGap;
@@ -11979,21 +11979,21 @@ ListManager.LM.prototypeGetShapesToReplace = function (e) {
           r,
           n,
           o,
-          s = GlobalData.optManager.ActiveVisibleZList(),
+          s = T3Gv.optManager.ActiveVisibleZList(),
           l = [],
           S = [];
         a = s.length;
         var c = 0,
-          u = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !1);
+          u = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1);
         for (n = u.swimlanelist.length, t = 0; t < n; t++) r = u.swimlanelist[t],
           (o = Business.GetSelectionBusinessManager(r, !0)) === e &&
-          (S = GlobalData.optManager.GetObjectPtr(r, !1).FramezList, c++);
+          (S = T3Gv.optManager.GetObjectPtr(r, !1).FramezList, c++);
         if (0 === c) for (t = 0; t < a; t++) r = s[t],
           l.indexOf(r) >= 0 ||
           (o = Business.GetSelectionBusinessManager(r, !0)) === e &&
           (S = o.GetChartObjectList(r), l = l.concat(S), c++);
         if (S.length) {
-          var p = GlobalData.optManager.GetListSRect(S, !1, !1);
+          var p = T3Gv.optManager.GetListSRect(S, !1, !1);
           i.x = p.x,
             i.y = p.y
         }
@@ -12004,26 +12004,26 @@ ListManager.LM.prototypeGetShapesToReplace = function (e) {
         )
       }(t)
     ),
-    GlobalData.optManager.ImportContext &&
+    T3Gv.optManager.ImportContext &&
     null != i.x
-  ) switch (GlobalData.optManager.ImportContext.TopLeft = i, e) {
+  ) switch (T3Gv.optManager.ImportContext.TopLeft = i, e) {
     case 'm-importazure':
     case 'm-importaws':
     case 'erd':
     case 'classdiagram':
     case 'umlsequence':
     case 'umlstate':
-      GlobalData.optManager.ImportContext &&
-        (GlobalData.optManager.ImportContext.UseTopLeft = !0)
+      T3Gv.optManager.ImportContext &&
+        (T3Gv.optManager.ImportContext.UseTopLeft = !0)
   }
-  return GlobalData.optManager.ImportContext &&
-    (GlobalData.optManager.ImportContext.contextId = e),
+  return T3Gv.optManager.ImportContext &&
+    (T3Gv.optManager.ImportContext.contextId = e),
     r
 }
 
 ListManager.LM.prototypeStoreReportParameters = function (e, t, a) {
   var r = ListManager.ImportFieldNameList[ListManager.ImportTableFields.PARAMS_FIELD],
-    i = GlobalData.optManager.GetObjectPtr(e, !0);
+    i = T3Gv.optManager.GetObjectPtr(e, !0);
   if (null != i) {
     var n = i.datasetElemID,
       o = ListManager.SDData.GetDataSetIdByName(
@@ -12087,7 +12087,7 @@ ListManager.LM.prototypeShapeIsEnclosed = function (e, t) {
   var a,
     r,
     i,
-    n = GlobalData.optManager.VisibleZList(),
+    n = T3Gv.optManager.VisibleZList(),
     o = {};
   n.length,
     i = e.trect;
@@ -12130,11 +12130,11 @@ ListManager.LM.prototypeShapeIsEnclosed = function (e, t) {
 
 function NumberToString(value, isFeet) {
   let result = value;
-  const decimalPlaces = GlobalData.docHandler.rulerSettings.dp;
+  const decimalPlaces = T3Gv.docHandler.rulerSettings.dp;
 
   if (isFeet) return value;
 
-  if (GlobalData.docHandler.rulerSettings.showpixels) {
+  if (T3Gv.docHandler.rulerSettings.showpixels) {
     return result.toFixed(0);
   }
 
@@ -12171,48 +12171,48 @@ ListManager.LM.prototype.CoordinatesInEditState = function () {
 },
 
   ListManager.LM.prototype.PinTrackPoint = function (e) {
-    GlobalData.optManager.PinRect &&
+    T3Gv.optManager.PinRect &&
       (
-        e.x < GlobalData.optManager.PinRect.x &&
-        (e.x = GlobalData.optManager.PinRect.x),
-        e.x > GlobalData.optManager.PinRect.x + GlobalData.optManager.PinRect.width &&
-        (e.x = GlobalData.optManager.PinRect.x + GlobalData.optManager.PinRect.width),
-        e.y < GlobalData.optManager.PinRect.y &&
-        (e.y = GlobalData.optManager.PinRect.y),
-        e.y > GlobalData.optManager.PinRect.y + GlobalData.optManager.PinRect.height &&
-        (e.y = GlobalData.optManager.PinRect.y + GlobalData.optManager.PinRect.height)
+        e.x < T3Gv.optManager.PinRect.x &&
+        (e.x = T3Gv.optManager.PinRect.x),
+        e.x > T3Gv.optManager.PinRect.x + T3Gv.optManager.PinRect.width &&
+        (e.x = T3Gv.optManager.PinRect.x + T3Gv.optManager.PinRect.width),
+        e.y < T3Gv.optManager.PinRect.y &&
+        (e.y = T3Gv.optManager.PinRect.y),
+        e.y > T3Gv.optManager.PinRect.y + T3Gv.optManager.PinRect.height &&
+        (e.y = T3Gv.optManager.PinRect.y + T3Gv.optManager.PinRect.height)
       )
   }
 
 ListManager.LM.prototypePinMoveRect = function (e) {
-  var t = Utils1.DeepCopy(GlobalData.optManager.theMoveBounds);
+  var t = Utils1.DeepCopy(T3Gv.optManager.theMoveBounds);
   Utils2.OffsetRect(
     t,
-    e.x - GlobalData.optManager.theDragStartX,
-    e.y - GlobalData.optManager.theDragStartY
+    e.x - T3Gv.optManager.theDragStartX,
+    e.y - T3Gv.optManager.theDragStartY
   );
   var a = t.x + t.width,
     r = t.y + t.height;
-  GlobalData.optManager.PinRect &&
+  T3Gv.optManager.PinRect &&
     (
-      t.x < GlobalData.optManager.PinRect.x &&
+      t.x < T3Gv.optManager.PinRect.x &&
       (
-        e.x = GlobalData.optManager.PinRect.x + GlobalData.optManager.theDragStartX - GlobalData.optManager.theMoveBounds.x
+        e.x = T3Gv.optManager.PinRect.x + T3Gv.optManager.theDragStartX - T3Gv.optManager.theMoveBounds.x
       ),
-      a > GlobalData.optManager.PinRect.x + GlobalData.optManager.PinRect.width &&
+      a > T3Gv.optManager.PinRect.x + T3Gv.optManager.PinRect.width &&
       (
-        e.x = GlobalData.optManager.PinRect.x + GlobalData.optManager.PinRect.width + GlobalData.optManager.theDragStartX - (
-          GlobalData.optManager.theMoveBounds.x + GlobalData.optManager.theMoveBounds.width
+        e.x = T3Gv.optManager.PinRect.x + T3Gv.optManager.PinRect.width + T3Gv.optManager.theDragStartX - (
+          T3Gv.optManager.theMoveBounds.x + T3Gv.optManager.theMoveBounds.width
         )
       ),
-      t.y < GlobalData.optManager.PinRect.y &&
+      t.y < T3Gv.optManager.PinRect.y &&
       (
-        e.y = GlobalData.optManager.PinRect.y + GlobalData.optManager.theDragStartY - GlobalData.optManager.theMoveBounds.y
+        e.y = T3Gv.optManager.PinRect.y + T3Gv.optManager.theDragStartY - T3Gv.optManager.theMoveBounds.y
       ),
-      r > GlobalData.optManager.PinRect.y + GlobalData.optManager.PinRect.height &&
+      r > T3Gv.optManager.PinRect.y + T3Gv.optManager.PinRect.height &&
       (
-        e.y = GlobalData.optManager.PinRect.y + GlobalData.optManager.PinRect.height + GlobalData.optManager.theDragStartY - (
-          GlobalData.optManager.theMoveBounds.y + GlobalData.optManager.theMoveBounds.height
+        e.y = T3Gv.optManager.PinRect.y + T3Gv.optManager.PinRect.height + T3Gv.optManager.theDragStartY - (
+          T3Gv.optManager.theMoveBounds.y + T3Gv.optManager.theMoveBounds.height
         )
       )
     )
@@ -12278,7 +12278,7 @@ ListManager.LM.prototypePinMoveRect = function (e) {
       r
     ) {
       s.segl.firstdir = l.GetSegLFace(this.LinkParams.ConnectPt, s.StartPoint, s.StartPoint);
-      var c = GlobalData.optManager.svgObjectLayer.GetElementByID(this.LinkParams.ConnectIndex);
+      var c = T3Gv.optManager.svgObjectLayer.GetElementByID(this.LinkParams.ConnectIndex);
       (s = this.GetObjectPtr(this.LinkParams.ConnectIndex, !0)).AdjustLine(
         c,
         s.StartPoint.x,
@@ -12295,7 +12295,7 @@ ListManager.LM.prototypePinMoveRect = function (e) {
         r
       ) {
         s.segl.lastdir = l.GetSegLFace(this.LinkParams.ConnectPt, s.EndPoint, s.EndPoint);
-        c = GlobalData.optManager.svgObjectLayer.GetElementByID(this.LinkParams.ConnectIndex);
+        c = T3Gv.optManager.svgObjectLayer.GetElementByID(this.LinkParams.ConnectIndex);
         (s = this.GetObjectPtr(this.LinkParams.ConnectIndex, !0)).AdjustLine(
           c,
           s.EndPoint.x,
@@ -12348,10 +12348,10 @@ ListManager.LM.prototypePinMoveRect = function (e) {
 ListManager.LM.prototypeCloseOpenNudge = function () {
   if (Collab.AllowMessage()) {
     if (!SDJS.Editor.IsStateOpen()) {
-      var e = GlobalData.optManager.GetTargetSelect();
+      var e = T3Gv.optManager.GetTargetSelect();
       if (e >= 0) {
         Collab.BeginSecondaryEdit();
-        GlobalData.optManager.GetObjectPtr(e, !0)
+        T3Gv.optManager.GetObjectPtr(e, !0)
       }
     }
     var t = {
@@ -12376,23 +12376,23 @@ ListManager.LM.prototypeCloseOpenNudge = function () {
         x: 0,
         y: 0
       },
-      n = GlobalData.docHandler.svgDoc.docInfo.docDpi / SDF.DRAWRES,
+      n = T3Gv.docHandler.svgDoc.docInfo.docDpi / SDF.DRAWRES,
       o = 0 == (
-        GlobalData.optManager.GetObjectPtr(this.theSEDSessionBlockID, !1).moreflags & ConstantData.SessionMoreFlags.SEDSM_DrawToScale
+        T3Gv.optManager.GetObjectPtr(this.theSEDSessionBlockID, !1).moreflags & ConstantData.SessionMoreFlags.SEDSM_DrawToScale
       );
     return i.x = e.ScalingData.Dimensions.x,
       i.y = e.ScalingData.Dimensions.y,
       e.ShapeData.ObjectAttributeFlags & ListManager.LibraryFlags.SEDL_Scale ? (
-        GlobalData.docHandler.rulerSettings.useInches ? (
+        T3Gv.docHandler.rulerSettings.useInches ? (
           t = e.ScalingData.Width,
           a = e.ScalingData.Height,
           r = e.ScalingData.ScaleType
         ) : (
-          t = e.ScalingData.Metric_Width ? e.ScalingData.Metric_Width : i.x / GlobalData.docHandler.svgDoc.docInfo.docDpi * ConstantData.Defines.MetricConv,
-          a = e.ScalingData.Metric_Height ? e.ScalingData.Metric_Height : i.y / GlobalData.docHandler.svgDoc.docInfo.docDpi * ConstantData.Defines.MetricConv,
+          t = e.ScalingData.Metric_Width ? e.ScalingData.Metric_Width : i.x / T3Gv.docHandler.svgDoc.docInfo.docDpi * ConstantData.Defines.MetricConv,
+          a = e.ScalingData.Metric_Height ? e.ScalingData.Metric_Height : i.y / T3Gv.docHandler.svgDoc.docInfo.docDpi * ConstantData.Defines.MetricConv,
           r = e.ScalingData.MetricUnits
         ),
-        GlobalData.optManager.ScaleToRuler(t, a, r, i, o, !1)
+        T3Gv.optManager.ScaleToRuler(t, a, r, i, o, !1)
       ) : (
         i.x = SDF.ToSDJSCoords(i.x, n),
         i.y = SDF.ToSDJSCoords(i.y, n)
@@ -12419,7 +12419,7 @@ ListManager.LM.prototype.BuildSymbolObject = function (e, t, a) {
   var r, i, n, o, s, l,
     S = { x: 240, y: 150 },
     c = {},
-    u = GlobalData.optManager.GetObjectPtr(this.theSEDSessionBlockID, false),
+    u = T3Gv.optManager.GetObjectPtr(this.theSEDSessionBlockID, false),
     p = ConstantData.TextFlags,
     d = e,
     D = (t === -2),
@@ -12434,40 +12434,40 @@ ListManager.LM.prototype.BuildSymbolObject = function (e, t, a) {
         } else {
           SDUI.Commands.MainController.Symbols.StoreLMObject(e, s);
         }
-        for (r = GlobalData.optManager.EmptyEMFList.length - 1; r >= 0; r--) {
-          if (GlobalData.optManager.EmptyEMFList[r].EMFHash === o.EMFHash) {
+        for (r = T3Gv.optManager.EmptyEMFList.length - 1; r >= 0; r--) {
+          if (T3Gv.optManager.EmptyEMFList[r].EMFHash === o.EMFHash) {
             S = SDJS.Editor.IsStateOpen();
-            a = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.EmptyEMFList[r].BlockID, S);
+            a = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.EmptyEMFList[r].BlockID, S);
             if (a) {
               u = true;
               i = new Uint8Array(t);
-              n = new ListManager.BlobBytes(GlobalData.optManager.EmptyEMFList[r].EMFBufferType, i);
+              n = new ListManager.BlobBytes(T3Gv.optManager.EmptyEMFList[r].EMFBufferType, i);
               if (a.EMFBufferType === FileParser.Image_Dir.dir_meta) {
-                l = GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.BLOBBYTES_OBJECT, n);
+                l = T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.BLOBBYTES_OBJECT, n);
                 if (l) a.EMFBlobBytesID = l.ID;
               } else {
-                l = GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.BLOBBYTES_OBJECT, n);
+                l = T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.BLOBBYTES_OBJECT, n);
                 if (l) a.BlobBytesID = l.ID;
               }
               a.EMFBuffer = null;
               if (a.EMFBufferType !== FileParser.Image_Dir.dir_meta) {
                 delete a.EMFHash;
               }
-              if (GlobalData.optManager.ReplaceSymbolID !== o.EMFHash) {
-                GlobalData.optManager.AddEMFBlockToUndo(GlobalData.optManager.EmptyEMFList[r].BlockID, l.ID);
+              if (T3Gv.optManager.ReplaceSymbolID !== o.EMFHash) {
+                T3Gv.optManager.AddEMFBlockToUndo(T3Gv.optManager.EmptyEMFList[r].BlockID, l.ID);
               }
               if (!S) {
                 c = [];
                 c.push(l);
-                c.push(GlobalData.objectStore.GetObject(a.BlockID));
-                SDF.SaveChangedBlocks(GlobalData.stateManager.CurrentStateID, 0, GlobalData.stateManager.CurrentStateID, c);
+                c.push(T3Gv.objectStore.GetObject(a.BlockID));
+                SDF.SaveChangedBlocks(T3Gv.stateManager.CurrentStateID, 0, T3Gv.stateManager.CurrentStateID, c);
               }
-              GlobalData.optManager.EmptyEMFList.splice(r, 1);
+              T3Gv.optManager.EmptyEMFList.splice(r, 1);
             }
           }
         }
         if (u && S) {
-          GlobalData.optManager.CompleteOperation();
+          T3Gv.optManager.CompleteOperation();
         }
       }
     },
@@ -12481,39 +12481,39 @@ ListManager.LM.prototype.BuildSymbolObject = function (e, t, a) {
           SDUI.Commands.MainController.Symbols.StoreLMObject(e, s);
         }
         var a, r, i, n, l, S, c, u = false, p = [], g = false;
-        a = GlobalData.optManager.EmptySymbolList.length;
+        a = T3Gv.optManager.EmptySymbolList.length;
         var h = [];
         if (
-          GlobalData.optManager.theDrawShape &&
-          GlobalData.optManager.theActionStoredObjectID >= 0 &&
-          (h.push(GlobalData.optManager.theActionStoredObjectID),
-            GlobalData.optManager.theDrawShape.SymbolID === d)
+          T3Gv.optManager.theDrawShape &&
+          T3Gv.optManager.theActionStoredObjectID >= 0 &&
+          (h.push(T3Gv.optManager.theActionStoredObjectID),
+            T3Gv.optManager.theDrawShape.SymbolID === d)
         ) {
-          GlobalData.optManager.MouseAddNewShape(true);
-          GlobalData.optManager.NewObjectVisible = true;
+          T3Gv.optManager.MouseAddNewShape(true);
+          T3Gv.optManager.NewObjectVisible = true;
           for (r = 0; r < a; r++) {
-            if (GlobalData.optManager.EmptySymbolList[r].BlockID === h[0]) {
-              GlobalData.optManager.EmptySymbolList.splice(r, 1);
+            if (T3Gv.optManager.EmptySymbolList[r].BlockID === h[0]) {
+              T3Gv.optManager.EmptySymbolList.splice(r, 1);
               break;
             }
           }
-          GlobalData.optManager.DeleteObjects(h, false);
+          T3Gv.optManager.DeleteObjects(h, false);
         }
         h = [];
-        a = GlobalData.optManager.EmptySymbolList.length;
+        a = T3Gv.optManager.EmptySymbolList.length;
         for (r = a - 1; r >= 0; r--) {
-          i = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.EmptySymbolList[r].BlockID, false, false);
+          i = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.EmptySymbolList[r].BlockID, false, false);
           if (i) {
-            if (GlobalData.optManager.EmptySymbolList[r].SymbolID === d) {
-              if (GlobalData.optManager.ReplaceSymbolID === d) {
-                GlobalData.optManager.ReplaceSymbol(o, GlobalData.optManager.EmptySymbolList[r].BlockID, h, false, false);
-                GlobalData.optManager.EmptySymbolList.splice(r, 1);
+            if (T3Gv.optManager.EmptySymbolList[r].SymbolID === d) {
+              if (T3Gv.optManager.ReplaceSymbolID === d) {
+                T3Gv.optManager.ReplaceSymbol(o, T3Gv.optManager.EmptySymbolList[r].BlockID, h, false, false);
+                T3Gv.optManager.EmptySymbolList.splice(r, 1);
                 u = true;
                 g = true;
               } else {
                 l = SDJS.Editor.IsStateOpen();
-                h.push(GlobalData.optManager.EmptySymbolList[r].BlockID);
-                c = GlobalData.optManager.EmptySymbolList[r].BlockID;
+                h.push(T3Gv.optManager.EmptySymbolList[r].BlockID);
+                c = T3Gv.optManager.EmptySymbolList[r].BlockID;
                 S = {
                   x: o.Frame.x,
                   y: o.Frame.y,
@@ -12524,47 +12524,47 @@ ListManager.LM.prototype.BuildSymbolObject = function (e, t, a) {
                 o.Frame.y = i.Frame.y;
                 o.Frame.width = i.Frame.width;
                 o.Frame.height = i.Frame.height;
-                n = GlobalData.optManager.AddNewNativeSymbol(o, true, i);
+                n = T3Gv.optManager.AddNewNativeSymbol(o, true, i);
                 o.Frame = S;
                 if (n < 0) continue;
                 i.newID = n;
-                if (GlobalData.optManager.GetTargetSelect() === c) {
+                if (T3Gv.optManager.GetTargetSelect() === c) {
                   p.push(n);
-                  GlobalData.optManager.SelectObjects(p, false, false);
+                  T3Gv.optManager.SelectObjects(p, false, false);
                 }
-                GlobalData.optManager.EmptySymbolList.splice(r, 1);
-                GlobalData.optManager.DeleteObjects(h, false);
-                GlobalData.optManager.SetLinkFlagsOnFilledClosedPolylines(n);
-                GlobalData.optManager.UpdateLinks();
+                T3Gv.optManager.EmptySymbolList.splice(r, 1);
+                T3Gv.optManager.DeleteObjects(h, false);
+                T3Gv.optManager.SetLinkFlagsOnFilledClosedPolylines(n);
+                T3Gv.optManager.UpdateLinks();
                 if (!l) {
-                  GlobalData.optManager.PatchUndo(c);
+                  T3Gv.optManager.PatchUndo(c);
                 }
                 u = true;
               }
             }
           } else {
-            GlobalData.optManager.EmptySymbolList.splice(r, 1);
+            T3Gv.optManager.EmptySymbolList.splice(r, 1);
           }
         }
         if (u) {
-          if (GlobalData.optManager.ReplaceSymbolID === d || g) {
-            GlobalData.optManager.ReplaceSymbolID = -1;
-            GlobalData.optManager.DeleteObjects(h);
-            GlobalData.optManager.CompleteOperation(null, false);
+          if (T3Gv.optManager.ReplaceSymbolID === d || g) {
+            T3Gv.optManager.ReplaceSymbolID = -1;
+            T3Gv.optManager.DeleteObjects(h);
+            T3Gv.optManager.CompleteOperation(null, false);
           } else {
-            GlobalData.optManager.CompleteOperation(null, true);
+            T3Gv.optManager.CompleteOperation(null, true);
           }
         }
       }
     };
 
-  if (GlobalData.docHandler.svgDoc.docInfo.docDpi / SDF.DRAWRES, e) {
+  if (T3Gv.docHandler.svgDoc.docInfo.docDpi / SDF.DRAWRES, e) {
     if (!D) {
       var C = SDUI.Commands.MainController.Symbols.GetLMObject(e);
       if (C) {
         o = Utils1.DeepCopy(C);
         o.nativeDataArrayBuffer = C.nativeDataArrayBuffer;
-        l = GlobalData.optManager.ScaleSymbolObject(o.SymbolData);
+        l = T3Gv.optManager.ScaleSymbolObject(o.SymbolData);
         o.Frame.width = l.x;
         o.Frame.height = l.y;
         return o;
@@ -12585,7 +12585,7 @@ ListManager.LM.prototype.BuildSymbolObject = function (e, t, a) {
 
     if (r == null) return null;
 
-    S = GlobalData.optManager.ScaleSymbolObject(r);
+    S = T3Gv.optManager.ScaleSymbolObject(r);
     c.Frame = {
       x: -1000 - S.x,
       y: -1000 - S.y,
@@ -12841,12 +12841,12 @@ ListManager.LM.prototype.BuildCreateMessage = function (e, t) {
 
   ListManager.LM.prototype.ResetHammerGesture = function (e, t, a) {
 
-    var r = GlobalData.optManager.ActiveVisibleZList(),
+    var r = T3Gv.optManager.ActiveVisibleZList(),
       i = 0,
       n = 0,
       o = !1;
     for (i = 0; i < r.length; i++) {
-      var s = GlobalData.optManager.svgObjectLayer.GetElementByID(r[i]).svgObj.SDGObj.GetEventProxy();
+      var s = T3Gv.optManager.svgObjectLayer.GetElementByID(r[i]).svgObj.SDGObj.GetEventProxy();
       for (n = 0; n < s.eventHandlers.length; n++) s.eventHandlers[n].handler === t &&
         (o = !0);
       o &&
@@ -12912,7 +12912,7 @@ ListManager.LM.prototypeGetTargetList = function (e, t, a, r, i) {
     (c = i),
     null == (n = this.GetObjectPtr(e, !1))
   ) return a;
-  GlobalData.optManager.FixAnyCircularHooks(n);
+  T3Gv.optManager.FixAnyCircularHooks(n);
   for (var u = 0; u < n.hooks.length; u++) s = n.hooks[u].objid,
     a.indexOf(s) < 0 &&
     (
@@ -13040,7 +13040,7 @@ ListManager.LM.prototype.FindAllChildLines = function (e, t) {
       hookpt: 0
     },
     r = [];
-    GlobalData.optManager.FindChildArrayByIndex(e, a, t, ConstantData.DrawingObjectBaseClass.LINE) > 0;
+    T3Gv.optManager.FindChildArrayByIndex(e, a, t, ConstantData.DrawingObjectBaseClass.LINE) > 0;
   ) r.push(a.id);
   return r
 },
@@ -13102,7 +13102,7 @@ ListManager.LM.prototype.FindAllChildLines = function (e, t) {
       a = Business.Base.prototype.DuplicateShape(t, !1, !1),
       (s = this.GetObjectPtr(a, !0)).DataID >= 0
     ) {
-      var b = GlobalData.objectStore.GetObject(s.DataID);
+      var b = T3Gv.objectStore.GetObject(s.DataID);
       b &&
         b.Delete(),
         s.DataID = - 1
@@ -13331,12 +13331,12 @@ ListManager.LM.prototype.SeparateReturns = function () {
         I = {};
       o = e.length;
       for (
-        GlobalData.optManager.SetLinkFlag(t, ConstantData.LinkFlags.SED_L_MOVE),
-        C = GlobalData.optManager.GetObjectPtr(t, !1),
+        T3Gv.optManager.SetLinkFlag(t, ConstantData.LinkFlags.SED_L_MOVE),
+        C = T3Gv.optManager.GetObjectPtr(t, !1),
         n = 0;
         n < o;
         n++
-      ) s = GlobalData.optManager.GetObjectPtr(e[n], !1),
+      ) s = T3Gv.optManager.GetObjectPtr(e[n], !1),
         y = Utils2.Pt2Rect(s.StartPoint, s.EndPoint),
         s.hooks[0].objid === t ? (p = s.hooks[0].hookpt, g = 0) : (p = s.hooks[1].hookpt, g = 1),
         p === P.SED_KTL ? (S = 0, l = s.segl.pts.length > 2 ? 2 : 1) : (S = (u = s.segl.pts.length) - 1, (l = u - 3) < 0 && (l = 0)),
@@ -13362,11 +13362,11 @@ ListManager.LM.prototype.SeparateReturns = function () {
         n < o;
         n++
       ) I = f[n],
-        (s = GlobalData.optManager.GetObjectPtr(e[I.index], !1)).hooks[I.hookindex].connect.x = c,
+        (s = T3Gv.optManager.GetObjectPtr(e[I.index], !1)).hooks[I.hookindex].connect.x = c,
         c -= r;
       for (o = L.length, c = R / 2, (f.length || i) && (c += r / 2), n = 0; n < o; n++) if (
         I = L[n],
-        (s = GlobalData.optManager.GetObjectPtr(e[I.index], !1)).hooks[I.hookindex].connect.x = c,
+        (s = T3Gv.optManager.GetObjectPtr(e[I.index], !1)).hooks[I.hookindex].connect.x = c,
         c += r,
         I.len > 3
       ) {
@@ -13399,12 +13399,12 @@ ListManager.LM.prototype.SeparateReturns = function () {
         I = {};
       o = e.length;
       for (
-        GlobalData.optManager.SetLinkFlag(t, ConstantData.LinkFlags.SED_L_MOVE),
-        C = GlobalData.optManager.GetObjectPtr(t, !1),
+        T3Gv.optManager.SetLinkFlag(t, ConstantData.LinkFlags.SED_L_MOVE),
+        C = T3Gv.optManager.GetObjectPtr(t, !1),
         n = 0;
         n < o;
         n++
-      ) s = GlobalData.optManager.GetObjectPtr(e[n], !1),
+      ) s = T3Gv.optManager.GetObjectPtr(e[n], !1),
         y = Utils2.Pt2Rect(s.StartPoint, s.EndPoint),
         s.hooks[0].objid === t ? (p = s.hooks[0].hookpt, g = 0) : (p = s.hooks[1].hookpt, g = 1),
         p === P.SED_KTL ? (S = 0, l = s.segl.pts.length > 2 ? 2 : 1) : (S = (c = s.segl.pts.length) - 1, (l = c - 3) < 0 && (l = 0)),
@@ -13430,11 +13430,11 @@ ListManager.LM.prototype.SeparateReturns = function () {
         n < o;
         n++
       ) I = f[n],
-        (s = GlobalData.optManager.GetObjectPtr(e[I.index], !1)).hooks[I.hookindex].connect.y = u,
+        (s = T3Gv.optManager.GetObjectPtr(e[I.index], !1)).hooks[I.hookindex].connect.y = u,
         u -= r;
       for (o = L.length, u = R / 2, (f.length || i) && (u += r / 2), n = 0; n < o; n++) if (
         I = L[n],
-        (s = GlobalData.optManager.GetObjectPtr(e[I.index], !1)).hooks[I.hookindex].connect.y = u,
+        (s = T3Gv.optManager.GetObjectPtr(e[I.index], !1)).hooks[I.hookindex].connect.y = u,
         u += r,
         I.len > 3
       ) {
@@ -13455,7 +13455,7 @@ ListManager.LM.prototype.SeparateReturns = function () {
   for (a = e.length, t = 0; t < a; t++) if (
     i = e[t],
     v = !1,
-    r = GlobalData.optManager.GetObjectPtr(i, !1),
+    r = T3Gv.optManager.GetObjectPtr(i, !1),
     A = R / r.Frame.width * 10,
     C = R / r.Frame.height * 10,
     r.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.SHAPE
@@ -13467,7 +13467,7 @@ ListManager.LM.prototype.SeparateReturns = function () {
       h = !1,
       y = [],
       n = (
-        y = GlobalData.optManager.GetHookList(
+        y = T3Gv.optManager.GetHookList(
           F,
           y,
           r.BlockID,
@@ -13481,13 +13481,13 @@ ListManager.LM.prototype.SeparateReturns = function () {
       o < n;
       o++
     ) l = y[o],
-      (s = GlobalData.optManager.GetObjectPtr(l, !1)).DrawingObjectBaseClass !== ConstantData.DrawingObjectBaseClass.LINE ||
+      (s = T3Gv.optManager.GetObjectPtr(l, !1)).DrawingObjectBaseClass !== ConstantData.DrawingObjectBaseClass.LINE ||
       s.LineType !== ConstantData.LineType.SEGLINE &&
       s.LineType !== ConstantData.LineType.ARCSEGLINE ||
       L.push(l),
       s.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.CONNECTOR &&
       (
-        (s = GlobalData.optManager.GetObjectPtr(l, !1)).hooks[0].connect.x === R ? s.hooks[0].connect.y == R / 2 &&
+        (s = T3Gv.optManager.GetObjectPtr(l, !1)).hooks[0].connect.x === R ? s.hooks[0].connect.y == R / 2 &&
           (D = !0) : 0 === s.hooks[0].connect.x ? s.hooks[0].connect.y == R / 2 &&
             (g = !0) : s.hooks[0].connect.y === R ? s.hooks[0].connect.x == R / 2 &&
               (m = !0) : 0 === s.hooks[0].connect.y &&
@@ -13496,7 +13496,7 @@ ListManager.LM.prototype.SeparateReturns = function () {
       );
     for (S = L.length, I = [], b = [], T = [], M = [], o = 0; o < S; o++) switch (
       l = L[o],
-      s = GlobalData.optManager.GetObjectPtr(l, !1),
+      s = T3Gv.optManager.GetObjectPtr(l, !1),
       (p = s.hooks[0].objid === i ? s.hooks[0].hookpt : s.hooks[1].hookpt) === P.SED_KTL ? s.segl.firstdir : s.segl.lastdir
     ) {
         case P.SED_KTC:
@@ -13521,8 +13521,8 @@ ListManager.LM.prototype.SeparateReturns = function () {
       (w(I, i, - 1, _(I, C), g), v = !0),
       v &&
       (
-        GlobalData.optManager.UpdateLinks(),
-        GlobalData.optManager.RenderDirtySVGObjects()
+        T3Gv.optManager.UpdateLinks(),
+        T3Gv.optManager.RenderDirtySVGObjects()
       )
   }
 },
@@ -13541,9 +13541,9 @@ ListManager.LM.prototype.SeparateReturns = function () {
   }
 
 ListManager.LM.prototypeTextEdit_PauseTyping = function () {
-  clearTimeout(GlobalData.optManager.textEntryTimer),
-    GlobalData.optManager.textEntryTimer = null,
-    GlobalData.optManager.RegisterLastTEOp(ConstantData.TELastOp.TIMEOUT)
+  clearTimeout(T3Gv.optManager.textEntryTimer),
+    T3Gv.optManager.textEntryTimer = null,
+    T3Gv.optManager.RegisterLastTEOp(ConstantData.TELastOp.TIMEOUT)
 };
 
 
@@ -13652,7 +13652,7 @@ ListManager.LM.prototypeCreateTextBlock = function (e, t, a, r) {
     });
   return p.runtimeText = c,
     p.selrange = u,
-    GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.LM_TEXT_OBJECT, p).ID
+    T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.LM_TEXT_OBJECT, p).ID
 }
 
 ListManager.LM.prototypeClearTextBlock = function (e, t) {
@@ -13663,7 +13663,7 @@ ListManager.LM.prototypeClearTextBlock = function (e, t) {
       a.SetText('');
     var r = a.GetRuntimeText();
     t.Data.runtimeText = r;
-    var i = GlobalData.optManager.svgObjectLayer.GetElementByID(e);
+    var i = T3Gv.optManager.svgObjectLayer.GetElementByID(e);
     if (i) {
       var n = i.textElem;
       n &&
@@ -13707,7 +13707,7 @@ ListManager.LM.prototypeCreateTextBlockFromHTML = function (e, t, a) {
     });
   return l.runtimeText = o,
     l.selrange = s,
-    GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.LM_TEXT_OBJECT, l).ID
+    T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.LM_TEXT_OBJECT, l).ID
 }
 
 ListManager.LM.prototypeSetHTMLText = function (e, t) {
@@ -13732,7 +13732,7 @@ ListManager.LM.prototypeSetHTMLText = function (e, t) {
         else if ('SPAN' == e.nodeName) {
           if (
             (s = $(e).css('font-family')) &&
-            (l.font = s, l.type = GlobalData.docHandler.svgDoc.GetFontType(l.font)),
+            (l.font = s, l.type = T3Gv.docHandler.svgDoc.GetFontType(l.font)),
             (s = $(e).css('font-size')) &&
             (
               s = s.replace('px', ''),
@@ -13891,7 +13891,7 @@ ListManager.LM.prototypeSetHTMLText = function (e, t) {
               ) &&
               (S.TextAlign = l, S.LineTextX = 0, S.LineTextY = 0, n && m.vjust !== C)
             ) {
-              var y = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
+              var y = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
                 f = ConstantData.Colors.Color_White;
               y &&
                 y.background.Paint.FillType !== ConstantData.FillTypes.SDFILL_TRANSPARENT &&
@@ -13941,7 +13941,7 @@ ListManager.LM.prototypeChangeSelectedTextAttributes = function (e, t, a, r, i) 
       ++c
     ) {
       u = l[c],
-        (o = GlobalData.optManager.SD_GetVisioTextChild(u)) >= 0 &&
+        (o = T3Gv.optManager.SD_GetVisioTextChild(u)) >= 0 &&
         (u = o);
       var D = this.GetObjectPtr(u, !0);
       D &&
@@ -13960,7 +13960,7 @@ ListManager.LM.prototypeChangeBackgroundTextColor = function (e, t) {
     var a,
       r,
       i,
-      n = GlobalData.optManager.ZList();
+      n = T3Gv.optManager.ZList();
     for (a = n.length, r = 0; r < a; r++) (i = this.GetObjectPtr(n[r], !1)) &&
       i.ChangeBackgroundColor(e, t)
   }
@@ -13982,19 +13982,19 @@ ListManager.LM.prototypeChangeBackgroundTextColor = function (e, t) {
         r.SetSelectedRange(i.start, i.end, i.line, i.anchor),
         0 === i.start &&
         r.GetTextLength() === i.end
-      ) (o = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0)).def.style.Text.FontName = e,
+      ) (o = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0)).def.style.Text.FontName = e,
         o.def.style.Text.FontId = t,
         o.def.lf.fontName = e;
       this.RegisterLastTEOp(ConstantData.TELastOp.TIMEOUT)
-    } else if (GlobalData.optManager.bInDimensionEdit) this.CloseEdit(),
-      o = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0),
-      GlobalData.optManager.theContentHeader.DimensionFont.fontName = e,
-      GlobalData.optManager.theContentHeader.DimensionFontStyle.font = e,
+    } else if (T3Gv.optManager.bInDimensionEdit) this.CloseEdit(),
+      o = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0),
+      T3Gv.optManager.theContentHeader.DimensionFont.fontName = e,
+      T3Gv.optManager.theContentHeader.DimensionFontStyle.font = e,
       SDF.ChangeHeader(FileParser.SDROpCodesByName.SDF_C_DIMFONT, !1),
-      GlobalData.optManager.UpdateAllDimensionLines(!0);
+      T3Gv.optManager.UpdateAllDimensionLines(!0);
     else {
       var o;
-      (o = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0)).def.style.Text.FontName = e,
+      (o = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0)).def.style.Text.FontName = e,
         o.def.style.Text.FontId = t,
         o.def.lf.fontName = e,
         this.ChangeSelectedTextAttributes({
@@ -14016,7 +14016,7 @@ ListManager.LM.prototypePixelstoPoints = function (e) {
 
 ListManager.LM.prototypeChangeFontSize = function (e) {
   Collab.BeginSecondaryEdit(),
-    GlobalData.docHandler.rulerSettings.showpixels &&
+    T3Gv.docHandler.rulerSettings.showpixels &&
     (e = this.PointstoPixels(e));
   var t = this.GetObjectPtr(this.theTEDSessionBlockID, !1);
   if (- 1 != t.theActiveTextEditObjectID || this.bInNoteEdit) {
@@ -14031,17 +14031,17 @@ ListManager.LM.prototypeChangeFontSize = function (e) {
       a.SetSelectedRange(r.start, r.end, r.line, r.anchor),
       0 === r.start &&
       a.GetTextLength() === r.end
-    ) this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0).def.style.Text.FontSize = e;
+    ) this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0).def.style.Text.FontSize = e;
     this.RegisterLastTEOp(ConstantData.TELastOp.TIMEOUT)
-  } else if (GlobalData.optManager.bInDimensionEdit) {
+  } else if (T3Gv.optManager.bInDimensionEdit) {
     this.CloseEdit();
-    GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0);
-    GlobalData.optManager.theContentHeader.DimensionFont.fontSize = e,
-      GlobalData.optManager.theContentHeader.DimensionFontStyle.size = SDF.PointSizeToFontSize(e),
+    T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0);
+    T3Gv.optManager.theContentHeader.DimensionFont.fontSize = e,
+      T3Gv.optManager.theContentHeader.DimensionFontStyle.size = SDF.PointSizeToFontSize(e),
       SDF.ChangeHeader(FileParser.SDROpCodesByName.SDF_C_DIMFONT, !1),
-      GlobalData.optManager.UpdateAllDimensionLines(!0)
+      T3Gv.optManager.UpdateAllDimensionLines(!0)
   } else {
-    this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0).def.style.Text.FontSize = e,
+    this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0).def.style.Text.FontSize = e,
       this.ChangeSelectedTextAttributes({
         size: SDF.PointSizeToFontSize(e)
       }, {
@@ -14053,13 +14053,13 @@ ListManager.LM.prototypeChangeFontSize = function (e) {
 ListManager.LM.prototypeChangeFontStyle = function (e) {
   Collab.BeginSecondaryEdit();
   var t = this.GetObjectPtr(this.theTEDSessionBlockID, !1),
-    a = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
+    a = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
     r = ConstantData.TextFace,
     i = {},
     n = a.def.style.Text.Face;
   switch (
-  GlobalData.optManager.bInDimensionEdit &&
-  (n = GlobalData.optManager.theContentHeader.DimensionFont.face),
+  T3Gv.optManager.bInDimensionEdit &&
+  (n = T3Gv.optManager.theContentHeader.DimensionFont.face),
   e
   ) {
     case 'bold':
@@ -14090,18 +14090,18 @@ ListManager.LM.prototypeChangeFontStyle = function (e) {
       0 === s.start &&
       o.GetTextLength() === s.end &&
       (
-        (a = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0)).def.style.Text.Face = n
+        (a = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0)).def.style.Text.Face = n
       ),
       this.RegisterLastTEOp(ConstantData.TELastOp.TIMEOUT)
-  } else GlobalData.optManager.bInDimensionEdit ? (
+  } else T3Gv.optManager.bInDimensionEdit ? (
     this.CloseEdit(),
-    a = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0),
-    GlobalData.optManager.theContentHeader.DimensionFont.face = n,
-    GlobalData.optManager.theContentHeader.DimensionFontStyle = $.extend(!0, GlobalData.optManager.theContentHeader.DimensionFontStyle, i),
+    a = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0),
+    T3Gv.optManager.theContentHeader.DimensionFont.face = n,
+    T3Gv.optManager.theContentHeader.DimensionFontStyle = $.extend(!0, T3Gv.optManager.theContentHeader.DimensionFontStyle, i),
     SDF.ChangeHeader(FileParser.SDROpCodesByName.SDF_C_DIMFONT, !1),
-    GlobalData.optManager.UpdateAllDimensionLines(!0)
+    T3Gv.optManager.UpdateAllDimensionLines(!0)
   ) : (
-    (a = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0)).def.style.Text.Face = n,
+    (a = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0)).def.style.Text.Face = n,
     this.ChangeSelectedTextAttributes(i, {
       Face: n
     }, null, null)
@@ -14123,10 +14123,10 @@ ListManager.LM.prototypeChangeFontColor = function (e) {
       a.SetSelectedRange(r.start, r.end, r.line, r.anchor),
       0 === r.start &&
       a.GetTextLength() === r.end
-    ) this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0).def.style.Text.Paint.Color = e;
+    ) this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0).def.style.Text.Paint.Color = e;
     this.RegisterLastTEOp(ConstantData.TELastOp.TIMEOUT)
   } else {
-    this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0).def.style.Text.Paint.Color = e,
+    this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0).def.style.Text.Paint.Color = e,
       this.ChangeSelectedTextAttributes({
         color: e
       }, {
@@ -14149,10 +14149,10 @@ ListManager.LM.prototypeChangeFontOpacity = function (e) {
       a.SetSelectedRange(r.start, r.end, r.line, r.anchor),
       0 === r.start &&
       a.GetTextLength() === r.end
-    ) this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0).def.style.Text.Paint.Opacity = e;
+    ) this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0).def.style.Text.Paint.Opacity = e;
     this.RegisterLastTEOp(ConstantData.TELastOp.TIMEOUT)
   } else {
-    this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0).def.style.Text.Paint.Opacity = e,
+    this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0).def.style.Text.Paint.Opacity = e,
       this.ChangeSelectedTextAttributes({
         colorTrans: e
       }, {
@@ -14209,42 +14209,42 @@ ListManager.LM.prototypeClearHyperlinkFromActiveText = function () {
   ListManager.LM.prototypeTextResizeNeedPageResize = function (e, t, a) {
     if (
       !(
-        GlobalData.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto
+        T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto
       )
     ) {
       var r,
-        i = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
+        i = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
       t > i.dim.x &&
         (
           r = {
             x: (
-              i = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0)
-            ).dim.x + GlobalData.optManager.theContentHeader.Page.papersize.x - (
-                GlobalData.optManager.theContentHeader.Page.margins.left + GlobalData.optManager.theContentHeader.Page.margins.right
+              i = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0)
+            ).dim.x + T3Gv.optManager.theContentHeader.Page.papersize.x - (
+                T3Gv.optManager.theContentHeader.Page.margins.left + T3Gv.optManager.theContentHeader.Page.margins.right
               ),
             y: i.dim.y
           },
-          GlobalData.optManager.UpdateEdgeLayers([], i.dim, r),
-          i.dim.x += GlobalData.optManager.theContentHeader.Page.papersize.x - (
-            GlobalData.optManager.theContentHeader.Page.margins.left + GlobalData.optManager.theContentHeader.Page.margins.right
+          T3Gv.optManager.UpdateEdgeLayers([], i.dim, r),
+          i.dim.x += T3Gv.optManager.theContentHeader.Page.papersize.x - (
+            T3Gv.optManager.theContentHeader.Page.margins.left + T3Gv.optManager.theContentHeader.Page.margins.right
           ),
-          GlobalData.optManager.ResizeSVGDocument()
+          T3Gv.optManager.ResizeSVGDocument()
         ),
         a > i.dim.y &&
         (
           r = {
             x: (
-              i = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0)
+              i = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0)
             ).dim.x,
-            y: i.dim.y + GlobalData.optManager.theContentHeader.Page.papersize.y - (
-              GlobalData.optManager.theContentHeader.Page.margins.top + GlobalData.optManager.theContentHeader.Page.margins.bottom
+            y: i.dim.y + T3Gv.optManager.theContentHeader.Page.papersize.y - (
+              T3Gv.optManager.theContentHeader.Page.margins.top + T3Gv.optManager.theContentHeader.Page.margins.bottom
             )
           },
-          GlobalData.optManager.UpdateEdgeLayers([], i.dim, r),
-          i.dim.y += GlobalData.optManager.theContentHeader.Page.papersize.y - (
-            GlobalData.optManager.theContentHeader.Page.margins.top + GlobalData.optManager.theContentHeader.Page.margins.bottom
+          T3Gv.optManager.UpdateEdgeLayers([], i.dim, r),
+          i.dim.y += T3Gv.optManager.theContentHeader.Page.papersize.y - (
+            T3Gv.optManager.theContentHeader.Page.margins.top + T3Gv.optManager.theContentHeader.Page.margins.bottom
           ),
-          GlobalData.optManager.ResizeSVGDocument()
+          T3Gv.optManager.ResizeSVGDocument()
         )
     }
   }
@@ -14258,7 +14258,7 @@ ListManager.LM.prototypeTextPinFrame = function (e, t) {
     (e.y = a),
     this.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto
   ) {
-    var r = GlobalData.optManager.GetObjectPtr(this.theSEDSessionBlockID, !1),
+    var r = T3Gv.optManager.GetObjectPtr(this.theSEDSessionBlockID, !1),
       i = e.x + e.width - r.dim.x + a;
     if (i > 0 && e.x >= i && (e.x -= i), (i = e.y + e.height - r.dim.y + a) > 0) {
       if (!(e.y - t >= i)) {
@@ -14274,14 +14274,14 @@ ListManager.LM.prototypeTextPinFrame = function (e, t) {
 
 ListManager.LM.prototypeTextAutoScroll = function (e) {
   if (
-    - 1 != GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theTEDSessionBlockID, !1).theActiveTextEditObjectID
+    - 1 != T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theTEDSessionBlockID, !1).theActiveTextEditObjectID
   ) {
-    var t = GlobalData.optManager.svgObjectLayer.GetElementByID(e);
+    var t = T3Gv.optManager.svgObjectLayer.GetElementByID(e);
     if (t && t.textElem) {
       var a = t.textElem.GetInputCursorPos();
       if (a) {
-        var r = GlobalData.optManager.svgDoc.ConvertWindowToDocCoords(a.x2, a.y2);
-        GlobalData.docHandler.ScrollToPosition(r.x, r.y)
+        var r = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(a.x2, a.y2);
+        T3Gv.docHandler.ScrollToPosition(r.x, r.y)
       }
     }
   }
@@ -14299,17 +14299,17 @@ ListManager.LM.prototypeTextCallback = function (e, t, a, r) {
     u = r.ID,
     p = null,
     d = !1,
-    D = GlobalData.gBusinessManager,
+    D = T3Gv.gBusinessManager,
     g = function () {
       var e = Business.GetSelectionBusinessManager(u);
       e &&
         (D = e)
     };
   try {
-    var h = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theTEDSessionBlockID, !1);
+    var h = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theTEDSessionBlockID, !1);
     if (
       'spellcheck' === e &&
-      (p = GlobalData.optManager.GetObjectPtr(u, !1)) &&
+      (p = T3Gv.optManager.GetObjectPtr(u, !1)) &&
       (
         (S = p.GetTable(!1)) &&
         (
@@ -14317,42 +14317,42 @@ ListManager.LM.prototypeTextCallback = function (e, t, a, r) {
           d = !(S.select >= 0) ||
           S.cells[S.select].DataID != c
         ),
-        null == GlobalData.optManager.svgDoc.GetActiveEdit() &&
+        null == T3Gv.optManager.svgDoc.GetActiveEdit() &&
         (d = !0)
       ),
       h.theActiveTextEditObjectID != u ||
       d
     ) {
-      if ('spellcheck' === e) (p = GlobalData.optManager.GetObjectPtr(u, !1)) &&
+      if ('spellcheck' === e) (p = T3Gv.optManager.GetObjectPtr(u, !1)) &&
         (c = (S = p.GetTable(!1)) ? a.GetUserData() : p.DataID),
         c > 0 &&
         a &&
         (
           o = a.GetRuntimeText(),
-          (s = GlobalData.optManager.GetObjectPtr(c, SDJS.Editor.IsStateOpen())) &&
+          (s = T3Gv.optManager.GetObjectPtr(c, SDJS.Editor.IsStateOpen())) &&
           (s.runtimeText = o),
           SDJS.Editor.IsStateOpen() ||
           (
-            (l = []).push(GlobalData.objectStore.GetObject(c)),
-            SDF.SaveChangedBlocks(GlobalData.stateManager.CurrentStateID, 0, GlobalData.stateManager.CurrentStateID, l)
+            (l = []).push(T3Gv.objectStore.GetObject(c)),
+            SDF.SaveChangedBlocks(T3Gv.stateManager.CurrentStateID, 0, T3Gv.stateManager.CurrentStateID, l)
           )
         );
       return
     }
     switch (e) {
       case 'activate':
-        (i = GlobalData.optManager.Table_GetActiveID()) >= 0 &&
+        (i = T3Gv.optManager.Table_GetActiveID()) >= 0 &&
           (
-            GlobalData.optManager.Table_UpdateSelectionAttributes(i, !0),
+            T3Gv.optManager.Table_UpdateSelectionAttributes(i, !0),
             n = new ListManager.SelectionAttributes,
-            $.extend(!0, n, GlobalData.optManager.SelectionState),
+            $.extend(!0, n, T3Gv.optManager.SelectionState),
             SDUI.Commands.MainController.UpdateActiveSelection(n, !1)
           ),
           SDUI.Commands.MainController.DataPanel.IdleDataPanel(null, !0);
         break;
       case 'dragoutside':
         if (
-          (p = GlobalData.optManager.GetObjectPtr(u, !1)) &&
+          (p = T3Gv.optManager.GetObjectPtr(u, !1)) &&
           (S = p.GetTable(!1)) &&
           S.select >= 0
         ) {
@@ -14368,18 +14368,18 @@ ListManager.LM.prototypeTextCallback = function (e, t, a, r) {
               a.editor.BeginTableDrag(),
               y.y -= p.trect.y,
               y.x -= p.trect.x,
-              GlobalData.optManager.Table_Select(p, S, y, !0, null, !1)
+              T3Gv.optManager.Table_Select(p, S, y, !0, null, !1)
             )
         }
         break;
       case 'dragoutside_mouseup':
-        GlobalData.optManager.DeactivateTextEdit(!1),
-          GlobalData.optManager.FormatPainterMode === ListManager.FormatPainterModes.TEXT &&
+        T3Gv.optManager.DeactivateTextEdit(!1),
+          T3Gv.optManager.FormatPainterMode === ListManager.FormatPainterModes.TEXT &&
           (
-            GlobalData.optManager.FormatPainterClick(u, null),
+            T3Gv.optManager.FormatPainterClick(u, null),
             !0 !== this.FormatPainterSticky &&
             (
-              GlobalData.optManager.FormatPainterMode = ListManager.FormatPainterModes.None
+              T3Gv.optManager.FormatPainterMode = ListManager.FormatPainterModes.None
             )
           );
         break;
@@ -14388,7 +14388,7 @@ ListManager.LM.prototypeTextCallback = function (e, t, a, r) {
           case Resources.Keys.Tab:
             if (
               h.theActiveTableObjectID >= 0 &&
-              GlobalData.optManager.Table_Navigate(
+              T3Gv.optManager.Table_Navigate(
                 h.theActiveTableObjectID,
                 Resources.Keys.Tab,
                 t.shiftKey,
@@ -14400,7 +14400,7 @@ ListManager.LM.prototypeTextCallback = function (e, t, a, r) {
           case Resources.Keys.Enter:
             if (
               h.theActiveTableObjectID >= 0 &&
-              GlobalData.optManager.Table_Navigate(
+              T3Gv.optManager.Table_Navigate(
                 h.theActiveTableObjectID,
                 Resources.Keys.Enter,
                 t.shiftKey,
@@ -14408,7 +14408,7 @@ ListManager.LM.prototypeTextCallback = function (e, t, a, r) {
               )
             ) return !0;
             if (
-              (p = GlobalData.optManager.GetObjectPtr(h.theActiveTextEditObjectID, !1)) &&
+              (p = T3Gv.optManager.GetObjectPtr(h.theActiveTextEditObjectID, !1)) &&
               p.TextFlags & ConstantData.TextFlags.SED_TF_FormCR &&
               !t.ctrlKey &&
               (g(), !D.Tab(t.shiftKey))
@@ -14418,7 +14418,7 @@ ListManager.LM.prototypeTextCallback = function (e, t, a, r) {
           case Resources.Keys.Down_Arrow:
             if (
               h.theActiveTableObjectID >= 0 &&
-              GlobalData.optManager.Table_Navigate(h.theActiveTableObjectID, t.keyCode, t.shiftKey, t.ctrlKey)
+              T3Gv.optManager.Table_Navigate(h.theActiveTableObjectID, t.keyCode, t.shiftKey, t.ctrlKey)
             ) return !0;
             if (g(), !D.NavUpDown(t.keyCode === Resources.Keys.Up_Arrow)) return !0;
             break;
@@ -14426,7 +14426,7 @@ ListManager.LM.prototypeTextCallback = function (e, t, a, r) {
           case Resources.Keys.Right_Arrow:
             if (
               h.theActiveTableObjectID >= 0 &&
-              GlobalData.optManager.Table_Navigate(h.theActiveTableObjectID, t.keyCode, t.shiftKey, t.ctrlKey)
+              T3Gv.optManager.Table_Navigate(h.theActiveTableObjectID, t.keyCode, t.shiftKey, t.ctrlKey)
             ) return !0;
             if (
               g(),
@@ -14435,22 +14435,22 @@ ListManager.LM.prototypeTextCallback = function (e, t, a, r) {
         }
         break;
       case 'edit':
-        GlobalData.optManager.TextAutoScroll(u),
-          GlobalData.optManager.TextResizeCommon(u);
+        T3Gv.optManager.TextAutoScroll(u),
+          T3Gv.optManager.TextResizeCommon(u);
         break;
       case 'didresize':
         break;
       case 'click':
         h.theTELastOp != ConstantData.TELastOp.INIT &&
-          GlobalData.optManager.RegisterLastTEOp(ConstantData.TELastOp.SELECT);
+          T3Gv.optManager.RegisterLastTEOp(ConstantData.TELastOp.SELECT);
         break;
       case 'selectrange':
-        GlobalData.optManager.FormatPainterMode === ListManager.FormatPainterModes.TEXT &&
+        T3Gv.optManager.FormatPainterMode === ListManager.FormatPainterModes.TEXT &&
           (
-            GlobalData.optManager.FormatPainterClick(u, null),
+            T3Gv.optManager.FormatPainterClick(u, null),
             !0 !== this.FormatPainterSticky &&
             (
-              GlobalData.optManager.FormatPainterMode = ListManager.FormatPainterModes.None
+              T3Gv.optManager.FormatPainterMode = ListManager.FormatPainterModes.None
             )
           );
         break;
@@ -14458,17 +14458,17 @@ ListManager.LM.prototypeTextCallback = function (e, t, a, r) {
         SDUI.Commands.MainController.Hyperlinks.FollowHyperlink(t);
         break;
       case 'select':
-        GlobalData.optManager.TextSelectIdle(a);
+        T3Gv.optManager.TextSelectIdle(a);
         break;
       case 'charfilter':
-        if (!(p = GlobalData.optManager.GetObjectPtr(u, !1))) return !0;
+        if (!(p = T3Gv.optManager.GetObjectPtr(u, !1))) return !0;
         var L = Business.GetSelectionBusinessManager(p.BlockID);
         return !(L && !L.TextEditCharFilter(u, t));
       case 'deactivate':
         SDUI.Commands.MainController.DataPanel.IdleDataPanel(null, !0)
     }
   } catch (e) {
-    GlobalData.optManager.ExceptionCleanup(e)
+    T3Gv.optManager.ExceptionCleanup(e)
   }
 }
 
@@ -14650,16 +14650,16 @@ ListManager.LM.prototypeChangeTextAlign = function (e) {
       ),
       this.TextResizeCommon(r.theActiveTextEditObjectID),
       s.SetSelectedRange(l.start, l.end, l.line, l.anchor),
-      (a = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0)).def.just = n,
+      (a = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0)).def.just = n,
       a.def.vjust = i,
       this.RegisterLastTEOp(ConstantData.TELastOp.TIMEOUT)
-  } else (a = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0)).def.just = n,
+  } else (a = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0)).def.just = n,
     a.def.vjust = i,
     this.ChangeSelectedTextAttributes(null, null, e, null)
 }
 
 ListManager.LM.prototypeSetTextAlignment = function (e, t, a) {
-  var r = GlobalData.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.TEXT);
+  var r = T3Gv.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.TEXT);
   r.SetRenderingEnabled(!1),
     r.SetRuntimeText(e.runtimeText),
     null != t &&
@@ -14720,7 +14720,7 @@ ListManager.LM.prototypeChangeTextSpacing = function (e) {
 ListManager.LM.prototypeChangeTextDirection = function (e, t) {
   var a = this.GetObjectPtr(this.theSelectedListBlockID, !1);
   if (Collab.BeginSecondaryEdit(), null == t) {
-    var r = GlobalData.optManager.GetObjectPtr(this.theSEDSessionBlockID, !0);
+    var r = T3Gv.optManager.GetObjectPtr(this.theSEDSessionBlockID, !0);
     r.def.textflags = Utils2.SetFlag(
       r.def.textflags,
       ConstantData.TextFlags.SED_TF_HorizText,
@@ -14761,7 +14761,7 @@ ListManager.LM.prototypeDeleteTargetTextObject = function (e) {
     var t = this.GetObjectPtr(e, !0),
       a = t.DataID;
     if (- 1 != a) {
-      var r = GlobalData.objectStore.GetObject(a);
+      var r = T3Gv.objectStore.GetObject(a);
       t.SetTextObject(- 1),
         r &&
         r.Delete()
@@ -14785,39 +14785,39 @@ ListManager.LM.prototypeTextSelectIdle = function (e) {
     d = !1;
   t = e.GetSelectedFormat(),
     r = (a = e.GetSelectedRange()).start != a.end,
-    GlobalData.optManager.SelectionState.selectionhastext = !0,
+    T3Gv.optManager.SelectionState.selectionhastext = !0,
     t &&
     (
       (
-        u = GlobalData.optManager.Table_GetActiveID() >= 0 &&
-          GlobalData.optManager.GetClipboardType() === ConstantData.ClipboardType.Table ? ConstantData.ClipboardType.Table : GlobalData.optManager.theTextClipboard ? ConstantData.ClipboardType.Text : ConstantData.ClipboardType.None
-      ) !== GlobalData.optManager.SelectionState.paste &&
-      (GlobalData.optManager.SelectionState.paste = u, d = !0),
-      (i = GlobalData.optManager.FontSizeToPoints(t.size)) != GlobalData.optManager.SelectionState.fontsize &&
-      (GlobalData.optManager.SelectionState.fontsize = i, d = !0),
-      (n = GlobalData.optManager.GetFontIdByName(t.font)) != GlobalData.optManager.SelectionState.fontid &&
-      (GlobalData.optManager.SelectionState.fontid = n, d = !0),
+        u = T3Gv.optManager.Table_GetActiveID() >= 0 &&
+          T3Gv.optManager.GetClipboardType() === ConstantData.ClipboardType.Table ? ConstantData.ClipboardType.Table : T3Gv.optManager.theTextClipboard ? ConstantData.ClipboardType.Text : ConstantData.ClipboardType.None
+      ) !== T3Gv.optManager.SelectionState.paste &&
+      (T3Gv.optManager.SelectionState.paste = u, d = !0),
+      (i = T3Gv.optManager.FontSizeToPoints(t.size)) != T3Gv.optManager.SelectionState.fontsize &&
+      (T3Gv.optManager.SelectionState.fontsize = i, d = !0),
+      (n = T3Gv.optManager.GetFontIdByName(t.font)) != T3Gv.optManager.SelectionState.fontid &&
+      (T3Gv.optManager.SelectionState.fontid = n, d = !0),
       o = 'bold' === t.weight,
-      GlobalData.optManager.SelectionState.bold != o &&
-      (GlobalData.optManager.SelectionState.bold = o, d = !0),
+      T3Gv.optManager.SelectionState.bold != o &&
+      (T3Gv.optManager.SelectionState.bold = o, d = !0),
       s = 'italic' === t.style,
-      GlobalData.optManager.SelectionState.italic != s &&
-      (GlobalData.optManager.SelectionState.italic = s, d = !0),
+      T3Gv.optManager.SelectionState.italic != s &&
+      (T3Gv.optManager.SelectionState.italic = s, d = !0),
       l = 'underline' === t.decoration,
-      GlobalData.optManager.SelectionState.underline != l &&
-      (GlobalData.optManager.SelectionState.underline = l, d = !0),
+      T3Gv.optManager.SelectionState.underline != l &&
+      (T3Gv.optManager.SelectionState.underline = l, d = !0),
       S = 'super' === t.baseOffset,
-      GlobalData.optManager.SelectionState.superscript != S &&
-      (GlobalData.optManager.SelectionState.superscript = S, d = !0),
+      T3Gv.optManager.SelectionState.superscript != S &&
+      (T3Gv.optManager.SelectionState.superscript = S, d = !0),
       c = 'sub' === t.baseOffset,
-      GlobalData.optManager.SelectionState.subscript != c &&
-      (GlobalData.optManager.SelectionState.subscript = c, d = !0),
-      r != GlobalData.optManager.SelectionState.allowcopy &&
-      (GlobalData.optManager.SelectionState.allowcopy = r, d = !0),
+      T3Gv.optManager.SelectionState.subscript != c &&
+      (T3Gv.optManager.SelectionState.subscript = c, d = !0),
+      r != T3Gv.optManager.SelectionState.allowcopy &&
+      (T3Gv.optManager.SelectionState.allowcopy = r, d = !0),
       d &&
       (
         p = new ListManager.SelectionAttributes,
-        $.extend(!0, p, GlobalData.optManager.SelectionState),
+        $.extend(!0, p, T3Gv.optManager.SelectionState),
         SDUI.Commands.MainController.UpdateActiveSelection(p, !0)
       )
     )
@@ -14835,12 +14835,12 @@ ListManager.LM.prototypeReplaceAll = function (e, t, a, r) {
     if (e === t) return void Utils2.Alert(Resources.Strings.Search_ReplMatch, null)
   } else if (e.toUpperCase() === t.toUpperCase()) return void Utils2.Alert(Resources.Strings.Search_ReplMatch, null);
   for (
-    GlobalData.optManager.CloseEdit(),
-    GlobalData.optManager.NoUndo = !0;
+    T3Gv.optManager.CloseEdit(),
+    T3Gv.optManager.NoUndo = !0;
     this.FindNext(e, t, a, r, !0, n);
   ) i++;
   i > 0 ? Utils2.Alert(i + Resources.Strings.Search_NMatches, null) : Utils2.Alert(Resources.Strings.Search_NoMatch, null),
-    GlobalData.optManager.NoUndo = !1
+    T3Gv.optManager.NoUndo = !1
 }
 
 ListManager.LM.prototypeFindNext = function (e, t, a, r, i, n) {
@@ -14981,13 +14981,13 @@ ListManager.LM.prototypeFoundText = function (e, t, a, r) {
     n,
     o,
     s;
-  if ((i = this.GetObjectPtr(e, !1)).FoundText(t, a, r)) return GlobalData.optManager.ScrollObjectIntoView(e, !1),
+  if ((i = this.GetObjectPtr(e, !1)).FoundText(t, a, r)) return T3Gv.optManager.ScrollObjectIntoView(e, !1),
     !0;
   if (
     i &&
     i.TableID >= 0 &&
     (o = i.GetTable(!1), this.Table_FindNext(i, o, t, a, !1, !1))
-  ) return GlobalData.optManager.ScrollObjectIntoView(e, !1),
+  ) return T3Gv.optManager.ScrollObjectIntoView(e, !1),
     !0;
   if (
     i &&
@@ -14995,7 +14995,7 @@ ListManager.LM.prototypeFoundText = function (e, t, a, r) {
     (s = this.GetObjectPtr(i.NoteID, !1)) &&
     (n = s.runtimeText.text.search(t)) >= 0
   ) {
-    GlobalData.optManager.ScrollObjectIntoView(e, !1),
+    T3Gv.optManager.ScrollObjectIntoView(e, !1),
       this.ToggleNote(e, null);
     var l = this.svgDoc.GetActiveEdit();
     if (l) return l.SetSelectedRange(n, n + a),
@@ -15053,11 +15053,11 @@ ListManager.LM.prototypeApplyGroupProperties = function (e, t) {
       a instanceof ListManager.GroupSymbol ? this.ApplyGroupProperties(e, a) : (a = this.GetObjectPtr(r[o], !0)).SetObjectStyle(e),
       i = !0;
     if (i) {
-      GlobalData.optManager.AddToDirtyList(t.BlockID);
+      T3Gv.optManager.AddToDirtyList(t.BlockID);
       var s = t.Frame.width / t.InitialGroupBounds.width,
         l = t.Frame.height / t.InitialGroupBounds.height;
       if (
-        t.InitialGroupBounds = GlobalData.optManager.GetListSRect(r),
+        t.InitialGroupBounds = T3Gv.optManager.GetListSRect(r),
         !isNaN(s) &&
         !isNaN(l)
       ) {
@@ -15075,7 +15075,7 @@ ListManager.LM.prototypeApplyGroupProperties = function (e, t) {
         t.UpdateFrame(S)
       }
     }
-    t.ConvertToNative(GlobalData.optManager.RichGradients, !1)
+    t.ConvertToNative(T3Gv.optManager.RichGradients, !1)
   }
 }
 
@@ -15109,7 +15109,7 @@ ListManager.LM.prototypeSetGroupTheme = function (e, t) {
         }
       }
     }
-    e.ConvertToNative(GlobalData.optManager.RichGradients, !1)
+    e.ConvertToNative(T3Gv.optManager.RichGradients, !1)
   }
 }
 
@@ -15128,8 +15128,8 @@ ListManager.LM.prototypeUngroupNative = function (e, t, a) {
       selectedList: []
     };
   if (
-    (r = GlobalData.optManager.GetObjectPtr(e, !1)).NativeID >= 0 &&
-    (i = GlobalData.optManager.GetObjectPtr(r.NativeID, !1)) &&
+    (r = T3Gv.optManager.GetObjectPtr(e, !1)).NativeID >= 0 &&
+    (i = T3Gv.optManager.GetObjectPtr(r.NativeID, !1)) &&
     (
       SDF.ReadSymbolFromBuffer(i, 0, 0, 0, !1, !1, d, !1, !1, !1, !1, !1),
       d.selectedList.length
@@ -15150,13 +15150,13 @@ ListManager.LM.prototypeUngroupNative = function (e, t, a) {
       Utils2.IsEqual(100 * s, 100) ||
       !(l > 1)
     ) for (S = 0; S < l; S++) e = d.selectedList[S],
-      GlobalData.optManager.GetObjectPtr(e, !1).OffsetShape(c, u);
+      T3Gv.optManager.GetObjectPtr(e, !1).OffsetShape(c, u);
     else for (S = 0; S < l; S++) e = d.selectedList[S],
-      GlobalData.optManager.GetObjectPtr(e, !1).ScaleObject(c, u, g, 0, o, s, !0);
+      T3Gv.optManager.GetObjectPtr(e, !1).ScaleObject(c, u, g, 0, o, s, !0);
     l > 1 &&
       !a ? (
-      e = GlobalData.optManager.GroupSelectedShapes(!0, d.selectedList, !1),
-      n = GlobalData.optManager.GetObjectPtr(e, !1),
+      e = T3Gv.optManager.GroupSelectedShapes(!0, d.selectedList, !1),
+      n = T3Gv.optManager.GetObjectPtr(e, !1),
       p.push(e),
       n.InitialGroupBounds.x = 0,
       n.InitialGroupBounds.y = 0,
@@ -15194,11 +15194,11 @@ ListManager.LM.prototypeUngroupVisioShapes = function (e, t) {
     e instanceof ListManager.GroupSymbol
   ) {
     if (1 === (i = (a = Utils1.DeepCopy(e.ShapesInGroup)).length)) {
-      var s = GlobalData.objectStore.GetObject(e.BlockID),
-        l = GlobalData.objectStore.GetObject(a[0]),
+      var s = T3Gv.objectStore.GetObject(e.BlockID),
+        l = T3Gv.objectStore.GetObject(a[0]),
         S = s.Data;
       S.DataID <= 0 &&
-        (o = GlobalData.optManager.SD_GetVisioTextChild(S.BlockID)),
+        (o = T3Gv.optManager.SD_GetVisioTextChild(S.BlockID)),
         o >= 0 &&
         (
           l.Data.associd = S.associd,
@@ -15217,7 +15217,7 @@ ListManager.LM.prototypeUngroupVisioShapes = function (e, t) {
     } else if (e.ContainsText()) for (this.UngroupShape(e.BlockID), r = 0; r < i; r++) (n = this.GetObjectPtr(a[r])) &&
       this.UngroupVisioShapes(n, t)
   } else if (
-    (o = GlobalData.optManager.SD_GetVisioTextChild(e.BlockID)) >= 0 &&
+    (o = T3Gv.optManager.SD_GetVisioTextChild(e.BlockID)) >= 0 &&
     0 === e.StyleRecord.Line.Thickness &&
     e.StyleRecord.Fill.Paint.FillType === ConstantData.FillTypes.SDFILL_TRANSPARENT
   ) {
@@ -15246,76 +15246,76 @@ ListManager.LM.prototypeUngroupVisioShapes = function (e, t) {
 
 ListManager.LM.prototypeImportScaledBitmapImage = function (e) {
   var t = new Image;
-  GlobalData.optManager.bitmapImportCanvas = document.createElement('canvas'),
-    GlobalData.optManager.bitmapScaledCanvas = document.createElement('canvas'),
+  T3Gv.optManager.bitmapImportCanvas = document.createElement('canvas'),
+    T3Gv.optManager.bitmapScaledCanvas = document.createElement('canvas'),
     'http' == e.substring(0, 4) &&
     (t.crossOrigin = 'Anonymous'),
     t.onload = function () {
       var e = t.width,
         a = t.height;
-      GlobalData.optManager.bitmapImportSourceWidth = e,
-        GlobalData.optManager.bitmapImportSourceHeight = a,
-        GlobalData.optManager.bitmapImportCanvas.width = e,
-        GlobalData.optManager.bitmapImportCanvas.height = a;
+      T3Gv.optManager.bitmapImportSourceWidth = e,
+        T3Gv.optManager.bitmapImportSourceHeight = a,
+        T3Gv.optManager.bitmapImportCanvas.width = e,
+        T3Gv.optManager.bitmapImportCanvas.height = a;
       var r,
-        i = GlobalData.optManager.bitmapImportCanvas.getContext('2d');
+        i = T3Gv.optManager.bitmapImportCanvas.getContext('2d');
       if (
-        GlobalData.optManager.bitmapImportCanvasCTX = i,
+        T3Gv.optManager.bitmapImportCanvasCTX = i,
         i.fillStyle = 'white',
         i.fillRect(0, 0, e, a),
-        GlobalData.optManager.bitmapImportEXIFdata.Orientation
-      ) switch (GlobalData.optManager.bitmapImportEXIFdata.Orientation) {
+        T3Gv.optManager.bitmapImportEXIFdata.Orientation
+      ) switch (T3Gv.optManager.bitmapImportEXIFdata.Orientation) {
         case 1:
         default:
-          GlobalData.optManager.bitmapImportCanvas.width = e,
-            GlobalData.optManager.bitmapImportCanvas.height = a,
+          T3Gv.optManager.bitmapImportCanvas.width = e,
+            T3Gv.optManager.bitmapImportCanvas.height = a,
             i.drawImage(t, 0, 0, e, a);
           break;
         case 3:
-          GlobalData.optManager.bitmapImportCanvas.width = e,
-            GlobalData.optManager.bitmapImportCanvas.height = a,
-            GlobalData.optManager.DrawRotatedBitmapImage(i, t, e / 2, a / 2, 180);
+          T3Gv.optManager.bitmapImportCanvas.width = e,
+            T3Gv.optManager.bitmapImportCanvas.height = a,
+            T3Gv.optManager.DrawRotatedBitmapImage(i, t, e / 2, a / 2, 180);
           break;
         case 6:
-          GlobalData.optManager.bitmapImportCanvas.width = a,
-            GlobalData.optManager.bitmapImportCanvas.height = e,
-            GlobalData.optManager.DrawRotatedBitmapImage(i, t, a / 2, e / 2, 90),
+          T3Gv.optManager.bitmapImportCanvas.width = a,
+            T3Gv.optManager.bitmapImportCanvas.height = e,
+            T3Gv.optManager.DrawRotatedBitmapImage(i, t, a / 2, e / 2, 90),
             r = e,
             e = a,
             a = r;
           break;
         case 8:
-          GlobalData.optManager.bitmapImportCanvas.width = a,
-            GlobalData.optManager.bitmapImportCanvas.height = e,
-            GlobalData.optManager.DrawRotatedBitmapImage(i, t, a / 2, e / 2, 270),
+          T3Gv.optManager.bitmapImportCanvas.width = a,
+            T3Gv.optManager.bitmapImportCanvas.height = e,
+            T3Gv.optManager.DrawRotatedBitmapImage(i, t, a / 2, e / 2, 270),
             r = e,
             e = a,
             a = r
-      } else GlobalData.optManager.bitmapImportCanvas.width = e,
-        GlobalData.optManager.bitmapImportCanvas.height = a,
+      } else T3Gv.optManager.bitmapImportCanvas.width = e,
+        T3Gv.optManager.bitmapImportCanvas.height = a,
         i.drawImage(t, 0, 0, e, a);
-      var n = GlobalData.optManager.bitmapImportDPI,
-        o = GlobalData.optManager.bitmapImportDestWidth * (n / GlobalData.docHandler.svgDoc.docInfo.docDpi),
-        s = GlobalData.optManager.bitmapImportDestHeight * (n / GlobalData.docHandler.svgDoc.docInfo.docDpi);
+      var n = T3Gv.optManager.bitmapImportDPI,
+        o = T3Gv.optManager.bitmapImportDestWidth * (n / T3Gv.docHandler.svgDoc.docInfo.docDpi),
+        s = T3Gv.optManager.bitmapImportDestHeight * (n / T3Gv.docHandler.svgDoc.docInfo.docDpi);
       o < 100 &&
         (o = 100),
         s < 100 &&
         (s = 100),
-        o > GlobalData.optManager.bitmapImportMaxScaledWidth &&
-        (o = GlobalData.optManager.bitmapImportMaxScaledWidth),
-        s > GlobalData.optManager.bitmapImportMaxScaledHeight &&
-        (s = GlobalData.optManager.bitmapImportMaxScaledHeight);
+        o > T3Gv.optManager.bitmapImportMaxScaledWidth &&
+        (o = T3Gv.optManager.bitmapImportMaxScaledWidth),
+        s > T3Gv.optManager.bitmapImportMaxScaledHeight &&
+        (s = T3Gv.optManager.bitmapImportMaxScaledHeight);
       var l = Math.max(o / e, s / a);
       l = Math.min(l, 1);
       var S = Math.round(e * l),
         c = Math.round(a * l);
-      GlobalData.optManager.bitmapScaledCanvas.width = S,
-        GlobalData.optManager.bitmapScaledCanvas.height = c;
-      var u = GlobalData.optManager.bitmapScaledCanvas.getContext('2d');
-      GlobalData.optManager.bitmapScaledCanvasCTX = u,
+      T3Gv.optManager.bitmapScaledCanvas.width = S,
+        T3Gv.optManager.bitmapScaledCanvas.height = c;
+      var u = T3Gv.optManager.bitmapScaledCanvas.getContext('2d');
+      T3Gv.optManager.bitmapScaledCanvasCTX = u,
         u.ImageSmoothingEnabled = !1,
-        u.drawImage(GlobalData.optManager.bitmapImportCanvas, 0, 0, e, a, 0, 0, S, c);
-      GlobalData.optManager.bitmapScaledCanvas.toBlob(
+        u.drawImage(T3Gv.optManager.bitmapImportCanvas, 0, 0, e, a, 0, 0, S, c);
+      T3Gv.optManager.bitmapScaledCanvas.toBlob(
         (
           function (e) {
             var t = new FileReader;
@@ -15327,24 +15327,24 @@ ListManager.LM.prototypeImportScaledBitmapImage = function (e) {
                 r = '';
               a &&
                 a.createObjectURL ? (
-                GlobalData.optManager.bitmapImportScaledSize = t.length,
+                T3Gv.optManager.bitmapImportScaledSize = t.length,
                 r = a.createObjectURL(e),
-                GlobalData.optManager.scaledBitmapCallback(r, e, t),
-                GlobalData.optManager.bitmapImportCanvas.width = 0,
-                GlobalData.optManager.bitmapImportCanvas.height = 0,
-                GlobalData.optManager.bitmapImportCanvasCTX = null,
-                GlobalData.optManager.bitmapImportCanvas = null,
-                GlobalData.optManager.bitmapScaledCanvas.width = 0,
-                GlobalData.optManager.bitmapScaledCanvas.height = 0,
-                GlobalData.optManager.bitmapScaledCanvasCTX = null,
-                GlobalData.optManager.bitmapScaledCanvas = null,
-                GlobalData.optManager.bitmapImportEXIFdata = null
+                T3Gv.optManager.scaledBitmapCallback(r, e, t),
+                T3Gv.optManager.bitmapImportCanvas.width = 0,
+                T3Gv.optManager.bitmapImportCanvas.height = 0,
+                T3Gv.optManager.bitmapImportCanvasCTX = null,
+                T3Gv.optManager.bitmapImportCanvas = null,
+                T3Gv.optManager.bitmapScaledCanvas.width = 0,
+                T3Gv.optManager.bitmapScaledCanvas.height = 0,
+                T3Gv.optManager.bitmapScaledCanvasCTX = null,
+                T3Gv.optManager.bitmapScaledCanvas = null,
+                T3Gv.optManager.bitmapImportEXIFdata = null
               ) : alert('No createObjectURL available')
             },
               t.readAsArrayBuffer(e)
           }
         ),
-        GlobalData.optManager.bitmapImportMimeType,
+        T3Gv.optManager.bitmapImportMimeType,
         0.9
       )
     },
@@ -15393,7 +15393,7 @@ ListManager.LM.prototypeClearImage = function (e, t, a, r, i) {
     s = !1;
   if (n = this.GetObjectPtr(e, !r)) {
     if ((o = n.GetTable(!1)) && !a) {
-      if (s = GlobalData.optManager.Table_ClearTableImage(n, o, r), r) return !0
+      if (s = T3Gv.optManager.Table_ClearTableImage(n, o, r), r) return !0
     } else {
       if (this.IsBlobURL(n.ImageURL)) {
         if (r) return !0;
@@ -15402,7 +15402,7 @@ ListManager.LM.prototypeClearImage = function (e, t, a, r, i) {
           s = !0
       }
       if (- 1 != n.BlobBytesID) {
-        var l = GlobalData.objectStore.GetObject(n.BlobBytesID);
+        var l = T3Gv.objectStore.GetObject(n.BlobBytesID);
         l &&
           l.Delete(),
           n.BlobBytesID = - 1
@@ -15444,7 +15444,7 @@ ListManager.LM.prototypeClearImage = function (e, t, a, r, i) {
               var o = ConstantData.FillTypes.SDFILL_TRANSPARENT;
               for (i = a.cells.length, r = 0; r < i; r++) (n = a.cells[r]).fill.Paint.FillType = o;
               if (
-                GlobalData.optManager.Table_Format(null, a, ConstantData.TextGrowBehavior.PROPORTIONAL, !1),
+                T3Gv.optManager.Table_Format(null, a, ConstantData.TextGrowBehavior.PROPORTIONAL, !1),
                 (n = a.cells[0]).celltype === ListManager.Table.CellTypes.SDT_CT_ICONPHOTOCELL
               ) null == n.Image &&
                 (n.Image = new ListManager.ImageRecord),
@@ -15483,7 +15483,7 @@ ListManager.LM.prototypeTable_Create = function (e, t, a, r, i) {
       P,
       R,
       A = {},
-      _ = GlobalData.optManager.GetObjectPtr(this.theSEDSessionBlockID, !1);
+      _ = T3Gv.optManager.GetObjectPtr(this.theSEDSessionBlockID, !1);
     if (null != (R = this.GetObjectPtr(e, !0))) {
       R.TextFlags = Utils2.SetFlag(R.TextFlags, ConstantData.TextFlags.SED_TF_AttachA, !1),
         R.TextFlags = Utils2.SetFlag(R.TextFlags, ConstantData.TextFlags.SED_TF_AttachB, !1);
@@ -15511,7 +15511,7 @@ ListManager.LM.prototypeTable_Create = function (e, t, a, r, i) {
         o.vdisp = this.Table_GetGridLineThickness(o.vline),
         o.tstylename = R.StyleRecord.Name,
         o.Text = Utils1.DeepCopy(R.StyleRecord.Text),
-        o.Text.FontId = GlobalData.optManager.GetFontIdByName(_.def.lf.fontName),
+        o.Text.FontId = T3Gv.optManager.GetFontIdByName(_.def.lf.fontName),
         o.Text.FontName = _.def.lf.fontName,
         o.uniqueid = ++y.tunique,
         o.stylename = R.StyleRecord.Name,
@@ -15845,7 +15845,7 @@ ListManager.LM.prototypeTable_SortChildContainers = function (e, t) {
   if (!(this.ActiveVisibleZList().indexOf(e.BlockID) < 0)) {
     for (r = t.cells.length, a = 0; a < r; a++) (i = t.cells[a]).childcontainer >= 0 &&
       n.push(i.childcontainer);
-    for (len = n.length, a = 0; a < len; a++) GlobalData.optManager.PutInFrontofObject(e.BlockID, n[a])
+    for (len = n.length, a = 0; a < len; a++) T3Gv.optManager.PutInFrontofObject(e.BlockID, n[a])
   }
 }
 
@@ -15957,7 +15957,7 @@ ListManager.LM.prototypeTable_GetStyle = function (e, t, a) {
     s,
     l,
     S = !0,
-    c = GlobalData.optManager.Table_GetActiveID();
+    c = T3Gv.optManager.Table_GetActiveID();
   if (e.BlockID === c) {
     for (r = t.rows.length, n = 0; n < r; n++) o = t.rows[n],
       l = t.cells[o.start],
@@ -16272,7 +16272,7 @@ ListManager.LM.prototype.Table_AddSVGTextObject = function (e, t, a, r, i) {
       c = e.GetTable(!1);
     r.nextra &&
       (S = this.Table_GetJoinedCellFrame(c, i, !0, !1));
-    var u = GlobalData.objectStore.GetObject(r.DataID);
+    var u = T3Gv.objectStore.GetObject(r.DataID);
     if (null != u) {
       var p = t.CreateShape(ConstantData.CreateShapeType.TEXT);
       if (
@@ -16292,22 +16292,22 @@ ListManager.LM.prototype.Table_AddSVGTextObject = function (e, t, a, r, i) {
           p.SetRuntimeText(u.Data.runtimeText)
         ) : p.SetText(''),
         e.TextGrow === ConstantData.TextGrowBehavior.HORIZONTAL ? p.SetConstraints(
-          GlobalData.optManager.theContentHeader.MaxWorkDim.x - c.wd + S.width,
+          T3Gv.optManager.theContentHeader.MaxWorkDim.x - c.wd + S.width,
           S.width,
           S.height
         ) : p.SetConstraints(S.width, S.width, S.height),
         p.SetRenderingEnabled(!0),
         u.Data.runtimeText ||
         (u.Data.runtimeText = p.GetRuntimeText()),
-        p.SetEditCallback(GlobalData.optManager.TextCallback, a),
-        !GlobalData.docHandler.IsReadOnly()
+        p.SetEditCallback(T3Gv.optManager.TextCallback, a),
+        !T3Gv.docHandler.IsReadOnly()
       ) switch (e.objecttype) {
         case n.SD_OBJT_SWIMLANE_GRID:
         case n.SD_OBJT_SWIMLANE_COLS:
         case n.SD_OBJT_SWIMLANE_ROWS:
         case n.SD_OBJT_ANNOTATION:
-          var d = GlobalData.optManager.FindLayerForShapeID(e.BlockID);
-          if (GlobalData.optManager.GetActiveLayerIndex() !== d) {
+          var d = T3Gv.optManager.FindLayerForShapeID(e.BlockID);
+          if (T3Gv.optManager.GetActiveLayerIndex() !== d) {
             p.SetEventBehavior(ConstantData.EventBehavior.NORMAL);
             var D = p.DOMElement(),
               g = Hammer(D);
@@ -16426,7 +16426,7 @@ ListManager.LM.prototypeTable_AddSVGDateBlockHeaderTitle = function (e, t, a, r,
         if (g.x + g.width < D.x) continue;
         (
           C = (
-            m = GlobalData.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.PATH)
+            m = T3Gv.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.PATH)
           ).PathCreator()
         ).BeginPath(),
           C.MoveTo(g.x + g.width, g.y),
@@ -16532,7 +16532,7 @@ ListManager.LM.prototypeTable_AddSVGDateBlockHeaderGrid = function (e, t, a, r, 
       (
         (
           S = (
-            P = GlobalData.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.PATH)
+            P = T3Gv.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.PATH)
           ).PathCreator()
         ).BeginPath(),
         S.MoveTo(_.x + I, _.y),
@@ -16586,7 +16586,7 @@ ListManager.LM.prototypeDrawDateBlockGridShading = function (e, t, a, r, i) {
     (l = !1),
     !l
   ) {
-    var c = GlobalData.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.RECT);
+    var c = T3Gv.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.RECT);
     c.SetSize(a.width, a.height),
       c.SetPos(a.x, a.y),
       c.SetFillColor(ListManager.GanttDefines.GANTT_NONWORKING_COLOR),
@@ -16599,8 +16599,8 @@ ListManager.LM.prototypeLM_SelectSVGTableObject = function (e, t, a, r, i) {
     var a = !1;
     e < 0 &&
       (a = !0, e = - e);
-    var r = GlobalData.optManager.GetObjectPtr(e, !1),
-      i = GlobalData.optManager.svgObjectLayer.GetElementByID(e);
+    var r = T3Gv.optManager.GetObjectPtr(e, !1),
+      i = T3Gv.optManager.svgObjectLayer.GetElementByID(e);
     if (i) {
       var n = i.GetElementByID(ConstantData.Defines.TableSelection);
       if (n) return void (a && i.RemoveElement(n));
@@ -16805,15 +16805,15 @@ ListManager.LM.prototypeLM_AddSVGTableCells = function (e, t, a, r) {
             alignment: S.fill.Paint.TextureScale.AlignmentScalar
           },
           M = S.fill.Paint.Texture,
-          GlobalData.optManager.TextureList.Textures[M] &&
+          T3Gv.optManager.TextureList.Textures[M] &&
           (
-            b.dim = GlobalData.optManager.TextureList.Textures[M].dim,
-            b.url = GlobalData.optManager.TextureList.Textures[M].ImageURL,
-            b.scale = GlobalData.optManager.CalcTextureScale(S.fill.Paint.TextureScale, b.dim.x),
+            b.dim = T3Gv.optManager.TextureList.Textures[M].dim,
+            b.url = T3Gv.optManager.TextureList.Textures[M].ImageURL,
+            b.scale = T3Gv.optManager.CalcTextureScale(S.fill.Paint.TextureScale, b.dim.x),
             S.fill.Paint.TextureScale.Scale = b.scale,
             b.url ||
             (
-              b.url = Constants.FilePath_CMSRoot + Constants.FilePath_Textures + GlobalData.optManager.TextureList.Textures[M].filename
+              b.url = Constants.FilePath_CMSRoot + Constants.FilePath_Textures + T3Gv.optManager.TextureList.Textures[M].filename
             ),
             n.SetTextureFill(b)
           )
@@ -16828,8 +16828,8 @@ ListManager.LM.prototypeLM_AddSVGTableCells = function (e, t, a, r) {
         n.SetPos(0, 0),
         n.SetID(F),
         n.SetUserData(g),
-        GlobalData.optManager.bDrawEffects &&
-        !GlobalData.optManager.bTokenizeStyle &&
+        T3Gv.optManager.bDrawEffects &&
+        !T3Gv.optManager.bTokenizeStyle &&
         (
           A.Fill = S.fill,
           A.Line = t.cells[S.list[0]].hline,
@@ -17309,8 +17309,8 @@ ListManager.LM.prototypeTable_AddIcons = function (e, t, a, r, i, n, o) {
             return function () {
               var a = function (e, t) {
                 return function () {
-                  GlobalData.optManager.bInNoteEdit ||
-                    GlobalData.optManager.ShowNote(e, t)
+                  T3Gv.optManager.bInNoteEdit ||
+                    T3Gv.optManager.ShowNote(e, t)
                 }
               }(e, t);
               m = setTimeout(a, 750, null)
@@ -17318,8 +17318,8 @@ ListManager.LM.prototypeTable_AddIcons = function (e, t, a, r, i, n, o) {
           }(C.BlockID, y),
           L = function (e, t) {
             return function () {
-              GlobalData.optManager.bInNoteEdit ||
-                GlobalData.optManager.HideNote(e, t),
+              T3Gv.optManager.bInNoteEdit ||
+                T3Gv.optManager.HideNote(e, t),
                 clearTimeout(m)
             }
           }(C.BlockID, y),
@@ -17363,7 +17363,7 @@ ListManager.LM.prototypeTableAddSVGDateBlockScrollControl = function (e, t, a, r
         return function () {
           var a = function (e, t) {
             return function () {
-              GlobalData.optManager.ShowGanttScroll(e, t)
+              T3Gv.optManager.ShowGanttScroll(e, t)
             }
           }(e, t);
           S = setTimeout(a, 50, null)
@@ -17371,7 +17371,7 @@ ListManager.LM.prototypeTableAddSVGDateBlockScrollControl = function (e, t, a, r
       }(c.BlockID, u),
       d = function (e, t) {
         return function (a) {
-          GlobalData.optManager.HideGanttScroll(e, t, a),
+          T3Gv.optManager.HideGanttScroll(e, t, a),
             clearTimeout(S)
         }
       }(c.BlockID, u),
@@ -17406,7 +17406,7 @@ ListManager.LM.prototypeFrameCell = function (e, t, a, r, i, n, o, s, l) {
     ConstantData.Defines.TableRowHit,
     0 === g &&
     (g = 1),
-    u = c.nextra ? GlobalData.optManager.Table_GetJoinedCellFrame(t, i, !1, !1) : c.frame,
+    u = c.nextra ? T3Gv.optManager.Table_GetJoinedCellFrame(t, i, !1, !1) : c.frame,
     n &&
     (
       shape = a.CreateShape(ConstantData.CreateShapeType.LINE),
@@ -17556,7 +17556,7 @@ ListManager.LM.prototypeLM_AddSVGTableObject = function (e, t, a, r) {
   for (
     _ = e.trect.x - se.x,
     E = e.trect.y - se.y,
-    N = GlobalData.optManager.Table_GetActiveID() === e.BlockID,
+    N = T3Gv.optManager.Table_GetActiveID() === e.BlockID,
     this.LM_AddSVGTableCells(e, r, t, a),
     q = r.rows.length,
     W = 0;
@@ -17584,7 +17584,7 @@ ListManager.LM.prototypeLM_AddSVGTableObject = function (e, t, a, r) {
       Y.push(i + l.start),
       S.celltype === ListManager.Table.CellTypes.SDT_CT_GANTTTASK &&
       S.datarecordID >= 0 &&
-      GlobalData.optManager.theContentHeader.SDDataID >= 0 &&
+      T3Gv.optManager.theContentHeader.SDDataID >= 0 &&
       S.datarecordID >= 0 &&
       (
         ListManager.SDData.GetNumChildren(
@@ -17700,7 +17700,7 @@ ListManager.LM.prototypeLM_AddSVGTableObject = function (e, t, a, r) {
         ),
         - 1 != S.BlobBytesID
       ) {
-        var ue = GlobalData.optManager.GetObjectPtr(S.BlobBytesID, !1);
+        var ue = T3Gv.optManager.GetObjectPtr(S.BlobBytesID, !1);
         ue.ImageDir == FileParser.Image_Dir.dir_svg ? (
           null == S.SVGDim &&
           (S.SVGDim = Utils2.ParseSVGDimensions(ue.Bytes)),
@@ -17801,11 +17801,11 @@ ListManager.LM.prototypeLM_AddSVGTableObject = function (e, t, a, r) {
           alignment: Z.Line.Paint.TextureScale.AlignmentScalar
         },
         x = Z.Line.Paint.Texture,
-        J.dim = GlobalData.optManager.TextureList.Textures[x].dim,
-        J.url = GlobalData.optManager.TextureList.Textures[x].ImageURL,
+        J.dim = T3Gv.optManager.TextureList.Textures[x].dim,
+        J.url = T3Gv.optManager.TextureList.Textures[x].ImageURL,
         J.url ||
         (
-          J.url = Constants.FilePath_CMSRoot + Constants.FilePath_Textures + GlobalData.optManager.TextureList.Textures[x].filename
+          J.url = Constants.FilePath_CMSRoot + Constants.FilePath_Textures + T3Gv.optManager.TextureList.Textures[x].filename
         ),
         o.SetTextureStroke(J),
         o.SetStrokeOpacity(P)
@@ -17895,11 +17895,11 @@ ListManager.LM.prototypeLM_AddSVGTableObject = function (e, t, a, r) {
           alignment: Z.Line.Paint.TextureScale.AlignmentScalar
         },
         x = Z.Line.Paint.Texture,
-        J.dim = GlobalData.optManager.TextureList.Textures[x].dim,
-        J.url = GlobalData.optManager.TextureList.Textures[x].ImageURL,
+        J.dim = T3Gv.optManager.TextureList.Textures[x].dim,
+        J.url = T3Gv.optManager.TextureList.Textures[x].ImageURL,
         J.url ||
         (
-          J.url = Constants.FilePath_CMSRoot + Constants.FilePath_Textures + GlobalData.optManager.TextureList.Textures[x].filename
+          J.url = Constants.FilePath_CMSRoot + Constants.FilePath_Textures + T3Gv.optManager.TextureList.Textures[x].filename
         ),
         o.SetTextureStroke(J),
         o.SetStrokeOpacity(P)
@@ -18025,10 +18025,10 @@ ListManager.LM.prototypeLM_AddSVGTableObject = function (e, t, a, r) {
       (y = x.cells[o]).childcontainer >= 0 &&
       (
         (
-          l = GlobalData.optManager.svgObjectLayer.GetElementByID(y.childcontainer)
+          l = T3Gv.optManager.svgObjectLayer.GetElementByID(y.childcontainer)
         ).SetPos(t.trect.x + y.frame.x, t.trect.y + y.frame.y),
         l.SetSize(y.frame.width, y.frame.height),
-        (O = GlobalData.optManager.GetObjectPtr(y.childcontainer, !1)) &&
+        (O = T3Gv.optManager.GetObjectPtr(y.childcontainer, !1)) &&
         O.ContainerList
       )
     ) for (
@@ -18040,8 +18040,8 @@ ListManager.LM.prototypeLM_AddSVGTableObject = function (e, t, a, r) {
         R++
       ) (j = B[R].id) >= 0 &&
         (
-          V = GlobalData.optManager.GetObjectPtr(j, !1),
-          (l = GlobalData.optManager.svgObjectLayer.GetElementByID(j)) &&
+          V = T3Gv.optManager.GetObjectPtr(j, !1),
+          (l = T3Gv.optManager.svgObjectLayer.GetElementByID(j)) &&
           l.SetPos(V.Frame.x + Y, V.Frame.y + Z)
         );
     if (
@@ -18102,7 +18102,7 @@ ListManager.LM.prototypeLM_AddSVGTableObject = function (e, t, a, r) {
             (G = this.Table_GetJoinedCellFrame(x, m, !0, !1)),
             l.SetPos(G.x + F, G.y + v),
             l.SetSize(G.width, G.height),
-            f = t.TextGrow === ConstantData.TextGrowBehavior.HORIZONTAL ? GlobalData.optManager.theContentHeader.MaxWorkDim.x - x.wd + G.width : G.width,
+            f = t.TextGrow === ConstantData.TextGrowBehavior.HORIZONTAL ? T3Gv.optManager.theContentHeader.MaxWorkDim.x - x.wd + G.width : G.width,
             l.SetConstraints(f, G.width, G.height)
           );
         break;
@@ -18201,7 +18201,7 @@ ListManager.LM.prototypeLM_AddSVGTableObject = function (e, t, a, r) {
     }
     !r &&
       t.GetGanttInfo() &&
-      GlobalData.optManager.Table_ResizeGanttDateBlock(t, x, e, F, v)
+      T3Gv.optManager.Table_ResizeGanttDateBlock(t, x, e, F, v)
   },
 
 
@@ -18218,14 +18218,14 @@ ListManager.LM.prototypeLM_AddSVGTableObject = function (e, t, a, r) {
       d = null,
       D = - 1,
       g = [],
-      h = GlobalData.optManager.ActiveVisibleZList(),
+      h = T3Gv.optManager.ActiveVisibleZList(),
       m = a.GetElementByID(ConstantData.SVGElementClass.GANTTGRIDCLIPPINGGROUP);
     if (m) {
       for (s = h.length, o = 0; o < s; o++) {
-        switch (D = - 1, (p = GlobalData.optManager.GetObjectPtr(h[o])).objecttype) {
+        switch (D = - 1, (p = T3Gv.optManager.GetObjectPtr(h[o])).objecttype) {
           case ConstantData.ObjectTypes.SD_OBJT_GANTT_CONNECTOR:
             if (0 === p.hooks.length) break;
-            (d = GlobalData.optManager.GetObjectPtr(p.hooks[0].objid)) &&
+            (d = T3Gv.optManager.GetObjectPtr(p.hooks[0].objid)) &&
               (D = d.datasetTableID);
             break;
           case ConstantData.ObjectTypes.SD_OBJT_GANTT_BAR:
@@ -18241,7 +18241,7 @@ ListManager.LM.prototypeLM_AddSVGTableObject = function (e, t, a, r) {
           })
       }
       if (
-        GlobalData.optManager.PlanningTableUpdateGeometry(e, !0),
+        T3Gv.optManager.PlanningTableUpdateGeometry(e, !0),
         n = ListManager.SDData.GetNumRows(e.datasetTableID, '', ''),
         !window.navigator.msPointerEnabled &&
         n < 30
@@ -18269,15 +18269,15 @@ ListManager.LM.prototypeLM_AddSVGTableObject = function (e, t, a, r) {
       for (s = g.length, o = 0; o < s; o++) if (
         (
           u = 0 != (
-            (p = GlobalData.optManager.GetObjectPtr(g[o].objID, !1)).flags & ConstantData.ObjFlags.SEDO_NotVisible
+            (p = T3Gv.optManager.GetObjectPtr(g[o].objID, !1)).flags & ConstantData.ObjFlags.SEDO_NotVisible
           )
         ) != g[o].hidden &&
-        GlobalData.optManager.AddSVGObject(g[o].zOrder, p.BlockID, !0, !1),
+        T3Gv.optManager.AddSVGObject(g[o].zOrder, p.BlockID, !0, !1),
         !u &&
         p.objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_BAR &&
         p.EndArrowID != g[o].EndArrowID
       ) {
-        var C = GlobalData.optManager.svgObjectLayer.GetElementByID(p.BlockID),
+        var C = T3Gv.optManager.svgObjectLayer.GetElementByID(p.BlockID),
           y = C.GetElementByID(ConstantData.SVGElementClass.SHAPE),
           f = C.GetElementByID(ConstantData.SVGElementClass.SLOP),
           L = 0 === ConstantData1.ArrowheadLookupTable[p.StartArrowID].id ? null : ConstantData1.ArrowheadLookupTable[p.StartArrowID],
@@ -18475,18 +18475,18 @@ ListManager.LM.prototypeTable_GetTRect = function (e, t, a, r) {
 }
 
 ListManager.LM.prototypeTable_CloseEdit = function (e, t) {
-  GlobalData.optManager.bInNoteEdit &&
-    GlobalData.optManager.ToggleNote(GlobalData.optManager.curNoteShape, GlobalData.optManager.curNoteTableCell),
+  T3Gv.optManager.bInNoteEdit &&
+    T3Gv.optManager.ToggleNote(T3Gv.optManager.curNoteShape, T3Gv.optManager.curNoteTableCell),
     this.DeactivateAllTextEdit(!1),
     e.DataID = - 1
 },
   ,
   ListManager.LM.prototype.Table_OpenEdit = function (e, t, a, r) {
     t.select = a;
-    var i = GlobalData.optManager.svgObjectLayer.GetElementByID(e);
-    GlobalData.optManager.ActivateTextEdit(i.svgObj.SDGObj, r, !1);
-    var n = GlobalData.optManager.svgDoc.GetActiveEdit();
-    GlobalData.optManager.GetObjectPtr(e, !1);
+    var i = T3Gv.optManager.svgObjectLayer.GetElementByID(e);
+    T3Gv.optManager.ActivateTextEdit(i.svgObj.SDGObj, r, !1);
+    var n = T3Gv.optManager.svgDoc.GetActiveEdit();
+    T3Gv.optManager.GetObjectPtr(e, !1);
     n &&
       n.editor &&
       (n.editor.lastClickTime = 0, n.editor.HandleMouseDown(r))
@@ -18512,7 +18512,7 @@ ListManager.LM.prototypeTable_CloseEdit = function (e, t) {
       if (
         s = o.GetElementListWithID(ConstantData.Defines.TableColHitHidden)
       ) for (n = s.length, i = 0; i < n; i++) s[i].SetStrokeOpacity(0.8);
-      var l = GlobalData.optManager.GetObjectPtr(e, !1);
+      var l = T3Gv.optManager.GetObjectPtr(e, !1);
       if (r || (a.theActiveTableObjectIndex = - 1), l) switch (l.objecttype) {
         case ConstantData.ObjectTypes.SD_OBJT_SWIMLANE_GRID:
         case ConstantData.ObjectTypes.SD_OBJT_SWIMLANE_COLS:
@@ -18525,8 +18525,8 @@ ListManager.LM.prototypeTable_CloseEdit = function (e, t) {
         default:
           a.theActiveTableObjectIndex < 0 &&
             (
-              a.theActiveTableObjectIndex = GlobalData.optManager.svgObjectLayer.GetElementIndex(o),
-              GlobalData.optManager.svgObjectLayer.MoveElementToFront(o)
+              a.theActiveTableObjectIndex = T3Gv.optManager.svgObjectLayer.GetElementIndex(o),
+              T3Gv.optManager.svgObjectLayer.MoveElementToFront(o)
             )
       }
     }
@@ -18539,7 +18539,7 @@ ListManager.LM.prototypeTable_RotateClickPoint = function (e, t) {
       r = {};
     r.x = e.trect.width / 2,
       r.y = e.trect.height / 2,
-      t = GlobalData.optManager.RotatePointAroundPoint(r, t, a)
+      t = T3Gv.optManager.RotatePointAroundPoint(r, t, a)
   }
   return t
 }
@@ -18579,7 +18579,7 @@ ListManager.LM.prototypeTable_SetupAction = function (e, t, a, r) {
         p = e.gesture.srcEvent.ctrlKey;
       switch (a) {
         case ConstantData.Defines.TableRowZone:
-          if (GlobalData.optManager.IsJiraIssueShape(i)) break;
+          if (T3Gv.optManager.IsJiraIssueShape(i)) break;
           S = this.Table_Hit(n, L.x, L.y),
             this.Table_Load(t),
             i.LM_ActionClick(e, !1, t, ConstantData.ActionTriggerType.TABLE_ROWSELECT, r),
@@ -18601,7 +18601,7 @@ ListManager.LM.prototypeTable_SetupAction = function (e, t, a, r) {
             this.Table_Load(t);
           break;
         case ConstantData.Defines.TableColZone:
-          if (GlobalData.optManager.IsJiraIssueShape(i)) break;
+          if (T3Gv.optManager.IsJiraIssueShape(i)) break;
           S = this.Table_Hit(n, L.x, L.y),
             this.Table_Load(t),
             i.LM_ActionClick(e, !1, t, ConstantData.ActionTriggerType.TABLE_COLSELECT, r),
@@ -18637,7 +18637,7 @@ ListManager.LM.prototypeTable_SetupAction = function (e, t, a, r) {
             !(l = e.gesture.srcEvent.shiftKey || c || p) &&
             (S < 0 && (S = this.Table_Hit(n, L.x, L.y)), S >= 0)
           ) {
-            var D = GlobalData.optManager.Table_GetActiveID();
+            var D = T3Gv.optManager.Table_GetActiveID();
             if (S != n.select || i.DataID < 0) {
               (n.select >= 0 || t !== D) &&
                 this.Table_CloseEdit(i, n);
@@ -18655,11 +18655,11 @@ ListManager.LM.prototypeTable_SetupAction = function (e, t, a, r) {
                 this.Table_Release(!1),
                 this.Table_OpenEdit(t, n, S, g);
               else if ('doubletap' == e.type) {
-                var m = GlobalData.optManager.Table_GetNextTextCell(n, S, Resources.Keys.Right_Arrow);
+                var m = T3Gv.optManager.Table_GetNextTextCell(n, S, Resources.Keys.Right_Arrow);
                 if (
                   m < 0 &&
                   (
-                    m = GlobalData.optManager.Table_GetNextTextCell(n, 0, Resources.Keys.Right_Arrow)
+                    m = T3Gv.optManager.Table_GetNextTextCell(n, 0, Resources.Keys.Right_Arrow)
                   ),
                   m < 0
                 ) n.select = S,
@@ -18737,20 +18737,20 @@ ListManager.LM.prototypeTable_SetupAction = function (e, t, a, r) {
 }
 
 ListManager.LM.prototypeTable_SizeChildContainer = function (e, t, a) {
-  var r = GlobalData.optManager.GetObjectPtr(e, !0);
+  var r = T3Gv.optManager.GetObjectPtr(e, !0);
   if (r) {
     var i = Utils1.DeepCopy(r.Frame);
     i.height = a,
       i.width = t,
       r.UpdateFrame(i),
       r.flags = Utils2.SetFlag(r.flags, ConstantData.ObjFlags.SEDO_Obj1, !0);
-    var n = GlobalData.optManager.svgObjectLayer.GetElementByID(r.BlockID);
+    var n = T3Gv.optManager.svgObjectLayer.GetElementByID(r.BlockID);
     if (n) {
       var o = n.GetElementByID(ConstantData.SVGElementClass.SHAPE);
       o &&
         o.SetSize(i.width, i.height)
     }
-    GlobalData.optManager.AddToDirtyList(e)
+    T3Gv.optManager.AddToDirtyList(e)
   }
 }
 
@@ -18795,7 +18795,7 @@ ListManager.LM.prototypeTable_Resize = function (e, t, a, r, i) {
     H = {},
     V = !1,
     j = e.TextGrow,
-    z = GlobalData.optManager.svgObjectLayer.GetElementByID(e.BlockID);
+    z = T3Gv.optManager.svgObjectLayer.GetElementByID(e.BlockID);
   if (i) {
     if (S = a.ht, o = t.rows.length, i - S < - 0.01) if (i < t.minht && (i = t.minht), i - S < - 0.01) for (G = S, v = S, m = i, u = 0; v > i;) {
       for (u += m / G, G = 0, v = 0, n = 0; n < o; n++) {
@@ -18994,7 +18994,7 @@ ListManager.LM.prototypeTable_Resize = function (e, t, a, r, i) {
     for (p = 0; p < $; p++) if ((l = t.cells[p]).childcontainer >= 0) {
       var Z = l.trect;
       Z = this.Table_GetJoinedCellFrame(t, p, !0, !0),
-        (Y = GlobalData.optManager.GetObjectPtr(l.childcontainer, !1)).Frame.height == Z.height &&
+        (Y = T3Gv.optManager.GetObjectPtr(l.childcontainer, !1)).Frame.height == Z.height &&
         Y.Frame.width == Z.width ||
         this.Table_SizeChildContainer(l.childcontainer, Z.width, Z.height)
     }
@@ -19003,7 +19003,7 @@ ListManager.LM.prototypeTable_Resize = function (e, t, a, r, i) {
     H.y = t.ht,
     e.GetGanttInfo() &&
     ListManager.SDData.GetTable(e.datasetTableID, !1) &&
-    GlobalData.optManager.PlanningTableUpdateGeometry(e, !0),
+    T3Gv.optManager.PlanningTableUpdateGeometry(e, !0),
     H
 },
 
@@ -19117,7 +19117,7 @@ ListManager.LM.prototypeTable_GetTextDimensions = function (e, t, a, r, i) {
         o.SetFormat(i);
       var s = t.trect;
       r === ConstantData.TextGrowBehavior.HORIZONTAL ? o.SetConstraints(
-        GlobalData.optManager.theContentHeader.MaxWorkDim.x - a.wd + s.width,
+        T3Gv.optManager.theContentHeader.MaxWorkDim.x - a.wd + s.width,
         s.width,
         s.height
       ) : o.SetConstraints(s.width, s.width, s.height),
@@ -19181,7 +19181,7 @@ ListManager.LM.prototypeTable_GrowColumn = function (e, t, a, r, i, n, o, s, l) 
     k,
     U = 0,
     J = 0,
-    x = GlobalData.optManager.svgObjectLayer.GetElementByID(e.BlockID),
+    x = T3Gv.optManager.svgObjectLayer.GetElementByID(e.BlockID),
     O = !0;
   ConstantData.ObjectTypes;
   if (
@@ -19454,7 +19454,7 @@ ListManager.LM.prototypeTable_SetCursors = function (e, t, a, r) {
         o.SetCursor(ConstantData.CursorType.ADD_PLUS);
       break;
     case ConstantData.SVGElementClass.TEXT:
-      o === GlobalData.optManager.svgDoc.GetActiveEdit() ? (
+      o === T3Gv.optManager.svgDoc.GetActiveEdit() ? (
         r ||
         o.SetCursorState(SDGraphics.ConstantData.CursorState.EDITLINK),
         o.SetCursorState(SDGraphics.ConstantData.CursorState.EDITLINK)
@@ -19809,21 +19809,21 @@ ListManager.LM.prototypeTable_DeleteObject = function (e) {
     i;
   for (t = e.cells.length, a = 0; a < t; a++) (i = e.cells[a]).DataID >= 0 &&
     (
-      (r = GlobalData.objectStore.PreserveBlock(i.DataID)) &&
+      (r = T3Gv.objectStore.PreserveBlock(i.DataID)) &&
       r.Delete(),
       i.DataID = - 1
     ),
     i.NoteID >= 0 &&
     (
-      (r = GlobalData.objectStore.PreserveBlock(i.NoteID)) &&
+      (r = T3Gv.objectStore.PreserveBlock(i.NoteID)) &&
       r.Delete(),
       i.NoteID = - 1
     ),
     i.BlobBytesID >= 0 &&
-    (r = GlobalData.objectStore.PreserveBlock(i.BlobBytesID)) &&
+    (r = T3Gv.objectStore.PreserveBlock(i.BlobBytesID)) &&
     r.Delete(),
     i.EMFBlobBytesID >= 0 &&
-    (r = GlobalData.objectStore.PreserveBlock(i.EMFBlobBytesID)) &&
+    (r = T3Gv.objectStore.PreserveBlock(i.EMFBlobBytesID)) &&
     r.Delete(),
     this.IsBlobURL(i.ImageURL) &&
     this.DeleteURL(i.ImageURL)
@@ -19988,7 +19988,7 @@ ListManager.LM.prototypeTable_ChangeTextAttributes = function (e, t, a, r, i, n,
     P = {},
     R = !1,
     A = !1,
-    _ = GlobalData.optManager.Table_GetActiveID();
+    _ = T3Gv.optManager.Table_GetActiveID();
   (e.BlockID !== _ || null != o || s) &&
     (c = !0, null != o && e.TextGrow != o && (A = !0, e.TextGrow = o));
   var E = e.TextGrow === ConstantData.TextGrowBehavior.PROPORTIONAL,
@@ -20138,7 +20138,7 @@ ListManager.LM.prototypeTable_FindNext = function (e, t, a, r, i, n) {
       if (i = !1, l.NoteID >= 0) {
         var d = this.GetObjectPtr(l.NoteID, !1);
         if (d && (c = d.runtimeText.text.search(a)) >= 0) {
-          GlobalData.optManager.ScrollObjectIntoView(e.BlockID, !1),
+          T3Gv.optManager.ScrollObjectIntoView(e.BlockID, !1),
             t.select = s,
             this.ToggleNote(e.BlockID, l);
           var D = this.svgDoc.GetActiveEdit();
@@ -20246,7 +20246,7 @@ ListManager.LM.prototypeTable_SetCellFlags = function (e, t, a) {
     n,
     o,
     s = ListManager.Table.CellFlags.SDT_F_Select,
-    l = GlobalData.optManager.Table_GetActiveID();
+    l = T3Gv.optManager.Table_GetActiveID();
   if (l >= 0 && (this.CloseEdit(!0), r = this.GetObjectPtr(l, !1))) {
     var S = r.GetTable(!0);
     if (S) {
@@ -20271,7 +20271,7 @@ ListManager.LM.prototypeTable_SetHyperlink = function (e, t) {
   }
   a.celltype === ListManager.Table.CellTypes.SDT_CT_GANTTTASK &&
     a.datarecordID >= 0 &&
-    GlobalData.optManager.DataAddHyperlinkToRecord(t, a.datarecordID)
+    T3Gv.optManager.DataAddHyperlinkToRecord(t, a.datarecordID)
 }
 
 ListManager.LM.prototypeTable_SetTheme = function (e, t) {
@@ -20294,7 +20294,7 @@ ListManager.LM.prototypeTable_SetTheme = function (e, t) {
         var s = {
           StyleRecord: t[r]
         },
-          l = GlobalData.optManager.ApplyColorFilter(s, null, o.fill, e.colorfilter);
+          l = T3Gv.optManager.ApplyColorFilter(s, null, o.fill, e.colorfilter);
         l.StyleRecord &&
           l.StyleRecord.Fill &&
           this.ApplyProperties(l.StyleRecord.Fill, o.fill)
@@ -20308,13 +20308,13 @@ ListManager.LM.prototypeTable_SetTheme = function (e, t) {
 ListManager.LM.prototypeTable_FillSwimlane = function (e, t, a, r) {
   var i,
     n = ConstantData.ObjectTypes,
-    o = GlobalData.optManager.GetObjectPtr(e, !1),
+    o = T3Gv.optManager.GetObjectPtr(e, !1),
     s = ListManager.Table.CellTypes.SD_CT_SWIMLANE_TITLE;
   if (null != o) {
     'TableCell' === t &&
       o.objecttype === ConstantData.ObjectTypes.SD_OBJT_SHAPECONTAINER &&
       o.hooks.length &&
-      (e = o.hooks[0].objid, o = GlobalData.optManager.GetObjectPtr(e, !1));
+      (e = o.hooks[0].objid, o = T3Gv.optManager.GetObjectPtr(e, !1));
     var l = o.GetTable(!1);
     if (null != l) {
       var S = l.rows.length,
@@ -20324,7 +20324,7 @@ ListManager.LM.prototypeTable_FillSwimlane = function (e, t, a, r) {
         ),
         u = 1,
         p = 0;
-      if (GlobalData.optManager.CloseEdit(!0), Collab.AllowMessage()) {
+      if (T3Gv.optManager.CloseEdit(!0), Collab.AllowMessage()) {
         Collab.BeginSecondaryEdit();
         var d = {
           BlockID: e,
@@ -20434,14 +20434,14 @@ ListManager.LM.prototypeTable_FillSwimlane = function (e, t, a, r) {
       };
       return T.StyleRecord.Fill = Utils1.DeepCopy(l.fills[f].fill),
         I ? l.fills.splice(f, 1) : T.StyleRecord.Fill.Paint.FillType = ConstantData.FillTypes.SDFILL_TRANSPARENT,
-        o = GlobalData.optManager.GetObjectPtr(o.BlockID, !0),
-        GlobalData.optManager.ApplyProperties(T, o),
-        GlobalData.optManager.AddToDirtyList(e),
+        o = T3Gv.optManager.GetObjectPtr(o.BlockID, !0),
+        T3Gv.optManager.ApplyProperties(T, o),
+        T3Gv.optManager.AddToDirtyList(e),
         Collab.AllowMessage() &&
         (
           message = Collab.BuildMessage(ConstantData.CollabMessages.Table_FillSwimlane, d, !1)
         ),
-        GlobalData.optManager.CompleteOperation(),
+        T3Gv.optManager.CompleteOperation(),
         !0
     }
   }
@@ -20488,7 +20488,7 @@ ListManager.LM.prototypeTable_FillSwimlane = function (e, t, a, r) {
       x = ListManager.Table.CellFlags.SDT_F_SilentF;
     if (null != (u = e.GetTable(!0))) {
       if (
-        i = GlobalData.optManager.Table_GetActiveID() !== e.BlockID,
+        i = T3Gv.optManager.Table_GetActiveID() !== e.BlockID,
         c = u.rows.length,
         p = u.cols.length,
         (!i || r) &&
@@ -20514,7 +20514,7 @@ ListManager.LM.prototypeTable_FillSwimlane = function (e, t, a, r) {
               a.StyleRecord.hline &&
               (a.StyleRecord.Line = a.StyleRecord.hline),
               U.Line = s.hline,
-              y = GlobalData.optManager.ApplyColorFilter(a, null, U, e.colorfilter),
+              y = T3Gv.optManager.ApplyColorFilter(a, null, U, e.colorfilter),
               this.ApplyProperties(y.StyleRecord.Line, s.hline),
               F = !0,
               n < c - 1 &&
@@ -20558,7 +20558,7 @@ ListManager.LM.prototypeTable_FillSwimlane = function (e, t, a, r) {
               a.StyleRecord.vline &&
               (a.StyleRecord.Line = a.StyleRecord.vline),
               U.Line = s.vline,
-              y = GlobalData.optManager.ApplyColorFilter(a, null, U, e.colorfilter),
+              y = T3Gv.optManager.ApplyColorFilter(a, null, U, e.colorfilter),
               this.ApplyProperties(y.StyleRecord.Line, s.vline),
               s.colindex < p - 1 &&
               (
@@ -20646,7 +20646,7 @@ ListManager.LM.prototypeTable_FillSwimlane = function (e, t, a, r) {
             U.Fill = s.fill,
             t.StyleRecord.Name &&
             (s.stylename = t.StyleRecord.Name),
-            y = GlobalData.optManager.ApplyColorFilter(a, null, U, e.colorfilter),
+            y = T3Gv.optManager.ApplyColorFilter(a, null, U, e.colorfilter),
             e.objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART &&
             s.celltype === ListManager.Table.CellTypes.SDT_CT_GANTTTASK &&
             y.StyleRecord &&
@@ -20657,7 +20657,7 @@ ListManager.LM.prototypeTable_FillSwimlane = function (e, t, a, r) {
             var B = {
               Fill: s.fill
             };
-            GlobalData.optManager.GanttStoreStyleExceptions(s.datarecordID, B, y.StyleRecord.Fill)
+            T3Gv.optManager.GanttStoreStyleExceptions(s.datarecordID, B, y.StyleRecord.Fill)
           }
           s.childcontainer >= 0 ? (f = this.GetObjectPtr(s.childcontainer, !0)) &&
             (
@@ -20903,7 +20903,7 @@ ListManager.LM.prototypeTable_JoinCells = function (e, t, a) {
     g = - 1,
     h = ListManager.Table.CellFlags.SDT_F_Select,
     m = !1,
-    C = GlobalData.optManager.Table_GetActiveID();
+    C = T3Gv.optManager.Table_GetActiveID();
   if (!(C < 0)) {
     if (!a) {
       var y = this.GetObjectPtr(this.theTEDSessionBlockID, !1);
@@ -20981,13 +20981,13 @@ ListManager.LM.prototypeTable_JoinText = function (e, t, a, r, i) {
           a.SetRuntimeText(o, s, 0, !0),
           e.RemoveElement(n)
         ),
-        (l = GlobalData.objectStore.GetObject(r.DataID)) &&
+        (l = T3Gv.objectStore.GetObject(r.DataID)) &&
         l.Delete(),
         r.DataID = - 1
       ) : t &&
       (a = n, t.DataID = r.DataID, r.DataID = - 1),
       r.NoteID &&
-      ((l = GlobalData.objectStore.GetObject(r.NoteID)) && l.Delete(), r.NoteID = - 1)
+      ((l = T3Gv.objectStore.GetObject(r.NoteID)) && l.Delete(), r.NoteID = - 1)
     ),
     a
 }
@@ -21146,7 +21146,7 @@ ListManager.LM.prototypeTable_JoinHorizontally = function (e, t, a, r, i, n) {
         p.push(s.start + c),
         u.DataID >= 0 &&
         (
-          this.Table_CellIsFixed(S) ? ((P = GlobalData.objectStore.GetObject(S.DataID)) && P.Delete(), S.DataID = - 1) : y = this.Table_JoinText(A, S, y, u, !1)
+          this.Table_CellIsFixed(S) ? ((P = T3Gv.objectStore.GetObject(S.DataID)) && P.Delete(), S.DataID = - 1) : y = this.Table_JoinText(A, S, y, u, !1)
         ),
         this.Table_ClearImage(u);
       break
@@ -21403,7 +21403,7 @@ ListManager.LM.prototypeTable_SplitCells = function (e, t) {
     d = !1,
     D = ListManager.Table.CellFlags.SDT_F_Select,
     g = [],
-    h = GlobalData.optManager.Table_GetActiveID();
+    h = T3Gv.optManager.Table_GetActiveID();
   if (!(h < 0)) {
     Collab.IsProcessingMessage() ||
       this.DeactivateAllTextEdit(!1);
@@ -21650,7 +21650,7 @@ ListManager.LM.prototypeTable_DistributeRowandCols = function (e, t, a) {
     d,
     D,
     g = ListManager.Table.CellFlags.SDT_F_Select,
-    h = GlobalData.optManager.Table_GetActiveID();
+    h = T3Gv.optManager.Table_GetActiveID();
   if (!(h < 0)) {
     Collab.IsProcessingMessage() ||
       this.DeactivateAllTextEdit(!1);
@@ -21784,7 +21784,7 @@ ListManager.LM.prototypeTable_InsertRows = function (e, t, a, r, i) {
     D,
     g = !1,
     h = ListManager.Table.CellFlags.SDT_F_Select,
-    m = GlobalData.optManager.Table_GetActiveID();
+    m = T3Gv.optManager.Table_GetActiveID();
   if (null != t && (m = t), !(m < 0)) {
     Collab.IsProcessingMessage() ||
       this.DeactivateAllTextEdit(!1);
@@ -21844,9 +21844,9 @@ ListManager.LM.prototypeTable_InsertDeleteGroupRows = function (e, t, a, r, i) {
     o = ListManager.Table.CellTypes,
     s = !1,
     l = !1,
-    S = GlobalData.optManager.GetObjectPtr(t, !1);
+    S = T3Gv.optManager.GetObjectPtr(t, !1);
   if (S) {
-    var c = GlobalData.optManager.ContainerIsInCell(S);
+    var c = T3Gv.optManager.ContainerIsInCell(S);
     if (null == c) {
       var u = S.GetTable(!1);
       if (u) {
@@ -21915,14 +21915,14 @@ ListManager.LM.prototypeTable_InsertDeleteGroupRows = function (e, t, a, r, i) {
         var L = {};
         if (
           d = c.theTable.cells[D[h]],
-          GlobalData.optManager.Table_GetCellWithID(c.theTable, d.uniqueid, L),
+          T3Gv.optManager.Table_GetCellWithID(c.theTable, d.uniqueid, L),
           null != L.index
         ) {
           var I = this.Table_GetRow(c.theTable, L.index),
             T = I + C;
           if (!a) if (T - I + 1 >= c.theTable.rows.length) return !1;
           if (r) return !0;
-          GlobalData.optManager.CloseEdit(!0);
+          T3Gv.optManager.CloseEdit(!0);
           var b = this.GetObjectPtr(c.obj.BlockID, !0);
           return c.theTable = b.GetTable(!0),
             a ? this.Table_AddRows(b, c.theTable, I, T, e, !1, !1) : this.Table_RemoveRows(b, c.theTable, I, T),
@@ -21947,10 +21947,10 @@ ListManager.LM.prototypeTable_InsertDeleteGroupCols = function (e, t, a, r, i) {
     l = !1;
   Collab.IsProcessingMessage() ||
     this.DeactivateAllTextEdit(!1);
-  var S = GlobalData.optManager.GetObjectPtr(t, !1);
+  var S = T3Gv.optManager.GetObjectPtr(t, !1);
   if (S) {
     var c,
-      u = GlobalData.optManager.ContainerIsInCell(S);
+      u = T3Gv.optManager.ContainerIsInCell(S);
     if (null == u) {
       if (c = S.GetTable(!1)) {
         var p = c.select;
@@ -22020,7 +22020,7 @@ ListManager.LM.prototypeTable_InsertDeleteGroupCols = function (e, t, a, r, i) {
         return u.theTable = b.GetTable(!0),
           a ? this.Table_AddCols(b, u.theTable, D, d, e, !1) : this.Table_RemoveCols(b, u.theTable, D, d),
           u.obj.objecttype === ConstantData.ObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER &&
-          GlobalData.optManager.Table_SortChildContainers(u.obj, c),
+          T3Gv.optManager.Table_SortChildContainers(u.obj, c),
           b.sizedim.height = b.Frame.height,
           b.sizedim.width = b.Frame.width,
           this.AddToDirtyList(u.obj.BlockID),
@@ -22038,9 +22038,9 @@ ListManager.LM.prototypeTable_InsertDeleteGroupCols = function (e, t, a, r, i) {
 ListManager.LM.prototypeTable_DeleteCell = function (e) {
   var t;
   e.DataID >= 0 &&
-    (t = GlobalData.objectStore.GetObject(e.DataID), e.DataID = - 1, t && t.Delete()),
+    (t = T3Gv.objectStore.GetObject(e.DataID), e.DataID = - 1, t && t.Delete()),
     e.NoteID >= 0 &&
-    ((t = GlobalData.objectStore.GetObject(e.NoteID)) && t.Delete(), e.NoteID = - 1),
+    ((t = T3Gv.objectStore.GetObject(e.NoteID)) && t.Delete(), e.NoteID = - 1),
     this.Table_ClearImage(e),
     this.Table_ClearCell(e)
 }
@@ -22070,7 +22070,7 @@ ListManager.LM.prototypeTable_CopyContainer = function (e, t, a, r) {
   };
   if (r) {
     var o = t.childcontainer;
-    GlobalData.optManager.UpdateHook(
+    T3Gv.optManager.UpdateHook(
       i,
       - 1,
       e.BlockID,
@@ -22078,11 +22078,11 @@ ListManager.LM.prototypeTable_CopyContainer = function (e, t, a, r) {
       n,
       t.uniqueid
     ),
-      GlobalData.optManager.UpdateHook(o, 0, e.BlockID, ConstantData.HookPts.SED_KCTL, n, a.uniqueid),
+      T3Gv.optManager.UpdateHook(o, 0, e.BlockID, ConstantData.HookPts.SED_KCTL, n, a.uniqueid),
       a.childcontainer = o,
       t.childcontainer = i
   } else a.childcontainer = i,
-    GlobalData.optManager.UpdateHook(
+    T3Gv.optManager.UpdateHook(
       i,
       - 1,
       e.BlockID,
@@ -22090,7 +22090,7 @@ ListManager.LM.prototypeTable_CopyContainer = function (e, t, a, r) {
       n,
       a.uniqueid
     );
-  var s = GlobalData.optManager.GetObjectPtr(i, !0);
+  var s = T3Gv.optManager.GetObjectPtr(i, !0);
   s.flags = Utils2.SetFlag(s.flags, ConstantData.ObjFlags.SEDO_Obj1, !0)
 },
 
@@ -22160,7 +22160,7 @@ ListManager.LM.prototypeTable_CopyContainer = function (e, t, a, r) {
           var k = this.GetObjectPtr(R, !1),
             U = Utils1.DeepCopy(k),
             J = new ListManager.TextObject(U);
-          k = GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.LM_TEXT_OBJECT, J),
+          k = T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.LM_TEXT_OBJECT, J),
             this.Table_ClearCell(d),
             d.DataID = k.ID
         } else this.Table_ClearCell(d);
@@ -22230,7 +22230,7 @@ ListManager.LM.prototypeTable_CopyContainer = function (e, t, a, r) {
         (
           x = p.trect,
           x = this.Table_GetJoinedCellFrame(t, S, !0, !0),
-          (_ = GlobalData.optManager.GetObjectPtr(p.childcontainer, !1)).Frame.height == x.height &&
+          (_ = T3Gv.optManager.GetObjectPtr(p.childcontainer, !1)).Frame.height == x.height &&
           _.Frame.width == x.width ||
           this.Table_SizeChildContainer(p.childcontainer, x.width, x.height)
         );
@@ -22310,7 +22310,7 @@ ListManager.LM.prototypeTable_ColumnIsFixed = function (e, t) {
 }
 
 ListManager.LM.prototypeTable_AllowRemoveColumn = function () {
-  var e = GlobalData.optManager.GetTargetSelect();
+  var e = T3Gv.optManager.GetTargetSelect();
   if (e >= 0) {
     var t = this.GetObjectPtr(e, !1).GetTable(!1);
     if (this.Table_AutoGetMinCols(t) >= t.cols.length) return !1
@@ -22330,7 +22330,7 @@ ListManager.LM.prototypeTable_AutoGetMinRows = function (e) {
 }
 
 ListManager.LM.prototypeTable_AllowRemoveColumn = function () {
-  var e = GlobalData.optManager.GetTargetSelect();
+  var e = T3Gv.optManager.GetTargetSelect();
   if (e >= 0) {
     var t = this.GetObjectPtr(e, !1).GetTable(!1);
     if (this.Table_AutoGetMinCols(t) >= t.cols.length) return !1
@@ -22368,7 +22368,7 @@ ListManager.LM.prototypeTable_DeleteRows = function (e, t, a) {
     d = - 1,
     D = 1,
     g = ListManager.Table.CellFlags.SDT_F_Select;
-  if (d = GlobalData.optManager.Table_GetActiveID(), null != e && (d = e, p = !0), d < 0) return !1;
+  if (d = T3Gv.optManager.Table_GetActiveID(), null != e && (d = e, p = !0), d < 0) return !1;
   Collab.IsProcessingMessage() ||
     this.DeactivateAllTextEdit(!1);
   var h = this.GetObjectPtr(d, !1);
@@ -22484,9 +22484,9 @@ ListManager.LM.prototypeTable_RemoveRows = function (e, t, a, r) {
           S.childcontainer = - 1
         ),
         S.DataID >= 0 &&
-        ((i = GlobalData.objectStore.GetObject(S.DataID)) && i.Delete(), S.DataID = - 1),
+        ((i = T3Gv.objectStore.GetObject(S.DataID)) && i.Delete(), S.DataID = - 1),
         S.NoteID >= 0 &&
-        ((i = GlobalData.objectStore.GetObject(S.NoteID)) && i.Delete(), S.NoteID = - 1),
+        ((i = T3Gv.objectStore.GetObject(S.NoteID)) && i.Delete(), S.NoteID = - 1),
         void 0 === c &&
         (c = l.start + o),
         T++
@@ -22583,7 +22583,7 @@ ListManager.LM.prototypeTable_InsertColumns = function (e, t, a, r, i, n) {
     T = !1,
     b = ListManager.Table.CellFlags.SDT_F_Select,
     M = !1,
-    P = GlobalData.optManager.Table_GetActiveID();
+    P = T3Gv.optManager.Table_GetActiveID();
   if (t && (P = t), !(P < 0)) {
     Collab.IsProcessingMessage() ||
       this.DeactivateAllTextEdit(!1);
@@ -22661,7 +22661,7 @@ ListManager.LM.prototypeTable_InsertColumns = function (e, t, a, r, i, n) {
             R.sizedim.width = R.Frame.width;
           var w = Utils1.DeepCopy(R.Frame);
           if (0 !== R.RotationAngle) {
-            var F = GlobalData.optManager.svgDoc.CalculateRotatedOffsetForResize(A, w, R.RotationAngle),
+            var F = T3Gv.optManager.svgDoc.CalculateRotatedOffsetForResize(A, w, R.RotationAngle),
               v = R.r.x + F.x;
             v < 0 &&
               (F.x -= v);
@@ -22673,7 +22673,7 @@ ListManager.LM.prototypeTable_InsertColumns = function (e, t, a, r, i, n) {
           this.AddToDirtyList(P),
             this.SetLinkFlag(R.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
             R.objecttype === ConstantData.ObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER &&
-            GlobalData.optManager.Table_SortChildContainers(R, c),
+            T3Gv.optManager.Table_SortChildContainers(R, c),
             i ||
             this.CompleteOperation(null)
         }
@@ -22772,7 +22772,7 @@ ListManager.LM.prototypeTable_AddCols = function (e, t, a, r, i, n) {
               P = this.GetObjectPtr(_, !1),
               M = Utils1.DeepCopy(P),
               R = new ListManager.TextObject(M),
-              P = GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.LM_TEXT_OBJECT, R),
+              P = T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.LM_TEXT_OBJECT, R),
               this.Table_ClearCell(p),
               p.DataID = P.ID
             ) : this.Table_ClearCell(p)
@@ -23268,7 +23268,7 @@ ListManager.LM.prototypeTable_SetNumberofColumns = function (e, t, a, r) {
       d,
       D,
       g = ListManager.Table.CellFlags.SDT_F_Select,
-      h = GlobalData.optManager.Table_GetActiveID(),
+      h = T3Gv.optManager.Table_GetActiveID(),
       m = !1;
     if (null != e && (h = e, D = !0), !(h < 0)) {
       Collab.IsProcessingMessage() ||
@@ -23303,7 +23303,7 @@ ListManager.LM.prototypeTable_SetNumberofColumns = function (e, t, a, r) {
                 (f = y.width - C.Frame.width, C.OffsetShape(f, 0));
               var L = Utils1.DeepCopy(C.Frame);
               if (0 !== C.RotationAngle) {
-                var I = GlobalData.optManager.svgDoc.CalculateRotatedOffsetForResize(y, L, C.RotationAngle);
+                var I = T3Gv.optManager.svgDoc.CalculateRotatedOffsetForResize(y, L, C.RotationAngle);
                 C.OffsetShape(I.x, I.y)
               }
               this.AddToDirtyList(h),
@@ -23379,14 +23379,14 @@ ListManager.LM.prototypeTable_RemoveCols = function (e, t, a, r) {
           ),
           l.DataID >= 0 &&
           (
-            (I = GlobalData.objectStore.GetObject(l.DataID)) &&
+            (I = T3Gv.objectStore.GetObject(l.DataID)) &&
             I.Delete(),
             e.DataID === l.DataID &&
             (e.DataID = - 1),
             l.DataID = - 1
           ),
           l.NoteID >= 0 &&
-          ((I = GlobalData.objectStore.GetObject(l.NoteID)) && I.Delete(), l.NoteID = - 1),
+          ((I = T3Gv.objectStore.GetObject(l.NoteID)) && I.Delete(), l.NoteID = - 1),
           S < 0 &&
           (S = s.start + o),
           c++;
@@ -23629,7 +23629,7 @@ ListManager.LM.prototypeTable_SetProperties = function (e, t, a) {
       else a < i &&
         (o = i - a, this.Table_RemoveCols(e, S, i - o - 1, i - 1));
       e.objecttype === ConstantData.ObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER &&
-        GlobalData.optManager.Table_SortChildContainers(e, S),
+        T3Gv.optManager.Table_SortChildContainers(e, S),
         l = !0
     }
   }
@@ -23670,7 +23670,7 @@ ListManager.LM.prototypeTable_Remove = function (e, t) {
         ),
         o.celltype === ListManager.Table.CellTypes.SDT_CT_PERSON
       ) {
-        var h = GlobalData.objectStore.GetObject(o.DataID);
+        var h = T3Gv.objectStore.GetObject(o.DataID);
         h &&
           h.Delete(),
           o.DataID = - 1
@@ -23758,7 +23758,7 @@ ListManager.LM.prototypeTable_Navigate = function (e, t, a, r) {
     f = ListManager.Table.CellFlags.SDT_F_Select;
   if (
     e < 0 &&
-    (e = GlobalData.optManager.Table_GetActiveID()),
+    (e = T3Gv.optManager.Table_GetActiveID()),
     null == (i = this.GetObjectPtr(e, !1))
   ) return !1;
   if (
@@ -23772,7 +23772,7 @@ ListManager.LM.prototypeTable_Navigate = function (e, t, a, r) {
         d &&
         M.celltype === ListManager.Table.CellTypes.SDT_CT_GANTTTASK
       ) {
-        var L = GlobalData.optManager.Table_GetFirstTextCell(n);
+        var L = T3Gv.optManager.Table_GetFirstTextCell(n);
         n.select !== L &&
           (h = !0)
       } else i.objecttype === ConstantData.ObjectTypes.SD_OBJT_UIELEMENT &&
@@ -23913,10 +23913,10 @@ ListManager.LM.prototypeTable_Navigate = function (e, t, a, r) {
             !0;
           this.CloseEdit(!0),
             i = this.GetObjectPtr(e, !0);
-          var O = GlobalData.optManager.Table_GetActiveID();
+          var O = T3Gv.optManager.Table_GetActiveID();
           if (
             i.objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART
-          ) return GlobalData.optManager.GanttAddTask(!1),
+          ) return T3Gv.optManager.GanttAddTask(!1),
             !0;
           this.Table_AddRows(i, n, E, E, !1, !0, !1),
             this.AddToDirtyList(O),
@@ -24012,13 +24012,13 @@ ListManager.LM.prototypeTable_ClearImage = function (e) {
     e.ImageURL = '',
     - 1 != e.BlobBytesID &&
     (
-      (t = GlobalData.objectStore.GetObject(e.BlobBytesID)) &&
+      (t = T3Gv.objectStore.GetObject(e.BlobBytesID)) &&
       t.Delete(),
       e.BlobBytesID = - 1
     ),
     - 1 != e.EMFBlobBytesID &&
     (
-      (t = GlobalData.objectStore.GetObject(e.EMFBlobBytesID)) &&
+      (t = T3Gv.objectStore.GetObject(e.EMFBlobBytesID)) &&
       t.Delete(),
       e.EMFBlobBytesID = - 1
     )
@@ -24065,7 +24065,7 @@ ListManager.LM.prototypeTable_ClearText = function (e) {
 
 ListManager.LM.prototypeTable_DeleteCellContent = function (e, t, a, r, i) {
   null == e &&
-    (e = GlobalData.optManager.Table_GetActiveID()),
+    (e = T3Gv.optManager.Table_GetActiveID()),
     this.CloseEdit(!0),
     Collab.AllowMessage() &&
     Collab.BeginSecondaryEdit();
@@ -24120,7 +24120,7 @@ ListManager.LM.prototypeTable_DeleteCellContent = function (e, t, a, r, i) {
         o.DataID >= 0 &&
         0 == (o.flags & ListManager.Table.CellFlags.SDT_F_NoText) &&
         (
-          l = GlobalData.objectStore.GetObject(o.DataID),
+          l = T3Gv.objectStore.GetObject(o.DataID),
           o.DataID = - 1,
           I = - 1,
           l &&
@@ -24129,7 +24129,7 @@ ListManager.LM.prototypeTable_DeleteCellContent = function (e, t, a, r, i) {
           f.push(L[n])
         ),
         o.NoteID >= 0 &&
-        ((l = GlobalData.objectStore.GetObject(o.NoteID)) && l.Delete(), o.NoteID = - 1),
+        ((l = T3Gv.objectStore.GetObject(o.NoteID)) && l.Delete(), o.NoteID = - 1),
         this.Table_ClearImage(o),
         r ||
         (this.Table_ClearCell(o), o.DataID = I);
@@ -24309,7 +24309,7 @@ ListManager.LM.prototypeTable_PasteCellContent = function (e, t) {
                     M.selrange = f.DataID.selrange,
                     I = new ListManager.TextObject(M),
                     (
-                      h = GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.LM_TEXT_OBJECT, I)
+                      h = T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.LM_TEXT_OBJECT, I)
                     ) &&
                     (D.DataID = h.ID),
                     T = this.Table_AddSVGTextObject(i, this.svgDoc, R, D, d.start + u)
@@ -24387,11 +24387,11 @@ ListManager.LM.prototypeTable_PasteCellContent = function (e, t) {
 ListManager.LM.prototypeTable_CellSetBlobBytes = function (e, t, a) {
   var r = new ListManager.BlobBytes(a, t);
   if (e.BlobBytesID >= 0) {
-    var i = GlobalData.objectStore.PreserveBlock(e.BlobBytesID);
+    var i = T3Gv.objectStore.PreserveBlock(e.BlobBytesID);
     i &&
       (i.Data = r)
   } else {
-    var n = GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.BLOBBYTES_OBJECT, r);
+    var n = T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.BLOBBYTES_OBJECT, r);
     n &&
       (e.BlobBytesID = n.ID)
   }
@@ -24400,11 +24400,11 @@ ListManager.LM.prototypeTable_CellSetBlobBytes = function (e, t, a) {
 ListManager.LM.prototypeTable_CellSetEMFBlobBytes = function (e, t, a) {
   var r = new ListManager.BlobBytes(a, t);
   if (e.EMFBlobBytesID >= 0) {
-    var i = GlobalData.objectStore.PreserveBlock(e.EMFBlobBytesID);
+    var i = T3Gv.objectStore.PreserveBlock(e.EMFBlobBytesID);
     i &&
       (i.Data = r)
   } else {
-    var n = GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.BLOBBYTES_OBJECT, r);
+    var n = T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.BLOBBYTES_OBJECT, r);
     n &&
       (e.EMFBlobBytesID = n.ID)
   }
@@ -24413,14 +24413,14 @@ ListManager.LM.prototypeTable_CellSetEMFBlobBytes = function (e, t, a) {
 ListManager.LM.prototypeTable_CellGetBlobBytes = function (e) {
   var t = null;
   return e.BlobBytesID >= 0 &&
-    (t = GlobalData.optManager.GetObjectPtr(e.BlobBytesID, !1)),
+    (t = T3Gv.optManager.GetObjectPtr(e.BlobBytesID, !1)),
     t
 }
 
 ListManager.LM.prototypeTable_CellGetEMFBlobBytes = function (e) {
   var t = null;
   return e.EMFBlobBytesID >= 0 &&
-    (t = GlobalData.optManager.GetObjectPtr(e.EMFBlobBytesID, !1)),
+    (t = T3Gv.optManager.GetObjectPtr(e.EMFBlobBytesID, !1)),
     t
 }
 
@@ -24461,10 +24461,10 @@ ListManager.LM.prototypeTable_ImportPicture = function (e, t, a, r, i, n, o) {
         Collab.AllowMessage() &&
         Collab.BeginSecondaryEdit(),
         (
-          l = (S = (s = GlobalData.optManager.GetObjectPtr(e, !0)).GetTable(!0)).cells[n]
+          l = (S = (s = T3Gv.optManager.GetObjectPtr(e, !0)).GetTable(!0)).cells[n]
         ).DataID >= 0
       ) {
-        var c = GlobalData.objectStore.GetObject(l.DataID);
+        var c = T3Gv.objectStore.GetObject(l.DataID);
         l.DataID = - 1,
           c &&
           c.Delete()
@@ -24475,7 +24475,7 @@ ListManager.LM.prototypeTable_ImportPicture = function (e, t, a, r, i, n, o) {
         l.ImageURL = t,
         l.SVGDim = i,
         this.Table_CellSetBlobBytes(l, r, a),
-        GlobalData.optManager.Table_GetActiveID() >= 0 &&
+        T3Gv.optManager.Table_GetActiveID() >= 0 &&
         (
           this.Table_Release(!0),
           l.flags = Utils2.SetFlag(l.flags, ListManager.Table.CellFlags.SDT_F_Select, !0),
@@ -24509,7 +24509,7 @@ ListManager.LM.prototypeTable_SetCellIcon = function (e, t, a, r) {
   var i,
     n,
     o,
-    s = GlobalData.optManager.GetTargetSelect();
+    s = T3Gv.optManager.GetTargetSelect();
   s >= 0 &&
     (
       !(n = (i = this.GetObjectPtr(s, !1)).GetTable(!1)) ||
@@ -24544,7 +24544,7 @@ ListManager.LM.prototypeTable_ToggleCellIcon = function (e, t, a, r) {
     ],
     c = 0,
     u = [],
-    p = GlobalData.optManager.GetTargetSelect();
+    p = T3Gv.optManager.GetTargetSelect();
   if (
     p >= 0 &&
     (
@@ -24554,7 +24554,7 @@ ListManager.LM.prototypeTable_ToggleCellIcon = function (e, t, a, r) {
     )
   ) {
     n = (i = this.GetObjectPtr(p, !0)).GetTable(!0);
-    var d = GlobalData.optManager.Table_GetRow(n, t);
+    var d = T3Gv.optManager.Table_GetRow(n, t);
     l = n.rows[d];
     var D = - 1;
     for (s = 0; s < 4; s++) (o = n.cells[t + s]) &&
@@ -24614,7 +24614,7 @@ ListManager.LM.prototypeTable_BPMNChoreo_AddRemoveRow = function (e, t, a, r) {
     s,
     l,
     S = 0,
-    c = GlobalData.optManager.GetTargetSelect();
+    c = T3Gv.optManager.GetTargetSelect();
   if (
     c >= 0 &&
     (n = (i = this.GetObjectPtr(c, !1)).GetTable(!1)) &&
@@ -24704,12 +24704,12 @@ ListManager.LM.prototypeTable_ResetTable = function (e, t, a, r) {
       M = 0,
       P = 0,
       R = [],
-      A = GlobalData.optManager.GetObjectPtr(this.theSEDSessionBlockID, !1);
+      A = T3Gv.optManager.GetObjectPtr(this.theSEDSessionBlockID, !1);
     n = Utils1.DeepCopy(t);
     var _ = $.extend(!0, {
     }, A.def.style.Text);
     for (
-      _.FontId = GlobalData.optManager.GetFontIdByName(A.def.lf.fontName),
+      _.FontId = T3Gv.optManager.GetFontIdByName(A.def.lf.fontName),
       _.FontName = A.def.lf.fontName,
       g = n.cells.length,
       o = 0;
@@ -24819,15 +24819,15 @@ ListManager.LM.prototypeTable_ApplyTable = function (e, t, a) {
     n,
     o,
     s = ConstantData.TextFace,
-    l = GlobalData.optManager.GetObjectPtr(this.theSEDSessionBlockID, !1);
+    l = T3Gv.optManager.GetObjectPtr(this.theSEDSessionBlockID, !1);
   r = Utils1.DeepCopy(t),
     e.SetTable(r),
-    GlobalData.optManager.AddToDirtyList(e.BlockID),
-    GlobalData.optManager.RenderDirtySVGObjects();
+    T3Gv.optManager.AddToDirtyList(e.BlockID),
+    T3Gv.optManager.RenderDirtySVGObjects();
   var S = $.extend(!0, {
   }, l.def.style.Text);
   for (
-    S.FontId = GlobalData.optManager.GetFontIdByName(l.def.lf.fontName),
+    S.FontId = T3Gv.optManager.GetFontIdByName(l.def.lf.fontName),
     S.FontName = l.def.lf.fontName,
     this.Table_ChangeTextAttributes(e, null, S, null, null, null, null, !0),
     e.StyleRecord.Text = S,
@@ -24841,14 +24841,14 @@ ListManager.LM.prototypeTable_ApplyTable = function (e, t, a) {
     var c = this.Table_GetFirstTextCell(r);
     (i = r.cells[c]).DataID = e.DataID,
       e.DataID = - 1,
-      GlobalData.optManager.AddToDirtyList(e.BlockID),
-      GlobalData.optManager.RenderDirtySVGObjects();
+      T3Gv.optManager.AddToDirtyList(e.BlockID),
+      T3Gv.optManager.RenderDirtySVGObjects();
     var u = this.svgObjectLayer.GetElementByID(e.BlockID).GetElementByID(ConstantData.SVGElementClass.TEXT);
     u.SetUserData(i.DataID);
     var p = u.GetSelectedFormat();
     if (p) {
-      i.Text.FontSize = GlobalData.optManager.FontSizeToPoints(p.size),
-        i.Text.FontId = GlobalData.optManager.GetFontIdByName(p.font),
+      i.Text.FontSize = T3Gv.optManager.FontSizeToPoints(p.size),
+        i.Text.FontId = T3Gv.optManager.GetFontIdByName(p.font),
         i.Text.FontName = p.font;
       var d = 'bold' === p.weight;
       i.Text.Face = Utils2.SetFlag(S.Face, s.Bold, d);
@@ -24915,7 +24915,7 @@ ListManager.LM.prototypeTable_ApplyTable = function (e, t, a) {
     ) {
       var u = t.cells[n];
       if (u.Text.FontSize = u.Text.FontSize * r, u.DataID >= 0) for (
-        o = (s = GlobalData.optManager.GetObjectPtr(u.DataID, !0).runtimeText.styles).length,
+        o = (s = T3Gv.optManager.GetObjectPtr(u.DataID, !0).runtimeText.styles).length,
         l = 0;
         l < o;
         ++l
@@ -24960,7 +24960,7 @@ ListManager.LM.prototypeTable_Match = function (e, t) {
 }
 
 ListManager.LM.prototypeTable_GetPerimPts = function (e, t, a, r) {
-  var i = GlobalData.optManager.Table_GetCellWithID(t, a),
+  var i = T3Gv.optManager.Table_GetCellWithID(t, a),
     n = [];
   return i ? (
     n[0] = {
@@ -24984,8 +24984,8 @@ ListManager.LM.prototypeTable_GetTargetPoints = function (e, t, a, r, i, n) {
   if (Utils2.pointInRect(e.trect, a)) {
     i.x = a.x - e.trect.x,
       i.y = a.y - e.trect.y;
-    var c = GlobalData.optManager.Table_Hit(t, i.x, i.y);
-    if (c >= 0) return GlobalData.optManager.Table_GetRow(t, c),
+    var c = T3Gv.optManager.Table_Hit(t, i.x, i.y);
+    if (c >= 0) return T3Gv.optManager.Table_GetRow(t, c),
       t.rows.length,
       (o = t.cells[c]).frame.y + o.frame.height / 2,
       s = o.frame.height / 4,
@@ -25010,7 +25010,7 @@ ListManager.LM.prototypeTable_RebuildURLs = function (e) {
     (
       i = this.Table_CellGetBlobBytes(r),
       n = FileParser.GetImageBlobType(i.ImageDir),
-      r.ImageURL = GlobalData.optManager.MakeURL(null, i.Bytes, n)
+      r.ImageURL = T3Gv.optManager.MakeURL(null, i.Bytes, n)
     )
 }
 
@@ -25042,7 +25042,7 @@ ListManager.LM.prototypeTable_RefreshURLs = function (e, t, a) {
           (
             s = FileParser.GetImageBlobType(o.ImageDir),
             this.IsBlobURL(l.ImageURL) &&
-            (l.ImageURL = GlobalData.optManager.MakeURL(null, o.Bytes, s))
+            (l.ImageURL = T3Gv.optManager.MakeURL(null, o.Bytes, s))
           )
         ) : this.DeleteURL(n.ImageURL)
     );
@@ -25055,7 +25055,7 @@ ListManager.LM.prototypeTable_RefreshURLs = function (e, t, a) {
       (
         s = FileParser.GetImageBlobType(o.ImageDir),
         this.IsBlobURL(l.ImageURL) &&
-        (l.ImageURL = GlobalData.optManager.MakeURL(null, o.Bytes, s))
+        (l.ImageURL = T3Gv.optManager.MakeURL(null, o.Bytes, s))
       )
     )
 }
@@ -25113,8 +25113,8 @@ ListManager.LM.prototypeTable_ConvertToVisio = function (e, t) {
         D.DataID = a.DataID,
         D.dataclass = h,
         u = new ListManager.Rect(D),
-        l = GlobalData.optManager.AddNewObject(u, !1, !1),
-        (p = GlobalData.optManager.GetObjectPtr(l, !1)).DataID = a.DataID,
+        l = T3Gv.optManager.AddNewObject(u, !1, !1),
+        (p = T3Gv.optManager.GetObjectPtr(l, !1)).DataID = a.DataID,
         p.BlobBytesID = a.BlobBytesID,
         p.BlobBytesID >= 0 &&
         (p.ImageHeader = Utils1.DeepCopy(a.Image)),
@@ -25154,15 +25154,15 @@ ListManager.LM.prototypeTable_ConvertToVisio = function (e, t) {
         ),
         D.StyleRecord.OutsideEffect.OutsideType = 0,
         u = new ListManager.Line(D),
-        l = GlobalData.optManager.AddNewObject(u, !1, !1),
-        p = GlobalData.optManager.GetObjectPtr(l, !1),
+        l = T3Gv.optManager.AddNewObject(u, !1, !1),
+        p = T3Gv.optManager.GetObjectPtr(l, !1),
         0 !== e.RotationAngle &&
         p.ScaleObject(0, 0, m, e.RotationAngle, 1, 1, !1),
         S = p.ConvertToVisio([]),
         g.push(S[0]),
         selectedlist.push(S[0])
     };
-  GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSelectedListBlockID, !1);
+  T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSelectedListBlockID, !1);
   for (
     selectedlist = [],
     e.TableID = - 1,
@@ -25207,9 +25207,9 @@ ListManager.LM.prototypeTable_ConvertToVisio = function (e, t) {
       i.hline.Thickness > 0 &&
       y(i, !1, r === s - 1)
     );
-  l = GlobalData.optManager.GroupSelectedShapes(!0, selectedlist, !0, !1),
+  l = T3Gv.optManager.GroupSelectedShapes(!0, selectedlist, !0, !1),
     (g = []).push(l);
-  var M = GlobalData.optManager.GetObjectPtr(l, !1);
+  var M = T3Gv.optManager.GetObjectPtr(l, !1);
   return M &&
     (
       M.moreflags = Utils2.SetFlag(
@@ -25239,7 +25239,7 @@ ListManager.LM.prototypeTable_ConvertToVisio = function (e, t) {
       o += '"',
         r.DataID >= 0 &&
         (
-          TextBlock = GlobalData.optManager.GetObjectPtr(r.DataID, !1),
+          TextBlock = T3Gv.optManager.GetObjectPtr(r.DataID, !1),
           TextBlock &&
           (o += TextBlock.runtimeText.text)
         ),
@@ -25315,10 +25315,10 @@ ListManager.LM.prototypeTable_EnsureDateFormatCorrect = function (e, t) {
     o = null,
     s = !1;
   if (
-    (i = GlobalData.optManager.GetObjectPtr(e, !1)) &&
+    (i = T3Gv.optManager.GetObjectPtr(e, !1)) &&
     (n = i.GetTable(!1)) &&
     (
-      systemUsingEuroFormat = Utils2.GetActiveDateFormat(GlobalData.optManager.theContentHeader.dateformat) == ListManager.DateCodes.SDEURODATE,
+      systemUsingEuroFormat = Utils2.GetActiveDateFormat(T3Gv.optManager.theContentHeader.dateformat) == ListManager.DateCodes.SDEURODATE,
       t ? systemUsingEuroFormat &&
         (
           s = !0,
@@ -25337,7 +25337,7 @@ ListManager.LM.prototypeTable_EnsureDateFormatCorrect = function (e, t) {
   ) for (rowsLen = n.rows.length, a = 0; a < rowsLen; a++) for (r = 0; r < n.rows[a].ncells; r++) (o = n.cells[n.rows[a].start + r]).celltype !== ListManager.Table.CellTypes.SDT_CT_GANTT_START &&
     o.celltype !== ListManager.Table.CellTypes.SDT_CT_GANTT_END ||
     (
-      textObj = GlobalData.optManager.GetObjectPtr(o.DataID, !1),
+      textObj = T3Gv.optManager.GetObjectPtr(o.DataID, !1),
       dateText = textObj.runtimeText.text,
       dateText = Utils2.FlipDate(dateText),
       dateText &&
@@ -25371,12 +25371,12 @@ ListManager.LM.prototypeTable_CellHasContainer = function (e, t, a) {
 
 ListManager.LM.prototypeContainerIsInCell = function (e) {
   if (e.hooks.length && null != e.hooks[0].cellid) {
-    var t = GlobalData.optManager.GetObjectPtr(e.hooks[0].objid, !1);
+    var t = T3Gv.optManager.GetObjectPtr(e.hooks[0].objid, !1);
     if (t) {
       var a = t.GetTable(!1);
       if (a) {
         var r = {},
-          i = GlobalData.optManager.Table_GetCellWithID(a, e.hooks[0].cellid, r);
+          i = T3Gv.optManager.Table_GetCellWithID(a, e.hooks[0].cellid, r);
         if (i) return {
           cell: i,
           cellindex: r.index,
@@ -25391,16 +25391,16 @@ ListManager.LM.prototypeContainerIsInCell = function (e) {
 
 ListManager.LM.prototypeTable_ShowContainerMenu = function (e, t) {
   if (null == e) {
-    var a = GlobalData.optManager.Table_GetActiveID();
+    var a = T3Gv.optManager.Table_GetActiveID();
     if (a >= 0) {
-      var r = GlobalData.optManager.GetObjectPtr(a, !1);
+      var r = T3Gv.optManager.GetObjectPtr(a, !1);
       if (r) {
         var i = r.GetTable(!1),
           n = {
-            x: GlobalData.optManager.RightClickParams.HitPt.x - r.trect.x,
-            y: GlobalData.optManager.RightClickParams.HitPt.y - r.trect.y
+            x: T3Gv.optManager.RightClickParams.HitPt.x - r.trect.x,
+            y: T3Gv.optManager.RightClickParams.HitPt.y - r.trect.y
           },
-          o = GlobalData.optManager.Table_Hit(i, n.x, n.y);
+          o = T3Gv.optManager.Table_Hit(i, n.x, n.y);
         if (o < 0 && (o = i.select), i && o >= 0) e = {
           obj: r,
           theTable: i,
@@ -25411,7 +25411,7 @@ ListManager.LM.prototypeTable_ShowContainerMenu = function (e, t) {
     }
     if (null == e) return
   }
-  GlobalData.optManager.RightClickParams.CellIndex = e.cellindex;
+  T3Gv.optManager.RightClickParams.CellIndex = e.cellindex;
   var s = ListManager.Table.CellTypes,
     l = !1,
     S = !1;
@@ -25449,9 +25449,9 @@ ListManager.LM.prototypeTable_ShowContainerMenu = function (e, t) {
 }
 
 ListManager.LM.prototypeAddContainerToCell = function (e) {
-  var t = GlobalData.optManager.Table_GetActiveID();
+  var t = T3Gv.optManager.Table_GetActiveID();
   if (t >= 0) {
-    var a = GlobalData.optManager.GetObjectPtr(t, !0);
+    var a = T3Gv.optManager.GetObjectPtr(t, !0);
     if (a) {
       var r = a.GetTable(!0);
       if (r && r.select >= 0) {
@@ -25481,7 +25481,7 @@ ListManager.LM.prototypeAddContainerToCell = function (e) {
             }
             t.flags |= ConstantData.ContainerListFlags.AllowOnlyNonContainers;
             var l = new ListManager.ShapeContainer(o);
-            return i = GlobalData.optManager.AddNewObject(l, !1, !0),
+            return i = T3Gv.optManager.AddNewObject(l, !1, !0),
               Collab.AddNewBlockToSecondary(i),
               i
           }(
@@ -25494,8 +25494,8 @@ ListManager.LM.prototypeAddContainerToCell = function (e) {
             },
             a.StyleRecord
           );
-          GlobalData.optManager.GetObjectPtr(s, !1);
-          GlobalData.optManager.UpdateHook(
+          T3Gv.optManager.GetObjectPtr(s, !1);
+          T3Gv.optManager.UpdateHook(
             s,
             - 1,
             t,
@@ -25507,7 +25507,7 @@ ListManager.LM.prototypeAddContainerToCell = function (e) {
             i.uniqueid
           ),
             a.objecttype = ConstantData.ObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER,
-            GlobalData.optManager.SetLinkFlag(t, ConstantData.LinkFlags.SED_L_MOVE),
+            T3Gv.optManager.SetLinkFlag(t, ConstantData.LinkFlags.SED_L_MOVE),
             i.childcontainer = s;
           var l = {
             width: i.trect.width,
@@ -25515,7 +25515,7 @@ ListManager.LM.prototypeAddContainerToCell = function (e) {
           },
             S = (
               o = Utils1.DeepCopy(a.trect),
-              GlobalData.optManager.Table_TextGrow(
+              T3Gv.optManager.Table_TextGrow(
                 a,
                 r,
                 r.select,
@@ -25527,8 +25527,8 @@ ListManager.LM.prototypeAddContainerToCell = function (e) {
           o.width = S.x,
             o.height = S.y,
             a.TRectToFrame(o, !1),
-            GlobalData.optManager.AddToDirtyList(t),
-            GlobalData.optManager.CompleteOperation()
+            T3Gv.optManager.AddToDirtyList(t),
+            T3Gv.optManager.CompleteOperation()
         }
       }
     }
@@ -25540,7 +25540,7 @@ ListManager.LM.prototypeToggleNote = function (e, t, a) {
   if (null != a && (t = r.IsNoteCell(a)), !t) {
     var i = r ? r.GetTable(!1) : null;
     if (i && i.select >= 0) {
-      var n = GlobalData.optManager.Table_GetActiveID();
+      var n = T3Gv.optManager.Table_GetActiveID();
       if (r.BlockID === n) {
         var o = i.select;
         t = i.cells[o]
@@ -25548,7 +25548,7 @@ ListManager.LM.prototypeToggleNote = function (e, t, a) {
     }
   }
   if (this.bInNoteEdit = !this.bInNoteEdit, this.bInNoteEdit) {
-    if (this.ShowNote(e, t), GlobalData.docHandler.IsReadOnly()) return;
+    if (this.ShowNote(e, t), T3Gv.docHandler.IsReadOnly()) return;
     var s;
     this.ActivateNote(e),
       (
@@ -25563,7 +25563,7 @@ ListManager.LM.prototypeToggleNote = function (e, t, a) {
     if (
       this.DeactivateNote(e, t),
       this.HideNote(e),
-      GlobalData.docHandler.IsReadOnly()
+      T3Gv.docHandler.IsReadOnly()
     ) return;
     this.UpdateSelectionAttributes([]),
       Collab.UnBlockMessages()
@@ -25634,7 +25634,7 @@ ListManager.LM.prototypeCreateNoteSVG = function (e, t, a) {
     c.SetStrokeWidth(1),
     c.SetFillColor('#FFFFE1'),
     c.SetID(ConstantData.SVGElementClass.SHAPE);
-  var u = GlobalData.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.TEXT),
+  var u = T3Gv.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.TEXT),
     p = i - 2 * n,
     d = o - 2 * n;
   u.SetPos(n, n),
@@ -25642,7 +25642,7 @@ ListManager.LM.prototypeCreateNoteSVG = function (e, t, a) {
     u.SetVerticalAlignment('top'),
     u.SetID(ConstantData.SVGElementClass.NOTETEXT),
     u.SetEditCallback(this.NoteEditCallback, this),
-    u.SetSpellCheck(GlobalData.optManager.DocAllowSpell()),
+    u.SetSpellCheck(T3Gv.optManager.DocAllowSpell()),
     u.SetConstraints(p, 0, 0);
   var D = t;
   a &&
@@ -25684,25 +25684,25 @@ ListManager.LM.prototypeNoteEditCallback = function (e, t, a, r) {
 
   switch (e) {
     case 'edit':
-      GlobalData.optManager.NoteResize(GlobalData.optManager.curNoteShape, GlobalData.optManager.curNoteTableCell),
-        GlobalData.optManager.bNoteChanged = !0;
+      T3Gv.optManager.NoteResize(T3Gv.optManager.curNoteShape, T3Gv.optManager.curNoteTableCell),
+        T3Gv.optManager.bNoteChanged = !0;
       break;
     case 'willresize':
-      GlobalData.optManager.bNoteChanged = !0;
+      T3Gv.optManager.bNoteChanged = !0;
       break;
     case 'keyend':
     case 'charfilter':
     case 'activate':
       break;
     case 'deactivate':
-      if (GlobalData.optManager.curNoteShape) {
-        var i = Business.GetSelectionBusinessManager(GlobalData.optManager.curNoteShape);
+      if (T3Gv.optManager.curNoteShape) {
+        var i = Business.GetSelectionBusinessManager(T3Gv.optManager.curNoteShape);
         i &&
           i.OnDeactivateNote(a)
       }
       break;
     case 'select':
-      GlobalData.optManager.TextSelectIdle(a)
+      T3Gv.optManager.TextSelectIdle(a)
   }
 }
 
@@ -25710,7 +25710,7 @@ ListManager.LM.prototypeActivateNote = function (e) {
   var t,
     a = null;
   if (
-    !GlobalData.docHandler.IsReadOnly() &&
+    !T3Gv.docHandler.IsReadOnly() &&
     (
       t = 'note_' + e,
       null != (a = this.svgHighlightLayer.GetElementByID(t))
@@ -25721,12 +25721,12 @@ ListManager.LM.prototypeActivateNote = function (e) {
     i.SetFillColor('#f5f7f9'),
       null != r &&
       null != i &&
-      GlobalData.optManager.TERegisterNoteEvents(r, i)
+      T3Gv.optManager.TERegisterNoteEvents(r, i)
   }
 }
 
 ListManager.LM.prototypeDeactivateNote = function (e, t) {
-  if (!GlobalData.docHandler.IsReadOnly()) {
+  if (!T3Gv.docHandler.IsReadOnly()) {
     var a = this.svgDoc.GetActiveEdit(),
       r = !1,
       i = - 1;
@@ -25756,7 +25756,7 @@ ListManager.LM.prototypeDeactivateNote = function (e, t) {
             t
           ) {
             if (p = s.GetTable(!1)) {
-              var u = GlobalData.optManager.Table_GetCellWithID(p, t.uniqueid);
+              var u = T3Gv.optManager.Table_GetCellWithID(p, t.uniqueid);
               u &&
                 (l = u)
             }
@@ -25774,7 +25774,7 @@ ListManager.LM.prototypeDeactivateNote = function (e, t) {
             )
           ) {
             var p = (s = this.GetObjectPtr(e, !0)).GetTable(!0),
-              d = GlobalData.objectStore.GetObject(l.NoteID);
+              d = T3Gv.objectStore.GetObject(l.NoteID);
             l.NoteID = - 1,
               this.curNoteShape = - 1,
               this.curNoteTableCell = null,
@@ -25811,7 +25811,7 @@ ListManager.LM.prototypeDeactivateNote = function (e, t) {
 ListManager.LM.prototypeAddObjectNoteBlock = function (e, t) {
   var a = {},
     r = new ListManager.BaseShape,
-    i = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
+    i = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
   r.StyleRecord = $.extend(!0, {
   }, i.def.style);
   var n = Resources.FindStyle(ConstantData.Defines.TextBlockStyle);
@@ -25831,7 +25831,7 @@ ListManager.LM.prototypeAddObjectNoteBlock = function (e, t) {
     });
   return p.runtimeText = c,
     p.selrange = u,
-    GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.LM_NOTES_OBJECT, p).ID
+    T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.LM_NOTES_OBJECT, p).ID
 }
 
 ListManager.LM.prototypeAddObjectNote = function (e, t, a) {
@@ -25845,7 +25845,7 @@ ListManager.LM.prototypeAddObjectNote = function (e, t, a) {
   if (i.NoteID < 0) {
     var o = new ListManager.TextObject({
     }),
-      s = GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.LM_NOTES_OBJECT, o);
+      s = T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.LM_NOTES_OBJECT, o);
     if (null === s) throw new Error('ActivateTextEdit.CreateBlock: CreateBlock failed');
 
     // new SDJSError({
@@ -25875,11 +25875,11 @@ ListManager.LM.prototypeActiveNoteSelectAll = function () {
 }
 
 ListManager.LM.prototypeEditNote = function () {
-  if (!GlobalData.docHandler.IsReadOnly()) {
+  if (!T3Gv.docHandler.IsReadOnly()) {
     this.CloseEdit(!0),
       this.bInNoteEdit ||
       this.DeactivateAllTextEdit(!1);
-    var e = GlobalData.optManager.GetTargetSelect();
+    var e = T3Gv.optManager.GetTargetSelect();
     if (e < 0) Utils2.Alert(Resources.Strings.NoShape, null);
     else {
       var t,
@@ -25888,7 +25888,7 @@ ListManager.LM.prototypeEditNote = function () {
         i = !0;
       if (a) {
         if (a.flags & ConstantData.ObjFlags.SEDO_Lock) return;
-        var n = GlobalData.optManager.SD_GetVisioTextChild(a.BlockID);
+        var n = T3Gv.optManager.SD_GetVisioTextChild(a.BlockID);
         n >= 0 &&
           (a = this.GetObjectPtr(n, !1));
         var o = a.BlockID;
@@ -25896,7 +25896,7 @@ ListManager.LM.prototypeEditNote = function () {
           r = null;
           var s = - 1;
           if ((t = a.GetTable(!1)) && t.select >= 0) {
-            var l = GlobalData.optManager.Table_GetActiveID();
+            var l = T3Gv.optManager.Table_GetActiveID();
             a.BlockID === l &&
               (
                 s = t.select,
@@ -25976,15 +25976,15 @@ ListManager.LM.prototypeTERegisterNoteEvents = function (e, t) {
   var a = function (t) {
     var a;
     Utils2.StopPropagationAndDefaults(t),
-      GlobalData.optManager.IsRightClick(t) &&
-      GlobalData.optManager.bInNoteEdit &&
+      T3Gv.optManager.IsRightClick(t) &&
+      T3Gv.optManager.bInNoteEdit &&
       (
         e &&
         (
           a = e.GetSpellAtLocation(t.gesture.center.clientX, t.gesture.center.clientY)
         ),
         a >= 0 &&
-        GlobalData.optManager.svgDoc.GetSpellCheck().ShowSpellMenu(e, a, t.gesture.center.clientX, t.gesture.center.clientY)
+        T3Gv.optManager.svgDoc.GetSpellCheck().ShowSpellMenu(e, a, t.gesture.center.clientX, t.gesture.center.clientY)
       )
   };
   this.SetVirtualKeyboardLifter(e),
@@ -26024,7 +26024,7 @@ ListManager.LM.prototypeTEUnregisterNoteEvents = function () {
 }
 
 ListManager.LM.prototypeNoteTextResizeCommon = function () {
-  this.NoteResize(GlobalData.optManager.curNoteShape, GlobalData.optManager.curNoteTableCell)
+  this.NoteResize(T3Gv.optManager.curNoteShape, T3Gv.optManager.curNoteTableCell)
 },
 
 
@@ -26037,26 +26037,26 @@ ListManager.LM.prototypeNoteTextResizeCommon = function () {
 ListManager.LM.prototypeComment_CreateList = function (e) {
   var t = new ListManager.CommentList;
   return t.threads.push(e),
-    GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.LM_COMMENT_LIST, t)
+    T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.LM_COMMENT_LIST, t)
 }
 
 ListManager.LM.prototypeComment_CreateThread = function (e, t) {
   var a = new ListManager.CommentThread;
   a.blocks.push(e);
   var r,
-    i = GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.LM_COMMENT_THREAD, a);
+    i = T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.LM_COMMENT_THREAD, a);
   if (i && !t) {
-    var n = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
+    var n = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
     n.CommentListID < 0 ? (
       (r = this.Comment_CreateList(i.ID)) &&
       (
-        (n = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0)).CommentListID = r.ID
+        (n = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0)).CommentListID = r.ID
       ),
-      GlobalData.optManager.CommentShowTab(!0)
+      T3Gv.optManager.CommentShowTab(!0)
     ) : (r = this.GetObjectPtr(n.CommentListID, !0)) &&
     (
       0 === r.threads.length &&
-      GlobalData.optManager.CommentShowTab(!0),
+      T3Gv.optManager.CommentShowTab(!0),
       r.threads.push(i.ID)
     )
   }
@@ -26069,18 +26069,18 @@ ListManager.LM.prototypeComment_Ungroup = function (e) {
       a,
       r,
       i = e.length,
-      n = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
+      n = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
     for (t = 0; t < i; t++) a = e[t],
       n.CommentListID < 0 ? (
         (r = this.Comment_CreateList(a)) &&
         (
-          (n = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0)).CommentListID = r.ID
+          (n = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0)).CommentListID = r.ID
         ),
-        GlobalData.optManager.CommentShowTab(!0)
+        T3Gv.optManager.CommentShowTab(!0)
       ) : (r = this.GetObjectPtr(n.CommentListID, !0)) &&
       (
         0 === r.threads.length &&
-        GlobalData.optManager.CommentShowTab(!0),
+        T3Gv.optManager.CommentShowTab(!0),
         r.threads.indexOf(a) < 0 &&
         r.threads.push(a)
       )
@@ -26112,13 +26112,13 @@ ListManager.LM.prototypeComment_CreateBlock = function (e, t, a) {
     r.objectID = e,
     r.timestamp = i.getTime(),
     this.Comment_InitBlock(r, i),
-    GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.LM_COMMENT_BLOCK, r)
+    T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.LM_COMMENT_BLOCK, r)
 }
 
 ListManager.LM.prototypeCommentEnter = function (e, t, a, r, i) {
   if (null == a) {
-    a = GlobalData.optManager.GetTargetSelect();
-    var n = GlobalData.optManager.SD_GetVisioTextChild(a);
+    a = T3Gv.optManager.GetTargetSelect();
+    var n = T3Gv.optManager.SD_GetVisioTextChild(a);
     n >= 0 &&
       (a = n)
   }
@@ -26137,29 +26137,29 @@ ListManager.LM.prototypeCommentEnter = function (e, t, a, r, i) {
         o.Data.timestamp = u.Data.timestamp,
         ConstantData.CommentParams.CommentID = l.CommentID;
       var p = l.GetIconShape();
-      GlobalData.optManager.AddToDirtyList(p),
+      T3Gv.optManager.AddToDirtyList(p),
         S = !0
     } else (o = this.GetObjectPtr(l.CommentID, !0)).blocks.push(u.ID);
     else if (
-      (c = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0)).CommentID >= 0 &&
+      (c = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0)).CommentID >= 0 &&
       ConstantData.CommentParams.DocumentThreadID < 0 &&
       (ConstantData.CommentParams.DocumentThreadID = c.CommentID),
       ConstantData.CommentParams.DocumentThreadID < 0
     ) (o = this.Comment_CreateThread(u.ID, !1)).Data.objID = - 1,
-      (c = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0)).CommentID = o.ID,
+      (c = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0)).CommentID = o.ID,
       ConstantData.CommentParams.DocumentThreadID = o.ID,
       o.Data.timestamp = u.Data.timestamp,
       ConstantData.CommentParams.CommentID = o.ID;
     else 0 === (
       o = this.GetObjectPtr(ConstantData.CommentParams.DocumentThreadID, !0)
     ).blocks.length &&
-      GlobalData.optManager.CommentShowTab(!0),
+      T3Gv.optManager.CommentShowTab(!0),
       o.blocks.push(u.ID);
     if (
-      t ? GlobalData.optManager.Comment_BuildPanel() : (
+      t ? T3Gv.optManager.Comment_BuildPanel() : (
         r ||
-        GlobalData.optManager.Comment_BuildDropDown(),
-        GlobalData.optManager.Comment_UpdatePanel(null)
+        T3Gv.optManager.Comment_BuildDropDown(),
+        T3Gv.optManager.Comment_UpdatePanel(null)
       ),
       $(window).trigger('SDJS.Notify', {
         action: `commented: "${e}"`
@@ -26174,9 +26174,9 @@ ListManager.LM.prototypeCommentEnter = function (e, t, a, r, i) {
       };
       Collab.BuildMessage(ConstantData.CollabMessages.Comment_Add, d, !1)
     }
-    GlobalData.optManager.PreserveUndoState(!1),
+    T3Gv.optManager.PreserveUndoState(!1),
       S &&
-      GlobalData.optManager.RenderDirtySVGObjects(),
+      T3Gv.optManager.RenderDirtySVGObjects(),
       Collab.UnBlockMessages()
   }
 }
@@ -26192,36 +26192,36 @@ ListManager.LM.prototypeCommentDelete = function () {
   var e = ConstantData.CommentParams.DeleteTarget;
   if (!(e < 0)) {
     var t = !1,
-      a = GlobalData.optManager.GetObjectPtr(ConstantData.CommentParams.CommentID, !0);
+      a = T3Gv.optManager.GetObjectPtr(ConstantData.CommentParams.CommentID, !0);
     if (null != a) {
-      var r = GlobalData.objectStore.GetObject(e);
+      var r = T3Gv.objectStore.GetObject(e);
       r &&
         r.Delete();
       var i = a.blocks.indexOf(e);
       if (i >= 0 && a.blocks.splice(i, 1), 0 === a.blocks.length) {
-        var n = GlobalData.optManager.GetObjectPtr(a.objID, !0);
+        var n = T3Gv.optManager.GetObjectPtr(a.objID, !0);
         if (n) {
           n.CommentID = - 1,
             t = !0;
           var o = n.GetIconShape();
-          GlobalData.optManager.AddToDirtyList(o)
+          T3Gv.optManager.AddToDirtyList(o)
         }
-        var s = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
+        var s = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
           l = this.GetObjectPtr(s.CommentListID, !0);
         l &&
           (i = l.threads.indexOf(a.BlockID)) >= 0 &&
           (
             l.threads.splice(i, 1),
             0 === l.threads.length &&
-            GlobalData.optManager.CommentShowTab(!1)
+            T3Gv.optManager.CommentShowTab(!1)
           ),
-          (r = GlobalData.objectStore.GetObject(a.BlockID)) &&
+          (r = T3Gv.objectStore.GetObject(a.BlockID)) &&
           r.Delete()
       }
-      GlobalData.optManager.Comment_BuildDropDown(),
-        GlobalData.optManager.PreserveUndoState(!1),
+      T3Gv.optManager.Comment_BuildDropDown(),
+        T3Gv.optManager.PreserveUndoState(!1),
         t &&
-        GlobalData.optManager.RenderDirtySVGObjects(),
+        T3Gv.optManager.RenderDirtySVGObjects(),
         Collab.UnBlockMessages()
     }
   }
@@ -26232,7 +26232,7 @@ ListManager.LM.prototypeComment_Group = function (e) {
     a,
     r,
     i,
-    n = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
+    n = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
     o = this.GetObjectPtr(n.CommentListID, !0);
   if (o) {
     for (r = e.length, a = 0; a < r; a++) i = e[a],
@@ -26240,7 +26240,7 @@ ListManager.LM.prototypeComment_Group = function (e) {
       (
         o.threads.splice(t, 1),
         0 === o.threads.length &&
-        GlobalData.optManager.CommentShowTab(!1)
+        T3Gv.optManager.CommentShowTab(!1)
       );
     o.threads.length > 0 &&
       this.Comment_UpdatePanel(- 2)
@@ -26255,21 +26255,21 @@ ListManager.LM.prototypeCommentObjectDelete = function (e) {
       i,
       n;
     if (
-      e = GlobalData.optManager.GetObjectPtr(e.BlockID, !0),
-      t = GlobalData.optManager.GetObjectPtr(e.CommentID, !0)
+      e = T3Gv.optManager.GetObjectPtr(e.BlockID, !0),
+      t = T3Gv.optManager.GetObjectPtr(e.CommentID, !0)
     ) {
-      var o = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
+      var o = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
         s = this.GetObjectPtr(o.CommentListID, !0);
-      for (r = t.blocks.length, a = 0; a < r; a++) (i = GlobalData.objectStore.GetObject(t.blocks[a])) &&
+      for (r = t.blocks.length, a = 0; a < r; a++) (i = T3Gv.objectStore.GetObject(t.blocks[a])) &&
         i.Delete(),
         s &&
         (n = s.threads.indexOf(t.BlockID)) >= 0 &&
         (
           s.threads.splice(n, 1),
           0 === s.threads.length &&
-          GlobalData.optManager.CommentShowTab(!1)
+          T3Gv.optManager.CommentShowTab(!1)
         ),
-        (i = GlobalData.objectStore.GetObject(t.BlockID)) &&
+        (i = T3Gv.objectStore.GetObject(t.BlockID)) &&
         i.Delete()
     }
     e.CommentID = - 1
@@ -26304,9 +26304,9 @@ ListManager.LM.prototypeComment_MakeDayList = function (e) {
         start: - 1,
         n: 0
       };
-    for (r = 0; r < i; r++) if (n = GlobalData.optManager.GetObjectPtr(e.blocks[r], !1)) switch (
+    for (r = 0; r < i; r++) if (n = T3Gv.optManager.GetObjectPtr(e.blocks[r], !1)) switch (
       '' == n.userName &&
-      (n.userName = GlobalData.optManager.CommentUserIDs[n.userID]),
+      (n.userName = T3Gv.optManager.CommentUserIDs[n.userID]),
       0 == n.year &&
       n &&
       (a = new Date(n.timestamp), this.Comment_InitBlock(n, a)),
@@ -26387,9 +26387,9 @@ ListManager.LM.prototypeComment_BuildPanel = function () {
     a = ConstantData.CommentParams.PanelContainer,
     r = ConstantData.CommentParams.Panel;
   var d,
-    D = GlobalData.optManager.GetTargetSelect();
+    D = T3Gv.optManager.GetTargetSelect();
   ConstantData.CommentParams.PanelTargetID = D;
-  var g = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
+  var g = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
   if (g.CommentListID >= 0) {
     var h = this.GetObjectPtr(g.CommentListID, !1);
     for (i = h.threads.length, n = 0; n < i; n++) (o = this.GetObjectPtr(h.threads[n])) &&
@@ -26399,15 +26399,15 @@ ListManager.LM.prototypeComment_BuildPanel = function () {
   s.blocks.sort(
     (
       function (e, t) {
-        var a = GlobalData.optManager.GetObjectPtr(e, !1),
-          r = GlobalData.optManager.GetObjectPtr(t, !1);
+        var a = T3Gv.optManager.GetObjectPtr(e, !1),
+          r = T3Gv.optManager.GetObjectPtr(t, !1);
         return a.timestamp - r.timestamp
       }
     )
   ),
     i = s.blocks.length;
   var m = Resources.Controls.SmartPanel_Comments.NoCommentsPlaceholder.GetControl(!0);
-  for (0 === i ? m.removeClass('hide') : m.addClass('hide'), n = 0; n < i; n++) (e = GlobalData.optManager.GetObjectPtr(s.blocks[n], !1)).objectID === D &&
+  for (0 === i ? m.removeClass('hide') : m.addClass('hide'), n = 0; n < i; n++) (e = T3Gv.optManager.GetObjectPtr(s.blocks[n], !1)).objectID === D &&
     (d = n);
   var C,
     y,
@@ -26441,7 +26441,7 @@ ListManager.LM.prototypeComment_BuildPanel = function () {
       C < y.n;
       C++
     ) L = C + y.start,
-      e = GlobalData.optManager.GetObjectPtr(s.blocks[L], !1),
+      e = T3Gv.optManager.GetObjectPtr(s.blocks[L], !1),
       t = new ListManager.CommentData,
       P = e.comment.replace(/</g, '&lt;'),
       t.Comment = P,
@@ -26512,7 +26512,7 @@ ListManager.LM.prototypeComment_BuildDropDown = function () {
     ConstantData.CommentParams.DropDownTextArea[0].value = '',
     ConstantData.CommentParams.CommentID >= 0 &&
     (
-      u = GlobalData.optManager.GetObjectPtr(ConstantData.CommentParams.CommentID, !1)
+      u = T3Gv.optManager.GetObjectPtr(ConstantData.CommentParams.CommentID, !1)
     ),
     u
   ) for (t = (a = this.Comment_MakeDayList(u)).length, e = 0; e < t; e++) {
@@ -26527,8 +26527,8 @@ ListManager.LM.prototypeComment_BuildDropDown = function () {
       s < o.n;
       s++
     ) l = s + o.start,
-      '' == (r = GlobalData.optManager.GetObjectPtr(u.blocks[l], !1)).userName &&
-      (r.userName = GlobalData.optManager.CommentUserIDs[r.userID]),
+      '' == (r = T3Gv.optManager.GetObjectPtr(u.blocks[l], !1)).userName &&
+      (r.userName = T3Gv.optManager.CommentUserIDs[r.userID]),
       i = new ListManager.CommentData,
       c = r.comment.replace(/</g, '&lt;'),
       i.Comment = c,
@@ -26539,7 +26539,7 @@ ListManager.LM.prototypeComment_BuildDropDown = function () {
     ConstantData.CommentParams.CommentTemplate &&
       d.Append(n, ConstantData.CommentParams.CommentTemplate, p)
   }
-  GlobalData.docHandler.IsReadOnly() ? ConstantData.CommentParams.DropDownTextArea.addClass('hide') : (
+  T3Gv.docHandler.IsReadOnly() ? ConstantData.CommentParams.DropDownTextArea.addClass('hide') : (
     ConstantData.CommentParams.DropDownTextArea.removeClass('hide'),
     n[0].scrollTop = n[0].scrollHeight,
     ConstantData.CommentParams.DropDownTextArea[0].onblur = null,
@@ -26554,7 +26554,7 @@ ListManager.LM.prototypeComment_BuildDropDown = function () {
 }
 
 ListManager.LM.prototypeComment_GetDocumentThread = function () {
-  var e = this.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
+  var e = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
   if (e.CommentListID < 0) ConstantData.CommentParams.DocumentThreadID = - 1;
   else {
     var t,
@@ -26566,22 +26566,22 @@ ListManager.LM.prototypeComment_GetDocumentThread = function () {
 }
 
 ListManager.LM.prototypePanelCommentSelect = function (e) {
-  GlobalData.optManager.ScrollObjectIntoView(e, !1),
-    GlobalData.optManager.EditComments(e)
+  T3Gv.optManager.ScrollObjectIntoView(e, !1),
+    T3Gv.optManager.EditComments(e)
 }
 
 ListManager.LM.prototypeEditComments = function (e) {
   SDUI.Commands.MainController.Dropdowns.HideAllDropdowns(),
     '' === ConstantData.DocumentContext.UserName &&
     SDUI.Utils.GetUser(ConstantData.DocumentContext.UserId);
-  var t = GlobalData.optManager.GetTargetSelect(),
-    a = GlobalData.optManager.SD_GetVisioTextChild(t);
+  var t = T3Gv.optManager.GetTargetSelect(),
+    a = T3Gv.optManager.SD_GetVisioTextChild(t);
   if (a >= 0 && (t = a), null == e) {
     if (- 1 === (e = t)) return void Utils2.Alert(Resources.Strings.NoShape, null)
   } else if (e != t) {
     var r = [];
     r.push(e),
-      GlobalData.optManager.SelectObjects(r, !1, !1)
+      T3Gv.optManager.SelectObjects(r, !1, !1)
   }
   var i = this.GetObjectPtr(e, !1),
     n = {};
@@ -26589,7 +26589,7 @@ ListManager.LM.prototypeEditComments = function (e) {
     (
       n.x = i.Frame.x + i.Frame.width + 10,
       n.y = i.Frame.y,
-      n = GlobalData.docHandler.DocObject().ConvertDocToWindowCoords(n.x, n.y),
+      n = T3Gv.docHandler.DocObject().ConvertDocToWindowCoords(n.x, n.y),
       ConstantData.CommentParams.CommentID = i.CommentID
     );
   var o = null,
@@ -26630,7 +26630,7 @@ ListManager.LM.prototypeShowCommentsPanel = function () {
     SDUI.Utils.GetUser(ConstantData.DocumentContext.UserId),
     ConstantData.CommentParams.DocumentThreadID < 0 &&
     this.Comment_GetDocumentThread(),
-    ConstantData.CommentParams.PanelTargetID = GlobalData.optManager.GetTargetSelect();
+    ConstantData.CommentParams.PanelTargetID = T3Gv.optManager.GetTargetSelect();
   var e = this.GetObjectPtr(ConstantData.CommentParams.PanelTargetID, !1);
   e ? ConstantData.CommentParams.CommentID = e.CommentID : ConstantData.CommentParams.DocumentThreadID < 0 ? ConstantData.CommentParams.CommentID = - 1 : ConstantData.CommentParams.CommentID = ConstantData.CommentParams.DocumentThreadID;
   var t = null,
@@ -26648,11 +26648,11 @@ ListManager.LM.prototypeShowCommentsPanel = function () {
               (ConstantData.CommentParams.PanelCommentTemplate = t.HTML),
               null == ConstantData.CommentParams.DateTemplate &&
               (ConstantData.CommentParams.DateTemplate = a.HTML),
-              GlobalData.optManager.Comment_BuildPanel()
+              T3Gv.optManager.Comment_BuildPanel()
           }
         )
       )
-  } else GlobalData.optManager.Comment_BuildPanel()
+  } else T3Gv.optManager.Comment_BuildPanel()
 }
 
 ListManager.LM.prototypeComment_Cancel = function () {
@@ -27192,17 +27192,17 @@ ListManager.LM.prototypeApplyLineHopDialog = function (e, t, a, r, i) {
         bLineHopsThisLine: i
       }
     );
-  var n = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0);
+  var n = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0);
   n.hopdimindex = e,
     n.hopdim = {
       x: ListManager.HopDimX[e],
       y: ListManager.HopDimY[e]
     },
-    t ? GlobalData.optManager.EnableGlobalLineHops() : GlobalData.optManager.DisableGlobalLineHops(),
+    t ? T3Gv.optManager.EnableGlobalLineHops() : T3Gv.optManager.DisableGlobalLineHops(),
     n.hopstyle = a ? ListManager.HopStyle.SDH_Box : ListManager.HopStyle.SDH_Arc,
     r &&
     (
-      i ? GlobalData.optManager.SetSelectedLineHops(!0) : GlobalData.optManager.SetSelectedLineHops(!1)
+      i ? T3Gv.optManager.SetSelectedLineHops(!0) : T3Gv.optManager.SetSelectedLineHops(!1)
     ),
     Collab.AllowMessage() &&
     Collab.BuildMessage(
@@ -27210,9 +27210,9 @@ ListManager.LM.prototypeApplyLineHopDialog = function (e, t, a, r, i) {
       Collab_Data,
       !0
     ),
-    GlobalData.optManager.CompleteOperation()
+    T3Gv.optManager.CompleteOperation()
   // } catch (e) {
-  //   GlobalData.optManager.ExceptionCleanup(e)
+  //   T3Gv.optManager.ExceptionCleanup(e)
   // }
 },
 
@@ -27257,7 +27257,7 @@ ListManager.LM.prototypeGraph_GetActiveID = function (e) {
 
 ListManager.LM.prototypeGraph_GetFirstGraphID = function (e) {
 
-  var t = GlobalData.optManager.ActiveVisibleZList(),
+  var t = T3Gv.optManager.ActiveVisibleZList(),
     a = null,
     r = 0,
     i = - 1;
@@ -27333,11 +27333,11 @@ ListManager.LM.prototypeGraphAddNew = function (e, t) {
     u.cx = Math.round(0.9 * n.docWidth),
     e === ListManager.Graph.GraphType.SDGRAPH_TYPE_PIE ? u.cy = Math.round(0.75 * n.docHeight) : u.cy = Math.round(0.5 * n.docHeight),
     o = Utils2.SetRect(0, 0, u.cx, u.cy),
-    r = GlobalData.optManager.ActiveVisibleZList(),
+    r = T3Gv.optManager.ActiveVisibleZList(),
     l = 0;
     l < r.length;
     l++
-  ) (a = GlobalData.optManager.GetObjectPtr(r[l], !1)).GetGraph() &&
+  ) (a = T3Gv.optManager.GetObjectPtr(r[l], !1)).GetGraph() &&
     d++;
   for (l = 0; l < d; l++) Utils2.OffsetRect(o, 20, 20),
     (o.x + o.width > n.docWidth || o.y + o.height > n.docHeight) &&
@@ -27349,16 +27349,16 @@ ListManager.LM.prototypeGraphAddNew = function (e, t) {
   };
   if (
     a = new ListManager.Rect(g),
-    GlobalData.optManager.AddNewObject(a, !0, !0),
-    GlobalData.optManager.SelectObjects([a.BlockID], !1, !1),
-    GlobalData.optManager.PreserveUndoState(!1),
+    T3Gv.optManager.AddNewObject(a, !0, !0),
+    T3Gv.optManager.SelectObjects([a.BlockID], !1, !1),
+    T3Gv.optManager.PreserveUndoState(!1),
     s = new ListManager.Graph,
     a.SetGraph(s),
     s.graphlegendTitle.DataID = - 1,
     s.lastEditedTextid = - 1,
     s.areaBGImageID = - 1,
     s.bgImageID = - 1,
-    i = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0),
+    i = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0),
     s.style = Utils1.DeepCopy(i.graphDef.style),
     s.flags = i.graphDef.flags,
     s.pointflags = i.graphDef.pointflags,
@@ -27413,9 +27413,9 @@ ListManager.LM.prototypeGraphAddNew = function (e, t) {
     c = parseFloat(c).toString(),
     (S = this.GraphGetNumericStringPrecision(c)) > s.valuePrecision &&
     (s.valuePrecision = S);
-  return GlobalData.optManager.GraphFormat(a, s, a.Frame, !0),
-    GlobalData.optManager.AddToDirtyList(a.BlockID),
-    GlobalData.optManager.RenderDirtySVGObjects(),
+  return T3Gv.optManager.GraphFormat(a, s, a.Frame, !0),
+    T3Gv.optManager.AddToDirtyList(a.BlockID),
+    T3Gv.optManager.RenderDirtySVGObjects(),
     D
 }
 
@@ -27428,7 +27428,7 @@ ListManager.LM.prototypeGraphLoadInitialChart = function (e, t) {
     o,
     s,
     l,
-    S = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0),
+    S = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0),
     c = this.GraphGetAxesIndexes(t);
   for (
     a = t.axes[c.category],
@@ -27531,7 +27531,7 @@ ListManager.LM.prototypeGraphSetGraphType = function (e, t, a, r, i, n) {
     d = - 1,
     D = - 1,
     g = null,
-    h = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0);
+    h = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0);
   if (
     null != i &&
     i >= 0 &&
@@ -27793,7 +27793,7 @@ ListManager.LM.prototypeGraphSetGraphType = function (e, t, a, r, i, n) {
 ListManager.LM.prototypeGraphSetDefaultsFromGraph = function (e) {
 
   var t,
-    a = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0);
+    a = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0);
   a.graphDef.type = e.graphtype,
     a.graphDef.flags = e.flags,
     a.graphDef.flags &= ~ListManager.Graph.Flags.SDAX_FLAG_DATA_MODIFIED,
@@ -27893,7 +27893,7 @@ ListManager.LM.prototypeLM_AddSVGGraphObject = function (e, t, a, r) {
     o.x,
     e.trect.y,
     o.y,
-    i = GlobalData.objectStore.GetObject(r.graphtitle.DataID),
+    i = T3Gv.objectStore.GetObject(r.graphtitle.DataID),
     n = this.Graph_AddSVGTextObject(
       e,
       t,
@@ -28166,9 +28166,9 @@ ListManager.LM.prototypeLM_AddSVGPieChartWedges = function (e, t, a, r) {
           Math.round(s.cy * D + s.cy * u)
         )
       );
-    var F = GlobalData.optManager.SD_GetCounterClockwiseAngleBetween2Points(I[0], I[1]);
+    var F = T3Gv.optManager.SD_GetCounterClockwiseAngleBetween2Points(I[0], I[1]);
     F = this.RadiansToTangle(F);
-    var v = GlobalData.optManager.SD_GetCounterClockwiseAngleBetween2Points(T[0], T[1]),
+    var v = T3Gv.optManager.SD_GetCounterClockwiseAngleBetween2Points(T[0], T[1]),
       G = 90 - F;
     G < 0 &&
       (G = 360 + G);
@@ -28289,7 +28289,7 @@ ListManager.LM.prototypeLM_AddSVGGraphValueLabel = function (e, t, a, r, i, n, o
 
   var s,
     l = new Point,
-    S = GlobalData.objectStore.GetObject(i.label.DataID),
+    S = T3Gv.objectStore.GetObject(i.label.DataID),
     c = this.Graph_AddSVGTextObject(
       e,
       t,
@@ -28643,7 +28643,7 @@ ListManager.LM.prototypeLM_AddSVGLegend = function (e, t, a, r) {
       Utils2.EqualRect(n, r.graphLegend[o].textFrame)
     )
   ) {
-    l = GlobalData.objectStore.GetObject(r.graphLegend[o].DataID),
+    l = T3Gv.objectStore.GetObject(r.graphLegend[o].DataID),
       S = this.Graph_AddSVGTextObject(
         e,
         t,
@@ -28672,7 +28672,7 @@ ListManager.LM.prototypeLM_AddSVGLegend = function (e, t, a, r) {
       i.x = i.x + SDAX_LEGEND_SWATCH_SIZE + SDAX_LEGEND_GAP_SIZE,
       s.x = i.x + i.width / 2,
       s.y = i.y + i.height / 2,
-      l = GlobalData.objectStore.GetObject(r.theGraph.graphlegendTitle.DataID),
+      l = T3Gv.objectStore.GetObject(r.theGraph.graphlegendTitle.DataID),
       S = this.Graph_AddSVGTextObject(
         e,
         t,
@@ -28691,7 +28691,7 @@ ListManager.LM.prototypeLM_AddSVGLegend = function (e, t, a, r) {
 ListManager.LM.prototypeAddSVGAddLine = function (e, t, a, r, i, n, o) {
 
   var s,
-    l = GlobalData.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.PATH);
+    l = T3Gv.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.PATH);
   a.AddElement(l);
   var S = l.PathCreator();
   for (
@@ -28951,7 +28951,7 @@ ListManager.LM.prototypeLM_AddSVGAxisLabels = function (e, t, a, r, i) {
           S.x + r.axes[i].labels[n].frame.width,
           S.y + r.axes[i].labels[n].frame.height
         ),
-        !(c = GlobalData.objectStore.GetObject(r.axes[i].labels[n].DataID))
+        !(c = T3Gv.objectStore.GetObject(r.axes[i].labels[n].DataID))
       );
       var D = null;
       switch (r.axes[i].labels[n].just) {
@@ -28992,7 +28992,7 @@ ListManager.LM.prototypeLM_AddSVGBarOrLineAddAxis = function (e, t, a, r, i) {
     s = {},
     l = {},
     S = (new Rectangle, []),
-    c = GlobalData.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.PATH);
+    c = T3Gv.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.PATH);
   if (
     0 != r.axes[i].title.DataID &&
     !(
@@ -29001,7 +29001,7 @@ ListManager.LM.prototypeLM_AddSVGBarOrLineAddAxis = function (e, t, a, r, i) {
     r.graphtype !== ListManager.Graph.GraphType.SDGRAPH_TYPE_PIE &&
     r.graphtype !== ListManager.Graph.GraphType.SDGRAPH_TYPE_LINEARPIE
   ) {
-    o = GlobalData.objectStore.GetObject(r.axes[i].title.DataID);
+    o = T3Gv.objectStore.GetObject(r.axes[i].title.DataID);
     var u = {};
     this.GraphGetTextInfo(e, r, r.axes[i].title.DataID, r.axes[i].title.tangle, u, {
     }),
@@ -29199,14 +29199,14 @@ ListManager.LM.prototypeGraphFormat = function (e, t, a, r) {
 
   var i;
   if (e) {
-    var n = GlobalData.optManager.svgObjectLayer.GetElementByID(e.BlockID);
+    var n = T3Gv.optManager.svgObjectLayer.GetElementByID(e.BlockID);
     n &&
-      GlobalData.optManager.svgObjectLayer.RemoveElement(n),
+      T3Gv.optManager.svgObjectLayer.RemoveElement(n),
       (
         i = this.svgDoc.CreateShape(ConstantData.CreateShapeType.SHAPECONTAINER)
       ).SetID(e.BlockID),
       this.svgObjectLayer.AddElement(i, 0),
-      GlobalData.optManager.AddToDirtyList(e.BlockID)
+      T3Gv.optManager.AddToDirtyList(e.BlockID)
   }
   switch (
   t.layoutFrame = Utils1.DeepCopy(a),
@@ -29224,7 +29224,7 @@ ListManager.LM.prototypeGraphFormat = function (e, t, a, r) {
       this.GraphPieChartRecalcLayout(e, t, a, r)
   }
   t.flags & ListManager.Graph.Flags.SDAX_SHOW_TABLE &&
-    GlobalData.optManager.GetActiveTextEdit()
+    T3Gv.optManager.GetActiveTextEdit()
 },
 
 
@@ -29549,7 +29549,7 @@ ListManager.LM.prototypeGraphDeleteSummaryLabels = function (e, t) {
 
   var a;
   for (a = t.labels.length - 1; a > 0; a--) if (this.GraphIsSummaryLabel(t.labels[a])) {
-    var r = GlobalData.objectStore.GetObject(t.labels[a].DataID);
+    var r = T3Gv.objectStore.GetObject(t.labels[a].DataID);
     r &&
       r.Delete(),
       t.labels[a].DataID = - 1,
@@ -29669,7 +29669,7 @@ ListManager.LM.prototypeSetMagnitudeAxisLabels = function (e, t) {
     u
   ) {
     for (i = 0; i < r.labels.length; i++) {
-      var d = GlobalData.objectStore.GetObject(r.labels[i].DataID);
+      var d = T3Gv.objectStore.GetObject(r.labels[i].DataID);
       d &&
         d.Delete(),
         r.labels[i].DataID = - 1
@@ -30207,7 +30207,7 @@ ListManager.LM.prototypeGraphConfirmAndSetTextValue = function (e, t, a, r, i) {
     o;
   if (
     i == (
-      n = GlobalData.optManager.svgObjectLayer.GetElementByID(e.BlockID).GetElementByID(ConstantData.SVGElementClass.TEXT, a)
+      n = T3Gv.optManager.svgObjectLayer.GetElementByID(e.BlockID).GetElementByID(ConstantData.SVGElementClass.TEXT, a)
     ).GetText()
   ) return !1;
   if (n.SetText(i), r) {
@@ -30405,9 +30405,9 @@ ListManager.LM.prototypeGraphGetTextInfo = function (e, t, a, r, i, n) {
     l = {},
     S = {},
     c = {},
-    u = GlobalData.objectStore.GetObject(a);
+    u = T3Gv.objectStore.GetObject(a);
   if (!u) return !1;
-  if (!(c = GlobalData.optManager.svgObjectLayer.GetElementByID(e.BlockID))) return !1;
+  if (!(c = T3Gv.optManager.svgObjectLayer.GetElementByID(e.BlockID))) return !1;
   if (
     !(S = c.GetElementByID(ConstantData.SVGElementClass.TEXT, a))
   ) {
@@ -30551,7 +30551,7 @@ ListManager.LM.prototypeGraphGetLegendHeight = function (e, t) {
 
 ListManager.LM.prototypeGraphEnsureTextContrast = function (e, t, a, r) {
 
-  var i = GlobalData.optManager.svgObjectLayer.GetElementByID(e.BlockID);
+  var i = T3Gv.optManager.svgObjectLayer.GetElementByID(e.BlockID);
   if (!i) return null;
   var n = i.GetElementByID(ConstantData.SVGElementClass.TEXT, a),
     o = n.GetSelectedFormat();
@@ -30745,7 +30745,7 @@ ListManager.LM.prototypeGraphTitleLayout = function (e, t, a, r) {
   if (r) {
     i = this.GraphGetTextMaxDim(t, t.graphtitle.DataID);
     var o = this.svgDoc.CreateShape(ConstantData.CreateShapeType.TEXT),
-      s = GlobalData.objectStore.GetObject(t.graphtitle.DataID);
+      s = T3Gv.objectStore.GetObject(t.graphtitle.DataID);
     o.SetRuntimeText(s.Data.runtimeText);
     var l = o.CalcTextFit(i.width);
     n.cy = l.height,
@@ -30985,7 +30985,7 @@ ListManager.LM.prototypeGraphTextHitInfo = function (e, t) {
       defaultStyle: null
     },
     l = new Rectangle(0, 0, 0, 0),
-    S = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0);
+    S = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0);
   if (
     n = e.layoutFrame.width,
     o = e.layoutFrame.height,
@@ -31265,7 +31265,7 @@ ListManager.LM.prototypeGraphTextGrowOne = function (e, t, a, r, i, n, o) {
     g = {},
     h = e.GetSVGFrame(e.Frame),
     m = {};
-  if (!(u = GlobalData.objectStore.GetObject(o))) return - 1;
+  if (!(u = T3Gv.objectStore.GetObject(o))) return - 1;
   if (
     c = (S = this.svgObjectLayer.GetElementByID(e.BlockID)).GetElementByID(ConstantData.SVGElementClass.TEXT, o),
     p = new Rectangle,
@@ -32430,7 +32430,7 @@ ListManager.LM.prototypeGraphGetSeriesName = function (e, t) {
   var a,
     r = null;
   for (a = 0; a < e.graphLegend.length; a++) if (e.graphLegend[a].seriesid == t) {
-    r = GlobalData.objectStore.GetObject(e.graphLegend[a].DataID).Data.runtimeText.text;
+    r = T3Gv.objectStore.GetObject(e.graphLegend[a].DataID).Data.runtimeText.text;
     break
   }
   return r
@@ -33390,7 +33390,7 @@ ListManager.LM.prototypeContainsRect = function (e, t) {
 
 ListManager.LM.prototypeGraphGetTextSize = function (e, t, a) {
 
-  var r = GlobalData.optManager.svgObjectLayer.GetElementByID(e.BlockID);
+  var r = T3Gv.optManager.svgObjectLayer.GetElementByID(e.BlockID);
   if (!r) return null;
   var i = {
     cx: 0,
@@ -33408,12 +33408,12 @@ ListManager.LM.prototypeGraphGetTextSize = function (e, t, a) {
 
 ListManager.LM.prototypeGraphGetTextValue = function (e) {
 
-  return GlobalData.objectStore.GetObject(e, !1).Data.runtimeText.text
+  return T3Gv.objectStore.GetObject(e, !1).Data.runtimeText.text
 }
 
 ListManager.LM.prototypeGraphIsTextStyleDifferent = function (e, t) {
 
-  var a = GlobalData.objectStore.GetObject(e).Data.runtimeText.styles[0];
+  var a = T3Gv.objectStore.GetObject(e).Data.runtimeText.styles[0];
   return a.font != t.FontName ||
     a.size != t.FontSize ||
     a.color != t.Paint.Color ||
@@ -33425,11 +33425,11 @@ var SDJS_LM_GraphTextTap = null,
     return function (t) {
       if (
         Utils2.StopPropagationAndDefaults(t),
-        GlobalData.optManager.currentModalOperation === ListManager.ModalOperations.NONE
+        T3Gv.optManager.currentModalOperation === ListManager.ModalOperations.NONE
       ) {
         var a = e.BlockID,
-          r = GlobalData.optManager.svgObjectLayer.FindElementByDOMElement(t.currentTarget).GetUserData();
-        return GlobalData.optManager.Graph_SetupAction(t, a, ConstantData.Defines.GraphTextHit, r),
+          r = T3Gv.optManager.svgObjectLayer.FindElementByDOMElement(t.currentTarget).GetUserData();
+        return T3Gv.optManager.Graph_SetupAction(t, a, ConstantData.Defines.GraphTextHit, r),
           !1
       }
       return !1
@@ -33437,9 +33437,9 @@ var SDJS_LM_GraphTextTap = null,
   };
 ListManager.LM.prototype.Graph_OpenEdit = function (e, t, a, r) {
   t.selectedText = a;
-  var i = GlobalData.optManager.svgObjectLayer.GetElementByID(e);
-  GlobalData.optManager.ActivateTextEdit(i.svgObj.SDGObj, r, !1);
-  var n = GlobalData.optManager.svgDoc.GetActiveEdit();
+  var i = T3Gv.optManager.svgObjectLayer.GetElementByID(e);
+  T3Gv.optManager.ActivateTextEdit(i.svgObj.SDGObj, r, !1);
+  var n = T3Gv.optManager.svgDoc.GetActiveEdit();
   n.editor &&
     (n.editor.lastClickTime = 0, n.editor.HandleMouseDown(r))
 }
@@ -33460,8 +33460,8 @@ ListManager.LM.prototypeGraphGetValueWithPrecision = function (e, t) {
 
 ListManager.LM.prototypeGraph_CloseEdit = function (e, t) {
 
-  GlobalData.optManager.bInNoteEdit &&
-    GlobalData.optManager.ToggleNote(GlobalData.optManager.curNoteShape, GlobalData.optManager.curNoteGraphPoint),
+  T3Gv.optManager.bInNoteEdit &&
+    T3Gv.optManager.ToggleNote(T3Gv.optManager.curNoteShape, T3Gv.optManager.curNoteGraphPoint),
     this.DeactivateAllTextEdit(!1),
     e.DataID = - 1,
     t.selectedText = - 1
@@ -33579,16 +33579,16 @@ ListManager.LM.prototypeGraph_AddSVGTextObject = function (e, t, a, r, i, n, o, 
     r &&
     ('object' == typeof r ? l.SetRuntimeText(r) : l.SetText(r)),
     e.TextGrow === ConstantData.TextGrowBehavior.HORIZONTAL ? l.SetConstraints(
-      GlobalData.optManager.theContentHeader.MaxWorkDim.x - p.width + u.width,
+      T3Gv.optManager.theContentHeader.MaxWorkDim.x - p.width + u.width,
       u.width,
       u.height
     ) : l.SetConstraints(u.width, u.width, u.height),
     a &&
     (
       l.SetRenderingEnabled(!0),
-      l.SetEditCallback(GlobalData.optManager.TextCallback, a),
-      !GlobalData.docHandler.IsReadOnly() ||
-      GlobalData.optManager.GetActiveLayerIndex() !== GlobalData.optManager.FindLayerForShapeID(e.BlockID)
+      l.SetEditCallback(T3Gv.optManager.TextCallback, a),
+      !T3Gv.docHandler.IsReadOnly() ||
+      T3Gv.optManager.GetActiveLayerIndex() !== T3Gv.optManager.FindLayerForShapeID(e.BlockID)
     )
   ) {
     l.SetEventBehavior(ConstantData.EventBehavior.NORMAL);
@@ -33618,7 +33618,7 @@ ListManager.LM.prototypeGraphCreateText = function (e, t, a, r, i, n) {
     },
     l = new ListManager.TextObject(s),
     (
-      S = GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.LM_TEXT_OBJECT, l)
+      S = T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.LM_TEXT_OBJECT, l)
     ) ? S.ID : null
 }
 
@@ -34318,7 +34318,7 @@ ListManager.LM.prototypeGraphUpdateValueFromText = function (e, t, a) {
 
   var r = this.GraphGetPointIndexForTextId(t, t.selectedText);
   if (r >= 0) {
-    var i = GlobalData.optManager.svgObjectLayer.GetElementByID(e.BlockID).GetElementByID(ConstantData.SVGElementClass.TEXT, a).GetText(),
+    var i = T3Gv.optManager.svgObjectLayer.GetElementByID(e.BlockID).GetElementByID(ConstantData.SVGElementClass.TEXT, a).GetText(),
       n = this.GraphParseValueLabel(i),
       o = this.GraphGetValueLabelString(t, t.gpoint[r], !1),
       s = this.GraphParseValueLabel(o);
@@ -35006,7 +35006,7 @@ ListManager.LM.prototypeGraphDelSeries = function (e, t, a, r) {
 
 ListManager.LM.prototypeGraphDeleteDataBlock = function (e) {
 
-  var t = GlobalData.objectStore.GetObject(e);
+  var t = T3Gv.objectStore.GetObject(e);
   t &&
     t.Delete()
 }
@@ -35066,7 +35066,7 @@ ListManager.LM.prototypeGraphSwapSeriesAndCategories = function (e, t) {
   ),
     S.push(l);
   var u = this.GraphGetAxesIndexes(t),
-    p = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
+    p = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
   if (
     a = t.axes[u.category],
     this.GraphDeleteSummaryLabels(t, a),
@@ -35570,7 +35570,7 @@ ListManager.LM.prototypeGraphAddCategoryCmd = function (e, t, a) {
     0 === t.graphLegend.length &&
     (
       l = ListManager.Graph.Defines.SDAX_DEFAULT_SERIES_NAME + '1',
-      n = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
+      n = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
       this.GraphAddLegendEntry(
         e,
         t,
@@ -35636,7 +35636,7 @@ ListManager.LM.prototypeGraphAddSeries = function (e, t, a) {
     r = t.axes[c.category],
     i = t.axes[c.magnitude],
     S = this.GraphGenerateUniqueSeriesName(e, t),
-    n = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
+    n = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
     l = this.GraphAddLegendEntry(
       e,
       t,
@@ -35800,27 +35800,27 @@ ListManager.LM.prototypeGraphAddTable = function (e) {
   };
   for (
     t = new ListManager.Rect(s),
-    GlobalData.optManager.AddNewObject(t, !0, !0),
+    T3Gv.optManager.AddNewObject(t, !0, !0),
     tableShape.InsertNewTable(
       ListManager.SDData.GraphGetNumRows(graph.datasetTableID),
       ListManager.SDData.GraphGetNumCols(graph.datasetTableID),
       !0
     ),
-    GlobalData.optManager.GetTable(t),
-    r = GlobalData.optManager.GetGraph(a),
+    T3Gv.optManager.GetTable(t),
+    r = T3Gv.optManager.GetGraph(a),
     i = this.GraphGetCategoryList(r),
-    GlobalData.optManager.Table_InsertRows(!1, tableShape.BlockID, !1),
+    T3Gv.optManager.Table_InsertRows(!1, tableShape.BlockID, !1),
     n = 0;
     n < ListManager.SDData.GraphGetNumRows(graph.datasetTableID);
     n++
-  ) GlobalData.optManager.Table_InsertRows(!1, tableShape.BlockID, !1);
+  ) T3Gv.optManager.Table_InsertRows(!1, tableShape.BlockID, !1);
   for (
-    GlobalData.optManager.Table_InsertColumns(!1, tableShape.BlockID, !1),
+    T3Gv.optManager.Table_InsertColumns(!1, tableShape.BlockID, !1),
     n = 0;
     n < ListManager.SDData.GraphGetNumCols(graph.datasetTableID);
     n++
-  ) GlobalData.optManager.Table_InsertColumns(!1, tableShape.BlockID, !1);
-  for (n = 1; n < table.cols.length; n++) GlobalData.optManager.Table_SetCell(0, n, i[n - 1].name);
+  ) T3Gv.optManager.Table_InsertColumns(!1, tableShape.BlockID, !1);
+  for (n = 1; n < table.cols.length; n++) T3Gv.optManager.Table_SetCell(0, n, i[n - 1].name);
   for (
     n = 0;
     n < ListManager.SDData.GraphGetNumRows(graph.datasetTableID);
@@ -35829,12 +35829,12 @@ ListManager.LM.prototypeGraphAddTable = function (e) {
       n = 0;
       n < ListManager.SDData.GraphGetNumCols(graph.datasetTableID);
       n++
-    ) GlobalData.optManager.Table_InsertColumns(!1, tableShape.BlockID, !1)
+    ) T3Gv.optManager.Table_InsertColumns(!1, tableShape.BlockID, !1)
 },
   ListManager.Graph.prototype.RenderRect = function (e, t, a, r, i) {
 
     var n = i ||
-      GlobalData.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.RECT);
+      T3Gv.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.RECT);
     return n.SetSize(e.width, e.height),
       n.SetPos(e.x, e.y),
       this.SetElementStyle(n, t, a, r),
@@ -35843,7 +35843,7 @@ ListManager.LM.prototypeGraphAddTable = function (e) {
   ListManager.Graph.prototype.RenderLine = function (e, t, a, r, i) {
 
     var n = i ||
-      GlobalData.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.LINE);
+      T3Gv.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.LINE);
     return n.SetPoints(e.x, e.y, t.x, t.y),
       this.SetElementStyle(n, null, a, r),
       n
@@ -35851,7 +35851,7 @@ ListManager.LM.prototypeGraphAddTable = function (e) {
   ListManager.Graph.prototype.RenderPolyLine = function (e, t, a, r) {
 
     var i = r ||
-      GlobalData.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.POLYLINE);
+      T3Gv.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.POLYLINE);
     return i.SetPoints(e),
       this.SetElementStyle(i, null, t, a),
       i
@@ -35859,7 +35859,7 @@ ListManager.LM.prototypeGraphAddTable = function (e) {
   ListManager.Graph.prototype.RenderArea = function (e, t, a, r, i) {
 
     var n = i ||
-      GlobalData.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.POLYGON);
+      T3Gv.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.POLYGON);
     return n.SetPoints(e),
       this.SetElementStyle(n, t, a, r),
       n
@@ -35870,7 +35870,7 @@ ListManager.LM.prototypeGraphAddTable = function (e) {
       n,
       o,
       s = r ||
-        GlobalData.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.POLYPOLYLINE);
+        T3Gv.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.POLYPOLYLINE);
     for (o = e.length, s.Clear(), i = 0; i < o; i++) n = e[i],
       s.AddPolyLine(n, !1, !1);
     return s.BuildPath(),
@@ -35890,7 +35890,7 @@ ListManager.LM.prototypeGraphAddTable = function (e) {
       h = {};
     return S = (
       l = s ||
-      GlobalData.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.PATH)
+      T3Gv.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.PATH)
     ).PathCreator(),
       d.x = e.x,
       d.y = e.y - t,
@@ -35950,15 +35950,15 @@ ListManager.LM.prototypeGraphAddTable = function (e) {
           alignment: t.TextureScale.AlignmentScalar
         },
         n = t.Texture,
-        GlobalData.optManager.TextureList.Textures[n] &&
+        T3Gv.optManager.TextureList.Textures[n] &&
         (
-          i.dim = GlobalData.optManager.TextureList.Textures[n].dim,
-          i.url = GlobalData.optManager.TextureList.Textures[n].ImageURL,
-          i.scale = GlobalData.optManager.CalcTextureScale(t.TextureScale, i.dim.x),
+          i.dim = T3Gv.optManager.TextureList.Textures[n].dim,
+          i.url = T3Gv.optManager.TextureList.Textures[n].ImageURL,
+          i.scale = T3Gv.optManager.CalcTextureScale(t.TextureScale, i.dim.x),
           t.TextureScale.Scale = i.scale,
           i.url ||
           (
-            i.url = Constants.URL_Textures + GlobalData.optManager.TextureList.Textures[n].filename
+            i.url = Constants.URL_Textures + T3Gv.optManager.TextureList.Textures[n].filename
           ),
           e.SetTextureFill(i),
           e.SetFillOpacity(t.Opacity)
@@ -35983,11 +35983,11 @@ ListManager.LM.prototypeGraphAddTable = function (e) {
             alignment: a.TextureScale.AlignmentScalar
           },
           n = a.Texture,
-          i.dim = GlobalData.optManager.TextureList.Textures[n].dim,
-          i.url = GlobalData.optManager.TextureList.Textures[n].ImageURL,
+          i.dim = T3Gv.optManager.TextureList.Textures[n].dim,
+          i.url = T3Gv.optManager.TextureList.Textures[n].ImageURL,
           i.url ||
           (
-            i.url = Constants.URL_Textures + GlobalData.optManager.TextureList.Textures[n].filename
+            i.url = Constants.URL_Textures + T3Gv.optManager.TextureList.Textures[n].filename
           ),
           e.SetTextureStroke(i),
           e.SetStrokeOpacity(a.Opacity)
@@ -36069,7 +36069,7 @@ ListManager.LM.prototypeGraphAddTable = function (e) {
   ListManager.Graph.prototype.Render3DBar = function (e, t, a, r, i) {
 
     var n = i ||
-      GlobalData.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.GROUP);
+      T3Gv.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.GROUP);
     switch (e) {
       case ListManager.Graph.BarStyleVariations3d.SDGRAPH_3D_SHAPE_TYPE_CYLINDER:
         this._Render3DCylinder(t, a, r, n);
@@ -36181,7 +36181,7 @@ ListManager.LM.prototypeGraphAddTable = function (e) {
       0.5,
       (
         d = n ||
-        GlobalData.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.POLYGON)
+        T3Gv.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.POLYGON)
       ) &&
       (
         p[0] = {
@@ -36241,7 +36241,7 @@ ListManager.LM.prototypeGraphAddTable = function (e) {
         i = (
           n = r.GetElementByID(ListManager.Graph.Point._3DComponents.SIDE)
         ) ||
-        GlobalData.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.POLYGON)
+        T3Gv.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.POLYGON)
       ) &&
       (
         i.SetPoints(l),
@@ -36274,7 +36274,7 @@ ListManager.LM.prototypeGraphAddTable = function (e) {
           i = (
             n = r.GetElementByID(ListManager.Graph.Point._3DComponents.TOP)
           ) ||
-          GlobalData.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.POLYGON)
+          T3Gv.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.POLYGON)
         ) &&
         (
           i.SetPoints(l),
@@ -36308,7 +36308,7 @@ ListManager.LM.prototypeGraphAddTable = function (e) {
         i = (
           n = r.GetElementByID(ListManager.Graph.Point._3DComponents.MAIN)
         ) ||
-        GlobalData.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.POLYGON)
+        T3Gv.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.POLYGON)
       ) &&
       (
         i.SetPoints(l),
@@ -36352,7 +36352,7 @@ ListManager.LM.prototypeGraphAddTable = function (e) {
         i = (
           s = r.GetElementByID(ListManager.Graph.Point._3DComponents.TOP)
         ) ||
-        GlobalData.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.PATH)
+        T3Gv.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.PATH)
       ) &&
         (
           (n = i.PathCreator()).BeginPath(),
@@ -36380,7 +36380,7 @@ ListManager.LM.prototypeGraphAddTable = function (e) {
         i = (
           s = r.GetElementByID(ListManager.Graph.Point._3DComponents.MAIN)
         ) ||
-        GlobalData.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.PATH)
+        T3Gv.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.PATH)
       ) &&
       (
         (n = i.PathCreator()).BeginPath(),
@@ -36447,7 +36447,7 @@ ListManager.LM.prototypeGraphAddTable = function (e) {
         r = (
           o = a.GetElementByID(ListManager.Graph.Point._3DComponents.MAIN)
         ) ||
-        GlobalData.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.PATH)
+        T3Gv.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.PATH)
       ) &&
       (
         (i = r.PathCreator()).BeginPath(),
@@ -36828,7 +36828,7 @@ ListManager.LM.prototypeGanttGetGanttObject = function () {
     r,
     i,
     n,
-    o = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !1),
+    o = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1),
     s = - 1,
     l = - 1;
   for (t = o.layers.length, e = 0; e < t; e++) if (
@@ -36912,7 +36912,7 @@ ListManager.LM.prototypeGanttCreateNewTask = function (e, t, a, r) {
   } else {
     for (
       s = p.rowafter,
-      GlobalData.optManager.Table_AddRows(e, t, s, s, !1, !1, !1),
+      T3Gv.optManager.Table_AddRows(e, t, s, s, !1, !1, !1),
       c = t.rows[s + 1],
       i = 0;
       i < c.ncells;
@@ -37555,7 +37555,7 @@ ListManager.LM.prototypeGanttUpdateTaskData = function (e, t, a, r, i, n, o, s, 
       percentComplete: 0
     };
   for (
-    v = e >= 0 ? GlobalData.optManager.GetObjectPtr(e, !0) : this.GetCurrentPlanningTable(ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART, !0, t),
+    v = e >= 0 ? T3Gv.optManager.GetObjectPtr(e, !0) : this.GetCurrentPlanningTable(ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART, !0, t),
     F = this.PlanningTableIsShowingGranularity(v, - 1, ListManager.TimeAmounts.OneHourNS),
     T = a.toString(),
     A = ListManager.SDData.GetNumRows(
@@ -37719,7 +37719,7 @@ ListManager.LM.prototypeGanttUpdateTaskData = function (e, t, a, r, i, n, o, s, 
           setTimeout(
             (
               function () {
-                var e = GlobalData.optManager.GanttGetDataValue(E, ListManager.Table.CellTypes.SDT_CT_GANTT_END);
+                var e = T3Gv.optManager.GanttGetDataValue(E, ListManager.Table.CellTypes.SDT_CT_GANTT_END);
                 ListManager.Trello.TrelloUpdateCardData(
                   E,
                   ListManager.GanttFieldNameList[ListManager.GanttTaskFields.TASK_END],
@@ -37813,8 +37813,8 @@ ListManager.LM.prototypeGanttDuplicateTable = function (e, t, a) {
       S.DataID = - 1;
     if (t > r) {
       var p = s.rows.length;
-      GlobalData.optManager.Table_AddRows(e, s, s.rows.length - 1, n + t - 1 - 1, !1, !0, !1);
-      var d = GlobalData.optManager.Table_GetActiveID(),
+      T3Gv.optManager.Table_AddRows(e, s, s.rows.length - 1, n + t - 1 - 1, !1, !0, !1);
+      var d = T3Gv.optManager.Table_GetActiveID(),
         D = this.GetObjectPtr(this.theTEDSessionBlockID, !0);
       D.theActiveTableObjectID = e.BlockID;
       var g = {
@@ -37838,7 +37838,7 @@ ListManager.LM.prototypeGanttDuplicateTable = function (e, t, a) {
       }
       D.theActiveTableObjectID = d
     } else t + 0 < r &&
-      GlobalData.optManager.Table_RemoveRows(e, s, n + t, s.rows.length - 1)
+      T3Gv.optManager.Table_RemoveRows(e, s, n + t, s.rows.length - 1)
   }
   return c
 }
@@ -37867,10 +37867,10 @@ ListManager.LM.prototypeGetCurrentPlanningTable = function (e, t, a, r) {
     n,
     o,
     s = null,
-    l = GlobalData.objectStore.GetObject(GlobalData.optManager.theSelectedListBlockID).Data,
-    S = GlobalData.optManager.ActiveVisibleZList(),
+    l = T3Gv.objectStore.GetObject(T3Gv.optManager.theSelectedListBlockID).Data,
+    S = T3Gv.optManager.ActiveVisibleZList(),
     c = 0,
-    u = GlobalData.optManager.Table_GetActiveID();
+    u = T3Gv.optManager.Table_GetActiveID();
   if (u >= 0 && (s = this.GetObjectPtr(u, t)) && - 1 !== e && e === s.objecttype) return s;
   if (
     n = this.GetObjectPtr(this.theSEDSessionBlockID, t),
@@ -37893,7 +37893,7 @@ ListManager.LM.prototypeGetCurrentPlanningTable = function (e, t, a, r) {
     ) return i = this.GetObjectPtr(s.hooks[0].objid, t)
   }
   if (a) for (c = S.length, o = 0; o < c; o++) if (
-    (s = GlobalData.optManager.GetObjectPtr(S[o])) &&
+    (s = T3Gv.optManager.GetObjectPtr(S[o])) &&
     - 1 !== e &&
     s.objecttype === e &&
     s.datasetTableID === a
@@ -37902,7 +37902,7 @@ ListManager.LM.prototypeGetCurrentPlanningTable = function (e, t, a, r) {
   var p = null,
     d = 0;
   for (o = 0; o < c; o++) if (
-    (s = GlobalData.optManager.GetObjectPtr(S[o])) &&
+    (s = T3Gv.optManager.GetObjectPtr(S[o])) &&
     s.objecttype === e &&
     (p = s, d++, r)
   ) return s;
@@ -37914,31 +37914,31 @@ ListManager.LM.prototypeGanttLoadLayer = function () {
     t,
     a,
     r = - 1,
-    i = GlobalData.optManager.ActiveVisibleZList(),
+    i = T3Gv.optManager.ActiveVisibleZList(),
     n = ListManager.SessionFlags,
-    o = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0);
+    o = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0);
   for (
     e = i.length,
     o.flags = Utils2.SetFlag(o.flags, n.SEDS_LLink, !1),
     t = 0;
     t < e;
     t++
-  ) (a = GlobalData.optManager.GetObjectPtr(i[t], !1)).objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART &&
+  ) (a = T3Gv.optManager.GetObjectPtr(i[t], !1)).objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART &&
     (r = i[t]);
   r >= 0 &&
     (
-      a = GlobalData.optManager.GetObjectPtr(r, !1),
-      GlobalData.optManager.TrimPersonTable(a.datasetID, a.datasetTableID),
-      GlobalData.optManager.AddToDirtyList(r),
-      GlobalData.optManager.RenderDirtySVGObjects(),
-      GlobalData.optManager.GanttFormat(r, !0, !0, !0, null)
+      a = T3Gv.optManager.GetObjectPtr(r, !1),
+      T3Gv.optManager.TrimPersonTable(a.datasetID, a.datasetTableID),
+      T3Gv.optManager.AddToDirtyList(r),
+      T3Gv.optManager.RenderDirtySVGObjects(),
+      T3Gv.optManager.GanttFormat(r, !0, !0, !0, null)
     )
 }
 
 ListManager.LM.prototypeGanttUnhideAllRows = function (e) {
   for (
     var t = 0,
-    a = GlobalData.optManager.GetObjectPtr(e, !1),
+    a = T3Gv.optManager.GetObjectPtr(e, !1),
     r = ListManager.SDData.GetNumRows(a.datasetTableID, '', ''),
     i = 0;
     i < r;
@@ -37989,7 +37989,7 @@ ListManager.LM.prototypeGanttFormat = function (e, t, a, r, i) {
     P = null,
     R = 0,
     A = - 1;
-  GlobalData.optManager.ActiveVisibleZList();
+  T3Gv.optManager.ActiveVisibleZList();
   if (
     D = Resources.FindStyle(ListManager.GanttDefines.GANTT_WORKING_STYLE),
     g = Resources.FindStyle(ListManager.GanttDefines.GANTT_NONWORKING_STYLE),
@@ -38028,7 +38028,7 @@ ListManager.LM.prototypeGanttFormat = function (e, t, a, r, i) {
     !(b = c.GetTable(!0))
   ) return 1;
   u = this.GanttDuplicateTable(c, R, t),
-    GlobalData.optManager.Table_GetActiveID() === b.BlockID &&
+    T3Gv.optManager.Table_GetActiveID() === b.BlockID &&
     (A = b.BlockID),
     a &&
     this.GanttValidateDependencies(u || b, c.datasetTableID, - 1),
@@ -38076,9 +38076,9 @@ ListManager.LM.prototypeGanttFormat = function (e, t, a, r, i) {
       w[n].celltype !== ListManager.Table.CellTypes.SDT_CT_GANTT_TASKNUMBER &&
       w[n].celltype !== ListManager.Table.CellTypes.SDT_CT_GANTT_RESOURCE ||
       F.push(n);
-    GlobalData.optManager.Table_ReformatText(c, b, 1, b.rows.length - 1, F)
+    T3Gv.optManager.Table_ReformatText(c, b, 1, b.rows.length - 1, F)
   }
-  if (A === b.BlockID && GlobalData.optManager.Table_GetActiveID() < 0 && u) for (
+  if (A === b.BlockID && T3Gv.optManager.Table_GetActiveID() < 0 && u) for (
     p = b.cells.length < u.cells.length ? b.cells.length : u.cells.length,
     b.select = u.select,
     n = 0;
@@ -38092,12 +38092,12 @@ ListManager.LM.prototypeGanttFormat = function (e, t, a, r, i) {
   return null == i &&
     (T = this.GanttDoRowShading(e)),
     T ||
-    GlobalData.optManager.Table_BuildFills(c, b, c.StyleRecord.Fill),
+    T3Gv.optManager.Table_BuildFills(c, b, c.StyleRecord.Fill),
     f ||
     r ||
     this.UpdateLinks(),
     null == i &&
-    GlobalData.optManager.AddToDirtyList(e),
+    T3Gv.optManager.AddToDirtyList(e),
     f
 }
 
@@ -38337,7 +38337,7 @@ ListManager.LM.prototypeGanttFastFormat = function (e, t) {
       a = 0;
       a < r;
       a++
-    ) if (l = t[a], !((s = GlobalData.optManager.GanttRecordToRow(o, l)).rowIndex < 0)) {
+    ) if (l = t[a], !((s = T3Gv.optManager.GanttRecordToRow(o, l)).rowIndex < 0)) {
       for (S = o.rows[s.rowIndex], c = 0; c < S.ncells; c++) switch (o.cells[S.start + c].celltype) {
         case ListManager.Table.CellTypes.SDT_CT_GANTT_START:
         case ListManager.Table.CellTypes.SDT_CT_GANTT_START_TIME:
@@ -38348,8 +38348,8 @@ ListManager.LM.prototypeGanttFastFormat = function (e, t) {
           this.GanttSetCellValue(e, o, c + S.start, '')
       }
       u = this.GanttRowToBar(l),
-        (u = GlobalData.optManager.GetObjectPtr(u.BlockID, !0)).flags = Utils2.SetFlag(u.flags, ConstantData.ObjFlags.SEDO_NotVisible, !1),
-        GlobalData.optManager.DirtyListReOrder = !0,
+        (u = T3Gv.optManager.GetObjectPtr(u.BlockID, !0)).flags = Utils2.SetFlag(u.flags, ConstantData.ObjFlags.SEDO_NotVisible, !1),
+        T3Gv.optManager.DirtyListReOrder = !0,
         this.GanttKillLinks(u.BlockID, - 2, - 1, !0),
         this.GanttLinkBarToRow(e.BlockID, u.BlockID, o, s.rowIndex)
     }
@@ -38428,7 +38428,7 @@ ListManager.LM.prototypePlanningTableUpdateGeometry = function (e, t, a) {
     0 === c &&
     S &&
     this.GanttAdjustTableForTimeScale(e, l, n),
-    GlobalData.optManager.AddToDirtyList(e.BlockID),
+    T3Gv.optManager.AddToDirtyList(e.BlockID),
     c
 }
 
@@ -38484,7 +38484,7 @@ ListManager.LM.prototypeTable_GetColumnMask = function (e, t) {
     this.DeactivateAllTextEdit(!1),
     e < 0
   ) return null;
-  if (!(a = GlobalData.optManager.GetObjectPtr(e))) return null;
+  if (!(a = T3Gv.optManager.GetObjectPtr(e))) return null;
   if (!(n = a.GetGanttInfo(!1))) return null;
   if (
     s.startDay = n.startDay,
@@ -38690,8 +38690,8 @@ ListManager.LM.prototypeGantt_HideandShowColumns = function (e, t, a) {
         (M[n].Title = a[i].Settings.Title)
       );
     if (
-      r = GlobalData.optManager.GetObjectPtr(e, !0),
-      GlobalData.optManager.ConfirmPlanningFields(r.datasetTableID),
+      r = T3Gv.optManager.GetObjectPtr(e, !0),
+      T3Gv.optManager.ConfirmPlanningFields(r.datasetTableID),
       (y = r.GetGanttInfo(!0)) ? y.timeScale == ListManager.TimeScale.SDG_DAY_WITH_HOURS &&
         (
           t = Utils2.SetFlag(
@@ -38769,13 +38769,13 @@ ListManager.LM.prototypeGantt_HideandShowColumns = function (e, t, a) {
             lpc = C.cells[s + h],
             lpc.frame.width !== M[n].width
           ) p = M[n].width - lpc.frame.width,
-            GlobalData.optManager.theActionTable = C,
-            dim = GlobalData.optManager.Table_GrowColumn(r, C, u, p, r.TextGrow, !0, !1, !0),
-            GlobalData.optManager.theActionTable = null,
+            T3Gv.optManager.theActionTable = C,
+            dim = T3Gv.optManager.Table_GrowColumn(r, C, u, p, r.TextGrow, !0, !1, !0),
+            T3Gv.optManager.theActionTable = null,
             (E = Utils1.DeepCopy(r)).trect.width = dim.x,
             E.trect.height = dim.y,
             E.TRectToFrame(E.trect, !0),
-            GlobalData.optManager.svgObjectLayer.RemoveElement(b),
+            T3Gv.optManager.svgObjectLayer.RemoveElement(b),
             r.SetSize(E.Frame.width, null, - 1);
           if (
             I = !0,
@@ -38845,13 +38845,13 @@ ListManager.LM.prototypeGantt_HideandShowColumns = function (e, t, a) {
             M[n].changewidth &&
             lpc.frame.width !== M[n].width
           ) p = M[n].width - lpc.frame.width,
-            GlobalData.optManager.theActionTable = C,
-            dim = GlobalData.optManager.Table_GrowColumn(r, C, lpc.colindex, p, r.TextGrow, !0, !1, !0),
-            GlobalData.optManager.theActionTable = null,
+            T3Gv.optManager.theActionTable = C,
+            dim = T3Gv.optManager.Table_GrowColumn(r, C, lpc.colindex, p, r.TextGrow, !0, !1, !0),
+            T3Gv.optManager.theActionTable = null,
             (E = Utils1.DeepCopy(r)).trect.width = dim.x,
             E.trect.height = dim.y,
             E.TRectToFrame(E.trect, !0),
-            GlobalData.optManager.svgObjectLayer.RemoveElement(b),
+            T3Gv.optManager.svgObjectLayer.RemoveElement(b),
             r.SetSize(E.Frame.width, null, - 1);
           M[n].Title &&
             (lpc = C.cells[s], this.SetColumnHeader(b, r, lpc, M[n].Title, s))
@@ -38860,8 +38860,8 @@ ListManager.LM.prototypeGantt_HideandShowColumns = function (e, t, a) {
     }
     if (I) {
       if (
-        GlobalData.optManager.AddToDirtyList(r.BlockID),
-        GlobalData.optManager.RenderDirtySVGObjects(),
+        T3Gv.optManager.AddToDirtyList(r.BlockID),
+        T3Gv.optManager.RenderDirtySVGObjects(),
         newDim = this.Table_TextGrow(r, C, - 1, !1, null, !1, null),
         newDim &&
         (f = this.Table_Format(r, C, - 1, !1, !1))
@@ -38895,10 +38895,10 @@ ListManager.LM.prototypeSetColumnHeader = function (e, t, a, r, i) {
   if (
     s.runtimeText = l.GetRuntimeText(),
     n = new ListManager.TextObject(s),
-    o = GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.LM_TEXT_OBJECT, n)
+    o = T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.LM_TEXT_OBJECT, n)
   ) {
     if (a.DataID >= 0) {
-      var c = GlobalData.objectStore.GetObject(a.DataID);
+      var c = T3Gv.objectStore.GetObject(a.DataID);
       c &&
         c.Delete()
     }
@@ -38958,7 +38958,7 @@ ListManager.LM.prototypeGanttCellDataToValue = function (e, t, a, r) {
               u = Utils2.SDRLocalTime(l),
               h = Utils2.SDRTimeToString(
                 u,
-                Utils2.GetActiveDateFormat(GlobalData.optManager.theContentHeader.dateformat)
+                Utils2.GetActiveDateFormat(T3Gv.optManager.theContentHeader.dateformat)
               )
             );
           break;
@@ -38985,7 +38985,7 @@ ListManager.LM.prototypeGanttCellDataToValue = function (e, t, a, r) {
               (l -= 60, u = Utils2.SDRLocalTime(l)),
               h = Utils2.SDRTimeToString(
                 u,
-                Utils2.GetActiveDateFormat(GlobalData.optManager.theContentHeader.dateformat)
+                Utils2.GetActiveDateFormat(T3Gv.optManager.theContentHeader.dateformat)
               )
             );
           break;
@@ -39020,7 +39020,7 @@ ListManager.LM.prototypeGanttCellDataToValue = function (e, t, a, r) {
         y.runtimeText = D.GetRuntimeText(),
           theTextObject = new ListManager.TextObject(y),
           (
-            d = GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.LM_TEXT_OBJECT, theTextObject)
+            d = T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.LM_TEXT_OBJECT, theTextObject)
           ) &&
           (s.DataID = d.ID),
           this.Table_AddSVGTextObject(e, this.svgDoc, f, s, r),
@@ -39319,7 +39319,7 @@ ListManager.LM.prototypeUpdateStartDateForHiddenGanttLayer = function (e) {
     S = '',
     c = [];
   for (
-    a = GlobalData.optManager.GetObjectPtr(e, !1),
+    a = T3Gv.optManager.GetObjectPtr(e, !1),
     r = ListManager.SDData.GetNumRows(a.datasetTableID, '', ''),
     n = 0;
     n < r;
@@ -39351,7 +39351,7 @@ ListManager.LM.prototypeUpdateStartDateForHiddenGanttLayer = function (e) {
     n = 0;
     n < t;
     n++
-  ) GlobalData.optManager.SetGanttEndDate(e, c[n].sddataID, c[n].end, !0)
+  ) T3Gv.optManager.SetGanttEndDate(e, c[n].sddataID, c[n].end, !0)
 }
 
 ListManager.LM.prototypePlanningTableUpdateStartDate = function (e) {
@@ -39434,17 +39434,17 @@ ListManager.LM.prototypePlanningTableUpdateStartDate = function (e) {
         null,
         null
       );
-    var m = GlobalData.optManager.ActiveVisibleZList();
+    var m = T3Gv.optManager.ActiveVisibleZList();
     for (S = 0; S < m.length; S++) if (
-      (t = GlobalData.optManager.GetObjectPtr(m[S])) &&
+      (t = T3Gv.optManager.GetObjectPtr(m[S])) &&
       t.GetGanttInfo() &&
       t.datasetID === d &&
       t.datasetTableID === D &&
       t.objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART
     ) {
       this.GanttFormat(t.BlockID, !1, !1, !1, null),
-        GlobalData.optManager.AddToDirtyList(t.BlockID),
-        GlobalData.optManager.RenderDirtySVGObjects();
+        T3Gv.optManager.AddToDirtyList(t.BlockID),
+        T3Gv.optManager.RenderDirtySVGObjects();
       break
     }
   }
@@ -39545,7 +39545,7 @@ ListManager.LM.prototypeGanttGetMonthLabelName = function (e, t) {
 }
 
 ListManager.LM.prototypeGanttGetMonthDayStr = function (e) {
-  return Utils2.GetActiveDateFormat(GlobalData.optManager.theContentHeader.dateformat) === ListManager.DateCodes.SDEURODATE ? e.wDay.toString() + '/' + e.wMonth.toString() : e.wMonth.toString() + '/' + e.wDay.toString()
+  return Utils2.GetActiveDateFormat(T3Gv.optManager.theContentHeader.dateformat) === ListManager.DateCodes.SDEURODATE ? e.wDay.toString() + '/' + e.wMonth.toString() : e.wMonth.toString() + '/' + e.wDay.toString()
 }
 
 ListManager.LM.prototypeGetDateLabel = function (e, t, a, r) {
@@ -39652,7 +39652,7 @@ ListManager.LM.prototypeGetDateLabel = function (e, t, a, r) {
         case ListManager.Table.GanttLabelTypes.GANTT_TITLE1_LABELS:
           o = this.GanttGetMonthLabelName(e, i.wMonth),
             n = Utils2.GetLongWeekdayName(i.wDayOfWeek),
-            S = Utils2.GetActiveDateFormat(GlobalData.optManager.theContentHeader.dateformat) === ListManager.DateCodes.SDEURODATE ? n + ' ' + i.wDay.toString() + ' ' + o + ' ' + i.wYear.toString() : n + ' ' + o + ' ' + i.wDay.toString() + ' ' + i.wYear.toString();
+            S = Utils2.GetActiveDateFormat(T3Gv.optManager.theContentHeader.dateformat) === ListManager.DateCodes.SDEURODATE ? n + ' ' + i.wDay.toString() + ' ' + o + ' ' + i.wYear.toString() : n + ' ' + o + ' ' + i.wDay.toString() + ' ' + i.wYear.toString();
           break;
         case ListManager.Table.GanttLabelTypes.GANTT_TITLE2_LABELS:
           S = ''
@@ -40278,7 +40278,7 @@ ListManager.LM.prototypeGanttAddDependency = function () {
     g,
     h,
     m,
-    C = GlobalData.optManager.ActiveVisibleZList(),
+    C = T3Gv.optManager.ActiveVisibleZList(),
     y = !1,
     f = !1,
     L = - 1,
@@ -40286,12 +40286,12 @@ ListManager.LM.prototypeGanttAddDependency = function () {
     T = !1;
   if (
     null != (
-      e = GlobalData.optManager.GetCurrentPlanningTable(ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART, !1, null)
+      e = T3Gv.optManager.GetCurrentPlanningTable(ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART, !1, null)
     )
   ) {
     if (l = e.BlockID, (c = this.GanttGetBar(l, - 1, !0)) >= 0) {
       for (
-        L = (e = GlobalData.optManager.GetObjectPtr(c, !1)).datasetElemID,
+        L = (e = T3Gv.optManager.GetObjectPtr(c, !1)).datasetElemID,
         n = e.datasetTableID,
         c,
         u = e.BlockID,
@@ -40299,7 +40299,7 @@ ListManager.LM.prototypeGanttAddDependency = function () {
         (S = this.GanttGetBar(l, S, !0)) >= 0 &&
         (
           I++,
-          e = GlobalData.optManager.GetObjectPtr(S, !1),
+          e = T3Gv.optManager.GetObjectPtr(S, !1),
           !(f = this.GanttIsDependencyCircular(L, e.datasetElemID))
         );
       ) if (
@@ -40324,17 +40324,17 @@ ListManager.LM.prototypeGanttAddDependency = function () {
       if (L.toString(), Collab.AllowMessage()) {
         Collab.BeginSecondaryEdit();
         var M = {},
-          P = (C = GlobalData.optManager.ActiveLayerZList()).length,
+          P = (C = T3Gv.optManager.ActiveLayerZList()).length,
           R = Collab.BuildMessage(ConstantData.CollabMessages.GanttAddDependency, M, !0, !0)
       }
       if (
-        p = (t = GlobalData.optManager.GetObjectPtr(l, !0)).BlockID,
+        p = (t = T3Gv.optManager.GetObjectPtr(l, !0)).BlockID,
         D = t.GetTable(!0),
         o = L.toString(),
         [].push(L),
         (S = this.GanttGetBar(l, c, !0)) >= 0
       ) if (
-          (e = GlobalData.optManager.GetObjectPtr(S)).objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_BAR &&
+          (e = T3Gv.optManager.GetObjectPtr(S)).objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_BAR &&
           e.datasetTableID === n &&
           (
             d = e.BlockID,
@@ -40344,21 +40344,21 @@ ListManager.LM.prototypeGanttAddDependency = function () {
               o
             )
           ),
-          (g = GlobalData.optManager.GanttRecordToRow(D, e.datasetElemID).rowIndex) >= 0
+          (g = T3Gv.optManager.GanttRecordToRow(D, e.datasetElemID).rowIndex) >= 0
         ) for (h = D.rows[g], i = 0; i < h.ncells; i++) if (
           (m = D.cells[h.start + i]).celltype === ListManager.Table.CellTypes.SDT_CT_GANTT_START
         ) {
           m.flags = Utils2.SetFlag(m.flags, ListManager.Table.CellFlags.SDT_F_NoText, !0),
             m.fill.Paint.Color = b.Fill.Paint.Color,
-            GlobalData.optManager.Table_BuildFills(t, D, t.StyleRecord.Fill),
-            GlobalData.optManager.AddToDirtyList(t.BlockID);
+            T3Gv.optManager.Table_BuildFills(t, D, t.StyleRecord.Fill),
+            T3Gv.optManager.AddToDirtyList(t.BlockID);
           break
         }
       this.GanttFormat(t.BlockID, !1, !0, !0, null),
-        GlobalData.optManager.HasValidDependencyLine(u, S) ||
-        GlobalData.optManager.AddDependencyLine(p, u, S),
-        a = GlobalData.optManager.GetObjectPtr(d, !1),
-        t = GlobalData.optManager.GetObjectPtr(p, !1),
+        T3Gv.optManager.HasValidDependencyLine(u, S) ||
+        T3Gv.optManager.AddDependencyLine(p, u, S),
+        a = T3Gv.optManager.GetObjectPtr(d, !1),
+        t = T3Gv.optManager.GetObjectPtr(p, !1),
         (
           s = ListManager.SDData.GetValue(
             a.datasetElemID,
@@ -40370,14 +40370,14 @@ ListManager.LM.prototypeGanttAddDependency = function () {
         (
           Collab.IsSecondary() &&
           (
-            C = GlobalData.optManager.ActiveLayerZList(),
+            C = T3Gv.optManager.ActiveLayerZList(),
             newlen = C.length,
             newlen > P &&
             (M.CreateList = [], M.CreateList.push(C[P]))
           ),
           Collab.SendMessage(R)
         ),
-        GlobalData.optManager.CompleteOperation()
+        T3Gv.optManager.CompleteOperation()
     }
   } else Utils2.Alert(Resources.Strings.NoCellsSelected)
 }
@@ -40407,15 +40407,15 @@ ListManager.LM.prototypeGanttRemoveDependency = function () {
     f = 0,
     L = - 1,
     I = - 1,
-    T = GlobalData.optManager.ActiveVisibleZList(),
-    b = GlobalData.objectStore.GetObject(this.theSelectedListBlockID).Data,
+    T = T3Gv.optManager.ActiveVisibleZList(),
+    b = T3Gv.objectStore.GetObject(this.theSelectedListBlockID).Data,
     M = {};
   if (
     null != (
-      e = GlobalData.optManager.GetCurrentPlanningTable(ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART, !1, null)
+      e = T3Gv.optManager.GetCurrentPlanningTable(ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART, !1, null)
     )
   ) {
-    if (s = e.BlockID, a = e, (u = GlobalData.optManager.Table_GetActiveID()) == s) e = GlobalData.optManager.GetObjectPtr(u, !0),
+    if (s = e.BlockID, a = e, (u = T3Gv.optManager.Table_GetActiveID()) == s) e = T3Gv.optManager.GetObjectPtr(u, !0),
       S = this.GanttGetBar(e.BlockID, - 1, !0),
       - 1 != this.GanttGetBar(e.BlockID, S, !0) &&
       f++,
@@ -40425,7 +40425,7 @@ ListManager.LM.prototypeGanttRemoveDependency = function () {
         (D = M.slave) >= 0 &&
         f++
       );
-    else for (r = 0; r < T.length; r++) (t = GlobalData.optManager.GetObjectPtr(T[r], !0)).objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_BAR &&
+    else for (r = 0; r < T.length; r++) (t = T3Gv.optManager.GetObjectPtr(T[r], !0)).objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_BAR &&
       $.inArray(t.BlockID, b) >= 0 &&
       f++;
     if (0 != f) {
@@ -40452,7 +40452,7 @@ ListManager.LM.prototypeGanttRemoveDependency = function () {
             I = D
         }
         if (
-          e = GlobalData.optManager.GetObjectPtr(I, !0),
+          e = T3Gv.optManager.GetObjectPtr(I, !0),
           (
             y = ListManager.SDData.GetValue(
               e.datasetElemID,
@@ -40469,7 +40469,7 @@ ListManager.LM.prototypeGanttRemoveDependency = function () {
         ) return;
         if ((c = this.GanttBarToRow(s, I).rowIndex) >= 0) {
           for (
-            g = (e = GlobalData.optManager.GetObjectPtr(s, !0)).GetTable(!0),
+            g = (e = T3Gv.optManager.GetObjectPtr(s, !0)).GetTable(!0),
             r = 0;
             r < g.rows[c].ncells;
             r++
@@ -40490,7 +40490,7 @@ ListManager.LM.prototypeGanttRemoveDependency = function () {
             )
         }
       } else for (r = 0; r < b.length; r++) if (
-        (e = GlobalData.optManager.GetObjectPtr(b[r])) &&
+        (e = T3Gv.optManager.GetObjectPtr(b[r])) &&
         e.objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_BAR
       ) {
         if (
@@ -40513,7 +40513,7 @@ ListManager.LM.prototypeGanttRemoveDependency = function () {
         ) break;
         if ((l = this.GanttBarToRow(s, e.BlockID).rowIndex) >= 0) {
           for (
-            (g = GlobalData.optManager.GetObjectPtr(s, !0).GetTable(!0)).rows[l].ncells,
+            (g = T3Gv.optManager.GetObjectPtr(s, !0).GetTable(!0)).rows[l].ncells,
             i = 0,
             n = g.rows[l].ncells;
             i < n;
@@ -40535,11 +40535,11 @@ ListManager.LM.prototypeGanttRemoveDependency = function () {
             )
         }
       }
-      GlobalData.optManager.Table_BuildFills(a, g, a.StyleRecord.Fill),
-        GlobalData.optManager.AddToDirtyList(a.BlockID),
+      T3Gv.optManager.Table_BuildFills(a, g, a.StyleRecord.Fill),
+        T3Gv.optManager.AddToDirtyList(a.BlockID),
         Collab.AllowMessage() &&
         Collab.SendMessage(P),
-        GlobalData.optManager.CompleteOperation()
+        T3Gv.optManager.CompleteOperation()
     } else Utils2.Alert(Resources.Strings.GanttRemoveDependency, null)
   } else Utils2.Alert(Resources.Strings.NoCellsSelected)
 }
@@ -40607,7 +40607,7 @@ ListManager.LM.prototypeGanttGetBar = function (e, t, a) {
     l,
     S,
     c = - 1;
-  if (!(o = GlobalData.optManager.GetObjectPtr(e, !1).GetTable())) return - 1;
+  if (!(o = T3Gv.optManager.GetObjectPtr(e, !1).GetTable())) return - 1;
   if (t < 0) l = 0;
   else {
     if ((S = this.GanttBarToRow(e, t).rowIndex) < 0) return - 1;
@@ -40618,7 +40618,7 @@ ListManager.LM.prototypeGanttGetBar = function (e, t, a) {
     i = o.cells[r.start],
     n = this.GanttRowToBar(i.datarecordID)
   ) {
-    var u = GlobalData.objectStore.GetObject(this.theSelectedListBlockID).Data;
+    var u = T3Gv.objectStore.GetObject(this.theSelectedListBlockID).Data;
     if (
       $.inArray(n.BlockID, u) >= 0 ||
       i.flags & ListManager.Table.CellFlags.SDT_F_Select
@@ -40817,7 +40817,7 @@ ListManager.LM.prototypeGanttMapDataToTable = function (e, t, a, r, i, n, o, s, 
     G,
     N = 0,
     k = null;
-  if (I = (w = GlobalData.optManager.GetObjectPtr(e, !0)).datasetTableID, null == u) k = this.GanttGetSortlist(I, i);
+  if (I = (w = T3Gv.optManager.GetObjectPtr(e, !0)).datasetTableID, null == u) k = this.GanttGetSortlist(I, i);
   else for (k = [], L = u.length, D = 0; D < L; D++) k.push({
     rowid: u[D]
   });
@@ -40831,7 +40831,7 @@ ListManager.LM.prototypeGanttMapDataToTable = function (e, t, a, r, i, n, o, s, 
     D++
   ) if ((h = k[D].rowid) >= 0) {
     if (
-      u ? g = GlobalData.optManager.GanttRecordToRow(t, h).rowIndex : (g = S, S = ++g),
+      u ? g = T3Gv.optManager.GanttRecordToRow(t, h).rowIndex : (g = S, S = ++g),
       C = - 1,
       a &&
       (C = this.GanttRecordToRow(a, h).rowIndex) >= 0
@@ -40911,12 +40911,12 @@ ListManager.LM.prototypeGanttMapDataToTable = function (e, t, a, r, i, n, o, s, 
         E.hyperlink = null,
         E.NoteID = - 1
       );
-    if (F = this.GanttRowToBar(h)) (F = GlobalData.optManager.GetObjectPtr(F.BlockID, !0)).flags = Utils2.SetFlag(F.flags, ConstantData.ObjFlags.SEDO_NotVisible, !1),
-      GlobalData.optManager.DirtyListReOrder = !0,
+    if (F = this.GanttRowToBar(h)) (F = T3Gv.optManager.GetObjectPtr(F.BlockID, !0)).flags = Utils2.SetFlag(F.flags, ConstantData.ObjFlags.SEDO_NotVisible, !1),
+      T3Gv.optManager.DirtyListReOrder = !0,
       this.GanttKillLinks(F.BlockID, - 2, - 1, !0);
     else {
       if (N = this.GanttAddGanttBar(e, t, g), F = this.GanttRowToBar(h), N) break;
-      GlobalData.optManager.AddToDirtyList(F.BlockID)
+      T3Gv.optManager.AddToDirtyList(F.BlockID)
     }
     if (
       null == (N = this.GanttRowDataToRowValues(w, t, l, s, g, r, h, !1, null != u)) ||
@@ -40964,7 +40964,7 @@ ListManager.LM.prototypeGanttRowDataToRowValues = function (e, t, a, r, i, n, o,
     u,
     p = 0,
     d = new ListManager.BaseShape,
-    D = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
+    D = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
   d.StyleRecord = $.extend(!0, {
   }, D.def.style);
   var g = d.GetTextDefault({
@@ -40987,8 +40987,8 @@ ListManager.LM.prototypeGanttRowDataToRowValues = function (e, t, a, r, i, n, o,
       s = this.GanttSetTaskIndent(e, t, S.start + u, r).reformat,
         o >= 0 &&
         (
-          GlobalData.optManager.GanttUpdateNotes(c, c.datarecordID),
-          GlobalData.optManager.GanttUpdateHyperlink(c, c.datarecordID)
+          T3Gv.optManager.GanttUpdateNotes(c, c.datarecordID),
+          T3Gv.optManager.GanttUpdateHyperlink(c, c.datarecordID)
         ),
         p = 0;
     case ListManager.Table.CellTypes.SDT_CT_GANTT_START:
@@ -41066,9 +41066,9 @@ ListManager.LM.prototypeGanttSetTaskIndent = function (e, t, a, r) {
     S = null,
     c = null,
     u = {},
-    p = GlobalData.docHandler.svgDoc.docInfo.docDpi / SDF.DRAWRES;
+    p = T3Gv.docHandler.svgDoc.docInfo.docDpi / SDF.DRAWRES;
   if (
-    i = GlobalData.optManager.Table_GetRow(t, a),
+    i = T3Gv.optManager.Table_GetRow(t, a),
     s = t.rows[i],
     r = SDF.ToSDJSCoords(100 * r, p),
     !(D = this.svgObjectLayer.GetElementByID(e.BlockID))
@@ -41087,17 +41087,17 @@ ListManager.LM.prototypeGanttSetTaskIndent = function (e, t, a, r) {
       lindent: r,
       pindent: r
     };
-    var d = GlobalData.optManager.GetObjectPtr(o.DataID);
+    var d = T3Gv.optManager.GetObjectPtr(o.DataID);
     if (d || (o.DataID = - 1), o.DataID >= 0) (l = d.runtimeText.paraInfo[0].pStyle).lindent !== r &&
       (
-        d = GlobalData.optManager.GetObjectPtr(o.DataID, !0),
+        d = T3Gv.optManager.GetObjectPtr(o.DataID, !0),
         l.lindent = r,
         l.pindent = r
       );
     else {
       c = new ListManager.TextObject,
         (
-          S = GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.LM_TEXT_OBJECT, c)
+          S = T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.LM_TEXT_OBJECT, c)
         ) &&
         (o.DataID = S.ID);
       var D = this.svgObjectLayer.GetElementByID(e.BlockID);
@@ -41169,7 +41169,7 @@ ListManager.LM.prototypeGanttSetCellValue = function (e, t, a, r) {
             D = Utils2.SDRLocalTime(u),
             h = Utils2.SDRTimeToStringYY(
               D,
-              Utils2.GetActiveDateFormat(GlobalData.optManager.theContentHeader.dateformat)
+              Utils2.GetActiveDateFormat(T3Gv.optManager.theContentHeader.dateformat)
             )
           );
         break;
@@ -41196,7 +41196,7 @@ ListManager.LM.prototypeGanttSetCellValue = function (e, t, a, r) {
             (u -= 60, D = Utils2.SDRLocalTime(u)),
             h = Utils2.SDRTimeToStringYY(
               D,
-              Utils2.GetActiveDateFormat(GlobalData.optManager.theContentHeader.dateformat)
+              Utils2.GetActiveDateFormat(T3Gv.optManager.theContentHeader.dateformat)
             )
           );
         break;
@@ -41212,12 +41212,12 @@ ListManager.LM.prototypeGanttSetCellValue = function (e, t, a, r) {
     }
     var C = this.svgObjectLayer.GetElementByID(e.BlockID);
     if (c.DataID >= 0) {
-      if (textBlock = GlobalData.optManager.GetObjectPtr(c.DataID), C) var y = C.GetElementByID(ConstantData.SVGElementClass.TEXT, c.DataID);
+      if (textBlock = T3Gv.optManager.GetObjectPtr(c.DataID), C) var y = C.GetElementByID(ConstantData.SVGElementClass.TEXT, c.DataID);
       textBlock &&
         (y || null == C) ? S = textBlock.runtimeText.text : (
         textBlock &&
         (
-          textBlockToDelete = GlobalData.objectStore.GetObject(c.DataID),
+          textBlockToDelete = T3Gv.objectStore.GetObject(c.DataID),
           textBlockToDelete &&
           textBlockToDelete.Delete()
         ),
@@ -41233,7 +41233,7 @@ ListManager.LM.prototypeGanttSetCellValue = function (e, t, a, r) {
         if (
           0 === h.length &&
           (h = ' ', f = !0),
-          null != GlobalData.optManager.GetActiveTextEdit()
+          null != T3Gv.optManager.GetActiveTextEdit()
         ) {
           var L = this.svgDoc.GetActiveEdit();
           L &&
@@ -41251,7 +41251,7 @@ ListManager.LM.prototypeGanttSetCellValue = function (e, t, a, r) {
           I.SetText(h, T),
           f &&
           I.SetText(''),
-          textBlock = GlobalData.optManager.GetObjectPtr(c.DataID, !0),
+          textBlock = T3Gv.optManager.GetObjectPtr(c.DataID, !0),
           textBlock.runtimeText = I.GetRuntimeText(),
           C.RemoveElement(I),
           this.Table_AddSVGTextObject(e, this.svgDoc, C, c, a),
@@ -41275,7 +41275,7 @@ ListManager.LM.prototypeGanttSetCellValue = function (e, t, a, r) {
         runtimeText: b
       },
         P = new ListManager.TextObject(M);
-      textBlock = GlobalData.objectStore.CreateBlock(Globals.StoredObjectType.LM_TEXT_OBJECT, P),
+      textBlock = T3Gv.objectStore.CreateBlock(Globals.StoredObjectType.LM_TEXT_OBJECT, P),
         c.DataID = textBlock.ID,
         this.Table_AddSVGTextObject(e, this.svgDoc, C, c, a),
         m = !0
@@ -41384,13 +41384,13 @@ ListManager.LM.prototypeGanttCleanBarsAndTable = function (e) {
     for (r = s.row, n = e.rows.length, i = r; i < n; i++) a = e.rows[i],
       (t = e.cells[a.start]).DataID >= 0 &&
       (
-        (l = GlobalData.objectStore.PreserveBlock(t.DataID)) &&
+        (l = T3Gv.objectStore.PreserveBlock(t.DataID)) &&
         l.Delete(),
         t.DataID = - 1
       ),
       t.NoteID >= 0 &&
       (
-        (l = GlobalData.objectStore.PreserveBlock(t.NoteID)) &&
+        (l = T3Gv.objectStore.PreserveBlock(t.NoteID)) &&
         l.Delete(),
         t.NoteID = - 1
       ),
@@ -41421,14 +41421,14 @@ ListManager.LM.prototypeGanttRelinkAllBars = function (e, t) {
     (i = a.cells[r.start]).datarecordID >= 0 &&
     (
       o = i.datarecordID,
-      (n = GlobalData.optManager.GanttRowToBar(o)) &&
-      0 != (l = GlobalData.optManager.GanttLinkBarToRow(e.BlockID, n.BlockID, a, s))
+      (n = T3Gv.optManager.GanttRowToBar(o)) &&
+      0 != (l = T3Gv.optManager.GanttLinkBarToRow(e.BlockID, n.BlockID, a, s))
     )
   ) return - 1;
   return t ||
     (
-      GlobalData.optManager.UpdateLinks(),
-      l = GlobalData.optManager.GanttUpdateDependencyLines(e.BlockID)
+      T3Gv.optManager.UpdateLinks(),
+      l = T3Gv.optManager.GanttUpdateDependencyLines(e.BlockID)
     ),
     l
 }
@@ -41485,7 +41485,7 @@ ListManager.LM.prototypeGanttLinkBarToRow = function (e, t, a, r) {
     F = new Rectangle(0, 0, 0, 0),
     v = {};
   for (
-    u = GlobalData.optManager.GetObjectPtr(e, !0),
+    u = T3Gv.optManager.GetObjectPtr(e, !0),
     i = a.rows[r],
     o = 0;
     o < i.ncells;
@@ -41498,7 +41498,7 @@ ListManager.LM.prototypeGanttLinkBarToRow = function (e, t, a, r) {
     }
   if (_ >= 0 && t >= 0) {
     if (
-      p = GlobalData.optManager.GetObjectPtr(t, !0),
+      p = T3Gv.optManager.GetObjectPtr(t, !0),
       !(
         (n = a.cells[_]).datarecordID == p.datasetElemID &&
         p.datasetElemID >= 0
@@ -41534,7 +41534,7 @@ ListManager.LM.prototypeGanttLinkBarToRow = function (e, t, a, r) {
       M &&
       null != (P = this.HasValidDependencyLine(d.BlockID, p.BlockID))
     ) {
-      w = GlobalData.optManager.GetObjectPtr(P, !0),
+      w = T3Gv.optManager.GetObjectPtr(P, !0),
         C = this.GanttGetDataValue(
           d.datasetElemID,
           ListManager.Table.CellTypes.SDT_CT_GANTT_START
@@ -41554,14 +41554,14 @@ ListManager.LM.prototypeGanttLinkBarToRow = function (e, t, a, r) {
         E = w.flags,
         w.flags = Utils2.SetFlag(w.flags, ConstantData.ObjFlags.SEDO_Hide, l || S || N),
         w.flags = Utils2.SetFlag(w.flags, ConstantData.ObjFlags.SEDO_NotVisible, l || S || N),
-        GlobalData.optManager.DirtyListReOrder = !0,
+        T3Gv.optManager.DirtyListReOrder = !0,
         w.flags != E &&
-        GlobalData.optManager.AddToDirtyList(w.BlockID)
+        T3Gv.optManager.AddToDirtyList(w.BlockID)
     }
     if (
       p.flags = Utils2.SetFlag(p.flags, ConstantData.ObjFlags.SEDO_Hide, l),
       p.flags = Utils2.SetFlag(p.flags, ConstantData.ObjFlags.SEDO_NotVisible, l),
-      GlobalData.optManager.DirtyListReOrder = !0,
+      T3Gv.optManager.DirtyListReOrder = !0,
       l &&
       (
         f.x = 0,
@@ -41596,12 +41596,12 @@ ListManager.LM.prototypeGanttLinkBarToRow = function (e, t, a, r) {
       f.x + u.trect.x + n.frame.x != p.Frame.x ||
       f.y + u.trect.y + n.frame.y != p.Frame.y
     ) {
-      GlobalData.optManager.AddToDirtyList(p.BlockID),
+      T3Gv.optManager.AddToDirtyList(p.BlockID),
         p.hooks.length > 0 &&
-        (GlobalData.optManager.ob = Utils1.DeepCopy(p)),
+        (T3Gv.optManager.ob = Utils1.DeepCopy(p)),
         Utils2.CopyRect(F, f),
         Utils2.OffsetRect(F, u.trect.x + n.frame.x, u.trect.y + n.frame.y);
-      var J = GlobalData.optManager.svgObjectLayer.GetElementByID(p.BlockID);
+      var J = T3Gv.optManager.svgObjectLayer.GetElementByID(p.BlockID);
       J ? (
         p.AdjustLineStart(J, F.x, F.y + F.height / 2, 0, !0, !0),
         p.AdjustLineEnd(J, F.x + F.width, F.y + F.height / 2, 0, !0)
@@ -41619,11 +41619,11 @@ ListManager.LM.prototypeGanttLinkBarToRow = function (e, t, a, r) {
       I = T ? ConstantData.HookPts.SED_KTC : ConstantData.HookPts.SED_KTL,
       u.extraflags = Utils2.SetFlag(u.extraflags, ConstantData.ExtraFlags.SEDE_DataUpdate, !0),
       this.UpdateHook(p.BlockID, L, e, I, v, a.cells[_].uniqueid),
-      GlobalData.optManager.SetLinkFlag(
+      T3Gv.optManager.SetLinkFlag(
         u.BlockID,
         ConstantData.LinkFlags.SED_L_MOVE | ConstantData.LinkFlags.SED_L_CHANGE
       ),
-      GlobalData.optManager.SetLinkFlag(p.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
+      T3Gv.optManager.SetLinkFlag(p.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
       u.extraflags = Utils2.SetFlag(u.extraflags, ConstantData.ExtraFlags.SEDE_DataUpdate, !1)
   }
   return 0
@@ -41687,18 +41687,18 @@ ListManager.LM.prototypeHasValidDependencyLine = function (e, t) {
     n,
     o,
     s = null;
-  GlobalData.optManager.GetObjectPtr(e),
-    GlobalData.optManager.GetObjectPtr(t);
-  var l = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLinksBlockID, !1);
+  T3Gv.optManager.GetObjectPtr(e),
+    T3Gv.optManager.GetObjectPtr(t);
+  var l = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, !1);
   if (!l) return null;
   for (
-    i = GlobalData.optManager.FindLink(l, t, !0);
+    i = T3Gv.optManager.FindLink(l, t, !0);
     i >= 0 &&
     i < l.length &&
     l[i].targetid === t;
   ) {
     if (
-      (a = GlobalData.optManager.GetObjectPtr(l[i].hookid)) &&
+      (a = T3Gv.optManager.GetObjectPtr(l[i].hookid)) &&
       a.objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_CONNECTOR
     ) {
       for (n = o = !1, r = 0; r < a.hooks.length; r++) a.hooks[r].objid === e &&
@@ -41723,7 +41723,7 @@ ListManager.LM.prototypeSetBarHeight = function (e, t) {
   if (
     !(e < 0) &&
     (
-      a = GlobalData.optManager.GetObjectPtr(e, !0),
+      a = T3Gv.optManager.GetObjectPtr(e, !0),
       i = (
         r = t ? ListManager.GanttDefines.GANTT_BTHICK / 2 : ListManager.GanttDefines.GANTT_BTHICK
       ) / 2,
@@ -41739,7 +41739,7 @@ ListManager.LM.prototypeSetBarHeight = function (e, t) {
       }
     };
     a.SetObjectStyle(n),
-      GlobalData.optManager.AddToDirtyList(e)
+      T3Gv.optManager.AddToDirtyList(e)
   }
 }
 
@@ -41751,7 +41751,7 @@ ListManager.LM.prototypeGanttSetBarArrows = function (e, t, a, r) {
   if (
     !(e < 0) &&
     (
-      i = GlobalData.optManager.GetObjectPtr(e, !0),
+      i = T3Gv.optManager.GetObjectPtr(e, !0),
       n = t ? ListManager.ArrowHeadTypes.ARR_IND_DOWN : ListManager.ArrowHeadTypes.ARR_ROUND_END,
       o = a ? 0 : n,
       s = r ? 0 : n,
@@ -41764,7 +41764,7 @@ ListManager.LM.prototypeGanttSetBarArrows = function (e, t, a, r) {
       EndArrowID: s
     };
     i.SetObjectStyle(l),
-      GlobalData.optManager.AddToDirtyList(e)
+      T3Gv.optManager.AddToDirtyList(e)
   }
 }
 
@@ -41780,12 +41780,12 @@ ListManager.LM.prototypeGanttKillAllLinks = function (e) {
   var t,
     a,
     r,
-    i = GlobalData.optManager.ZList(),
+    i = T3Gv.optManager.ZList(),
     n = {
       result: 0,
       dependencyLinesFound: !1
     };
-  for (r = GlobalData.optManager.GetObjectPtr(e), t = 0; t < i.length; t++) (a = GlobalData.optManager.GetObjectPtr(i[t])) &&
+  for (r = T3Gv.optManager.GetObjectPtr(e), t = 0; t < i.length; t++) (a = T3Gv.optManager.GetObjectPtr(i[t])) &&
     a.objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_BAR &&
     a.datasetTableID === r.datasetTableID &&
     (
@@ -41803,15 +41803,15 @@ ListManager.LM.prototypeGanttKillLinks = function (e, t, a, r, i) {
     l,
     S,
     c = !1,
-    u = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLinksBlockID, !0),
+    u = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, !0),
     p = [];
   if (
-    l = GlobalData.optManager.GetObjectPtr(e, !0),
-    !((n = GlobalData.optManager.FindLink(u, l.BlockID, !0)) < 0)
+    l = T3Gv.optManager.GetObjectPtr(e, !0),
+    !((n = T3Gv.optManager.FindLink(u, l.BlockID, !0)) < 0)
   ) {
     for (i && (p = i); n < u.length && u[n].targetid === l.BlockID;) {
       if (c = !1, u[n].hookid >= 0) {
-        if (!(S = GlobalData.optManager.GetObjectPtr(u[n].hookid, !0))) {
+        if (!(S = T3Gv.optManager.GetObjectPtr(u[n].hookid, !0))) {
           n++;
           continue
         }
@@ -41820,14 +41820,14 @@ ListManager.LM.prototypeGanttKillLinks = function (e, t, a, r, i) {
         else - 2 === t &&
           (c = !0);
         if (c) if (a > 0) S.flags = Utils2.SetFlag(S.flags, ConstantData.ObjFlags.SEDO_NotVisible, !0),
-          GlobalData.optManager.DirtyListReOrder = !0;
+          T3Gv.optManager.DirtyListReOrder = !0;
         else if (a < 0) {
-          for (s = 0, o = 0; o < S.hooks.length; o++) GlobalData.optManager.GetObjectPtr(S.hooks[o].objid, !0).flags & ConstantData.ObjFlags.SEDO_NotVisible &&
+          for (s = 0, o = 0; o < S.hooks.length; o++) T3Gv.optManager.GetObjectPtr(S.hooks[o].objid, !0).flags & ConstantData.ObjFlags.SEDO_NotVisible &&
             (s = !0);
           s ||
             (
               S.flags = Utils2.SetFlag(S.flags, ConstantData.ObjFlags.SEDO_NotVisible, !1),
-              GlobalData.optManager.DirtyListReOrder = !0
+              T3Gv.optManager.DirtyListReOrder = !0
             )
         } else p.push(S.BlockID)
       }
@@ -41835,9 +41835,9 @@ ListManager.LM.prototypeGanttKillLinks = function (e, t, a, r, i) {
     }
     p.length > 0 &&
       null == i &&
-      GlobalData.optManager.DeleteObjects(p),
+      T3Gv.optManager.DeleteObjects(p),
       r ||
-      GlobalData.optManager.UpdateLinks()
+      T3Gv.optManager.UpdateLinks()
   }
 }
 
@@ -41851,11 +41851,11 @@ ListManager.LM.prototypeUpdateDependencyLine = function (e, t, a, r) {
     S = {};
   if (- 1 == t && !(t = this.HasValidDependencyLine(a, r))) return - 1;
   if (
-    (o = GlobalData.optManager.GetObjectPtr(t, !0)).flags & ConstantData.ObjFlags.SEDO_NotVisible
-  ) return GlobalData.optManager.AddToDirtyList(o.BlockID),
+    (o = T3Gv.optManager.GetObjectPtr(t, !0)).flags & ConstantData.ObjFlags.SEDO_NotVisible
+  ) return T3Gv.optManager.AddToDirtyList(o.BlockID),
     0;
-  n = GlobalData.optManager.GetObjectPtr(a),
-    i = GlobalData.optManager.GetObjectPtr(r),
+  n = T3Gv.optManager.GetObjectPtr(a),
+    i = T3Gv.optManager.GetObjectPtr(r),
     o.flags = Utils2.SetFlag(o.flags, ConstantData.ObjFlags.SEDO_NoMaintainLink, !0),
     o.objecttype = ConstantData.ObjectTypes.SD_OBJT_GANTT_CONNECTOR,
     o.StartArrowID = 0,
@@ -41866,12 +41866,12 @@ ListManager.LM.prototypeUpdateDependencyLine = function (e, t, a, r) {
     l = 2 == o.hooks.length ? 1 : - 1,
     S.x = ConstantData.Defines.SED_CDim,
     S.y = ConstantData.Defines.SED_CDim / 2,
-    GlobalData.optManager.UpdateHook(t, s, a, ConstantData.HookPts.SED_KTL, S, null),
+    T3Gv.optManager.UpdateHook(t, s, a, ConstantData.HookPts.SED_KTL, S, null),
     S.x = 0,
     S.y = ConstantData.Defines.SED_CDim / 2,
-    GlobalData.optManager.UpdateHook(t, l, r, ConstantData.HookPts.SED_KTR, S, null);
+    T3Gv.optManager.UpdateHook(t, l, r, ConstantData.HookPts.SED_KTR, S, null);
   var c = new Point(0, 0);
-  c.x = GlobalData.optManager.GetDependencyLineEndX(o),
+  c.x = T3Gv.optManager.GetDependencyLineEndX(o),
     c.y = i.Frame.y + i.Frame.height / 2;
   var u = this.svgObjectLayer.GetElementByID(o.BlockID);
   return u &&
@@ -41880,15 +41880,15 @@ ListManager.LM.prototypeUpdateDependencyLine = function (e, t, a, r) {
       o.EndPoint.y = c.y,
       o.ModifyShape(u, c.x, c.y, ConstantData.ActionTriggerType.SEGL_PRESERVE)
     ),
-    GlobalData.optManager.SetLinkFlag(
+    T3Gv.optManager.SetLinkFlag(
       n.uniqueid,
       ConstantData.LinkFlags.SED_L_MOVE | ConstantData.LinkFlags.SED_L_CHANGE
     ),
-    GlobalData.optManager.SetLinkFlag(
+    T3Gv.optManager.SetLinkFlag(
       i.uniqueid,
       ConstantData.LinkFlags.SED_L_MOVE | ConstantData.LinkFlags.SED_L_CHANGE
     ),
-    GlobalData.optManager.AddToDirtyList(o.BlockID),
+    T3Gv.optManager.AddToDirtyList(o.BlockID),
     0
 }
 
@@ -41904,7 +41904,7 @@ ListManager.LM.prototypeAddDependencyLine = function (e, t, a) {
     u,
     p = new Rectangle(0, 0, 600, 0),
     d = {};
-  r = GlobalData.optManager.GetObjectPtr(a, !1),
+  r = T3Gv.optManager.GetObjectPtr(a, !1),
     (
       s = ListManager.SDData.GetValue(
         r.datasetElemID,
@@ -41914,7 +41914,7 @@ ListManager.LM.prototypeAddDependencyLine = function (e, t, a) {
     s.length &&
     (c = parseInt(s)) >= 0 &&
     (u = this.GanttRowToBar(c), this.GanttKillLinks(a, u.BlockID, !1)),
-    i = GlobalData.optManager.GetObjectPtr(t),
+    i = T3Gv.optManager.GetObjectPtr(t),
     l = Utils1.DeepCopy(i.EndPoint),
     (d = new Point(i.EndPoint.x, r.StartPoint.y)).x += 15,
     p = Utils2.Pt2Rect(l, d);
@@ -41948,10 +41948,10 @@ ListManager.LM.prototypeAddDependencyLine = function (e, t, a) {
     n = new ListManager.SegmentedLine(g),
     o = this.AddNewObject(n, !1, !0),
     Collab.AddNewBlockToSecondary(o),
-    (n = GlobalData.optManager.GetObjectPtr(o)).StyleRecord.Line.Thick = 1,
+    (n = T3Gv.optManager.GetObjectPtr(o)).StyleRecord.Line.Thick = 1,
     n.StyleRecord.Line.Color = ConstantData.Colors.Color_Black,
     n.CalcFrame(),
-    GlobalData.optManager.AddToDirtyList(o),
+    T3Gv.optManager.AddToDirtyList(o),
     this.UpdateDependencyLine(e, o, t, a),
     (
       r.flags & ConstantData.ObjFlags.SEDO_Hide ||
@@ -41960,7 +41960,7 @@ ListManager.LM.prototypeAddDependencyLine = function (e, t, a) {
     (
       n.flags = Utils2.SetFlag(n.flags, ConstantData.ObjFlags.SEDO_Hide, !0),
       n.flags = Utils2.SetFlag(n.flags, ConstantData.ObjFlags.SEDO_NotVisible, !0),
-      GlobalData.optManager.DirtyListReOrder = !0
+      T3Gv.optManager.DirtyListReOrder = !0
     ),
     o
 }
@@ -41972,9 +41972,9 @@ ListManager.LM.prototypeGanttUpdateDependencyLines = function (e) {
     i,
     n,
     o = [],
-    s = GlobalData.optManager.ActiveVisibleZList();
+    s = T3Gv.optManager.ActiveVisibleZList();
   for (i = 0; i < s.length; i++) if (
-    null != (t = GlobalData.optManager.GetObjectPtr(s[i], !0)) &&
+    null != (t = T3Gv.optManager.GetObjectPtr(s[i], !0)) &&
     t.objecttype == ConstantData.ObjectTypes.SD_OBJT_GANTT_BAR
   ) {
     if (
@@ -41986,13 +41986,13 @@ ListManager.LM.prototypeGanttUpdateDependencyLines = function (e) {
       )
     ) break;
     (n = parseInt(r)) < 0 ||
-      (a = GlobalData.optManager.GanttRowToBar(n)) &&
+      (a = T3Gv.optManager.GanttRowToBar(n)) &&
       o.push({
         slaveId: t.BlockID,
         masterId: a.BlockID
       })
   }
-  for (i = 0; i < o.length; i++) GlobalData.optManager.HasValidDependencyLine(o[i].masterId, o[i].slaveId) ? GlobalData.optManager.UpdateDependencyLine(e, - 1, o[i].masterId, o[i].slaveId) : GlobalData.optManager.AddDependencyLine(e, o[i].masterId, o[i].slaveId);
+  for (i = 0; i < o.length; i++) T3Gv.optManager.HasValidDependencyLine(o[i].masterId, o[i].slaveId) ? T3Gv.optManager.UpdateDependencyLine(e, - 1, o[i].masterId, o[i].slaveId) : T3Gv.optManager.AddDependencyLine(e, o[i].masterId, o[i].slaveId);
   return 0
 }
 
@@ -42003,7 +42003,7 @@ ListManager.LM.prototypeGanttSelectCell = function (e, t, a) {
     o,
     s,
     l = - 1,
-    S = GlobalData.optManager.GanttRecordToRow(t, a);
+    S = T3Gv.optManager.GanttRecordToRow(t, a);
   for (r = t.rows[S.rowIndex], i = 0; i < r.ncells; i++) if (
     t.cells[r.start + i].celltype === ListManager.Table.CellTypes.SDT_CT_GANTTTASK
   ) {
@@ -42022,12 +42022,12 @@ ListManager.LM.prototypeGanttSelectCell = function (e, t, a) {
 }
 
 ListManager.LM.prototypeGanttAddTask = function (e, t) {
-  GlobalData.optManager.ActiveVisibleZList();
+  T3Gv.optManager.ActiveVisibleZList();
   var a,
     r,
     i,
     n = this.GetObjectPtr(this.theTEDSessionBlockID, !1);
-  tLMB = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !1);
+  tLMB = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1);
   var o = [],
     s = [];
   if (
@@ -42035,7 +42035,7 @@ ListManager.LM.prototypeGanttAddTask = function (e, t) {
     - 1 != n.theActiveTextEditObjectID &&
     (this.DeactivateTextEdit(), !0),
     null != (
-      a = GlobalData.optManager.GetCurrentPlanningTable(ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART, !1, null)
+      a = T3Gv.optManager.GetCurrentPlanningTable(ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART, !1, null)
     )
   ) {
     if (
@@ -42051,7 +42051,7 @@ ListManager.LM.prototypeGanttAddTask = function (e, t) {
           S = Collab.BuildMessage(ConstantData.CollabMessages.GanttAddTask, l, !0, !0)
       }
       if (
-        (a = GlobalData.optManager.GetObjectPtr(i, !0)).GetGanttInfo(!0),
+        (a = T3Gv.optManager.GetObjectPtr(i, !0)).GetGanttInfo(!0),
         theTable = a.GetTable(!0),
         !((r = this.GanttCreateNewTask(a, theTable, e, a.datasetTableID)) < 0)
       ) {
@@ -42102,7 +42102,7 @@ ListManager.LM.prototypeGanttAddGanttBar = function (e, t, a) {
       x: 0,
       y: 0
     };
-  for (s = GlobalData.optManager.GetObjectPtr(e, !1), i = 0; i < t.rows[a].ncells; i++) if (
+  for (s = T3Gv.optManager.GetObjectPtr(e, !1), i = 0; i < t.rows[a].ncells; i++) if (
     (n = t.cells[t.rows[a].start + i]).celltype == ListManager.Table.CellTypes.SDT_CT_GANTT_DATEBLOCK_GRID
   ) {
     l = t.rows[a].start + i;
@@ -42111,7 +42111,7 @@ ListManager.LM.prototypeGanttAddGanttBar = function (e, t, a) {
   return l >= 0 &&
     (S.y = n.frame.y + s.inside.y, S.x = n.frame.x + s.inside.x),
     (r = this.GanttCreateBar(S, !1)) ? (
-      (o = GlobalData.optManager.GetObjectPtr(r, !0)).objecttype = ConstantData.ObjectTypes.SD_OBJT_GANTT_BAR,
+      (o = T3Gv.optManager.GetObjectPtr(r, !0)).objecttype = ConstantData.ObjectTypes.SD_OBJT_GANTT_BAR,
       o.datasetElemID = n.datarecordID,
       o.datasetID = s.datasetID,
       o.datasetType = s.datasetType,
@@ -42126,7 +42126,7 @@ ListManager.LM.prototypeGanttAddGanttBar = function (e, t, a) {
 }
 
 ListManager.LM.prototypeGanttDeleteTask = function (e, t, a, r, i) {
-  GlobalData.optManager.ActiveVisibleZList();
+  T3Gv.optManager.ActiveVisibleZList();
   var n,
     o,
     s,
@@ -42144,11 +42144,11 @@ ListManager.LM.prototypeGanttDeleteTask = function (e, t, a, r, i) {
         a = u.BlockID,
         r ||
         (
-          (u = GlobalData.optManager.GetObjectPtr(a, !0)).datasetElemID = - 1,
+          (u = T3Gv.optManager.GetObjectPtr(a, !0)).datasetElemID = - 1,
           u.objecttype = 0,
           i.push(a)
         )
-      ) : (u = GlobalData.optManager.GetObjectPtr(a, !0)).BlockID,
+      ) : (u = T3Gv.optManager.GetObjectPtr(a, !0)).BlockID,
     n = t.toString(),
     s = (
       l = ListManager.SDData.GetNumRows(
@@ -42233,7 +42233,7 @@ ListManager.LM.prototypeGanttDeleteTask = function (e, t, a, r, i) {
       ListManager.SDData.Defines.SDDATA_INDEX_ASC
     ),
       i.length > 0 &&
-      GlobalData.optManager.DeleteObjects(i)
+      T3Gv.optManager.DeleteObjects(i)
   }
   return p
 }
@@ -42252,7 +42252,7 @@ ListManager.LM.prototypeGanttRemoveTask = function () {
   if (
     - 1 != this.GetObjectPtr(this.theTEDSessionBlockID, !1).theActiveTextEditObjectID &&
     this.CloseEdit(!0, !1),
-    (t = GlobalData.optManager.Table_GetActiveID()) >= 0
+    (t = T3Gv.optManager.Table_GetActiveID()) >= 0
   ) {
     if (
       (e = this.GetObjectPtr(t, !1)) &&
@@ -42295,7 +42295,7 @@ ListManager.LM.prototypeGanttRemoveTask = function () {
 }
 
 ListManager.LM.prototypeGantt_HasDependency = function (e) {
-  var t = GlobalData.optManager.GetObjectPtr(e, !1),
+  var t = T3Gv.optManager.GetObjectPtr(e, !1),
     a = ListManager.SDData.GetValue(
       t.datasetElemID,
       ListManager.GanttFieldNameList[ListManager.GanttTaskFields.TASK_MASTER]
@@ -42388,8 +42388,8 @@ ListManager.LM.prototypeGanttScrollDateblock = function (e, t, a) {
   if (
     this.HideAllSVGSelectionStates(),
     null == e &&
-    GlobalData.optManager.RightClickParams &&
-    (e = this.GetObjectPtr(GlobalData.optManager.RightClickParams.TargetID)),
+    T3Gv.optManager.RightClickParams &&
+    (e = this.GetObjectPtr(T3Gv.optManager.RightClickParams.TargetID)),
     null != (
       e = e ||
       this.GetCurrentPlanningTable(ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART, !1)
@@ -42441,7 +42441,7 @@ ListManager.LM.prototypeGanttScrollDateblock = function (e, t, a) {
 ListManager.LM.prototypeGetDependencyLineStartX = function (e) {
   var t,
     a;
-  return a = (t = GlobalData.optManager.GetObjectPtr(e.hooks[0].objid)).Frame.x + t.Frame.width,
+  return a = (t = T3Gv.optManager.GetObjectPtr(e.hooks[0].objid)).Frame.x + t.Frame.width,
     t.StartArrowID,
     ListManager.ArrowHeadTypes.ARR_ROUND_END,
     a
@@ -42450,7 +42450,7 @@ ListManager.LM.prototypeGetDependencyLineStartX = function (e) {
 ListManager.LM.prototypeGetDependencyLineEndX = function (e) {
   var t,
     a;
-  return t = GlobalData.optManager.GetObjectPtr(e.hooks[1].objid),
+  return t = T3Gv.optManager.GetObjectPtr(e.hooks[1].objid),
     this.GanttIsDrawAsMilestone(t) ? a = t.Frame.x + t.Frame.width / 2 : (
       a = t.Frame.x + 10,
       t.sarrow,
@@ -42478,17 +42478,17 @@ ListManager.LM.prototypeGanttIsMilestone = function (e) {
 }
 
 ListManager.LM.prototypeGanttAdjustPinRect = function (e, t, a, r) {
-  var i = GlobalData.optManager.GetObjectPtr(e, !1);
+  var i = T3Gv.optManager.GetObjectPtr(e, !1);
   if (0 === i.hooks.length) return t;
-  var n = GlobalData.optManager.GetObjectPtr(i.hooks[0].objid, !1);
+  var n = T3Gv.optManager.GetObjectPtr(i.hooks[0].objid, !1);
   if (
     n &&
     n.objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART &&
     (
-      t = GlobalData.optManager.GanttGetDateFrame(n, a),
+      t = T3Gv.optManager.GanttGetDateFrame(n, a),
       a ||
       (t.y = i.Frame.y, t.height = 0),
-      GlobalData.optManager.Gantt_HasDependency(i.BlockID)
+      T3Gv.optManager.Gantt_HasDependency(i.BlockID)
     )
   ) {
     var o = i.Frame.x - t.x;
@@ -42516,16 +42516,16 @@ ListManager.LM.prototypeGanttAdjustBar = function (e, t) {
     D = ListManager.GanttTaskModes.TASK_MODE_END,
     g = !1;
   if (
-    (a = GlobalData.optManager.GetObjectPtr(e, !1)).hooks.length &&
-    (r = GlobalData.optManager.GetObjectPtr(a.hooks[0].objid, !1)),
+    (a = T3Gv.optManager.GetObjectPtr(e, !1)).hooks.length &&
+    (r = T3Gv.optManager.GetObjectPtr(a.hooks[0].objid, !1)),
     null != r &&
     null != (i = r.GetTable(!1)) &&
     !(
-      (n = GlobalData.optManager.GanttRecordToRow(i, a.datasetElemID).rowIndex) < 0
+      (n = T3Gv.optManager.GanttRecordToRow(i, a.datasetElemID).rowIndex) < 0
     )
   ) {
     p.push(a.datasetElemID);
-    var h = GlobalData.optManager.GanttGetDateblockFrame(
+    var h = T3Gv.optManager.GanttGetDateblockFrame(
       r,
       ListManager.Table.CellTypes.SDT_CT_GANTT_DATEBLOCK_GRID
     );
@@ -42535,7 +42535,7 @@ ListManager.LM.prototypeGanttAdjustBar = function (e, t) {
       ListManager.GanttFieldNameList[ListManager.GanttTaskFields.TASK_MASTER]
     ),
       C = !(!m || !m.length || '-1' == m);
-    if (0 === t) if ((c = GlobalData.optManager.GanttGetDropRow(r, i, a)) === n) {
+    if (0 === t) if ((c = T3Gv.optManager.GanttGetDropRow(r, i, a)) === n) {
       if (
         t = ConstantData.ActionTriggerType.LINESTART,
         D = ListManager.GanttTaskModes.TASK_MODE_START,
@@ -42547,7 +42547,7 @@ ListManager.LM.prototypeGanttAdjustBar = function (e, t) {
       case ConstantData.ActionTriggerType.LINESTART:
         if (C && !g) return;
         if (
-          s = GlobalData.optManager.Gantt_PositionToTime(r, i, a.Frame.x - h.x),
+          s = T3Gv.optManager.Gantt_PositionToTime(r, i, a.Frame.x - h.x),
           s = this.GanttGetBarSnapTime(r, s),
           (
             S = this.GanttGetDataValue(
@@ -42571,15 +42571,15 @@ ListManager.LM.prototypeGanttAdjustBar = function (e, t) {
             s >= (o = parseInt(S)) ? (
               s = o,
               D = ListManager.GanttTaskModes.TASK_MODE_START,
-              o = GlobalData.optManager.Gantt_PositionToTime(r, i, a.Frame.x + a.Frame.width - h.x),
+              o = T3Gv.optManager.Gantt_PositionToTime(r, i, a.Frame.x + a.Frame.width - h.x),
               o = this.GanttGetBarSnapTime(r, o),
               u = !0
             ) : (D = ListManager.GanttTaskModes.TASK_MODE_START, u = !0)
           ),
-          GlobalData.optManager.LinkParams &&
+          T3Gv.optManager.LinkParams &&
           (
-            GlobalData.optManager.LinkParams.ConnectIndex = - 1,
-            GlobalData.optManager.LinkParams.InitialHook = - 1
+            T3Gv.optManager.LinkParams.ConnectIndex = - 1,
+            T3Gv.optManager.LinkParams.InitialHook = - 1
           ),
           this.GanttUpdateDateField(
             r.BlockID,
@@ -42607,7 +42607,7 @@ ListManager.LM.prototypeGanttAdjustBar = function (e, t) {
       case ConstantData.ActionTriggerType.LINEEND:
         if (
           D = ListManager.GanttTaskModes.TASK_MODE_START,
-          o = GlobalData.optManager.Gantt_PositionToTime(r, i, a.Frame.x + a.Frame.width - h.x),
+          o = T3Gv.optManager.Gantt_PositionToTime(r, i, a.Frame.x + a.Frame.width - h.x),
           o = this.GanttGetBarSnapTime(r, o),
           (
             S = this.GanttGetDataValue(
@@ -42628,12 +42628,12 @@ ListManager.LM.prototypeGanttAdjustBar = function (e, t) {
           S.length &&
           (s = parseInt(S)) >= o &&
           (
-            GlobalData.optManager.LinkParams &&
+            T3Gv.optManager.LinkParams &&
             (
-              GlobalData.optManager.LinkParams.ConnectIndex = - 1,
-              GlobalData.optManager.LinkParams.InitialHook = - 1
+              T3Gv.optManager.LinkParams.ConnectIndex = - 1,
+              T3Gv.optManager.LinkParams.InitialHook = - 1
             ),
-            s = GlobalData.optManager.Gantt_PositionToTime(r, i, a.Frame.x - h.x),
+            s = T3Gv.optManager.Gantt_PositionToTime(r, i, a.Frame.x - h.x),
             s = this.GanttGetBarSnapTime(r, s),
             this.GanttUpdateDateField(
               r.BlockID,
@@ -42646,10 +42646,10 @@ ListManager.LM.prototypeGanttAdjustBar = function (e, t) {
               p
             )
           ),
-          GlobalData.optManager.LinkParams &&
+          T3Gv.optManager.LinkParams &&
           (
-            GlobalData.optManager.LinkParams.ConnectIndex = - 1,
-            GlobalData.optManager.LinkParams.InitialHook = - 1
+            T3Gv.optManager.LinkParams.ConnectIndex = - 1,
+            T3Gv.optManager.LinkParams.InitialHook = - 1
           ),
           this.GanttUpdateDateField(
             r.BlockID,
@@ -42669,7 +42669,7 @@ ListManager.LM.prototypeGanttAdjustBar = function (e, t) {
           throw y.name = '1',
           y
         }
-        s = GlobalData.optManager.Gantt_PositionToTime(r, i, a.Frame.x - h.x),
+        s = T3Gv.optManager.Gantt_PositionToTime(r, i, a.Frame.x - h.x),
           s = this.GanttGetBarSnapTime(r, s),
           (
             S = this.GanttGetDataValue(
@@ -42690,7 +42690,7 @@ ListManager.LM.prototypeGanttAdjustBar = function (e, t) {
             ListManager.GanttTaskModes.TASK_MODE_START,
             p
           ),
-          GlobalData.optManager.GanttFormat(r.BlockID, !0, !0, !0, null)
+          T3Gv.optManager.GanttFormat(r.BlockID, !0, !0, !0, null)
     }
   }
 }
@@ -42724,19 +42724,19 @@ ListManager.LM.prototypeGanttUpdateDataBasedOnPosition = function (e, t, a, r, i
     s = (y = this.GanttGetNonWorkingDays()).nonWorkingDays,
     (g = y.holidayMask) &&
     (T = this.LoadHolidays(!1), D = this.CountryNameFromHolidayMask(g)),
-    C = GlobalData.optManager.GanttGetDateblockFrame(
+    C = T3Gv.optManager.GanttGetDateblockFrame(
       e,
       ListManager.Table.CellTypes.SDT_CT_GANTT_DATEBLOCK_GRID
     ),
     Utils2.OffsetRect(C, e.Frame.x, e.Frame.y),
-    d = GlobalData.optManager.GanttGetDataValue(a, ListManager.Table.CellTypes.SDT_CT_GANTT_START),
+    d = T3Gv.optManager.GanttGetDataValue(a, ListManager.Table.CellTypes.SDT_CT_GANTT_START),
     S = parseInt(d),
-    l = GlobalData.optManager.GanttGetMode(t),
+    l = T3Gv.optManager.GanttGetMode(t),
     i ||
       n ? (
       l === ListManager.GanttTaskModes.TASK_MODE_END &&
-        i ? (m = r.x + r.width - C.x, L = GlobalData.optManager.Gantt_PositionToTime(e, t, m)) : (m = r.x - C.x, L = GlobalData.optManager.Gantt_PositionToTime(e, t, m)),
-      L = GlobalData.optManager.GanttGetBarSnapTime(e, L),
+        i ? (m = r.x + r.width - C.x, L = T3Gv.optManager.Gantt_PositionToTime(e, t, m)) : (m = r.x - C.x, L = T3Gv.optManager.Gantt_PositionToTime(e, t, m)),
+      L = T3Gv.optManager.GanttGetBarSnapTime(e, L),
       this.PlanningTableIsWithinScrollArea(e, S) ||
       (L = S)
     ) : L = S,
@@ -42827,7 +42827,7 @@ ListManager.LM.prototypeGanttUpdateDataBasedOnPosition = function (e, t, a, r, i
 ListManager.LM.prototypeGantt_PositionToTime = function (e, t, a) {
   var r,
     i;
-  return (r = e.GetGanttInfo()) ? (i = GlobalData.optManager.GanttGetTimeFromOffset(r, a, !1)) < 0 ? - 1 : i : - 1
+  return (r = e.GetGanttInfo()) ? (i = T3Gv.optManager.GanttGetTimeFromOffset(r, a, !1)) < 0 ? - 1 : i : - 1
 }
 
 ListManager.LM.prototypeGanttGetBarSnapTime = function (e, t) {
@@ -42835,7 +42835,7 @@ ListManager.LM.prototypeGanttGetBarSnapTime = function (e, t) {
     r,
     i;
   return a = Utils2.SDRLocalTime(t),
-    GlobalData.optManager.PlanningTableIsShowingGranularity(e, - 1, ListManager.TimeAmounts.OneHourNS) ? (
+    T3Gv.optManager.PlanningTableIsShowingGranularity(e, - 1, ListManager.TimeAmounts.OneHourNS) ? (
       i = a.wSecond >= 30,
       r = ListManager.TimeAmounts.OneMinNS,
       a.wSecond = a.wMilliseconds = 0
@@ -42936,7 +42936,7 @@ ListManager.LM.prototypePlanningTableIsWithinScrollArea = function (e, t) {
             d
           ),
           (f = this.GanttRowToBar(D)) &&
-          GlobalData.optManager.SetLinkFlag(f.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
+          T3Gv.optManager.SetLinkFlag(f.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
           h = Number(d - 1).toString(),
           c = ListManager.SDData.UpdateValue(
             D,
@@ -42952,7 +42952,7 @@ ListManager.LM.prototypePlanningTableIsWithinScrollArea = function (e, t) {
           d
         ),
         (f = this.GanttRowToBar(D)) &&
-        GlobalData.optManager.SetLinkFlag(f.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
+        T3Gv.optManager.SetLinkFlag(f.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
         h = Number(d + 1).toString(),
         c = ListManager.SDData.UpdateValue(
           D,
@@ -42972,7 +42972,7 @@ ListManager.LM.prototypePlanningTableIsWithinScrollArea = function (e, t) {
         ) >= 0 &&
         (
           (f = this.GanttRowToBar(D)) &&
-          GlobalData.optManager.SetLinkFlag(f.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
+          T3Gv.optManager.SetLinkFlag(f.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
           h = Number(d + 1).toString(),
           c = ListManager.SDData.UpdateValue(
             D,
@@ -42999,7 +42999,7 @@ ListManager.LM.prototypePlanningTableIsWithinScrollArea = function (e, t) {
             d
           ),
           (f = this.GanttRowToBar(D)) &&
-          GlobalData.optManager.SetLinkFlag(f.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
+          T3Gv.optManager.SetLinkFlag(f.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
           h = Number(d - 1).toString(),
           c = ListManager.SDData.UpdateValue(
             D,
@@ -43236,7 +43236,7 @@ ListManager.LM.prototypeGanttIndent = function (e, t) {
     g = !1,
     h = null,
     m = (
-      GlobalData.optManager.ActiveVisibleZList(),
+      T3Gv.optManager.ActiveVisibleZList(),
       this.GetObjectPtr(this.theTEDSessionBlockID, !1)
     ),
     C = [],
@@ -43246,12 +43246,12 @@ ListManager.LM.prototypeGanttIndent = function (e, t) {
     - 1 != m.theActiveTextEditObjectID &&
     this.DeactivateTextEdit(!1),
     null != (
-      a = GlobalData.optManager.GetCurrentPlanningTable(ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART, !1, null)
+      a = T3Gv.optManager.GetCurrentPlanningTable(ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART, !1, null)
     )
   ) {
     if (
       a.BlockID,
-      GlobalData.optManager.GetActiveLayerIndex() != GlobalData.optManager.FindLayerForShapeID(a.BlockID)
+      T3Gv.optManager.GetActiveLayerIndex() != T3Gv.optManager.FindLayerForShapeID(a.BlockID)
     ) return 0;
     if (!(r = a.GetTable())) return 0;
     for (
@@ -43310,7 +43310,7 @@ ListManager.LM.prototypeGanttIndent = function (e, t) {
       (p = this.GanttFormat(a.BlockID, g, !0, !1, null)),
       Collab.AllowMessage() &&
       Collab.SendMessage(L),
-      GlobalData.optManager.CompleteOperation(),
+      T3Gv.optManager.CompleteOperation(),
       p
   }
   Utils2.Alert(Resources.Strings.NoCellsSelected)
@@ -43382,7 +43382,7 @@ ListManager.LM.prototypeGanttSortTasks = function (e, t, a) {
     S;
   if (
     a ||
-    GlobalData.optManager.CloseEdit(),
+    T3Gv.optManager.CloseEdit(),
     n = this.GetCurrentPlanningTable(ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART, !1)
   ) {
     var c,
@@ -43438,7 +43438,7 @@ ListManager.LM.prototypeGanttSortTasks = function (e, t, a) {
     this.GanttFormat(n.BlockID, !1, !0, !1, null),
       Collab.AllowMessage() &&
       Collab.SendMessage(c),
-      GlobalData.optManager.CompleteOperation()
+      T3Gv.optManager.CompleteOperation()
   } else Utils2.Alert(Resources.Strings.SelectGantt)
 }
 
@@ -43451,7 +43451,7 @@ ListManager.LM.prototypeGetAssigneeList = function (e, t) {
     s,
     l,
     S = [],
-    c = GlobalData.optManager.GetObjectPtr(e, !1);
+    c = T3Gv.optManager.GetObjectPtr(e, !1);
   if (!c) return null;
   for (
     l = ListManager.SDData.GetNumRows(c.datasetTableID, '', ''),
@@ -43574,8 +43574,8 @@ ListManager.LM.prototypePlanningTableSetTimeScale = function (e, t, a) {
     p = null;
   if (
     null == e &&
-    GlobalData.optManager.RightClickParams &&
-    (e = this.GetObjectPtr(GlobalData.optManager.RightClickParams.TargetID)),
+    T3Gv.optManager.RightClickParams &&
+    (e = this.GetObjectPtr(T3Gv.optManager.RightClickParams.TargetID)),
     c = e ||
     this.GetCurrentPlanningTable(t, !1)
   ) {
@@ -43631,8 +43631,8 @@ ListManager.LM.prototypePlanningTableSetTimeScale = function (e, t, a) {
         null
       ),
       this.PlanningTableUpdateRange(c, c.objecttype, u, !0),
-      GlobalData.optManager.RenderDirtySVGObjects(),
-      GlobalData.optManager.GanttUpdateDependencyLines(c),
+      T3Gv.optManager.RenderDirtySVGObjects(),
+      T3Gv.optManager.GanttUpdateDependencyLines(c),
       Collab.AllowMessage()
     ) {
       var d = {
@@ -43699,30 +43699,30 @@ ListManager.LM.prototypeGanttGetTimePref = function () {
   var e;
   return (e = this.GetTimePreference()) == ListManager.ClockTypes.SDAUTOTIME &&
     (
-      e = Utils2.GetActiveDateFormat(GlobalData.optManager.theContentHeader.dateformat) == ListManager.DateCodes.SDUSDATE ? ListManager.ClockTypes.SD12HOURTIME : ListManager.ClockTypes.SD24HOURTIME
+      e = Utils2.GetActiveDateFormat(T3Gv.optManager.theContentHeader.dateformat) == ListManager.DateCodes.SDUSDATE ? ListManager.ClockTypes.SD12HOURTIME : ListManager.ClockTypes.SD24HOURTIME
     ),
     e
 }
 
 ListManager.LM.prototypeShowGanttScroll = function (e, t) {
-  var a = GlobalData.optManager.GetObjectPtr(e);
+  var a = T3Gv.optManager.GetObjectPtr(e);
   if (
     a &&
     !SDUI.Commands.MainController.Dropdowns.IsDropdownVisible(Resources.Controls.Dropdowns.GanttScroll.Id)
   ) {
-    GlobalData.optManager.RightClickParams = new ListManager.RightClickData,
-      GlobalData.optManager.RightClickParams.TargetID = e;
-    var r = GlobalData.optManager.GanttGetDateblockFrame(
+    T3Gv.optManager.RightClickParams = new ListManager.RightClickData,
+      T3Gv.optManager.RightClickParams.TargetID = e;
+    var r = T3Gv.optManager.GanttGetDateblockFrame(
       a,
       ListManager.Table.CellTypes.SDT_CT_GANTT_DATEBLOCK_TITLE
     ),
       i = a.trect.x + r.x + r.width / 2 - 200,
       n = r.y + a.Frame.y,
       o = (
-        GlobalData.optManager.svgObjectLayer.GetElementByID(a.BlockID),
-        GlobalData.docHandler.DocObject().ConvertDocToWindowCoords(i, n)
+        T3Gv.optManager.svgObjectLayer.GetElementByID(a.BlockID),
+        T3Gv.docHandler.DocObject().ConvertDocToWindowCoords(i, n)
       );
-    o.y < GlobalData.docHandler.hRulerDoc.docInfo.dispY &&
+    o.y < T3Gv.docHandler.hRulerDoc.docInfo.dispY &&
       (o.y = 170),
       o.x < 0 &&
       (o.x = 20),
@@ -43749,7 +43749,7 @@ ListManager.LM.prototypeHideGanttScroll = function (e, t, a) {
     x: i,
     y: posy
   },
-    o = (theSVGGroup = GlobalData.optManager.svgObjectLayer.GetElementByID(e)).GetElementByID(ConstantData.SVGElementClass.GANTTGRIDHOTSPOT).GetRBox();
+    o = (theSVGGroup = T3Gv.optManager.svgObjectLayer.GetElementByID(e)).GetElementByID(ConstantData.SVGElementClass.GANTTGRIDHOTSPOT).GetRBox();
   Utils2.InflateRect(o, - 2, - 2),
     Utils2.pointInRect(o, n) ||
     SDUI.Commands.MainController.Dropdowns.HideDropdown(Resources.Controls.Dropdowns.GanttScroll.Id)
@@ -43760,7 +43760,7 @@ ListManager.LM.prototypeGanttSetPercentCompleteEffectOnBar = function (e, t, a) 
     i,
     n,
     o,
-    s = GlobalData.optManager.ActiveVisibleZList(),
+    s = T3Gv.optManager.ActiveVisibleZList(),
     l = null,
     S = null,
     c = 0,
@@ -43781,7 +43781,7 @@ ListManager.LM.prototypeGanttSetPercentCompleteEffectOnBar = function (e, t, a) 
   if (m && 0 !== m.length) {
     if (o = parseInt(m), !isNaN(o) && 0 !== o) {
       for (i = s.length, r = 0; r < i; r++) if (
-        (l = GlobalData.optManager.GetObjectPtr(s[r], !1)).objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART &&
+        (l = T3Gv.optManager.GetObjectPtr(s[r], !1)).objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART &&
         l.datasetTableID === e.datasetTableID
       ) {
         S = l.GetGanttInfo();
@@ -43795,12 +43795,12 @@ ListManager.LM.prototypeGanttSetPercentCompleteEffectOnBar = function (e, t, a) 
               e.datasetElemID,
               ListManager.GanttFieldNameList[ListManager.GanttTaskFields.TASK_START]
             ),
-            d = GlobalData.optManager.GanttGetVirtualOffset(S, n.toString()),
+            d = T3Gv.optManager.GanttGetVirtualOffset(S, n.toString()),
             n = ListManager.SDData.GetValue(
               e.datasetElemID,
               ListManager.GanttFieldNameList[ListManager.GanttTaskFields.TASK_END]
             ),
-            u = d + o / 100 * ((D = GlobalData.optManager.GanttGetVirtualOffset(S, n.toString())) - d),
+            u = d + o / 100 * ((D = T3Gv.optManager.GanttGetVirtualOffset(S, n.toString())) - d),
             u -= S.scrollOffset,
             p = this.GanttGetDateblockWidth(
               l,
@@ -43845,7 +43845,7 @@ ListManager.LM.prototypeSetTaskResourceData = function (e, t) {
   );
   var a = ListManager.SDData.GetTableIDForRow(e),
     r = ListManager.SDData.GetDataSetID(a);
-  GlobalData.optManager.TM_AssignPersonToTask(t, r, e)
+  T3Gv.optManager.TM_AssignPersonToTask(t, r, e)
 }
 
 ListManager.LM.prototypePlanningTableUpdateUserPreferredRange = function (e, t, a, r, i) {
@@ -43853,13 +43853,13 @@ ListManager.LM.prototypePlanningTableUpdateUserPreferredRange = function (e, t, 
     o,
     s,
     l = ListManager.GanttTaskModes.TASK_MODE_START;
-  if (!(n = null != e ? e : GlobalData.optManager.GetCurrentPlanningTable(t, !0))) return - 1;
+  if (!(n = null != e ? e : T3Gv.optManager.GetCurrentPlanningTable(t, !0))) return - 1;
   if (!(o = n.GetGanttInfo())) return - 1;
   o.configuredStart = a.firstsecs,
     o.configuredEnd = a.lastsecs,
     l = ListManager.GanttTaskModes.TASK_MODE_START;
   var S;
-  return S = GlobalData.optManager.PlanningTableGetTimeInfo(e, ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART, !0),
+  return S = T3Gv.optManager.PlanningTableGetTimeInfo(e, ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART, !0),
     (i || r != S.dtTasksStart) &&
     (
       s = ListManager.SDData.GetRow(
@@ -43869,7 +43869,7 @@ ListManager.LM.prototypePlanningTableUpdateUserPreferredRange = function (e, t, 
         0
       )
     ) >= 0 &&
-    GlobalData.optManager.GanttUpdateDateField(
+    T3Gv.optManager.GanttUpdateDateField(
       n.BlockID,
       n.datasetTableID,
       s,
@@ -43886,7 +43886,7 @@ ListManager.LM.prototypeShapeStyleToData = function (e, t) {
   var a;
   (a = Resources.FindStyle(e.StyleRecord.Name)) &&
     (
-      a = GlobalData.optManager.GanttStoreStyleExceptions(t, a, e.StyleRecord.Fill)
+      a = T3Gv.optManager.GanttStoreStyleExceptions(t, a, e.StyleRecord.Fill)
     )
 }
 
@@ -43993,12 +43993,12 @@ ListManager.LM.prototypeGanttRefreshEndDates = function (e, t, a) {
     a ||
     (
       a = {},
-      S = GlobalData.optManager.GanttGetNonWorkingDays(),
+      S = T3Gv.optManager.GanttGetNonWorkingDays(),
       a.nonworkdays = S.nonWorkingDays,
       S.holidayMask &&
       (
-        a.holidayptr = GlobalData.optManager.LoadHolidays(!1),
-        a.country = GlobalData.optManager.CountryNameFromHolidayMask(S.holidayMask)
+        a.holidayptr = T3Gv.optManager.LoadHolidays(!1),
+        a.country = T3Gv.optManager.CountryNameFromHolidayMask(S.holidayMask)
       )
     ),
     l = ListManager.SDData.GetNumRows(
@@ -44033,7 +44033,7 @@ ListManager.LM.prototypeGanttRefreshEndDates = function (e, t, a) {
 
 ListManager.LM.prototypeSetGanttEndDate = function (e, t, a, r) {
   var i = ListManager.SDData.GetTableIDForRow(t);
-  return GlobalData.optManager.GanttUpdateDateField(
+  return T3Gv.optManager.GanttUpdateDateField(
     e,
     i,
     t,
@@ -44127,9 +44127,9 @@ ListManager.LM.prototypeInitializeGanttObject = function (e, t, a) {
       e.TextAlign = 'center',
       null != t.FillColor &&
       (a.BarColor = t.FillColor),
-      GlobalData.optManager.Table_Create(e.BlockID, h, n, e.TextGrow, !0);
+      T3Gv.optManager.Table_Create(e.BlockID, h, n, e.TextGrow, !0);
     var m = e.GetTable(!0);
-    for (s = 0; s < l; s++) GlobalData.optManager.Table_JoinVertically(e, m, s, 0, 1);
+    for (s = 0; s < l; s++) T3Gv.optManager.Table_JoinVertically(e, m, s, 0, 1);
     if (null != a.GanttColumns) for (l = a.GanttColumns.length, c = 0; c < l; c++) if (a.GanttColumns[c].Name === VS.GanttChartColumnNames.DateGrid) {
       for (s = 0; s < n; s++) if (
         i[s].celltype === r.SDT_CT_GANTT_DATEBLOCK_GRID &&
@@ -44160,11 +44160,11 @@ ListManager.LM.prototypeInitializeGanttObject = function (e, t, a) {
         null == t.TextSize &&
         (p.Text.FontSize = 12),
         i[s].Name.length &&
-        (p.DataID = GlobalData.optManager.CreateTextBlock(e, i[s].Name)),
+        (p.DataID = T3Gv.optManager.CreateTextBlock(e, i[s].Name)),
         d = i[s].width - p.frame.width,
-        GlobalData.optManager.theActionTable = m,
-        D = GlobalData.optManager.Table_GrowColumn(e, m, s, d, e.TextGrow, !0, !1, !0),
-        GlobalData.optManager.theActionTable = null,
+        T3Gv.optManager.theActionTable = m,
+        D = T3Gv.optManager.Table_GrowColumn(e, m, s, d, e.TextGrow, !0, !1, !0),
+        T3Gv.optManager.theActionTable = null,
         (g = Utils1.DeepCopy(e)).trect.width = D.x,
         g.trect.height = D.y,
         g.TRectToFrame(g.trect, !0),
@@ -44181,9 +44181,9 @@ ListManager.LM.prototypeInitializeGanttObject = function (e, t, a) {
     y.scrollStart = Utils2.SDRtime(null),
       y.scrollEnd = y.scrollStart + ListManager.TimeAmounts.OneDayNS,
       e.SetGanttInfo(y),
-      GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLayersManagerBlockID, !0).layers[0].layertype = ConstantData.LayerTypes.SD_LAYERT_GANTT,
-      GlobalData.optManager.AddPlanningDataSet(e),
-      GlobalData.optManager.GanttInsertTaskRecord(y, !1, e.datasetTableID, - 1, 0),
+      T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !0).layers[0].layertype = ConstantData.LayerTypes.SD_LAYERT_GANTT,
+      T3Gv.optManager.AddPlanningDataSet(e),
+      T3Gv.optManager.GanttInsertTaskRecord(y, !1, e.datasetTableID, - 1, 0),
       gProjectChartManager.ReadJSONAPI(a, !0)
   }
 }
@@ -44193,21 +44193,21 @@ ListManager.LM.prototypeUpdateProjectOptions = function (e, t, a, r) {
     n = !1;
   if (
     r ||
-    GlobalData.optManager.CloseEdit(),
+    T3Gv.optManager.CloseEdit(),
     Collab.AllowMessage() &&
     Collab.BeginSecondaryEdit(),
-    i = GlobalData.optManager.GetCurrentPlanningTable(ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART, !0),
-    GlobalData.optManager.Gantt_HideandShowColumns(i.BlockID, e),
-    a != GlobalData.optManager.GanttGetNonWorkingDays().holidayMask &&
-    (GlobalData.optManager.theContentHeader.holidaymask = a, n = !0),
-    GlobalData.optManager.theContentHeader.nonworkingdays != t &&
+    i = T3Gv.optManager.GetCurrentPlanningTable(ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART, !0),
+    T3Gv.optManager.Gantt_HideandShowColumns(i.BlockID, e),
+    a != T3Gv.optManager.GanttGetNonWorkingDays().holidayMask &&
+    (T3Gv.optManager.theContentHeader.holidaymask = a, n = !0),
+    T3Gv.optManager.theContentHeader.nonworkingdays != t &&
     (n = !0),
-    GlobalData.optManager.theContentHeader.nonworkingdays = t,
+    T3Gv.optManager.theContentHeader.nonworkingdays = t,
     n &&
     i &&
     (
-      GlobalData.optManager.GanttRefreshEndDates(i.datasetTableID, - 1),
-      GlobalData.optManager.GanttFormat(i.BlockID, !1, !1, !1, null)
+      T3Gv.optManager.GanttRefreshEndDates(i.datasetTableID, - 1),
+      T3Gv.optManager.GanttFormat(i.BlockID, !1, !1, !1, null)
     ),
     Collab.AllowMessage()
   ) {
@@ -44218,17 +44218,17 @@ ListManager.LM.prototypeUpdateProjectOptions = function (e, t, a, r) {
     };
     Collab.BuildMessage(ConstantData.CollabMessages.UpdateProjectOptions, o, !1)
   }
-  GlobalData.optManager.CompleteOperation(null)
+  T3Gv.optManager.CompleteOperation(null)
 }
 
 ListManager.LM.prototypeUpdateProjectTimeframe = function (e, t, a, r) {
   if (
     r ||
-    GlobalData.optManager.CloseEdit(),
+    T3Gv.optManager.CloseEdit(),
     Collab.AllowMessage() &&
     Collab.BeginSecondaryEdit(),
-    obj = GlobalData.optManager.GetCurrentPlanningTable(ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART, !0),
-    GlobalData.optManager.PlanningTableUpdateUserPreferredRange(obj, ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART, e, t, a),
+    obj = T3Gv.optManager.GetCurrentPlanningTable(ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART, !0),
+    T3Gv.optManager.PlanningTableUpdateUserPreferredRange(obj, ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART, e, t, a),
     Collab.AllowMessage()
   ) {
     var i = {
@@ -44238,7 +44238,7 @@ ListManager.LM.prototypeUpdateProjectTimeframe = function (e, t, a, r) {
     i.range = Utils1.DeepCopy(e),
       Collab.BuildMessage(ConstantData.CollabMessages.UpdateProjectTimeframe, i, !1)
   }
-  GlobalData.optManager.CompleteOperation(null)
+  T3Gv.optManager.CompleteOperation(null)
 },
   ListManager.GanttDefines = {
     GANTT_NONWORKING_STYLE: 'Style14',
@@ -44334,7 +44334,7 @@ ListManager.LM.prototypeDataSaveField = function (e, t, a, r, i, n) {
       (p = 261),
       (o = Utils1.DeepCopy(u)).length > p &&
       (o = o.substr(0, p));
-    var U = this.DataParseValue(o, d, GlobalData.optManager.theContentHeader.dateformat);
+    var U = this.DataParseValue(o, d, T3Gv.optManager.theContentHeader.dateformat);
     if (0 != U.result) return r >= 0 ? (!0, v = null) : v = '',
       this.GanttFormat(e.BlockID, !1, !1, !1, null),
       v;
@@ -44349,7 +44349,7 @@ ListManager.LM.prototypeDataSaveField = function (e, t, a, r, i, n) {
         n.SetText(v),
         (R = n.GetUserData()) &&
         (
-          GlobalData.optManager.GetObjectPtr(R, !0).runtimeText = n.GetRuntimeText()
+          T3Gv.optManager.GetObjectPtr(R, !0).runtimeText = n.GetRuntimeText()
         )
       ),
       r >= 0
@@ -44357,13 +44357,13 @@ ListManager.LM.prototypeDataSaveField = function (e, t, a, r, i, n) {
       case ListManager.Table.CellTypes.SDT_CT_MEETINGDATE:
         - 2 == (
           A = (
-            b = this.GanttDueDateCheck(r, C, GlobalData.optManager.theContentHeader.dateformat, !0)
+            b = this.GanttDueDateCheck(r, C, T3Gv.optManager.theContentHeader.dateformat, !0)
           ).result
         ) &&
           (
             o = b.sformat,
             A = (
-              U = this.DataParseValue(o, d, GlobalData.optManager.theContentHeader.dateformat)
+              U = this.DataParseValue(o, d, T3Gv.optManager.theContentHeader.dateformat)
             ).result,
             C = U.timevalue,
             F = !0
@@ -44376,12 +44376,12 @@ ListManager.LM.prototypeDataSaveField = function (e, t, a, r, i, n) {
         switch (h) {
           case ListManager.GanttTaskModes.TASK_MODE_START:
           case ListManager.GanttTaskModes.TASK_MODE_BOTH:
-            var J = this.GanttEndRangeCheck(e, t, r, C, i, GlobalData.optManager.theContentHeader.dateformat, v);
+            var J = this.GanttEndRangeCheck(e, t, r, C, i, T3Gv.optManager.theContentHeader.dateformat, v);
             - 2 == (A = J.result) &&
               (
                 o = J.sformat,
                 A = (
-                  U = this.DataParseValue(o, d, GlobalData.optManager.theContentHeader.dateformat)
+                  U = this.DataParseValue(o, d, T3Gv.optManager.theContentHeader.dateformat)
                 ).result,
                 C = U.timevalue,
                 F = !0
@@ -44394,12 +44394,12 @@ ListManager.LM.prototypeDataSaveField = function (e, t, a, r, i, n) {
         switch (h) {
           case ListManager.GanttTaskModes.TASK_MODE_END:
           case ListManager.GanttTaskModes.TASK_MODE_BOTH:
-            var x = this.GanttStartRangeCheck(t, r, C, i, GlobalData.optManager.theContentHeader.dateformat, v);
+            var x = this.GanttStartRangeCheck(t, r, C, i, T3Gv.optManager.theContentHeader.dateformat, v);
             - 2 == (A = x.result) &&
               (
                 o = x.sformat,
                 A = (
-                  U = this.DataParseValue(o, d, GlobalData.optManager.theContentHeader.dateformat)
+                  U = this.DataParseValue(o, d, T3Gv.optManager.theContentHeader.dateformat)
                 ).result,
                 C = U.timevalue,
                 F = !0
@@ -44420,14 +44420,14 @@ ListManager.LM.prototypeDataSaveField = function (e, t, a, r, i, n) {
             (o = o && o.length && !isNaN(o) ? '100' : '', n && (v = o, F = !0))
           )
     } else if (i === ListManager.Table.CellTypes.SDT_CT_MEETINGDATE) A = (
-      b = this.GanttDueDateCheck(- 1, C, GlobalData.optManager.theContentHeader.dateformat, !0)
+      b = this.GanttDueDateCheck(- 1, C, T3Gv.optManager.theContentHeader.dateformat, !0)
     ).result,
       v = b.sresult;
     if (0 === A) {
       if (
         e.BlockID,
         _ = e.objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART &&
-        GlobalData.optManager.FindLayerForShapeID(e.BlockID) === GlobalData.optManager.GetActiveLayerIndex(),
+        T3Gv.optManager.FindLayerForShapeID(e.BlockID) === T3Gv.optManager.GetActiveLayerIndex(),
         r < 0
       ) return null;
       switch (i) {
@@ -44540,7 +44540,7 @@ ListManager.LM.prototypeDataSaveField = function (e, t, a, r, i, n) {
     if (
       e.BlockID,
       _ = e.objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART &&
-      GlobalData.optManager.FindLayerForShapeID(e.BlockID) === GlobalData.optManager.GetActiveLayerIndex(),
+      T3Gv.optManager.FindLayerForShapeID(e.BlockID) === T3Gv.optManager.GetActiveLayerIndex(),
       r >= 0
     ) {
       if (g) {
@@ -44575,8 +44575,8 @@ ListManager.LM.prototypeDataSaveField = function (e, t, a, r, i, n) {
                 o.toUpperCase() != u.toUpperCase()
               ) &&
               (
-                (c = GlobalData.optManager.TM_GetPersonRow(u, D)) < 0 ||
-                !GlobalData.optManager.TM_IsPersonFlagSet(c, ListManager.PersonTableFlags.SF_LF_FROM_TRELLO)
+                (c = T3Gv.optManager.TM_GetPersonRow(u, D)) < 0 ||
+                !T3Gv.optManager.TM_IsPersonFlagSet(c, ListManager.PersonTableFlags.SF_LF_FROM_TRELLO)
               )
             ) return Collab.IsProcessingMessage() ||
               setTimeout(
@@ -44588,7 +44588,7 @@ ListManager.LM.prototypeDataSaveField = function (e, t, a, r, i, n) {
                 200
               ),
               A = ListManager.SDData.UpdateValue(r, s, ''),
-              GlobalData.optManager.TM_AssignPersonToTask('', D, - 1),
+              T3Gv.optManager.TM_AssignPersonToTask('', D, - 1),
               ''
         }
         A = ListManager.SDData.UpdateValue(r, s, u)
@@ -44596,17 +44596,17 @@ ListManager.LM.prototypeDataSaveField = function (e, t, a, r, i, n) {
         (A = ListManager.SDDataUpdateValue(r, s, u));
       switch (i) {
         case ListManager.Table.CellTypes.SDT_CT_GANTT_RESOURCE:
-          GlobalData.optManager.TM_AddNewPerson(u, D),
-            A = GlobalData.optManager.TM_AssignPersonToTask(u, D, r);
+          T3Gv.optManager.TM_AddNewPerson(u, D),
+            A = T3Gv.optManager.TM_AssignPersonToTask(u, D, r);
           break;
         case ListManager.Table.CellTypes.SDT_CT_PERSON:
-          GlobalData.optManager.TM_AddNewPerson(u, D),
-            A = GlobalData.optManager.TM_AssignPersonToTask(u, D, - 1);
+          T3Gv.optManager.TM_AddNewPerson(u, D),
+            A = T3Gv.optManager.TM_AssignPersonToTask(u, D, - 1);
           break;
         case ListManager.Table.CellTypes.SDT_CT_MEETINGTASK:
           this.UpdateMeetingTaskLabels(u, r, i)
       }
-    } else if (i === ListManager.Table.CellTypes.SDT_CT_PERSON) A = GlobalData.optManager.TM_AssignPersonToTask(u, D, - 1)
+    } else if (i === ListManager.Table.CellTypes.SDT_CT_PERSON) A = T3Gv.optManager.TM_AssignPersonToTask(u, D, - 1)
   } else if (r >= 0 && s) {
     if (
       o = '',
@@ -44970,8 +44970,8 @@ ListManager.LM.prototypeGanttBarToRow = function (e, t) {
       dropRowIndex: - 1
     };
   if (
-    S = (l = GlobalData.optManager.GetObjectPtr(e)).GetTable(),
-    (c = GlobalData.optManager.GetObjectPtr(t)).hooks.length &&
+    S = (l = T3Gv.optManager.GetObjectPtr(e)).GetTable(),
+    (c = T3Gv.optManager.GetObjectPtr(t)).hooks.length &&
     c.hooks[0].id == S.UniqueID &&
     c.hooks[0].cellindex >= 0 &&
     (a = c.hooks[0].cellindex) < S.cells.length &&
@@ -45032,10 +45032,10 @@ ListManager.LM.prototypeGanttRecordToRow = function (e, t) {
 ListManager.LM.prototypeGanttRowToBar = function (e, t) {
   var a,
     r,
-    i = GlobalData.optManager.ActiveVisibleZList();
+    i = T3Gv.optManager.ActiveVisibleZList();
   if (e < 0) return null;
   for (r = 0; r < i.length; r++) if (
-    (a = GlobalData.optManager.GetObjectPtr(i[r], t)) &&
+    (a = T3Gv.optManager.GetObjectPtr(i[r], t)) &&
     a.datasetElemID === e &&
     a.objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_BAR
   ) return a;
@@ -45047,11 +45047,11 @@ ListManager.LM.prototypeGanttRowToTopic = function (e) {
   var t,
     a,
     r,
-    i = GlobalData.optManager.ActiveVisibleZList(),
-    n = GlobalData.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1);
+    i = T3Gv.optManager.ActiveVisibleZList(),
+    n = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1);
   for (t = 0; t < i.length; t++) if (
-    a = GlobalData.optManager.GetObjectPtr(i[t], !1),
-    r = GlobalData.optManager.FindLayerForShapeID(a.BlockID),
+    a = T3Gv.optManager.GetObjectPtr(i[t], !1),
+    r = T3Gv.optManager.FindLayerForShapeID(a.BlockID),
     a.datasetElemID === e &&
     a instanceof ListManager.BaseShape &&
     r >= 0 &&
@@ -45297,8 +45297,8 @@ ListManager.LM.prototypeGanttTimeToString = function (e) {
 ListManager.LM.prototypeGanttGetNonWorkingDays = function () {
   ConstantData.Defines.DEFAULT_NONWORKINGDAYS;
   return {
-    nonWorkingDays: GlobalData.optManager.theContentHeader.nonworkingdays,
-    holidayMask: GlobalData.optManager.theContentHeader.holidaymask
+    nonWorkingDays: T3Gv.optManager.theContentHeader.nonworkingdays,
+    holidayMask: T3Gv.optManager.theContentHeader.holidaymask
   }
 }
 
@@ -45366,7 +45366,7 @@ ListManager.LM.prototypeGanttCreateBar = function (e, t) {
     a = this.AddNewObject(r, !1, !0),
     Collab.AddNewBlockToSecondary(a),
     r.CalcFrame(),
-    GlobalData.optManager.AddToDirtyList(a),
+    T3Gv.optManager.AddToDirtyList(a),
     a
 }
 
@@ -45451,7 +45451,7 @@ ListManager.LM.prototypeAddPersonFields = function (e) {
 ListManager.LM.prototypeDataAddNotesToRecord = function (e, t) {
   var a = '';
   e >= 0 &&
-    (a = GlobalData.objectStore.GetObject(e, !1).Data.runtimeText.text);
+    (a = T3Gv.objectStore.GetObject(e, !1).Data.runtimeText.text);
   return ListManager.SDData.UpdateValue(
     t,
     ListManager.GanttFieldNameList[ListManager.GanttTaskFields.TASK_NOTES],
@@ -45510,12 +45510,12 @@ ListManager.LM.prototypeGanttUpdateNotes = function (e, t) {
     ) &&
     a.length
   ) if (e.NoteID >= 0) {
-    var i = GlobalData.optManager.GetObjectPtr(e.NoteID, !0);
+    var i = T3Gv.optManager.GetObjectPtr(e.NoteID, !0);
     i &&
-      GlobalData.optManager.SetTextBlock(i, a, r)
-  } else e.NoteID = GlobalData.optManager.AddObjectNoteBlock(a, r);
+      T3Gv.optManager.SetTextBlock(i, a, r)
+  } else e.NoteID = T3Gv.optManager.AddObjectNoteBlock(a, r);
   else if (e.NoteID >= 0) {
-    var n = GlobalData.objectStore.GetObject(e.NoteID);
+    var n = T3Gv.objectStore.GetObject(e.NoteID);
     n &&
       n.Delete(),
       e.NoteID = - 1
@@ -45545,7 +45545,7 @@ ListManager.LM.prototypeCommitConnector = function (e, t, a, r, i, n, o, s, l) {
     y = SDJS.ConnectorDefines.SEDA_NSkip,
     f = ListManager.Table.CellTypes.SDT_CT_GANTTTASK;
   for (
-    u = (g = GlobalData.optManager.GetObjectPtr(t, !1)).arraylist.hook.length,
+    u = (g = T3Gv.optManager.GetObjectPtr(t, !1)).arraylist.hook.length,
     n >= 0 &&
     (
       m = g.extraflags & ConstantData.ExtraFlags.SEDE_CollapseConn ? '1' : '0',
@@ -45559,7 +45559,7 @@ ListManager.LM.prototypeCommitConnector = function (e, t, a, r, i, n, o, s, l) {
     S < u;
     S++
   ) if ((p = g.arraylist.hook[S].id) >= 0) {
-    if ('' !== (D = GlobalData.optManager.GetObjectPtr(p, !0)).ImageURL) continue;
+    if ('' !== (D = T3Gv.optManager.GetObjectPtr(p, !0)).ImageURL) continue;
     if (
       (h = D.GetTable(!1)) &&
       (
@@ -45572,10 +45572,10 @@ ListManager.LM.prototypeCommitConnector = function (e, t, a, r, i, n, o, s, l) {
       D.datasetTableID = r,
       D.datasetElemID < 0 &&
       (
-        D.datasetElemID = GlobalData.optManager.GanttInsertTaskRecord(e, !1, r, n, S - y - 1 + l)
+        D.datasetElemID = T3Gv.optManager.GanttInsertTaskRecord(e, !1, r, n, S - y - 1 + l)
       ),
-      GlobalData.optManager.DataAddNotesToRecord(D.NoteID, D.datasetElemID),
-      C = GlobalData.optManager.SetRowHierarchy(D.datasetElemID, S - y + l, n)
+      T3Gv.optManager.DataAddNotesToRecord(D.NoteID, D.datasetElemID),
+      C = T3Gv.optManager.SetRowHierarchy(D.datasetElemID, S - y + l, n)
     ) return C;
     if (
       C = ListManager.SDData.SetIndexColumn(
@@ -45585,10 +45585,10 @@ ListManager.LM.prototypeCommitConnector = function (e, t, a, r, i, n, o, s, l) {
       )
     ) return C;
     if (
-      GlobalData.optManager.TextToTaskData(D, D.datasetElemID),
-      GlobalData.optManager.FieldToPersonData(D, a, D.datasetElemID),
+      T3Gv.optManager.TextToTaskData(D, D.datasetElemID),
+      T3Gv.optManager.FieldToPersonData(D, a, D.datasetElemID),
       m = '',
-      iconIndex = GlobalData.optManager.GetShapeIcon(D),
+      iconIndex = T3Gv.optManager.GetShapeIcon(D),
       iconIndex >= 0 &&
       (m = iconIndex.toString()),
       C = ListManager.SDData.UpdateValue(
@@ -45598,7 +45598,7 @@ ListManager.LM.prototypeCommitConnector = function (e, t, a, r, i, n, o, s, l) {
       )
     ) return C;
     if (
-      GlobalData.optManager.ShapeStyleToData(D, D.datasetElemID),
+      T3Gv.optManager.ShapeStyleToData(D, D.datasetElemID),
       0 === o &&
       (
         C = ListManager.SDData.UpdateValue(
@@ -45608,8 +45608,8 @@ ListManager.LM.prototypeCommitConnector = function (e, t, a, r, i, n, o, s, l) {
         )
       )
     ) return C;
-    (c = GlobalData.optManager.FindChildArray(p, - 1, - 1)) >= 0 &&
-      GlobalData.optManager.CommitConnector(e, c, a, r, i, D.datasetElemID, o + 1, s, 0)
+    (c = T3Gv.optManager.FindChildArray(p, - 1, - 1)) >= 0 &&
+      T3Gv.optManager.CommitConnector(e, c, a, r, i, D.datasetElemID, o + 1, s, 0)
   }
   return C
 }
@@ -45617,7 +45617,7 @@ ListManager.LM.prototypeCommitConnector = function (e, t, a, r, i, n, o, s, l) {
 ListManager.LM.prototypeFieldToPersonData = function (e, t, a) {
   var r;
   null != (
-    r = GlobalData.optManager.GetFieldTextPtr(e, ListManager.Table.CellTypes.SDT_CT_PERSON)
+    r = T3Gv.optManager.GetFieldTextPtr(e, ListManager.Table.CellTypes.SDT_CT_PERSON)
   ) &&
     (
       r == Resources.ReplaceTextStrings[Resources.ReplaceTextStrings.Indexes.PersonClick] &&
@@ -45632,7 +45632,7 @@ ListManager.LM.prototypeFieldToPersonData = function (e, t, a) {
           ListManager.GanttFieldNameList[ListManager.GanttTaskFields.TASK_RESOURCE],
           r
         ),
-        '' === r ? GlobalData.optManager.TM_UnAssignPersonToTask(a) : GlobalData.optManager.TM_AssignPersonToTask(r, t, a)
+        '' === r ? T3Gv.optManager.TM_UnAssignPersonToTask(a) : T3Gv.optManager.TM_AssignPersonToTask(r, t, a)
       )
     )
 }
@@ -45641,7 +45641,7 @@ ListManager.LM.prototypeTM_AssignPersonToTask = function (e, t, a, r) {
   var i,
     n,
     o;
-  if (- 1, (n = GlobalData.optManager.TM_GetPersonRow(e, t, - 1, !0)) && n >= 0) {
+  if (- 1, (n = T3Gv.optManager.TM_GetPersonRow(e, t, - 1, !0)) && n >= 0) {
     if (
       o = ListManager.SDData.GetValue(
         n,
@@ -45708,7 +45708,7 @@ ListManager.LM.prototypeTM_UnAssignPersonToTask = function (e, t) {
 
 ListManager.LM.prototypeTM_AddNewPerson = function (e, t) {
   var a;
-  return !(a = GlobalData.optManager.TM_GetPersonRow(e, t, undefined, !0)) ||
+  return !(a = T3Gv.optManager.TM_GetPersonRow(e, t, undefined, !0)) ||
     a < 0 ? - 1 : a
 }
 
@@ -45734,7 +45734,7 @@ ListManager.LM.prototypeTM_GetPersonRowByID = function (e, t, a, r, i, n) {
   }
   return !c &&
     i &&
-    (l = GlobalData.optManager.TM_AddPerson(a, t, o, r, e)) >= 0 &&
+    (l = T3Gv.optManager.TM_AddPerson(a, t, o, r, e)) >= 0 &&
     (
       c = !0,
       n &&
@@ -45790,7 +45790,7 @@ ListManager.LM.prototypeTM_GetPersonRow = function (e, t, a, r) {
     }
     if (!r) return S ? o : - 1;
     S ||
-      (o = GlobalData.optManager.TM_AddPerson(t, e, i, a)) >= 0 &&
+      (o = T3Gv.optManager.TM_AddPerson(t, e, i, a)) >= 0 &&
       (S = !0)
   }
   return o >= 0 &&
@@ -45848,7 +45848,7 @@ ListManager.LM.prototypeGetFieldTextPtr = function (e, t) {
   for (var r = 0; r < a.cells.length; r++) if (a.cells[r].celltype === t) {
     if (!(a.cells[r].DataID >= 0)) return '';
     if (
-      textObj = GlobalData.objectStore.GetObject(a.cells[r].DataID),
+      textObj = T3Gv.objectStore.GetObject(a.cells[r].DataID),
       textObj &&
       textObj.Data &&
       textObj.Data.runtimeText &&
@@ -45885,7 +45885,7 @@ ListManager.LM.prototypeUpdateGanttTaskIcons = function (e) {
     ) return - 1;
     if (
       i = s.length > 0 ? parseInt(s) : 0,
-      n = GlobalData.optManager.GetTaskIcon(r, i),
+      n = T3Gv.optManager.GetTaskIcon(r, i),
       0 != (
         o = ListManager.SDData.UpdateValue(
           r,
@@ -46116,13 +46116,13 @@ ListManager.LM.prototypeSDData_Transfer = function (e, t, a) {
       var t,
         a,
         r,
-        i = GlobalData.optManager.ZList();
+        i = T3Gv.optManager.ZList();
       for (r = e.length, t = i.length, a = 0; a < t - r; a++) if (
-        GlobalData.optManager.GetObjectPtr(i[a], !1).objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART
+        T3Gv.optManager.GetObjectPtr(i[a], !1).objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART
       ) return i[a];
       return null
     },
-    C = GlobalData.optManager.IsPlanningDocument();
+    C = T3Gv.optManager.IsPlanningDocument();
   C === ConstantData.LayerTypes.SD_LAYERT_MINDMAP &&
     ListManager.TaskMap.CommitVisualOutline(e);
   var y,
@@ -46171,13 +46171,13 @@ ListManager.LM.prototypeSDData_Transfer = function (e, t, a) {
       o.objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_BAR
     ) {
       if (!C && D < 0) {
-        var T = GlobalData.optManager.GetCurrentPlanningTable(ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART, !1, null, !0);
+        var T = T3Gv.optManager.GetCurrentPlanningTable(ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART, !1, null, !0);
         T &&
           (D = T.datasetID, f = u = T.BlockID)
       }
       o.extraflags = Utils2.SetFlag(o.extraflags, ConstantData.ExtraFlags.SEDE_NoDelete, !1)
     } else o instanceof ListManager.GroupSymbol &&
-      GlobalData.optManager.SDData_Transfer(o.ShapesInGroup, t, a);
+      T3Gv.optManager.SDData_Transfer(o.ShapesInGroup, t, a);
     g(o, c)
   } else h(o, c),
     f = m(e),
@@ -46199,8 +46199,8 @@ ListManager.LM.prototypeSDData_Transfer = function (e, t, a) {
     ),
     d.length
   ) {
-    var b = GlobalData.optManager.GanttAddtoDelete,
-      M = GlobalData.optManager.AddtoDelete;
+    var b = T3Gv.optManager.GanttAddtoDelete,
+      M = T3Gv.optManager.AddtoDelete;
     this.GanttAddtoDelete = function () {
     },
       this.AddtoDelete = function () {
@@ -46208,10 +46208,10 @@ ListManager.LM.prototypeSDData_Transfer = function (e, t, a) {
     var P = ListManager.TaskMap.CommitVisualOutline;
     ListManager.TaskMap.CommitVisualOutline = function () {
     },
-      GlobalData.optManager.CloseEdit(),
-      GlobalData.optManager.DeleteSelectedObjectsCommon(d, !0),
-      GlobalData.optManager.GanttAddtoDelete = b,
-      GlobalData.optManager.AddtoDelete = M,
+      T3Gv.optManager.CloseEdit(),
+      T3Gv.optManager.DeleteSelectedObjectsCommon(d, !0),
+      T3Gv.optManager.GanttAddtoDelete = b,
+      T3Gv.optManager.AddtoDelete = M,
       ListManager.TaskMap.CommitVisualOutline = P
   }
   var R = c.length;
@@ -46222,13 +46222,13 @@ ListManager.LM.prototypeSDData_Transfer = function (e, t, a) {
   switch (C) {
     case ConstantData.LayerTypes.SD_LAYERT_GANTT:
       if (u < 0 && A >= 0) u = this.GetCurrentPlanningTable(ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART, !0, A).BlockID;
-      GlobalData.optManager.GanttFormat(u, !1, !0, !0, null);
+      T3Gv.optManager.GanttFormat(u, !1, !0, !0, null);
       break;
     case ConstantData.LayerTypes.SD_LAYERT_MINDMAP:
       ListManager.TaskMap.FormatMindMap();
       break;
     default:
-      if (f > 0) GlobalData.optManager.GanttFormat(f, !1, !0, !0, null);
+      if (f > 0) T3Gv.optManager.GanttFormat(f, !1, !0, !0, null);
       else if (L >= 0) {
         var _ = ListManager.SDData.GetRow(
           A,
@@ -46237,14 +46237,14 @@ ListManager.LM.prototypeSDData_Transfer = function (e, t, a) {
           0
         );
         if (_ >= 0) {
-          var E = GlobalData.optManager.GanttRowToBar(_);
+          var E = T3Gv.optManager.GanttRowToBar(_);
           E &&
             (
-              (E = GlobalData.optManager.GetObjectPtr(E.BlockID, !0)).extraflags = Utils2.SetFlag(E.extraflags, ConstantData.ExtraFlags.SEDE_NoDelete, !0)
+              (E = T3Gv.optManager.GetObjectPtr(E.BlockID, !0)).extraflags = Utils2.SetFlag(E.extraflags, ConstantData.ExtraFlags.SEDE_NoDelete, !0)
             )
         }
-        GlobalData.optManager.AddSVGObject(0, L, !0, !1),
-          GlobalData.optManager.GanttFormat(L, !1, !0, !0, null)
+        T3Gv.optManager.AddSVGObject(0, L, !0, !1),
+          T3Gv.optManager.GanttFormat(L, !1, !0, !0, null)
       }
   }
 },
@@ -46288,10 +46288,10 @@ ListManager.LM.prototypeSDData_Transfer = function (e, t, a) {
       r,
       i,
       n,
-      o = GlobalData.optManager.ZListPreserve(),
+      o = T3Gv.optManager.ZListPreserve(),
       s = ConstantData.ObjectTypes,
       l = !1;
-    for (t = o.length, a = 0; a < t; a++) if (i = o[a], r = GlobalData.optManager.GetObjectPtr(i, !1)) {
+    for (t = o.length, a = 0; a < t; a++) if (i = o[a], r = T3Gv.optManager.GetObjectPtr(i, !1)) {
       switch (r.objecttype) {
         case s.SD_OBJT_GANTT_CHART:
           l = !0;
@@ -46312,13 +46312,13 @@ ListManager.LM.prototypeSDData_Transfer = function (e, t, a) {
     i < 0 &&
       (
         i = ListManager.SDData.AddTable(a, ListManager.DataTableNames.PLANNING_TASKS),
-        GlobalData.optManager.AddPlanningFields(i)
+        T3Gv.optManager.AddPlanningFields(i)
       );
     var n = ListManager.SDData.GetTableID(a, ListManager.DataTableNames.PERSONTABLE, !1);
     return n < 0 &&
       (
         n = ListManager.SDData.AddTable(a, ListManager.DataTableNames.PERSONTABLE),
-        GlobalData.optManager.AddPersonFields(n)
+        T3Gv.optManager.AddPersonFields(n)
       ),
       i
   },
@@ -46354,15 +46354,15 @@ ListManager.LM.prototypeSDData_Transfer = function (e, t, a) {
       parentid: - 1,
       index: 0
     };
-    if ((a = GlobalData.optManager.GetTargetSelect()) >= 0) switch ((r = GlobalData.optManager.GetObjectPtr(a, !1)).objecttype) {
+    if ((a = T3Gv.optManager.GetTargetSelect()) >= 0) switch ((r = T3Gv.optManager.GetObjectPtr(a, !1)).objecttype) {
       case S.SD_OBJT_GANTT_BAR:
         s = r.datasetElemID;
         break;
       case S.SD_OBJT_GANTT_CHART:
-        if (GlobalData.optManager.Table_GetActiveID() === a) {
+        if (T3Gv.optManager.Table_GetActiveID() === a) {
           var u = r.GetTable(!1);
           if (u) {
-            var p = GlobalData.optManager.Table_GetSelectedRange(u);
+            var p = T3Gv.optManager.Table_GetSelectedRange(u);
             p.rowstart >= 0 &&
               (s = u.cells[u.rows[p.rowend].start + 1].datarecordID)
           }
@@ -46370,13 +46370,13 @@ ListManager.LM.prototypeSDData_Transfer = function (e, t, a) {
         break;
       default:
         r.hooks.length &&
-          (i = GlobalData.optManager.GetObjectPtr(r.hooks[0].objid, !1)) &&
+          (i = T3Gv.optManager.GetObjectPtr(r.hooks[0].objid, !1)) &&
           i.objecttype === S.SD_OBJT_MINDMAP_CONNECTOR &&
           (s = r.datasetElemID)
     }
     s >= 0 &&
       (
-        - 1 == (o = GlobalData.optManager.GanttGetParentID(s)) ? (o = s, l = 0) : (
+        - 1 == (o = T3Gv.optManager.GanttGetParentID(s)) ? (o = s, l = 0) : (
           l = 0,
           (
             n = ListManager.SDData.GetValue(
@@ -46402,7 +46402,7 @@ ListManager.LM.prototypeSDData_Transfer = function (e, t, a) {
       s,
       l,
       S,
-      c = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theContentHeader.SDDataID, !0).SDData;
+      c = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theContentHeader.SDDataID, !0).SDData;
     if (
       null != (l = t.Index[i]) &&
       e[a] &&
@@ -46516,7 +46516,7 @@ ListManager.LM.prototypeSDData_Transfer = function (e, t, a) {
             ListManager.GanttFieldNameList[ListManager.GanttTaskFields.ROW_FIELD],
             p
           ),
-          c = GlobalData.optManager.GanttGetParentID(S),
+          c = T3Gv.optManager.GanttGetParentID(S),
           void 0 === (u = e[t].DataTableMap[i].DataElementMap[c]) &&
           (
             u = w.parentid,
@@ -46929,10 +46929,10 @@ ListManager.LM.prototypeBuildAssignmentMenu = function () {
     boundingRect = {},
     viewportBottom = - 1;
   var g = null,
-    h = GlobalData.optManager.Table_GetActiveID();
+    h = T3Gv.optManager.Table_GetActiveID();
   if (
     !(h < 0 || null == h) &&
-    (u = GlobalData.optManager.GetObjectPtr(h)) &&
+    (u = T3Gv.optManager.GetObjectPtr(h)) &&
     (i = u.GetTable()) &&
     !((n = i.select) < 0 || null == n)
   ) {
@@ -46951,8 +46951,8 @@ ListManager.LM.prototypeBuildAssignmentMenu = function () {
         u.subtype === ConstantData.ObjectSubTypes.SD_SUBT_TASK ||
         u.subtype === ConstantData.ObjectSubTypes.SD_SUBT_TASKMAP
       )
-    ) for (l = (g = GlobalData.optManager.ActiveVisibleZList()).length, e = 0; e < l; e++) if (
-      (p = GlobalData.optManager.GetObjectPtr(g[e], !1)).objecttype === ConstantData.ObjectTypes.SD_OBJT_MINDMAP_MAIN
+    ) for (l = (g = T3Gv.optManager.ActiveVisibleZList()).length, e = 0; e < l; e++) if (
+      (p = T3Gv.optManager.GetObjectPtr(g[e], !1)).objecttype === ConstantData.ObjectTypes.SD_OBJT_MINDMAP_MAIN
     ) {
       d = p.datasetID;
       break
@@ -46980,11 +46980,11 @@ ListManager.LM.prototypeBuildAssignmentMenu = function () {
         (
           !r ||
           !ListManager.Trello.AllowIntegrationWithTrello() ||
-          GlobalData.optManager.TM_IsPersonFlagSet(S, ListManager.PersonTableFlags.SF_LF_FROM_TRELLO)
+          T3Gv.optManager.TM_IsPersonFlagSet(S, ListManager.PersonTableFlags.SF_LF_FROM_TRELLO)
         ) &&
         (
-          !GlobalData.optManager.AssignmentMenuFilter ||
-          0 == D.toUpperCase().indexOf(GlobalData.optManager.AssignmentMenuFilter.toUpperCase())
+          !T3Gv.optManager.AssignmentMenuFilter ||
+          0 == D.toUpperCase().indexOf(T3Gv.optManager.AssignmentMenuFilter.toUpperCase())
         )
       ) {
         for (c = !1, l = resources.length, t = 0; t < l; t++) if (D.toUpperCase() == resources[t].toUpperCase()) {
@@ -47001,7 +47001,7 @@ ListManager.LM.prototypeBuildAssignmentMenu = function () {
       menuList.appendChild(m),
         m.innerHTML = '<a href="#" onclick="SD_Click(event, \'SD_Gantt_Assign\')" ' + Constants.Attr_GanttAssign + '="' + resources[e] + '">' + resources[e] + '</a>'
     }
-    return cellWindowCoords = GlobalData.docHandler.DocObject().ConvertDocToWindowCoords(u.trect.x + i.cells[n].frame.x, u.trect.y + i.cells[n].frame.y),
+    return cellWindowCoords = T3Gv.docHandler.DocObject().ConvertDocToWindowCoords(u.trect.x + i.cells[n].frame.x, u.trect.y + i.cells[n].frame.y),
       menuList.style.top = cellWindowCoords.y + i.cells[n].frame.height + 'px',
       boundingRect = menuList.getBoundingClientRect(),
       viewportBottom = window.innerHeight ||
@@ -47019,7 +47019,7 @@ ListManager.LM.prototypeBuildAssignmentMenu = function () {
       ),
       this,
       setTimeout((function () {
-        GlobalData.optManager.AssignmentMenuFilter = ''
+        T3Gv.optManager.AssignmentMenuFilter = ''
       }), 500),
       !1
   }
@@ -47030,20 +47030,20 @@ ListManager.LM.prototypeGanttAssign = function (e) {
     a = null,
     r = - 1,
     i = - 1,
-    n = GlobalData.optManager.svgDoc.GetActiveEdit();
+    n = T3Gv.optManager.svgDoc.GetActiveEdit();
   if (n) {
     n.SetText(e);
-    var o = GlobalData.optManager.Table_GetActiveID();
+    var o = T3Gv.optManager.Table_GetActiveID();
     if (o < 0) return;
-    if (!(t = GlobalData.optManager.GetObjectPtr(o, !1))) return;
+    if (!(t = T3Gv.optManager.GetObjectPtr(o, !1))) return;
     if (!(a = t.GetTable(!0))) return;
     if (!(r = n.GetUserData()) || r < 0) return;
-    if (!(i = GlobalData.optManager.Table_CellFromDataID(a, r)) || i < 0) return;
-    GlobalData.optManager.Table_ReformatText(t, a, 0, 0, [
+    if (!(i = T3Gv.optManager.Table_CellFromDataID(a, r)) || i < 0) return;
+    T3Gv.optManager.Table_ReformatText(t, a, 0, 0, [
       i
     ]),
-      GlobalData.optManager.AddToDirtyList(t.BlockID),
-      GlobalData.optManager.CloseEdit()
+      T3Gv.optManager.AddToDirtyList(t.BlockID),
+      T3Gv.optManager.CloseEdit()
   }
 }
 
@@ -47121,7 +47121,7 @@ ListManager.LM.prototypeShowFieldedDataTooltip = function (e, t, a) {
     a = a ||
     !0 === t,
     t &&
-    GlobalData.optManager.CloseEdit(!1, !1, !0),
+    T3Gv.optManager.CloseEdit(!1, !1, !0),
     i &&
     i.HasFieldData() &&
     (
@@ -47272,7 +47272,7 @@ ListManager.LM.prototypeHideFieldedDataTooltip = function (e, t) {
             T = ListManager.SDData.GetFieldedDataTableLock(t) ||
               ListManager.SDData.GetFieldedDataAutoUpdate(t),
             b = !this.ActiveDataTT.inEditMode ||
-              GlobalData.docHandler.IsReadOnly() ||
+              T3Gv.docHandler.IsReadOnly() ||
               T;
           if (
             b ? r.addClass('static') : r.removeClass('static'),
@@ -47379,7 +47379,7 @@ ListManager.LM.prototypeHideFieldedDataTooltip = function (e, t) {
             ),
             r.off('dblclick'),
             b &&
-            !GlobalData.docHandler.IsReadOnly() &&
+            !T3Gv.docHandler.IsReadOnly() &&
             r.on(
               'dblclick',
               (
@@ -47500,18 +47500,18 @@ ListManager.LM.prototypeInitFieldDataCtrl = function (e, t, a, r, i) {
           !o &&
           (
             n = parseInt(n, 10),
-            GlobalData.optManager.UpdateFieldedDataTooltipItem(n, r, i, s)
+            T3Gv.optManager.UpdateFieldedDataTooltipItem(n, r, i, s)
           )
       },
       beforeShow: function (e, t) {
         t.dpDiv &&
           $(t.dpDiv).addClass('ui-datepicker-fieldedData'),
-          GlobalData.optManager._curDatePickerElem = a
+          T3Gv.optManager._curDatePickerElem = a
       },
       onClose: function (e, t) {
         t.dpDiv &&
           $(t.dpDiv).removeClass('ui-datepicker-fieldedData'),
-          GlobalData.optManager._curDatePickerElem = null
+          T3Gv.optManager._curDatePickerElem = null
       }
     }),
       a.datepicker('widget').click(
@@ -47600,7 +47600,7 @@ ListManager.LM.prototypeFindShapeForFieldData = function (e, t) {
         s = 0;
         s < n.length &&
         (
-          l = GlobalData.optManager.GetObjectPtr(n[s], !1),
+          l = T3Gv.optManager.GetObjectPtr(n[s], !1),
           o ||
           (r = null),
           l.HasFieldDataRecord(e, t) ? a = {
@@ -47625,20 +47625,20 @@ ListManager.LM.prototypeClearShapesFieldData = function (e) {
   var t,
     a,
     r = this.ZList();
-  for (t = 0; t < r.length; t++) (a = GlobalData.optManager.GetObjectPtr(r[t], !1)).HasFieldDataForTable(e) &&
+  for (t = 0; t < r.length; t++) (a = T3Gv.optManager.GetObjectPtr(r[t], !1)).HasFieldDataForTable(e) &&
     (a.RemoveFieldData(!1, e), a.RefreshFromFieldData())
 }
 
 ListManager.LM.prototypeUpdateShapeTextWithFieldData = function (e) {
   var t,
     a = this.ZList();
-  for (t = 0; t < a.length; t++) GlobalData.optManager.GetObjectPtr(a[t], !1).RefreshFromFieldData(e)
+  for (t = 0; t < a.length; t++) T3Gv.optManager.GetObjectPtr(a[t], !1).RefreshFromFieldData(e)
 }
 
 ListManager.LM.prototypeUpdateShapesFromRuleChange = function (e, t) {
   var a,
     r = this.ZList();
-  for (a = 0; a < r.length; a++) GlobalData.optManager.GetObjectPtr(r[a], !1).RefreshFromRuleChange(e, t)
+  for (a = 0; a < r.length; a++) T3Gv.optManager.GetObjectPtr(r[a], !1).RefreshFromRuleChange(e, t)
 }
 
 ListManager.LM.prototypeCleanShapeDataHyperlink = function (e) {
@@ -47667,7 +47667,7 @@ ListManager.LM.prototypeSetShapeDataFromSDON = function (e, t, a) {
     var s = r.DataTable[0],
       l = ListManager.SDData.FieldedDataImportFromSDON(s);
     if (l) {
-      var S = GlobalData.optManager.GetObjectPtr(e, !0);
+      var S = T3Gv.optManager.GetObjectPtr(e, !0);
       S &&
         S.SetFieldDataRecord(l.tableID, l.recordID)
     }
@@ -47856,8 +47856,8 @@ ListManager.LM.prototypeSetShapeDataFromSDON = function (e, t, a) {
       o,
       s = ConstantData.ObjFlags.SEDO_Select;
     if (
-      n = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSelectedListBlockID, !1),
-      o = GlobalData.optManager.GetTargetSelect(),
+      n = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSelectedListBlockID, !1),
+      o = T3Gv.optManager.GetTargetSelect(),
       null == e
     ) {
       var l = Business.GetSelectionBusinessManager(o);
@@ -47868,11 +47868,11 @@ ListManager.LM.prototypeSetShapeDataFromSDON = function (e, t, a) {
         ListManager.TaskMap.CommitVisualOutline(),
         0 == l.SetSubprocessSelection(o)
       ) return !1;
-      for (a = (r = n.length) - 1; a >= 0; a--) (i = GlobalData.optManager.GetObjectPtr(n[a], !1)).IsSwimlane() &&
+      for (a = (r = n.length) - 1; a >= 0; a--) (i = T3Gv.optManager.GetObjectPtr(n[a], !1)).IsSwimlane() &&
         (i.flags = Utils2.SetFlag(i.flags, s, !1), n.splice(a, 1));
       if (
         o >= 0 &&
-        GlobalData.optManager.AddtoDelete(n, !0, !0),
+        T3Gv.optManager.AddtoDelete(n, !0, !0),
         Collab.AllowMessage() &&
         Collab.IsSecondary()
       ) {
@@ -47891,19 +47891,19 @@ ListManager.LM.prototypeSetShapeDataFromSDON = function (e, t, a) {
       o = e.Data.BlockID,
         n = Utils1.DeepCopy(e.Data.listtodelete)
     }
-    for (r = n.length, GlobalData.optManager.SetTargetSelect(o, !1), a = 0; a < r; a++) (
-      i = GlobalData.optManager.GetObjectPtr(n[a], !1 === SDUI.AppSettings.UseBackplane)
+    for (r = n.length, T3Gv.optManager.SetTargetSelect(o, !1), a = 0; a < r; a++) (
+      i = T3Gv.optManager.GetObjectPtr(n[a], !1 === SDUI.AppSettings.UseBackplane)
     ).DrawingObjectBaseClass !== ConstantData.DrawingObjectBaseClass.CONNECTOR &&
       (i.flags = Utils2.SetFlag(i.flags, s, !0));
     return !0 === SDUI.AppSettings.UseBackplane &&
       (
-        GlobalData.optManager.theContentHeader.ParentPageID = SDUI.SDBackplane.CurrentClientSession.PageID
+        T3Gv.optManager.theContentHeader.ParentPageID = SDUI.SDBackplane.CurrentClientSession.PageID
       ),
       e &&
       t &&
       (t.oldSelected = p, t.target = u),
       !1 === SDUI.AppSettings.UseBackplane &&
-      (GlobalData.optManager.PreserveUndoState(!1), SDF.SaveAllBlocks()),
+      (T3Gv.optManager.PreserveUndoState(!1), SDF.SaveAllBlocks()),
       !0
   },
   SDF.RestorePrepCreateSubProcess = function (e) {
@@ -47912,9 +47912,9 @@ ListManager.LM.prototypeSetShapeDataFromSDON = function (e, t, a) {
       r = e.oldSelected,
       i = r.length,
       n = ConstantData.ObjFlags.SEDO_Select;
-    for (GlobalData.optManager.SetTargetSelect(e.target, !1), t = 0; t < i; t++) (a = GlobalData.optManager.GetObjectPtr(r[t], !1)).DrawingObjectBaseClass !== ConstantData.DrawingObjectBaseClass.CONNECTOR &&
+    for (T3Gv.optManager.SetTargetSelect(e.target, !1), t = 0; t < i; t++) (a = T3Gv.optManager.GetObjectPtr(r[t], !1)).DrawingObjectBaseClass !== ConstantData.DrawingObjectBaseClass.CONNECTOR &&
       (a.flags = Utils2.SetFlag(a.flags, n, !1));
-    GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSelectedListBlockID, !1);
+    T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSelectedListBlockID, !1);
     Utils1.DeepCopy(r)
   },
   SDF.SubProcess_UpdateParent = function (e, t, a) {
@@ -47922,34 +47922,34 @@ ListManager.LM.prototypeSetShapeDataFromSDON = function (e, t, a) {
       i,
       n,
       o,
-      s = GlobalData.optManager.ActiveVisibleZList();
+      s = T3Gv.optManager.ActiveVisibleZList();
     i = s.length;
     var l,
       S = [],
       c = ConstantData.ObjFlags.SEDO_Select,
       u = [],
       p = function (a) {
-        if (n = GlobalData.optManager.GetObjectPtr(a, !0)) {
+        if (n = T3Gv.optManager.GetObjectPtr(a, !0)) {
           var r = n;
           if (
-            (l = GlobalData.optManager.SD_GetVisioTextChild(a)) >= 0 &&
-            (r = GlobalData.optManager.GetObjectPtr(l)),
+            (l = T3Gv.optManager.SD_GetVisioTextChild(a)) >= 0 &&
+            (r = T3Gv.optManager.GetObjectPtr(l)),
             null != t
           ) r.HyperlinkText = '/#' + t;
           else {
             var i = e;
             r.HyperlinkText = '/#Page ' + i.toString()
           }
-          GlobalData.optManager.AddToDirtyList(r.BlockID)
+          T3Gv.optManager.AddToDirtyList(r.BlockID)
         }
       };
     if (
-      o = null != a ? a.Data.BlockID : GlobalData.optManager.GetTargetSelect(),
+      o = null != a ? a.Data.BlockID : T3Gv.optManager.GetTargetSelect(),
       null == a
     ) {
-      if (o >= 0) for (p(o), r = 0; r < i; r++) if ((n = GlobalData.optManager.GetObjectPtr(s[r], !1)).flags & c) {
+      if (o >= 0) for (p(o), r = 0; r < i; r++) if ((n = T3Gv.optManager.GetObjectPtr(s[r], !1)).flags & c) {
         if (
-          (n = GlobalData.optManager.GetObjectPtr(s[r], !0)).flags = Utils2.SetFlag(n.flags, c, !1),
+          (n = T3Gv.optManager.GetObjectPtr(s[r], !0)).flags = Utils2.SetFlag(n.flags, c, !1),
           s[r] === l
         ) continue;
         n.DrawingObjectBaseClass !== ConstantData.DrawingObjectBaseClass.CONNECTOR &&
@@ -47970,8 +47970,8 @@ ListManager.LM.prototypeSetShapeDataFromSDON = function (e, t, a) {
       }
     } else S = Utils1.DeepCopy(a.Data.listtodelete),
       p(a.Data.BlockID);
-    if (GlobalData.optManager.DeleteSelectedObjectsCommon(S, !0, !1, !0), null == a) for (r = 0; r < i; r++) null != u[r] &&
-      ((n = GlobalData.optManager.GetObjectPtr(r, !1)).moreflags = u[r]);
+    if (T3Gv.optManager.DeleteSelectedObjectsCommon(S, !0, !1, !0), null == a) for (r = 0; r < i; r++) null != u[r] &&
+      ((n = T3Gv.optManager.GetObjectPtr(r, !1)).moreflags = u[r]);
     if (Collab.AllowMessage()) {
       var d = {
         BlockID: o,
@@ -47985,28 +47985,28 @@ ListManager.LM.prototypeSetShapeDataFromSDON = function (e, t, a) {
           !1
         )
     }
-    GlobalData.optManager.CompleteOperation()
+    T3Gv.optManager.CompleteOperation()
   },
   SDF.SubProcess_UpdateChild = function (e) {
     var t,
       a,
-      r = GlobalData.optManager.ActiveVisibleZList(),
+      r = T3Gv.optManager.ActiveVisibleZList(),
       i = r.length,
       n = ConstantData.ObjFlags.SEDO_Select,
       o = [],
-      s = GlobalData.optManager.GetTargetSelect(),
+      s = T3Gv.optManager.GetTargetSelect(),
       l = ConstantData.ObjectTypes;
-    GlobalData.objectStore.GetObject(GlobalData.optManager.theSelectedListBlockID).Data = [];
+    T3Gv.objectStore.GetObject(T3Gv.optManager.theSelectedListBlockID).Data = [];
     var S = Business.GetSelectionBusinessManager(s);
     for (
-      null == S ? S = GlobalData.gBusinessManager : (
-        GlobalData.optManager.theContentHeader.BusinessModule = SDJS_Business_GetModuleName(S),
-        GlobalData.gBusinessManager = S
+      null == S ? S = T3Gv.gBusinessManager : (
+        T3Gv.optManager.theContentHeader.BusinessModule = SDJS_Business_GetModuleName(S),
+        T3Gv.gBusinessManager = S
       ),
       t = 0;
       t < i;
       t++
-    ) if ((a = GlobalData.optManager.GetObjectPtr(r[t], !1)).flags & n || r[t] === s) (a = GlobalData.optManager.GetObjectPtr(r[t], !0)).flags = Utils2.SetFlag(a.flags, n, !1);
+    ) if ((a = T3Gv.optManager.GetObjectPtr(r[t], !1)).flags & n || r[t] === s) (a = T3Gv.optManager.GetObjectPtr(r[t], !0)).flags = Utils2.SetFlag(a.flags, n, !1);
       else if (
         a.DrawingObjectBaseClass !== ConstantData.DrawingObjectBaseClass.CONNECTOR
       ) {
@@ -48017,17 +48017,17 @@ ListManager.LM.prototypeSetShapeDataFromSDON = function (e, t, a) {
         o.push(r[t])
       }
     if (s >= 0) {
-      var c = GlobalData.gBusinessManager.RemoveParentConnector(s);
-      if (null != c && (o = o.concat(c)), a = GlobalData.optManager.GetObjectPtr(s, !0)) {
+      var c = T3Gv.gBusinessManager.RemoveParentConnector(s);
+      if (null != c && (o = o.concat(c)), a = T3Gv.optManager.GetObjectPtr(s, !0)) {
         var u = a,
-          p = GlobalData.optManager.SD_GetVisioTextChild(s);
+          p = T3Gv.optManager.SD_GetVisioTextChild(s);
         p >= 0 &&
-          (u = GlobalData.optManager.GetObjectPtr(p)),
+          (u = T3Gv.optManager.GetObjectPtr(p)),
           u.HyperlinkText = '/#' + e,
-          GlobalData.optManager.AddToDirtyList(u.BlockID)
+          T3Gv.optManager.AddToDirtyList(u.BlockID)
       }
       if (a.ParentFrameID >= 0) {
-        var d = GlobalData.optManager.GetObjectPtr(a.ParentFrameID, !1);
+        var d = T3Gv.optManager.GetObjectPtr(a.ParentFrameID, !1);
         if (d) {
           var D = d.moreflags;
           d.moreflags = Utils2.SetFlag(
@@ -48037,15 +48037,15 @@ ListManager.LM.prototypeSetShapeDataFromSDON = function (e, t, a) {
           )
         } else a.ParentFrameID = - 1
       }
-      GlobalData.optManager.AddtoDelete(o, !0, !0),
-        GlobalData.optManager.DeleteSelectedObjectsCommon(o),
-        GlobalData.optManager.SelectObjects([s], !1),
-        GlobalData.optManager.SetTargetSelect(s, !0),
+      T3Gv.optManager.AddtoDelete(o, !0, !0),
+        T3Gv.optManager.DeleteSelectedObjectsCommon(o),
+        T3Gv.optManager.SelectObjects([s], !1),
+        T3Gv.optManager.SetTargetSelect(s, !0),
         d &&
         (d.moreflags = D),
-        GlobalData.optManager.CenterOnPage(),
-        GlobalData.optManager.ResetStateManager(),
-        GlobalData.optManager.ClearFutureUndoStates()
+        T3Gv.optManager.CenterOnPage(),
+        T3Gv.optManager.ResetStateManager(),
+        T3Gv.optManager.ClearFutureUndoStates()
     }
   },
   SDF.ReOrderPages = function (e, t) {
@@ -48494,7 +48494,7 @@ ListManager.LM.prototypeTimeline_UnitsToStartAndEnd = function (e, t, a, r) {
       ListManager.TimelineFieldNameList[ListManager.NGTimelineFields.START],
       i
     );
-  var T = GlobalData.optManager.Timeline_GetStartTime(c, i);
+  var T = T3Gv.optManager.Timeline_GetStartTime(c, i);
   return ListManager.SDData.UpdateValue(
     e.datasetElemID,
     ListManager.TimelineFieldNameList[ListManager.NGTimelineFields.STARTTIME],
@@ -48555,7 +48555,7 @@ ListManager.LM.prototypeTimeline_SetScale = function (e, t, a) {
   ) {
     if (
       e.datasetID < 0 &&
-      GlobalData.optManager.Timeline_AddNGDataSet(e),
+      T3Gv.optManager.Timeline_AddNGDataSet(e),
       r = ListManager.SDData.GetValue(
         e.datasetElemID,
         ListManager.TimelineFieldNameList[ListManager.NGTimelineFields.AUTO]
@@ -48624,7 +48624,7 @@ ListManager.LM.prototypeTimeline_SetScale = function (e, t, a) {
       )
     );
     (!t && i || !a && !i) &&
-      GlobalData.optManager.Timeline_UnitsToStartAndEnd(e, m, u, p),
+      T3Gv.optManager.Timeline_UnitsToStartAndEnd(e, m, u, p),
       r = ListManager.SDData.GetValue(
         e.datasetElemID,
         ListManager.TimelineFieldNameList[ListManager.NGTimelineFields.LENGTH]
@@ -48705,22 +48705,22 @@ ListManager.LM.prototypeTimeline_SetScale = function (e, t, a) {
           (D += 1);
         var h = function (e, t, a) {
           if (t.DataID >= 0) {
-            var r = GlobalData.objectStore.GetObject(t.DataID);
+            var r = T3Gv.objectStore.GetObject(t.DataID);
             t.DataID = - 1,
               r &&
               r.Delete()
           }
-          if (- 1 === t.DataID) t.DataID = GlobalData.optManager.CreateTextBlock(e, a),
-            GlobalData.optManager.AddToDirtyList(e.BlockID);
+          if (- 1 === t.DataID) t.DataID = T3Gv.optManager.CreateTextBlock(e, a),
+            T3Gv.optManager.AddToDirtyList(e.BlockID);
           else {
-            var i = GlobalData.optManager.GetObjectPtr(t.DataID, !0);
-            GlobalData.optManager.SetTextBlock(i, a, null, t.just),
-              GlobalData.optManager.AddToDirtyList(e.BlockID)
+            var i = T3Gv.optManager.GetObjectPtr(t.DataID, !0);
+            T3Gv.optManager.SetTextBlock(i, a, null, t.just),
+              T3Gv.optManager.AddToDirtyList(e.BlockID)
           }
         };
         if (s && (s.cols.length !== D || t)) {
-          var m = GlobalData.optManager.Table_SetNumberofTitleColumns(e, s, d);
-          GlobalData.optManager.Table_SetNumberofColumns(e, s, D, m),
+          var m = T3Gv.optManager.Table_SetNumberofTitleColumns(e, s, d);
+          T3Gv.optManager.Table_SetNumberofColumns(e, s, D, m),
             function (t, a, r, i) {
               var n = 0,
                 s = 0,
@@ -48807,7 +48807,7 @@ ListManager.LM.prototypeTimeline_SetScale = function (e, t, a) {
                         (m.just = ConstantData.TextAlign.CENTER),
                         t.select = s,
                         h(e, m, b),
-                        GlobalData.optManager.Table_AlignTitleCellWithColumn(t, s - 1, M - 1),
+                        T3Gv.optManager.Table_AlignTitleCellWithColumn(t, s - 1, M - 1),
                         s++
                       ),
                       b = E.toString() + ':00'
@@ -48818,8 +48818,8 @@ ListManager.LM.prototypeTimeline_SetScale = function (e, t, a) {
                     t.select = M + i,
                     h(e, _, b),
                     _.starttime = d;
-                  t.cols = GlobalData.optManager.Table_BuildColumns(e, t, e.TextGrow),
-                    GlobalData.optManager.Table_BuildFills(e, t, e.StyleRecord.Fill);
+                  t.cols = T3Gv.optManager.Table_BuildColumns(e, t, e.TextGrow),
+                    T3Gv.optManager.Table_BuildFills(e, t, e.StyleRecord.Fill);
                   break;
                 case l.Day:
                   for (
@@ -48859,7 +48859,7 @@ ListManager.LM.prototypeTimeline_SetScale = function (e, t, a) {
                         (m.just = ConstantData.TextAlign.CENTER),
                         t.select = s,
                         h(e, m, b),
-                        GlobalData.optManager.Table_AlignTitleCellWithColumn(t, s - 1, M - 1),
+                        T3Gv.optManager.Table_AlignTitleCellWithColumn(t, s - 1, M - 1),
                         s++
                       ),
                       b = ' ' + I.toString()
@@ -48871,8 +48871,8 @@ ListManager.LM.prototypeTimeline_SetScale = function (e, t, a) {
                     h(e, _, b),
                     _.starttime = d;
                   t.select = - 1,
-                    t.cols = GlobalData.optManager.Table_BuildColumns(e, t, e.TextGrow),
-                    GlobalData.optManager.Table_BuildFills(e, t, e.StyleRecord.Fill);
+                    t.cols = T3Gv.optManager.Table_BuildColumns(e, t, e.TextGrow),
+                    T3Gv.optManager.Table_BuildFills(e, t, e.StyleRecord.Fill);
                   break;
                 case l.Week:
                   for (
@@ -48912,7 +48912,7 @@ ListManager.LM.prototypeTimeline_SetScale = function (e, t, a) {
                         (m.just = ConstantData.TextAlign.CENTER),
                         t.select = s,
                         h(e, m, b),
-                        GlobalData.optManager.Table_AlignTitleCellWithColumn(t, s - 1, M - 1),
+                        T3Gv.optManager.Table_AlignTitleCellWithColumn(t, s - 1, M - 1),
                         s++
                       ),
                       b = S[L] + ' ' + I.toString()
@@ -48924,8 +48924,8 @@ ListManager.LM.prototypeTimeline_SetScale = function (e, t, a) {
                     h(e, _, b),
                     _.starttime = d;
                   t.select = - 1,
-                    t.cols = GlobalData.optManager.Table_BuildColumns(e, t, e.TextGrow),
-                    GlobalData.optManager.Table_BuildFills(e, t, e.StyleRecord.Fill);
+                    t.cols = T3Gv.optManager.Table_BuildColumns(e, t, e.TextGrow),
+                    T3Gv.optManager.Table_BuildFills(e, t, e.StyleRecord.Fill);
                   break;
                 case l.Month:
                   for (
@@ -48959,7 +48959,7 @@ ListManager.LM.prototypeTimeline_SetScale = function (e, t, a) {
                       (m.just = ConstantData.TextAlign.CENTER),
                       t.select = s,
                       h(e, m, b),
-                      GlobalData.optManager.Table_AlignTitleCellWithColumn(t, s - 1, M - 1),
+                      T3Gv.optManager.Table_AlignTitleCellWithColumn(t, s - 1, M - 1),
                       s++
                     ),
                     b = S[L]
@@ -48971,8 +48971,8 @@ ListManager.LM.prototypeTimeline_SetScale = function (e, t, a) {
                     t.select = M + i,
                     h(e, _, b);
                   t.select = - 1,
-                    t.cols = GlobalData.optManager.Table_BuildColumns(e, t, e.TextGrow),
-                    GlobalData.optManager.Table_BuildFills(e, t, e.StyleRecord.Fill);
+                    t.cols = T3Gv.optManager.Table_BuildColumns(e, t, e.TextGrow),
+                    T3Gv.optManager.Table_BuildFills(e, t, e.StyleRecord.Fill);
                   break;
                 case l.Quarter:
                   for (
@@ -49006,7 +49006,7 @@ ListManager.LM.prototypeTimeline_SetScale = function (e, t, a) {
                       (m.just = ConstantData.TextAlign.CENTER),
                       t.select = s,
                       h(e, m, b),
-                      GlobalData.optManager.Table_AlignTitleCellWithColumn(t, s - 1, M - 1),
+                      T3Gv.optManager.Table_AlignTitleCellWithColumn(t, s - 1, M - 1),
                       s++
                     ),
                     b = c[T]
@@ -49072,7 +49072,7 @@ ListManager.LM.prototypeTimeline_SetScale = function (e, t, a) {
                   t.select = - 1
               }
             }(s, a, D, d),
-            s.cols = GlobalData.optManager.Table_BuildColumns(e, s, e.TextGrow);
+            s.cols = T3Gv.optManager.Table_BuildColumns(e, s, e.TextGrow);
           var C,
             y = {},
             f = !1;
@@ -49089,11 +49089,11 @@ ListManager.LM.prototypeTimeline_SetScale = function (e, t, a) {
             (
               y.RowProperties = [],
               (
-                C = GlobalData.optManager.VS_Table_GetRowProperties(S, VS.Timeline_RowIndexes.Year)
+                C = T3Gv.optManager.VS_Table_GetRowProperties(S, VS.Timeline_RowIndexes.Year)
               ) >= 0 &&
               (S[C].Index = c(S[C].Index, d > 0), y.RowProperties.push(S[C]), f = !0),
               (
-                C = GlobalData.optManager.VS_Table_GetRowProperties(S, VS.Timeline_RowIndexes.Date)
+                C = T3Gv.optManager.VS_Table_GetRowProperties(S, VS.Timeline_RowIndexes.Date)
               ) >= 0 &&
               (S[C].Index = c(S[C].Index, d > 0), y.RowProperties.push(S[C]), f = !0)
             ),
@@ -49108,16 +49108,16 @@ ListManager.LM.prototypeTimeline_SetScale = function (e, t, a) {
         r
       );
     var C = {};
-    GlobalData.optManager.Timeline_LinkEvents(e, i, C),
-      GlobalData.optManager.Timeline_AvoidGridOverlap(e, C) &&
+    T3Gv.optManager.Timeline_LinkEvents(e, i, C),
+      T3Gv.optManager.Timeline_AvoidGridOverlap(e, C) &&
       (
-        GlobalData.optManager.SetLinkFlag(e.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
-        GlobalData.optManager.UpdateLinks()
+        T3Gv.optManager.SetLinkFlag(e.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
+        T3Gv.optManager.UpdateLinks()
       ),
-      GlobalData.optManager.Timeline_AvoidRowOverlap(e, C) &&
+      T3Gv.optManager.Timeline_AvoidRowOverlap(e, C) &&
       (
-        GlobalData.optManager.SetLinkFlag(e.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
-        GlobalData.optManager.UpdateLinks()
+        T3Gv.optManager.SetLinkFlag(e.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
+        T3Gv.optManager.UpdateLinks()
       )
   }
 }
@@ -49130,8 +49130,8 @@ ListManager.LM.prototypeTimeline_AvoidRowOverlap = function (e, t) {
     o = !1,
     s = function (e) {
       this.eventid = e;
-      var t = GlobalData.optManager.GetObjectPtr(e, !1),
-        a = GlobalData.optManager.GetObjectPtr(t.associd, !1);
+      var t = T3Gv.optManager.GetObjectPtr(e, !1),
+        a = T3Gv.optManager.GetObjectPtr(t.associd, !1);
       if (a) {
         var r = Utils1.DeepCopy(a.r);
         this.r = r
@@ -49154,9 +49154,9 @@ ListManager.LM.prototypeTimeline_AvoidRowOverlap = function (e, t) {
         g = t.length;
       for (let e = 0; e < g; e++) {
         let r = t[e],
-          i = GlobalData.optManager.GetObjectPtr(r.eventid);
+          i = T3Gv.optManager.GetObjectPtr(r.eventid);
         if (75 !== i.r.height) {
-          var h = GlobalData.optManager.svgObjectLayer.GetElementByID(i.BlockID);
+          var h = T3Gv.optManager.svgObjectLayer.GetElementByID(i.BlockID);
           if (null == h) continue;
           a ? (
             S = i.EndPoint.x,
@@ -49185,7 +49185,7 @@ ListManager.LM.prototypeTimeline_AvoidRowOverlap = function (e, t) {
           ),
             r.r.x = r.r.x + D,
             r.r.y = r.r.y + d,
-            GlobalData.optManager.SetLinkFlag(r.eventid, ConstantData.LinkFlags.SED_L_MOVE)
+            T3Gv.optManager.SetLinkFlag(r.eventid, ConstantData.LinkFlags.SED_L_MOVE)
         }
       }
       for (let S = 0; S < g; S++) {
@@ -49197,12 +49197,12 @@ ListManager.LM.prototypeTimeline_AvoidRowOverlap = function (e, t) {
           l = !0,
             p = !0,
             a ? (d = r.r.y - n.r.y + r.r.height + 15, n.r.y = n.r.y + d) : (d = n.r.y - r.r.y + n.r.height + 15, n.r.y = n.r.y - d),
-            (e = GlobalData.optManager.GetObjectPtr(n.eventid, !0)) &&
+            (e = T3Gv.optManager.GetObjectPtr(n.eventid, !0)) &&
             (
               e.SetSize(e.r.height + d, 0, ConstantData.ActionTriggerType.LINELENGTH),
-              GlobalData.optManager.SetLinkFlag(n.eventid, ConstantData.LinkFlags.SED_L_MOVE)
+              T3Gv.optManager.SetLinkFlag(n.eventid, ConstantData.LinkFlags.SED_L_MOVE)
             ),
-            GlobalData.optManager.PutBehindObject(r.eventid, n.eventid),
+            T3Gv.optManager.PutBehindObject(r.eventid, n.eventid),
             S--;
           break
         }
@@ -49236,15 +49236,15 @@ ListManager.LM.prototypeTimeline_AvoidGridOverlap = function (e, t) {
     l,
     S = function (e) {
       this.eventid = e;
-      var t = GlobalData.optManager.GetObjectPtr(e, !1),
+      var t = T3Gv.optManager.GetObjectPtr(e, !1),
         a = t,
         r = Utils1.DeepCopy(t.Frame);
       t.subtype === ConstantData.ObjectSubTypes.SD_SUBT_NGEVENT_BAR &&
         Utils2.InflateRect(r, 0, t.StyleRecord.Line.Thickness / 2);
-      var i = GlobalData.optManager.GetObjectPtr(t.associd, !1);
+      var i = T3Gv.optManager.GetObjectPtr(t.associd, !1);
       i &&
         (Utils2.UnionRect(r, i.Frame, r), a = i);
-      var n = GlobalData.optManager.svgObjectLayer.GetElementByID(a.BlockID);
+      var n = T3Gv.optManager.svgObjectLayer.GetElementByID(a.BlockID);
       if (n) {
         var o = n.GetElementByID(ConstantData.SVGElementClass.TEXT);
         if (o) {
@@ -49255,11 +49255,11 @@ ListManager.LM.prototypeTimeline_AvoidGridOverlap = function (e, t) {
             (
               a.TextAlign = ConstantData.TextAlign.LEFT,
               r.width = s.width,
-              GlobalData.optManager.AddToDirtyList(t.BlockID)
+              T3Gv.optManager.AddToDirtyList(t.BlockID)
             ) : a.TextAlign !== ConstantData.TextAlign.CENTER &&
           (
             a.TextAlign = ConstantData.TextAlign.CENTER,
-            GlobalData.optManager.AddToDirtyList(t.BlockID)
+            T3Gv.optManager.AddToDirtyList(t.BlockID)
           );
           else {
             var l = {
@@ -49272,12 +49272,12 @@ ListManager.LM.prototypeTimeline_AvoidGridOverlap = function (e, t) {
               (
                 a.TextAlign = ConstantData.TextAlign.LEFT,
                 Utils2.UnionRect(r, l, r),
-                GlobalData.optManager.AddToDirtyList(t.BlockID)
+                T3Gv.optManager.AddToDirtyList(t.BlockID)
               ) : s.width < a.Frame.width &&
               a.TextAlign !== ConstantData.TextAlign.CENTER &&
             (
               a.TextAlign = ConstantData.TextAlign.CENTER,
-              GlobalData.optManager.AddToDirtyList(t.BlockID)
+              T3Gv.optManager.AddToDirtyList(t.BlockID)
             )
           }
         }
@@ -49318,7 +49318,7 @@ ListManager.LM.prototypeTimeline_AvoidGridOverlap = function (e, t) {
     },
     p = function (t) {
       var a = e.Frame.y + e.Frame.height,
-        r = GlobalData.optManager.GetObjectPtr(t.eventid, !0),
+        r = T3Gv.optManager.GetObjectPtr(t.eventid, !0),
         i = r.Frame.y + r.Frame.height;
       if (i !== a) {
         var n = a - i;
@@ -49327,9 +49327,9 @@ ListManager.LM.prototypeTimeline_AvoidGridOverlap = function (e, t) {
         var o = r.GetTable(!0);
         if (null != o) {
           var s = o.rows.length - 1;
-          GlobalData.optManager.theActionTable = o;
-          var l = GlobalData.optManager.Table_GrowRow(o, s, n, !1);
-          GlobalData.optManager.theActionTable = null;
+          T3Gv.optManager.theActionTable = o;
+          var l = T3Gv.optManager.Table_GrowRow(o, s, n, !1);
+          T3Gv.optManager.theActionTable = null;
           var S = Utils1.DeepCopy(r.trect);
           S.height = l.y,
             r.TRectToFrame(S, !0)
@@ -49355,9 +49355,9 @@ ListManager.LM.prototypeTimeline_AvoidGridOverlap = function (e, t) {
       p !== o &&
         (
           l = o - p,
-          GlobalData.optManager.theActionTable = u,
-          S = GlobalData.optManager.Table_GrowRow(u, t, l, !1),
-          GlobalData.optManager.theActionTable = null,
+          T3Gv.optManager.theActionTable = u,
+          S = T3Gv.optManager.Table_GrowRow(u, t, l, !1),
+          T3Gv.optManager.theActionTable = null,
           (c = Utils1.DeepCopy(e)).trect.width = S.x,
           c.trect.height = S.y,
           c.TRectToFrame(c.trect, !0),
@@ -49369,7 +49369,7 @@ ListManager.LM.prototypeTimeline_AvoidGridOverlap = function (e, t) {
         h,
         m,
         C,
-        y = GlobalData.optManager.GetObjectPtr();
+        y = T3Gv.optManager.GetObjectPtr();
       for (n = a.length, h = 0, m = 0, i = 0; i < n; i++) for (
         h = (m += 5 + r[i] / 2) / o * s,
         C = (m - r[i] / 2) / o * s,
@@ -49379,7 +49379,7 @@ ListManager.LM.prototypeTimeline_AvoidGridOverlap = function (e, t) {
         D < g;
         D++
       ) if (
-          (y = GlobalData.optManager.GetObjectPtr(d[D].eventid, !0)) &&
+          (y = T3Gv.optManager.GetObjectPtr(d[D].eventid, !0)) &&
           y.hooks.length
         ) switch (y.subtype) {
           case ConstantData.ObjectSubTypes.SD_SUBT_NGEVENT_BLOCK:
@@ -49402,7 +49402,7 @@ ListManager.LM.prototypeTimeline_AvoidGridOverlap = function (e, t) {
             t.RowHts[r] = s.frame.height,
             t.RowHts[r] > ConstantData.Defines.TimelineRowHeight &&
             (g = !0)
-          ) : (GlobalData.optManager.PutBehindObject(e.BlockID, o[n]), h.push(s));
+          ) : (T3Gv.optManager.PutBehindObject(e.BlockID, o[n]), h.push(s));
       var m = [];
       m.push(l),
         c(m, 0);
@@ -49420,12 +49420,12 @@ ListManager.LM.prototypeTimeline_InitializeTemplate = function () {
     t = gTimelineManager.AddShape(!0);
   return t &&
     (
-      (e = GlobalData.optManager.GetObjectPtr(t, !0)).SetSize(800, null, 0),
-      GlobalData.optManager.Table_Create(e.BlockID, 1, 4, e.TextGrow, !0),
+      (e = T3Gv.optManager.GetObjectPtr(t, !0)).SetSize(800, null, 0),
+      T3Gv.optManager.Table_Create(e.BlockID, 1, 4, e.TextGrow, !0),
       e.objecttype = ConstantData.ObjectTypes.SD_OBJT_NG_TIMELINE,
       e.TextFlags = Utils2.SetFlag(e.TextFlags, ConstantData.TextFlags.SED_TF_OneClick, !1),
-      GlobalData.optManager.Timeline_AddNGDataSet(e),
-      GlobalData.optManager.Timeline_SetScale(e, !0, !0)
+      T3Gv.optManager.Timeline_AddNGDataSet(e),
+      T3Gv.optManager.Timeline_SetScale(e, !0, !0)
     ),
     t
 }
@@ -49434,7 +49434,7 @@ ListManager.LM.prototypeTimeline_GetColumnWidth = function (e) {
   var t = e.GetTable(!1);
   if (null == t) return 100;
   var a = t.cells[0],
-    r = GlobalData.optManager.CalcDefaultInitialTextStyle(a.Text),
+    r = T3Gv.optManager.CalcDefaultInitialTextStyle(a.Text),
     i = this.svgDoc.CreateShape(ConstantData.CreateShapeType.TEXT);
   i.SetText('DEC 31', r);
   var n = i.GetTextMinDimensions();
@@ -49446,7 +49446,7 @@ ListManager.LM.prototypeTimeline_GetColumnWidth = function (e) {
 ListManager.LM.prototypeTimeline_GetRowHeight = function (e, t) {
   var a = ConstantData.Defines.TimelineRowHeight;
   if (null != e.TextSize) {
-    var r = GlobalData.optManager.CalcDefaultInitialTextStyle(t.StyleRecord.Text),
+    var r = T3Gv.optManager.CalcDefaultInitialTextStyle(t.StyleRecord.Text),
       i = this.svgDoc.CreateShape(ConstantData.CreateShapeType.TEXT);
     i.SetText('DEC 31', r);
     var n = i.GetTextMinDimensions();
@@ -49482,8 +49482,8 @@ ListManager.LM.prototypeTimeline_InitializeShape = function (e, t, a) {
             t.select = t.rows[i + 1].start,
             s.x = n.trect.width,
             s.y = n.trect.height,
-            n.DataID = GlobalData.optManager.CreateTextBlock(e, o.Label, s, !0),
-            GlobalData.optManager.RenderDirtySVGObjects(),
+            n.DataID = T3Gv.optManager.CreateTextBlock(e, o.Label, s, !0),
+            T3Gv.optManager.RenderDirtySVGObjects(),
             t.select = - 1
           )
       }
@@ -49509,8 +49509,8 @@ ListManager.LM.prototypeTimeline_InitializeShape = function (e, t, a) {
           ListManager.Table.TableFlags.SDT_TF_NGTIMELINE_USE_DEFAULT_JUST,
           !0
         ),
-          r = GlobalData.optManager.VS_Table_GetAlternateColProperties(a.AlternateColumns, VS.Timeline_RowIndexes.Year),
-          n = GlobalData.optManager.VS_Table_GetRowProperties(a.RowProperties, VS.Timeline_RowIndexes.Year),
+          r = T3Gv.optManager.VS_Table_GetAlternateColProperties(a.AlternateColumns, VS.Timeline_RowIndexes.Year),
+          n = T3Gv.optManager.VS_Table_GetRowProperties(a.RowProperties, VS.Timeline_RowIndexes.Year),
           r < 0 &&
           (
             n >= 0 ? null == a.RowProperties[n].FillColor &&
@@ -49556,9 +49556,9 @@ ListManager.LM.prototypeTimeline_InitializeShape = function (e, t, a) {
               Height: 2 * i
             })
           ),
-          n = GlobalData.optManager.VS_Table_GetRowProperties(a.RowProperties, VS.Timeline_RowIndexes.Date),
+          n = T3Gv.optManager.VS_Table_GetRowProperties(a.RowProperties, VS.Timeline_RowIndexes.Date),
           (
-            r = GlobalData.optManager.VS_Table_GetAlternateColProperties(a.AlternateColumns, VS.Timeline_RowIndexes.Date)
+            r = T3Gv.optManager.VS_Table_GetAlternateColProperties(a.AlternateColumns, VS.Timeline_RowIndexes.Date)
           ) < 0 &&
           (n < 0 || null == a.RowProperties[n].FillColor) &&
           (
@@ -49612,7 +49612,7 @@ ListManager.LM.prototypeTimeline_InitializeShape = function (e, t, a) {
           ),
           t ||
           (
-            r = GlobalData.optManager.VS_Table_GetAlternateColProperties(a.AlternateColumns, VS.Timeline_RowIndexes.Event)
+            r = T3Gv.optManager.VS_Table_GetAlternateColProperties(a.AlternateColumns, VS.Timeline_RowIndexes.Event)
           ) < 0 &&
           (
             null == a.AlternateColumns &&
@@ -49625,7 +49625,7 @@ ListManager.LM.prototypeTimeline_InitializeShape = function (e, t, a) {
             })
           )
       },
-        R = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !0);
+        R = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0);
       switch (
       e.StyleRecord.Line.Thickness = 0,
       e.StyleRecord.Fill.Paint.FillType = ConstantData.FillTypes.SDFILL_SOLID,
@@ -49649,7 +49649,7 @@ ListManager.LM.prototypeTimeline_InitializeShape = function (e, t, a) {
           e.StyleRecord.Fill.Paint.FillType = ConstantData.FillTypes.SDFILL_TRANSPARENT,
             e.StyleRecord.Line.Paint.Color = n
       }
-      g = (i = GlobalData.optManager.Timeline_GetRowHeight(t, e)) * D;
+      g = (i = T3Gv.optManager.Timeline_GetRowHeight(t, e)) * D;
       var A = t.MinWidth;
       null == A ? A = 1200 : A < r &&
         (A = r),
@@ -49666,7 +49666,7 @@ ListManager.LM.prototypeTimeline_InitializeShape = function (e, t, a) {
           (D++, a.Rows.push({
           }))
       }
-      GlobalData.optManager.Table_Create(e.BlockID, D, _, e.TextGrow, !0),
+      T3Gv.optManager.Table_Create(e.BlockID, D, _, e.TextGrow, !0),
         e.TextFlags = Utils2.SetFlag(e.TextFlags, ConstantData.TextFlags.SED_TF_OneClick, !1);
       var w,
         F = e.GetTable(!1);
@@ -49693,7 +49693,7 @@ ListManager.LM.prototypeTimeline_InitializeShape = function (e, t, a) {
               y = 0;
               y < 11;
               y++
-            ) GlobalData.optManager.VS_Table_ColumnProperties(a.ColumnProperties, y + 1) < 0 &&
+            ) T3Gv.optManager.VS_Table_ColumnProperties(a.ColumnProperties, y + 1) < 0 &&
               (
                 I = {
                   Index: y + 1,
@@ -49704,7 +49704,7 @@ ListManager.LM.prototypeTimeline_InitializeShape = function (e, t, a) {
               );
             void 0 === a.RowProperties &&
               (a.RowProperties = []);
-            var e = GlobalData.optManager.VS_Table_GetRowProperties(a.RowProperties, VS.Timeline_RowIndexes.Date);
+            var e = T3Gv.optManager.VS_Table_GetRowProperties(a.RowProperties, VS.Timeline_RowIndexes.Date);
             e < 0 ? (
               I = {
                 Index: VS.Timeline_RowIndexes.Date,
@@ -49764,7 +49764,7 @@ ListManager.LM.prototypeTimeline_InitializeShape = function (e, t, a) {
         y = 1;
         y < D;
         y++
-      ) rp = GlobalData.optManager.VS_Table_GetRowProperties(a.RowProperties, y + 1),
+      ) rp = T3Gv.optManager.VS_Table_GetRowProperties(a.RowProperties, y + 1),
         rp < 0 &&
         (I = {
           Index: y + 1,
@@ -49918,13 +49918,13 @@ ListManager.LM.prototypeTimeline_InitializeShape = function (e, t, a) {
           e.StyleRecord.Fill.Paint.FillType = ConstantData.FillTypes.SDFILL_TRANSPARENT,
           l < 2 &&
           (l = 2),
-          i = GlobalData.optManager.Timeline_GetRowHeight(t, e);
+          i = T3Gv.optManager.Timeline_GetRowHeight(t, e);
         var m = t.MinWidth;
         null == m ? m = 1200 : m < r &&
           (m = r),
           S = i * l,
           e.SetSize(m, S, 0),
-          GlobalData.optManager.Table_Create(e.BlockID, l, 12, e.TextGrow, !0),
+          T3Gv.optManager.Table_Create(e.BlockID, l, 12, e.TextGrow, !0),
           e.TextFlags = Utils2.SetFlag(e.TextFlags, ConstantData.TextFlags.SED_TF_OneClick, !1),
           e.TextFlags = Utils2.SetFlag(e.TextFlags, ConstantData.TextFlags.SED_TF_None, !0),
           e.flags = Utils2.SetFlag(e.flags, ConstantData.ObjFlags.SEDO_UseConnect, !0);
@@ -49944,7 +49944,7 @@ ListManager.LM.prototypeTimeline_InitializeShape = function (e, t, a) {
           d = 0;
           d < 12;
           d++
-        ) GlobalData.optManager.VS_Table_ColumnProperties(a.ColumnProperties, d + 1) < 0 &&
+        ) T3Gv.optManager.VS_Table_ColumnProperties(a.ColumnProperties, d + 1) < 0 &&
           (
             h = {
               Index: d + 1,
@@ -49955,7 +49955,7 @@ ListManager.LM.prototypeTimeline_InitializeShape = function (e, t, a) {
           );
         void 0 === a.RowProperties &&
           (a.RowProperties = []);
-        var y = GlobalData.optManager.VS_Table_GetRowProperties(a.RowProperties, VS.Timeline_RowIndexes.Date);
+        var y = T3Gv.optManager.VS_Table_GetRowProperties(a.RowProperties, VS.Timeline_RowIndexes.Date);
         y < 0 ? (h = {
           Index: 1,
           LineThick: 0
@@ -49989,14 +49989,14 @@ ListManager.LM.prototypeTimeline_InitializeShape = function (e, t, a) {
       }(e, a, C)
   }
   e.objecttype = ConstantData.ObjectTypes.SD_OBJT_NG_TIMELINE;
-  var f = GlobalData.optManager.Timeline_AddNGDataSet(e);
+  var f = T3Gv.optManager.Timeline_AddNGDataSet(e);
   if (null != a.AlternateColumns) {
     var L = a.AlternateColumns;
     g = JSON.stringify(L);
-    var I = GlobalData.optManager.VS_Table_GetAlternateColProperties(a.AlternateColumns, VS.Timeline_RowIndexes.Year);
+    var I = T3Gv.optManager.VS_Table_GetAlternateColProperties(a.AlternateColumns, VS.Timeline_RowIndexes.Year);
     I >= 0 &&
       a.AlternateColumns.splice(I, 1);
-    var T = GlobalData.optManager.VS_Table_GetAlternateColProperties(a.AlternateColumns, VS.Timeline_RowIndexes.Date);
+    var T = T3Gv.optManager.VS_Table_GetAlternateColProperties(a.AlternateColumns, VS.Timeline_RowIndexes.Date);
     T >= 0 &&
       (
         a.AlternateColumns[T].StartRow === VS.Timeline_RowIndexes.Date &&
@@ -50004,7 +50004,7 @@ ListManager.LM.prototypeTimeline_InitializeShape = function (e, t, a) {
         a.AlternateColumns[T].EndRow === VS.Timeline_RowIndexes.Date &&
         (a.AlternateColumns[T].EndRow = 1)
       );
-    var b = GlobalData.optManager.VS_Table_GetAlternateColProperties(a.AlternateColumns, VS.Timeline_RowIndexes.Event);
+    var b = T3Gv.optManager.VS_Table_GetAlternateColProperties(a.AlternateColumns, VS.Timeline_RowIndexes.Event);
     b >= 0 &&
       (
         a.AlternateColumns[b].StartRow === VS.Timeline_RowIndexes.Event &&
@@ -50014,8 +50014,8 @@ ListManager.LM.prototypeTimeline_InitializeShape = function (e, t, a) {
       )
   }
   if (null != a.RowProperties && a.RowProperties.length > 0) {
-    var M = GlobalData.optManager.VS_Table_GetRowProperties(a.RowProperties, VS.Timeline_RowIndexes.Year),
-      P = GlobalData.optManager.VS_Table_GetRowProperties(a.RowProperties, VS.Timeline_RowIndexes.Date);
+    var M = T3Gv.optManager.VS_Table_GetRowProperties(a.RowProperties, VS.Timeline_RowIndexes.Year),
+      P = T3Gv.optManager.VS_Table_GetRowProperties(a.RowProperties, VS.Timeline_RowIndexes.Date);
     (P >= 0 || M >= 0) &&
       (
         D = JSON.stringify(a.RowProperties),
@@ -50037,7 +50037,7 @@ ListManager.LM.prototypeTimeline_InitializeShape = function (e, t, a) {
       ListManager.TimelineFieldNameList[ListManager.NGTimelineFields.ROWPROPERTIES],
       D
     );
-  var R = GlobalData.optManager.Timeline_GetColumnWidth(e);
+  var R = T3Gv.optManager.Timeline_GetColumnWidth(e);
   (
     ListManager.SDData.UpdateValue(
       e.datasetElemID,
@@ -50097,7 +50097,7 @@ ListManager.LM.prototypeTimeline_InitializeShape = function (e, t, a) {
       ListManager.TimelineFieldNameList[ListManager.NGTimelineFields.DEFAULTSHAPE],
       JSON.stringify(a.DefaultShape)
     ),
-    GlobalData.optManager.Timeline_SetScale(e, !0, !0),
+    T3Gv.optManager.Timeline_SetScale(e, !0, !0),
     f
 }
 
@@ -50169,8 +50169,8 @@ ListManager.LM.prototypeTimeline_CalculateRange = function (e, t, a, r) {
     f.celltype === ListManager.Table.CellTypes.SD_CT_TIMELINE_ROWLABEL &&
       (y -= f.frame.width);
     var L = this.Timeline_GetUnits(e, m, y, a);
-    (GlobalData.optManager.Timeline_UnitsToStartAndEnd(e, L, S, c) || g !== L || r) &&
-      GlobalData.optManager.Timeline_SetScale(e, !0, !1)
+    (T3Gv.optManager.Timeline_UnitsToStartAndEnd(e, L, S, c) || g !== L || r) &&
+      T3Gv.optManager.Timeline_SetScale(e, !0, !1)
   }
 }
 
@@ -50344,13 +50344,13 @@ ListManager.LM.prototypeTimeline_LinkEvents = function (e, t, a) {
     P = ListManager.TimeAmounts.OneDayNS,
     R = function (e, t) {
       e.flags = Utils2.SetFlag(e.flags, ConstantData.ObjFlags.SEDO_NotVisible, t),
-        GlobalData.optManager.AddToDirtyList(e.BlockID),
-        GlobalData.optManager.DirtyListReOrder = !0;
-      var a = GlobalData.optManager.GetObjectPtr(e.associd, !0);
+        T3Gv.optManager.AddToDirtyList(e.BlockID),
+        T3Gv.optManager.DirtyListReOrder = !0;
+      var a = T3Gv.optManager.GetObjectPtr(e.associd, !0);
       a &&
         (
           a.flags = Utils2.SetFlag(a.flags, ConstantData.ObjFlags.SEDO_NotVisible, t),
-          GlobalData.optManager.AddToDirtyList(a.BlockID)
+          T3Gv.optManager.AddToDirtyList(a.BlockID)
         )
     },
     A = function (e, t) {
@@ -50358,7 +50358,7 @@ ListManager.LM.prototypeTimeline_LinkEvents = function (e, t, a) {
         e.DrawingObjectBaseClass !== ConstantData.DrawingObjectBaseClass.SHAPE
       ) {
         var a = e.associd,
-          r = GlobalData.optManager.GetObjectPtr(a, !1);
+          r = T3Gv.optManager.GetObjectPtr(a, !1);
         if (!(null == r || r.hooks.length < 1)) {
           var i = ConstantData.HookPts.SED_KCB,
             n = ConstantData.HookPts.SED_KCT,
@@ -50373,24 +50373,24 @@ ListManager.LM.prototypeTimeline_LinkEvents = function (e, t, a) {
             ),
             o ? t &&
               (
-                GlobalData.optManager.UpdateHook(a, 0, e.BlockID, n, {
+                T3Gv.optManager.UpdateHook(a, 0, e.BlockID, n, {
                   x: T,
                   y: T
                 }, null),
                 90 === s &&
                 (r.RotationAngle = 90),
-                GlobalData.optManager.SetLinkFlag(e.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
+                T3Gv.optManager.SetLinkFlag(e.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
                 e.EndArrowID &&
                 (e.StartArrowID = e.EndArrowID, e.EndArrowID = 0)
               ) : t ||
             (
-              GlobalData.optManager.UpdateHook(a, 0, e.BlockID, i, {
+              T3Gv.optManager.UpdateHook(a, 0, e.BlockID, i, {
                 x: 0,
                 y: 0
               }, null),
               90 === s &&
               (r.RotationAngle = - 90),
-              GlobalData.optManager.SetLinkFlag(e.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
+              T3Gv.optManager.SetLinkFlag(e.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
               e.StartArrowID &&
               (e.EndArrowID = e.StartArrowID, e.StartArrowID = 0)
             )
@@ -50426,7 +50426,7 @@ ListManager.LM.prototypeTimeline_LinkEvents = function (e, t, a) {
         i.cells[R].celltype === ListManager.Table.CellTypes.SD_CT_TIMELINE_DATETITLE &&
         (b = 1);
       var _ = i.rows[b],
-        E = GlobalData.optManager.Timeline_GetFirstLinkRow(i),
+        E = T3Gv.optManager.Timeline_GetFirstLinkRow(i),
         w = function (e) {
           var a,
             r,
@@ -50477,7 +50477,7 @@ ListManager.LM.prototypeTimeline_LinkEvents = function (e, t, a) {
             null == a.Rows[b + g] &&
             (a.Rows[b + g] = []),
             a.Rows[b + g].push(e.BlockID),
-            L = GlobalData.optManager.GetObjectPtr(e.associd)
+            L = T3Gv.optManager.GetObjectPtr(e.associd)
           ) {
             if (
               r = ListManager.SDData.GetValue(
@@ -50575,7 +50575,7 @@ ListManager.LM.prototypeTimeline_LinkEvents = function (e, t, a) {
               Utils2.IsEqual(L.Frame.width, C)
             ) break;
             null != (i = L.GetTable(!0)) &&
-              GlobalData.optManager.Table_FixSizeDimToMin(i),
+              T3Gv.optManager.Table_FixSizeDimToMin(i),
               L.SetSize(C, null, ConstantData.ActionTriggerType.LINELENGTH)
           }
           break;
@@ -50693,7 +50693,7 @@ ListManager.LM.prototypeTimeline_LinkEvents = function (e, t, a) {
               ListManager.TimelineEventFieldNameList[ListManager.NGTimelineEventFields.BLOCKID]
             ),
             l = parseInt(r),
-            S = GlobalData.optManager.GetObjectPtr(l, !0)
+            S = T3Gv.optManager.GetObjectPtr(l, !0)
           )
         ) {
           if (t) R(S, !1);
@@ -50721,10 +50721,10 @@ ListManager.LM.prototypeTimeline_LinkEvents = function (e, t, a) {
             b.x = C.x,
             b.y = C.y,
             c = 0 === S.hooks.length ? - 1 : 0,
-            GlobalData.optManager.UpdateHook(l, c, e.BlockID, C.hookpt, b, C.cellid)
+            T3Gv.optManager.UpdateHook(l, c, e.BlockID, C.hookpt, b, C.cellid)
         }
-      GlobalData.optManager.SetLinkFlag(e.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
-        GlobalData.optManager.UpdateLinks()
+      T3Gv.optManager.SetLinkFlag(e.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
+        T3Gv.optManager.UpdateLinks()
     }
   }
 }
@@ -50732,7 +50732,7 @@ ListManager.LM.prototypeTimeline_LinkEvents = function (e, t, a) {
 ListManager.LM.prototypeTimeline_Format = function (e, t) {
   var a,
     r;
-  if (null == GlobalData.optManager.GetObjectPtr(e.BlockID)) return !1;
+  if (null == T3Gv.optManager.GetObjectPtr(e.BlockID)) return !1;
   if (
     Collab.NoRedrawFromSameEditor = !1,
     e.datasetType === ListManager.DataSetNameListIndexes.DATASET_NG_TIMELINE &&
@@ -50748,7 +50748,7 @@ ListManager.LM.prototypeTimeline_Format = function (e, t) {
       ListManager.TimelineFieldNameList[ListManager.NGTimelineFields.EVENT_TABLEID]
     ),
       r = parseInt(a),
-      i ? GlobalData.optManager.Timeline_CalculateRange(e, r, !0, t) : GlobalData.optManager.Timeline_SetScale(e, !0, !1)
+      i ? T3Gv.optManager.Timeline_CalculateRange(e, r, !0, t) : T3Gv.optManager.Timeline_SetScale(e, !0, !1)
   }
 }
 
@@ -50765,7 +50765,7 @@ ListManager.LM.prototypeCreateEvent_Bubble = function (e, t) {
     u = 100,
     p = ConstantData.HookFlags,
     d = ConstantData.HookPts.SED_KCB,
-    D = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
+    D = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
   void 0 !== t.LineLength &&
     (u = t.LineLength),
     e &&
@@ -50806,7 +50806,7 @@ ListManager.LM.prototypeCreateEvent_Bubble = function (e, t) {
     },
     i = new ListManager.Line(l),
     n = this.AddNewObject(i, !1, !1),
-    GlobalData.optManager.AddToDirtyList(n),
+    T3Gv.optManager.AddToDirtyList(n),
     a
   ) {
     var h = Resources.FindStyle(ConstantData.Defines.TextBlockStyle);
@@ -50837,7 +50837,7 @@ ListManager.LM.prototypeCreateEvent_Bubble = function (e, t) {
       l.StyleRecord.Line.Thickness = 0,
       s = new ListManager.Rect(l),
       o = this.AddNewObject(s, !1, !1),
-      GlobalData.optManager.AddToDirtyList(o),
+      T3Gv.optManager.AddToDirtyList(o),
       d = ConstantData.HookPts.SED_KCL,
       e.ShapeType &&
       delete e.ShapeType,
@@ -50863,15 +50863,15 @@ ListManager.LM.prototypeCreateEvent_Bubble = function (e, t) {
       (l.RotationAngle = - 90, d = ConstantData.HookPts.SED_KCL),
       s = new ListManager.RRect(l),
       o = this.AddNewObject(s, !1, !1),
-      GlobalData.optManager.AddToDirtyList(o)
+      T3Gv.optManager.AddToDirtyList(o)
   }
-  return GlobalData.optManager.UpdateHook(o, - 1, n, d, {
+  return T3Gv.optManager.UpdateHook(o, - 1, n, d, {
     x: 0,
     y: 0
   }, null),
-    i = GlobalData.optManager.GetObjectPtr(n, !0),
-    (s = GlobalData.optManager.GetObjectPtr(o, !0)).objecttype = ConstantData.ObjectTypes.SD_OBJT_NG_EVENT_LABEL,
-    GlobalData.optManager.SetLinkFlag(n, ConstantData.LinkFlags.SED_L_MOVE),
+    i = T3Gv.optManager.GetObjectPtr(n, !0),
+    (s = T3Gv.optManager.GetObjectPtr(o, !0)).objecttype = ConstantData.ObjectTypes.SD_OBJT_NG_EVENT_LABEL,
+    T3Gv.optManager.SetLinkFlag(n, ConstantData.LinkFlags.SED_L_MOVE),
     i.objecttype = ConstantData.ObjectTypes.SD_OBJT_NG_EVENT,
     i.subtype = ConstantData.ObjectSubTypes.SD_SUBT_NGEVENT_STRAIGHT,
     r &&
@@ -50903,7 +50903,7 @@ ListManager.LM.prototypeCreateEvent_Bullet = function (e, t, a) {
     S = 100,
     c = 100,
     u = (ConstantData.HookFlags, ConstantData.Defines.SED_CDim),
-    p = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
+    p = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
   r = 0.5 * e.rows[0].frame.height / 2,
     void 0 !== a.EventType &&
     a.EventType.indexOf() &&
@@ -50935,7 +50935,7 @@ ListManager.LM.prototypeCreateEvent_Bullet = function (e, t, a) {
     },
     i = new ListManager.Line(l),
     n = this.AddNewObject(i, !1, !1),
-    GlobalData.optManager.AddToDirtyList(n);
+    T3Gv.optManager.AddToDirtyList(n);
   var D = Utils1.DeepCopy(p.def.style);
   return D.Line.Thickness = 1,
     l = {
@@ -50950,16 +50950,16 @@ ListManager.LM.prototypeCreateEvent_Bullet = function (e, t, a) {
     },
     s = new ListManager.Oval(l),
     o = this.AddNewObject(s, !1, !1),
-    GlobalData.optManager.AddToDirtyList(o),
-    GlobalData.optManager.UpdateHook(n, - 1, o, ConstantData.HookPts.SED_KTL, {
+    T3Gv.optManager.AddToDirtyList(o),
+    T3Gv.optManager.UpdateHook(n, - 1, o, ConstantData.HookPts.SED_KTL, {
       x: u,
       y: u / 2
     }, null),
-    (i = GlobalData.optManager.GetObjectPtr(n, !0)).TextAlign = ConstantData.TextAlign.CENTER,
+    (i = T3Gv.optManager.GetObjectPtr(n, !0)).TextAlign = ConstantData.TextAlign.CENTER,
     i.objecttype = ConstantData.ObjectTypes.SD_OBJT_NG_EVENT_LABEL,
-    (s = GlobalData.optManager.GetObjectPtr(o, !0)).objecttype = ConstantData.ObjectTypes.SD_OBJT_NG_EVENT,
+    (s = T3Gv.optManager.GetObjectPtr(o, !0)).objecttype = ConstantData.ObjectTypes.SD_OBJT_NG_EVENT,
     s.subtype = ConstantData.ObjectSubTypes.SD_SUBT_NGEVENT_BULLET,
-    GlobalData.optManager.SetLinkFlag(o, ConstantData.LinkFlags.SED_L_MOVE),
+    T3Gv.optManager.SetLinkFlag(o, ConstantData.LinkFlags.SED_L_MOVE),
     i.flags = Utils2.SetFlag(s.flags, ConstantData.ObjFlags.SEDO_Assoc, !0),
     s.associd = n,
     i.associd = o,
@@ -50971,11 +50971,11 @@ ListManager.LM.prototypeCreateEvent_Bullet = function (e, t, a) {
 
 ListManager.LM.prototypeCreateEvent_Bar = function (e, t, a) {
   var r,
-    i = GlobalData.optManager.GanttCreateBar({
+    i = T3Gv.optManager.GanttCreateBar({
       x: 0,
       y: 0
     }, !0),
-    n = GlobalData.optManager.GetObjectPtr(i, !0);
+    n = T3Gv.optManager.GetObjectPtr(i, !0);
   return r = 0.5 * e.rows[0].frame.height,
     n.objecttype = ConstantData.ObjectTypes.SD_OBJT_NG_EVENT,
     n.subtype = ConstantData.ObjectSubTypes.SD_SUBT_NGEVENT_BAR,
@@ -51007,7 +51007,7 @@ ListManager.LM.prototypeCreateEvent_Block = function (e, t, a) {
   var r,
     i,
     n,
-    o = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
+    o = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
     s = e.rows[0].frame.height,
     l = 2 * s;
   void 0 !== a.EventType &&
@@ -51032,14 +51032,14 @@ ListManager.LM.prototypeCreateEvent_Block = function (e, t, a) {
     },
     n = new ListManager.Rect(r),
     i = this.AddNewObject(n, !1, !1),
-    GlobalData.optManager.AddToDirtyList(i),
-    (n = GlobalData.optManager.GetObjectPtr(i, !0)).objecttype = ConstantData.ObjectTypes.SD_OBJT_NG_EVENT,
+    T3Gv.optManager.AddToDirtyList(i),
+    (n = T3Gv.optManager.GetObjectPtr(i, !0)).objecttype = ConstantData.ObjectTypes.SD_OBJT_NG_EVENT,
     n.subtype = ConstantData.ObjectSubTypes.SD_SUBT_NGEVENT_BLOCK,
-    GlobalData.optManager.SetLinkFlag(i, ConstantData.LinkFlags.SED_L_MOVE),
+    T3Gv.optManager.SetLinkFlag(i, ConstantData.LinkFlags.SED_L_MOVE),
     a.EventType !== VS.Timeline_EventTypes.GridBlock
   ) {
     if (null == t.Table || null == t.Table.Rows) {
-      var c = GlobalData.optManager.Timeline_GetRowHeight(t, n);
+      var c = T3Gv.optManager.Timeline_GetRowHeight(t, n);
       null == t.Table &&
         (t.Table = {
           Rows: 2,
@@ -51091,7 +51091,7 @@ ListManager.LM.prototypeCreateEvent_Block = function (e, t, a) {
     var r,
       i,
       n,
-      o = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
+      o = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
     e.rows[0].frame.height,
       void 0 !== a.EventType &&
       a.EventType.indexOf() &&
@@ -51115,10 +51115,10 @@ ListManager.LM.prototypeCreateEvent_Block = function (e, t, a) {
       },
       n = new ListManager.Rect(r),
       i = this.AddNewObject(n, !1, !1),
-      GlobalData.optManager.AddToDirtyList(i),
-      (n = GlobalData.optManager.GetObjectPtr(i, !0)).objecttype = ConstantData.ObjectTypes.SD_OBJT_NG_EVENT,
+      T3Gv.optManager.AddToDirtyList(i),
+      (n = T3Gv.optManager.GetObjectPtr(i, !0)).objecttype = ConstantData.ObjectTypes.SD_OBJT_NG_EVENT,
       n.subtype = ConstantData.ObjectSubTypes.SD_SUBT_NGEVENT_SWIMLANE,
-      GlobalData.optManager.SetLinkFlag(i, ConstantData.LinkFlags.SED_L_MOVE),
+      T3Gv.optManager.SetLinkFlag(i, ConstantData.LinkFlags.SED_L_MOVE),
       null == t.Table &&
       (
         t.Table = {
@@ -51146,25 +51146,25 @@ ListManager.LM.prototypeCreateEvent_Block = function (e, t, a) {
   }
 
 ListManager.LM.prototypeTimelineAddEvent = function (e, t) {
-  let a = GlobalData.optManager.GetTimeline();
+  let a = T3Gv.optManager.GetTimeline();
   if (isNaN(parseInt(a))) return Utils2.Alert(Resources.Strings.SelectTimeline);
-  let r = GlobalData.optManager.GetObjectPtr(a, !0);
+  let r = T3Gv.optManager.GetObjectPtr(a, !0);
   if (
     null == r ||
     r.objecttype !== ConstantData.ObjectTypes.SD_OBJT_NG_TIMELINE
   ) return Utils2.Alert(Resources.Strings.SelectTimeline);
   if (!(r.datasetTableID < 0)) {
-    if (null == t && GlobalData.optManager.CloseEdit(), Collab.AllowMessage()) {
+    if (null == t && T3Gv.optManager.CloseEdit(), Collab.AllowMessage()) {
       Collab.BeginSecondaryEdit();
       var i = {
         newEvent: e
       }
     }
-    GlobalData.optManager.TimelineCreateEvent(e, null, r),
-      GlobalData.optManager.Timeline_Format(r, !0),
+    T3Gv.optManager.TimelineCreateEvent(e, null, r),
+      T3Gv.optManager.Timeline_Format(r, !0),
       Collab.AllowMessage() &&
       Collab.BuildMessage(ConstantData.CollabMessages.TimelineAddEvent, i, !0),
-      GlobalData.optManager.CompleteOperation()
+      T3Gv.optManager.CompleteOperation()
   }
 }
 
@@ -51207,9 +51207,9 @@ ListManager.LM.prototypeTimelineCreateEvent = function (e, t, a) {
         ListManager.TimelineFieldNameList[ListManager.NGTimelineFields.DEF_EVENT]
       )
     );
-  let s = GlobalData.optManager.CreateEvent_Bubble(e, Timeline);
-  return lobj = GlobalData.optManager.GetObjectPtr(s.EventID, !0),
-    sobj = GlobalData.optManager.GetObjectPtr(s.OtherID, !0),
+  let s = T3Gv.optManager.CreateEvent_Bubble(e, Timeline);
+  return lobj = T3Gv.optManager.GetObjectPtr(s.EventID, !0),
+    sobj = T3Gv.optManager.GetObjectPtr(s.OtherID, !0),
     eobj = lobj,
     SDJS.API.SetShapeSize(sobj, e),
     SDJS.API.SetShapeProperties(e, sobj.BlockID, null),
@@ -51277,11 +51277,11 @@ ListManager.LM.prototypeTimelineCreateEvent = function (e, t, a) {
 ListManager.LM.prototypeTimelineRemoveEvent = function (e) {
   let t = - 1,
     a = [],
-    r = GlobalData.optManager.GetTimeline();
+    r = T3Gv.optManager.GetTimeline();
   if (isNaN(r)) return Utils2.Alert(Resources.Strings.SelectTimeline);
   null == e &&
-    GlobalData.optManager.CloseEdit();
-  let i = GlobalData.optManager.GetObjectPtr(r, !0);
+    T3Gv.optManager.CloseEdit();
+  let i = T3Gv.optManager.GetObjectPtr(r, !0);
   if (
     null == i ||
     i.objecttype !== ConstantData.ObjectTypes.SD_OBJT_NG_TIMELINE
@@ -51294,7 +51294,7 @@ ListManager.LM.prototypeTimelineRemoveEvent = function (e) {
     selectionManager = Business.GetSelectionBusinessManager(r, !1),
       selectedList = Business.GetSelectedObjectsInChart(selectionManager, r);
     for (let e = 0; e < selectedList.length; e++) {
-      let r = GlobalData.optManager.GetObjectPtr(selectedList[e]);
+      let r = T3Gv.optManager.GetObjectPtr(selectedList[e]);
       if (
         !(
           r.objecttype === ConstantData.ObjectTypes.SD_OBJT_NG_TIMELINE &&
@@ -51303,13 +51303,13 @@ ListManager.LM.prototypeTimelineRemoveEvent = function (e) {
       ) {
         switch (r.objecttype) {
           case ConstantData.ObjectTypes.SD_OBJT_NG_EVENT_LABEL:
-            let e = GlobalData.optManager.GetObjectPtr(r.associd, !0);
+            let e = T3Gv.optManager.GetObjectPtr(r.associd, !0);
             a.push(e.BlockID),
               a.push(r.BlockID),
               t = e.datasetElemID;
             break;
           case ConstantData.ObjectTypes.SD_OBJT_NG_EVENT:
-            let i = GlobalData.optManager.GetObjectPtr(r.associd, !0);
+            let i = T3Gv.optManager.GetObjectPtr(r.associd, !0);
             a.push(i.BlockID),
               a.push(r.BlockID),
               t = r.datasetElemID;
@@ -51323,18 +51323,18 @@ ListManager.LM.prototypeTimelineRemoveEvent = function (e) {
     Collab.AllowMessage() &&
       Collab.BuildMessage(ConstantData.CollabMessages.TimelineRemoveEvent, n, !0),
       a.length > 0 &&
-      GlobalData.optManager.DeleteObjects(a, !0),
-      GlobalData.optManager.Timeline_Format(i, !0),
-      GlobalData.optManager.CompleteOperation()
+      T3Gv.optManager.DeleteObjects(a, !0),
+      T3Gv.optManager.Timeline_Format(i, !0),
+      T3Gv.optManager.CompleteOperation()
   }
 }
 
 ListManager.LM.prototypeTimelineChangePosition = function (e, t) {
-  let a = GlobalData.optManager.GetTimeline();
+  let a = T3Gv.optManager.GetTimeline();
   if (isNaN(a)) return Utils2.Alert(Resources.Strings.SelectTimeline);
   null == t &&
-    GlobalData.optManager.CloseEdit();
-  let r = GlobalData.optManager.GetObjectPtr(a, !0);
+    T3Gv.optManager.CloseEdit();
+  let r = T3Gv.optManager.GetObjectPtr(a, !0);
   if (
     null == r ||
     r.objecttype !== ConstantData.ObjectTypes.SD_OBJT_NG_TIMELINE
@@ -51350,7 +51350,7 @@ ListManager.LM.prototypeTimelineChangePosition = function (e, t) {
       selectedList = Business.GetSelectedObjectsInChart(selectionManager, a);
     for (let t = 0; t < selectedList.length; t++) {
       let a = selectedList[t],
-        r = GlobalData.optManager.GetObjectPtr(a, !0);
+        r = T3Gv.optManager.GetObjectPtr(a, !0);
       if (null != r) switch (r.objecttype) {
         case ConstantData.ObjectTypes.SD_OBJT_NG_TIMELINE:
           let t = ListManager.SDData.GetValue(
@@ -51374,7 +51374,7 @@ ListManager.LM.prototypeTimelineChangePosition = function (e, t) {
           );
           break;
         case ConstantData.ObjectTypes.SD_OBJT_NG_EVENT_LABEL:
-          r = GlobalData.optManager.GetObjectPtr(r.associd);
+          r = T3Gv.optManager.GetObjectPtr(r.associd);
         case ConstantData.ObjectTypes.SD_OBJT_NG_EVENT:
           ListManager.SDData.UpdateValue(
             r.datasetElemID,
@@ -51383,22 +51383,22 @@ ListManager.LM.prototypeTimelineChangePosition = function (e, t) {
           )
       }
     }
-    GlobalData.optManager.Timeline_Format(r, !0),
+    T3Gv.optManager.Timeline_Format(r, !0),
       Collab.AllowMessage() &&
       Collab.BuildMessage(ConstantData.CollabMessages.TimelineChangePosition, i, !0),
-      GlobalData.optManager.CompleteOperation()
+      T3Gv.optManager.CompleteOperation()
   }
 };
 
 ListManager.LM.prototype.TimelineChangeType = function (e, t) {
   var a = function (t) {
-    u = GlobalData.optManager.GetObjectPtr(t, !0),
-      sobj = GlobalData.optManager.GetObjectPtr(u.associd, !0);
+    u = T3Gv.optManager.GetObjectPtr(t, !0),
+      sobj = T3Gv.optManager.GetObjectPtr(u.associd, !0);
     let a = u.datasetElemID;
     if (null != sobj) {
-      let e = GlobalData.objectStore.GetObject(sobj.DataID);
+      let e = T3Gv.objectStore.GetObject(sobj.DataID);
       if (s = e.Data.runtimeText.text, D.push(sobj.BlockID), sobj.NoteID > 0) {
-        let e = GlobalData.objectStore.GetObject(sobj.NoteID);
+        let e = T3Gv.objectStore.GetObject(sobj.NoteID);
         l = e.Data.runtimeText.text
       }
     }
@@ -51414,7 +51414,7 @@ ListManager.LM.prototype.TimelineChangeType = function (e, t) {
     };
     null != l &&
       (r.Note = l),
-      S = GlobalData.optManager.TimelineCreateEvent(r, a, i),
+      S = T3Gv.optManager.TimelineCreateEvent(r, a, i),
       ListManager.SDData.UpdateValue(
         a,
         ListManager.TimelineEventFieldNameList[ListManager.NGTimelineEventFields.BLOCKID],
@@ -51422,11 +51422,11 @@ ListManager.LM.prototype.TimelineChangeType = function (e, t) {
       ),
       u.datasetElemID = - 1
   };
-  let r = GlobalData.optManager.GetTimeline();
+  let r = T3Gv.optManager.GetTimeline();
   if (isNaN(r)) return Utils2.Alert(Resources.Strings.SelectTimeline);
   null == t &&
-    GlobalData.optManager.CloseEdit();
-  let i = GlobalData.optManager.GetObjectPtr(r, !0);
+    T3Gv.optManager.CloseEdit();
+  let i = T3Gv.optManager.GetObjectPtr(r, !0);
   if (
     null == i ||
     i.objecttype !== ConstantData.ObjectTypes.SD_OBJT_NG_TIMELINE
@@ -51478,7 +51478,7 @@ ListManager.LM.prototype.TimelineChangeType = function (e, t) {
     m = {};
   for (let e = 0; e < h; e++) {
     g = selectedList[e];
-    let t = GlobalData.optManager.GetObjectPtr(g);
+    let t = T3Gv.optManager.GetObjectPtr(g);
     if (null != t) switch (t.objecttype) {
       case ConstantData.ObjectTypes.SD_OBJT_NG_EVENT_LABEL:
         g = t.associd;
@@ -51487,17 +51487,17 @@ ListManager.LM.prototype.TimelineChangeType = function (e, t) {
           (m[g] = !0, a(g))
     }
   }
-  GlobalData.optManager.DeleteObjects(D, !0),
-    GlobalData.optManager.Timeline_Format(i, !0),
-    GlobalData.optManager.CompleteOperation()
+  T3Gv.optManager.DeleteObjects(D, !0),
+    T3Gv.optManager.Timeline_Format(i, !0),
+    T3Gv.optManager.CompleteOperation()
 };
 
 ListManager.LM.prototype.TimelineChangeDate = function (e, t, a, r) {
-  let i = GlobalData.optManager.GetTimeline();
+  let i = T3Gv.optManager.GetTimeline();
   if (isNaN(i)) return Utils2.Alert(Resources.Strings.SelectTimeline);
   null == r &&
-    GlobalData.optManager.CloseEdit();
-  let n = GlobalData.optManager.GetObjectPtr(i, !1);
+    T3Gv.optManager.CloseEdit();
+  let n = T3Gv.optManager.GetObjectPtr(i, !1);
   if (
     null == n ||
     n.objecttype !== ConstantData.ObjectTypes.SD_OBJT_NG_TIMELINE
@@ -51530,40 +51530,40 @@ ListManager.LM.prototype.TimelineChangeDate = function (e, t, a, r) {
       ListManager.TimelineFieldNameList[ListManager.NGTimelineFields.UNITS],
       a.toString()
     ),
-    GlobalData.optManager.Timeline_Format(n, !0),
+    T3Gv.optManager.Timeline_Format(n, !0),
     Collab.AllowMessage() &&
     Collab.BuildMessage(ConstantData.CollabMessages.TimelineChangeDate, o, !0),
-    GlobalData.optManager.CompleteOperation()
+    T3Gv.optManager.CompleteOperation()
 };
 
 ListManager.LM.prototype.TimelineSetAuto = function (e) {
-  let t = GlobalData.optManager.GetTimeline();
+  let t = T3Gv.optManager.GetTimeline();
   if (isNaN(parseInt(t))) return Utils2.Alert(Resources.Strings.SelectTimeline);
-  let a = GlobalData.optManager.GetObjectPtr(t, !1);
+  let a = T3Gv.optManager.GetObjectPtr(t, !1);
   if (
     null == a ||
     a.objecttype !== ConstantData.ObjectTypes.SD_OBJT_NG_TIMELINE
   ) return Utils2.Alert(Resources.Strings.SelectTimeline);
-  if (null == e && GlobalData.optManager.CloseEdit(), Collab.AllowMessage()) {
+  if (null == e && T3Gv.optManager.CloseEdit(), Collab.AllowMessage()) {
     Collab.BeginSecondaryEdit();
     var r = {}
   }
-  a = GlobalData.optManager.GetObjectPtr(t, !0),
+  a = T3Gv.optManager.GetObjectPtr(t, !0),
     ListManager.SDData.UpdateValue(
       a.datasetElemID,
       ListManager.TimelineFieldNameList[ListManager.NGTimelineFields.AUTO],
       !0
     ),
-    GlobalData.optManager.Timeline_Format(a, !0),
+    T3Gv.optManager.Timeline_Format(a, !0),
     Collab.AllowMessage() &&
     Collab.BuildMessage(ConstantData.CollabMessages.TimelineSetAuto, r, !0),
-    GlobalData.optManager.CompleteOperation()
+    T3Gv.optManager.CompleteOperation()
 };
 
 ListManager.LM.prototype.TimelineMoveEvent = function (e, t, a, r) {
   if (0 === a || e < 0) return !1;
   for (let e = 0; e < t.length; e++) {
-    let a = GlobalData.optManager.GetObjectPtr(t[e]);
+    let a = T3Gv.optManager.GetObjectPtr(t[e]);
     if (
       a.objecttype == ConstantData.ObjectTypes.SD_OBJT_NG_TIMELINE
     ) return !1;
@@ -51572,14 +51572,14 @@ ListManager.LM.prototype.TimelineMoveEvent = function (e, t, a, r) {
       (t.splice(e, 1), e--)
   }
   null == r &&
-    GlobalData.optManager.CloseEdit();
+    T3Gv.optManager.CloseEdit();
   var i = new Date(Constants.TimelineMinYear, 0, 1);
   let n = Utils2.JSDateToFiletime(i),
-    o = GlobalData.optManager.GetObjectPtr(e, !0);
+    o = T3Gv.optManager.GetObjectPtr(e, !0);
   if (
     o.objecttype === ConstantData.ObjectTypes.SD_OBJT_NG_EVENT_LABEL &&
     o.associd &&
-    (o = GlobalData.optManager.GetObjectPtr(o.associd)),
+    (o = T3Gv.optManager.GetObjectPtr(o.associd)),
     null == o
   ) return !1;
   let s = ListManager.SDData.GetTableID(o.datasetID, ListManager.DataTableNames.NG_TIMELINE, !0),
@@ -51589,12 +51589,12 @@ ListManager.LM.prototype.TimelineMoveEvent = function (e, t, a, r) {
       ListManager.TimelineFieldNameList[ListManager.NGTimelineFields.BLOCKID]
     );
   if (S = parseInt(S), isNaN(S)) return !1;
-  let c = GlobalData.optManager.GetObjectPtr(S, !0);
+  let c = T3Gv.optManager.GetObjectPtr(S, !0);
   if (
     null == c ||
     c.objecttype !== ConstantData.ObjectTypes.SD_OBJT_NG_TIMELINE
   ) return !1;
-  let u = GlobalData.optManager.GetObjectPtr(c.ParentFrameID, !0);
+  let u = T3Gv.optManager.GetObjectPtr(c.ParentFrameID, !0);
   if (null == u) return !1;
   selectedList = t,
     selectedList.indexOf(e) < 0 &&
@@ -51618,7 +51618,7 @@ ListManager.LM.prototype.TimelineMoveEvent = function (e, t, a, r) {
     );
   m = Utils2.ParseShapeDataDate(m) + Utils2.ParseShapeDataTime(C);
   for (let e = 0; e < selectedList.length; e++) {
-    let t = GlobalData.optManager.GetObjectPtr(selectedList[e], !0);
+    let t = T3Gv.optManager.GetObjectPtr(selectedList[e], !0);
     if (
       null == t ||
       t.objecttype != ConstantData.ObjectTypes.SD_OBJT_NG_EVENT
@@ -51682,14 +51682,14 @@ ListManager.LM.prototype.TimelineMoveEvent = function (e, t, a, r) {
       this.DeleteLink(f, t.hooks[0].objid, t.BlockID, t.hooks[0].cellid, 0, !1)
     }
   }
-  return GlobalData.optManager.Timeline_Format(c, !0),
+  return T3Gv.optManager.Timeline_Format(c, !0),
     !0
 };
 
 ListManager.LM.prototype.GetTimeline = function () {
-  let e = GlobalData.optManager.GetTargetSelect();
+  let e = T3Gv.optManager.GetTargetSelect();
   if (isNaN(e)) return null;
-  let t = GlobalData.optManager.GetObjectPtr(e, !1);
+  let t = T3Gv.optManager.GetObjectPtr(e, !1);
   if (null == t) return null;
   switch (t.objecttype) {
     case ConstantData.ObjectTypes.SD_OBJT_NG_TIMELINE:
@@ -51697,26 +51697,26 @@ ListManager.LM.prototype.GetTimeline = function () {
     case ConstantData.ObjectTypes.SD_OBJT_NG_EVENT:
       return t.hooks.length > 0 ? t.hooks[0].objid : null;
     case ConstantData.ObjectTypes.SD_OBJT_NG_EVENT_LABEL:
-      let a = GlobalData.optManager.GetObjectPtr(t.associd, !1);
+      let a = T3Gv.optManager.GetObjectPtr(t.associd, !1);
       return a.hooks.length > 0 ? a.hooks[0].objid : null
   }
   return null
 };
 
 ListManager.LM.prototype.TimelineGenerateText = function () {
-  let e = GlobalData.optManager.GetTimeline();
+  let e = T3Gv.optManager.GetTimeline();
   isNaN(parseInt(e)) &&
     (
       e = function () {
-        if (zList = GlobalData.optManager.ZList(), zList) for (len = zList.length, i = 0; i < len; i++) if (
-          obj = GlobalData.optManager.GetObjectPtr(zList[i], !1),
+        if (zList = T3Gv.optManager.ZList(), zList) for (len = zList.length, i = 0; i < len; i++) if (
+          obj = T3Gv.optManager.GetObjectPtr(zList[i], !1),
           obj &&
           obj.objecttype === ConstantData.ObjectTypes.SD_OBJT_NG_TIMELINE
         ) return zList[i];
         return !1
       }()
     );
-  let t = GlobalData.optManager.GetObjectPtr(e, !1);
+  let t = T3Gv.optManager.GetObjectPtr(e, !1);
   if (
     null == t ||
     t.objecttype !== ConstantData.ObjectTypes.SD_OBJT_NG_TIMELINE
@@ -51743,11 +51743,11 @@ ListManager.LM.prototype.TimelineGenerateText = function () {
       isNaN(lineBlockID)
     ) return !1;
     if (
-      lobj = GlobalData.optManager.GetObjectPtr(lineBlockID, !1),
+      lobj = T3Gv.optManager.GetObjectPtr(lineBlockID, !1),
       isNaN(lobj.associd)
     ) return !1;
     if (
-      sobj = GlobalData.optManager.GetObjectPtr(lobj.associd, !1),
+      sobj = T3Gv.optManager.GetObjectPtr(lobj.associd, !1),
       null == lobj ||
       null == sobj
     ) return !1;
@@ -51757,7 +51757,7 @@ ListManager.LM.prototype.TimelineGenerateText = function () {
     ),
       c += n + ',',
       a = '';
-    let i = GlobalData.objectStore.GetObject(sobj.DataID);
+    let i = T3Gv.objectStore.GetObject(sobj.DataID);
     if (
       i &&
       (a = i.Data.runtimeText.text),
@@ -51767,19 +51767,19 @@ ListManager.LM.prototype.TimelineGenerateText = function () {
     ) {
       S.indexOf('Note') < 0 &&
         (S += ',Note'),
-        r = GlobalData.objectStore.GetObject(sobj.NoteID).Data.runtimeText.text,
+        r = T3Gv.objectStore.GetObject(sobj.NoteID).Data.runtimeText.text,
         r = r.replace(/(\r\n|\n|\r)/gm, ''),
         c += ',' + r
     }
     c += '\n'
   }
   let u = function () {
-    const e = GlobalData.optManager.GetDocumentName();
+    const e = T3Gv.optManager.GetDocumentName();
     return `${e &&
       e.length ? e : 'ExportText'}.csv`
   }();
   c = S + '\n' + c,
-    GlobalData.optManager.ExportString(c, u)
+    T3Gv.optManager.ExportString(c, u)
 };
 
 
@@ -51818,7 +51818,7 @@ ListManager.LM.prototype.PolyLRemoveNodes = function (e, t) {
   ) return - 1;
   if ((i = a.polylist.segs.length) < 3 || t < 0 || t >= i - 1) return - 1;
   if (
-    GlobalData.optManager.ShowSVGSelectionState(e, !1),
+    T3Gv.optManager.ShowSVGSelectionState(e, !1),
     a.polylist.closed &&
     4 == a.polylist.segs.length
   ) {
@@ -51842,8 +51842,8 @@ ListManager.LM.prototype.PolyLRemoveNodes = function (e, t) {
     return a.UpdateFrame(this.Frame),
       this.SetLinkFlag(e, ConstantData.LinkFlags.SED_L_MOVE),
       this.MaintainLink(e, a, o, c, !1),
-      GlobalData.optManager.AddToDirtyList(e),
-      void GlobalData.optManager.CompleteOperation(null)
+      T3Gv.optManager.AddToDirtyList(e),
+      void T3Gv.optManager.CompleteOperation(null)
   }
   s = a.GetPolyPoints(ConstantData.Defines.NPOLYPTS, !1, !0, !1, null),
     t === i - 2 &&
@@ -51878,12 +51878,12 @@ ListManager.LM.prototype.PolyLRemoveNodes = function (e, t) {
       a.EndPoint.y = a.StartPoint.y
     ),
     a.CalcFrame();
-  var h = GlobalData.optManager.ActiveVisibleZList().indexOf(e);
+  var h = T3Gv.optManager.ActiveVisibleZList().indexOf(e);
   h >= 0 &&
     this.AddSVGObject(h, e, !0, !0),
     this.SetLinkFlag(e, ConstantData.LinkFlags.SED_L_MOVE),
     this.MaintainLink(e, a, o, c, !1),
-    GlobalData.optManager.CompleteOperation(null)
+    T3Gv.optManager.CompleteOperation(null)
 };
 
 ListManager.LM.prototype.PolyLAddNode = function (e, t, a, r) {
@@ -51909,7 +51909,7 @@ ListManager.LM.prototype.PolyLAddNode = function (e, t, a, r) {
       (n = i.polylist.segs.length) >= ConstantData.Defines.SED_MaxPolySegs ||
       t < 0 ||
       t >= n - 1 ? - 1 : (
-      GlobalData.optManager.ShowSVGSelectionState(e, !1),
+      T3Gv.optManager.ShowSVGSelectionState(e, !1),
       s = new PolySeg(
         i.polylist.segs[t].LineType,
         a.x - i.StartPoint.x,
@@ -51917,29 +51917,29 @@ ListManager.LM.prototype.PolyLAddNode = function (e, t, a, r) {
       ),
       i.polylist.segs.splice(t + 1, 0, s),
       i.CalcFrame(),
-      GlobalData.optManager.ActiveVisibleZList().indexOf(e) >= 0 &&
+      T3Gv.optManager.ActiveVisibleZList().indexOf(e) >= 0 &&
       (
-        GlobalData.optManager.AddToDirtyList(e),
-        GlobalData.optManager.RenderDirtySVGObjects()
+        T3Gv.optManager.AddToDirtyList(e),
+        T3Gv.optManager.RenderDirtySVGObjects()
       ),
       this.SetLinkFlag(e, ConstantData.LinkFlags.SED_L_MOVE),
       this.MaintainLink(e, i, o, l, !1),
-      GlobalData.optManager.AddToDirtyList(e),
-      void (r && GlobalData.optManager.CompleteOperation(null))
+      T3Gv.optManager.AddToDirtyList(e),
+      void (r && T3Gv.optManager.CompleteOperation(null))
     )
 };
 
 ListManager.LM.prototype.Wall_EditCorners = function (e) {
-  var t = GlobalData.optManager.GetObjectPtr(e, !1);
+  var t = T3Gv.optManager.GetObjectPtr(e, !1);
   t &&
     t.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL &&
     t.polylist &&
     t.polylist.closed &&
     (
-      GlobalData.optManager.HideAllSVGSelectionStates(),
-      GlobalData.optManager.ForceWallCorners = !0,
-      GlobalData.optManager.RenderAllSVGSelectionStates(),
-      GlobalData.optManager.ForceWallCorners = !1
+      T3Gv.optManager.HideAllSVGSelectionStates(),
+      T3Gv.optManager.ForceWallCorners = !0,
+      T3Gv.optManager.RenderAllSVGSelectionStates(),
+      T3Gv.optManager.ForceWallCorners = !1
     )
 };
 
@@ -51977,7 +51977,7 @@ ListManager.LM.prototype.PolyLSetSegmentType = function (e, t, a) {
   }
   if (r.polylist.segs[t].LineType === i) return - 1;
   switch (
-  GlobalData.optManager.ShowSVGSelectionState(e, !1),
+  T3Gv.optManager.ShowSVGSelectionState(e, !1),
   r.polylist.segs[t].LineType = i,
   p = r.polylist.segs[t].pt.x - r.polylist.segs[t - 1].pt.x,
   d = r.polylist.segs[t].pt.y - r.polylist.segs[t - 1].pt.y,
@@ -52016,12 +52016,12 @@ ListManager.LM.prototype.PolyLSetSegmentType = function (e, t, a) {
     (d = - r.r.y),
     (p || d) &&
     r.OffsetShape(p, d);
-  var D = GlobalData.optManager.ActiveVisibleZList().indexOf(e);
+  var D = T3Gv.optManager.ActiveVisibleZList().indexOf(e);
   return D >= 0 &&
     this.AddSVGObject(D, e, !0, !0),
     this.SetLinkFlag(e, ConstantData.LinkFlags.SED_L_MOVE),
     this.MaintainLink(e, r, l, c, !1),
-    GlobalData.optManager.CompleteOperation(null),
+    T3Gv.optManager.CompleteOperation(null),
     0
 };
 
@@ -52130,8 +52130,8 @@ ListManager.LM.prototype.CN_SetStyle = function (e, t) {
             !0
           )
         ),
-        GlobalData.optManager.SetLinkFlag(e, ConstantData.LinkFlags.SED_L_CHANGE),
-        GlobalData.optManager.SetLinkFlag(e, ConstantData.LinkFlags.SED_L_MOVE),
+        T3Gv.optManager.SetLinkFlag(e, ConstantData.LinkFlags.SED_L_CHANGE),
+        T3Gv.optManager.SetLinkFlag(e, ConstantData.LinkFlags.SED_L_MOVE),
         a._FixHook(!1, !1),
         r = a.arraylist.hook.length,
         t & ConstantData.SEDA_Styles.SEDA_Radial ? r > 1 &&
@@ -52148,7 +52148,7 @@ ListManager.LM.prototype.CN_SetStyle = function (e, t) {
             foundtree: !1
           }
         ),
-        GlobalData.optManager.CompleteOperation(null)
+        T3Gv.optManager.CompleteOperation(null)
       )
     )
 };
@@ -52171,7 +52171,7 @@ ListManager.LM.prototype.PolyLSplit = function (e, t, a) {
       C.recursiveCall = a;
     var y = Collab.BuildMessage(ConstantData.CollabMessages.PolyLSplit, C, !1, !0)
   }
-  if (GlobalData.optManager.ShowSVGSelectionState(e, !1),
+  if (T3Gv.optManager.ShowSVGSelectionState(e, !1),
     r.polylist.closed || 1 != t && t != r.polylist.segs.length - 1 || (m = !0),
     r.polylist.closed) {
     if (this instanceof ListManager.PolyLineContainer && r.MaintainDimensionThroughPolygonOpennessChange(!1),
@@ -52204,12 +52204,12 @@ ListManager.LM.prototype.PolyLSplit = function (e, t, a) {
       r.maxhooks = 2,
       r.targflags |= ConstantData.HookFlags.SED_LC_Line | ConstantData.HookFlags.SED_LC_AttachToLine,
       r.hookflags |= ConstantData.HookFlags.SED_LC_Shape | ConstantData.HookFlags.SED_LC_Line,
-      GlobalData.optManager.AddToDirtyList(e),
+      T3Gv.optManager.AddToDirtyList(e),
       r instanceof ListManager.PolyLineContainer ? t = r.polylist.segs.length - 2 : h = !0
   } else
     0 === t && (t = 1);
   if (!h) {
-    c = GlobalData.optManager.GetPolyLineLinks(e, t);
+    c = T3Gv.optManager.GetPolyLineLinks(e, t);
     var f = {
       Frame: {
         x: r.Frame.x,
@@ -52256,11 +52256,11 @@ ListManager.LM.prototype.PolyLSplit = function (e, t, a) {
       r.polylist.segs.splice(t + 1),
       r.EndPoint.x = u[t].x,
       r.EndPoint.y = u[t].y,
-      GlobalData.optManager.AddToDirtyList(e),
-      GlobalData.optManager.AddToDirtyList(l)
+      T3Gv.optManager.AddToDirtyList(e),
+      T3Gv.optManager.AddToDirtyList(l)
   }
   r.CalcFrame();
-  var L = GlobalData.optManager.ActiveVisibleZList().indexOf(e);
+  var L = T3Gv.optManager.ActiveVisibleZList().indexOf(e);
   if (L >= 0 && this.AddSVGObject(L, e, !0, !0),
     l && i && (this.IsTopMostVisibleLayer() ? this.RenderDirtySVGObjects() : this.RenderAllSVGObjects()),
     this.SetLinkFlag(e, ConstantData.LinkFlags.SED_L_MOVE),
@@ -52268,16 +52268,16 @@ ListManager.LM.prototype.PolyLSplit = function (e, t, a) {
     c && c.length && this.MoveLinks(l, e, c, null),
     this.MaintainLink(e, r, null, d, !1),
     l && this.MaintainLink(l, i, null, d, !1),
-    l && i && i.objecttype == ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL && i.MoveBehindAllLinked() && GlobalData.optManager.RenderAllSVGObjects(),
+    l && i && i.objecttype == ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL && i.MoveBehindAllLinked() && T3Gv.optManager.RenderAllSVGObjects(),
     r instanceof ListManager.PolyLineContainer && 2 === r.polylist.segs.length) {
     var I = r.BlockID
       , T = r.objecttype;
-    GlobalData.optManager.ChangeToLine(r, ConstantData.LineType.LINE, 0),
-      (r = GlobalData.optManager.GetObjectPtr(I, !1)) && (r.objecttype = T,
-        r.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL && r.MoveBehindAllLinked() && GlobalData.optManager.RenderAllSVGObjects())
+    T3Gv.optManager.ChangeToLine(r, ConstantData.LineType.LINE, 0),
+      (r = T3Gv.optManager.GetObjectPtr(I, !1)) && (r.objecttype = T,
+        r.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL && r.MoveBehindAllLinked() && T3Gv.optManager.RenderAllSVGObjects())
   }
   if (l ? p.push(l) : p.push(e),
-    m && i && i.polylist && i.polylist.segs && i.polylist.segs.length > 2 && (a || GlobalData.optManager.PolyLSplit(i.BlockID, 1, !0)),
+    m && i && i.polylist && i.polylist.segs && i.polylist.segs.length > 2 && (a || T3Gv.optManager.PolyLSplit(i.BlockID, 1, !0)),
     !a) {
     if (r && r instanceof ListManager.PolyLineContainer && i) {
       var b = {
@@ -52292,13 +52292,13 @@ ListManager.LM.prototype.PolyLSplit = function (e, t, a) {
       Math.abs(b.x - M.x) < 5 && (P = 0);
       var R = b.y > M.y ? 10 : -10;
       Math.abs(b.y - M.y) < 5 && (R = 0),
-        GlobalData.optManager.OffsetShape(i.BlockID, P, R, ConstantData.ActionTriggerType.TABLE_SELECT),
-        GlobalData.optManager.AddToDirtyList(i.BlockID)
+        T3Gv.optManager.OffsetShape(i.BlockID, P, R, ConstantData.ActionTriggerType.TABLE_SELECT),
+        T3Gv.optManager.AddToDirtyList(i.BlockID)
     }
     y && (Collab.IsSecondary() && Collab.CreateList.length && (y.Data.CreateList = [],
       y.Data.CreateList = y.Data.CreateList.concat(Collab.CreateList)),
       Collab.SendMessage(y)),
-      GlobalData.optManager.CompleteOperation(p)
+      T3Gv.optManager.CompleteOperation(p)
   }
   return l
 }
@@ -52307,7 +52307,7 @@ ListManager.LM.prototype.PolyLJoin = function (e, t, a, r, i) {
   var n, o, s, l, S, c, u, p, d, D, g, h, m, C, y, f = null, L = null, I = null, T = null, b = [], M = [], P = !1, R = [], A = !1, _ = ConstantData.ActionTriggerType.LINEEND, E = {
     x: 0,
     y: 0
-  }, w = {}, F = ConstantData.Defines.SED_KnobSize, v = -1, G = GlobalData.optManager.ActiveVisibleZList(), N = !1;
+  }, w = {}, F = ConstantData.Defines.SED_KnobSize, v = -1, G = T3Gv.optManager.ActiveVisibleZList(), N = !1;
   if (null == (f = this.GetObjectPtr(e, !0)))
     return -1;
   if (null == (L = this.GetObjectPtr(a, !0)))
@@ -52334,7 +52334,7 @@ ListManager.LM.prototype.PolyLJoin = function (e, t, a, r, i) {
     return f instanceof ListManager.PolyLineContainer && !A && !0 !== i && (f.MaintainDimensionThroughPolygonOpennessChange(f.polylist.closed),
       k = -2),
       f.CalcFrame(),
-      GlobalData.optManager.AddToDirtyList(f.BlockID),
+      T3Gv.optManager.AddToDirtyList(f.BlockID),
       this.SetLinkFlag(e, ConstantData.LinkFlags.SED_L_MOVE),
       this.MaintainLink(e, f, null, _, !1),
       k
@@ -52538,7 +52538,7 @@ ListManager.LM.prototype.PolyLJoin = function (e, t, a, r, i) {
         I.EndPoint.y = I.StartPoint.y,
         I instanceof ListManager.PolyLine && !0 !== i && I.MaintainDimensionThroughPolygonOpennessChange(I.polylist.closed),
         I.objecttype !== ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL && this.OpenShapeEdit(I.BlockID),
-        GlobalData.optManager.AddToDirtyList(I.BlockID))
+        T3Gv.optManager.AddToDirtyList(I.BlockID))
   } else {
     if (r === ConstantData.HookPts.SED_KTL) {
       for (n = 1; n < o; n++) {
@@ -52618,7 +52618,7 @@ ListManager.LM.prototype.PolyLJoin = function (e, t, a, r, i) {
         I.EndPoint.y = I.StartPoint.y,
         I.objecttype !== ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL && this.OpenShapeEdit(I.BlockID),
         I instanceof ListManager.PolyLine && !0 !== i && I.MaintainDimensionThroughPolygonOpennessChange(I.polylist.closed),
-        GlobalData.optManager.AddToDirtyList(I.BlockID))
+        T3Gv.optManager.AddToDirtyList(I.BlockID))
   }
   if (I.CalcFrame(),
     P)
@@ -52627,12 +52627,12 @@ ListManager.LM.prototype.PolyLJoin = function (e, t, a, r, i) {
       Collab.ClearCreateList(),
       Collab.AddToCreateList(c),
       N = !0,
-      GlobalData.optManager.AddToDirtyList(c);
+      T3Gv.optManager.AddToDirtyList(c);
   else {
-    var O = GlobalData.optManager.VisibleZList().indexOf(c);
+    var O = T3Gv.optManager.VisibleZList().indexOf(c);
     O >= 0 && this.AddSVGObject(O, c, !0, !0)
   }
-  for ((I = GlobalData.optManager.GetObjectPtr(c, !1)) && I.DataID < 0 && (I.DataID = h,
+  for ((I = T3Gv.optManager.GetObjectPtr(c, !1)) && I.DataID < 0 && (I.DataID = h,
     f.DataID === h ? (I.TextDirection = f.TextDirection,
       f.DataID = -1) : L.DataID === h && (I.TextDirection = L.TextDirection,
         L.DataID = -1),
@@ -52657,10 +52657,10 @@ ListManager.LM.prototype.PolyLJoin = function (e, t, a, r, i) {
     G.splice(B, 1),
       G.splice(v, 0, c),
       N = !0,
-      GlobalData.optManager.AddToDirtyList(c)
+      T3Gv.optManager.AddToDirtyList(c)
   }
   return I instanceof ListManager.PolyLineContainer && I.MoveBehindAllLinked() && (N = !0),
-    N && (GlobalData.optManager.IsTopMostVisibleLayer() ? GlobalData.optManager.RenderDirtySVGObjects() : GlobalData.optManager.RenderAllSVGObjects()),
+    N && (T3Gv.optManager.IsTopMostVisibleLayer() ? T3Gv.optManager.RenderDirtySVGObjects() : T3Gv.optManager.RenderAllSVGObjects()),
     c
 }
 
@@ -52684,7 +52684,7 @@ ListManager.LM.prototype.PolyLRemoveNodes = function (e, t) {
     return -1;
   if ((i = a.polylist.segs.length) < 3 || t < 0 || t >= i - 1)
     return -1;
-  if (GlobalData.optManager.ShowSVGSelectionState(e, !1),
+  if (T3Gv.optManager.ShowSVGSelectionState(e, !1),
     a.polylist.closed && 4 == a.polylist.segs.length) {
     for (s = a.GetPolyPoints(ConstantData.Defines.NPOLYPTS, !1, !0, !1, null),
       a.polylist.closed = !1,
@@ -52704,8 +52704,8 @@ ListManager.LM.prototype.PolyLRemoveNodes = function (e, t) {
     return a.UpdateFrame(this.Frame),
       this.SetLinkFlag(e, ConstantData.LinkFlags.SED_L_MOVE),
       this.MaintainLink(e, a, o, c, !1),
-      GlobalData.optManager.AddToDirtyList(e),
-      void GlobalData.optManager.CompleteOperation(null)
+      T3Gv.optManager.AddToDirtyList(e),
+      void T3Gv.optManager.CompleteOperation(null)
   }
   s = a.GetPolyPoints(ConstantData.Defines.NPOLYPTS, !1, !0, !1, null),
     t === i - 2 && (a.EndPoint.x = a.polylist.segs[t].pt.x + a.StartPoint.x,
@@ -52728,11 +52728,11 @@ ListManager.LM.prototype.PolyLRemoveNodes = function (e, t) {
     a.EndPoint.x = a.StartPoint.x,
     a.EndPoint.y = a.StartPoint.y),
     a.CalcFrame();
-  var h = GlobalData.optManager.ActiveVisibleZList().indexOf(e);
+  var h = T3Gv.optManager.ActiveVisibleZList().indexOf(e);
   h >= 0 && this.AddSVGObject(h, e, !0, !0),
     this.SetLinkFlag(e, ConstantData.LinkFlags.SED_L_MOVE),
     this.MaintainLink(e, a, o, c, !1),
-    GlobalData.optManager.CompleteOperation(null)
+    T3Gv.optManager.CompleteOperation(null)
 }
 
 ListManager.LM.prototype.PolyLAddNode = function (e, t, a, r) {
@@ -52748,24 +52748,24 @@ ListManager.LM.prototype.PolyLAddNode = function (e, t, a, r) {
       Collab.BuildMessage(ConstantData.CollabMessages.PolyLAddNode, S, !1)
   }
   return o = Utils1.DeepCopy(i),
-    i.LineType != ConstantData.LineType.POLYLINE || (n = i.polylist.segs.length) >= ConstantData.Defines.SED_MaxPolySegs || t < 0 || t >= n - 1 ? -1 : (GlobalData.optManager.ShowSVGSelectionState(e, !1),
+    i.LineType != ConstantData.LineType.POLYLINE || (n = i.polylist.segs.length) >= ConstantData.Defines.SED_MaxPolySegs || t < 0 || t >= n - 1 ? -1 : (T3Gv.optManager.ShowSVGSelectionState(e, !1),
       s = new PolySeg(i.polylist.segs[t].LineType, a.x - i.StartPoint.x, a.y - i.StartPoint.y),
       i.polylist.segs.splice(t + 1, 0, s),
       i.CalcFrame(),
-      GlobalData.optManager.ActiveVisibleZList().indexOf(e) >= 0 && (GlobalData.optManager.AddToDirtyList(e),
-        GlobalData.optManager.RenderDirtySVGObjects()),
+      T3Gv.optManager.ActiveVisibleZList().indexOf(e) >= 0 && (T3Gv.optManager.AddToDirtyList(e),
+        T3Gv.optManager.RenderDirtySVGObjects()),
       this.SetLinkFlag(e, ConstantData.LinkFlags.SED_L_MOVE),
       this.MaintainLink(e, i, o, l, !1),
-      GlobalData.optManager.AddToDirtyList(e),
-      void (r && GlobalData.optManager.CompleteOperation(null)))
+      T3Gv.optManager.AddToDirtyList(e),
+      void (r && T3Gv.optManager.CompleteOperation(null)))
 }
 
 ListManager.LM.prototype.Wall_EditCorners = function (e) {
-  var t = GlobalData.optManager.GetObjectPtr(e, !1);
-  t && t.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL && t.polylist && t.polylist.closed && (GlobalData.optManager.HideAllSVGSelectionStates(),
-    GlobalData.optManager.ForceWallCorners = !0,
-    GlobalData.optManager.RenderAllSVGSelectionStates(),
-    GlobalData.optManager.ForceWallCorners = !1)
+  var t = T3Gv.optManager.GetObjectPtr(e, !1);
+  t && t.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL && t.polylist && t.polylist.closed && (T3Gv.optManager.HideAllSVGSelectionStates(),
+    T3Gv.optManager.ForceWallCorners = !0,
+    T3Gv.optManager.RenderAllSVGSelectionStates(),
+    T3Gv.optManager.ForceWallCorners = !1)
 }
 
 ListManager.LM.prototype.PolyLSetSegmentType = function (e, t, a) {
@@ -52794,7 +52794,7 @@ ListManager.LM.prototype.PolyLSetSegmentType = function (e, t, a) {
   }
   if (r.polylist.segs[t].LineType === i)
     return -1;
-  switch (GlobalData.optManager.ShowSVGSelectionState(e, !1),
+  switch (T3Gv.optManager.ShowSVGSelectionState(e, !1),
   r.polylist.segs[t].LineType = i,
   p = r.polylist.segs[t].pt.x - r.polylist.segs[t - 1].pt.x,
   d = r.polylist.segs[t].pt.y - r.polylist.segs[t - 1].pt.y,
@@ -52823,11 +52823,11 @@ ListManager.LM.prototype.PolyLSetSegmentType = function (e, t, a) {
   r.r.x < 0 && (p = -r.r.x),
     r.r.y < 0 && (d = -r.r.y),
     (p || d) && r.OffsetShape(p, d);
-  var D = GlobalData.optManager.ActiveVisibleZList().indexOf(e);
+  var D = T3Gv.optManager.ActiveVisibleZList().indexOf(e);
   return D >= 0 && this.AddSVGObject(D, e, !0, !0),
     this.SetLinkFlag(e, ConstantData.LinkFlags.SED_L_MOVE),
     this.MaintainLink(e, r, l, c, !1),
-    GlobalData.optManager.CompleteOperation(null),
+    T3Gv.optManager.CompleteOperation(null),
     0
 }
 
@@ -52838,7 +52838,7 @@ ListManager.LM.prototype.CN_ChangeHook = function (e, t, a, r) {
   if (a) {
     if (e.hooks && e.hooks[t] && e.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.SHAPE) {
       if ((o = Business.GetParentConnector(e.BlockID, null)) >= 0) {
-        if (null == (i = GlobalData.optManager.GetObjectPtr(o, !1)))
+        if (null == (i = T3Gv.optManager.GetObjectPtr(o, !1)))
           return;
         if (i._IsFlowChartConnector())
           return;
@@ -52853,12 +52853,12 @@ ListManager.LM.prototype.CN_ChangeHook = function (e, t, a, r) {
         if (S = i.objecttype,
           c = i.subtype,
           e.subtype !== ConstantData.ObjectSubTypes.SD_SUBT_TASKMAP && e.subtype !== ConstantData.ObjectSubTypes.SD_SUBT_HUBMAP || (e.subtype = c),
-          (n = GlobalData.optManager.FindChildArray(e.BlockID, -1)) < 0) {
+          (n = T3Gv.optManager.FindChildArray(e.BlockID, -1)) < 0) {
           if (i.objecttype === ConstantData.ObjectTypes.SD_OBJT_DECISIONTREE_CONNECTOR)
             s = gDecisionTreeManager.GetChildConnectorStyle(e);
           else
             s = Business.GetChildConnectorStyle(e);
-          if ((n = Business.AddConnector(100, 100, s, e.BlockID)) >= 0 && (u = GlobalData.optManager.GetObjectPtr(n, !0)),
+          if ((n = Business.AddConnector(100, 100, s, e.BlockID)) >= 0 && (u = T3Gv.optManager.GetObjectPtr(n, !0)),
             null == u)
             return;
           if (u.objecttype = S,
@@ -52867,17 +52867,17 @@ ListManager.LM.prototype.CN_ChangeHook = function (e, t, a, r) {
             u.TextFlags = ConstantData.TextFlags.SED_TF_AttachC;
           l ? (p.x = 0,
             p.y = -ConstantData.SEDA_Styles.SEDA_CoManager) : p = s.connect,
-            GlobalData.optManager.UpdateHook(n, -1, e.BlockID, s.hookpt, p, null),
-            GlobalData.optManager.SetLinkFlag(e.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
+            T3Gv.optManager.UpdateHook(n, -1, e.BlockID, s.hookpt, p, null),
+            T3Gv.optManager.SetLinkFlag(e.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
             u.Pr_Format(n),
-            GlobalData.optManager.AddToDirtyList(n)
+            T3Gv.optManager.AddToDirtyList(n)
         }
         if (S === ConstantData.ObjectTypes.SD_OBJT_MINDMAP_CONNECTOR)
           gMindMapManager.ChangeHook(e, t, a, r)
       }
     } else if (e instanceof ListManager.SegmentedLine && e.objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_CONNECTOR && e.hooks.length >= 2) {
       var D = new Point(0, 0);
-      D.x = GlobalData.optManager.GetDependencyLineEndX(e),
+      D.x = T3Gv.optManager.GetDependencyLineEndX(e),
         D.y = e.EndPoint.y;
       var g = this.svgObjectLayer.GetElementByID(e.BlockID);
       g && (e.EndPoint.x = D.x,
@@ -52889,9 +52889,9 @@ ListManager.LM.prototype.CN_ChangeHook = function (e, t, a, r) {
       lindex: -1,
       id: -1,
       hookpt: 0
-    }; GlobalData.optManager.FindChildArrayByIndex(e.BlockID, h) >= 0;)
-      (n = h.id) >= 0 && 0 === GlobalData.optManager.CN_GetNShapes(n) && (d.push(n),
-        GlobalData.optManager.DeleteObjects(d, !1))
+    }; T3Gv.optManager.FindChildArrayByIndex(e.BlockID, h) >= 0;)
+      (n = h.id) >= 0 && 0 === T3Gv.optManager.CN_GetNShapes(n) && (d.push(n),
+        T3Gv.optManager.DeleteObjects(d, !1))
 }
 
 ListManager.LM.prototype.CN_GetNShapes = function (e) {
@@ -52950,8 +52950,8 @@ ListManager.LM.prototype.CN_SetStyle = function (e, t) {
       a.arraylist.styleflags = t,
       i != n ? (a.vertical = !a.vertical,
         !i && o && (a.arraylist.styleflags = Utils2.SetFlag(a.arraylist.styleflags, ConstantData.SEDA_Styles.SEDA_ReverseCol, !0))) : n && s && (a.arraylist.styleflags = Utils2.SetFlag(a.arraylist.styleflags, ConstantData.SEDA_Styles.SEDA_ReverseCol, !0)),
-      GlobalData.optManager.SetLinkFlag(e, ConstantData.LinkFlags.SED_L_CHANGE),
-      GlobalData.optManager.SetLinkFlag(e, ConstantData.LinkFlags.SED_L_MOVE),
+      T3Gv.optManager.SetLinkFlag(e, ConstantData.LinkFlags.SED_L_CHANGE),
+      T3Gv.optManager.SetLinkFlag(e, ConstantData.LinkFlags.SED_L_MOVE),
       a._FixHook(!1, !1),
       r = a.arraylist.hook.length,
       t & ConstantData.SEDA_Styles.SEDA_Radial ? r > 1 && (a.arraylist.hook[1].gap = 0) : r > 1 && 0 === a.arraylist.hook[1].gap && (a.arraylist.hook[1].gap = a.arraylist.ht),
@@ -52961,6 +52961,6 @@ ListManager.LM.prototype.CN_SetStyle = function (e, t) {
         topshape: -1,
         foundtree: !1
       }),
-      GlobalData.optManager.CompleteOperation(null)))
+      T3Gv.optManager.CompleteOperation(null)))
 }
 export default ListManager.LM;

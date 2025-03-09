@@ -1183,6 +1183,6 @@ extend(Element, {
   // },
 });
 
-const HvacSVG = SVG;
+const T3Svg = SVG;
 
-export default HvacSVG;
+export default T3Svg;

@@ -8,7 +8,7 @@
 // import SDGraphics from "./../../SDGraphics/SDGraphics.Index";
 // import GPP from '../../gListManager';
 // import $ from 'jquery';
-// import HvacSVG from '../../Hvac.SVG.t2';
+// import T3Svg from '../../Hvac.SVG.t2';
 
 
 // import DefaultStyle from '../../SDGraphics/TextFormatter.Index';
@@ -23,7 +23,7 @@ import Utils1 from '../Helper/Utils1'
 import Utils2 from "../Helper/Utils2"
 import Utils3 from "../Helper/Utils3"
 import Global from '../Data/Globals'
-import GlobalData from '../Data/GlobalData'
+import GlobalData from '../Data/T3Gv'
 import Collab from '../Data/Collab'
 import FileParser from '../Data/FileParser'
 import EvtUtil from "../Event/EvtUtil"
@@ -38,11 +38,11 @@ import Point from '../Model/Point'
 import $ from 'jquery'
 
 // import { isPolygonType } from '../Shape/Shape.Polygon'
-import Document from '../Basic/Basic.Document'
+import Document from '../Basic/B.Document'
 
-import Element from '../Basic/Basic.Element';
-import Effects from "../Basic/Basic.Element.Effects";
-import Formatter from '../Basic/Basic.Text.Formatter'
+import Element from '../Basic/B.Element';
+import Effects from "../Basic/B.Element.Effects";
+import Formatter from '../Basic/B.Text.Formatter'
 import Utils4 from "../Helper/Utils3";
 import ParagraphFormat from '../Model/ParagraphFormat'
 import Instance from "../Data/Instance/Instance"
@@ -781,7 +781,7 @@ class BaseDrawingObject {
   }
 
   MoveSVG() {
-    var e = GlobalData.optManager.svgObjectLayer.GetElementByID(this.BlockID);
+    var e = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID);
     if (e) {
       var t = this.GetSVGFrame();
       e.SetPos(t.x, t.y)
@@ -807,8 +807,8 @@ class BaseDrawingObject {
     var i, dimLineDeflectUserData, cursorAngle;
     for (
       l.knobID = ConstantData.ActionTriggerType.DIMENSION_LINE_ADJ,
-      docToScreenScale = GlobalData.optManager.svgDoc.docInfo.docToScreenScale,
-      GlobalData.optManager.svgDoc.docInfo.docScale <= 0.5 &&
+      docToScreenScale = T3Gv.optManager.svgDoc.docInfo.docToScreenScale,
+      T3Gv.optManager.svgDoc.docInfo.docScale <= 0.5 &&
       (docToScreenScale *= 2),
       l.knobSize = ConstantData.Defines.SED_KnobSize / docToScreenScale,
       l.shapeType = Document.CreateShapeType.POLYGON,
@@ -990,7 +990,7 @@ class BaseDrawingObject {
         y: s.y + s.height / 2
       },
         S = 2 * Math.PI * (r / 360),
-        c = GlobalData.optManager.RotatePointAroundPoint(a, l, S);
+        c = T3Gv.optManager.RotatePointAroundPoint(a, l, S);
       s.x = c.x - s.width / 2,
         s.y = c.y - s.height / 2,
         this.RotationAngle += r,
@@ -1205,7 +1205,7 @@ class BaseDrawingObject {
   }
 
   ChangeHook(e, t, a) {
-    GlobalData.optManager.CN_ChangeHook(this, e, t, a)
+    T3Gv.optManager.CN_ChangeHook(this, e, t, a)
   }
 
   ChangeShape(e, t, a, r, i) {
@@ -1234,53 +1234,53 @@ class BaseDrawingObject {
       a = null,
       r = [];
     if (- 1 != this.TableID) {
-      var i = GlobalData.optManager.GetObjectPtr(this.TableID, !0);
+      var i = T3Gv.optManager.GetObjectPtr(this.TableID, !0);
       i &&
-        GlobalData.optManager.Table_DeleteObject(i),
-        (e = GlobalData.objectStore.GetObject(this.TableID)) &&
+        T3Gv.optManager.Table_DeleteObject(i),
+        (e = T3Gv.objectStore.GetObject(this.TableID)) &&
         e.Delete()
     }
     - 1 != this.DataID &&
-      (e = GlobalData.objectStore.GetObject(this.DataID)) &&
+      (e = T3Gv.objectStore.GetObject(this.DataID)) &&
       e.Delete(),
       - 1 != this.NoteID &&
-      (e = GlobalData.objectStore.GetObject(this.NoteID)) &&
+      (e = T3Gv.objectStore.GetObject(this.NoteID)) &&
       e.Delete(),
       - 1 != this.NativeID &&
-      (e = GlobalData.objectStore.GetObject(this.NativeID)) &&
+      (e = T3Gv.objectStore.GetObject(this.NativeID)) &&
       e.Delete(),
       - 1 != this.GanttInfoID &&
-      (e = GlobalData.objectStore.GetObject(this.GanttInfoID)) &&
+      (e = T3Gv.objectStore.GetObject(this.GanttInfoID)) &&
       e.Delete(),
       - 1 != this.BlobBytesID &&
       (
-        (e = GlobalData.objectStore.GetObject(this.BlobBytesID)) &&
+        (e = T3Gv.objectStore.GetObject(this.BlobBytesID)) &&
         e.Delete(),
-        GlobalData.optManager.IsBlobURL(this.ImageURL) &&
-        GlobalData.optManager.DeleteURL(this.ImageURL)
+        T3Gv.optManager.IsBlobURL(this.ImageURL) &&
+        T3Gv.optManager.DeleteURL(this.ImageURL)
       ),
       - 1 != this.EMFBlobBytesID &&
-      (e = GlobalData.objectStore.GetObject(this.EMFBlobBytesID)) &&
+      (e = T3Gv.objectStore.GetObject(this.EMFBlobBytesID)) &&
       e.Delete(),
       - 1 != this.OleBlobBytesID &&
-      (e = GlobalData.objectStore.GetObject(this.OleBlobBytesID)) &&
+      (e = T3Gv.objectStore.GetObject(this.OleBlobBytesID)) &&
       e.Delete(),
       this.RemoveFieldData(!0),
       this.hooks.length &&
       (
-        !(t = GlobalData.optManager.GetObjectPtr(this.hooks[0].objid, !1)) ||
+        !(t = T3Gv.optManager.GetObjectPtr(this.hooks[0].objid, !1)) ||
         t.objecttype !== ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL ||
         t.Dimensions & ConstantData.DimensionFlags.SED_DF_HideHookedObjDimensions ||
         (
           r = Utils1.DeepCopy(this.hooks),
           this.hooks = [],
-          a = GlobalData.optManager.svgObjectLayer.GetElementByID(t.BlockID),
+          a = T3Gv.optManager.svgObjectLayer.GetElementByID(t.BlockID),
           t.UpdateDimensionLines(a),
           this.hooks = r
         )
       ),
       this.CommentID >= 0 &&
-      GlobalData.optManager.CommentObjectDelete(this)
+      T3Gv.optManager.CommentObjectDelete(this)
   }
 
   GetTextIDs() {
@@ -1314,13 +1314,13 @@ class BaseDrawingObject {
   }
 
   AfterModifyShape(e, t) {
-    GlobalData.optManager.SetLinkFlag(e, ConstantData.LinkFlags.SED_L_MOVE),
-      GlobalData.optManager.UpdateLinks()
+    T3Gv.optManager.SetLinkFlag(e, ConstantData.LinkFlags.SED_L_MOVE),
+      T3Gv.optManager.UpdateLinks()
   }
 
   AfterRotateShape(e) {
-    GlobalData.optManager.SetLinkFlag(e, ConstantData.LinkFlags.SED_L_MOVE),
-      GlobalData.optManager.UpdateLinks()
+    T3Gv.optManager.SetLinkFlag(e, ConstantData.LinkFlags.SED_L_MOVE),
+      T3Gv.optManager.UpdateLinks()
   }
 
   PolyGetTargetPointList(e) {
@@ -1398,15 +1398,15 @@ class BaseDrawingObject {
   }
 
   RightClick(e) {
-    var t = GlobalData.optManager.svgDoc.ConvertWindowToDocCoords(e.gesture.center.clientX, e.gesture.center.clientY),
-      a = GlobalData.optManager.svgObjectLayer.FindElementByDOMElement(e.currentTarget);
-    if (!GlobalData.optManager.SelectObjectFromClick(e, a)) return !1;
-    GlobalData.optManager.RightClickParams = new RightClickData(),
-      GlobalData.optManager.RightClickParams.TargetID = a.GetID(),
-      GlobalData.optManager.RightClickParams.HitPt.x = t.x,
-      GlobalData.optManager.RightClickParams.HitPt.y = t.y,
-      GlobalData.optManager.RightClickParams.Locked = (this.flags & ConstantData.ObjFlags.SEDO_Lock) > 0,
-      GlobalData.docHandler.IsReadOnly() ? Commands.MainController.ShowContextualMenu(
+    var t = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(e.gesture.center.clientX, e.gesture.center.clientY),
+      a = T3Gv.optManager.svgObjectLayer.FindElementByDOMElement(e.currentTarget);
+    if (!T3Gv.optManager.SelectObjectFromClick(e, a)) return !1;
+    T3Gv.optManager.RightClickParams = new RightClickData(),
+      T3Gv.optManager.RightClickParams.TargetID = a.GetID(),
+      T3Gv.optManager.RightClickParams.HitPt.x = t.x,
+      T3Gv.optManager.RightClickParams.HitPt.y = t.y,
+      T3Gv.optManager.RightClickParams.Locked = (this.flags & ConstantData.ObjFlags.SEDO_Lock) > 0,
+      T3Gv.docHandler.IsReadOnly() ? Commands.MainController.ShowContextualMenu(
         Resources.Controls.ContextMenus.DefaultReadOnly.Id.toLowerCase(),
         e.gesture.center.clientX,
         e.gesture.center.clientY
@@ -1426,7 +1426,7 @@ class BaseDrawingObject {
         runtimeText: e
       },
         a = new TextObject(t),
-        r = GlobalData.objectStore.CreateBlock(ConstantData.StoredObjectType.LM_TEXT_OBJECT, a);
+        r = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.LM_TEXT_OBJECT, a);
       if (null === r) throw new SDJSError({
         source: 'AddNewObject.CreateBlock',
         message: 'AddNewObject got a null new text block allocation'
@@ -1441,7 +1441,7 @@ class BaseDrawingObject {
         runtimeText: e
       },
         a = new TextObject(t),
-        r = GlobalData.objectStore.CreateBlock(ConstantData.StoredObjectType.LM_NOTES_OBJECT, a);
+        r = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.LM_NOTES_OBJECT, a);
       if (null === r) throw new SDJSError({
         source: 'AddNewObject.CreateBlock',
         message: 'AddNewObject got a null new text block allocation'
@@ -1457,14 +1457,14 @@ class BaseDrawingObject {
   GetTextParaFormat(e) {
     var t,
       a = {},
-      r = GlobalData.optManager.svgObjectLayer.GetElementByID(this.BlockID),
-      i = GlobalData.optManager.Table_GetActiveID();
+      r = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID),
+      i = T3Gv.optManager.Table_GetActiveID();
     if (
       a.just = this.TextAlign,
       a.bullet = 'none',
       a.spacing = 0,
       t = this.GetTable(!1)
-    ) GlobalData.optManager.Table_GetTextParaFormat(t, a, r, this.BlockID !== i, e, null);
+    ) T3Gv.optManager.Table_GetTextParaFormat(t, a, r, this.BlockID !== i, e, null);
     else if (this.DataID && this.DataID >= 0) {
       var n = r.textElem;
       if (n) {
@@ -1502,21 +1502,21 @@ class BaseDrawingObject {
       S = ConstantData.TextFace,
       c = new TextFormatData(),// Resources.TextFormatData,
       u = new DefaultStyle(),// new Formatter.DefaultStyle() /* Basic.Text.Formatter.DefaultStyle*/,
-      p = GlobalData.optManager.Table_GetActiveID(),
-      d = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
+      p = T3Gv.optManager.Table_GetActiveID(),
+      d = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
     if (
-      (c = Utils1.DeepCopy(this.StyleRecord.Text)).FontId = -1/* GlobalData.optManager.GetFontIdByName(d.def.lf.fontName)*/,
+      (c = Utils1.DeepCopy(this.StyleRecord.Text)).FontId = -1/* T3Gv.optManager.GetFontIdByName(d.def.lf.fontName)*/,
       c.FontName = d.def.lf.fontName,
       s = this.GetTable(!1)
-    ) GlobalData.optManager.Table_GetTextFormat(s, c, null, p != this.BlockID, t);
+    ) T3Gv.optManager.Table_GetTextFormat(s, c, null, p != this.BlockID, t);
     else if (this.DataID && this.DataID >= 0) {
-      var D = GlobalData.optManager.svgObjectLayer.GetElementByID(this.BlockID);
+      var D = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID);
       if (D && (l = D.textElem), t && (t.hastext = !0), l) {
         l.GetText();
         var g = l.GetSelectedFormat();
         if (g) return e ? (
-          c.FontSize = GlobalData.optManager.FontSizeToPoints(g.size),
-          c.FontId = -1,// GlobalData.optManager.GetFontIdByName(g.font),
+          c.FontSize = T3Gv.optManager.FontSizeToPoints(g.size),
+          c.FontId = -1,// T3Gv.optManager.GetFontIdByName(g.font),
           c.FontName = g.font,
           r = 'bold' === g.weight,
           c.Face = Utils2.SetFlag(c.Face, S.Bold, r),
@@ -1705,14 +1705,14 @@ class BaseDrawingObject {
   ChangeTextAttributes(e, t, a, r, i, n, o, s) {
     (e || t || a || r || s) &&
       (
-        this.GetTable(!0) ? GlobalData.optManager.Table_ChangeTextAttributes(this, e, t, i, r, n, null, !1, o, s) : GlobalData.optManager.ChangeObjectTextAttributes(this.BlockID, e, t, i, r, n, o, s)
+        this.GetTable(!0) ? T3Gv.optManager.Table_ChangeTextAttributes(this, e, t, i, r, n, null, !1, o, s) : T3Gv.optManager.ChangeObjectTextAttributes(this.BlockID, e, t, i, r, n, o, s)
       )
   }
 
   SetObjectStyle(e) {
-    var t = GlobalData.optManager.ApplyColorFilter(e, this, this.StyleRecord, this.colorfilter),
+    var t = T3Gv.optManager.ApplyColorFilter(e, this, this.StyleRecord, this.colorfilter),
       a = this.StyleRecord.Line.Thickness;
-    return this.GetTable(!1) ? GlobalData.optManager.Table_ApplyProperties(this, t, e, !1) : t.StyleRecord &&
+    return this.GetTable(!1) ? T3Gv.optManager.Table_ApplyProperties(this, t, e, !1) : t.StyleRecord &&
       t.StyleRecord.Fill &&
       t.StyleRecord.Fill.Paint &&
       t.StyleRecord.Fill.Paint.Color &&
@@ -1724,7 +1724,7 @@ class BaseDrawingObject {
             t.StyleRecord.Fill.Paint.FillType = ConstantData.FillTypes.SDFILL_SOLID
           ) : t.StyleRecord.Fill.Paint.FillType = ConstantData.FillTypes.SDFILL_SOLID
       ),
-      GlobalData.optManager.ApplyProperties(t, this),
+      T3Gv.optManager.ApplyProperties(t, this),
       t.StyleRecord &&
       (
         t.StyleRecord.Line &&
@@ -1758,10 +1758,10 @@ class BaseDrawingObject {
         e.just = this.TextAlign.slice(t + 1, this.TextAlign.length)
       ) : e.just = this.TextAlign
     }
-    var a = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
+    var a = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
       r = $.extend(!0, {
       }, this.StyleRecord.Text);
-    return r.FontId = -1,// GlobalData.optManager.GetFontIdByName(a.def.lf.fontName),
+    return r.FontId = -1,// T3Gv.optManager.GetFontIdByName(a.def.lf.fontName),
       r.FontName = a.def.lf.fontName,
       r
   }
@@ -1791,7 +1791,7 @@ class BaseDrawingObject {
   IsSelected() {
     //'use strict';
     var e = this.BlockID,
-      t = (GlobalData.optManager.theSelectedListBlockID).Data;
+      t = (T3Gv.optManager.theSelectedListBlockID).Data;
     return $.inArray(e, t) >= 0
   }
 
@@ -1859,7 +1859,7 @@ class BaseDrawingObject {
 
   // GetLengthInRulerUnits(e, t) {
 
-  //   var a = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1),
+  //   var a = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
   //     r = '',
   //     i = 0,
   //     n = 0,
@@ -1870,20 +1870,20 @@ class BaseDrawingObject {
   //     c = 0,
   //     u = '',
   //     p = 1,
-  //     d = Math.pow(10, GlobalData.docHandler.rulerSettings.dp);
+  //     d = Math.pow(10, T3Gv.docHandler.rulerSettings.dp);
   //   if (
   //     t &&
   //     (
   //       t *= 100,
-  //       GlobalData.docHandler.rulerSettings.useInches ||
+  //       T3Gv.docHandler.rulerSettings.useInches ||
   //       (t /= ConstantData.Defines.MetricConv),
   //       e -= t
   //     ),
-  //     GlobalData.docHandler.rulerSettings.showpixels
+  //     T3Gv.docHandler.rulerSettings.showpixels
   //   ) return r = Math.round(e);
   //   if (
-  //     GlobalData.docHandler.rulerSettings.useInches &&
-  //     GlobalData.docHandler.rulerSettings.units == ConstantData.RulerUnits.SED_Feet
+  //     T3Gv.docHandler.rulerSettings.useInches &&
+  //     T3Gv.docHandler.rulerSettings.units == ConstantData.RulerUnits.SED_Feet
   //   ) {
   //     if (
   //       (s = this.GetLengthInUnits(e, !0)) < 0 &&
@@ -1915,10 +1915,10 @@ class BaseDrawingObject {
   //       u.length > 0 &&
   //       (r += 0 !== i || 0 !== n ? ' ' + u : u),
   //       r += '"'
-  //   } else GlobalData.docHandler.rulerSettings.units == ConstantData.RulerUnits.SED_Inches ? (s = this.GetLengthInUnits(e), r = Math.round(s * d) / d) : (
+  //   } else T3Gv.docHandler.rulerSettings.units == ConstantData.RulerUnits.SED_Inches ? (s = this.GetLengthInUnits(e), r = Math.round(s * d) / d) : (
   //     s = this.GetLengthInUnits(e),
-  //     GlobalData.docHandler.rulerSettings.units == ConstantData.RulerUnits.SED_M ||
-  //       GlobalData.docHandler.rulerSettings.units == ConstantData.RulerUnits.SED_Cm ? r = Math.round(s * d) / d : GlobalData.docHandler.rulerSettings.units == ConstantData.RulerUnits.SED_Mm &&
+  //     T3Gv.docHandler.rulerSettings.units == ConstantData.RulerUnits.SED_M ||
+  //       T3Gv.docHandler.rulerSettings.units == ConstantData.RulerUnits.SED_Cm ? r = Math.round(s * d) / d : T3Gv.docHandler.rulerSettings.units == ConstantData.RulerUnits.SED_Mm &&
   //     (r = Math.round(s))
   //   );
   //   return r
@@ -1929,7 +1929,7 @@ class BaseDrawingObject {
 
 
   GetLengthInRulerUnits(length: number, offset?: number): string {
-    const sessionBlock = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, false);
+    const sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
     let result = '';
     let feet = 0;
     let inches = 0;
@@ -1938,21 +1938,21 @@ class BaseDrawingObject {
     let denominator = 0;
     let fraction = 0;
     let sign = 1;
-    const decimalPlaces = Math.pow(10, GlobalData.docHandler.rulerSettings.dp);
+    const decimalPlaces = Math.pow(10, T3Gv.docHandler.rulerSettings.dp);
 
     if (offset) {
       offset *= 100;
-      if (!GlobalData.docHandler.rulerSettings.useInches) {
+      if (!T3Gv.docHandler.rulerSettings.useInches) {
         offset /= ConstantData.Defines.MetricConv;
       }
       length -= offset;
     }
 
-    if (GlobalData.docHandler.rulerSettings.showpixels) {
+    if (T3Gv.docHandler.rulerSettings.showpixels) {
       return result = Math.round(length).toString();
     }
 
-    if (GlobalData.docHandler.rulerSettings.useInches && GlobalData.docHandler.rulerSettings.units === ConstantData.RulerUnits.SED_Feet) {
+    if (T3Gv.docHandler.rulerSettings.useInches && T3Gv.docHandler.rulerSettings.units === ConstantData.RulerUnits.SED_Feet) {
       let totalInches = this.GetLengthInUnits(length, true);
       if (totalInches < 0) {
         sign = -1;
@@ -1996,14 +1996,14 @@ class BaseDrawingObject {
         result += `${feet !== 0 || inches !== 0 ? ' ' : ''}${fraction}`;
       }
       result += '"';
-    } else if (GlobalData.docHandler.rulerSettings.units === ConstantData.RulerUnits.SED_Inches) {
+    } else if (T3Gv.docHandler.rulerSettings.units === ConstantData.RulerUnits.SED_Inches) {
       const inches = this.GetLengthInUnits(length);
       result = (Math.round(inches * decimalPlaces) / decimalPlaces).toString();
     } else {
       const units = this.GetLengthInUnits(length);
-      if (GlobalData.docHandler.rulerSettings.units === ConstantData.RulerUnits.SED_M || GlobalData.docHandler.rulerSettings.units === ConstantData.RulerUnits.SED_Cm) {
+      if (T3Gv.docHandler.rulerSettings.units === ConstantData.RulerUnits.SED_M || T3Gv.docHandler.rulerSettings.units === ConstantData.RulerUnits.SED_Cm) {
         result = (Math.round(units * decimalPlaces) / decimalPlaces).toString();
-      } else if (GlobalData.docHandler.rulerSettings.units === ConstantData.RulerUnits.SED_Mm) {
+      } else if (T3Gv.docHandler.rulerSettings.units === ConstantData.RulerUnits.SED_Mm) {
         result = Math.round(units).toString();
       }
     }
@@ -2043,7 +2043,7 @@ class BaseDrawingObject {
   //     r = 2 * Math.PI * (a / 360),
   //     n.push(new Point(e.x, e.y)),
   //     n.push(new Point(t.x, t.y)),
-  //     GlobalData.optManager.RotatePointsAboutCenter(this.Frame, - r, n),
+  //     T3Gv.optManager.RotatePointsAboutCenter(this.Frame, - r, n),
   //     i = Math.abs(n[0].x - n[1].x),
   //     this.GetLengthInRulerUnits(i)
   // }
@@ -2094,12 +2094,12 @@ class BaseDrawingObject {
       d = [];
     if (
       r = a.segment,
-      GlobalData.optManager.ShowSVGSelectionState(this.BlockID, !1),
+      T3Gv.optManager.ShowSVGSelectionState(this.BlockID, !1),
       (i = this.GetDimensionLengthFromString(t, r)) <= 0
-    ) return GlobalData.optManager.AddToDirtyList(this.BlockID),
-      void GlobalData.optManager.RenderDirtySVGObjects();
+    ) return T3Gv.optManager.AddToDirtyList(this.BlockID),
+      void T3Gv.optManager.RenderDirtySVGObjects();
     if (
-      n = GlobalData.optManager.GetObjectPtr(a.hookedObjectInfo.hookedObjID, !0)
+      n = T3Gv.optManager.GetObjectPtr(a.hookedObjectInfo.hookedObjID, !0)
     ) {
       for (
         s = n.hooks[0].connect,
@@ -2112,7 +2112,7 @@ class BaseDrawingObject {
         S.push(
           new Point(a.hookedObjectInfo.end.x, a.hookedObjectInfo.end.y)
         ),
-        o = GlobalData.optManager.SD_GetCounterClockwiseAngleBetween2Points(S[0], S[1]),
+        o = T3Gv.optManager.SD_GetCounterClockwiseAngleBetween2Points(S[0], S[1]),
         Utils3.RotatePointsAboutCenter(this.Frame, - o, S),
         p = i - Math.abs(S[1].x - S[0].x),
         1 === a.hookedObjectInfo.side &&
@@ -2144,11 +2144,11 @@ class BaseDrawingObject {
         )
       ) &&
         g ? (
-        GlobalData.optManager.UpdateHook(n.BlockID, 0, this.BlockID, n.hooks[0].hookpt, d[0]),
-        GlobalData.optManager.SetLinkFlag(n.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
-        GlobalData.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
-        GlobalData.optManager.UpdateLinks(),
-        GlobalData.optManager.UpdateHook(n.BlockID, 0, this.BlockID, n.hooks[0].hookpt, d[0])
+        T3Gv.optManager.UpdateHook(n.BlockID, 0, this.BlockID, n.hooks[0].hookpt, d[0]),
+        T3Gv.optManager.SetLinkFlag(n.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
+        T3Gv.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE),
+        T3Gv.optManager.UpdateLinks(),
+        T3Gv.optManager.UpdateHook(n.BlockID, 0, this.BlockID, n.hooks[0].hookpt, d[0])
       ) : setTimeout(
         (
           function () {
@@ -2175,15 +2175,15 @@ class BaseDrawingObject {
         if (
           t.keyCode == Resources.Keys.Tab ||
           t.keyCode == Resources.Keys.Enter
-        ) return GlobalData.optManager.CloseEdit(),
+        ) return T3Gv.optManager.CloseEdit(),
           !0;
         break;
       case 'charfilter':
         if (a.userData && a.userData.angleChange) {
           if (- 1 === t.search(/(\d|\.|\-)/)) return !1
         } else if (
-          GlobalData.docHandler.rulerSettings.useInches &&
-          GlobalData.docHandler.rulerSettings.units === ConstantData.RulerUnits.SED_Feet
+          T3Gv.docHandler.rulerSettings.useInches &&
+          T3Gv.docHandler.rulerSettings.units === ConstantData.RulerUnits.SED_Feet
         ) {
           if (- 1 === t.search(/(\d|\.|\/|'|"| )/)) return !1
         } else if (- 1 === t.search(/(\d|\.)/)) return !1;
@@ -2215,7 +2215,7 @@ class BaseDrawingObject {
           a.SetRotation(0, o.x, o.y);
         break;
       case 'deactivate':
-        if (GlobalData.optManager.bInDimensionEdit = !1, Collab.AllowMessage()) {
+        if (T3Gv.optManager.bInDimensionEdit = !1, Collab.AllowMessage()) {
           Collab.BeginSecondaryEdit();
           r = Utils1.DeepCopy(a.GetUserData());
           var p = {
@@ -2223,7 +2223,7 @@ class BaseDrawingObject {
             text: a.GetText(),
             userData: r
           };
-          GlobalData.optManager.GetObjectPtr(s.BlockID, !0),
+          T3Gv.optManager.GetObjectPtr(s.BlockID, !0),
             Collab.BuildMessage(
               ConstantData.CollabMessages.UpdateDimensionFromTextObj,
               p,
@@ -2289,7 +2289,7 @@ class BaseDrawingObject {
   //     b = [];
   //   if (e) {
   //     if (
-  //       f = GlobalData.optManager.svgDoc.CreateShape(Document.CreateShapeType.TEXT),
+  //       f = T3Gv.optManager.svgDoc.CreateShape(Document.CreateShapeType.TEXT),
   //       e.AddElement(f),
   //       f.SetRenderingEnabled(!1),
   //       f.SetText(i),
@@ -2312,8 +2312,8 @@ class BaseDrawingObject {
   //         f.SetID(ConstantData.SVGElementClass.DIMENSIONTEXT),
   //         f.SetEditCallback(this.DimensionEditCallback, this)
   //       ),
-  //       f.SetFormat(GlobalData.optManager.theContentHeader.DimensionFontStyle),
-  //       f.SetConstraints(GlobalData.optManager.theContentHeader.MaxWorkDim.x, 0, 0),
+  //       f.SetFormat(T3Gv.optManager.theContentHeader.DimensionFontStyle),
+  //       f.SetConstraints(T3Gv.optManager.theContentHeader.MaxWorkDim.x, 0, 0),
   //       f.SetRenderingEnabled(!0),
   //       a
   //     ) {
@@ -2361,7 +2361,7 @@ class BaseDrawingObject {
   //     ) {
   //       var P = 360 - r,
   //         R = 2 * Math.PI * (P / 360);
-  //       GlobalData.optManager.RotatePointsAboutCenter(this.Frame, - R, D),
+  //       T3Gv.optManager.RotatePointsAboutCenter(this.Frame, - R, D),
   //         L = {},
   //         Utils2.GetPolyRect(L, D);
   //       var A = {
@@ -2369,7 +2369,7 @@ class BaseDrawingObject {
   //         y: L.y + L.height
   //       };
   //       (b = []).push(new Point(A.x, A.y)),
-  //         GlobalData.optManager.RotatePointsAboutCenter(this.Frame, R, b),
+  //         T3Gv.optManager.RotatePointsAboutCenter(this.Frame, R, b),
   //         (r += 180) > 360 &&
   //         (r -= 360)
   //     }
@@ -2433,7 +2433,7 @@ class BaseDrawingObject {
     }
 
     if (container) {
-      textShape = GlobalData.optManager.svgDoc.CreateShape(Document.CreateShapeType.TEXT);
+      textShape = T3Gv.optManager.svgDoc.CreateShape(Document.CreateShapeType.TEXT);
       container.AddElement(textShape);
       textShape.SetRenderingEnabled(false);
       textShape.SetText(text);
@@ -2449,8 +2449,8 @@ class BaseDrawingObject {
         textShape.SetEditCallback(this.DimensionEditCallback, this);
       }
 
-      textShape.SetFormat(GlobalData.optManager.theContentHeader.DimensionFontStyle);
-      textShape.SetConstraints(GlobalData.optManager.theContentHeader.MaxWorkDim.x, 0, 0);
+      textShape.SetFormat(T3Gv.optManager.theContentHeader.DimensionFontStyle);
+      textShape.SetConstraints(T3Gv.optManager.theContentHeader.MaxWorkDim.x, 0, 0);
       textShape.SetRenderingEnabled(true);
 
       if (isAreaDimension) {
@@ -2566,7 +2566,7 @@ class BaseDrawingObject {
       return;
     }
 
-    textShape = GlobalData.optManager.svgDoc.CreateShape(Document.CreateShapeType.TEXT);
+    textShape = T3Gv.optManager.svgDoc.CreateShape(Document.CreateShapeType.TEXT);
     container.AddElement(textShape);
     textShape.SetRenderingEnabled(false);
     textShape.SetText(angle);
@@ -2589,8 +2589,8 @@ class BaseDrawingObject {
       textShape.SetEditCallback(this.DimensionEditCallback, this);
     }
 
-    textShape.SetFormat(GlobalData.optManager.theContentHeader.DimensionFontStyle);
-    textShape.SetConstraints(GlobalData.optManager.theContentHeader.MaxWorkDim.x, 0, 0);
+    textShape.SetFormat(T3Gv.optManager.theContentHeader.DimensionFontStyle);
+    textShape.SetConstraints(T3Gv.optManager.theContentHeader.MaxWorkDim.x, 0, 0);
     textShape.SetRenderingEnabled(true);
 
     // debugger
@@ -2722,7 +2722,7 @@ class BaseDrawingObject {
         o.text.SetUserData(s),
         o.text.SetID(ConstantData.SVGElementClass.DIMENSIONTEXT),
         o.text.SetEditCallback(this.DimensionEditCallback, this),
-        o.text.SetConstraints(GlobalData.optManager.theContentHeader.MaxWorkDim.x, 0, 0),
+        o.text.SetConstraints(T3Gv.optManager.theContentHeader.MaxWorkDim.x, 0, 0),
         o.text.SetRenderingEnabled(!0),
         o.text.SetPos(o.textRect.x, o.textRect.y),
         0 != this.RotationAngle &&
@@ -2798,7 +2798,7 @@ class BaseDrawingObject {
       ),
       Utils3.RotatePointsAboutPoint(a, t, i),
       Utils2.GetPolyRect(n, i);
-    var o = GlobalData.optManager.svgDoc.CreateShape(Document.CreateShapeType.POLYGON);
+    var o = T3Gv.optManager.svgDoc.CreateShape(Document.CreateShapeType.POLYGON);
     o.SetPoints(i),
       o.SetEventBehavior(Element.EventBehavior.ALL),
       o.SetID(ConstantData.SVGElementClass.DIMENSIONLINE),
@@ -2809,7 +2809,7 @@ class BaseDrawingObject {
   }
 
   GetPerpendicularAngle(e, t, a) {
-    var r = GlobalData.optManager.SD_GetCounterClockwiseAngleBetween2Points(e, t);
+    var r = T3Gv.optManager.SD_GetCounterClockwiseAngleBetween2Points(e, t);
     return (r += a ? Math.PI / 2 : - Math.PI / 2) < 0 &&
       (r += 2 * Math.PI),
       r > 2 * Math.PI &&
@@ -2839,8 +2839,8 @@ class BaseDrawingObject {
       d = Utils2.GetDistanceBetween2Points(a, r),
       g.x = i.x + i.width / 2,
       g.y = i.y + i.height / 2,
-      l = GlobalData.optManager.SD_GetCounterClockwiseAngleBetween2Points(a, g),
-      y = GlobalData.optManager.SD_GetCounterClockwiseAngleBetween2Points(a, n),
+      l = T3Gv.optManager.SD_GetCounterClockwiseAngleBetween2Points(a, g),
+      y = T3Gv.optManager.SD_GetCounterClockwiseAngleBetween2Points(a, n),
       l > Math.PI &&
       0 == y &&
       (y = 2 * Math.PI),
@@ -2859,12 +2859,12 @@ class BaseDrawingObject {
       ]),
       o = D ? m : g,
       s = D ? g : m,
-      u = GlobalData.optManager.SD_GetCounterClockwiseAngleBetween2Points(a, o),
+      u = T3Gv.optManager.SD_GetCounterClockwiseAngleBetween2Points(a, o),
       Utils3.RotatePointsAboutPoint(a, Math.PI / 2 - u, [
         o,
         s
       ]),
-      h = GlobalData.optManager.ArcToPoly(ConstantData.Defines.NPOLYPTS, a, d, o.y, s.y, a.x, !1),
+      h = T3Gv.optManager.ArcToPoly(ConstantData.Defines.NPOLYPTS, a, d, o.y, s.y, a.x, !1),
       Utils3.RotatePointsAboutPoint(a, - (Math.PI / 2 - u), [
         o,
         s
@@ -2889,7 +2889,7 @@ class BaseDrawingObject {
     }
     C ||
       (C = h[I = D ? h.length - 1 : 0]),
-      c = GlobalData.optManager.SD_GetCounterClockwiseAngleBetween2Points(C, m),
+      c = T3Gv.optManager.SD_GetCounterClockwiseAngleBetween2Points(C, m),
       this.DrawDimensionAngleArrowhead(e, c, m)
   }
 
@@ -2938,9 +2938,9 @@ class BaseDrawingObject {
         n = Utils2.GetDistanceBetween2Points(u[0], u[1]),
         p.push(new Point(p[0].x + n, p[0].y))
       ),
-      d = GlobalData.optManager.SD_GetCounterClockwiseAngleBetween2Points(u[0], u[1]),
+      d = T3Gv.optManager.SD_GetCounterClockwiseAngleBetween2Points(u[0], u[1]),
       (
-        d -= r = GlobalData.optManager.SD_GetCounterClockwiseAngleBetween2Points(p[0], p[1])
+        d -= r = T3Gv.optManager.SD_GetCounterClockwiseAngleBetween2Points(p[0], p[1])
       ) < 0 &&
       (d += 2 * Math.PI),
       D = d / 2,
@@ -2964,8 +2964,8 @@ class BaseDrawingObject {
       l = (i = Math.round(i)).toString(),
       l += '°',
       (
-        s = GlobalData.optManager.svgDoc.CreateShape(Document.CreateShapeType.TEXT)
-      ).SetFormat(GlobalData.optManager.theContentHeader.DimensionFontStyle),
+        s = T3Gv.optManager.svgDoc.CreateShape(Document.CreateShapeType.TEXT)
+      ).SetFormat(T3Gv.optManager.theContentHeader.DimensionFontStyle),
       s.SetText(l),
       a = s.GetTextMinDimensions();
       h < o &&
@@ -2976,9 +2976,9 @@ class BaseDrawingObject {
       h = h += ConstantData.LineAngleDimensionDefs.ANGLEDIMENSION_PREFERRED_BISECTOR_LEN
     ) >= o &&
       (h = o);
-    return GlobalData.optManager.SetLineLength(u[0], u[1], h),
-      GlobalData.optManager.SetLineLength(p[0], p[1], h),
-      GlobalData.optManager.SetLineLength(c[0], c[1], h),
+    return T3Gv.optManager.SetLineLength(u[0], u[1], h),
+      T3Gv.optManager.SetLineLength(p[0], p[1], h),
+      T3Gv.optManager.SetLineLength(c[0], c[1], h),
       S = Utils2.SetRect(0, 0, a.width, a.height),
       Utils2.OffsetRect(S, c[1].x, c[1].y),
       Utils2.OffsetRect(S, - a.width / 2, - a.height / 2),
@@ -3000,10 +3000,10 @@ class BaseDrawingObject {
       u = new Rectangle(),
       p = new Rectangle();
     return (
-      o = GlobalData.optManager.svgDoc.CreateShape(Document.CreateShapeType.TEXT)
+      o = T3Gv.optManager.svgDoc.CreateShape(Document.CreateShapeType.TEXT)
     ).SetText(t),
-      o.SetFormat(GlobalData.optManager.theContentHeader.DimensionFontStyle),
-      o.SetConstraints(GlobalData.optManager.theContentHeader.MaxWorkDim.x, 0, 0),
+      o.SetFormat(T3Gv.optManager.theContentHeader.DimensionFontStyle),
+      o.SetConstraints(T3Gv.optManager.theContentHeader.MaxWorkDim.x, 0, 0),
       this.GetDimensionTextInfo(a, r, e, o, i, s, l, S, n),
       o = null,
       Utils2.GetPolyRect(c, l),
@@ -3033,7 +3033,7 @@ class BaseDrawingObject {
         r = a;
       return Math.abs(t / 2)
     }(e) : this.Frame.width * this.Frame.height,
-      t = GlobalData.docHandler.rulerSettings.showpixels ? a : this.GetLengthInUnits(a),
+      t = T3Gv.docHandler.rulerSettings.showpixels ? a : this.GetLengthInUnits(a),
       this.GetLengthInRulerUnits(t)
   }
 
@@ -3049,7 +3049,7 @@ class BaseDrawingObject {
     //   this.RotationAngle
     // ) {
     //   var t = - this.RotationAngle / (180 / ConstantData.Geometry.PI);
-    //   GlobalData.optManager.RotatePointsAboutCenter(this.Frame, t, e)
+    //   T3Gv.optManager.RotatePointsAboutCenter(this.Frame, t, e)
     // }
     // return e
 
@@ -3103,15 +3103,15 @@ class BaseDrawingObject {
       I = null,
       T = (
         new Rectangle(0, 0, 0, 0),
-        GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLinksBlockID, !1)
+        T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, !1)
       );
     if (Utils2.GetPolyRect(C, e), T) for (
-      s = GlobalData.optManager.FindLink(T, this.BlockID, !0),
+      s = T3Gv.optManager.FindLink(T, this.BlockID, !0),
       l = T.length;
       s >= 0 &&
       s < l &&
       T[s].targetid === this.BlockID;
-    ) if (f = GlobalData.optManager.GetObjectPtr(T[s].hookid, !1)) {
+    ) if (f = T3Gv.optManager.GetObjectPtr(T[s].hookid, !1)) {
       for (o = f.hooks.length, r = 0; r < o; r++) if (f.hooks[r].objid === this.BlockID) {
         g.push(T[s].hookid);
         break
@@ -3140,7 +3140,7 @@ class BaseDrawingObject {
       r++
     ) if (
 
-        hobj = GlobalData.optManager.GetObjectPtr(g[r], !1),
+        hobj = T3Gv.optManager.GetObjectPtr(g[r], !1),
         // hobj instanceof ListManager.BaseShape &&
         // dOULE ===
         // hobj instanceof GlobalDataShape.BaseShape &&
@@ -3186,7 +3186,7 @@ class BaseDrawingObject {
         if (!(b - 1 >= e.length)) {
           (p = []).push(new Point(e[b - 1].x, e[b - 1].y)),
             p.push(new Point(e[b].x, e[b].y)),
-            c = GlobalData.optManager.SD_GetCounterClockwiseAngleBetween2Points(p[0], p[1]),
+            c = T3Gv.optManager.SD_GetCounterClockwiseAngleBetween2Points(p[0], p[1]),
             Utils3.RotatePointsAboutCenter(C, - c, p),
             t &&
               t.movingShapeID === hobj.BlockID ? (u = Utils2.PolyFromRect(t.movingShapeBBox), d = c) : (
@@ -3341,7 +3341,7 @@ class BaseDrawingObject {
       g.push(new Point(m[t].x, m[t].y)),
       h.x = g[0].x < g[1].x ? g[0].x + (g[1].x - g[0].x) / 2 : g[1].x + (g[0].x - g[1].x) / 2,
       h.y = g[0].y < g[1].y ? g[0].y + (g[1].y - g[0].y) / 2 : g[1].y + (g[0].y - g[1].y) / 2,
-      D = GlobalData.optManager.SD_GetCounterClockwiseAngleBetween2Points(m[t - 1], m[t]),
+      D = T3Gv.optManager.SD_GetCounterClockwiseAngleBetween2Points(m[t - 1], m[t]),
       // this instanceof ListManager.Polygon &&
       // Doule === TODO
       // this instanceof GlobalDataShape.Polygon &&
@@ -3349,7 +3349,7 @@ class BaseDrawingObject {
       this.polylist &&
       (
         ob = Utils1.DeepCopy(this),
-        (c = GlobalData.optManager.ShapeToPolyLine(this.BlockID, !1, !0, ob)) &&
+        (c = T3Gv.optManager.ShapeToPolyLine(this.BlockID, !1, !0, ob)) &&
         c.IsReverseWinding &&
         c.IsReverseWinding() &&
         (y = !0)
@@ -3421,7 +3421,7 @@ class BaseDrawingObject {
     // debugger
     // elem = Basic.ShapeContainer
 
-    // return GlobalData.optManager.bBuildingSymbols ? e : null != e ? (
+    // return T3Gv.optManager.bBuildingSymbols ? e : null != e ? (
     //   this.RemoveDimensionLines(e),
     //   (
     //     this.Dimensions & ConstantData.DimensionFlags.SED_DF_Area ||
@@ -3442,7 +3442,7 @@ class BaseDrawingObject {
     // elem shapecontainer
 
 
-    if (GlobalData.optManager.bBuildingSymbols) {
+    if (T3Gv.optManager.bBuildingSymbols) {
       return elem;
     }
 
@@ -3479,7 +3479,7 @@ class BaseDrawingObject {
     // debugger
     // elem = Basic.ShapeContainer
 
-    // return GlobalData.optManager.bBuildingSymbols ? e : null != e ? (
+    // return T3Gv.optManager.bBuildingSymbols ? e : null != e ? (
     //   this.RemoveDimensionLines(e),
     //   (
     //     this.Dimensions & ConstantData.DimensionFlags.SED_DF_Area ||
@@ -3502,7 +3502,7 @@ class BaseDrawingObject {
 
     // Double need to change the Dimensions to CoordinateLines
 
-    if (GlobalData.optManager.bBuildingSymbols) {
+    if (T3Gv.optManager.bBuildingSymbols) {
       return elem;
     }
 
@@ -3586,7 +3586,7 @@ class BaseDrawingObject {
     //   c = null;
     // if (e) {
     //   if (
-    //     c = GlobalData.optManager.svgDoc.CreateShape(Document.CreateShapeType.PATH),
+    //     c = T3Gv.optManager.svgDoc.CreateShape(Document.CreateShapeType.PATH),
     //     e.AddElement(c),
     //     S = c.PathCreator(),
     //     c.SetID(ConstantData.SVGElementClass.DIMENSIONLINE),
@@ -3641,7 +3641,7 @@ class BaseDrawingObject {
       return;
     }
 
-    pathShape = GlobalData.optManager.svgDoc.CreateShape(Document.CreateShapeType.PATH);
+    pathShape = T3Gv.optManager.svgDoc.CreateShape(Document.CreateShapeType.PATH);
     elem.AddElement(pathShape);
     pathCreator = pathShape.PathCreator();
     pathShape.SetID(ConstantData.SVGElementClass.DIMENSIONLINE);
@@ -3699,7 +3699,7 @@ class BaseDrawingObject {
       return;
     }
 
-    pathShape = GlobalData.optManager.svgDoc.CreateShape(Document.CreateShapeType.PATH);
+    pathShape = T3Gv.optManager.svgDoc.CreateShape(Document.CreateShapeType.PATH);
     shapContainer.AddElement(pathShape);
     pathCreator = pathShape.PathCreator();
     pathShape.SetID(ConstantData.SVGElementClass.CoordinateLine);
@@ -3772,7 +3772,7 @@ class BaseDrawingObject {
       n = null,
       o = !1,
       s = !1,
-      l = GlobalData.optManager.svgObjectLayer.GetElementByID(this.BlockID);
+      l = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID);
     if (null != l) {
       var S = [
         ConstantData.SVGElementClass.DIMENSIONLINE,
@@ -3812,7 +3812,7 @@ class BaseDrawingObject {
       t &&
       t.movingShapeID === this.BlockID &&
       (
-        !(a = GlobalData.optManager.GetObjectPtr(this.hooks[0].objid, !1)) ||
+        !(a = T3Gv.optManager.GetObjectPtr(this.hooks[0].objid, !1)) ||
         a.objecttype !== ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL ||
         a.Dimensions & ConstantData.DimensionFlags.SED_DF_HideHookedObjDimensions ||
         a.HideOrShowSelectOnlyDimensions(e, t)
@@ -3828,7 +3828,7 @@ class BaseDrawingObject {
     //'use strict';
     var t,
       a,
-      r = GlobalData.optManager.svgDoc.CreateShape(Document.CreateShapeType.PATH);
+      r = T3Gv.optManager.svgDoc.CreateShape(Document.CreateShapeType.PATH);
     if (null != e) {
       e.AddElement(r);
       var i = r.PathCreator();
@@ -3912,9 +3912,9 @@ class BaseDrawingObject {
     if (0 === (e = e.trim()).length) return - 1;
     if (!e.match(/^[0-9. \/\'\"]+$/)) return - 1;
     if (
-      GlobalData.docHandler.rulerSettings.useInches &&
-      GlobalData.docHandler.rulerSettings.units == ConstantData.RulerUnits.SED_Feet &&
-      !GlobalData.docHandler.rulerSettings.showpixels
+      T3Gv.docHandler.rulerSettings.useInches &&
+      T3Gv.docHandler.rulerSettings.units == ConstantData.RulerUnits.SED_Feet &&
+      !T3Gv.docHandler.rulerSettings.showpixels
     ) {
       if ((a = this.ConvertToFeet(e)) < 0 || isNaN(a)) return - 1
     } else {
@@ -3927,7 +3927,7 @@ class BaseDrawingObject {
   GetDimensionLengthFromValue(e) {
     //'use strict';
     var t = 0;
-    return t = GlobalData.docHandler.rulerSettings.showpixels ? e : this.UnitsToCoord(e, 0),
+    return t = T3Gv.docHandler.rulerSettings.showpixels ? e : this.UnitsToCoord(e, 0),
       isNaN(t) ||
         t > 400000 ? - 1 : t
   }
@@ -4078,8 +4078,8 @@ class BaseDrawingObject {
       this.ShortRef != ConstantData2.LineTypes.SED_LS_MeasuringTape &&
       this.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL
     ) {
-      var L = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLinksBlockID, !1);
-      if (L) GlobalData.optManager.FindLink(L, this.BlockID, !0) >= 0 &&
+      var L = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, !1);
+      if (L) T3Gv.optManager.FindLink(L, this.BlockID, !0) >= 0 &&
         (f = !0)
     }
     l &&
@@ -4322,14 +4322,14 @@ class BaseDrawingObject {
 
       check3
     ) {
-      // var L = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLinksBlockID, !1);
-      // if (L) GlobalData.optManager.FindLink(L, this.BlockID, !0) >= 0 &&
+      // var L = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, !1);
+      // if (L) T3Gv.optManager.FindLink(L, this.BlockID, !0) >= 0 &&
       //   (isStdOff = !0)
 
-      var linkObject = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLinksBlockID, false);
+      var linkObject = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, false);
       if (linkObject) {
 
-        const fdLink = GlobalData.optManager.FindLink(linkObject, this.BlockID, !0);
+        const fdLink = T3Gv.optManager.FindLink(linkObject, this.BlockID, !0);
         if (fdLink >= 0) {
           isStdOff = true;
         }
@@ -4371,13 +4371,13 @@ class BaseDrawingObject {
     //     )[segmentIndex - 1],
     //     polyPoints[segmentIndex]
     //   ];
-    //   GlobalData.optManager.RotatePointsAboutCenter(this.Frame, - arcLength, b),
+    //   T3Gv.optManager.RotatePointsAboutCenter(this.Frame, - arcLength, b),
     //     b.push({
     //       x: textDim.x + textDim.width / 2,
     //       y: textDim.y + textDim.height / 2
     //     }),
     //     b[2].x = b[0].x + (b[1].x - b[0].x) / 2,
-    //     GlobalData.optManager.RotatePointsAboutCenter(this.Frame, arcLength, b),
+    //     T3Gv.optManager.RotatePointsAboutCenter(this.Frame, arcLength, b),
     //     Utils2.IsPointInPoly(polyPoints, b[2]) &&
     //     (C = !0)
     // } else this.IsTextFrameOverlap(textDim, angle) &&
@@ -4637,14 +4637,14 @@ class BaseDrawingObject {
 
       check3
     ) {
-      // var L = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLinksBlockID, !1);
-      // if (L) GlobalData.optManager.FindLink(L, this.BlockID, !0) >= 0 &&
+      // var L = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, !1);
+      // if (L) T3Gv.optManager.FindLink(L, this.BlockID, !0) >= 0 &&
       //   (isStdOff = !0)
 
-      var linkObject = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLinksBlockID, false);
+      var linkObject = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, false);
       if (linkObject) {
 
-        const fdLink = GlobalData.optManager.FindLink(linkObject, this.BlockID, !0);
+        const fdLink = T3Gv.optManager.FindLink(linkObject, this.BlockID, !0);
         if (fdLink >= 0) {
           isStdOff = true;
         }
@@ -4690,13 +4690,13 @@ class BaseDrawingObject {
     //     )[segmentIndex - 1],
     //     polyPoints[segmentIndex]
     //   ];
-    //   GlobalData.optManager.RotatePointsAboutCenter(this.Frame, - arcLength, b),
+    //   T3Gv.optManager.RotatePointsAboutCenter(this.Frame, - arcLength, b),
     //     b.push({
     //       x: textDim.x + textDim.width / 2,
     //       y: textDim.y + textDim.height / 2
     //     }),
     //     b[2].x = b[0].x + (b[1].x - b[0].x) / 2,
-    //     GlobalData.optManager.RotatePointsAboutCenter(this.Frame, arcLength, b),
+    //     T3Gv.optManager.RotatePointsAboutCenter(this.Frame, arcLength, b),
     //     Utils2.IsPointInPoly(polyPoints, b[2]) &&
     //     (C = !0)
     // } else this.IsTextFrameOverlap(textDim, angle) &&
@@ -4983,7 +4983,7 @@ class BaseDrawingObject {
       r.bottom = Math.max(r.right, l[n].y);
     for (Utils2.GetPolyRect(s, l), n = 0; n < o; n++) l[n].x -= s.x,
       l[n].y -= s.y;
-    var S = GlobalData.optManager.svgDoc.CreateShape(Document.CreateShapeType.POLYGON);
+    var S = T3Gv.optManager.svgDoc.CreateShape(Document.CreateShapeType.POLYGON);
     S.SetPoints(a),
       S.SetEventBehavior(Element.EventBehavior.ALL),
       S.SetID(ConstantData.SVGElementClass.DIMENSIONLINE),
@@ -5006,17 +5006,17 @@ class BaseDrawingObject {
 
   ContainsText() {
     return this.DataID >= 0 ||
-      GlobalData.optManager.SD_GetVisioTextChild(this.BlockID) >= 0
+      T3Gv.optManager.SD_GetVisioTextChild(this.BlockID) >= 0
   }
 
   GetToUnits() {
     //'use strict';
-    var e = GlobalData.docHandler.DocObject().GetWorkArea().docDpi,
+    var e = T3Gv.docHandler.DocObject().GetWorkArea().docDpi,
       t = 0;
-    return e = GlobalData.docHandler.rulerSettings.major,
-      t = GlobalData.docHandler.rulerSettings.majorScale / e,
-      GlobalData.docHandler.rulerSettings.useInches ||
-      (t *= GlobalData.docHandler.rulerSettings.metricConv),
+    return e = T3Gv.docHandler.rulerSettings.major,
+      t = T3Gv.docHandler.rulerSettings.majorScale / e,
+      T3Gv.docHandler.rulerSettings.useInches ||
+      (t *= T3Gv.docHandler.rulerSettings.metricConv),
       t
   }
 
@@ -5027,7 +5027,7 @@ class BaseDrawingObject {
     return a = e * this.GetToUnits(),
       t ||
       (
-        r = Math.pow(10, GlobalData.docHandler.rulerSettings.dp),
+        r = Math.pow(10, T3Gv.docHandler.rulerSettings.dp),
         a = Math.round(a * r) / r
       ),
       a
@@ -5035,7 +5035,7 @@ class BaseDrawingObject {
 
   GetFractionStringGranularity(e) {
     //'use strict';
-    return GlobalData.docHandler.rulerSettings.fractionaldenominator >= 1 ? 1 / GlobalData.docHandler.rulerSettings.fractionaldenominator : GlobalData.docHandler.rulerSettings.majorScale <= 1 ? 1 / 16 : GlobalData.docHandler.rulerSettings.majorScale <= 2 ? 1 / 8 : GlobalData.docHandler.rulerSettings.majorScale <= 4 ? 1 / 4 : GlobalData.docHandler.rulerSettings.majorScale <= 8 ? 0.5 : 1
+    return T3Gv.docHandler.rulerSettings.fractionaldenominator >= 1 ? 1 / T3Gv.docHandler.rulerSettings.fractionaldenominator : T3Gv.docHandler.rulerSettings.majorScale <= 1 ? 1 / 16 : T3Gv.docHandler.rulerSettings.majorScale <= 2 ? 1 / 8 : T3Gv.docHandler.rulerSettings.majorScale <= 4 ? 1 / 4 : T3Gv.docHandler.rulerSettings.majorScale <= 8 ? 0.5 : 1
   }
 
   NumberIsFloat(e) {
@@ -5124,16 +5124,16 @@ class BaseDrawingObject {
 
   UnitsToCoord(e, t) {
     //'use strict';
-    GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
+    T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
     var a = this.GetToUnits();
-    return e += t * GlobalData.docHandler.rulerSettings.majorScale,
+    return e += t * T3Gv.docHandler.rulerSettings.majorScale,
       e /= a
   }
 
   ConvToUnits(e, t) {
     //'use strict';
-    GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theSEDSessionBlockID, !1);
-    return e * this.GetToUnits() - t * GlobalData.docHandler.rulerSettings.majorScale
+    T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
+    return e * this.GetToUnits() - t * T3Gv.docHandler.rulerSettings.majorScale
   }
 
   Frame2Poly(frame, polyPoints) {
@@ -5163,11 +5163,11 @@ class BaseDrawingObject {
   SetBlobBytes(e, t) {
     var a = new ListManager.BlobBytes(t, e);
     if (this.BlobBytesID >= 0) {
-      var r = GlobalData.objectStore.PreserveBlock(this.BlobBytesID);
+      var r = T3Gv.objectStore.PreserveBlock(this.BlobBytesID);
       r &&
         (r.Data = a)
     } else {
-      var i = GlobalData.objectStore.CreateBlock(ConstantData.StoredObjectType.BLOBBYTES_OBJECT, a);
+      var i = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.BLOBBYTES_OBJECT, a);
       i &&
         (this.BlobBytesID = i.ID)
     }
@@ -5176,11 +5176,11 @@ class BaseDrawingObject {
   SetEMFBlobBytes(e, t) {
     var a = new ListManager.BlobBytes(t, e);
     if (this.EMFBlobBytesID >= 0) {
-      var r = GlobalData.objectStore.PreserveBlock(this.EMFBlobBytesID);
+      var r = T3Gv.objectStore.PreserveBlock(this.EMFBlobBytesID);
       r &&
         (r.Data = a)
     } else {
-      var i = GlobalData.objectStore.CreateBlock(ConstantData.StoredObjectType.BLOBBYTES_OBJECT, a);
+      var i = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.BLOBBYTES_OBJECT, a);
       i &&
         (this.EMFBlobBytesID = i.ID)
     }
@@ -5189,11 +5189,11 @@ class BaseDrawingObject {
   SetOleBlobBytes(e, t) {
     var a = new ListManager.BlobBytes(t, e);
     if (this.OleBlobBytesID >= 0) {
-      var r = GlobalData.objectStore.PreserveBlock(this.OleBlobBytesID);
+      var r = T3Gv.objectStore.PreserveBlock(this.OleBlobBytesID);
       r &&
         (r.Data = a)
     } else {
-      var i = GlobalData.objectStore.CreateBlock(ConstantData.StoredObjectType.BLOBBYTES_OBJECT, a);
+      var i = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.BLOBBYTES_OBJECT, a);
       i &&
         (this.OleBlobBytesID = i.ID)
     }
@@ -5202,21 +5202,21 @@ class BaseDrawingObject {
   GetBlobBytes() {
     var e = null;
     return this.BlobBytesID >= 0 &&
-      (e = GlobalData.optManager.GetObjectPtr(this.BlobBytesID, !1)),
+      (e = T3Gv.optManager.GetObjectPtr(this.BlobBytesID, !1)),
       e
   }
 
   GetEMFBlobBytes() {
     var e = null;
     return this.EMFBlobBytesID >= 0 &&
-      (e = GlobalData.optManager.GetObjectPtr(this.EMFBlobBytesID, !1)),
+      (e = T3Gv.optManager.GetObjectPtr(this.EMFBlobBytesID, !1)),
       e
   }
 
   GetOleBlobBytes() {
     var e = null;
     return this.OleBlobBytesID >= 0 &&
-      (e = GlobalData.optManager.GetObjectPtr(this.OleBlobBytesID, !1)),
+      (e = T3Gv.optManager.GetObjectPtr(this.OleBlobBytesID, !1)),
       e
   }
 
@@ -5225,22 +5225,22 @@ class BaseDrawingObject {
     return null == e &&
       (e = !1),
       this.TableID >= 0 &&
-      (t = GlobalData.optManager.GetObjectPtr(this.TableID, e)),
+      (t = T3Gv.optManager.GetObjectPtr(this.TableID, e)),
       t
   }
 
   SetTable(e) {
     if (this.TableID >= 0) if (null == e) {
-      var t = GlobalData.objectStore.GetObject(this.TableID);
+      var t = T3Gv.objectStore.GetObject(this.TableID);
       t &&
         t.Delete(),
         this.TableID = - 1
     } else {
-      var a = GlobalData.objectStore.PreserveBlock(this.TableID);
+      var a = T3Gv.objectStore.PreserveBlock(this.TableID);
       a &&
         (a.Data = e)
     } else {
-      var r = GlobalData.objectStore.CreateBlock(ConstantData.StoredObjectType.TABLE_OBJECT, e);
+      var r = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.TABLE_OBJECT, e);
       r &&
         (this.TableID = r.ID)
     }
@@ -5251,22 +5251,22 @@ class BaseDrawingObject {
     return null == e &&
       (e = !1),
       this.GraphID >= 0 &&
-      (t = GlobalData.optManager.GetObjectPtr(this.GraphID, e)),
+      (t = T3Gv.optManager.GetObjectPtr(this.GraphID, e)),
       t
   }
 
   SetGraph(e) {
     if (this.GraphID >= 0) if (null == e) {
-      var t = GlobalData.objectStore.GetObject(this.GraphID);
+      var t = T3Gv.objectStore.GetObject(this.GraphID);
       t &&
         t.Delete(),
         this.GraphID = - 1
     } else {
-      var a = GlobalData.objectStore.PreserveBlock(this.GraphID);
+      var a = T3Gv.objectStore.PreserveBlock(this.GraphID);
       a &&
         (a.Data = e)
     } else {
-      var r = GlobalData.objectStore.CreateBlock(ConstantData.StoredObjectType.GRAPH_OBJECT, e);
+      var r = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.GRAPH_OBJECT, e);
       r &&
         (this.GraphID = r.ID)
     }
@@ -5277,7 +5277,7 @@ class BaseDrawingObject {
     return null == e &&
       (e = !1),
       this.GanttInfoID >= 0 &&
-      (t = GlobalData.optManager.GetObjectPtr(this.GanttInfoID, e)),
+      (t = T3Gv.optManager.GetObjectPtr(this.GanttInfoID, e)),
       t
   }
 
@@ -5316,10 +5316,10 @@ class BaseDrawingObject {
     var e = this.GetTable(!1);
     if (e) {
       var t = - 1;
-      return GlobalData.optManager.Table_GetActiveID() === e.BlockID &&
+      return T3Gv.optManager.Table_GetActiveID() === e.BlockID &&
         (t = e.select),
-        !(t < 0 && (t = GlobalData.optManager.Table_GetFirstTextCell(e)) < 0) &&
-        GlobalData.optManager.Table_AllowCellTextEdit(e, t)
+        !(t < 0 && (t = T3Gv.optManager.Table_GetFirstTextCell(e)) < 0) &&
+        T3Gv.optManager.Table_AllowCellTextEdit(e, t)
     }
     return !0
   }
@@ -5463,7 +5463,7 @@ class BaseDrawingObject {
         this.HyperlinkText &&
         Utils1.ResolveHyperlink(this.HyperlinkText) ||
         - 1 != this.NoteID ||
-        GlobalData.optManager.NoteIsShowing(this.BlockID, null)
+        T3Gv.optManager.NoteIsShowing(this.BlockID, null)
       )
   }
 
@@ -5538,7 +5538,7 @@ class BaseDrawingObject {
           (S = this.AddIcon(e, t, a)).SetCustomAttribute('_expextendtt_', this.ExpandedViewID);
         if (
           - 1 != this.NoteID ||
-          GlobalData.optManager.NoteIsShowing(this.BlockID, null)
+          T3Gv.optManager.NoteIsShowing(this.BlockID, null)
         ) {
           var S,
             c;
@@ -5551,8 +5551,8 @@ class BaseDrawingObject {
             (S = this.AddIcon(e, t, a)).SetCustomAttribute('_expnotett_', this.NoteID);
           var u = this,
             p = function () {
-              GlobalData.optManager.bInNoteEdit ||
-                GlobalData.optManager.ShowNote(u.BlockID, null)
+              T3Gv.optManager.bInNoteEdit ||
+                T3Gv.optManager.ShowNote(u.BlockID, null)
             },
             d = S.DOMElement();
           $(d).hover(
@@ -5561,8 +5561,8 @@ class BaseDrawingObject {
             }),
             (
               function () {
-                GlobalData.optManager.bInNoteEdit ||
-                  GlobalData.optManager.HideNote(u.BlockID, null),
+                T3Gv.optManager.bInNoteEdit ||
+                  T3Gv.optManager.HideNote(u.BlockID, null),
                   clearTimeout(c)
               }
             )
@@ -5580,8 +5580,8 @@ class BaseDrawingObject {
           var g = null,
             h = this.BlockID,
             m = function () {
-              GlobalData.optManager.FieldedDataTooltipVisible(h) ||
-                GlobalData.optManager.ShowFieldedDataTooltip(h),
+              T3Gv.optManager.FieldedDataTooltipVisible(h) ||
+                T3Gv.optManager.ShowFieldedDataTooltip(h),
                 g = null
             };
           d = D.DOMElement();
@@ -5589,19 +5589,19 @@ class BaseDrawingObject {
             $(d).hover(
               (
                 function () {
-                  GlobalData.optManager.FieldedDataTooltipVisible(h) ||
+                  T3Gv.optManager.FieldedDataTooltipVisible(h) ||
                     (g = setTimeout(m, 750))
                 }
               ),
               (
                 function () {
-                  GlobalData.optManager.HideFieldedDataTooltip(h),
+                  T3Gv.optManager.HideFieldedDataTooltip(h),
                     g &&
                     (clearTimeout(g), g = null)
                 }
               )
             ),
-            !GlobalData.docHandler.IsReadOnly()
+            !T3Gv.docHandler.IsReadOnly()
           ) {
             var C = Hammer(d);
             C.off('doubletap'),
@@ -5612,7 +5612,7 @@ class BaseDrawingObject {
                     return Utils2.StopPropagationAndDefaults(e),
                       g &&
                       (clearTimeout(g), g = null),
-                      GlobalData.optManager.ShowFieldedDataTooltip(h, !0, !0),
+                      T3Gv.optManager.ShowFieldedDataTooltip(h, !0, !0),
                       !1
                   }
                 )
@@ -5683,10 +5683,10 @@ class BaseDrawingObject {
       r,
       i,
       n,
-      o = GlobalData.optManager.svgObjectLayer.GetElementByID(this.BlockID),
+      o = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID),
       s = !1;
     if (!(this.flags & ConstantData.ObjFlags.SEDO_Lock) && o) if (
-      GlobalData.optManager.GetEditMode() === ConstantData.EditState.DEFAULT
+      T3Gv.optManager.GetEditMode() === ConstantData.EditState.DEFAULT
     ) {
       if (
         (i = o.GetElementByID(ConstantData.SVGElementClass.SHAPE)) &&
@@ -5715,7 +5715,7 @@ class BaseDrawingObject {
         e.SetCursor(Element.CursorType.POINTER),
         (r = o.GetElementByID(ConstantData.SVGElementClass.SLOP)) &&
         r.SetCursor(Element.CursorType.ADD),
-        a = GlobalData.optManager.svgDoc.GetActiveEdit(),
+        a = T3Gv.optManager.svgDoc.GetActiveEdit(),
         this.DataID &&
         this.DataID >= 0 &&
         o.textElem &&
@@ -5748,7 +5748,7 @@ class BaseDrawingObject {
   }
 
   ClearCursors() {
-    var e = GlobalData.optManager.svgObjectLayer.GetElementByID(this.BlockID);
+    var e = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID);
     e &&
       (
         e.ClearAllCursors(),
@@ -5762,7 +5762,7 @@ class BaseDrawingObject {
   }
 
   SVGTokenizerHook(e) {
-    if (GlobalData.optManager.bTokenizeStyle) {
+    if (T3Gv.optManager.bTokenizeStyle) {
       var t = this.colorfilter;
       if (
         e = Utils1.DeepCopy(e),
@@ -5787,7 +5787,7 @@ class BaseDrawingObject {
   }
 
   CancelObjectDraw() {
-    return GlobalData.optManager.unbindActionClickHammerEvents(),
+    return T3Gv.optManager.unbindActionClickHammerEvents(),
       this.ResetAutoScrollTimer(),
       !0
   }
@@ -5825,7 +5825,7 @@ class BaseDrawingObject {
         e.push(t)
       ),
       (a = r.GetTable(!1)) &&
-      GlobalData.optManager.Table_GetTextures(a, e)
+      T3Gv.optManager.Table_GetTextures(a, e)
   }
 
   GetContrastingColorName(e) {
@@ -5835,7 +5835,7 @@ class BaseDrawingObject {
   }
 
   SetRuntimeEffects(e) {
-    var t = GlobalData.optManager.svgObjectLayer.GetElementByID(this.BlockID);
+    var t = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID);
     t &&
       this.ApplyEffects(t, e, !1)
   }
@@ -5844,10 +5844,10 @@ class BaseDrawingObject {
     if (
       (
         e = e ||
-        GlobalData.optManager.svgObjectLayer.GetElementByID(this.BlockID)
+        T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID)
       ) &&
-      GlobalData.optManager.bDrawEffects &&
-      !GlobalData.optManager.bTokenizeStyle
+      T3Gv.optManager.bDrawEffects &&
+      !T3Gv.optManager.bTokenizeStyle
     ) {
       var r = e.GetElementByID(ConstantData.SVGElementClass.SHAPE),
         i = e.shapeGroup ||
@@ -6162,8 +6162,8 @@ class BaseDrawingObject {
         startPos: Basic.Element.Style.GradientPos.LEFTTOP,
         stops: []
       };
-    if (e < 0 || e >= GlobalData.optManager.RichGradients.length) return null;
-    switch ((a = GlobalData.optManager.RichGradients[e]).gradienttype) {
+    if (e < 0 || e >= T3Gv.optManager.RichGradients.length) return null;
+    switch ((a = T3Gv.optManager.RichGradients[e]).gradienttype) {
       case Resources.RichGradientTypes.SDFILL_RICHGRADIENT_LINEAR:
         r.type = Basic.Element.Style.GradientStyle.LINEAR,
           r.angle = a.angle;
@@ -6224,11 +6224,11 @@ class BaseDrawingObject {
   }
 
   ResetAutoScrollTimer() {
-    - 1 != GlobalData.optManager.autoScrollTimerID &&
+    - 1 != T3Gv.optManager.autoScrollTimerID &&
       (
-        GlobalData.optManager.autoScrollTimer.clearTimeout(GlobalData.optManager.autoScrollTimerID),
-        GlobalData.optManager.autoScrollTimer.obj = GlobalData.optManager,
-        GlobalData.optManager.autoScrollTimerID = - 1
+        T3Gv.optManager.autoScrollTimer.clearTimeout(T3Gv.optManager.autoScrollTimerID),
+        T3Gv.optManager.autoScrollTimer.obj = T3Gv.optManager,
+        T3Gv.optManager.autoScrollTimerID = - 1
       )
   }
 
@@ -6243,24 +6243,24 @@ class BaseDrawingObject {
   SetRolloverActions(e, t) {
     // debugger
     if (
-      - 1 != GlobalData.optManager.curHiliteShape &&
-      GlobalData.optManager.curHiliteShape != this.BlockID
+      - 1 != T3Gv.optManager.curHiliteShape &&
+      T3Gv.optManager.curHiliteShape != this.BlockID
     ) {
-      var a = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.curHiliteShape, !1);
+      var a = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.curHiliteShape, !1);
       a &&
         (a.SetRuntimeEffects(!1), a.ClearCursors())
     }
     var r = this;
-    GlobalData.optManager.isMobilePlatform ? this.SetRuntimeEffects(!1) : this.SetRuntimeEffects(!0),
+    T3Gv.optManager.isMobilePlatform ? this.SetRuntimeEffects(!1) : this.SetRuntimeEffects(!0),
       this.SetCursors(),
-      GlobalData.optManager.curHiliteShape = this.BlockID,
+      T3Gv.optManager.curHiliteShape = this.BlockID,
       t.svgObj.mouseout(
         (
           function () {
             r.SetRuntimeEffects(!1),
               r.ClearCursors(),
-              GlobalData.optManager.curHiliteShape === r.BlockID &&
-              (GlobalData.optManager.curHiliteShape = - 1)
+              T3Gv.optManager.curHiliteShape === r.BlockID &&
+              (T3Gv.optManager.curHiliteShape = - 1)
           }
         )
       )
@@ -6298,12 +6298,12 @@ class BaseDrawingObject {
   FoundText(e, t, a) {
     if (this.BlockID === a) return !1;
     if (this.DataID >= 0) {
-      var r = GlobalData.optManager.svgObjectLayer.GetElementByID(this.BlockID);
+      var r = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID);
       if (r) {
         var i = r.textElem;
         if (i) {
           var n = i.GetText(0).search(e);
-          if (n >= 0) return GlobalData.optManager.ActivateTextEdit(r),
+          if (n >= 0) return T3Gv.optManager.ActivateTextEdit(r),
             i.SetSelectedRange(n, n + t),
             !0
         }
@@ -6317,11 +6317,11 @@ class BaseDrawingObject {
     var e,
       t,
       a = !1,
-      r = GlobalData.optManager.FrontMostLayerZListPreserve(),
+      r = T3Gv.optManager.FrontMostLayerZListPreserve(),
       i = $.inArray(this.BlockID, r),
-      n = GlobalData.optManager.GetObjectPtr(GlobalData.optManager.theLinksBlockID, !0);
+      n = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, !0);
     if (n) for (
-      e = GlobalData.optManager.FindLink(n, this.BlockID, !0);
+      e = T3Gv.optManager.FindLink(n, this.BlockID, !0);
       e >= 0 &&
       e < n.length &&
       n[e].targetid === this.BlockID;
@@ -6410,9 +6410,9 @@ class BaseDrawingObject {
     if (e && this.fieldDataTableID != e) return !1;
     if (this.fieldDataElemID < 0) return !1;
     var t = this.GetTable(!1);
-    if (t) return GlobalData.optManager.Table_HasFieldDataInText(this.BlockID, t);
+    if (t) return T3Gv.optManager.Table_HasFieldDataInText(this.BlockID, t);
     if (this.DataID >= 0) {
-      var a = GlobalData.optManager.svgObjectLayer.FindElement(this.BlockID),
+      var a = T3Gv.optManager.svgObjectLayer.FindElement(this.BlockID),
         r = null;
       if (a && (r = a.textElem), r) return r.HasDataFields()
     }
@@ -6421,22 +6421,22 @@ class BaseDrawingObject {
 
   SetFieldDataRecord(e, t, a) {
     if (a || this.FieldDataAllowed()) {
-      GlobalData.optManager.GetObjectPtr(this.BlockID, !0);
+      T3Gv.optManager.GetObjectPtr(this.BlockID, !0);
       this.fieldDataDatasetID = ListManager.SDData.GetFieldedDataSet(!0),
         this.fieldDataTableID = e,
         this.fieldDataElemID = t,
-        GlobalData.optManager.AddToDirtyList(this.BlockID),
+        T3Gv.optManager.AddToDirtyList(this.BlockID),
         this.RefreshFromFieldData()
     }
   }
 
   NewFieldDataRecord(e) {
     if (this.FieldDataAllowed()) {
-      GlobalData.optManager.GetObjectPtr(this.BlockID, !0);
+      T3Gv.optManager.GetObjectPtr(this.BlockID, !0);
       this.fieldDataDatasetID = ListManager.SDData.GetFieldedDataSet(!0),
         this.fieldDataTableID = e,
         this.fieldDataElemID = ListManager.SDData.FieldedDataAddRecord(e),
-        GlobalData.optManager.AddToDirtyList(this.BlockID)
+        T3Gv.optManager.AddToDirtyList(this.BlockID)
     }
   }
 
@@ -6448,20 +6448,20 @@ class BaseDrawingObject {
 
   ChangeFieldDataTable(e) {
     if (this.FieldDataAllowed()) {
-      if (this.bMultiDataRecsAllowed) return GlobalData.optManager.ClearShapesFieldData(e),
+      if (this.bMultiDataRecsAllowed) return T3Gv.optManager.ClearShapesFieldData(e),
         this.HasFieldData() &&
         this.fieldDataTableID != e &&
         ListManager.SDData.DeleteFieldedDataTable(this.fieldDataTableID),
         void this.SetFieldDataRecord(e, - 1);
       if (this.HasFieldData()) {
-        GlobalData.optManager.GetObjectPtr(this.BlockID, !0);
+        T3Gv.optManager.GetObjectPtr(this.BlockID, !0);
         var t = ListManager.SDData.FieldedDataAddRecord(e);
         ListManager.SDData.FieldedDataMoveData(this.fieldDataTableID, this.fieldDataElemID, e, t),
           ListManager.SDData.FieldedDataDelRecord(this.fieldDataTableID, this.fieldDataElemID),
           this.fieldDataDatasetID = ListManager.SDData.GetFieldedDataSet(!0),
           this.fieldDataTableID = e,
           this.fieldDataElemID = t,
-          GlobalData.optManager.AddToDirtyList(this.BlockID),
+          T3Gv.optManager.AddToDirtyList(this.BlockID),
           this.RefreshFromFieldData()
       } else this.NewFieldDataRecord(e)
     }
@@ -6469,7 +6469,7 @@ class BaseDrawingObject {
 
   RemoveFieldData(e, t) {
     if (this.HasFieldData() && (!t || this.fieldDataTableID == t)) {
-      GlobalData.optManager.GetObjectPtr(this.BlockID, !0);
+      T3Gv.optManager.GetObjectPtr(this.BlockID, !0);
       e &&
         (
           this.fieldDataElemID < 0 ? ListManager.SDData.DeleteFieldedDataTable(this.fieldDataTableID) : ListManager.SDData.FieldedDataDelRecord(this.fieldDataTableID, this.fieldDataElemID)
@@ -6478,7 +6478,7 @@ class BaseDrawingObject {
         this.fieldDataTableID = - 1,
         this.fieldDataElemID = - 1,
         this.dataStyleOverride = null,
-        GlobalData.optManager.AddToDirtyList(this.BlockID),
+        T3Gv.optManager.AddToDirtyList(this.BlockID),
         this.RefreshFromFieldData()
     }
   }
@@ -6505,7 +6505,7 @@ class BaseDrawingObject {
         this.fieldDataElemID < 0 ? this.dataStyleOverride = null : this.dataStyleOverride = ListManager.SDData.FieldedDataProcessRulesForRecord(this.fieldDataTableID, this.fieldDataElemID),
       this.bInGroup
     ) {
-      var e = GlobalData.optManager.FindParentGroup(this.BlockID);
+      var e = T3Gv.optManager.FindParentGroup(this.BlockID);
       if (e) {
         var t = e.GetFieldDataStyleOverride();
         t &&
@@ -6535,7 +6535,7 @@ class BaseDrawingObject {
           r = !0
         ),
         ListManager.SDData.FieldedDataHasRulesForRecord(this.fieldDataTableID, this.fieldDataElemID) &&
-        (GlobalData.optManager.AddToDirtyList(this.BlockID), r = !0),
+        (T3Gv.optManager.AddToDirtyList(this.BlockID), r = !0),
         r
       )
   }
@@ -6544,7 +6544,7 @@ class BaseDrawingObject {
     this.HasFieldDataRecord(e, t, !0) &&
       (
         this.GetFieldDataStyleOverride(),
-        GlobalData.optManager.AddToDirtyList(this.BlockID)
+        T3Gv.optManager.AddToDirtyList(this.BlockID)
       )
   }
 
@@ -6562,7 +6562,7 @@ class BaseDrawingObject {
           i.push(n.textid)
       } else this.DataID >= 0 &&
         i.push(this.DataID);
-      for (t = 0; t < i.length; t++) (a = GlobalData.optManager.GetObjectPtr(i[t], !0)) &&
+      for (t = 0; t < i.length; t++) (a = T3Gv.optManager.GetObjectPtr(i[t], !0)) &&
         Basic.Text.RemapDataFieldsInRuntimeText(a.runtimeText, e)
     }
   }
@@ -6625,7 +6625,7 @@ class BaseDrawingObject {
 
 
     // debugger
-    var t = GlobalData.optManager.svgObjectLayer.GetElementByID(this.BlockID);
+    var t = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID);
     return this.UpdateDimensionLines(t, e),
       !0
   }

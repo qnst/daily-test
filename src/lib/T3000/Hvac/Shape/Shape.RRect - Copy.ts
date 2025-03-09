@@ -9,13 +9,13 @@
 // import SDGraphics from "./../../SDGraphics/SDGraphics.Index";
 // import GPP from '../../gListManager';
 // import $ from 'jquery';
-// import HvacSVG from '../../Hvac.SVG.t2';
+// import T3Svg from '../../Hvac.SVG.t2';
 
-import BaseShape from './Shape.BaseShape'
+import BaseShape from './S.BaseShape'
 import Utils1 from '../Helper/Utils1';
 import Utils2 from "../Helper/Utils2";
 import Utils3 from "../Helper/Utils3";
-import GlobalData from '../Data/GlobalData'
+import GlobalData from '../Data/T3Gv'
 import Collab from '../Data/Collab'
 import FileParser from '../Data/FileParser'
 import EvtUtil from "../Event/EvtUtil";
@@ -24,10 +24,10 @@ import ListManager from '../Data/ListManager';
 // import Element from "../Basic/Basic.Element";
 import Point from '../Model/Point'
 
-import Document from '../Basic/Basic.Document'
+import Document from '../Basic/B.Document'
 
-import Element from '../Basic/Basic.Element';
-import BaseDrawingObject from './Shape.BaseDrawingObject'
+import Element from '../Basic/B.Element';
+import BaseDrawingObject from './S.BaseDrawingObject'
 import $ from 'jquery'
 import ConstantData from '../Data/ConstantData'
 
@@ -139,7 +139,7 @@ class RRect extends BaseShape {
     a.isShape = !0;
     var g = this.GetTable(!1);
     return g &&
-      GlobalData.optManager.LM_AddSVGTableObject(this, e, a, g),
+      T3Gv.optManager.LM_AddSVGTableObject(this, e, a, g),
       this.DataID >= 0 &&
       this.LM_AddSVGTextObject(e, a),
       a
@@ -159,7 +159,7 @@ class RRect extends BaseShape {
       }, t),
       o = $.extend(!0, {
       }, t),
-      s = GlobalData.optManager.svgDoc.CalculateRotatedOffsetForResize(i, n, r);
+      s = T3Gv.optManager.svgDoc.CalculateRotatedOffsetForResize(i, n, r);
     this.StyleRecord.Line.BThick &&
       null == this.polylist &&
       Utils2.InflateRect(o, this.StyleRecord.Line.BThick, this.StyleRecord.Line.BThick),
@@ -183,10 +183,10 @@ class RRect extends BaseShape {
       c.SetRRectSize(o.width, o.height, p, p),
       S &&
       S.SetRRectSize(o.width, o.height, p, p),
-      this.GetTable(!1) ? GlobalData.optManager.Table_ResizeSVGTableObject(e, a, t) : this.LM_ResizeSVGTextObject(e, a, t),
+      this.GetTable(!1) ? T3Gv.optManager.Table_ResizeSVGTableObject(e, a, t) : this.LM_ResizeSVGTextObject(e, a, t),
       e.SetRotation(r),
       this.UpdateDimensionLines(e),
-      GlobalData.optManager.UpdateDisplayCoordinates(t, null, null, this),
+      T3Gv.optManager.UpdateDisplayCoordinates(t, null, null, this),
       s
   }
 
@@ -203,7 +203,7 @@ class RRect extends BaseShape {
       }, t),
       n = $.extend(!0, {
       }, t),
-      o = GlobalData.optManager.svgDoc.CalculateRotatedOffsetForResize(r, i, a);
+      o = T3Gv.optManager.svgDoc.CalculateRotatedOffsetForResize(r, i, a);
     this.StyleRecord.Line.BThick &&
       null == this.polylist &&
       Utils2.InflateRect(n, this.StyleRecord.Line.BThick, this.StyleRecord.Line.BThick),
@@ -216,7 +216,7 @@ class RRect extends BaseShape {
     l &&
       l.SetSize(n.width, n.height),
       this.GetTable(!1) &&
-      GlobalData.optManager.Table_ResizeSVGTableObject(e, this, t, !0);
+      T3Gv.optManager.Table_ResizeSVGTableObject(e, this, t, !0);
     var S = e.GetElementByID(ConstantData.SVGElementClass.HATCH);
     S &&
       S.SetSize(n.width, n.height);
@@ -233,7 +233,7 @@ class RRect extends BaseShape {
       l.SetRRectSize(n.width, n.height, u, u),
       e.SetRotation(a),
       this.UpdateDimensionLines(e),
-      GlobalData.optManager.UpdateDisplayCoordinates(t, null, null, this),
+      T3Gv.optManager.UpdateDisplayCoordinates(t, null, null, this),
       o
   }
 
@@ -256,22 +256,22 @@ class RRect extends BaseShape {
       S.y = 0,
       S.width = u,
       S.height = 2 * u,
-      GlobalData.optManager.PolyYCurve(l, S, e / 2, 0, 0, 0, u, !0),
+      T3Gv.optManager.PolyYCurve(l, S, e / 2, 0, 0, 0, u, !0),
       S.x = 0,
       S.y = c.height - 2 * u,
       S.width = u,
       S.height = 2 * u,
-      GlobalData.optManager.PolyYCurve(l, S, e / 2, 0, 0, u, 0, !0),
+      T3Gv.optManager.PolyYCurve(l, S, e / 2, 0, 0, u, 0, !0),
       S.x = c.width - u,
       S.y = c.height,
       S.width = u,
       S.height = - 2 * u,
-      GlobalData.optManager.PolyYCurve(l, S, e / 2, 0, 0, 0, - u, !1),
+      T3Gv.optManager.PolyYCurve(l, S, e / 2, 0, 0, 0, - u, !1),
       S.x = c.width - u,
       S.y = 2 * u,
       S.width = u,
       S.height = - 2 * u,
-      GlobalData.optManager.PolyYCurve(l, S, e / 2, 0, 0, - u, 0, !1),
+      T3Gv.optManager.PolyYCurve(l, S, e / 2, 0, 0, - u, 0, !1),
       l.push(new Point(l[0].x, l[0].y)),
       !t
     ) for (s = l.length, n = 0; n < s; n++) l[n].x += c.x,
@@ -282,13 +282,13 @@ class RRect extends BaseShape {
   ExtendLines() {
     var e = this.GetTable(!1);
     e &&
-      GlobalData.optManager.Table_ExtendLines(this, e)
+      T3Gv.optManager.Table_ExtendLines(this, e)
   }
 
   ExtendCell(e, t, a) {
     var r = this.GetTable(!1);
     if (r) {
-      var i = GlobalData.optManager.Table_ExtendCell(this, r, e, t, a);
+      var i = T3Gv.optManager.Table_ExtendCell(this, r, e, t, a);
       if (i) {
         var n,
           o,
@@ -332,7 +332,7 @@ class RRect extends BaseShape {
 
     var m = this.GetTable(!1);
     if (null != i && m) {
-      var C = GlobalData.optManager.Table_GetPerimPts(this, m, i, t);
+      var C = T3Gv.optManager.Table_GetPerimPts(this, m, i, t);
       if (C) return p = C,
         !0,
         r ||
@@ -373,11 +373,11 @@ class RRect extends BaseShape {
       0 === t[u].y ? (p[u].x += o, p[u].y += o) : 0 === t[u].x &&
         t[u].y === h ? (p[u].x += o, p[u].y -= o) : t[u].x === h &&
           0 === t[u].y ? (p[u].x -= o, p[u].y += o) : t[u].x === h &&
-            t[u].y === h ? (p[u].x -= o, p[u].y -= o) : t[u].x < h / 4 ? (c = GlobalData.optManager.PolyGetIntersect(d, p[u].y, g, null, !1)) &&
-              (p[u].x = g[0], c > 1 && g[1] < p[u].x && (p[u].x = g[1])) : t[u].x > 3 * h / 4 ? (c = GlobalData.optManager.PolyGetIntersect(d, p[u].y, g, null, !1)) &&
-                (p[u].x = g[0], c > 1 && g[1] > p[u].x && (p[u].x = g[1])) : t[u].y < h / 4 ? (c = GlobalData.optManager.PolyGetIntersect(d, p[u].x, g, null, !0)) &&
+            t[u].y === h ? (p[u].x -= o, p[u].y -= o) : t[u].x < h / 4 ? (c = T3Gv.optManager.PolyGetIntersect(d, p[u].y, g, null, !1)) &&
+              (p[u].x = g[0], c > 1 && g[1] < p[u].x && (p[u].x = g[1])) : t[u].x > 3 * h / 4 ? (c = T3Gv.optManager.PolyGetIntersect(d, p[u].y, g, null, !1)) &&
+                (p[u].x = g[0], c > 1 && g[1] > p[u].x && (p[u].x = g[1])) : t[u].y < h / 4 ? (c = T3Gv.optManager.PolyGetIntersect(d, p[u].x, g, null, !0)) &&
                   (p[u].y = g[0], c > 1 && g[1] < p[u].y && (p[u].y = g[1])) : t[u].y > 3 * h / 4 &&
-                  (c = GlobalData.optManager.PolyGetIntersect(d, p[u].x, g, null, !0)) &&
+                  (c = T3Gv.optManager.PolyGetIntersect(d, p[u].x, g, null, !0)) &&
     (p[u].y = g[0], c > 1 && g[1] > p[u].y && (p[u].y = g[1])),
       null != t[u].id &&
       (p[u].id = t[u].id);

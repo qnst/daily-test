@@ -9,22 +9,22 @@
 // import SDGraphics from "./../../SDGraphics/SDGraphics.Index";
 // import GPP from '../../gListManager';
 // import $ from 'jquery';
-// import HvacSVG from '../../Hvac.SVG.t2';
+// import T3Svg from '../../Hvac.SVG.t2';
 
 
 
 
 
-import BaseSymbol from './Shape.BaseSymbol'
+import BaseSymbol from './S.BaseSymbol'
 import Utils1 from '../Helper/Utils1';
 import Utils2 from "../Helper/Utils2";
 import Utils3 from "../Helper/Utils3";
-import GlobalData from '../Data/GlobalData'
+import GlobalData from '../Data/T3Gv'
 import Collab from '../Data/Collab'
 import FileParser from '../Data/FileParser'
 import EvtUtil from "../Event/EvtUtil";
 import Resources from '../Data/Resources'
-import Element from "../Basic/Basic.Element";
+import Element from "../Basic/B.Element";
 
 import ListManager from '../Data/ListManager';
 
@@ -151,15 +151,15 @@ class SVGFragmentSymbol extends BaseSymbol {
           alignment: t.Fill.Paint.TextureScale.AlignmentScalar
         },
           s = t.Fill.Paint.Texture;
-        GlobalData.optManager.TextureList.Textures[s] &&
+        T3Gv.optManager.TextureList.Textures[s] &&
           (
-            o.dim = GlobalData.optManager.TextureList.Textures[s].dim,
-            o.url = GlobalData.optManager.TextureList.Textures[s].ImageURL,
-            o.scale = GlobalData.optManager.CalcTextureScale(t.Fill.Paint.TextureScale, o.dim.x),
+            o.dim = T3Gv.optManager.TextureList.Textures[s].dim,
+            o.url = T3Gv.optManager.TextureList.Textures[s].ImageURL,
+            o.scale = T3Gv.optManager.CalcTextureScale(t.Fill.Paint.TextureScale, o.dim.x),
             t.Fill.Paint.TextureScale.Scale = o.scale,
             o.url ||
             (
-              o.url = Constants.FilePath_CMSRoot + Constants.FilePath_Textures + GlobalData.optManager.TextureList.Textures[s].filename
+              o.url = Constants.FilePath_CMSRoot + Constants.FilePath_Textures + T3Gv.optManager.TextureList.Textures[s].filename
             ),
             e.SetTextureFill(o)
           )
@@ -177,7 +177,7 @@ class SVGFragmentSymbol extends BaseSymbol {
       }, this.prevBBox),
       n = $.extend(!0, {
       }, t),
-      o = GlobalData.optManager.svgDoc.CalculateRotatedOffsetForResize(i, n, r);
+      o = T3Gv.optManager.svgDoc.CalculateRotatedOffsetForResize(i, n, r);
     e.SetSize(t.width, t.height),
       e.SetPos(t.x + o.x, t.y + o.y);
     var s = e.GetElementByID(ConstantData.SVGElementClass.SHAPE);
@@ -199,7 +199,7 @@ class SVGFragmentSymbol extends BaseSymbol {
     if (e) {
       var a = e.GetID();
       if (a >= 0) {
-        var r = GlobalData.optManager.GetObjectPtr(a, !1);
+        var r = T3Gv.optManager.GetObjectPtr(a, !1);
         return this.prevBBox = $.extend(!0, {
         }, this.Frame),
           this.Resize(e, t, r)
@@ -516,7 +516,7 @@ class SVGFragmentSymbol extends BaseSymbol {
     var a = [
       this.BlockID
     ],
-      r = GlobalData.objectStore.PreserveBlock(this.BlockID);
+      r = T3Gv.objectStore.PreserveBlock(this.BlockID);
     if (null == r) return a;
     if (!t) return a;
     var i = t[this.BlockID];
@@ -538,11 +538,11 @@ class SVGFragmentSymbol extends BaseSymbol {
       s.RotationAngle = this.RotationAngle,
       s.extraflags = this.extraflags,
       s.StyleRecord = Utils1.DeepCopy(this.StyleRecord),
-      GlobalData.optManager.SD_GetVisioTextChild(this.BlockID) < 0 &&
+      T3Gv.optManager.SD_GetVisioTextChild(this.BlockID) < 0 &&
       this.DataID >= 0 &&
       this.TextFlags & ConstantData.TextFlags.SED_TF_AttachB
     ) {
-      var l = GlobalData.optManager.svgObjectLayer.GetElementByID(this.BlockID);
+      var l = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID);
       if (l) {
         var S = l.GetElementByID(ConstantData.SVGElementClass.TEXT).GetTextMinDimensions();
         s.trect.y += this.Frame.height,
