@@ -177,7 +177,7 @@ class ToolUtil {
     callback = this.StampOrDragDropCallback;
 
     // Set timeout to trigger the callback after 200ms
-    T3Gv.optManager.StampTimeout = window.setTimeout(callback, 200, thisReference, shapeType);
+    T3Gv.optManager.stampTimeout = window.setTimeout(callback, 200, thisReference, shapeType);
 
     console.log("O.ToolOpt StampOrDragDropNewShape output: void");
   }
@@ -193,7 +193,7 @@ class ToolUtil {
     T3Gv.optManager.PreDragDropOrStamp();
     r = this;
     i = this.StampOrDragDropCallback;
-    T3Gv.optManager.StampTimeout = window.setTimeout(i, 200, r, a);
+    T3Gv.optManager.stampTimeout = window.setTimeout(i, 200, r, a);
 
 
   }
@@ -373,7 +373,7 @@ class ToolUtil {
     var result;
     var shapeTypes = ConstantData.SDRShapeTypes;
 
-    T3Gv.optManager.StampTimeout = null;
+    T3Gv.optManager.stampTimeout = null;
 
     if (shapeType !== 'textLabel') {
       // ConstantData.DocumentContext.ShapeTool = shapeType;
@@ -418,7 +418,7 @@ class ToolUtil {
     var r;
     var i = ConstantData.SDRShapeTypes;
 
-    T3Gv.optManager.StampTimeout = null;
+    T3Gv.optManager.stampTimeout = null;
     // SDUI.Commands.MainController.Dropdowns.HideAllDropdowns(),
     if (a !== 'textLabel') {
       ConstantData.DocumentContext.ShapeTool = a;

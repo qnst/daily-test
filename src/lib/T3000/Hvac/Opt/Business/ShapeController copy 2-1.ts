@@ -182,9 +182,9 @@ class ToolUtil1 {
     callbackFunction = this.StampOrDragDropCallback;
 
     // Set a timeout to execute the callback after a short delay
-    T3Gv.optManager.StampTimeout = window.setTimeout(callbackFunction, 200, context, shapeType);
+    T3Gv.optManager.stampTimeout = window.setTimeout(callbackFunction, 200, context, shapeType);
 
-    console.log('U.ToolUtil.StampOrDragDropNewShape - Output: StampTimeout set');
+    console.log('U.ToolUtil.StampOrDragDropNewShape - Output: stampTimeout set');
   }
 
 
@@ -394,7 +394,7 @@ class ToolUtil1 {
     var r;
     var i = ConstantData.SDRShapeTypes;
 
-    T3Gv.optManager.StampTimeout = null;
+    T3Gv.optManager.stampTimeout = null;
     // SDUI.Commands.MainController.Dropdowns.HideAllDropdowns(),
     if (a !== 'textLabel') {
       ConstantData.DocumentContext.ShapeTool = a;
@@ -625,7 +625,7 @@ class ToolUtil1 {
   //         T3Gv.optManager.PreDragDropOrStamp(),
   //         r = this,
   //         i = this.StampOrDragDropMobileCallback,
-  //         T3Gv.optManager.StampTimeout = window.setTimeout(i, 200, r, a)
+  //         T3Gv.optManager.stampTimeout = window.setTimeout(i, 200, r, a)
   //       ),
   //       'pointerup' == t.type
   //     ) return void (e = !0)
@@ -640,7 +640,7 @@ class ToolUtil1 {
   //       T3Gv.optManager.PreDragDropOrStamp(),
   //       r = this,
   //       i = this.StampOrDragDropCallback,
-  //       T3Gv.optManager.StampTimeout = window.setTimeout(i, 200, r, a)
+  //       T3Gv.optManager.stampTimeout = window.setTimeout(i, 200, r, a)
   //     ),
   //     'mouseup' == t.type ||
   //     'pointerup' == t.type ||
@@ -662,7 +662,7 @@ class ToolUtil1 {
   //   //     T3Gv.optManager.PreDragDropOrStamp();
   //   //     r = this;
   //   //     i = this.StampOrDragDropMobileCallback;
-  //   //     T3Gv.optManager.StampTimeout = window.setTimeout(i, 200, r, a);
+  //   //     T3Gv.optManager.stampTimeout = window.setTimeout(i, 200, r, a);
   //   //   } else if (t.type === 'pointerup') {
   //   //     e = !0;
   //   //   }
@@ -673,7 +673,7 @@ class ToolUtil1 {
   //   //   T3Gv.optManager.PreDragDropOrStamp();
   //   //   r = this;
   //   //   i = this.StampOrDragDropCallback;
-  //   //   T3Gv.optManager.StampTimeout = window.setTimeout(i, 200, r, a);
+  //   //   T3Gv.optManager.stampTimeout = window.setTimeout(i, 200, r, a);
   //   // } else if (t.type === 'mouseup' || t.type === 'pointerup' || t.type === 'touchend') {
   //   //   e = !0;
   //   // }
@@ -703,7 +703,7 @@ class ToolUtil1 {
   //       T3Gv.optManager.PreDragDropOrStamp();
   //       r = this;
   //       i = this.StampOrDragDropMobileCallback;
-  //       T3Gv.optManager.StampTimeout = window.setTimeout(i, 200, r, a);
+  //       T3Gv.optManager.stampTimeout = window.setTimeout(i, 200, r, a);
   //     } else if (t.type === 'pointerup') {
   //       e = true;
   //     }
@@ -713,7 +713,7 @@ class ToolUtil1 {
   //     T3Gv.optManager.PreDragDropOrStamp();
   //     r = this;
   //     i = this.StampOrDragDropCallback;
-  //     T3Gv.optManager.StampTimeout = window.setTimeout(i, 200, r, a);
+  //     T3Gv.optManager.stampTimeout = window.setTimeout(i, 200, r, a);
   //   } else if (t.type === 'mouseup' || t.type === 'pointerup' || t.type === 'touchend') {
   //     e = true;
   //   }
@@ -1062,8 +1062,8 @@ class ToolUtil1 {
     //   if (null == (i = T3Gv.optManager.BuildSymbolObject(e, - 1))) return
     // }
     // if (
-    //   null == T3Gv.optManager.theDrawShape &&
-    //   (T3Gv.optManager.theDrawShape = i),
+    //   null == T3Gv.optManager.drawShape &&
+    //   (T3Gv.optManager.drawShape = i),
     //   i.SymbolData.HasNative
     // ) {
     //   if (null == i.nativeDataArrayBuffer) return void (

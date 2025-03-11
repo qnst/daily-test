@@ -158,7 +158,7 @@ class BaseSymbol extends BaseShape {
       C.knobID = ConstantData.ActionTriggerType.BOTTOMLEFT,
       y = this.GenericKnob(C),
       n.AddElement(y),
-      T3Gv.optManager.bTouchInitiated ||
+      T3Gv.optManager.touchInitiated ||
       C.locked ||
       this.NoGrow() ||
       (
@@ -218,7 +218,7 @@ class BaseSymbol extends BaseShape {
           this.TextFlags & ConstantData.TextFlags.SED_TF_AttachA ||
           this.TextFlags & ConstantData.TextFlags.SED_TF_AttachB
         ) &&
-        T3Gv.optManager.theActionSVGObject.textElem.SetVisible(!1)
+        T3Gv.optManager.actionSvgObject.textElem.SetVisible(!1)
       );
     this.rflags &&
       (
@@ -239,7 +239,7 @@ class BaseSymbol extends BaseShape {
           this.TextFlags & ConstantData.TextFlags.SED_TF_AttachA ||
           this.TextFlags & ConstantData.TextFlags.SED_TF_AttachB
         ) &&
-        T3Gv.optManager.theActionSVGObject.textElem.SetVisible(!0)
+        T3Gv.optManager.actionSvgObject.textElem.SetVisible(!0)
       );
     T3Gv.optManager.SetEditMode(ConstantData.EditState.DEFAULT),
       T3Gv.optManager.UpdateLinks(),

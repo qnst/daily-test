@@ -12,6 +12,7 @@ import Point from '../Model/Point'
 import $ from 'jquery'
 import Instance from '../Data/Instance/Instance'
 import ConstantData2 from '../Data/ConstantData2'
+import ShapeContant from '../Data/ShapeContant'
 
 class ArcLine extends BaseLine {
   public CurveAdjust: any;
@@ -468,7 +469,7 @@ class ArcLine extends BaseLine {
     group.AddElement(knob);
 
     // Add ROTATE knob if allowed.
-    if (T3Gv.optManager.bTouchInitiated) {
+    if (T3Gv.optManager.touchInitiated) {
       allowKnob = false;
     }
     if (allowKnob && !knobConfig.locked && !this.NoGrow()) {
@@ -860,7 +861,7 @@ class ArcLine extends BaseLine {
           ConstantData.ActionTriggerType.ROTATE
         );
       }
-      T3Gv.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE);
+      T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
     }
 
     // Reset the backup object
@@ -1053,15 +1054,15 @@ class ArcLine extends BaseLine {
   StartNewObjectDrawTrackCommon(drawX: number, drawY: number, extra: any) {
     console.log("= S.ArcLine StartNewObjectDrawTrackCommon input:", { drawX, drawY, extra });
 
-    const startX = T3Gv.optManager.theActionStartX;
-    const startY = T3Gv.optManager.theActionStartY;
+    const startX = T3Gv.optManager.actionStartX;
+    const startY = T3Gv.optManager.actionStartY;
 
     const deltaX = drawX - startX;
     const deltaY = drawY - startY;
     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
     // Extend the action bounding box (side effect, if required)
-    $.extend(true, {}, T3Gv.optManager.theActionBBox);
+    $.extend(true, {}, T3Gv.optManager.actionBBox);
 
     let newCurveAdjust = distance / 10;
     if (newCurveAdjust < 1) {
@@ -1076,7 +1077,7 @@ class ArcLine extends BaseLine {
 
     // Update the end point of the line using the new parameters
     this.AdjustLineEnd(
-      T3Gv.optManager.theActionSVGObject,
+      T3Gv.optManager.actionSvgObject,
       drawX,
       drawY,
       ConstantData.ActionTriggerType.LINEEND

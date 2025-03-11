@@ -197,7 +197,7 @@ class DocHandler1 {
       e.width -= s,
       e.y += l,
       e.height -= l);
-    this.svgDoc ? this.scaleToFit ? this.optHandler.bInAutoScroll ? t = {
+    this.svgDoc ? this.scaleToFit ? this.optHandler.inAutoScroll ? t = {
       width: (a = this.svgDoc.GetWorkArea()).docScreenWidth,
       height: a.docScreenHeight
     } : e.width > 0 && e.height > 0 ? (t = {
@@ -215,7 +215,7 @@ class DocHandler1 {
             width: (a = this.svgDoc.CalcScaleToFit(e.width - 20, e.height - 20, r, i)).width,
             height: a.height
           },
-          this.optHandler.bInAutoScroll || this.svgDoc.docInfo.docScale != a.scale && (this.svgDoc.SetDocumentScale(a.scale),
+          this.optHandler.inAutoScroll || this.svgDoc.docInfo.docScale != a.scale && (this.svgDoc.SetDocumentScale(a.scale),
             this.UpdateGrid(),
             this.ResetRulers())) : t = {
               width: (a = this.svgDoc.GetWorkArea()).docScreenWidth,

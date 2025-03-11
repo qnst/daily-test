@@ -176,7 +176,7 @@ class ShapeController {
     //     gListManager.PreDragDropOrStamp();
     //     r = this;
     //     i = this.StampOrDragDropMobileCallback;
-    //     gListManager.StampTimeout = window.setTimeout(i, 200, r, a);
+    //     gListManager.stampTimeout = window.setTimeout(i, 200, r, a);
     //   } else if (t.type === "pointerup") {
     //     e = true;
     //   }
@@ -189,7 +189,7 @@ class ShapeController {
     //   T3Gv.optManager.PreDragDropOrStamp();
     //   r = this;
     //   i = this.StampOrDragDropCallback;
-    //   T3Gv.optManager.StampTimeout = window.setTimeout(i, 200, r, a);
+    //   T3Gv.optManager.stampTimeout = window.setTimeout(i, 200, r, a);
     // } else if (t.type === "mouseup" || t.type === "pointerup" || t.type === "touchend") {
     //   e = true;
     // }  // }
@@ -203,7 +203,7 @@ class ShapeController {
     T3Gv.optManager.PreDragDropOrStamp();
     r = this;
     i = this.StampOrDragDropCallback;
-    T3Gv.optManager.StampTimeout = window.setTimeout(i, 200, r, a);
+    T3Gv.optManager.stampTimeout = window.setTimeout(i, 200, r, a);
 
 
   }
@@ -415,7 +415,7 @@ class ShapeController {
     var r;
     var i = ConstantData.SDRShapeTypes;
 
-    T3Gv.optManager.StampTimeout = null;
+    T3Gv.optManager.stampTimeout = null;
     // SDUI.Commands.MainController.Dropdowns.HideAllDropdowns(),
     if (a !== 'textLabel') {
       ConstantData.DocumentContext.ShapeTool = a;
@@ -646,7 +646,7 @@ class ShapeController {
   //         T3Gv.optManager.PreDragDropOrStamp(),
   //         r = this,
   //         i = this.StampOrDragDropMobileCallback,
-  //         T3Gv.optManager.StampTimeout = window.setTimeout(i, 200, r, a)
+  //         T3Gv.optManager.stampTimeout = window.setTimeout(i, 200, r, a)
   //       ),
   //       'pointerup' == t.type
   //     ) return void (e = !0)
@@ -661,7 +661,7 @@ class ShapeController {
   //       T3Gv.optManager.PreDragDropOrStamp(),
   //       r = this,
   //       i = this.StampOrDragDropCallback,
-  //       T3Gv.optManager.StampTimeout = window.setTimeout(i, 200, r, a)
+  //       T3Gv.optManager.stampTimeout = window.setTimeout(i, 200, r, a)
   //     ),
   //     'mouseup' == t.type ||
   //     'pointerup' == t.type ||
@@ -683,7 +683,7 @@ class ShapeController {
   //   //     T3Gv.optManager.PreDragDropOrStamp();
   //   //     r = this;
   //   //     i = this.StampOrDragDropMobileCallback;
-  //   //     T3Gv.optManager.StampTimeout = window.setTimeout(i, 200, r, a);
+  //   //     T3Gv.optManager.stampTimeout = window.setTimeout(i, 200, r, a);
   //   //   } else if (t.type === 'pointerup') {
   //   //     e = !0;
   //   //   }
@@ -694,7 +694,7 @@ class ShapeController {
   //   //   T3Gv.optManager.PreDragDropOrStamp();
   //   //   r = this;
   //   //   i = this.StampOrDragDropCallback;
-  //   //   T3Gv.optManager.StampTimeout = window.setTimeout(i, 200, r, a);
+  //   //   T3Gv.optManager.stampTimeout = window.setTimeout(i, 200, r, a);
   //   // } else if (t.type === 'mouseup' || t.type === 'pointerup' || t.type === 'touchend') {
   //   //   e = !0;
   //   // }
@@ -724,7 +724,7 @@ class ShapeController {
   //       T3Gv.optManager.PreDragDropOrStamp();
   //       r = this;
   //       i = this.StampOrDragDropMobileCallback;
-  //       T3Gv.optManager.StampTimeout = window.setTimeout(i, 200, r, a);
+  //       T3Gv.optManager.stampTimeout = window.setTimeout(i, 200, r, a);
   //     } else if (t.type === 'pointerup') {
   //       e = true;
   //     }
@@ -734,7 +734,7 @@ class ShapeController {
   //     T3Gv.optManager.PreDragDropOrStamp();
   //     r = this;
   //     i = this.StampOrDragDropCallback;
-  //     T3Gv.optManager.StampTimeout = window.setTimeout(i, 200, r, a);
+  //     T3Gv.optManager.stampTimeout = window.setTimeout(i, 200, r, a);
   //   } else if (t.type === 'mouseup' || t.type === 'pointerup' || t.type === 'touchend') {
   //     e = true;
   //   }
@@ -1083,8 +1083,8 @@ class ShapeController {
     //   if (null == (i = T3Gv.optManager.BuildSymbolObject(e, - 1))) return
     // }
     // if (
-    //   null == T3Gv.optManager.theDrawShape &&
-    //   (T3Gv.optManager.theDrawShape = i),
+    //   null == T3Gv.optManager.drawShape &&
+    //   (T3Gv.optManager.drawShape = i),
     //   i.SymbolData.HasNative
     // ) {
     //   if (null == i.nativeDataArrayBuffer) return void (

@@ -401,7 +401,7 @@ class Rect extends BaseShape {
       }
     }
 
-    if (ListManager.BaseShape.prototype.SetShapeProperties.call(this, properties)) {
+    if (Instance.Shape.BaseShape.prototype.SetShapeProperties.call(this, properties)) {
       updated = true;
     }
 
@@ -416,7 +416,7 @@ class Rect extends BaseShape {
     if (table) {
       var firstRow = table.rows[0];
       for (var i = 0; i < firstRow.ncells; i++) {
-        if (table.cells[i].flags & ListManager.Table.CellFlags.SDT_F_UseExpandedRectAsFrame) {
+        if (table.cells[i].flags & TODO.Table.CellFlags.SDT_F_UseExpandedRectAsFrame) {
           console.log("= S.Rect ApplyCurvature Output: No action taken due to expanded rect as frame");
           return;
         }

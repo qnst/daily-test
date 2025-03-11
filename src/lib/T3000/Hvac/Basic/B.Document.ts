@@ -506,15 +506,15 @@ class Document extends Container {
   RotateAroundCenterPt(point, center, angle) {
     console.log('= B.Document RotateAroundCenterPt input', { point, center, angle });
 
-    const svgPoint = this.DOMElement().createSVGPoint();
-    const svgMatrix = this.DOMElement().createSVGMatrix();
+    let svgPoint = this.DOMElement().createSVGPoint();
+    let svgMatrix = this.DOMElement().createSVGMatrix();
 
     svgPoint.x = point.x - center.x;
     svgPoint.y = point.y - center.y;
 
-    const rotatedPoint = svgPoint.matrixTransform(svgMatrix.rotate(angle));
+    let rotatedPoint = svgPoint.matrixTransform(svgMatrix.rotate(angle));
 
-    const result = {
+    let result = {
       x: rotatedPoint.x + center.x,
       y: rotatedPoint.y + center.y
     };

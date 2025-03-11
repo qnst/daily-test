@@ -6,13 +6,9 @@ import Utils2 from "../Helper/Utils2";
 import Utils3 from "../Helper/Utils3";
 import T3Gv from '../Data/T3Gv'
 import FileParser from '../Data/FileParser'
-import Resources from '../Data/Resources'
-import ListManager from '../Data/ListManager';
 import Point from '../Model/Point';
 import ConstantData from '../Data/ConstantData'
-import HitResult from '../Model/HitResult'
 import SelectionAttributes from '../Model/SelectionAttributes'
-import RightClickData from '../Model/RightClickData'
 import PathPoint from '../Model/PathPoint'
 import Rectangle from '../Model/Rectangle'
 import CRect from '../Model/CRect'
@@ -23,6 +19,8 @@ import ConstantData1 from "../Data/ConstantData1"
 import ArrowheadRecord from '../Model/ArrowheadRecord'
 import ConstantData2 from "../Data/ConstantData2"
 import OptAhUtil from '../Opt/Business/OptAhUtil';
+import Instance from '../Data/Instance/Instance';
+import ShapeContant from '../Data/ShapeContant';
 
 class Connector extends BaseDrawingObject {
 
@@ -255,7 +253,7 @@ class Connector extends BaseDrawingObject {
       textElement.DisableHyperlinks(true);
     }
     textElement.SetRenderingEnabled(true);
-    ListManager.BaseLine.prototype.TextDirectionCommon.call(this, textElement, backgroundRect, false, hook);
+    Instance.Shape.BaseLine.prototype.TextDirectionCommon.call(this, textElement, backgroundRect, false, hook);
     textElement.SetEditCallback(T3Gv.optManager.TextCallback, parentElement);
 
     console.log('S.Connector: Output textElement:', textElement);
@@ -609,7 +607,7 @@ class Connector extends BaseDrawingObject {
     let lastTextHook = this.arraylist.lasttexthook;
     const totalHooks = this.arraylist.hook.length;
     const isLinear = Boolean(this.arraylist.styleflags & ConstantData.SEDA_Styles.SEDA_Linear);
-    const textAlignment = SDF.TextAlignToWin(this.TextAlign);
+    const textAlignment = ShapeDataUtil.TextAlignToWin(this.TextAlign);
     const backgroundObj = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
 
     // Update background color and fill based on text alignment
@@ -703,7 +701,7 @@ class Connector extends BaseDrawingObject {
 
           if (textElement && textBackgroundElement) {
             const isDefaultSvgDoc = svgDoc == null;
-            ListManager.BaseLine.prototype.TextDirectionCommon.call(this, textElement, textBackgroundElement, isDefaultSvgDoc, lastHook);
+            Instance.Shape.BaseLine.prototype.TextDirectionCommon.call(this, textElement, textBackgroundElement, isDefaultSvgDoc, lastHook);
           }
         }
       }
@@ -1479,7 +1477,7 @@ class Connector extends BaseDrawingObject {
     console.log('S.Connector: SetCursors input');
 
     const svgElement = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID);
-    ListManager.BaseDrawingObject.prototype.SetCursors.call(this);
+    Instance.Shape.BaseDrawingObject.prototype.SetCursors.call(this);
 
     if (T3Gv.optManager.GetEditMode() === ConstantData.EditState.DEFAULT && svgElement) {
       const hitAreasElement = svgElement.GetElementByID(ConstantData.Defines.HitAreas);
@@ -1507,68 +1505,7 @@ class Connector extends BaseDrawingObject {
   }
 
   RightClick(event) {
-    console.log('S.Connector: RightClick input:', event);
 
-    const docCoords = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(event.gesture.center.clientX, event.gesture.center.clientY);
-    const hitResult = new HitResult(-1, 0, null);
-    const svgElement = T3Gv.optManager.svgObjectLayer.FindElementByDOMElement(event.currentTarget);
-
-    if (!T3Gv.optManager.SelectObjectFromClick(event, svgElement)) {
-      console.log('S.Connector: RightClick output: false (selection failed)');
-      return false;
-    }
-
-    const elementId = svgElement.GetID();
-    const targetObject = T3Gv.optManager.GetObjectPtr(elementId, false);
-
-    if (targetObject) {
-      if (targetObject.GetTextObject() >= 0) {
-        const textElement = svgElement.textElem;
-        if (textElement) {
-          const spellIndex = textElement.GetSpellAtLocation(event.gesture.center.clientX, event.gesture.center.clientY);
-          if (spellIndex >= 0) {
-            T3Gv.optManager.ActivateTextEdit(svgElement, event, true);
-          }
-        }
-      }
-
-      const styles = ConstantData.SEDA_Styles;
-      const isCoManager = targetObject.arraylist.styleflags & styles.SEDA_CoManager;
-      const isPerpConn = (targetObject.arraylist.styleflags & styles.SEDA_PerpConn) > 0;
-      const skipCount = ConstantData.ConnectorDefines.SEDA_NSkip;
-      const hookCount = targetObject.arraylist.hook.length;
-
-      if (isPerpConn && hookCount > skipCount + 1) {
-        // Additional logic if needed
-      }
-
-      if (isCoManager) {
-        // Additional logic if needed
-      }
-    }
-
-    T3Gv.optManager.RightClickParams = new RightClickData();
-    T3Gv.optManager.RightClickParams.TargetID = svgElement.GetID();
-    T3Gv.optManager.RightClickParams.HitPt.x = docCoords.x;
-    T3Gv.optManager.RightClickParams.HitPt.y = docCoords.y;
-    T3Gv.optManager.RightClickParams.Locked = (this.flags & ConstantData.ObjFlags.SEDO_Lock) > 0;
-
-    if (T3Gv.optManager.GetActiveTextEdit() !== null) {
-      const activeEdit = T3Gv.optManager.svgDoc.GetActiveEdit();
-      let spellIndex = -1;
-      if (activeEdit) {
-        spellIndex = activeEdit.GetSpellAtLocation(event.gesture.center.clientX, event.gesture.center.clientY);
-      }
-      if (spellIndex >= 0) {
-        T3Gv.optManager.svgDoc.GetSpellCheck().ShowSpellMenu(activeEdit, spellIndex, event.gesture.center.clientX, event.gesture.center.clientY);
-      } else {
-        Commands.MainController.ShowContextualMenu(Resources.Controls.ContextMenus.TextMenu.Id.toLowerCase(), event.gesture.center.clientX, event.gesture.center.clientY);
-      }
-    } else {
-      Commands.MainController.ShowContextualMenu(Resources.Controls.ContextMenus.Connector.Id.toLowerCase(), event.gesture.center.clientX, event.gesture.center.clientY);
-    }
-
-    console.log('S.Connector: RightClick output: true');
   }
 
   HitAreaClick(hitAreaID) {
@@ -1597,7 +1534,7 @@ class Connector extends BaseDrawingObject {
 
     OptAhUtil.FindTreeTop(
       connector,
-      ConstantData.LinkFlags.SED_L_MOVE,
+      ShapeContant.LinkFlags.SED_L_MOVE,
       {
         topconnector: -1,
         topshape: -1,
@@ -2170,7 +2107,7 @@ class Connector extends BaseDrawingObject {
     });
 
     // Call the base scale method with the original parameters
-    ListManager.BaseLine.prototype.ScaleObject.call(
+    Instance.Shape.BaseLine.prototype.ScaleObject.call(
       this,
       scaleX,
       scaleY,
@@ -2322,7 +2259,7 @@ class Connector extends BaseDrawingObject {
       this.rflags = Utils2.SetFlag(this.rflags, ConstantData.FloatingPointDim.SD_FP_Height, false);
     }
 
-    T3Gv.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE);
+    T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
 
     console.log("S.Connector: SetSize output:", { arraylist: this.arraylist, rflags: this.rflags });
   }
@@ -2334,10 +2271,10 @@ class Connector extends BaseDrawingObject {
     let updatedFrame = newFrame || this.Frame;
 
     // Call the original base UpdateFrame method
-    ListManager.BaseDrawingObject.prototype.UpdateFrame.call(this, updatedFrame);
+    Instance.Shape.BaseDrawingObject.prototype.UpdateFrame.call(this, updatedFrame);
 
     // Process arrowhead bounds if the global list manager is available
-    if (gListManager) {
+    if (T3Gv.optManager) {
       let svgElement = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID);
       if (svgElement !== null) {
         let svgFrame = this.GetSVGFrame();
@@ -2539,7 +2476,7 @@ class Connector extends BaseDrawingObject {
       null != this.arraylist.hook &&
       !((a = this.arraylist.hook.length) < 1)
     ) {
-      var v = T3Gv.optManager.theActionSVGObject,
+      var v = T3Gv.optManager.actionSvgObject,
         G = v.GetElementByID(ConstantData.SVGElementClass.SHAPE),
         N = v.GetElementByID(ConstantData.SVGElementClass.SLOP),
         k = $.extend(!0, {
@@ -2556,11 +2493,11 @@ class Connector extends BaseDrawingObject {
         u = this.arraylist.styleflags & R.SEDA_Linear,
         d = this.arraylist.styleflags & ConstantData.SEDA_Styles.SEDA_FlowConn,
         this.vertical ? (
-          b = t - T3Gv.optManager.theActionStartY,
-          M = e - T3Gv.optManager.theActionStartX
+          b = t - T3Gv.optManager.actionStartY,
+          M = e - T3Gv.optManager.actionStartX
         ) : (
-          b = e - T3Gv.optManager.theActionStartX,
-          M = t - T3Gv.optManager.theActionStartY
+          b = e - T3Gv.optManager.actionStartX,
+          M = t - T3Gv.optManager.actionStartY
         ),
         L = this.arraylist.ht,
         I = this.arraylist.wd;
@@ -2576,19 +2513,19 @@ class Connector extends BaseDrawingObject {
       i++,
       0 !== x &&
       i++,
-      T3Gv.optManager.theActionTriggerID
+      T3Gv.optManager.actionTriggerId
       ) {
         case ConstantData.ActionTriggerType.CONNECTOR_ADJ:
           (E || O) &&
             (b = - b),
             (f = T3Gv.optManager.OldConnectorExtra + b) < - T3Gv.optManager.OldConnectorWd &&
             (f = - T3Gv.optManager.OldConnectorWd),
-            b = f - this.arraylist.hook[T3Gv.optManager.theActionTriggerData].extra,
-            this.arraylist.hook[T3Gv.optManager.theActionTriggerData].extra = f,
+            b = f - this.arraylist.hook[T3Gv.optManager.actionTriggerData].extra,
+            this.arraylist.hook[T3Gv.optManager.actionTriggerData].extra = f,
             c &&
-            T3Gv.optManager.theActionTriggerData < this.arraylist.hook.length - 1 &&
+            T3Gv.optManager.actionTriggerData < this.arraylist.hook.length - 1 &&
             (
-              this.arraylist.hook[T3Gv.optManager.theActionTriggerData + 1].extra = f
+              this.arraylist.hook[T3Gv.optManager.actionTriggerData + 1].extra = f
             ),
             (E || O) &&
             (b = - b),
@@ -2618,7 +2555,7 @@ class Connector extends BaseDrawingObject {
           break;
         case ConstantData.ActionTriggerType.CONNECTOR_PERP:
           n = L,
-            (c && T3Gv.optManager.theActionTriggerData % 2 || U && S) &&
+            (c && T3Gv.optManager.actionTriggerData % 2 || U && S) &&
             (M = - M),
             (S && c || S) &&
             (M = - M),
@@ -2630,10 +2567,10 @@ class Connector extends BaseDrawingObject {
             b = 0;
           break;
         case ConstantData.ActionTriggerType.CONNECTOR_HOOK:
-          n = (r = this.arraylist.hook[T3Gv.optManager.theActionTriggerData]).gap,
+          n = (r = this.arraylist.hook[T3Gv.optManager.actionTriggerData]).gap,
             P = s ? b : M,
             E ? P = - P : S ? s ||
-              (P = - P) : T3Gv.optManager.theActionTriggerData === ConstantData.ConnectorDefines.A_Cr &&
+              (P = - P) : T3Gv.optManager.actionTriggerData === ConstantData.ConnectorDefines.A_Cr &&
             (P = - P),
             r.gap = T3Gv.optManager.OldConnectorGap + P,
             p = T3Gv.optManager.OldConnectorExtra + P,
@@ -2655,7 +2592,7 @@ class Connector extends BaseDrawingObject {
             ) &&
             (r.extra = p),
             E ? P = - P : S ? s ||
-              (P = - P) : T3Gv.optManager.theActionTriggerData === ConstantData.ConnectorDefines.A_Cr &&
+              (P = - P) : T3Gv.optManager.actionTriggerData === ConstantData.ConnectorDefines.A_Cr &&
             (P = - P),
             M = 0,
             b = 0,
@@ -2676,8 +2613,8 @@ class Connector extends BaseDrawingObject {
           b,
           M,
           P,
-          T3Gv.optManager.theActionTriggerID,
-          T3Gv.optManager.theActionTriggerData,
+          T3Gv.optManager.actionTriggerId,
+          T3Gv.optManager.actionTriggerData,
           i,
           J,
           x
@@ -2700,7 +2637,7 @@ class Connector extends BaseDrawingObject {
           T3Gv.optManager.ConnectorList
         ) switch (
           a = T3Gv.optManager.ConnectorList.length,
-          T3Gv.optManager.theActionTriggerID
+          T3Gv.optManager.actionTriggerId
           ) {
             case ConstantData.ActionTriggerType.CONNECTOR_ADJ:
               for (this.arraylist.angle && (A = _ * this.arraylist.angle), l = 0; l < a; l++) {
@@ -2718,17 +2655,17 @@ class Connector extends BaseDrawingObject {
                 y = _;
               var z,
                 W = - 1;
-              T3Gv.optManager.theActionTriggerID === ConstantData.ActionTriggerType.LINEEND &&
+              T3Gv.optManager.actionTriggerId === ConstantData.ActionTriggerType.LINEEND &&
                 a > 0 &&
                 this.arraylist.hook[w.A_Cr].id >= 0 &&
                 (W = w.A_Cr),
-                T3Gv.optManager.theActionTriggerID === ConstantData.ActionTriggerType.LINESTART &&
+                T3Gv.optManager.actionTriggerId === ConstantData.ActionTriggerType.LINESTART &&
                 a > 0 &&
                 this.arraylist.hook[w.A_Cl].id >= 0 &&
                 (W = w.A_Cl);
               var q = c &&
                 this.arraylist.hook.length % 2 == 0 &&
-                T3Gv.optManager.theActionTriggerID === ConstantData.ActionTriggerType.LINESTART;
+                T3Gv.optManager.actionTriggerId === ConstantData.ActionTriggerType.LINESTART;
               for (l = 0; l < a; l++) {
                 if (
                   g = T3Gv.optManager.ConnectorList[l].locallist,
@@ -2855,17 +2792,16 @@ class Connector extends BaseDrawingObject {
   }
 
   HandleActionTriggerDoAutoScroll() {
-    ListManager.BaseLine.prototype.HandleActionTriggerDoAutoScroll.call(this)
+    Instance.Shape.BaseLine.prototype.HandleActionTriggerDoAutoScroll.call(this)
   }
 
   AutoScrollCommon(e, t, a) {
-    return ListManager.BaseLine.prototype.AutoScrollCommon.call(this, e, t, a)
+    return Instance.Shape.BaseLine.prototype.AutoScrollCommon.call(this, e, t, a)
   }
 
   LM_ActionTrack(e) {
-    console.log('============ListManager.Connector.prototype.LM_ActionTrack e=>', e);
 
-    ListManager.BaseLine.prototype.LM_ActionTrack.call(this, e)
+    Instance.Shape.BaseLine.prototype.LM_ActionTrack.call(this, e)
   }
 
   LM_ActionRelease(e, t) {
@@ -2883,8 +2819,8 @@ class Connector extends BaseDrawingObject {
         // Collab.AllowMessage()
       ) {
         var n = {};
-        n.BlockID = T3Gv.optManager.theActionStoredObjectID,
-          n.theActionTriggerID = T3Gv.optManager.theActionTriggerID,
+        n.BlockID = T3Gv.optManager.actionStoredObjectId,
+          n.actionTriggerId = T3Gv.optManager.actionTriggerId,
           n.Frame = Utils1.DeepCopy(this.Frame),
           n.StartPoint = Utils1.DeepCopy(this.StartPoint),
           n.EndPoint = Utils1.DeepCopy(this.EndPoint),
@@ -2892,7 +2828,7 @@ class Connector extends BaseDrawingObject {
         // ,
         // Collab.BuildMessage(ConstantData.CollabMessages.Action_Connector, n, !1)
       }
-      switch (T3Gv.optManager.theActionTriggerID) {
+      switch (T3Gv.optManager.actionTriggerId) {
         case ConstantData.ActionTriggerType.LINESTART:
         case ConstantData.ActionTriggerType.LINEEND:
           if (
@@ -2906,37 +2842,37 @@ class Connector extends BaseDrawingObject {
             hook.extra < - this.arraylist.wd &&
             (hook.extra = - this.arraylist.wd)
       }
-      this.Pr_Format(T3Gv.optManager.theActionStoredObjectID),
+      this.Pr_Format(T3Gv.optManager.actionStoredObjectId),
         T3Gv.optManager.SetLinkFlag(
-          T3Gv.optManager.theActionStoredObjectID,
-          ConstantData.LinkFlags.SED_L_MOVE
+          T3Gv.optManager.actionStoredObjectId,
+          ShapeContant.LinkFlags.SED_L_MOVE
         ),
         T3Gv.optManager.UpdateLinks(),
         t ||
         (
-          this.LM_ActionPostRelease(T3Gv.optManager.theActionStoredObjectID),
-          T3Gv.optManager.theActionStoredObjectID = - 1,
-          T3Gv.optManager.theActionSVGObject = null
+          this.LM_ActionPostRelease(T3Gv.optManager.actionStoredObjectId),
+          T3Gv.optManager.actionStoredObjectId = - 1,
+          T3Gv.optManager.actionSvgObject = null
         ),
         T3Gv.optManager.ShowOverlayLayer(),
         T3Gv.optManager.CompleteOperation(null)
     } catch (e) {
-      ListManager.BaseShape.prototype.LM_ActionClick_ExceptionCleanup.call(this, e);
+      Instance.Shape.BaseShape.prototype.LM_ActionClick_ExceptionCleanup.call(this, e);
       T3Gv.optManager.ExceptionCleanup(e);
       throw e;
     }
   }
 
   LM_SetupActionClick(e, t) {
-    return ListManager.BaseLine.prototype.LM_SetupActionClick.call(this, e, t)
+    return Instance.Shape.BaseLine.prototype.LM_SetupActionClick.call(this, e, t)
   }
 
   LM_ActionClick(e, t) {
-    ListManager.BaseLine.prototype.LM_ActionClick.call(this, e, t)
+    Instance.Shape.BaseLine.prototype.LM_ActionClick.call(this, e, t)
   }
 
   LM_ActionClick_ExceptionCleanup(e) {
-    ListManager.BaseLine.prototype.LM_ActionClick_ExceptionCleanup.call(this, e)
+    Instance.Shape.BaseLine.prototype.LM_ActionClick_ExceptionCleanup.call(this, e)
   }
 
   LM_ActionPreTrack(actionEvent, triggerType) {
@@ -3049,7 +2985,7 @@ class Connector extends BaseDrawingObject {
       connectorMultiplier = 2;
     }
     if (triggerType === ConstantData.ActionTriggerType.CONNECTOR_HOOK) {
-      currentHook = this.arraylist.hook[T3Gv.optManager.theActionTriggerData];
+      currentHook = this.arraylist.hook[T3Gv.optManager.actionTriggerData];
       T3Gv.optManager.OldConnectorGap = currentHook.gap;
       T3Gv.optManager.OldConnectorExtra = currentHook.extra;
     }
@@ -3059,8 +2995,8 @@ class Connector extends BaseDrawingObject {
 
     switch (triggerType) {
       case ConstantData.ActionTriggerType.CONNECTOR_ADJ:
-        connectorMultiplier = T3Gv.optManager.theActionTriggerData;
-        currentHook = this.arraylist.hook[T3Gv.optManager.theActionTriggerData];
+        connectorMultiplier = T3Gv.optManager.actionTriggerData;
+        currentHook = this.arraylist.hook[T3Gv.optManager.actionTriggerData];
         T3Gv.optManager.OldConnectorExtra = currentHook.extra;
         totalHooks = this.arraylist.hook.length;
         if (isLinear && stubIndex === connectorDefines.A_Cr) {
@@ -3132,7 +3068,7 @@ class Connector extends BaseDrawingObject {
             }
           }
           if (retrievedObject.hooks.length) {
-            T3Gv.optManager.SetLinkFlag(retrievedObject.hooks[0].objid, ConstantData.LinkFlags.SED_L_MOVE);
+            T3Gv.optManager.SetLinkFlag(retrievedObject.hooks[0].objid, ShapeContant.LinkFlags.SED_L_MOVE);
           }
         }
         break;
@@ -3642,11 +3578,11 @@ class Connector extends BaseDrawingObject {
           this._CollapseAssistant();
         }
       }
-      T3Gv.optManager.SetLinkFlag(connectorBlockId, ConstantData.LinkFlags.SED_L_MOVE);
+      T3Gv.optManager.SetLinkFlag(connectorBlockId, ShapeContant.LinkFlags.SED_L_MOVE);
       if (noTreeOverlap) {
         OptAhUtil.FindTreeTop(
           this,
-          ConstantData.LinkFlags.SED_L_MOVE,
+          ShapeContant.LinkFlags.SED_L_MOVE,
           {
             topconnector: -1,
             topshape: -1,
@@ -3656,7 +3592,7 @@ class Connector extends BaseDrawingObject {
       } else {
         const objectPtr = T3Gv.optManager.GetObjectPtr(connectorBlockId, true);
         if (objectPtr && objectPtr.hooks.length) {
-          T3Gv.optManager.SetLinkFlag(objectPtr.hooks[0].objid, ConstantData.LinkFlags.SED_L_MOVE);
+          T3Gv.optManager.SetLinkFlag(objectPtr.hooks[0].objid, ShapeContant.LinkFlags.SED_L_MOVE);
         }
       }
       this.Pr_Format(connectorBlockId);
@@ -4329,8 +4265,8 @@ class Connector extends BaseDrawingObject {
         wd: 0,
         nshapes: numberOfShapes,
         nlines: hookArrayLength,
-        lht: SDF.ToSDWinCoords(this.arraylist.ht, context.coordScaleFactor),
-        lwd: SDF.ToSDWinCoords(this.arraylist.wd, context.coordScaleFactor),
+        lht: ShapeDataUtil.ToSDWinCoords(this.arraylist.ht, context.coordScaleFactor),
+        lwd: ShapeDataUtil.ToSDWinCoords(this.arraylist.wd, context.coordScaleFactor),
         profile: {
           x: profileRect.x,
           y: profileRect.y,
@@ -4347,16 +4283,16 @@ class Connector extends BaseDrawingObject {
         tilt: this.arraylist.tilt,
         nshapes: numberOfShapes,
         nlines: hookArrayLength,
-        lht: SDF.ToSDWinCoords(this.arraylist.ht, context.coordScaleFactor),
-        lwd: SDF.ToSDWinCoords(this.arraylist.wd, context.coordScaleFactor),
+        lht: ShapeDataUtil.ToSDWinCoords(this.arraylist.ht, context.coordScaleFactor),
+        lwd: ShapeDataUtil.ToSDWinCoords(this.arraylist.wd, context.coordScaleFactor),
         angle: this.arraylist.angle,
         curveparam: this.arraylist.curveparam
       };
       outputStream.writeStruct(FileParser.SDF_ARRAY_Struct_34, structToWrite);
     }
 
-    let drawArrayCode = SDF.Write_CODE(outputStream, ConstantData2.SDROpCodesByName.SDF_C_DRAWARRAY);
-    SDF.Write_LENGTH(outputStream, drawArrayCode);
+    let drawArrayCode = ShapeDataUtil.Write_CODE(outputStream, ConstantData2.SDROpCodesByName.SDF_C_DRAWARRAY);
+    ShapeDataUtil.Write_LENGTH(outputStream, drawArrayCode);
 
     // Compute the offset for hook rectangles relative to the frame
     let offsetPoint = new Point(
@@ -4396,7 +4332,7 @@ class Connector extends BaseDrawingObject {
       }
 
       let convertedRect = Utils2.CRect2Rect(hookRect, this.vertical);
-      let winRect = SDF.ToSDWinRect(convertedRect, context.coordScaleFactor, offsetPoint);
+      let winRect = ShapeDataUtil.ToSDWinRect(convertedRect, context.coordScaleFactor, offsetPoint);
       let gapValue = currentHook.gap;
 
       // Adjust gap for reverse column if flag was applied above
@@ -4408,41 +4344,41 @@ class Connector extends BaseDrawingObject {
         }
       }
 
-      let drawArrayHookCode = SDF.Write_CODE(outputStream, ConstantData2.SDROpCodesByName.SDF_C_DRAWARRAYHOOK);
+      let drawArrayHookCode = ShapeDataUtil.Write_CODE(outputStream, ConstantData2.SDROpCodesByName.SDF_C_DRAWARRAYHOOK);
 
       // Write hook structure based on output context type
       if (context.WriteWin32) {
         let hookStruct = {
           liner: { left: 0, top: 0, right: 0, bottom: 0 },
-          uniqueid: SDF.BlockIDtoUniqueID(currentHook.id, context),
+          uniqueid: ShapeDataUtil.BlockIDtoUniqueID(currentHook.id, context),
           index: 0,
           gap: 0,
-          extra: SDF.ToSDWinCoords(currentHook.extra, context.coordScaleFactor),
+          extra: ShapeDataUtil.ToSDWinCoords(currentHook.extra, context.coordScaleFactor),
           lliner: {
             left: winRect.left,
             top: winRect.top,
             right: winRect.right,
             bottom: winRect.bottom
           },
-          lgap: SDF.ToSDWinCoords(gapValue, context.coordScaleFactor)
+          lgap: ShapeDataUtil.ToSDWinCoords(gapValue, context.coordScaleFactor)
         };
         outputStream.writeStruct(FileParser.SDF_ARRAYHOOK_Struct_38, hookStruct);
       } else {
         let hookStruct = {
-          uniqueid: SDF.BlockIDtoUniqueID(currentHook.id, context),
-          extra: SDF.ToSDWinCoords(currentHook.extra, context.coordScaleFactor),
+          uniqueid: ShapeDataUtil.BlockIDtoUniqueID(currentHook.id, context),
+          extra: ShapeDataUtil.ToSDWinCoords(currentHook.extra, context.coordScaleFactor),
           lliner: {
             left: winRect.left,
             top: winRect.top,
             right: winRect.right,
             bottom: winRect.bottom
           },
-          lgap: SDF.ToSDWinCoords(gapValue, context.coordScaleFactor)
+          lgap: ShapeDataUtil.ToSDWinCoords(gapValue, context.coordScaleFactor)
         };
         outputStream.writeStruct(FileParser.SDF_ARRAYHOOK_Struct_50, hookStruct);
       }
 
-      SDF.Write_LENGTH(outputStream, drawArrayHookCode);
+      ShapeDataUtil.Write_LENGTH(outputStream, drawArrayHookCode);
 
       // Determine which hook to use for text association
       let hookForText = (linearStyle && hookIndex >= skipCount)
@@ -4459,12 +4395,12 @@ class Connector extends BaseDrawingObject {
         } else {
           textStruct = {
             tindex: 0,
-            tuniqueid: SDF.BlockIDtoUniqueID(-hookForText.textid, context)
+            tuniqueid: ShapeDataUtil.BlockIDtoUniqueID(-hookForText.textid, context)
           };
         }
-        let textCode = SDF.Write_CODE(outputStream, ConstantData2.SDROpCodesByName.SDF_C_DRAWARRAYTEXT);
+        let textCode = ShapeDataUtil.Write_CODE(outputStream, ConstantData2.SDROpCodesByName.SDF_C_DRAWARRAYTEXT);
         outputStream.writeStruct(FileParser.SDF_ArrayHookText_Struct, textStruct);
-        SDF.Write_LENGTH(outputStream, textCode);
+        ShapeDataUtil.Write_LENGTH(outputStream, textCode);
       }
     }
 
@@ -4472,8 +4408,8 @@ class Connector extends BaseDrawingObject {
 
     // Adjust text flags based on text direction
     this.TextFlags = Utils2.SetFlag(this.TextFlags, ConstantData.TextFlags.SED_TF_HorizText, !this.TextDirection);
-    SDF.WriteTextParams(outputStream, this, -1, context);
-    SDF.WriteArrowheads(outputStream, context, this);
+    ShapeDataUtil.WriteTextParams(outputStream, this, -1, context);
+    ShapeDataUtil.WriteArrowheads(outputStream, context, this);
 
     console.log("S.Connector: WriteSDFAttributes completed", { instanceID, numberOfShapes });
   }
@@ -4609,7 +4545,7 @@ class Connector extends BaseDrawingObject {
       } else {
         childArrayId = T3Gv.optManager.FindChildArray(firstHookId, -1);
         if (childArrayId >= 0) {
-          T3Gv.optManager.SetLinkFlag(firstHookId, ConstantData.LinkFlags.SED_L_MOVE);
+          T3Gv.optManager.SetLinkFlag(firstHookId, ShapeContant.LinkFlags.SED_L_MOVE);
         }
       }
     }
@@ -4695,7 +4631,7 @@ class Connector extends BaseDrawingObject {
           );
 
           remainingHooks = 0;
-          T3Gv.optManager.SetLinkFlag(parentObjectId, ConstantData.LinkFlags.SED_L_MOVE);
+          T3Gv.optManager.SetLinkFlag(parentObjectId, ShapeContant.LinkFlags.SED_L_MOVE);
         }
       }
 
@@ -5244,7 +5180,7 @@ class Connector extends BaseDrawingObject {
           (
             Utils2.IsEqual(ee.h, te.h) &&
             Utils2.IsEqual(ee.v, te.v) ||
-            T3Gv.optManager.SetLinkFlag(this.hooks[0].objid, ConstantData.LinkFlags.SED_L_MOVE)
+            T3Gv.optManager.SetLinkFlag(this.hooks[0].objid, ShapeContant.LinkFlags.SED_L_MOVE)
           )
       } else te.h = 0,
         te.v = 0;
@@ -5314,11 +5250,11 @@ class Connector extends BaseDrawingObject {
         Utils2.IsEqual(this.arraylist.profile.vdist, ae.vdist) ||
         p &&
         (
-          T3Gv.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE)
+          T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE)
           ,
           OptAhUtil.FindTreeTop(
             this,
-            ConstantData.LinkFlags.SED_L_MOVE,
+            ShapeContant.LinkFlags.SED_L_MOVE,
             {
               topconnector: - 1,
               topshape: - 1,
@@ -7536,9 +7472,9 @@ class Connector extends BaseDrawingObject {
 
     let orientation;
     if (this.vertical) {
-      orientation = startLeft ? ListManager.ConnectorDir.ORG_HORIZONTALRIGHT : ListManager.ConnectorDir.ORG_HORIZONTAL;
+      orientation = startLeft ? Instance.Shape.ConnectorDir.ORG_HORIZONTALRIGHT : Instance.Shape.ConnectorDir.ORG_HORIZONTAL;
     } else {
-      orientation = startLeft ? ListManager.ConnectorDir.ORG_VERTICALUP : ListManager.ConnectorDir.ORG_VERTICALDOWN;
+      orientation = startLeft ? Instance.Shape.ConnectorDir.ORG_VERTICALUP : Instance.Shape.ConnectorDir.ORG_VERTICALDOWN;
     }
 
     console.log("S.Connector: _GetConnectorOrientation result:", orientation);
@@ -7648,7 +7584,7 @@ class Connector extends BaseDrawingObject {
         this.hooks[0].hookpt === ConstantData.HookPts.SED_LT;
 
       // Force an update to the linked object.
-      T3Gv.optManager.SetLinkFlag(this.hooks[0].objid, ConstantData.LinkFlags.SED_L_MOVE);
+      T3Gv.optManager.SetLinkFlag(this.hooks[0].objid, ShapeContant.LinkFlags.SED_L_MOVE);
 
       if (this.vertical) {
         if (isBothSides) {
@@ -7788,7 +7724,7 @@ class Connector extends BaseDrawingObject {
     }
 
     // Set link flag for the current connector and mark it for reformatting.
-    T3Gv.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE | ConstantData.LinkFlags.SED_L_CHANGE);
+    T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE | ShapeContant.LinkFlags.SED_L_CHANGE);
     this.flags = Utils2.SetFlag(this.flags, ConstantData.ObjFlags.SEDO_Obj1, true);
     // Fix the hook based on the propagate flag.
     this._FixHook(propagate, false);
@@ -7800,7 +7736,7 @@ class Connector extends BaseDrawingObject {
       if (hookedObject && hookedObject.hooks.length) {
         // Update hook point for the hooked object.
         hookedObject.hooks[0].hookpt = this.GetBestHook(currentHook.id, hookedObject.hooks[0].hookpt, hookedObject.hooks[0].connect);
-        T3Gv.optManager.SetLinkFlag(currentHook.id, ConstantData.LinkFlags.SED_L_MOVE);
+        T3Gv.optManager.SetLinkFlag(currentHook.id, ShapeContant.LinkFlags.SED_L_MOVE);
         if (hookedObject.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.CONNECTOR) {
           // Recursively set direction for connector type objects.
           hookedObject._SetDirection(invertStyle, toggleOrientation, true);
@@ -7977,12 +7913,12 @@ class Connector extends BaseDrawingObject {
     }
 
     if (propagateCollapse && this.hooks.length > 0) {
-      T3Gv.optManager.SetLinkFlag(this.hooks[0].objid, ConstantData.LinkFlags.SED_L_MOVE);
+      T3Gv.optManager.SetLinkFlag(this.hooks[0].objid, ShapeContant.LinkFlags.SED_L_MOVE);
     }
 
     if (((this.extraflags & collapseExtraFlag) > 0) != collapseState || !propagateCollapse) {
       if (propagateCollapse || updateLinkFlags) {
-        T3Gv.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE);
+        T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
       }
       if (!propagateCollapse && collapseState) {
         this.flags = Utils2.SetFlag(this.flags, notVisibleFlag, collapseState);
@@ -8114,7 +8050,7 @@ class Connector extends BaseDrawingObject {
       for (hookIndex = 0; hookIndex < totalMatches; hookIndex++) {
         currentConnector = T3Gv.optManager.GetObjectPtr(matchList[hookIndex].cobj.BlockID, true);
         currentConnector.arraylist.matchsizelen = 0;
-        T3Gv.optManager.SetLinkFlag(currentConnector.BlockID, ConstantData.LinkFlags.SED_L_MOVE);
+        T3Gv.optManager.SetLinkFlag(currentConnector.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
         // Determine the new stub index for formatting
         const newStubIndex = (currentConnector.hooks[0].hookpt === hookPoints.SED_LL ||
           currentConnector.hooks[0].hookpt === hookPoints.SED_LT)
@@ -8147,7 +8083,7 @@ class Connector extends BaseDrawingObject {
         for (hookIndex = 0; hookIndex < totalMatches; hookIndex++) {
           currentConnector = T3Gv.optManager.GetObjectPtr(matchList[hookIndex].cobj.BlockID, true);
           currentConnector.arraylist.matchsizelen = 0;
-          T3Gv.optManager.SetLinkFlag(currentConnector.BlockID, ConstantData.LinkFlags.SED_L_MOVE);
+          T3Gv.optManager.SetLinkFlag(currentConnector.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
           currentConnector.Pr_Format(currentConnector.BlockID);
           matchList[hookIndex].bkdist = currentConnector.arraylist.hook[connectorDefines.A_Bk].endpoint.h -
             currentConnector.arraylist.hook[connectorDefines.A_Bk].startpoint.h;

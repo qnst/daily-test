@@ -262,7 +262,7 @@ class DocUtil {
 
     if (this.svgDoc) {
       if (this.scaleToFit) {
-        if (T3Gv.optManager.bInAutoScroll) {
+        if (T3Gv.optManager.inAutoScroll) {
           tempArea = this.svgDoc.GetWorkArea();
           targetDimensions = {
             width: tempArea.docScreenWidth,
@@ -301,7 +301,7 @@ class DocUtil {
           height: tempArea.height
         };
 
-        if (!T3Gv.optManager.bInAutoScroll && this.svgDoc.docInfo.docScale !== tempArea.scale) {
+        if (!T3Gv.optManager.inAutoScroll && this.svgDoc.docInfo.docScale !== tempArea.scale) {
           this.svgDoc.SetDocumentScale(tempArea.scale);
           this.IdleZoomUI();
           this.UpdateGrid();

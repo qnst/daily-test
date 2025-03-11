@@ -697,15 +697,6 @@ class ConstantData {
     SEDSM_NoCtrlArrow: 4096
   }
 
-  public static LinkFlags = {
-    SED_L_DELT: 1,
-    SED_L_DELL: 2,
-    SED_L_CHANGE: 4,
-    SED_L_BREAK: 8,
-    SED_L_MOVE: 16,
-    SED_L_WASMOVE: 32
-  }
-
   public static HookFlags = {
     SED_LC_Shape: 1,
     SED_LC_Line: 2,
@@ -821,9 +812,9 @@ class ConstantData {
     SD_OBJT_CABINETWALL: 3,
     SD_OBJT_CABINETFINISH: 4,
     SD_OBJT_BACKGROUND: 5,
-    SD_OBJT_MINDMAP_MAIN: 6,
-    SD_OBJT_MINDMAP_IDEA: 7,
-    SD_OBJT_MINDMAP_CONNECTOR: 8,
+    // SD_OBJT_MINDMAP_MAIN: 6,
+    // SD_OBJT_MINDMAP_IDEA: 7,
+    // SD_OBJT_MINDMAP_CONNECTOR: 8,
     SD_OBJT_CAUSEEFFECT_MAIN: 9,
     SD_OBJT_SWIMLANE_ROWS: 11,
     SD_OBJT_SWIMLANE_COLS: 12,
@@ -1142,8 +1133,8 @@ class ConstantData {
     ConnectorSetSpacing: 97,
     ActionButton_JoinPath: 98,
     OrgSetTable: 99,
-    MindMapSetTable: 100,
-    MindMapAddIcon: 101,
+    // MindMapSetTable: 100,
+    // MindMapAddIcon: 101,
     ReadJSONAPI: 102,
     UpdateProjectOptions: 110,
     UpdateProjectTimeframe: 111,

@@ -7,7 +7,7 @@ import T3Gv from '../Data/T3Gv'
 import ConstantData from '../Data/ConstantData'
 import $ from 'jquery';
 import ConstantData2 from '../Data/ConstantData2';
-import SDF from '../Data/SDF';
+import ShapeDataUtil from '../Data/ShapeDataUtil';
 import PolygonConstant from '../Opt/Business/PolygonConstant';
 
 class SVGFragmentSymbol extends BaseSymbol {
@@ -493,7 +493,7 @@ class SVGFragmentSymbol extends BaseSymbol {
       !(
         this.NoRotate() ||
         this.NoGrow() ||
-        T3Gv.optManager.bTouchInitiated ||
+        T3Gv.optManager.touchInitiated ||
         knobConfig.locked ||
         smallWidth ||
         hasHooks
@@ -501,7 +501,7 @@ class SVGFragmentSymbol extends BaseSymbol {
     ) {
       const isTextGrowHorizontal = this.TextGrow === ConstantData.TextGrowBehavior.HORIZONTAL &&
         (this.flags & ConstantData.ObjFlags.SEDO_TextOnly) &&
-        SDF.TextAlignToWin(this.TextAlign).just === ConstantData2.TextJust.TA_LEFT;
+        ShapeDataUtil.TextAlignToWin(this.TextAlign).just === ConstantData2.TextJust.TA_LEFT;
       knobConfig.shapeType = ConstantData.CreateShapeType.OVAL;
       knobConfig.x = isTextGrowHorizontal ? width + adjustedRKnobSize : width - 3 * adjustedRKnobSize;
       knobConfig.y = height / 2 - adjustedRKnobSize / 2;

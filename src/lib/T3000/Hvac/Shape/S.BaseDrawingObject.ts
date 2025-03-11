@@ -25,6 +25,7 @@ import ConstantData2 from '../Data/ConstantData2'
 import PolyList from '../Model/PolyList'
 import BasicConstants from '../Basic/B.Constants'
 import PolygonConstant from '../Opt/Business/PolygonConstant'
+import ShapeContant from '../Data/ShapeContant'
 
 class BaseDrawingObject {
   public Type: string;
@@ -1225,7 +1226,7 @@ class BaseDrawingObject {
   AfterModifyShape(shape: any, additionalData: any): void {
     console.log("= S.BaseDrawingObject: AfterModifyShape input:", { shape, additionalData });
 
-    T3Gv.optManager.SetLinkFlag(shape, ConstantData.LinkFlags.SED_L_MOVE);
+    T3Gv.optManager.SetLinkFlag(shape, ShapeContant.LinkFlags.SED_L_MOVE);
     T3Gv.optManager.UpdateLinks();
 
     console.log("= S.BaseDrawingObject: AfterModifyShape output: links updated");
@@ -1234,7 +1235,7 @@ class BaseDrawingObject {
   AfterRotateShape(shape: any): void {
     console.log("= S.BaseDrawingObject: AfterRotateShape input:", shape);
 
-    T3Gv.optManager.SetLinkFlag(shape, ConstantData.LinkFlags.SED_L_MOVE);
+    T3Gv.optManager.SetLinkFlag(shape, ShapeContant.LinkFlags.SED_L_MOVE);
     T3Gv.optManager.UpdateLinks();
 
     console.log("= S.BaseDrawingObject: AfterRotateShape output: links updated");
@@ -2261,8 +2262,8 @@ class BaseDrawingObject {
 
     if (targetPoints && isPointInRect) {
       T3Gv.optManager.UpdateHook(hookedObject.BlockID, 0, this.BlockID, hookedObject.hooks[0].hookpt, targetPoints[0]);
-      T3Gv.optManager.SetLinkFlag(hookedObject.BlockID, ConstantData.LinkFlags.SED_L_MOVE);
-      T3Gv.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE);
+      T3Gv.optManager.SetLinkFlag(hookedObject.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
+      T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
       T3Gv.optManager.UpdateLinks();
       T3Gv.optManager.UpdateHook(hookedObject.BlockID, 0, this.BlockID, hookedObject.hooks[0].hookpt, targetPoints[0]);
     } else {
@@ -6239,10 +6240,10 @@ class BaseDrawingObject {
   ResetAutoScrollTimer() {
     console.log("= S.BaseDrawingObject: ResetAutoScrollTimer - Input: {}");
 
-    if (T3Gv.optManager.autoScrollTimerID !== -1) {
-      T3Gv.optManager.autoScrollTimer.clearTimeout(T3Gv.optManager.autoScrollTimerID);
+    if (T3Gv.optManager.autoScrollTimerId !== -1) {
+      T3Gv.optManager.autoScrollTimer.clearTimeout(T3Gv.optManager.autoScrollTimerId);
       T3Gv.optManager.autoScrollTimer.obj = T3Gv.optManager;
-      T3Gv.optManager.autoScrollTimerID = -1;
+      T3Gv.optManager.autoScrollTimerId = -1;
       console.log("= S.BaseDrawingObject: ResetAutoScrollTimer - Output: Timer has been reset");
     } else {
       console.log("= S.BaseDrawingObject: ResetAutoScrollTimer - Output: No active timer to reset");

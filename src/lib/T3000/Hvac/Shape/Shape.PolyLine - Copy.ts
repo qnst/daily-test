@@ -54,7 +54,7 @@ import Point from '../Model/Point'
 
 import Document from '../Basic/B.Document'
 
-import SDF from '../Data/SDF'
+import SDF from '../Data/ShapeDataUtil'
 import Instance from '../Data/Instance/Instance'
 import ConstantData from '../Data/ConstantData'
 import PolyList from '../Model/PolyList'
@@ -995,7 +995,7 @@ class PolyLine extends BaseLine {
               (d = this.GenericKnob(G)).SetUserData(l),
               f.AddElement(d)
         }
-      return T3Gv.optManager.bTouchInitiated && (C = !1),
+      return T3Gv.optManager.touchInitiated && (C = !1),
         !C || G.locked || this.NoGrow() || (G.shapeType = Document.CreateShapeType.OVAL,
           n.width < n.height ? (G.x = n.width / 2,
             G.y = n.height - 2 * R) : (G.y = n.height / 2,
@@ -1328,26 +1328,26 @@ class PolyLine extends BaseLine {
 
   BeforeRotate(e) {
     var t;
-    T3Gv.optManager.theRotateKnobCenterDivisor = this.RotateKnobCenterDivisor(),
-      T3Gv.optManager.theRotateStartRotation = 0,
-      T3Gv.optManager.theRotateEndRotation = T3Gv.optManager.theRotateStartRotation,
+    T3Gv.optManager.rotateKnobCenterDivisor = this.RotateKnobCenterDivisor(),
+      T3Gv.optManager.rotateStartRotation = 0,
+      T3Gv.optManager.rotateEndRotation = T3Gv.optManager.rotateStartRotation,
       t = this.Frame,
-      T3Gv.optManager.theRotateStartPoint.x = this.RotateKnobPt.x,
-      T3Gv.optManager.theRotateStartPoint.y = this.RotateKnobPt.y,
-      T3Gv.optManager.theRotatePivotX = t.x + t.width / T3Gv.optManager.theRotateKnobCenterDivisor.x,
-      T3Gv.optManager.theRotatePivotY = t.y + t.height / T3Gv.optManager.theRotateKnobCenterDivisor.y
+      T3Gv.optManager.rotateStartPoint.x = this.RotateKnobPt.x,
+      T3Gv.optManager.rotateStartPoint.y = this.RotateKnobPt.y,
+      T3Gv.optManager.rotatePivotX = t.x + t.width / T3Gv.optManager.rotateKnobCenterDivisor.x,
+      T3Gv.optManager.rotatePivotY = t.y + t.height / T3Gv.optManager.rotateKnobCenterDivisor.y
   }
 
   AdjustRotate(e, t, a) {
-    T3Gv.optManager.theRotateEndRotation;
-    var r, i = e - T3Gv.optManager.theRotatePivotX, n = t - T3Gv.optManager.theRotatePivotY;
-    if (T3Gv.optManager.theRotateStartPoint.x === T3Gv.optManager.theRotatePivotX)
+    T3Gv.optManager.rotateEndRotation;
+    var r, i = e - T3Gv.optManager.rotatePivotX, n = t - T3Gv.optManager.rotatePivotY;
+    if (T3Gv.optManager.rotateStartPoint.x === T3Gv.optManager.rotatePivotX)
       Math.abs(n) < 1e-4 && (n = 1e-4),
         r = -Math.atan(i / n),
         r *= 180 / ConstantData.Geometry.PI,
         n < 0 && (r = 180 + r);
     else {
-      if (T3Gv.optManager.theRotateStartPoint.y !== T3Gv.optManager.theRotatePivotY)
+      if (T3Gv.optManager.rotateStartPoint.y !== T3Gv.optManager.rotatePivotY)
         return;
       Math.abs(i) < 1e-4 && (i = 1e-4),
         r = Math.atan(n / i),
@@ -1355,7 +1355,7 @@ class PolyLine extends BaseLine {
         i < 0 && (r = 180 + r)
     }
     var o = T3Gv.optManager.OverrideSnaps(a);
-    gDocumentHandler.documentConfig.enableSnap && !o && (r = Math.round(r / T3Gv.optManager.theRotateSnap) * T3Gv.optManager.theRotateSnap),
+    gDocumentHandler.documentConfig.enableSnap && !o && (r = Math.round(r / T3Gv.optManager.rotateSnap) * T3Gv.optManager.rotateSnap),
       r < 0 && (r += 360);
     var s, l = {};
     if (s = this.GetPolyPoints(ConstantData.Defines.NPOLYPTS, !1, !0, !1, null),
@@ -1369,20 +1369,20 @@ class PolyLine extends BaseLine {
         if (l.y + l.height > S.dim.y)
           return
       }
-      T3Gv.optManager.theRotateEndRotation = r,
-        this.Rotate(T3Gv.optManager.theActionSVGObject, r)
+      T3Gv.optManager.rotateEndRotation = r,
+        this.Rotate(T3Gv.optManager.actionSvgObject, r)
     }
   }
 
   Rotate(e, t) {
-    e.SetRotation(t, T3Gv.optManager.theRotatePivotX, T3Gv.optManager.theRotatePivotY)
+    e.SetRotation(t, T3Gv.optManager.rotatePivotX, T3Gv.optManager.rotatePivotY)
   }
 
   AfterRotateShape(e, t) {
-    var a, r, i = T3Gv.optManager.theRotateEndRotation, n = {
-      x: T3Gv.optManager.theRotatePivotX,
-      y: T3Gv.optManager.theRotatePivotY
-    }, o = -(i - T3Gv.optManager.theRotateStartRotation) / (180 / ConstantData.Geometry.PI), s = (T3Gv.optManager.RotatePointAroundPoint(n, T3Gv.optManager.theRotateStartPoint, o),
+    var a, r, i = T3Gv.optManager.rotateEndRotation, n = {
+      x: T3Gv.optManager.rotatePivotX,
+      y: T3Gv.optManager.rotatePivotY
+    }, o = -(i - T3Gv.optManager.rotateStartRotation) / (180 / ConstantData.Geometry.PI), s = (T3Gv.optManager.RotatePointAroundPoint(n, T3Gv.optManager.rotateStartPoint, o),
       this.polylist.segs.length);
     for (a = 0; a < s; ++a)
       this.polylist.segs[a].LineType == ConstantData.LineType.ELLIPSE && (this.polylist.segs[a].weight += 10 * i);
@@ -1419,7 +1419,7 @@ class PolyLine extends BaseLine {
     "use strict";
     var a = new HitResult(-1, 0, null)
       , r = [{
-        id: T3Gv.optManager.theActionTriggerID === ConstantData.ActionTriggerType.LINESTART ? ConstantData.HookPts.SED_KTL : ConstantData.HookPts.SED_KTR,
+        id: T3Gv.optManager.actionTriggerId === ConstantData.ActionTriggerType.LINESTART ? ConstantData.HookPts.SED_KTL : ConstantData.HookPts.SED_KTR,
         x: e,
         y: t
       }];
@@ -1992,7 +1992,7 @@ class PolyLine extends BaseLine {
           !0;
       switch (i) {
         case ConstantData.ActionTriggerType.POLYLNODE:
-          i = (T3Gv.optManager.theActionTriggerData === l - 1 || T3Gv.optManager.theActionTriggerData === l) && p.StartPoint.x === d[T3Gv.optManager.theActionTriggerData].x && p.StartPoint.y === d[T3Gv.optManager.theActionTriggerData].y ? ConstantData.ActionTriggerType.LINESTART : ConstantData.ActionTriggerType.LINEEND;
+          i = (T3Gv.optManager.actionTriggerData === l - 1 || T3Gv.optManager.actionTriggerData === l) && p.StartPoint.x === d[T3Gv.optManager.actionTriggerData].x && p.StartPoint.y === d[T3Gv.optManager.actionTriggerData].y ? ConstantData.ActionTriggerType.LINESTART : ConstantData.ActionTriggerType.LINEEND;
           break;
         case ConstantData.ActionTriggerType.ROTATE:
           return T3Gv.optManager.Lines_MaintainDist(p, D, i, e),
@@ -2059,8 +2059,8 @@ class PolyLine extends BaseLine {
         T3Gv.optManager.WorkAreaHammer.on("tap", EvtUtil.Evt_WorkAreaHammerClick)),
       this.ResetAutoScrollTimer(),
       T3Gv.optManager.LinkParams = null,
-      T3Gv.optManager.theActionStoredObjectID = -1,
-      T3Gv.optManager.theActionSVGObject = null,
+      T3Gv.optManager.actionStoredObjectId = -1,
+      T3Gv.optManager.actionSvgObject = null,
       T3Gv.optManager.WorkAreaHammer.on("dragstart", EvtUtil.Evt_WorkAreaHammerDragStart)
   }
 
@@ -2127,23 +2127,23 @@ class PolyLine extends BaseLine {
       var n = {
         attributes: {}
       };
-      n.attributes.StyleRecord = Utils1.DeepCopy(T3Gv.optManager.theDrawShape.StyleRecord),
-        n.attributes.StartArrowID = T3Gv.optManager.theDrawShape.StartArrowID,
-        n.attributes.EndArrowID = T3Gv.optManager.theDrawShape.EndArrowID,
-        n.attributes.StartArrowDisp = T3Gv.optManager.theDrawShape.StartArrowDisp,
-        n.attributes.ArrowSizeIndex = T3Gv.optManager.theDrawShape.ArrowSizeIndex,
-        n.attributes.TextGrow = T3Gv.optManager.theDrawShape.TextGrow,
-        n.attributes.TextAlign = T3Gv.optManager.theDrawShape.TextAlign,
-        n.attributes.TextDirection = T3Gv.optManager.theDrawShape.TextDirection,
-        n.attributes.Dimensions = T3Gv.optManager.theDrawShape.Dimensions,
-        n.attributes.StartPoint = Utils1.DeepCopy(T3Gv.optManager.theDrawShape.StartPoint),
-        n.attributes.EndPoint = Utils1.DeepCopy(T3Gv.optManager.theDrawShape.EndPoint),
-        n.attributes.Frame = Utils1.DeepCopy(T3Gv.optManager.theDrawShape.Frame),
+      n.attributes.StyleRecord = Utils1.DeepCopy(T3Gv.optManager.drawShape.StyleRecord),
+        n.attributes.StartArrowID = T3Gv.optManager.drawShape.StartArrowID,
+        n.attributes.EndArrowID = T3Gv.optManager.drawShape.EndArrowID,
+        n.attributes.StartArrowDisp = T3Gv.optManager.drawShape.StartArrowDisp,
+        n.attributes.ArrowSizeIndex = T3Gv.optManager.drawShape.ArrowSizeIndex,
+        n.attributes.TextGrow = T3Gv.optManager.drawShape.TextGrow,
+        n.attributes.TextAlign = T3Gv.optManager.drawShape.TextAlign,
+        n.attributes.TextDirection = T3Gv.optManager.drawShape.TextDirection,
+        n.attributes.Dimensions = T3Gv.optManager.drawShape.Dimensions,
+        n.attributes.StartPoint = Utils1.DeepCopy(T3Gv.optManager.drawShape.StartPoint),
+        n.attributes.EndPoint = Utils1.DeepCopy(T3Gv.optManager.drawShape.EndPoint),
+        n.attributes.Frame = Utils1.DeepCopy(T3Gv.optManager.drawShape.Frame),
         n.attributes.extraflags = ConstantData.ExtraFlags.SEDE_SideKnobs,
         this.polylist && (n.attributes.polylist = Utils1.DeepCopy(this.polylist)),
         n.LineTool = ConstantData.DocumentContext.LineTool,
-        Collab.AddNewBlockToSecondary(T3Gv.optManager.theDrawShape.BlockID),
-        Collab.IsSecondary() && (n.CreateList = [T3Gv.optManager.theDrawShape.BlockID]),
+        Collab.AddNewBlockToSecondary(T3Gv.optManager.drawShape.BlockID),
+        Collab.IsSecondary() && (n.CreateList = [T3Gv.optManager.drawShape.BlockID]),
         n.LinkParams = Utils1.DeepCopy(T3Gv.optManager.LinkParams),
         n.Actions = [];
       var o = new Collab.MessageAction(ConstantData.CollabMessageActions.CreateLine);
@@ -2152,7 +2152,7 @@ class PolyLine extends BaseLine {
         n.Actions.push(o),
         Collab.BuildMessage(ConstantData.CollabMessages.AddLine, n, !1)
     }
-    this.LM_DrawPostRelease(T3Gv.optManager.theActionStoredObjectID),
+    this.LM_DrawPostRelease(T3Gv.optManager.actionStoredObjectId),
       T3Gv.optManager.PostObjectDraw()
   }
 

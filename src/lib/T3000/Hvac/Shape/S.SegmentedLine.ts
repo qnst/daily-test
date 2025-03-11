@@ -11,9 +11,10 @@ import SelectionAttributes from '../Model/SelectionAttributes'
 import SegLine from '../Model/SegLine';
 import Point from '../Model/Point'
 import $ from 'jquery'
-import SDF from '../Data/SDF'
+import ShapeDataUtil from '../Data/ShapeDataUtil'
 import ConstantData2 from '../Data/ConstantData2'
 import Instance from '../Data/Instance/Instance';
+import ShapeContant from '../Data/ShapeContant';
 
 class SegmentedLine extends BaseLine {
 
@@ -1602,7 +1603,7 @@ class SegmentedLine extends BaseLine {
       this.AdjustLineStart(svgElement, this.StartPoint.x + deltaWidth, this.StartPoint.y + deltaHeight, 0);
     }
 
-    T3Gv.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE);
+    T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
     console.log("= S.SegmentedLine: SetSize output", { deltaWidth, deltaHeight, isEndAdjusted });
   }
 
@@ -1742,7 +1743,7 @@ class SegmentedLine extends BaseLine {
           ConstantData.ActionTriggerType.ROTATE
         );
       }
-      T3Gv.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE);
+      T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
     }
 
     T3Gv.optManager.ob = {};
@@ -2434,7 +2435,7 @@ class SegmentedLine extends BaseLine {
     }
 
     this.CalcFrame(true);
-    T3Gv.optManager.SetLinkFlag(elementId, ConstantData.LinkFlags.SED_L_MOVE);
+    T3Gv.optManager.SetLinkFlag(elementId, ShapeContant.LinkFlags.SED_L_MOVE);
     T3Gv.optManager.AddToDirtyList(elementId);
 
     console.log("= S.SegmentedLine: LinkGrow output", {
@@ -3023,7 +3024,7 @@ class SegmentedLine extends BaseLine {
     console.log("= S.SegmentedLine: ConnectToHook input", { connectedObjectId, hookType });
 
     let resultHook = hookType;
-    if (SDF.LineIsReversed(this, null, false)) {
+    if (ShapeDataUtil.LineIsReversed(this, null, false)) {
       if (resultHook === ConstantData.HookPts.SED_KTL) {
         resultHook = ConstantData.HookPts.SED_KTR;
       } else if (resultHook === ConstantData.HookPts.SED_KTR) {
@@ -3054,7 +3055,7 @@ class SegmentedLine extends BaseLine {
 
     // Determine the two candidate points (r and i) from the segmentation points.
     let firstPt: Point, secondPt: Point;
-    if (SDF.LineIsReversed(this, null, false)) {
+    if (ShapeDataUtil.LineIsReversed(this, null, false)) {
       if (compareValue === 0) {
         // Use the last two points.
         firstPt = this.segl.pts[totalPts - 2];
@@ -3199,7 +3200,7 @@ class SegmentedLine extends BaseLine {
     const instanceId = options.WriteBlocks ? this.BlockID : options.nsegl++;
     console.log("= S.SegmentedLine: Instance ID", { instanceId });
 
-    const reversed = SDF.LineIsReversed(this, options, false);
+    const reversed = ShapeDataUtil.LineIsReversed(this, options, false);
     console.log("= S.SegmentedLine: Is line reversed?", { reversed });
 
     let copiedSeg = Utils1.DeepCopy(this.segl);
@@ -3273,17 +3274,17 @@ class SegmentedLine extends BaseLine {
     // Convert each segment's length to SD window coordinates.
     const lengthsCount = copiedSeg.lengths.length;
     for (let i = 0; i < lengthsCount; i++) {
-      sdfData.llengths[i] = SDF.ToSDWinCoords(copiedSeg.lengths[i], options.coordScaleFactor);
+      sdfData.llengths[i] = ShapeDataUtil.ToSDWinCoords(copiedSeg.lengths[i], options.coordScaleFactor);
     }
     console.log("= S.SegmentedLine: Converted segment lengths", { llengths: sdfData.llengths });
 
     // Create rectangle info for each segment between adjacent points.
     for (let i = 0; i < numPoints - 1; i++) {
       let segmentRect = {
-        left: SDF.ToSDWinCoords(copiedSeg.pts[i].x - minX, options.coordScaleFactor),
-        top: SDF.ToSDWinCoords(copiedSeg.pts[i].y - minY, options.coordScaleFactor),
-        right: SDF.ToSDWinCoords(copiedSeg.pts[i + 1].x - minX, options.coordScaleFactor),
-        bottom: SDF.ToSDWinCoords(copiedSeg.pts[i + 1].y - minY, options.coordScaleFactor),
+        left: ShapeDataUtil.ToSDWinCoords(copiedSeg.pts[i].x - minX, options.coordScaleFactor),
+        top: ShapeDataUtil.ToSDWinCoords(copiedSeg.pts[i].y - minY, options.coordScaleFactor),
+        right: ShapeDataUtil.ToSDWinCoords(copiedSeg.pts[i + 1].x - minX, options.coordScaleFactor),
+        bottom: ShapeDataUtil.ToSDWinCoords(copiedSeg.pts[i + 1].y - minY, options.coordScaleFactor),
       };
 
       // Ensure the rectangle is properly ordered.
@@ -3316,13 +3317,13 @@ class SegmentedLine extends BaseLine {
     }
     console.log("= S.SegmentedLine: Padded segmentation rectangles", { lsegr: sdfData.lsegr });
 
-    const code = SDF.Write_CODE(writer, ConstantData2.SDROpCodesByName.SDF_C_DRAWSEGL);
+    const code = Write_CODE(writer, ConstantData2.SDROpCodesByName.SDF_C_DRAWSEGL);
     if (options.WriteWin32) {
       writer.writeStruct(FileParser.SDF_SegLine_Struct, sdfData);
     } else {
       writer.writeStruct(FileParser.SDF_SegLine_Struct_210, sdfData);
     }
-    SDF.Write_LENGTH(writer, code);
+    Write_LENGTH(writer, code);
 
     // Call the base class implementation.
     super.WriteSDFAttributes(writer, options);

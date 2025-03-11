@@ -153,7 +153,7 @@ class EvtUtil {
     console.log("E.Evt WorkAreaHammerPanEnd input:", event);
 
     // Reset touch pan state
-    T3Gv.optManager.bTouchPanStarted = false;
+    T3Gv.optManager.touchPanStarted = false;
 
     // Remove pan-related event handlers
     T3Gv.optManager.WorkAreaHammer.off("drag");
@@ -194,8 +194,8 @@ class EvtUtil {
 
     if (shouldPan) {
       // Initialize or continue panning
-      if (!T3Gv.optManager.bTouchPanStarted) {
-        T3Gv.optManager.bTouchPanStarted = true;
+      if (!T3Gv.optManager.touchPanStarted) {
+        T3Gv.optManager.touchPanStarted = true;
         T3Gv.optManager.touchPanX = event.gesture.center.clientX;
         T3Gv.optManager.touchPanY = event.gesture.center.clientY;
 
@@ -210,7 +210,7 @@ class EvtUtil {
       return false;
     } else {
       // End any existing pan operation
-      if (T3Gv.optManager.bTouchPanStarted) {
+      if (T3Gv.optManager.touchPanStarted) {
         EvtUtil.Evt_WorkAreaHammerPanEnd();
       }
 
@@ -306,7 +306,7 @@ class EvtUtil {
       T3Gv.optManager.ResetAutoScrollTimer();
 
       // Get the final rubber band selection area
-      const rubberBandFrame = T3Gv.optManager.theRubberBandFrame;
+      const rubberBandFrame = T3Gv.optManager.rubberBandFrame;
 
       // Select all objects within the selection rectangle
       // If shift key is pressed, add to existing selection instead of replacing
@@ -316,14 +316,14 @@ class EvtUtil {
       );
 
       // Remove the visual rubber band selection indicator
-      T3Gv.optManager.svgOverlayLayer.RemoveElement(T3Gv.optManager.theRubberBand);
+      T3Gv.optManager.svgOverlayLayer.RemoveElement(T3Gv.optManager.rubberBand);
 
       // Reset rubber band selection state
       console.log("E.Evt RubberBandDragEnd processing: resetting rubber band state");
-      T3Gv.optManager.theRubberBand = null;
-      T3Gv.optManager.theRubberBandStartX = 0;
-      T3Gv.optManager.theRubberBandStartY = 0;
-      T3Gv.optManager.theRubberBandFrame = { x: 0, y: 0, width: 0, height: 0 };
+      T3Gv.optManager.rubberBand = null;
+      T3Gv.optManager.rubberBandStartX = 0;
+      T3Gv.optManager.rubberBandStartY = 0;
+      T3Gv.optManager.rubberBandFrame = { x: 0, y: 0, width: 0, height: 0 };
 
       console.log("E.Evt RubberBandDragEnd output: selection completed");
 
@@ -915,10 +915,10 @@ class EvtUtil {
 
     // If scale is greater than threshold, handle as pan instead of pinch
     if (event.gesture.scale > 0.666) {
-      if (T3Gv.optManager.bTouchPanStarted) {
+      if (T3Gv.optManager.touchPanStarted) {
         return EvtUtil.Evt_WorkAreaHammerPan(event);
       } else {
-        T3Gv.optManager.bTouchPanStarted = true;
+        T3Gv.optManager.touchPanStarted = true;
         T3Gv.optManager.touchPanX = event.gesture.center.clientX;
         T3Gv.optManager.touchPanY = event.gesture.center.clientY;
       }
@@ -926,7 +926,7 @@ class EvtUtil {
     }
 
     // Reset touch state for pinch gesture
-    T3Gv.optManager.bTouchPanStarted = false;
+    T3Gv.optManager.touchPanStarted = false;
     T3Gv.optManager.touchPanX = event.gesture.center.clientX;
     T3Gv.optManager.touchPanY = event.gesture.center.clientY;
 
@@ -1048,10 +1048,10 @@ class EvtUtil {
 
     // If scale is less than threshold, handle as pan instead of pinch
     if (event.gesture.scale < 1.333) {
-      if (T3Gv.optManager.bTouchPanStarted) {
+      if (T3Gv.optManager.touchPanStarted) {
         return EvtUtil.Evt_WorkAreaHammerPan(event);
       } else {
-        T3Gv.optManager.bTouchPanStarted = true;
+        T3Gv.optManager.touchPanStarted = true;
         T3Gv.optManager.touchPanX = event.gesture.center.clientX;
         T3Gv.optManager.touchPanY = event.gesture.center.clientY;
       }
@@ -1059,7 +1059,7 @@ class EvtUtil {
     }
 
     // Reset touch state for pinch gesture
-    T3Gv.optManager.bTouchPanStarted = false;
+    T3Gv.optManager.touchPanStarted = false;
     T3Gv.optManager.touchPanX = event.gesture.center.clientX;
     T3Gv.optManager.touchPanY = event.gesture.center.clientY;
 
@@ -1125,7 +1125,7 @@ class EvtUtil {
     console.log("E.Evt WorkAreaHammerPinchEnd input:", event);
 
     // Reset touch pan state
-    T3Gv.optManager.bTouchPanStarted = false;
+    T3Gv.optManager.touchPanStarted = false;
 
     console.log("E.Evt WorkAreaHammerPinchEnd output: touch pan state reset");
   }

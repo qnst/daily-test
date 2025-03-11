@@ -308,7 +308,7 @@ class Utils3 {
   /**
    * Determines the modifier keys pressed in a keyboard event
    * @param event - The keyboard event object
-   * @returns The modifier key combination from Resources.ModifierKeys enum
+   * @returns The modifier key combination from ModifierKeys enum
    */
   static GetModifierKeys(event) {
     let modifierKey = KeyboardConstant.ModifierKeys.None;

@@ -5065,7 +5065,7 @@ ListManager.RecentSymbol = function (e, t, a) {
 //       bottom: 0
 //     },
 //     this.bkflags = 0,
-//     this.addcount = 0,
+//     this.addCount = 0,
 //     this.sequencemask = 0,
 //     this.sequencestep = - 1,
 //     this.nsequencesteps = 0,

@@ -4,7 +4,6 @@ import T3Gv from '../../Data/T3Gv'
 import Utils1 from '../../Helper/Utils1'
 import Utils2 from '../../Helper/Utils2'
 import Utils3 from '../../Helper/Utils3'
-import Resources from '../../Data/Resources'
 import Line from '../../Shape/S.Line'
 import Rect from '../../Shape/S.Rect'
 import $ from 'jquery'
@@ -38,7 +37,7 @@ class ToolUtil {
     T3Gv.optManager.RenderAllSVGSelectionStates();
 
     // Check if we're currently using the wall tool
-    const isCurrentlyWallTool = T3Constant.DocContext.SelectionTool === Resources.Tools.Tool_Wall;
+    const isCurrentlyWallTool = T3Constant.DocContext.SelectionTool === ToolConstant.Tools.Tool_Wall;
 
     // Update context with new tool settings
     T3Constant.DocContext.SelectionTool = toolType;
@@ -46,7 +45,7 @@ class ToolUtil {
     T3Constant.DocContext.SelectionToolMultiple = false;
 
     // Additional handling for wall tool transitions
-    if (toolType !== Resources.Tools.Tool_Wall) {
+    if (toolType !== ToolConstant.Tools.Tool_Wall) {
       T3Constant.DocContext.UsingWallTool = false;
 
       // If we were previously using the wall tool, re-render all states
@@ -70,7 +69,6 @@ class ToolUtil {
   CancelModalOperation(skipMessageHandling?) {
     console.log("O.ToolOpt CancelModalOperation input:", skipMessageHandling);
 
-    // Commands.MainController.Selection.SetSelectionTool(Resources.Tools.Tool_Select, false);
     this.SetSelectionTool(ToolConstant.Tools.Tool_Select, false);
     T3Gv.optManager.CancelModalOperation();
 
@@ -176,9 +174,9 @@ class ToolUtil {
     callbackFunction = this.StampOrDragDropCallback;
 
     // Set a timeout to execute the callback after a short delay
-    T3Gv.optManager.StampTimeout = window.setTimeout(callbackFunction, 200, context, shapeType);
+    T3Gv.optManager.stampTimeout = window.setTimeout(callbackFunction, 200, context, shapeType);
 
-    console.log('U.ToolUtil.StampOrDragDropNewShape - Output: StampTimeout set');
+    console.log('U.ToolUtil.StampOrDragDropNewShape - Output: stampTimeout set');
   }
 
   /**
@@ -356,7 +354,7 @@ class ToolUtil {
     var result;
     var shapeTypes = PolygonConstant.ShapeTypes;
 
-    T3Gv.optManager.StampTimeout = null;
+    T3Gv.optManager.stampTimeout = null;
 
     if (shapeType !== 'textLabel') {
       // ConstantData.DocumentContext.ShapeTool = shapeType;

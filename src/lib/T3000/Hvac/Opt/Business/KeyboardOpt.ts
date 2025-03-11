@@ -188,7 +188,7 @@ class KeyboardOpt {
     console.log('U.KeyboardUtil: Processing key down event', { keyCode, modifierKey });
 
     // Handle touch pan with space key
-    if (T3Gv.optManager.bTouchPanStarted && keyCode == KeyboardConstant.Keys.Space) {
+    if (T3Gv.optManager.touchPanStarted && keyCode == KeyboardConstant.Keys.Space) {
       event.stopPropagation();
       event.preventDefault();
       console.log('U.KeyboardUtil: Prevented default for space during touch pan');
@@ -374,7 +374,7 @@ class KeyboardOpt {
     let toolUtil = new ToolUtil();
 
     // Handle touch pan with space key
-    if (T3Gv.optManager.bTouchPanStarted && charCode == KeyboardConstant.Keys.Space) {
+    if (T3Gv.optManager.touchPanStarted && charCode == KeyboardConstant.Keys.Space) {
       console.log('U.KeyboardUtil: Preventing default for space during touch pan');
       event.stopPropagation();
       event.preventDefault();

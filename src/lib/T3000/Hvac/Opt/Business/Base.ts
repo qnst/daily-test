@@ -1,6 +1,5 @@
 
 import T3Gv from '../../Data/T3Gv'
-import ListManager from '../../Data/ListManager'
 import ConstantData from '../../Data/ConstantData'
 import RecentSymbol from '../../Model/RecentSymbol'
 

@@ -29,18 +29,3 @@ class RecentSymbol {
 
 export default RecentSymbol
 
-/*
-ListManager.RecentSymbol = function (e, t, a) {
-  this.ItemId = e,
-    this.ContentTitle = '',
-    this.ContentTT = '',
-    this.ContentImageUrl = '',
-    this.NoMenu = !!a,
-    t &&
-    (
-      this.ContentTitle = t,
-      this.ContentImageUrl = Constants.FilePath_CMSRoot + 'symbols/BTN/' + this.ItemId + '.png',
-      this.ContentTT = this.ContentTitle.replace(/"/g, '&quot;')
-    )
-}
-*/

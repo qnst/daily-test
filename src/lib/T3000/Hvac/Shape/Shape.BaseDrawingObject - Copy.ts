@@ -6224,11 +6224,11 @@ class BaseDrawingObject {
   }
 
   ResetAutoScrollTimer() {
-    - 1 != T3Gv.optManager.autoScrollTimerID &&
+    - 1 != T3Gv.optManager.autoScrollTimerId &&
       (
-        T3Gv.optManager.autoScrollTimer.clearTimeout(T3Gv.optManager.autoScrollTimerID),
+        T3Gv.optManager.autoScrollTimer.clearTimeout(T3Gv.optManager.autoScrollTimerId),
         T3Gv.optManager.autoScrollTimer.obj = T3Gv.optManager,
-        T3Gv.optManager.autoScrollTimerID = - 1
+        T3Gv.optManager.autoScrollTimerId = - 1
       )
   }
 

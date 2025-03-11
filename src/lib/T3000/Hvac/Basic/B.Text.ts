@@ -10,6 +10,7 @@ import Utils2 from "../Helper/Utils2"
 import Utils3 from "../Helper/Utils3"
 import ConstantData from "../Data/ConstantData"
 import ConstantData2 from "../Data/ConstantData2";
+import T3Gv from "../Data/T3Gv";
 
 class Text extends Element {
 
@@ -1192,11 +1193,11 @@ class Text extends Element {
     const formattedFieldId = BasicTextFormatter.FormatDataFieldID(fieldId, false);
 
     if (useFieldName) {
-      result = ListManager.SDData.FieldedDataGetFieldName(this.dataTableID, formattedFieldId);
+      result = TODO.SDData.FieldedDataGetFieldName(this.dataTableID, formattedFieldId);
     } else {
-      result = ListManager.SDData.FieldedDataGetFieldValue(this.dataTableID, this.dataRecordID, formattedFieldId);
-      const fieldType = ListManager.SDData.FieldedDataGetFieldType(this.dataTableID, formattedFieldId);
-      result = gListManager.ModifyFieldDataForDisplay(result, fieldType);
+      result = TODO.SDData.FieldedDataGetFieldValue(this.dataTableID, this.dataRecordID, formattedFieldId);
+      const fieldType = TODO.SDData.FieldedDataGetFieldType(this.dataTableID, formattedFieldId);
+      result = T3Gv.optManager.ModifyFieldDataForDisplay(result, fieldType);
     }
 
     if (!result || result === "") {
@@ -1217,10 +1218,10 @@ class Text extends Element {
     }
 
     const formattedDataFieldId = BasicTextFormatter.FormatDataFieldID(dataFieldId, false);
-    const fieldStyle = ListManager.SDData.FieldedDataGetFieldStyle(this.dataTableID, this.dataRecordID, formattedDataFieldId);
+    const fieldStyle = TODO.SDData.FieldedDataGetFieldStyle(this.dataTableID, this.dataRecordID, formattedDataFieldId);
 
     if (fieldStyle) {
-      styleArray = ListManager.SDData.FieldedDataParseStyle(fieldStyle);
+      styleArray = TODO.SDData.FieldedDataParseStyle(fieldStyle);
     }
 
     console.log("B.Text: GetDataStyle output:", styleArray);
@@ -1236,7 +1237,7 @@ class Text extends Element {
 
     if (tableIsValid && recordIsValid) {
       const formattedFieldId = BasicTextFormatter.FormatDataFieldID(dataFieldId, false);
-      const record = ListManager.SDData.FieldedDataGetRecord(this.dataTableID, this.dataRecordID);
+      const record = TODO.SDData.FieldedDataGetRecord(this.dataTableID, this.dataRecordID);
       exists = !!record[formattedFieldId];
     }
 

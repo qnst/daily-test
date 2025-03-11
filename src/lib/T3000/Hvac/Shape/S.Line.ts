@@ -10,6 +10,7 @@ import ConstantData from '../Data/ConstantData'
 import SelectionAttributes from '../Model/SelectionAttributes'
 import ConstantData2 from '../Data/ConstantData2'
 import Instance from '../Data/Instance/Instance';
+import ShapeContant from '../Data/ShapeContant';
 
 class Line extends BaseLine {
 
@@ -598,7 +599,7 @@ class Line extends BaseLine {
         (T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto) &&
         (deepCopiedEndPoint.x !== this.EndPoint.x || deepCopiedEndPoint.y !== this.EndPoint.y)
       ) {
-        const error = new Error(Resources.Strings.Error_Bounds);
+        const error = new Error("bounds error");
         error.name = "1";
         throw error;
       }
@@ -651,7 +652,7 @@ class Line extends BaseLine {
         );
       }
 
-      T3Gv.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE);
+      T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
     }
 
     T3Gv.optManager.ob = {};
@@ -704,7 +705,7 @@ class Line extends BaseLine {
 
       this.CalcFrame();
       T3Gv.optManager.MaintainLink(this.BlockID, this, T3Gv.optManager.ob, ConstantData.ActionTriggerType.MODIFYSHAPE);
-      T3Gv.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE | ConstantData.LinkFlags.SED_L_CHANGE);
+      T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE | ShapeContant.LinkFlags.SED_L_CHANGE);
       T3Gv.optManager.UpdateLinks();
 
       const newLineData = {

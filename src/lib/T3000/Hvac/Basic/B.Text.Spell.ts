@@ -604,7 +604,6 @@ class Spell {
     }
 
     console.log("B.Text.Spell: Showing contextual menu with", this.spellMenuData.wordInfo.suggestions.length, "suggestions");
-    // Commands.MainController.ShowContextualMenu(Resources.Controls.Dropdowns.SpellingSuggest.Id, clientX, clientY);
   }
 
   /**

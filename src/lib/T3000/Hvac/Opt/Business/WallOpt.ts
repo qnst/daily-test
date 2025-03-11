@@ -4,7 +4,6 @@ import T3Gv from '../../Data/T3Gv'
 import PolyLineContainer from '../../Shape/S.PolyLineContainer'
 import Utils1 from "../../Helper/Utils1"
 import Utils2 from '../../Helper/Utils2'
-import Resources from '../../Data/Resources'
 import Line from "../../Shape/S.Line"
 import BaseLine from '../../Shape/S.BaseLine'
 import ConstantData from '../../Data/ConstantData'
@@ -14,6 +13,7 @@ import Instance from "../../Data/Instance/Instance"
 import T3Constant from "../../Data/T3Constant"
 import KeyboardConstant from "./KeyboardConstant"
 import PolygonConstant from './PolygonConstant'
+import ShapeContant from '../../Data/ShapeContant'
 
 class WallOpt {
 
@@ -517,7 +517,7 @@ class WallOpt {
     measureAreaParams.StyleRecord.Fill.FillEffect = 0;
     measureAreaParams.StyleRecord.OutsideEffect.OutsideType = 0;
     measureAreaParams.StyleRecord.Border.Thickness = 1;
-    measureAreaParams.StyleRecord.Border.LinePattern = Resources.LinePatternData[Resources.Windows_LinePatterns.SEP_Dotted];
+    measureAreaParams.StyleRecord.Border.LinePattern = ShapeContant.LinePatternData[ShapeContant.Windows_LinePatterns.SEP_Dotted];
     measureAreaParams.StyleRecord.Fill.Paint.Opacity = 0.4;
     measureAreaParams.StyleRecord.Fill.Paint.EndOpacity = 0.4;
 
@@ -599,10 +599,10 @@ class WallOpt {
       }
 
       // Split the wall if it's a polyline
-      if (targetObject instanceof PolyLine) {
+      if (targetObject instanceof Instance.Shape.PolyLine) {
         // If the polyline is closed, prepare it for splitting
         if (targetObject.polylist.closed) {
-          Collab.BeginSecondaryEdit();
+          // Collab.BeginSecondaryEdit();
           T3Gv.optManager.GetObjectPtr(targetObject.BlockID, true);
           targetObject.MaintainDimensionThroughPolygonOpennessChange(false);
         }

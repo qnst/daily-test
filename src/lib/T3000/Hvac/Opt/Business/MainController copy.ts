@@ -40,7 +40,7 @@ class MainController {
 
   HandleKeyDown(e, t, a) {
     // if (!0 !== this.Modals.ModalsVisible()) {
-    if (T3Gv.optManager.bTouchPanStarted && t == ConstantData2.Keys.Space)
+    if (T3Gv.optManager.touchPanStarted && t == ConstantData2.Keys.Space)
       return e.stopPropagation(),
         void e.preventDefault();
     var r, i, n, o = [], s = 0, l = 0, S = (t == ConstantData2.Keys.Left_Arrow ||
@@ -133,7 +133,7 @@ class MainController {
 
   HandleKeyPress = function (e, t) {
     var a = !1;
-    if (T3Gv.optManager.bTouchPanStarted && t == ConstantData2.Keys.Space)
+    if (T3Gv.optManager.touchPanStarted && t == ConstantData2.Keys.Space)
       return e.stopPropagation(),
         void e.preventDefault();
     if (true/*!0 !== this.Modals.ModalsVisible()*/)

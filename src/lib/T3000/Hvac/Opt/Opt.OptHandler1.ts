@@ -12,42 +12,42 @@ class OptHandler1 {
 
   //#region
 
-  public theSVGDocumentID: string;
+  public svgDocId: string;
   public svgObjectLayer: any;
   public svgOverlayLayer: any;
   public svgHighlightLayer: any;
   public svgCollabLayer: any;
   public SVGroot: any;
-  public theDragStartX: number;
-  public theDragStartY: number;
-  public theDragDeltaX: number;
-  public theDragDeltaY: number;
-  public theDragTargetID: any;
-  public theDragTargetBBox: any;
-  public theDragGotMove: boolean;
-  public theDragGotAutoResizeRight: boolean;
-  public theDragGotAutoResizeBottom: boolean;
-  public theDragGotAutoResizeOldX: any[];
-  public theDragGotAutoResizeOldY: any[];
-  public theDrawStartX: number;
-  public theDrawStartY: number;
-  public theLineDrawStartX: number;
-  public theLineDrawStartY: number;
-  public LineDrawID: number;
-  public LineDrawLineID: number;
-  public autoScrollTimerID: number;
+  public dragStartX: number;
+  public dragStartY: number;
+  public dragDeltaX: number;
+  public dragDeltaY: number;
+  public dragTargetId: any;
+  public dragTargetBBox: any;
+  public dragGotMove: boolean;
+  public dragGotAutoResizeRight: boolean;
+  public dragGotAutoResizeBottom: boolean;
+  public dragGotAutoResizeOldX: any[];
+  public dragGotAutoResizeOldY: any[];
+  public drawStartX: number;
+  public drawStartY: number;
+  public lineDrawStartX: number;
+  public lineDrawStartY: number;
+  public lineDrawId: number;
+  public lineDrawLineId: number;
+  public autoScrollTimerId: number;
   public autoScrollXPos: number;
   public autoScrollYPos: number;
-  public bInAutoScroll: boolean;
+  public inAutoScroll: boolean;
   public textEntryTimer: any;
   public TopLeftPastePos: any;
   public TopLeftPasteScrollPos: any;
   public theContentHeader: any;
   public inZoomIdle: boolean;
-  public theRubberBandFrame: any;
-  public theRubberBandStartX: number = 0;
-  public theRubberBandStartY: number = 0;
-  public theRubberBand: any;
+  public rubberBandFrame: any;
+  public rubberBandStartX: number = 0;
+  public rubberBandStartY: number = 0;
+  public rubberBand: any;
   public svgDoc: any;
   public docHandler: DocHandler;
 
@@ -57,28 +57,28 @@ class OptHandler1 {
 
     //#region
 
-    this.theSVGDocumentID = 'svg-area';
-    this.theDragStartX = 0;
-    this.theDragStartY = 0;
-    this.theDragDeltaX = 0;
-    this.theDragDeltaY = 0;
-    this.theDragTargetID = null;
-    this.theDragTargetBBox = {};
-    this.theDragGotMove = false;
-    this.theDragGotAutoResizeRight = false;
-    this.theDragGotAutoResizeBottom = false;
-    this.theDragGotAutoResizeOldX = [];
-    this.theDragGotAutoResizeOldY = [];
-    this.theDrawStartX = 0;
-    this.theDrawStartY = 0;
-    this.theLineDrawStartX = 0;
-    this.theLineDrawStartY = 0;
-    this.LineDrawID = -1;
-    this.LineDrawLineID = -1;
-    this.autoScrollTimerID = -1;
+    this.svgDocId = 'svg-area';
+    this.dragStartX = 0;
+    this.dragStartY = 0;
+    this.dragDeltaX = 0;
+    this.dragDeltaY = 0;
+    this.dragTargetId = null;
+    this.dragTargetBBox = {};
+    this.dragGotMove = false;
+    this.dragGotAutoResizeRight = false;
+    this.dragGotAutoResizeBottom = false;
+    this.dragGotAutoResizeOldX = [];
+    this.dragGotAutoResizeOldY = [];
+    this.drawStartX = 0;
+    this.drawStartY = 0;
+    this.lineDrawStartX = 0;
+    this.lineDrawStartY = 0;
+    this.lineDrawId = -1;
+    this.lineDrawLineId = -1;
+    this.autoScrollTimerId = -1;
     this.autoScrollXPos = 0;
     this.autoScrollYPos = 0;
-    this.bInAutoScroll = true;
+    this.inAutoScroll = true;
     this.textEntryTimer = null;
     // this.svgDoc = null;
     this.svgObjectLayer = null;
@@ -162,8 +162,8 @@ class OptHandler1 {
     rubberBand.SetStrokePattern(pattern);
 
     const coords = this.svgDoc.ConvertWindowToDocCoords(e.clientX, e.clientY);
-    this.theRubberBandStartX = coords.x;
-    this.theRubberBandStartY = coords.y;
+    this.rubberBandStartX = coords.x;
+    this.rubberBandStartY = coords.y;
 
     console.log('StartRubberBandSelect coords: 1', e.clientX, e.clientY);
     console.log('StartRubberBandSelect coords: 2', coords.x, coords.y);
@@ -172,9 +172,9 @@ class OptHandler1 {
     rubberBand.SetPos(coords.x, coords.y);
 
     this.svgOverlayLayer.AddElement(rubberBand);
-    this.theRubberBand = rubberBand;
+    this.rubberBand = rubberBand;
 
-    console.log('StartRubberBandSelect theRubberBand:', this.theRubberBand);
+    console.log('StartRubberBandSelect rubberBand:', this.rubberBand);
 
     this.EndStampSession();
   }
@@ -226,11 +226,11 @@ class OptHandler1 {
       this.autoScrollXPos = scrollX;
       this.autoScrollYPos = scrollY;
 
-      if (this.autoScrollTimerID !== -1) {
+      if (this.autoScrollTimerId !== -1) {
         return false;
       }
 
-      // this.autoScrollTimerID = this.autoScrollTimer.setTimeout(a, 0);
+      // this.autoScrollTimerId = this.autoScrollTimer.setTimeout(a, 0);
       return false;
     }
 
@@ -312,28 +312,28 @@ class OptHandler1 {
       this.testWall.SetStrokeWidth(19.5);
     }
 
-    if (!this.theRubberBand) return;
+    if (!this.rubberBand) return;
 
-    const startX = this.theRubberBandStartX;
-    const startY = this.theRubberBandStartY;
+    const startX = this.rubberBandStartX;
+    const startY = this.rubberBandStartY;
 
     if (x >= startX && y >= startY) {
-      this.theRubberBand.SetSize(x - startX, y - startY);
-      this.theRubberBandFrame = { x: startX, y: startY, width: x - startX, height: y - startY };
+      this.rubberBand.SetSize(x - startX, y - startY);
+      this.rubberBandFrame = { x: startX, y: startY, width: x - startX, height: y - startY };
     } else if (y < startY) {
       if (x >= startX) {
-        this.theRubberBand.SetSize(x - startX, startY - y);
-        this.theRubberBand.SetPos(startX, y);
-        this.theRubberBandFrame = { x: startX, y: y, width: x - startX, height: startY - y };
+        this.rubberBand.SetSize(x - startX, startY - y);
+        this.rubberBand.SetPos(startX, y);
+        this.rubberBandFrame = { x: startX, y: y, width: x - startX, height: startY - y };
       } else {
-        this.theRubberBand.SetSize(startX - x, startY - y);
-        this.theRubberBand.SetPos(x, y);
-        this.theRubberBandFrame = { x: x, y: y, width: startX - x, height: startY - y };
+        this.rubberBand.SetSize(startX - x, startY - y);
+        this.rubberBand.SetPos(x, y);
+        this.rubberBandFrame = { x: x, y: y, width: startX - x, height: startY - y };
       }
     } else if (x < startX) {
-      this.theRubberBand.SetSize(startX - x, y - startY);
-      this.theRubberBand.SetPos(x, startY);
-      this.theRubberBandFrame = { x: x, y: startY, width: startX - x, height: y - startY };
+      this.rubberBand.SetSize(startX - x, y - startY);
+      this.rubberBand.SetPos(x, startY);
+      this.rubberBandFrame = { x: x, y: startY, width: startX - x, height: y - startY };
     }
   }
 

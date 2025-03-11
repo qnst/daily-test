@@ -2,12 +2,8 @@
 
 import { Type } from 'class-transformer'
 import 'reflect-metadata'
-
-import ListManager from "../Data/ListManager"
-import Globals from "../Data/Globals"
 import RulerConfig from "./RulerConfig"
 import PageRecord from "./PageRecord"
-import Resources from '../Data/Resources'
 import ConstantData from "../Data/ConstantData"
 import RecentSymbol from "./RecentSymbol"
 import FillData from "./FillData"
@@ -50,7 +46,7 @@ class SEDSession {
   public bkid: number;
   public bkcroprect: { left: number, top: number, right: number, bottom: number };
   public bkflags: number;
-  public addcount: number;
+  public addCount: number;
   public sequencemask: number;
   public sequencestep: number;
   public nsequencesteps: number;
@@ -111,7 +107,7 @@ class SEDSession {
     this.bkid = -1;
     this.bkcroprect = { left: 0, top: 0, right: 0, bottom: 0 };
     this.bkflags = 0;
-    this.addcount = 0;
+    this.addCount = 0;
     this.sequencemask = 0;
     this.sequencestep = -1;
     this.nsequencesteps = 0;

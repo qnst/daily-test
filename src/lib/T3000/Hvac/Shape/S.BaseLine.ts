@@ -19,8 +19,9 @@ import RightClickData from '../Model/RightClickData'
 import ConstantData1 from "../Data/ConstantData1"
 import ArrowheadRecord from '../Model/ArrowheadRecord'
 import ConstantData2 from "../Data/ConstantData2"
-import SDF from '../Data/SDF';
+import ShapeDataUtil from '../Data/ShapeDataUtil';
 import T3Constant from '../Data/T3Constant';
+import ShapeContant from '../Data/ShapeContant';
 
 class BaseLine extends BaseDrawingObject {
 
@@ -110,7 +111,7 @@ class BaseLine extends BaseDrawingObject {
     console.log("= S.BaseLine: Input this =", this);
 
     const arrHead = new ArrowheadRecord();
-    if (SDF.LineIsReversed(this, null, false)) {
+    if (ShapeDataUtil.LineIsReversed(this, null, false)) {
       console.log("= S.BaseLine: Line is reversed");
       arrHead.StartArrowID = this.EndArrowID;
       arrHead.EndArrowID = this.StartArrowID;
@@ -625,7 +626,7 @@ class BaseLine extends BaseDrawingObject {
       }
 
       let widthDifference = textRect.width - this.TextWrapWidth;
-      switch (SDF.TextAlignToWin(this.TextAlign).just) {
+      switch (ShapeDataUtil.TextAlignToWin(this.TextAlign).just) {
         case ConstantData2.TextJust.TA_LEFT:
           this.trect.x = textRect.x;
           this.trect.width = this.TextWrapWidth;
@@ -717,7 +718,7 @@ class BaseLine extends BaseDrawingObject {
         this.AdjustLineStart(svgElement, this.StartPoint.x + widthDifference, this.StartPoint.y + heightDifference, 0, true);
       }
 
-      T3Gv.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE);
+      T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
     } else {
       this.UpdateDimensions(newWidth);
     }
@@ -852,7 +853,7 @@ class BaseLine extends BaseDrawingObject {
     }
 
     this.CalcFrame(true);
-    T3Gv.optManager.SetLinkFlag(blockID, ConstantData.LinkFlags.SED_L_MOVE);
+    T3Gv.optManager.SetLinkFlag(blockID, ShapeContant.LinkFlags.SED_L_MOVE);
     T3Gv.optManager.AddToDirtyList(blockID);
 
     console.log("= S.BaseLine: LinkGrow updated StartPoint:", this.StartPoint, "EndPoint:", this.EndPoint);
@@ -871,9 +872,9 @@ class BaseLine extends BaseDrawingObject {
       eventObj,
     });
 
-    const actionStartX = T3Gv.optManager.theActionStartX;
-    const actionStartY = T3Gv.optManager.theActionStartY;
-    const actionBBox = $.extend(true, {}, T3Gv.optManager.theActionBBox);
+    const actionStartX = T3Gv.optManager.actionStartX;
+    const actionStartY = T3Gv.optManager.actionStartY;
+    const actionBBox = $.extend(true, {}, T3Gv.optManager.actionBBox);
     let adjustedPoint = {};
 
     function adjustPoint(x: number, y: number, rect: any): { x: number; y: number } {
@@ -883,22 +884,22 @@ class BaseLine extends BaseDrawingObject {
       return point;
     }
 
-    switch (T3Gv.optManager.theActionTriggerID) {
+    switch (T3Gv.optManager.actionTriggerId) {
       case ConstantData.ActionTriggerType.LINESTART:
         this.AdjustLineStart(
-          T3Gv.optManager.theActionSVGObject,
+          T3Gv.optManager.actionSvgObject,
           newX,
           newY,
-          T3Gv.optManager.theActionTriggerID,
+          T3Gv.optManager.actionTriggerId,
           redrawFlag
         );
         if (this.r.x < 0 || this.r.y < 0) {
           adjustedPoint = adjustPoint(this.StartPoint.x, this.StartPoint.y, this.r);
           this.AdjustLineStart(
-            T3Gv.optManager.theActionSVGObject,
+            T3Gv.optManager.actionSvgObject,
             adjustedPoint.x,
             adjustedPoint.y,
-            T3Gv.optManager.theActionTriggerID,
+            T3Gv.optManager.actionTriggerId,
             redrawFlag
           );
         }
@@ -906,19 +907,19 @@ class BaseLine extends BaseDrawingObject {
       case ConstantData.ActionTriggerType.POLYLEND:
       case ConstantData.ActionTriggerType.LINEEND:
         this.AdjustLineEnd(
-          T3Gv.optManager.theActionSVGObject,
+          T3Gv.optManager.actionSvgObject,
           newX,
           newY,
-          T3Gv.optManager.theActionTriggerID,
+          T3Gv.optManager.actionTriggerId,
           redrawFlag
         );
         if (this.r.x < 0 || this.r.y < 0) {
           adjustedPoint = adjustPoint(this.EndPoint.x, this.EndPoint.y, this.r);
           this.AdjustLineEnd(
-            T3Gv.optManager.theActionSVGObject,
+            T3Gv.optManager.actionSvgObject,
             adjustedPoint.x,
             adjustedPoint.y,
-            T3Gv.optManager.theActionTriggerID,
+            T3Gv.optManager.actionTriggerId,
             redrawFlag
           );
         }
@@ -937,42 +938,42 @@ class BaseLine extends BaseDrawingObject {
       case ConstantData.ActionTriggerType.BOTTOMLEFT:
       case ConstantData.ActionTriggerType.BOTTOMRIGHT:
         this.ModifyShape(
-          T3Gv.optManager.theActionSVGObject,
+          T3Gv.optManager.actionSvgObject,
           newX,
           newY,
-          T3Gv.optManager.theActionTriggerID,
-          T3Gv.optManager.theActionTriggerData,
+          T3Gv.optManager.actionTriggerId,
+          T3Gv.optManager.actionTriggerData,
           redrawFlag
         );
         this.UpdateFrame();
         if (this.r.x < 0 || this.r.y < 0) {
           adjustedPoint = adjustPoint(newX, newY, this.r);
           this.ModifyShape(
-            T3Gv.optManager.theActionSVGObject,
+            T3Gv.optManager.actionSvgObject,
             adjustedPoint.x,
             adjustedPoint.y,
-            T3Gv.optManager.theActionTriggerID,
-            T3Gv.optManager.theActionTriggerData
+            T3Gv.optManager.actionTriggerId,
+            T3Gv.optManager.actionTriggerData
           );
           this.UpdateFrame();
         }
         break;
       case ConstantData.ActionTriggerType.MOVEPOLYSEG:
         this.MovePolySeg(
-          T3Gv.optManager.theActionSVGObject,
+          T3Gv.optManager.actionSvgObject,
           newX,
           newY,
-          T3Gv.optManager.theActionTriggerID,
-          T3Gv.optManager.theActionTriggerData
+          T3Gv.optManager.actionTriggerId,
+          T3Gv.optManager.actionTriggerData
         );
         break;
       case ConstantData.ActionTriggerType.DIMENSION_LINE_ADJ:
         this.DimensionLineDeflectionAdjust(
-          T3Gv.optManager.theActionSVGObject,
+          T3Gv.optManager.actionSvgObject,
           newX,
           newY,
-          T3Gv.optManager.theActionTriggerID,
-          T3Gv.optManager.theActionTriggerData
+          T3Gv.optManager.actionTriggerId,
+          T3Gv.optManager.actionTriggerData
         );
         break;
     }
@@ -984,8 +985,8 @@ class BaseLine extends BaseDrawingObject {
   AdjustRotate(mouseX: number, mouseY: number, event: any): void {
     console.log("= S.BaseLine: AdjustRotate called with mouseX:", mouseX, "mouseY:", mouseY, "event:", event);
 
-    const pivotX = T3Gv.optManager.theRotatePivotX;
-    const pivotY = T3Gv.optManager.theRotatePivotY;
+    const pivotX = T3Gv.optManager.rotatePivotX;
+    const pivotY = T3Gv.optManager.rotatePivotY;
     let deltaX = mouseX - pivotX;
     let deltaY = mouseY - pivotY;
     let angle = 0;
@@ -1005,12 +1006,12 @@ class BaseLine extends BaseDrawingObject {
     const overrideSnaps = T3Gv.optManager.OverrideSnaps(event);
     if (T3Gv.docUtil.docConfig.enableSnap && !overrideSnaps) {
       const enhanceSnaps = T3Gv.optManager.EnhanceSnaps(event);
-      const snapAngle = enhanceSnaps ? T3Gv.optManager.enhanceRotateSnap : T3Gv.optManager.theRotateSnap;
+      const snapAngle = enhanceSnaps ? T3Gv.optManager.enhanceRotateSnap : T3Gv.optManager.rotateSnap;
       angle = Math.round(angle / snapAngle) * snapAngle;
     }
 
-    if (this.Rotate(T3Gv.optManager.theActionSVGObject, angle)) {
-      T3Gv.optManager.theRotateEndRotation = angle;
+    if (this.Rotate(T3Gv.optManager.actionSvgObject, angle)) {
+      T3Gv.optManager.rotateEndRotation = angle;
     }
 
     console.log("= S.BaseLine: AdjustRotate output angle:", angle);
@@ -1173,15 +1174,15 @@ class BaseLine extends BaseDrawingObject {
 
     // Perform the resize operation
     const resizeAdjustment = this.Resize(
-      T3Gv.optManager.theActionSVGObject,
-      T3Gv.optManager.theActionNewBBox
+      T3Gv.optManager.actionSvgObject,
+      T3Gv.optManager.actionNewBBox
     );
 
     // Update the action bounding box and start coordinates
-    T3Gv.optManager.theActionBBox.x += resizeAdjustment.x;
-    T3Gv.optManager.theActionBBox.y += resizeAdjustment.y;
-    T3Gv.optManager.theActionStartX += resizeAdjustment.x;
-    T3Gv.optManager.theActionStartY += resizeAdjustment.y;
+    T3Gv.optManager.actionBBox.x += resizeAdjustment.x;
+    T3Gv.optManager.actionBBox.y += resizeAdjustment.y;
+    T3Gv.optManager.actionStartX += resizeAdjustment.x;
+    T3Gv.optManager.actionStartY += resizeAdjustment.y;
 
     console.log("= S.BaseLine: HandleActionTriggerCallResize output resizeAdjustment:", resizeAdjustment);
   }
@@ -1190,7 +1191,7 @@ class BaseLine extends BaseDrawingObject {
     console.log("= S.BaseLine: HandleActionTriggerDoAutoScroll called");
 
     // Set a timeout for the auto-scroll function
-    T3Gv.optManager.autoScrollTimerID = T3Gv.optManager.autoScrollTimer.setTimeout('HandleActionTriggerDoAutoScroll', 100);
+    T3Gv.optManager.autoScrollTimerId = T3Gv.optManager.autoScrollTimer.setTimeout('HandleActionTriggerDoAutoScroll', 100);
 
     // Convert window coordinates to document coordinates
     const docCoords = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(T3Gv.optManager.autoScrollXPos, T3Gv.optManager.autoScrollYPos);
@@ -1266,9 +1267,9 @@ class BaseLine extends BaseDrawingObject {
       // Set auto-scroll positions and start the timer if not already running
       T3Gv.optManager.autoScrollXPos = scrollX;
       T3Gv.optManager.autoScrollYPos = scrollY;
-      if (T3Gv.optManager.autoScrollTimerID === -1) {
+      if (T3Gv.optManager.autoScrollTimerId === -1) {
         T3Gv.optManager.autoScrollTimer = new T3Timer(this);
-        T3Gv.optManager.autoScrollTimerID = T3Gv.optManager.autoScrollTimer.setTimeout(autoScrollCallback, 0);
+        T3Gv.optManager.autoScrollTimerId = T3Gv.optManager.autoScrollTimer.setTimeout(autoScrollCallback, 0);
       }
 
       console.log('= S.BaseLine: AutoScrollCommon output: shouldAutoScroll = false');
@@ -1289,7 +1290,7 @@ class BaseLine extends BaseDrawingObject {
     let r;
     let i = false;
 
-    if (Utils2.StopPropagationAndDefaults(event), -1 == T3Gv.optManager.theActionStoredObjectID) {
+    if (Utils2.StopPropagationAndDefaults(event), -1 == T3Gv.optManager.actionStoredObjectId) {
       return false;
     }
 
@@ -1309,13 +1310,13 @@ class BaseLine extends BaseDrawingObject {
       t = true;
     }
 
-    if (T3Gv.optManager.theActionTriggerID !== ConstantData.ActionTriggerType.MODIFYSHAPE &&
+    if (T3Gv.optManager.actionTriggerId !== ConstantData.ActionTriggerType.MODIFYSHAPE &&
       T3Gv.docUtil.docConfig.enableSnap && !t) {
-      const deltaX = trackCoords.x - T3Gv.optManager.theActionStartX;
-      const deltaY = trackCoords.y - T3Gv.optManager.theActionStartY;
-      const isMovePolySeg = T3Gv.optManager.theActionTriggerID === ConstantData.ActionTriggerType.MOVEPOLYSEG;
+      const deltaX = trackCoords.x - T3Gv.optManager.actionStartX;
+      const deltaY = trackCoords.y - T3Gv.optManager.actionStartY;
+      const isMovePolySeg = T3Gv.optManager.actionTriggerId === ConstantData.ActionTriggerType.MOVEPOLYSEG;
 
-      if (T3Gv.optManager.theActionTriggerID === ConstantData.ActionTriggerType.ROTATE ||
+      if (T3Gv.optManager.actionTriggerId === ConstantData.ActionTriggerType.ROTATE ||
         this.CustomSnap(this.Frame.x, this.Frame.y, deltaX, deltaY, isMovePolySeg, trackCoords) || isMovePolySeg) {
         // Do nothing
       } else {
@@ -1339,12 +1340,12 @@ class BaseLine extends BaseDrawingObject {
 
       // if (Collab.AllowMessage()) {
       //   const actionData = {
-      //     BlockID: T3Gv.optManager.theActionStoredObjectID,
-      //     theActionTriggerID: T3Gv.optManager.theActionTriggerID,
-      //     theRotateEndRotation: T3Gv.optManager.theRotateEndRotation,
-      //     theRotatePivotX: T3Gv.optManager.theRotatePivotX,
-      //     theRotatePivotY: T3Gv.optManager.theRotatePivotY,
-      //     theRotateStartPoint: Utils1.DeepCopy(T3Gv.optManager.theRotateStartPoint),
+      //     BlockID: T3Gv.optManager.actionStoredObjectId,
+      //     actionTriggerId: T3Gv.optManager.actionTriggerId,
+      //     rotateEndRotation: T3Gv.optManager.rotateEndRotation,
+      //     rotatePivotX: T3Gv.optManager.rotatePivotX,
+      //     rotatePivotY: T3Gv.optManager.rotatePivotY,
+      //     rotateStartPoint: Utils1.DeepCopy(T3Gv.optManager.rotateStartPoint),
       //     CurveAdjust: this.CurveAdjust,
       //     IsReversed: this.IsReversed,
       //     Frame: Utils1.DeepCopy(this.Frame),
@@ -1352,9 +1353,9 @@ class BaseLine extends BaseDrawingObject {
       //     EndPoint: Utils1.DeepCopy(this.EndPoint),
       //   };
 
-      //   if (T3Gv.optManager.theActionTriggerData) {
-      //     actionData.hitSegment = T3Gv.optManager.theActionTriggerData.hitSegment;
-      //     actionData.moveAngle = T3Gv.optManager.theActionTriggerData.moveAngle;
+      //   if (T3Gv.optManager.actionTriggerData) {
+      //     actionData.hitSegment = T3Gv.optManager.actionTriggerData.hitSegment;
+      //     actionData.moveAngle = T3Gv.optManager.actionTriggerData.moveAngle;
       //   }
 
       //   if (T3Gv.optManager.ob.Frame) {
@@ -1383,16 +1384,16 @@ class BaseLine extends BaseDrawingObject {
       //     actionData.pointlist = Utils1.DeepCopy(this.pointlist);
       //   }
 
-      //   if (T3Gv.optManager.theActionTriggerID === ConstantData.ActionTriggerType.DIMENSION_LINE_ADJ) {
+      //   if (T3Gv.optManager.actionTriggerId === ConstantData.ActionTriggerType.DIMENSION_LINE_ADJ) {
       //     actionData.dimensionDeflectionH = this.dimensionDeflectionH;
       //     actionData.dimensionDeflectionV = this.dimensionDeflectionV;
       //   }
       // }
     }
 
-    switch (T3Gv.optManager.theActionTriggerID) {
+    switch (T3Gv.optManager.actionTriggerId) {
       case ConstantData.ActionTriggerType.ROTATE:
-        this.AfterRotateShape(T3Gv.optManager.theActionStoredObjectID);
+        this.AfterRotateShape(T3Gv.optManager.actionStoredObjectId);
         break;
       case ConstantData.ActionTriggerType.MODIFYSHAPE:
       case ConstantData.ActionTriggerType.SEGL_ONE:
@@ -1402,27 +1403,27 @@ class BaseLine extends BaseDrawingObject {
       case ConstantData.ActionTriggerType.POLYLADJ:
       case ConstantData.ActionTriggerType.POLYLEND:
       case ConstantData.ActionTriggerType.MOVEPOLYSEG:
-        this.AfterModifyShape(T3Gv.optManager.theActionStoredObjectID, T3Gv.optManager.theActionTriggerID);
+        this.AfterModifyShape(T3Gv.optManager.actionStoredObjectId, T3Gv.optManager.actionTriggerId);
         break;
       default:
 
         if (T3Gv.optManager.ob.Frame) {
-          T3Gv.optManager.MaintainLink(T3Gv.optManager.theActionStoredObjectID, this, T3Gv.optManager.ob, T3Gv.optManager.theActionTriggerID);
+          T3Gv.optManager.MaintainLink(T3Gv.optManager.actionStoredObjectId, this, T3Gv.optManager.ob, T3Gv.optManager.actionTriggerId);
           T3Gv.optManager.ob = {};
-          T3Gv.optManager.SetLinkFlag(T3Gv.optManager.theActionStoredObjectID, ConstantData.LinkFlags.SED_L_MOVE);
+          T3Gv.optManager.SetLinkFlag(T3Gv.optManager.actionStoredObjectId, ShapeContant.LinkFlags.SED_L_MOVE);
           T3Gv.optManager.UpdateLinks();
         }
     }
 
-    this.LM_ActionPostRelease(T3Gv.optManager.theActionStoredObjectID);
+    this.LM_ActionPostRelease(T3Gv.optManager.actionStoredObjectId);
 
     if (this.HyperlinkText !== "" || this.NoteID !== -1 || this.CommentID !== -1 || this.HasFieldData()) {
-      T3Gv.optManager.AddToDirtyList(T3Gv.optManager.theActionStoredObjectID);
+      T3Gv.optManager.AddToDirtyList(T3Gv.optManager.actionStoredObjectId);
     }
 
     if (!isSecondary) {
-      T3Gv.optManager.theActionStoredObjectID = -1;
-      T3Gv.optManager.theActionSVGObject = null;
+      T3Gv.optManager.actionStoredObjectId = -1;
+      T3Gv.optManager.actionSvgObject = null;
     }
 
     T3Gv.optManager.ShowOverlayLayer();
@@ -1544,15 +1545,15 @@ class BaseLine extends BaseDrawingObject {
       points[0].y = event.y;
 
       if (this.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
-        points[0].id = T3Gv.optManager.theActionTriggerID === ConstantData.ActionTriggerType.LINESTART
+        points[0].id = T3Gv.optManager.actionTriggerId === ConstantData.ActionTriggerType.LINESTART
           ? ConstantData.HookPts.SED_KTL
           : ConstantData.HookPts.SED_KTR;
 
-        T3Gv.optManager.theDragDeltaX = 0;
-        T3Gv.optManager.theDragDeltaY = 0;
+        T3Gv.optManager.dragDeltaX = 0;
+        T3Gv.optManager.dragDeltaY = 0;
 
         if (T3Gv.optManager.FindConnect(
-          T3Gv.optManager.theActionStoredObjectID,
+          T3Gv.optManager.actionStoredObjectId,
           this,
           points,
           true,
@@ -1560,8 +1561,8 @@ class BaseLine extends BaseDrawingObject {
           T3Gv.optManager.LinkParams.AllowJoin,
           event
         )) {
-          event.x += T3Gv.optManager.theDragDeltaX;
-          event.y += T3Gv.optManager.theDragDeltaY;
+          event.x += T3Gv.optManager.dragDeltaX;
+          event.y += T3Gv.optManager.dragDeltaY;
         }
       }
     }
@@ -1590,7 +1591,7 @@ class BaseLine extends BaseDrawingObject {
     }
 
     // Set link flag and update links
-    T3Gv.optManager.SetLinkFlag(blockID, ConstantData.LinkFlags.SED_L_MOVE);
+    T3Gv.optManager.SetLinkFlag(blockID, ShapeContant.LinkFlags.SED_L_MOVE);
     T3Gv.optManager.UpdateLinks();
 
     console.log("= S.BaseLine: AfterRotateShape completed for blockID:", blockID);
@@ -1599,10 +1600,10 @@ class BaseLine extends BaseDrawingObject {
   AfterModifyShape(blockID: number, actionTriggerID: number): void {
     console.log("= S.BaseLine: AfterModifyShape called with blockID:", blockID, "actionTriggerID:", actionTriggerID);
 
-    if (T3Gv.optManager.theActionSVGObject) {
-      const ellipseAxesElement = T3Gv.optManager.theActionSVGObject.GetElementByID(ConstantData.Defines.EllipseAxes);
+    if (T3Gv.optManager.actionSvgObject) {
+      const ellipseAxesElement = T3Gv.optManager.actionSvgObject.GetElementByID(ConstantData.Defines.EllipseAxes);
       if (ellipseAxesElement != null) {
-        T3Gv.optManager.theActionSVGObject.RemoveElement(ellipseAxesElement);
+        T3Gv.optManager.actionSvgObject.RemoveElement(ellipseAxesElement);
         console.log("= S.BaseLine: Removed ellipseAxesElement:", ellipseAxesElement);
       }
     }
@@ -1619,7 +1620,7 @@ class BaseLine extends BaseDrawingObject {
       console.log("= S.BaseLine: Reset floating point dimensions flags");
     }
 
-    T3Gv.optManager.SetLinkFlag(blockID, ConstantData.LinkFlags.SED_L_MOVE);
+    T3Gv.optManager.SetLinkFlag(blockID, ShapeContant.LinkFlags.SED_L_MOVE);
     T3Gv.optManager.UpdateLinks();
     console.log("= S.BaseLine: Set link flag and updated links");
 
@@ -1688,7 +1689,7 @@ class BaseLine extends BaseDrawingObject {
       }
 
       // Set link flag and update links
-      T3Gv.optManager.SetLinkFlag(blockID, ConstantData.LinkFlags.SED_L_MOVE);
+      T3Gv.optManager.SetLinkFlag(blockID, ShapeContant.LinkFlags.SED_L_MOVE);
       T3Gv.optManager.UpdateLinks();
 
       // Clear LinkParams
@@ -1704,8 +1705,8 @@ class BaseLine extends BaseDrawingObject {
     let actionStoredObjectID, actionTriggerID, preservedBlock, targetElement;
 
     if (isSecondary) {
-      actionStoredObjectID = T3Gv.optManager.theActionStoredObjectID;
-      actionTriggerID = T3Gv.optManager.theActionTriggerID;
+      actionStoredObjectID = T3Gv.optManager.actionStoredObjectId;
+      actionTriggerID = T3Gv.optManager.actionTriggerId;
       T3Gv.optManager.PinRect = null;
       preservedBlock = T3Gv.objectStore.PreserveBlock(actionStoredObjectID);
     } else {
@@ -1718,15 +1719,15 @@ class BaseLine extends BaseDrawingObject {
 
       const elementID = overlayElement.GetID();
       actionStoredObjectID = parseInt(elementID.substring(ConstantData.Defines.Action.length), 10);
-      T3Gv.optManager.theActionStoredObjectID = actionStoredObjectID;
+      T3Gv.optManager.actionStoredObjectId = actionStoredObjectID;
 
       targetElement = overlayElement.GetTargetForEvent(event);
       if (targetElement == null) return false;
 
       preservedBlock = T3Gv.objectStore.PreserveBlock(actionStoredObjectID);
       actionTriggerID = targetElement.GetID();
-      T3Gv.optManager.theActionTriggerID = actionTriggerID;
-      T3Gv.optManager.theActionTriggerData = targetElement.GetUserData();
+      T3Gv.optManager.actionTriggerId = actionTriggerID;
+      T3Gv.optManager.actionTriggerData = targetElement.GetUserData();
       T3Gv.optManager.PinRect = null;
     }
 
@@ -1735,10 +1736,10 @@ class BaseLine extends BaseDrawingObject {
     }
 
     this.LM_ActionPreTrack(actionStoredObjectID, actionTriggerID);
-    T3Gv.optManager.theActionSVGObject = T3Gv.optManager.svgObjectLayer.GetElementByID(actionStoredObjectID);
+    T3Gv.optManager.actionSvgObject = T3Gv.optManager.svgObjectLayer.GetElementByID(actionStoredObjectID);
 
     if (this.HyperlinkText !== "" || this.NoteID !== -1 || this.CommentID !== -1 || this.HasFieldData()) {
-      this.HideAllIcons(T3Gv.optManager.svgDoc, T3Gv.optManager.theActionSVGObject);
+      this.HideAllIcons(T3Gv.optManager.svgDoc, T3Gv.optManager.actionSvgObject);
     }
 
     let coords = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(event.gesture.center.clientX, event.gesture.center.clientY);
@@ -1756,31 +1757,31 @@ class BaseLine extends BaseDrawingObject {
     const startX = coords.x;
     const startY = coords.y;
 
-    T3Gv.optManager.theActionLockAspectRatio = event.gesture.srcEvent.shiftKey;
+    T3Gv.optManager.actionLockAspectRatio = event.gesture.srcEvent.shiftKey;
     if (this.ResizeAspectConstrain) {
-      T3Gv.optManager.theActionLockAspectRatio = !T3Gv.optManager.theActionLockAspectRatio;
+      T3Gv.optManager.actionLockAspectRatio = !T3Gv.optManager.actionLockAspectRatio;
     }
 
     const svgFrame = this.GetSVGFrame();
-    if (T3Gv.optManager.theActionLockAspectRatio) {
+    if (T3Gv.optManager.actionLockAspectRatio) {
       if (svgFrame.height === 0) {
-        T3Gv.optManager.theActionLockAspectRatio = false;
+        T3Gv.optManager.actionLockAspectRatio = false;
       } else {
-        T3Gv.optManager.theActionAspectRatioWidth = svgFrame.width;
-        T3Gv.optManager.theActionAspectRatioHeight = svgFrame.height;
+        T3Gv.optManager.actionAspectRatioWidth = svgFrame.width;
+        T3Gv.optManager.actionAspectRatioHeight = svgFrame.height;
       }
     }
 
-    T3Gv.optManager.theActionBBox = $.extend(true, {}, svgFrame);
-    T3Gv.optManager.theActionNewBBox = $.extend(true, {}, svgFrame);
+    T3Gv.optManager.actionBBox = $.extend(true, {}, svgFrame);
+    T3Gv.optManager.actionNewBBox = $.extend(true, {}, svgFrame);
     T3Gv.optManager.HideOverlayLayer();
-    T3Gv.optManager.theActionStartX = startX;
-    T3Gv.optManager.theActionStartY = startY;
+    T3Gv.optManager.actionStartX = startX;
+    T3Gv.optManager.actionStartY = startY;
 
-    if (T3Gv.optManager.theActionTriggerID === ConstantData.ActionTriggerType.ROTATE) {
+    if (T3Gv.optManager.actionTriggerId === ConstantData.ActionTriggerType.ROTATE) {
       this.BeforeRotate(svgFrame);
-    } else if (T3Gv.optManager.theActionTriggerID === ConstantData.ActionTriggerType.MODIFYSHAPE || T3Gv.optManager.theActionTriggerID === ConstantData.ActionTriggerType.POLYLADJ) {
-      this.BeforeModifyShape(startX, startY, T3Gv.optManager.theActionTriggerData);
+    } else if (T3Gv.optManager.actionTriggerId === ConstantData.ActionTriggerType.MODIFYSHAPE || T3Gv.optManager.actionTriggerId === ConstantData.ActionTriggerType.POLYLADJ) {
+      this.BeforeModifyShape(startX, startY, T3Gv.optManager.actionTriggerData);
     }
 
     console.log("= S.BaseLine: LM_SetupActionClick output:", true);
@@ -1791,29 +1792,29 @@ class BaseLine extends BaseDrawingObject {
     console.log("= S.BaseLine: BeforeRotate called with frame:", frame);
 
     // Set the rotation knob center divisor
-    T3Gv.optManager.theRotateKnobCenterDivisor = this.RotateKnobCenterDivisor();
+    T3Gv.optManager.rotateKnobCenterDivisor = this.RotateKnobCenterDivisor();
 
     // Calculate the start rotation angle in degrees
     const deltaX = this.EndPoint.x - this.StartPoint.x;
     const deltaY = this.EndPoint.y - this.StartPoint.y;
-    T3Gv.optManager.theRotateStartRotation = 180 * Math.atan2(deltaY, deltaX) / Math.PI;
-    T3Gv.optManager.theRotateEndRotation = T3Gv.optManager.theRotateStartRotation;
+    T3Gv.optManager.rotateStartRotation = 180 * Math.atan2(deltaY, deltaX) / Math.PI;
+    T3Gv.optManager.rotateEndRotation = T3Gv.optManager.rotateStartRotation;
 
     // Calculate the pivot point for rotation
-    T3Gv.optManager.theRotatePivotX = frame.x + frame.width / T3Gv.optManager.theRotateKnobCenterDivisor.x;
-    T3Gv.optManager.theRotatePivotY = frame.y + frame.height / T3Gv.optManager.theRotateKnobCenterDivisor.y;
+    T3Gv.optManager.rotatePivotX = frame.x + frame.width / T3Gv.optManager.rotateKnobCenterDivisor.x;
+    T3Gv.optManager.rotatePivotY = frame.y + frame.height / T3Gv.optManager.rotateKnobCenterDivisor.y;
 
     // Store the start and end points
-    T3Gv.optManager.theRotateStartPoint = $.extend(true, {}, this.StartPoint);
-    T3Gv.optManager.theRotateEndPoint = $.extend(true, {}, this.EndPoint);
+    T3Gv.optManager.rotateStartPoint = $.extend(true, {}, this.StartPoint);
+    T3Gv.optManager.rotateEndPoint = $.extend(true, {}, this.EndPoint);
 
     console.log("= S.BaseLine: BeforeRotate output:", {
-      theRotateStartRotation: T3Gv.optManager.theRotateStartRotation,
-      theRotateEndRotation: T3Gv.optManager.theRotateEndRotation,
-      theRotatePivotX: T3Gv.optManager.theRotatePivotX,
-      theRotatePivotY: T3Gv.optManager.theRotatePivotY,
-      theRotateStartPoint: T3Gv.optManager.theRotateStartPoint,
-      theRotateEndPoint: T3Gv.optManager.theRotateEndPoint
+      rotateStartRotation: T3Gv.optManager.rotateStartRotation,
+      rotateEndRotation: T3Gv.optManager.rotateEndRotation,
+      rotatePivotX: T3Gv.optManager.rotatePivotX,
+      rotatePivotY: T3Gv.optManager.rotatePivotY,
+      rotateStartPoint: T3Gv.optManager.rotateStartPoint,
+      rotateEndPoint: T3Gv.optManager.rotateEndPoint
     });
   }
 
@@ -1829,10 +1830,10 @@ class BaseLine extends BaseDrawingObject {
     // Clear global data properties
     T3Gv.optManager.ob = {};
     T3Gv.optManager.LinkParams = null;
-    T3Gv.optManager.theActionTriggerID = -1;
-    T3Gv.optManager.theActionTriggerData = null;
-    T3Gv.optManager.theActionStoredObjectID = -1;
-    T3Gv.optManager.theActionSVGObject = null;
+    T3Gv.optManager.actionTriggerId = -1;
+    T3Gv.optManager.actionTriggerData = null;
+    T3Gv.optManager.actionStoredObjectId = -1;
+    T3Gv.optManager.actionSvgObject = null;
 
     // Unblock messages
     // Collab.UnBlockMessages();
@@ -1878,13 +1879,13 @@ class BaseLine extends BaseDrawingObject {
     console.log("= S.BaseLine: Rotate called with svgElement:", svgElement, "endRotation:", endRotation);
 
     const pivotPoint = {
-      x: T3Gv.optManager.theRotatePivotX,
-      y: T3Gv.optManager.theRotatePivotY
+      x: T3Gv.optManager.rotatePivotX,
+      y: T3Gv.optManager.rotatePivotY
     };
 
-    const rotationRadians = (endRotation - T3Gv.optManager.theRotateStartRotation) / (180 / ConstantData.Geometry.PI);
-    const rotatedStartPoint = T3Gv.optManager.RotatePointAroundPoint(pivotPoint, T3Gv.optManager.theRotateStartPoint, rotationRadians);
-    const rotatedEndPoint = T3Gv.optManager.RotatePointAroundPoint(pivotPoint, T3Gv.optManager.theRotateEndPoint, rotationRadians);
+    const rotationRadians = (endRotation - T3Gv.optManager.rotateStartRotation) / (180 / ConstantData.Geometry.PI);
+    const rotatedStartPoint = T3Gv.optManager.RotatePointAroundPoint(pivotPoint, T3Gv.optManager.rotateStartPoint, rotationRadians);
+    const rotatedEndPoint = T3Gv.optManager.RotatePointAroundPoint(pivotPoint, T3Gv.optManager.rotateEndPoint, rotationRadians);
 
     console.log("= S.BaseLine: Rotated points calculated as rotatedStartPoint:", rotatedStartPoint, "rotatedEndPoint:", rotatedEndPoint);
 
@@ -1937,7 +1938,7 @@ class BaseLine extends BaseDrawingObject {
     const session = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
 
     const useEdges = layersManager && layersManager.activelayer >= 0 && (layersManager.layers[layersManager.activelayer].flags & ConstantData.LayerFlags.SDLF_UseEdges);
-    const fromOverlayLayer = T3Gv.optManager.FromOverlayLayer;
+    const fromOverlayLayer = T3Gv.optManager.fromOverlayLayer;
     const sessionLink = session && (session.flags & ConstantData.SessionFlags.SEDS_LLink);
 
     return !useEdges && (fromOverlayLayer || sessionLink);
@@ -2189,7 +2190,7 @@ class BaseLine extends BaseDrawingObject {
           case hookPts.SED_KBC:
           case hookPts.SED_KRC:
           case hookPts.SED_KLC:
-            const isReversed = SDF.LineIsReversed(this, null, false);
+            const isReversed = ShapeDataUtil.LineIsReversed(this, null, false);
             if (this.hooks.length === 0) {
               if (isReversed) {
                 targetPoints[0].x = ConstantData.Defines.SED_CDim;
@@ -2519,7 +2520,7 @@ class BaseLine extends BaseDrawingObject {
       position.height = knobSize;
 
       let knobParams = null;
-      if (T3Gv.optManager.bTouchInitiated) {
+      if (T3Gv.optManager.touchInitiated) {
         knobParams = {
           svgDoc,
           shapeType: ConstantData.CreateShapeType.OVAL,
@@ -2700,7 +2701,7 @@ class BaseLine extends BaseDrawingObject {
         targetObj.RotationAngle = apparentAngle;
         T3Gv.optManager.SetLinkFlag(
           this.BlockID,
-          ConstantData.LinkFlags.SED_L_MOVE | ConstantData.LinkFlags.SED_L_CHANGE
+          ShapeContant.LinkFlags.SED_L_MOVE | ShapeContant.LinkFlags.SED_L_CHANGE
         );
         T3Gv.optManager.AddToDirtyList(targetId);
         console.log("= S.BaseLine: ChangeTarget updated targetObj.RotationAngle to:", apparentAngle);
@@ -2835,11 +2836,11 @@ class BaseLine extends BaseDrawingObject {
     console.log("= S.BaseLine: StartNewObjectDrawDoAutoScroll called");
 
     // Set the auto-scroll timer with a 100ms timeout
-    T3Gv.optManager.autoScrollTimerID = T3Gv.optManager.autoScrollTimer.setTimeout(
+    T3Gv.optManager.autoScrollTimerId = T3Gv.optManager.autoScrollTimer.setTimeout(
       'StartNewObjectDrawDoAutoScroll',
       100
     );
-    console.log("= S.BaseLine: autoScrollTimerID set to", T3Gv.optManager.autoScrollTimerID);
+    console.log("= S.BaseLine: autoScrollTimerId set to", T3Gv.optManager.autoScrollTimerId);
 
     // Convert window coordinates (autoScrollXPos, autoScrollYPos) to document coordinates
     let docCoords = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(
@@ -2865,18 +2866,18 @@ class BaseLine extends BaseDrawingObject {
     console.log("= S.BaseLine: StartNewObjectDrawTrackCommon called with x:", x, "y:", y, "extraFlag:", extraFlag);
 
     // Compute differences relative to the action start coordinates
-    const deltaX = x - T3Gv.optManager.theActionStartX;
-    const deltaY = y - T3Gv.optManager.theActionStartY;
+    const deltaX = x - T3Gv.optManager.actionStartX;
+    const deltaY = y - T3Gv.optManager.actionStartY;
     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
     console.log("= S.BaseLine: Computed deltaX:", deltaX, "deltaY:", deltaY, "distance:", distance);
 
     // Make a deep copy of the action bounding box
-    const actionBBox = $.extend(true, {}, T3Gv.optManager.theActionBBox);
+    const actionBBox = $.extend(true, {}, T3Gv.optManager.actionBBox);
     console.log("= S.BaseLine: actionBBox:", actionBBox);
 
     // Adjust the line end point
     this.AdjustLineEnd(
-      T3Gv.optManager.theActionSVGObject,
+      T3Gv.optManager.actionSvgObject,
       x,
       y,
       ConstantData.ActionTriggerType.LINEEND,
@@ -2895,8 +2896,8 @@ class BaseLine extends BaseDrawingObject {
     let altKeyFlag = 0;
 
     // Check if action stored object is valid
-    if (T3Gv.optManager.theActionStoredObjectID === -1) {
-      console.log("= S.BaseLine: LM_DrawTrack aborted, theActionStoredObjectID is -1");
+    if (T3Gv.optManager.actionStoredObjectId === -1) {
+      console.log("= S.BaseLine: LM_DrawTrack aborted, actionStoredObjectId is -1");
       return false;
     }
 
@@ -2932,8 +2933,8 @@ class BaseLine extends BaseDrawingObject {
 
     // If snapping is enabled and there's no active link connection, snap the point to grid
     if (T3Gv.docUtil.docConfig.enableSnap && !hasLinkParams) {
-      const deltaX = trackPoint.x - T3Gv.optManager.theActionStartX;
-      const deltaY = trackPoint.y - T3Gv.optManager.theActionStartY;
+      const deltaX = trackPoint.x - T3Gv.optManager.actionStartX;
+      const deltaY = trackPoint.y - T3Gv.optManager.actionStartY;
       console.log("= S.BaseLine: Calculated delta for snapping:", { deltaX, deltaY });
       if (!this.CustomSnap(this.Frame.x, this.Frame.y, deltaX, deltaY, false, trackPoint)) {
         trackPoint = T3Gv.docUtil.SnapToGrid(trackPoint);
@@ -2966,16 +2967,16 @@ class BaseLine extends BaseDrawingObject {
     // Unbind click hammer events
     T3Gv.optManager.UnbindActionClickHammerEvents();
 
-    // Handle the LineStamp flag: if set, unbind mousemove on non-mobile platforms
-    if (T3Gv.optManager.LineStamp) {
+    // Handle the lineStamp flag: if set, unbind mousemove on non-mobile platforms
+    if (T3Gv.optManager.lineStamp) {
       if (!T3Gv.optManager.isMobilePlatform && T3Gv.optManager.WorkAreaHammer) {
         T3Gv.optManager.WorkAreaHammer.off('mousemove');
       }
-      T3Gv.optManager.LineStamp = false;
+      T3Gv.optManager.lineStamp = false;
     }
 
     // Reset overlay flag and re-bind tap event
-    T3Gv.optManager.FromOverlayLayer = false;
+    T3Gv.optManager.fromOverlayLayer = false;
     T3Gv.optManager.WorkAreaHammer.on('tap', EvtUtil.Evt_WorkAreaHammerClick);
 
     // Reset auto-scroll timer
@@ -3020,24 +3021,24 @@ class BaseLine extends BaseDrawingObject {
       let deltaX: number, deltaY: number;
       const movementThreshold: number = 2 * ConstantData.Defines.SED_MinDim;
 
-      if (T3Gv.optManager.FromOverlayLayer) {
-        deltaX = T3Gv.optManager.theLineDrawStartX - conversionPoint.x;
-        deltaY = T3Gv.optManager.theLineDrawStartY - conversionPoint.y;
+      if (T3Gv.optManager.fromOverlayLayer) {
+        deltaX = T3Gv.optManager.lineDrawStartX - conversionPoint.x;
+        deltaY = T3Gv.optManager.lineDrawStartY - conversionPoint.y;
         // For overlay, reduce the minimum length to make the snapping easier
         minLength -= 20;
       } else {
-        deltaX = T3Gv.optManager.theDrawStartX - conversionPoint.x;
-        deltaY = T3Gv.optManager.theDrawStartY - conversionPoint.y;
+        deltaX = T3Gv.optManager.drawStartX - conversionPoint.x;
+        deltaY = T3Gv.optManager.drawStartY - conversionPoint.y;
       }
       console.log("= S.BaseLine: LM_DrawRelease - deltaX:", deltaX, "deltaY:", deltaY, "minLength:", minLength);
 
-      // If movement is very small and LineStamp flag is not set, set LineStamp and bind mousemove (for desktop)
+      // If movement is very small and lineStamp flag is not set, set lineStamp and bind mousemove (for desktop)
       if (
-        !T3Gv.optManager.LineStamp &&
+        !T3Gv.optManager.lineStamp &&
         Math.abs(deltaX) < movementThreshold &&
         Math.abs(deltaY) < movementThreshold
       ) {
-        T3Gv.optManager.LineStamp = true;
+        T3Gv.optManager.lineStamp = true;
         if (!T3Gv.optManager.isMobilePlatform && T3Gv.optManager.WorkAreaHammer) {
           T3Gv.optManager.WorkAreaHammer.on(
             "mousemove",
@@ -3060,7 +3061,7 @@ class BaseLine extends BaseDrawingObject {
 
       // Verify if movement is long enough when using overlay; if not, cancel the modal operation
       if (
-        T3Gv.optManager.FromOverlayLayer &&
+        T3Gv.optManager.fromOverlayLayer &&
         (deltaX * deltaX + deltaY * deltaY) < minLength * minLength
       ) {
         console.log("= S.BaseLine: LM_DrawRelease - movement below minimum length; canceling modal operation.");
@@ -3073,9 +3074,9 @@ class BaseLine extends BaseDrawingObject {
       };
 
       // Complete the drawing by calling LM_DrawPostRelease
-      const postReleaseResult = this.LM_DrawPostRelease(T3Gv.optManager.theActionStoredObjectID);
+      const postReleaseResult = this.LM_DrawPostRelease(T3Gv.optManager.actionStoredObjectId);
       let addedLabel: any = null;
-      if (T3Gv.optManager.FromOverlayLayer) {
+      if (T3Gv.optManager.fromOverlayLayer) {
         addedLabel = gBusinessController.AddLineLabel(this.BlockID);
       }
 
@@ -3086,17 +3087,17 @@ class BaseLine extends BaseDrawingObject {
         T3Gv.optManager.PostObjectDraw(this.LM_DrawRelease);
       }
 
-      // Unbind temporary mousemove events if set via LineStamp, then reset flag
-      if (T3Gv.optManager.LineStamp) {
+      // Unbind temporary mousemove events if set via lineStamp, then reset flag
+      if (T3Gv.optManager.lineStamp) {
         if (!T3Gv.optManager.isMobilePlatform && T3Gv.optManager.WorkAreaHammer) {
           T3Gv.optManager.WorkAreaHammer.off("mousemove");
         }
-        T3Gv.optManager.LineStamp = false;
+        T3Gv.optManager.lineStamp = false;
       }
 
       // If drawing was initiated from overlay, complete business action and reset overlay flag
-      if (T3Gv.optManager.FromOverlayLayer) {
-        T3Gv.optManager.FromOverlayLayer = false;
+      if (T3Gv.optManager.fromOverlayLayer) {
+        T3Gv.optManager.fromOverlayLayer = false;
         gBusinessController.CompleteAction(this.BlockID, pointerPos);
       }
       console.log("= S.BaseLine: LM_DrawRelease output: completed successfully");
@@ -3124,7 +3125,7 @@ class BaseLine extends BaseDrawingObject {
       T3Gv.optManager.LinkParams = new LinkParameters();
 
       if (sessionObj) {
-        if (!T3Gv.optManager.FromOverlayLayer) {
+        if (!T3Gv.optManager.fromOverlayLayer) {
           T3Gv.optManager.LinkParams.AllowJoin = sessionObj.flags & ConstantData.SessionFlags.SEDS_FreeHand;
         }
       }
@@ -3136,15 +3137,15 @@ class BaseLine extends BaseDrawingObject {
         hookList[0].y = event.y;
 
         // Reset drag delta values
-        T3Gv.optManager.theDragDeltaX = 0;
-        T3Gv.optManager.theDragDeltaY = 0;
+        T3Gv.optManager.dragDeltaX = 0;
+        T3Gv.optManager.dragDeltaY = 0;
 
         linksBlockObj = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, false);
 
         // Try to find a connection using the hook list
         if (
           T3Gv.optManager.FindConnect(
-            T3Gv.optManager.theActionStoredObjectID,
+            T3Gv.optManager.actionStoredObjectId,
             this,
             hookList,
             false,
@@ -3167,10 +3168,10 @@ class BaseLine extends BaseDrawingObject {
           T3Gv.optManager.LinkParams.ConnectHookFlag = 0;
 
           // Adjust event and line start coordinates using the drag delta
-          event.x += T3Gv.optManager.theDragDeltaX;
-          event.y += T3Gv.optManager.theDragDeltaY;
-          this.StartPoint.x += T3Gv.optManager.theDragDeltaX;
-          this.StartPoint.y += T3Gv.optManager.theDragDeltaY;
+          event.x += T3Gv.optManager.dragDeltaX;
+          event.y += T3Gv.optManager.dragDeltaY;
+          this.StartPoint.x += T3Gv.optManager.dragDeltaX;
+          this.StartPoint.y += T3Gv.optManager.dragDeltaY;
           this.EndPoint.x = this.StartPoint.x;
           this.EndPoint.y = this.StartPoint.y;
 
@@ -3240,12 +3241,12 @@ class BaseLine extends BaseDrawingObject {
     hookPoints[0].id = ConstantData.HookPts.SED_KTR;
 
     // Reset drag deltas
-    T3Gv.optManager.theDragDeltaX = 0;
-    T3Gv.optManager.theDragDeltaY = 0;
+    T3Gv.optManager.dragDeltaX = 0;
+    T3Gv.optManager.dragDeltaY = 0;
 
     // Attempt to find a connection; if found, adjust e.x and e.y
     if (T3Gv.optManager.FindConnect(
-      T3Gv.optManager.theActionStoredObjectID,
+      T3Gv.optManager.actionStoredObjectId,
       this,
       hookPoints,
       true,
@@ -3253,8 +3254,8 @@ class BaseLine extends BaseDrawingObject {
       T3Gv.optManager.LinkParams.AllowJoin,
       event
     )) {
-      event.x += T3Gv.optManager.theDragDeltaX;
-      event.y += T3Gv.optManager.theDragDeltaY;
+      event.x += T3Gv.optManager.dragDeltaX;
+      event.y += T3Gv.optManager.dragDeltaY;
     }
 
     // Check for join conditions when SJoinIndex is set and JoinIndex is not yet set
@@ -3443,20 +3444,20 @@ class BaseLine extends BaseDrawingObject {
 
     T3Gv.optManager.UnbindActionClickHammerEvents();
 
-    if (T3Gv.optManager.LineStamp) {
+    if (T3Gv.optManager.lineStamp) {
       if (!T3Gv.optManager.isMobilePlatform && T3Gv.optManager.WorkAreaHammer) {
         T3Gv.optManager.WorkAreaHammer.off('mousemove');
       }
-      T3Gv.optManager.LineStamp = false;
+      T3Gv.optManager.lineStamp = false;
     }
 
     T3Gv.optManager.WorkAreaHammer.on('tap', EvtUtil.Evt_WorkAreaHammerClick);
     this.ResetAutoScrollTimer();
     T3Gv.optManager.LinkParams = null;
-    T3Gv.optManager.theActionStoredObjectID = -1;
-    T3Gv.optManager.theActionSVGObject = null;
-    T3Gv.optManager.LineStamp = false;
-    T3Gv.optManager.FromOverlayLayer = false;
+    T3Gv.optManager.actionStoredObjectId = -1;
+    T3Gv.optManager.actionSvgObject = null;
+    T3Gv.optManager.lineStamp = false;
+    T3Gv.optManager.fromOverlayLayer = false;
     T3Gv.optManager.WorkAreaHammer.on('dragstart', EvtUtil.Evt_WorkAreaHammerDragStart);
 
     console.log("= S.BaseLine: LM_DrawClick_ExceptionCleanup output: cleanup complete");
@@ -3498,7 +3499,7 @@ class BaseLine extends BaseDrawingObject {
       console.log("= S.BaseLine: DataID is valid:", this.DataID);
 
       // Evaluate vertical justification from text alignment.
-      const textAlignWin = SDF.TextAlignToWin(this.TextAlign);
+      const textAlignWin = ShapeDataUtil.TextAlignToWin(this.TextAlign);
       switch (textAlignWin.vjust) {
         case ConstantData2.TextJust.TA_TOP:
         case ConstantData2.TextJust.TA_BOTTOM:
@@ -3541,13 +3542,13 @@ class BaseLine extends BaseDrawingObject {
       dataIdForWrite = this.DataID;
     }
 
-    // Write text parameters to SDF.
+    // Write text parameters to ShapeDataUtil.
     console.log("= S.BaseLine: Writing text parameters with DataID:", dataIdForWrite);
-    SDF.WriteTextParams(e, this, dataIdForWrite, options);
+    ShapeDataUtil.WriteTextParams(e, this, dataIdForWrite, options);
 
     // Write arrowhead attributes.
     console.log("= S.BaseLine: Writing arrowhead attributes");
-    SDF.WriteArrowheads(e, options, this);
+    ShapeDataUtil.WriteArrowheads(e, options, this);
 
     console.log("= S.BaseLine: WriteSDFAttributes completed with output:", {
       DataID: this.DataID,
@@ -3662,7 +3663,7 @@ class BaseLine extends BaseDrawingObject {
     this.DataID = newDataId;
 
     // Get text alignment settings and session object
-    const textAlignWin = SDF.TextAlignToWin(this.TextAlign);
+    const textAlignWin = ShapeDataUtil.TextAlignToWin(this.TextAlign);
     const sessionObj = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
 
     // Update the fill color based on the session background
@@ -3776,7 +3777,7 @@ class BaseLine extends BaseDrawingObject {
         }
 
         // Get a justification object from text alignment
-        let just = SDF.TextAlignToJust(this.TextAlign);
+        let just = ShapeDataUtil.TextAlignToJust(this.TextAlign);
 
         // If text is flipped and this is a simple line, swap left/right alignment
         if (flipText && this.LineType === ConstantData.LineType.LINE) {
@@ -4019,7 +4020,7 @@ class BaseLine extends BaseDrawingObject {
 
     // Calculate vertical offset based on text alignment.
     if (this.LineTextY || this.LineTextX) {
-      const winTextAlign = SDF.TextAlignToWin(this.TextAlign);
+      const winTextAlign = ShapeDataUtil.TextAlignToWin(this.TextAlign);
       switch (winTextAlign.vjust) {
         case ConstantData2.TextJust.TA_TOP:
           verticalOffset = this.trect.height / 2 - textHeight / 2 + this.LineTextY;
@@ -4999,12 +5000,12 @@ class BaseLine extends BaseDrawingObject {
     console.log("= S.BaseLine: UpdateDimensionFromText completed");
 
     // Set link flag for the current block
-    T3Gv.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE);
+    T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
     console.log("= S.BaseLine: Set link flag for BlockID", this.BlockID);
 
     // Set link flag for each hooked object
     for (let i = 0; i < this.hooks.length; i++) {
-      T3Gv.optManager.SetLinkFlag(this.hooks[i].objid, ConstantData.LinkFlags.SED_L_MOVE);
+      T3Gv.optManager.SetLinkFlag(this.hooks[i].objid, ShapeContant.LinkFlags.SED_L_MOVE);
       console.log("= S.BaseLine: Set link flag for hook object with id", this.hooks[i].objid);
     }
 
@@ -5065,14 +5066,14 @@ class BaseLine extends BaseDrawingObject {
     // Set link flags for this object.
     T3Gv.optManager.SetLinkFlag(
       this.BlockID,
-      ConstantData.LinkFlags.SED_L_MOVE | ConstantData.LinkFlags.SED_L_CHANGE
+      ShapeContant.LinkFlags.SED_L_MOVE | ShapeContant.LinkFlags.SED_L_CHANGE
     );
 
     // Set link flags for each hooked object.
     for (hookIndex = 0; hookIndex < this.hooks.length; hookIndex++) {
       T3Gv.optManager.SetLinkFlag(
         this.hooks[hookIndex].objid,
-        ConstantData.LinkFlags.SED_L_MOVE | ConstantData.LinkFlags.SED_L_CHANGE
+        ShapeContant.LinkFlags.SED_L_MOVE | ShapeContant.LinkFlags.SED_L_CHANGE
       );
     }
 

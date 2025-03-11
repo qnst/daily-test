@@ -5,9 +5,8 @@ import Utils1 from '../Helper/Utils1';
 import Utils2 from "../Helper/Utils2";
 import T3Gv from '../Data/T3Gv'
 import FileParser from '../Data/FileParser'
-import ListManager from '../Data/ListManager';
 import WResult from '../Model/WResult'
-import SDF from '../Data/SDF'
+import ShapeDataUtil from '../Data/ShapeDataUtil'
 import $ from 'jquery'
 import Effects from '../Basic/B.Element.Effects'
 import Instance from '../Data/Instance/Instance'
@@ -203,7 +202,7 @@ class GroupSymbol extends BaseSymbol {
       if (shapeElement != null) {
         // If text editing is allowed, call the base ChangeTextAttributes function
         if (this.AllowTextEdit()) {
-          ListManager.BaseSymbol.prototype.ChangeTextAttributes.call(
+          Instance.Shape.BaseSymbol.prototype.ChangeTextAttributes.call(
             this,
             textContent,
             styleOptions,
@@ -569,7 +568,7 @@ class GroupSymbol extends BaseSymbol {
     }
 
     // Add the rotate knob if rotation is enabled
-    const disableRotation = this.NoRotate() || this.NoGrow() || T3Gv.optManager.bTouchInitiated || knobProps.locked;
+    const disableRotation = this.NoRotate() || this.NoGrow() || T3Gv.optManager.touchInitiated || knobProps.locked;
     const isNarrow = frame.width < 44;
     let hasConnectorHook = this.hooks.length > 0;
     if (hasConnectorHook) {
@@ -582,7 +581,7 @@ class GroupSymbol extends BaseSymbol {
     if (!disableRotation && !isNarrow && !hasConnectorHook) {
       const isTextGrowHorizontal = this.TextGrow === ConstantData.TextGrowBehavior.HORIZONTAL &&
         (this.flags & ConstantData.ObjFlags.SEDO_TextOnly) &&
-        SDF.TextAlignToWin(this.TextAlign).just === ConstantData2.TextJust.TA_LEFT;
+        ShapeDataUtil.TextAlignToWin(this.TextAlign).just === ConstantData2.TextJust.TA_LEFT;
       knobProps.shapeType = ConstantData.CreateShapeType.OVAL;
       knobProps.x = isTextGrowHorizontal ? frameWidth + adjustedSmallKnobSize : frameWidth - 3 * adjustedSmallKnobSize;
       knobProps.y = frameHeight / 2 - adjustedSmallKnobSize / 2;
@@ -667,7 +666,7 @@ class GroupSymbol extends BaseSymbol {
       T3Gv.docUtil.svgDoc.GetWorkArea();
       result.docDpi = T3Gv.docUtil.svgDoc.docInfo.docDpi;
 
-      const buffer = SDF.WriteBuffer(result, true, true, true);
+      const buffer = ShapeDataUtil.WriteBuffer(result, true, true, true);
       if (shouldReturnBuffer === true) {
         console.log('S.GroupSymbol - ConvertToNative output:', buffer);
         return buffer;
@@ -708,10 +707,10 @@ class GroupSymbol extends BaseSymbol {
 
     nativeStorageResult.RichGradients = T3Gv.optManager.RichGradients;
 
-    SDF.WriteTextParams(writer, this, dataId, writeOptions);
+    ShapeDataUtil.WriteTextParams(writer, this, dataId, writeOptions);
 
     if (writeOptions.WriteBlocks) {
-      SDF.WriteNativeID(writer, this.NativeID, writeOptions);
+      ShapeDataUtil.WriteNativeID(writer, this.NativeID, writeOptions);
     } else if (this.NativeID && (numShapes = this.ShapesInGroup.length)) {
       for (let i = 0; i < numShapes; i++) {
         const shapeId = this.ShapesInGroup[i];
@@ -739,10 +738,10 @@ class GroupSymbol extends BaseSymbol {
       T3Gv.docUtil.svgDoc.GetWorkArea();
       nativeStorageResult.docDpi = T3Gv.docUtil.svgDoc.docInfo.docDpi;
 
-      buffer = SDF.WriteBuffer(nativeStorageResult, true, true, true);
-      codeLength = SDF.Write_CODE(writer, ConstantData2.SDROpCodesByName.SDF_C_NATIVESTORAGE);
+      buffer = ShapeDataUtil.WriteBuffer(nativeStorageResult, true, true, true);
+      codeLength = ShapeDataUtil.Write_CODE(writer, ConstantData2.SDROpCodesByName.SDF_C_NATIVESTORAGE);
       FileParser.write_nativebuffer(writer, buffer);
-      SDF.Write_LENGTH(writer, codeLength);
+      ShapeDataUtil.Write_LENGTH(writer, codeLength);
     }
 
     console.log("S.GroupSymbol - WriteSDFAttributes output executed");
@@ -762,8 +761,6 @@ class GroupSymbol extends BaseSymbol {
         }
       }
     }
-    // ListManager.BaseDrawingObject.prototype.DeleteObject.call(this)
-    // Double === TODO
     this.BaseDrawingObject_DeleteObject();
     console.log("S.GroupSymbol - DeleteObject output: deleted");
   }
@@ -872,9 +869,9 @@ class GroupSymbol extends BaseSymbol {
 
       if (shouldRemove) {
         if (this.fieldDataElemID < 0) {
-          ListManager.SDData.DeleteFieldedDataTable(this.fieldDataTableID);
+          TODO.SDData.DeleteFieldedDataTable(this.fieldDataTableID);
         } else {
-          ListManager.SDData.FieldedDataDelRecord(this.fieldDataTableID, this.fieldDataElemID);
+          TODO.SDData.FieldedDataDelRecord(this.fieldDataTableID, this.fieldDataElemID);
         }
       }
 
@@ -918,7 +915,7 @@ class GroupSymbol extends BaseSymbol {
       needsRefresh = true;
     }
 
-    if (ListManager.SDData.FieldedDataHasRulesForRecord(this.fieldDataTableID, this.fieldDataElemID)) {
+    if (TODO.SDData.FieldedDataHasRulesForRecord(this.fieldDataTableID, this.fieldDataElemID)) {
       T3Gv.optManager.AddToDirtyList(this.BlockID);
       needsRefresh = true;
     }
@@ -985,7 +982,7 @@ class GroupSymbol extends BaseSymbol {
 
   RemoveFieldData(fieldKey, fieldValue) {
     console.log("S.GroupSymbol - RemoveFieldData input:", { fieldKey, fieldValue });
-    ListManager.BaseSymbol.prototype.RemoveFieldData.call(this, fieldKey, fieldValue);
+    Instance.Shape.BaseSymbol.prototype.RemoveFieldData.call(this, fieldKey, fieldValue);
     const shapesList = this.ShapesInGroup;
     const totalShapes = shapesList.length;
     for (let i = 0; i < totalShapes; i++) {
@@ -1003,7 +1000,7 @@ class GroupSymbol extends BaseSymbol {
     const shapesInGroup = this.ShapesInGroup;
     const totalShapes = shapesInGroup.length;
 
-    if (ListManager.BaseSymbol.prototype.HasFieldDataInText.call(this, fieldData)) {
+    if (Instance.Shape.BaseSymbol.prototype.HasFieldDataInText.call(this, fieldData)) {
       console.log("S.GroupSymbol - HasFieldDataInText output:", true);
       return true;
     }
@@ -1026,7 +1023,7 @@ class GroupSymbol extends BaseSymbol {
     const shapesInGroup = this.ShapesInGroup;
     const shapesCount = shapesInGroup.length;
 
-    if (ListManager.BaseSymbol.prototype.HasFieldDataRules.call(this, criteria)) {
+    if (Instance.Shape.BaseSymbol.prototype.HasFieldDataRules.call(this, criteria)) {
       console.log("S.GroupSymbol - HasFieldDataRules output:", true);
       return true;
     }
@@ -1049,7 +1046,7 @@ class GroupSymbol extends BaseSymbol {
     const totalShapes = groupShapes.length;
 
     // Check in base symbol first
-    if (ListManager.BaseSymbol.prototype.HasFieldDataForTable.call(this, tableId)) {
+    if (Instance.Shape.BaseSymbol.prototype.HasFieldDataForTable.call(this, tableId)) {
       console.log("S.GroupSymbol - HasFieldDataForTable output:", true);
       return true;
     }
@@ -1072,7 +1069,7 @@ class GroupSymbol extends BaseSymbol {
     const shapesInGroup = this.ShapesInGroup;
     const totalShapes = shapesInGroup.length;
 
-    if (ListManager.BaseSymbol.prototype.HasFieldDataRecord.call(this, fieldKey, fieldValue, recordId)) {
+    if (Instance.Shape.BaseSymbol.prototype.HasFieldDataRecord.call(this, fieldKey, fieldValue, recordId)) {
       console.log("S.GroupSymbol - HasFieldDataRecord output:", true);
       return true;
     }
@@ -1096,7 +1093,7 @@ class GroupSymbol extends BaseSymbol {
 
     let needsRefresh = false;
 
-    if (ListManager.BaseSymbol.prototype.RefreshFromFieldData.call(this, fieldData)) {
+    if (Instance.Shape.BaseSymbol.prototype.RefreshFromFieldData.call(this, fieldData)) {
       needsRefresh = true;
     }
 
@@ -1118,7 +1115,7 @@ class GroupSymbol extends BaseSymbol {
   RemapDataFields(fieldData) {
     console.log("S.GroupSymbol - remapDataFields input:", fieldData);
 
-    ListManager.BaseSymbol.prototype.RemapDataFields.call(this, fieldData);
+    Instance.Shape.BaseSymbol.prototype.RemapDataFields.call(this, fieldData);
     const shapesGroup = this.ShapesInGroup;
     for (let index = 0; index < shapesGroup.length; index++) {
       const shapeObject = T3Gv.optManager.GetObjectPtr(shapesGroup[index], false);

@@ -153,7 +153,7 @@ class BaseSymbol extends BaseShape {
     knobGroup.AddElement(knobElement);
 
     // Conditionally create the rotate knob if allowed
-    if (!T3Gv.optManager.bTouchInitiated && !knobConfig.locked && !this.NoGrow()) {
+    if (!T3Gv.optManager.touchInitiated && !knobConfig.locked && !this.NoGrow()) {
       knobConfig.shapeType = ConstantData.CreateShapeType.OVAL;
       knobConfig.x = frameWidth - 3 * scaleRotatedKnobSize;
       knobConfig.y = frameHeight / 2 - scaleRotatedKnobSize / 2;
@@ -219,7 +219,7 @@ class BaseSymbol extends BaseShape {
     if (this.DataID !== -1) {
       if (this.TextFlags & ConstantData.TextFlags.SED_TF_AttachA ||
         this.TextFlags & ConstantData.TextFlags.SED_TF_AttachB) {
-        T3Gv.optManager.theActionSVGObject.textElem.SetVisible(false);
+        T3Gv.optManager.actionSvgObject.textElem.SetVisible(false);
       }
     }
 
@@ -239,7 +239,7 @@ class BaseSymbol extends BaseShape {
         (this.TextFlags & ConstantData.TextFlags.SED_TF_AttachA) ||
         (this.TextFlags & ConstantData.TextFlags.SED_TF_AttachB)
       ) {
-        T3Gv.optManager.theActionSVGObject.textElem.SetVisible(true);
+        T3Gv.optManager.actionSvgObject.textElem.SetVisible(true);
       }
     }
 

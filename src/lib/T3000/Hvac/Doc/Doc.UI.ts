@@ -517,7 +517,7 @@ class UI {
         // ListManager.LM.prototype.RubberBandSelectMoveCommon
 
         // // Double ===
-        // if(T3Gv.optManager.theRubberBand===null){
+        // if(T3Gv.optManager.rubberBand===null){
         //   return;
         // }
 
@@ -577,7 +577,7 @@ class UI {
         // ListManager.LM.prototype.RubberBandSelectMoveCommon
 
         // // Double ===
-        // if(T3Gv.optManager.theRubberBand===null){
+        // if(T3Gv.optManager.rubberBand===null){
         //   return;
         // }
 
@@ -653,7 +653,7 @@ class UI {
         // SDUI.ShapeController.ts => StampOrDragDropNewShape
         // T3Gv.optManager.PreDragDropOrStamp()
         // this.StampOrDragDropCallback
-        // T3Gv.optManager.StampTimeout = window.setTimeout(i, 200, r, a)
+        // T3Gv.optManager.stampTimeout = window.setTimeout(i, 200, r, a)
 
         // ==>  T3Gv.optManager.DragDropNewShape(o, !0, !0, !0, null, null)
         // ==>  T3Gv.optManager.MouseStampNewShape(o, !0, !0, !0, null, null)
@@ -665,9 +665,9 @@ class UI {
 
         /*
         Collab.BeginSecondaryEdit();
-        this.MouseAddNewShape(this.bUseDefaultStyle);
+        this.MouseAddNewShape(this.useDefaultStyle);
         => ListManager.LM.prototype.MouseAddNewShape
-        this.NewObjectVisible = true;
+        this.newObjectVisible = true;
       }
 
       if (this.AutoScrollCommon(e, true, 'HandleStampDragDoAutoScroll')) {

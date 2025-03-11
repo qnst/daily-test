@@ -4,7 +4,6 @@ import Utils3 from "../Helper/Utils3";
 import T3Gv from '../Data/T3Gv'
 import FileParser from '../Data/FileParser'
 import EvtUtil from "../Event/EvtUtil";
-import Resources from '../Data/Resources'
 import Element from "../Basic/B.Element";
 import QuickStyle from "../Model/QuickStyle"
 import Rectangle from "../Model/Rectangle"
@@ -34,22 +33,22 @@ class Graph {
       this.quadrant = 0,
       this.barAreaAmount = 0,
       this.barAreaAmountStacked = 0,
-      txList = new TextureList(),// new Resources.SDTextureList,
+      txList = new TextureList(),
       this.imageValueRep = 0,
       this.perspectiveView3D = - 1,
       this.effectLightDirection3D = - 1,
-      this.style = new QuickStyle(),// new Resources.QuickStyle,
-      this.areaStyle = new QuickStyle(),//new Resources.QuickStyle,
-      this.gridStyle = new QuickStyle(),//new Resources.QuickStyle,
+      this.style = new QuickStyle(),
+      this.areaStyle = new QuickStyle(),
+      this.gridStyle = new QuickStyle(),
       this.axes = [],
-      this.graphtitle = new ListManager.Graph.Axis.Title,
-      this.graphlegendTitle = new ListManager.Graph.Axis.Title,
+      this.graphtitle = new TODO.Graph.Axis.Title,
+      this.graphlegendTitle = new TODO.Graph.Axis.Title,
       this.graphLegendType = 0,
       this.graphLegend = [],
       this.gpoint = []
   }
 
-  ListManager.Graph.Axis = function () {
+  TODO.Graph.Axis = function () {
     this.orientation = 0,
       this.selected = !1,
       this.flags = 0,
@@ -70,12 +69,12 @@ class Graph {
       this.minorscale = 0,
       this.tickstyles = 0,
       this.labelformat = 0,
-      this.style = new QuickStyle(),// new Resources.QuickStyle,
-      this.title = new ListManager.Graph.Axis.Title,
+      this.style = new QuickStyle(),
+      this.title = new TODO.Graph.Axis.Title,
       this.footprint3d = [],
       this.labels = []
   },
-  ListManager.Graph.Point = function () {
+  TODO.Graph.Point = function () {
     this.uniqueid = - 1,
       this.seriesid = - 1,
       this.categoryid = - 1,
@@ -95,7 +94,7 @@ class Graph {
       },
       this.selected = !1,
       this.flags = 0,
-      this.style = new QuickStyle(),// new Resources.QuickStyle,
+      this.style = new QuickStyle(),
       this.imagescale = 0,
       this.imagestackfactor = 0,
       this.imagerect = new Rectangle(0, 0, 0, 0),
@@ -104,9 +103,9 @@ class Graph {
       this.imagerectTop = new Rectangle(0, 0, 0, 0),
       this.imagePaintBounds = new Rectangle(0, 0, 0, 0),
       this.footprint3d = [],
-      this.label = new ListManager.Graph.Axis.Label
+      this.label = new TODO.Graph.Axis.Label
   },
-  ListManager.Graph.LegendEntry = function () {
+  TODO.Graph.LegendEntry = function () {
     this.seriesid = - 1,
       this.selected = !1,
       this.flags = 0,
@@ -115,12 +114,12 @@ class Graph {
       this.imgIndx = - 1,
       this.textFrame = new Rectangle(0, 0, 0, 0),
       this.swatchFrame = new Rectangle(0, 0, 0, 0),
-      this.style = new QuickStyle(),// new Resources.QuickStyle,
-      this.labelStyle = new QuickStyle(),//new Resources.QuickStyle,
+      this.style = new QuickStyle(),
+      this.labelStyle = new QuickStyle(),
       this.imageFill = {},
       this.valuePerImage = 0
   },
-  ListManager.Graph.Category = function () {
+  TODO.Graph.Category = function () {
     this.categoryid = - 1,
       this.cSeries = 0,
       this.cumValue = 0,
@@ -130,7 +129,7 @@ class Graph {
       this.maxArea3D = new Rectangle(0, 0, 0, 0),
       this.selectHotspot = new Rectangle(0, 0, 0, 0)
   },
-  ListManager.Graph.Axis.Label = function () {
+  TODO.Graph.Axis.Label = function () {
     this.categoryid = - 1,
       this.selected = !1,
       this.lflags = 0,
@@ -144,9 +143,9 @@ class Graph {
       this.DataID = - 1,
       this.just = 0,
       this.vjust = 0,
-      this.style = new QuickStyle(),// new Resources.QuickStyle
+      this.style = new QuickStyle(),
   },
-  ListManager.Graph.Axis.Title = function () {
+  TODO.Graph.Axis.Title = function () {
     this.DataID = - 1,
       this.disp = {
         x: 0,
@@ -163,9 +162,9 @@ class Graph {
         x: 0,
         y: 0
       },
-      this.style = new QuickStyle(),// new Resources.QuickStyle
+      this.style = new QuickStyle(),
   },
-  ListManager.Graph.Defines = {
+  TODO.Graph.Defines = {
     SDAX_HORIZ: 0,
     SDAX_VERT: 1,
     SDAX_CATEGORY_AXIS: 1,
@@ -235,26 +234,26 @@ class Graph {
     SDAX_GALLERY_DEFAULT_EXPLODE_AMT: 20,
     SDAX_DefThick: 1
   },
-  Object.freeze(ListManager.Graph.Defines),
-  ListManager.Graph.Static = {
+  Object.freeze(TODO.Graph.Defines),
+  TODO.Graph.Static = {
     LastGraphType: - 1,
     LastGraphSubType: - 1
   },
-  ListManager.Graph.StylePrefix = {
+  TODO.Graph.StylePrefix = {
     SDGRAPH_STYLE_PREFIX_BAR: 'Bar',
     SDGRAPH_STYLE_PREFIX_PIEWEDGE: 'Pie',
     SDGRAPH_STYLE_PREFIX_LINE: 'Line',
     SDGRAPH_STYLE_PREFIX_AREA: 'Area'
   },
-  Object.freeze(ListManager.Graph.StylePrefix),
-  ListManager.Graph.SelectionType = {
+  Object.freeze(TODO.Graph.StylePrefix),
+  TODO.Graph.SelectionType = {
     SDAX_SELECT_NONE: 0,
     SDAX_SELECT_POINT: 1,
     SDAX_SELECT_SERIES: 2,
     SDAX_SELECT_CATEGORY: 3
   },
-  Object.freeze(ListManager.Graph.SelectionType),
-  ListManager.Graph.MovementDirection = {
+  Object.freeze(TODO.Graph.SelectionType),
+  TODO.Graph.MovementDirection = {
     SDAX_LEFT: 1,
     SDAX_RIGHT: 2,
     SDAX_UP: 3,
@@ -262,8 +261,8 @@ class Graph {
     SDAX_TOP: 5,
     SDAX_BOTTOM: 6
   },
-  Object.freeze(ListManager.Graph.SelectionType),
-  ListManager.Graph.TimeGranularity = {
+  Object.freeze(TODO.Graph.SelectionType),
+  TODO.Graph.TimeGranularity = {
     SDAX_MILLENIUM: 11,
     SDAX_CENTURY: 10,
     SDAX_DECADE: 9,
@@ -276,8 +275,8 @@ class Graph {
     SDAX_MINUTE: 2,
     SDAX_SECOND: 1
   },
-  Object.freeze(ListManager.Graph.TimeGranularity),
-  ListManager.Graph.ImageRepresentation = {
+  Object.freeze(TODO.Graph.TimeGranularity),
+  TODO.Graph.ImageRepresentation = {
     SDAX_IMAGEVALUEREP_NONE: 0,
     SDAX_IMAGEVALUEREP_STACK: 1,
     SDAX_IMAGEVALUEREP_STACK_NOSCALE: 2,
@@ -285,21 +284,21 @@ class Graph {
     SDAX_IMAGEVALUEREP_STRETCH: 4,
     SDAX_IMAGEVALUEREP_SPAN: 5
   },
-  Object.freeze(ListManager.Graph.ImageRepresentation),
-  ListManager.Graph.LegendType = {
+  Object.freeze(TODO.Graph.ImageRepresentation),
+  TODO.Graph.LegendType = {
     SDAX_LEGEND_FULL: 0,
     SDAX_LEGEND_NONE: 1,
     SDAX_LEGEND_NAMES: 2,
     SDAX_LEGEND_SWATCHES: 3
   },
-  Object.freeze(ListManager.Graph.LegendType),
-  ListManager.Graph.ScaleValue = {
+  Object.freeze(TODO.Graph.LegendType),
+  TODO.Graph.ScaleValue = {
     SDAX_SCALE_AUTO: - 2,
     SDAX_SCALE_RECC: - 3,
     SDAX_SCALE_CUSTOM: - 4
   },
-  Object.freeze(ListManager.Graph.ScaleValue),
-  ListManager.Graph.GraphType = {
+  Object.freeze(TODO.Graph.ScaleValue),
+  TODO.Graph.GraphType = {
     SDGRAPH_TYPE_UNSET: - 1,
     SDGRAPH_TYPE_BAR: 0,
     SDGRAPH_TYPE_STACKEDBAR: 1,
@@ -308,15 +307,15 @@ class Graph {
     SDGRAPH_TYPE_LINEARPIE: 4,
     SDGRAPH_TYPE_STACKEDLINE: 5
   },
-  Object.freeze(ListManager.Graph.GraphType),
-  ListManager.Graph.GraphSubType = {
+  Object.freeze(TODO.Graph.GraphType),
+  TODO.Graph.GraphSubType = {
     SDGRAPH_SUBTYPE_UNSET: - 1,
     SDGRAPH_SUBTYPE_NONE: 0,
     SDGRAPH_SUBTYPE_HISTOGRAM: 1,
     SDGRAPH_SUBTYPE_AREA: 2
   },
-  Object.freeze(ListManager.Graph.GraphSubType),
-  ListManager.Graph.AxisFlags = {
+  Object.freeze(TODO.Graph.GraphSubType),
+  TODO.Graph.AxisFlags = {
     SDAX_START_AT_LOWER_BOUND: 1,
     SDAX_HIDE_MAJOR_TICKS: 2,
     SDAX_HIDE_MINOR_TICKS: 4,
@@ -329,8 +328,8 @@ class Graph {
     SDAX_SHOW_GRID_LINE_MINOR: 512,
     SDAX_SHOW_SUMMARY_LABELS: 1024
   },
-  Object.freeze(ListManager.Graph.AxisFlags),
-  ListManager.Graph.AxisSummaryLabelFlags = {
+  Object.freeze(TODO.Graph.AxisFlags),
+  TODO.Graph.AxisSummaryLabelFlags = {
     SDAX_SUMMARIZE_FORMATTING_MASK: 47,
     SDAX_FORMAT_MONTHNAMES: 1,
     SDAX_FORMAT_MONTHNAMES_ABBREV: 2,
@@ -351,13 +350,13 @@ class Graph {
     SDAX_SUMMARIZE_BY_CENTURY: 32768,
     SDAX_SUMMARIZE_BY_MILLENIUM: 65536
   },
-  Object.freeze(ListManager.Graph.AxisSummaryLabelFlags),
-  ListManager.Graph.AxisTickStyles = {
+  Object.freeze(TODO.Graph.AxisSummaryLabelFlags),
+  TODO.Graph.AxisTickStyles = {
     SDAX_TICK_ABOVE: 0,
     SDAX_TICK_BELOW: 1
   },
-  Object.freeze(ListManager.Graph.AxisTickStyles),
-  ListManager.Graph.Flags = {
+  Object.freeze(TODO.Graph.AxisTickStyles),
+  TODO.Graph.Flags = {
     SDAX_SEQUENCE_BY_POINTS: 1,
     SDAX_SEQUENCE_BY_SERIES: 2,
     SDAX_SEQUENCE_BY_CATEGORY: 4,
@@ -373,8 +372,8 @@ class Graph {
     SDAX_AREABG_IMAGEFILL: 16384,
     SDAX_SHOW_STACKED_SCALE: 32768
   },
-  Object.freeze(ListManager.Graph.Flags),
-  ListManager.Graph.PointFlags = {
+  Object.freeze(TODO.Graph.Flags),
+  TODO.Graph.PointFlags = {
     SDAX_VALUELABELS: 1,
     SDAX_VALUELABELS_ANGLED: 2,
     SDAX_VALUELABELS_SERIES_NAME: 4,
@@ -389,23 +388,23 @@ class Graph {
     SDAX_DIAGONAL: 2048,
     SDAX_RAGGED_EDGES: 4096
   },
-  Object.freeze(ListManager.Graph.PointFlags),
-  ListManager.Graph.LayoutFlags = {
+  Object.freeze(TODO.Graph.PointFlags),
+  TODO.Graph.LayoutFlags = {
     SDAX_LAYOUT_AFFECTING_HORIZ: 1,
     SDAX_LAYOUT_AFFECTING_VERT: 2,
     SDAX_LAYOUT_ALTERNATE: 4
   },
-  Object.freeze(ListManager.Graph.LayoutFlags),
-  ListManager.Graph.PointFlagOverrides = {
+  Object.freeze(TODO.Graph.LayoutFlags),
+  TODO.Graph.PointFlagOverrides = {
     SDAX_POINT_SELECTED: 1,
     SDAX_POINT_FORCE_EXTERNALLEADER: 2
   },
-  Object.freeze(ListManager.Graph.PointFlagOverrides),
-  ListManager.Graph.LegendEntryFlags = {
+  Object.freeze(TODO.Graph.PointFlagOverrides),
+  TODO.Graph.LegendEntryFlags = {
     SDAX_TREND_LINE: 1
   },
-  Object.freeze(ListManager.Graph.LegendEntryFlags),
-  ListManager.Graph.HitCodes = {
+  Object.freeze(TODO.Graph.LegendEntryFlags),
+  TODO.Graph.HitCodes = {
     SDG_VALUE_HOTSPOT: 1,
     SDG_TEXT: 2,
     SDG_POINT: 3,
@@ -419,35 +418,35 @@ class Graph {
     SDG_INSIDEGJ: 11,
     SDG_INSIDEGN: 12
   },
-  Object.freeze(ListManager.Graph.HitCodes),
-  ListManager.Graph.AxesStyles = {
+  Object.freeze(TODO.Graph.HitCodes),
+  TODO.Graph.AxesStyles = {
     SDGRAPH_AXES_BOTH: 0,
     SDGRAPH_AXES_HORIZ_ONLY: 1,
     SDGRAPH_AXES_VERT_ONLY: 2,
     SDGRAPH_AXES_NONE: 3
   },
-  Object.freeze(ListManager.Graph.AxesStyles),
-  ListManager.Graph.GridStyles = {
+  Object.freeze(TODO.Graph.AxesStyles),
+  TODO.Graph.GridStyles = {
     SDGRAPH_GRID_BOTH: 0,
     SDGRAPH_GRID_MINOR_ONLY: 1,
     SDGRAPH_GRID_MAJOR_ONLY: 2,
     SDGRAPH_GRID_NONE: 3
   },
-  Object.freeze(ListManager.Graph.GridStyles),
-  ListManager.Graph.DrawTypes = {
+  Object.freeze(TODO.Graph.GridStyles),
+  TODO.Graph.DrawTypes = {
     SD_GRAPH_DRAWTYPE_TEXT: 0,
     SD_GRAPH_DRAWTYPE_LINES: 1,
     SD_GRAPH_DRAWTYPE_ALL: 2
   },
-  Object.freeze(ListManager.Graph.DrawTypes),
-  ListManager.Graph.BarStyleVariations3d = {
+  Object.freeze(TODO.Graph.DrawTypes),
+  TODO.Graph.BarStyleVariations3d = {
     SDGRAPH_3D_SHAPE_TYPE_RECT: 0,
     SDGRAPH_3D_SHAPE_TYPE_ROUNDEDRECT: 1,
     SDGRAPH_3D_SHAPE_TYPE_CYLINDER: 2,
     SDGRAPH_3D_SHAPE_TYPE_CONE: 3
   },
-  Object.freeze(ListManager.Graph.BarStyleVariations3d),
-  ListManager.Graph.StyleBuilderInfo = {
+  Object.freeze(TODO.Graph.BarStyleVariations3d),
+  TODO.Graph.StyleBuilderInfo = {
     SDTD_GRAPHSTYLE: 'chartStyle',
     SDTD_GRAPHSTYLENAME: 'name',
     SDTD_GRAPHSTYLETYPE: 'type',
@@ -465,8 +464,8 @@ class Graph {
     SDTD_GRAPHSTYLEDIAGONAL: 'diagonalEdge',
     SDTD_GRAPHSTYLERAGGED: 'raggedEdge'
   },
-  Object.freeze(ListManager.Graph.StyleBuilderInfo),
-  ListManager.Graph.ValueLabelOptions = {
+  Object.freeze(TODO.Graph.StyleBuilderInfo),
+  TODO.Graph.ValueLabelOptions = {
     SDTD_GRAPHSTYLE_VALUELABELS: 'valueLabels',
     SDTD_GRAPHSTYLE_VALUELABELS_ANGLED: 'valueLabelAngled',
     SDTD_GRAPHSTYLE_VALUELABELS_SHOWVALUE: 'valueLabelShowValue',
@@ -474,8 +473,8 @@ class Graph {
     SDTD_GRAPHSTYLE_VALUELABELS_SHOWPERCENT: 'valueLabelShowPercent',
     SDTD_GRAPHSTYLE_VALUELABELS_STYLE: 'valueLabelStyle'
   },
-  Object.freeze(ListManager.Graph.ValueLabelOptions),
-  ListManager.Graph.AxisLabelOptions = {
+  Object.freeze(TODO.Graph.ValueLabelOptions),
+  TODO.Graph.AxisLabelOptions = {
     SDTD_GRAPHSTYLE_HAXIS: 'horizontalAxis',
     SDTD_GRAPHSTYLE_VAXIS: 'verticalAxis',
     SDTD_GRAPHSTYLE_AXIS_LINE: 'line',
@@ -486,8 +485,8 @@ class Graph {
     SDTD_GRAPHSTYLE_AXIS_MAJOR_GRID: 'majorGridLine',
     SDTD_GRAPHSTYLE_AXIS_MINOR_GRID: 'minorGridLine'
   },
-  Object.freeze(ListManager.Graph.AxisLabelOptions),
-  ListManager.Graph.GraphDefaultColors = [
+  Object.freeze(TODO.Graph.AxisLabelOptions),
+  TODO.Graph.GraphDefaultColors = [
     '#3C459F',
     '#6DBB5B',
     '#1096EE',
@@ -504,8 +503,8 @@ class Graph {
     '#CC6E87',
     '#6ECCB3'
   ],
-  Object.freeze(ListManager.Graph.GraphDefaultColors),
-  ListManager.Graph.GraphStyles = {
+  Object.freeze(TODO.Graph.GraphDefaultColors),
+  TODO.Graph.GraphStyles = {
     Default: {
       graphType: 0,
       graphSubType: 0,
@@ -526,347 +525,347 @@ class Graph {
     },
     Bar: {
       Default: {
-        graphType: ListManager.Graph.GraphType.SDGRAPH_TYPE_BAR,
-        graphSubType: ListManager.Graph.GraphSubType.SDGRAPH_SUBTYPE_NONE,
-        legend: ListManager.Graph.LegendType.SDAX_LEGEND_FULL,
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS
+        graphType: TODO.Graph.GraphType.SDGRAPH_TYPE_BAR,
+        graphSubType: TODO.Graph.GraphSubType.SDGRAPH_SUBTYPE_NONE,
+        legend: TODO.Graph.LegendType.SDAX_LEGEND_FULL,
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS
       },
       1: {
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_TITLE | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_TITLE | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_TITLE | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_TITLE | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS
       },
       2: {
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
       },
       3: {
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_TITLE | ListManager.Graph.AxisFlags.SDAX_HIDE_LABELS | ListManager.Graph.AxisFlags.SDAX_HIDE_AXIS_LINE | ListManager.Graph.AxisFlags.SDAX_HIDE_MAJOR_TICKS | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_MAJOR_TICKS | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | ListManager.Graph.AxisFlags.SDAX_HIDE_TITLE | ListManager.Graph.AxisFlags.SDAX_HIDE_LABELS
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_TITLE | TODO.Graph.AxisFlags.SDAX_HIDE_LABELS | TODO.Graph.AxisFlags.SDAX_HIDE_AXIS_LINE | TODO.Graph.AxisFlags.SDAX_HIDE_MAJOR_TICKS | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_MAJOR_TICKS | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | TODO.Graph.AxisFlags.SDAX_HIDE_TITLE | TODO.Graph.AxisFlags.SDAX_HIDE_LABELS
       },
       4: {
-        pointFlags: ListManager.Graph.PointFlags.SDAX_VALUELABELS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL_LEADERS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_ANGLED,
+        pointFlags: TODO.Graph.PointFlags.SDAX_VALUELABELS | TODO.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL_LEADERS | TODO.Graph.PointFlags.SDAX_VALUELABELS_ANGLED,
         valueLabelStyleName: 'Style15',
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
       },
       5: {
-        pointFlags: ListManager.Graph.PointFlags.SDAX_VALUELABELS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL,
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
+        pointFlags: TODO.Graph.PointFlags.SDAX_VALUELABELS | TODO.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL,
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
       },
       6: {
-        pointFlags: ListManager.Graph.PointFlags.SDAX_VALUELABELS,
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
+        pointFlags: TODO.Graph.PointFlags.SDAX_VALUELABELS,
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
       },
       7: {
         quadrant: 1,
-        pointFlags: ListManager.Graph.PointFlags.SDAX_VALUELABELS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL_LEADERS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_ANGLED,
+        pointFlags: TODO.Graph.PointFlags.SDAX_VALUELABELS | TODO.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL_LEADERS | TODO.Graph.PointFlags.SDAX_VALUELABELS_ANGLED,
         valueLabelStyleName: 'Style15',
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
       },
       8: {
         quadrant: 1,
-        pointFlags: ListManager.Graph.PointFlags.SDAX_VALUELABELS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL,
+        pointFlags: TODO.Graph.PointFlags.SDAX_VALUELABELS | TODO.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL,
         valueLabelStyleName: 'Style15',
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
       },
       9: {
         quadrant: 1,
-        pointFlags: ListManager.Graph.PointFlags.SDAX_VALUELABELS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL_LEADERS,
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
+        pointFlags: TODO.Graph.PointFlags.SDAX_VALUELABELS | TODO.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL_LEADERS,
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
       }
     },
     Pie: {
       Default: {
-        graphType: ListManager.Graph.GraphType.SDGRAPH_TYPE_PIE,
-        graphSubType: ListManager.Graph.GraphSubType.SDGRAPH_SUBTYPE_NONE,
-        legend: ListManager.Graph.LegendType.SDAX_LEGEND_NONE,
+        graphType: TODO.Graph.GraphType.SDGRAPH_TYPE_PIE,
+        graphSubType: TODO.Graph.GraphSubType.SDGRAPH_SUBTYPE_NONE,
+        legend: TODO.Graph.LegendType.SDAX_LEGEND_NONE,
         simplifySample: 1,
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_TITLE | ListManager.Graph.AxisFlags.SDAX_HIDE_LABELS | ListManager.Graph.AxisFlags.SDAX_HIDE_AXIS_LINE | ListManager.Graph.AxisFlags.SDAX_HIDE_MAJOR_TICKS | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_TITLE | ListManager.Graph.AxisFlags.SDAX_HIDE_LABELS | ListManager.Graph.AxisFlags.SDAX_HIDE_AXIS_LINE | ListManager.Graph.AxisFlags.SDAX_HIDE_MAJOR_TICKS | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_TITLE | TODO.Graph.AxisFlags.SDAX_HIDE_LABELS | TODO.Graph.AxisFlags.SDAX_HIDE_AXIS_LINE | TODO.Graph.AxisFlags.SDAX_HIDE_MAJOR_TICKS | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_TITLE | TODO.Graph.AxisFlags.SDAX_HIDE_LABELS | TODO.Graph.AxisFlags.SDAX_HIDE_AXIS_LINE | TODO.Graph.AxisFlags.SDAX_HIDE_MAJOR_TICKS | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS
       },
       1: {
-        pointFlags: ListManager.Graph.PointFlags.SDAX_VALUELABELS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL | ListManager.Graph.PointFlags.SDAX_VALUELABELS_SERIES_NAME | ListManager.Graph.PointFlags.SDAX_VALUELABELS_PERCENT
+        pointFlags: TODO.Graph.PointFlags.SDAX_VALUELABELS | TODO.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL | TODO.Graph.PointFlags.SDAX_VALUELABELS_SERIES_NAME | TODO.Graph.PointFlags.SDAX_VALUELABELS_PERCENT
       },
       2: {
-        legend: ListManager.Graph.LegendType.SDAX_LEGEND_FULL
+        legend: TODO.Graph.LegendType.SDAX_LEGEND_FULL
       },
       3: {
-        legend: ListManager.Graph.LegendType.SDAX_LEGEND_NONE
+        legend: TODO.Graph.LegendType.SDAX_LEGEND_NONE
       },
       4: {
-        legend: ListManager.Graph.LegendType.SDAX_LEGEND_NONE,
-        pointFlags: ListManager.Graph.PointFlags.SDAX_VALUELABELS,
+        legend: TODO.Graph.LegendType.SDAX_LEGEND_NONE,
+        pointFlags: TODO.Graph.PointFlags.SDAX_VALUELABELS,
         explode: 1
       },
       4: {
-        pointFlags: ListManager.Graph.PointFlags.SDAX_VALUELABELS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL | ListManager.Graph.PointFlags.SDAX_VALUELABELS_SERIES_NAME | ListManager.Graph.PointFlags.SDAX_VALUELABELS_PERCENT,
+        pointFlags: TODO.Graph.PointFlags.SDAX_VALUELABELS | TODO.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL | TODO.Graph.PointFlags.SDAX_VALUELABELS_SERIES_NAME | TODO.Graph.PointFlags.SDAX_VALUELABELS_PERCENT,
         explode: 1
       },
       5: {
-        legend: ListManager.Graph.LegendType.SDAX_LEGEND_FULL,
-        pointFlags: ListManager.Graph.PointFlags.SDAX_VALUELABELS,
+        legend: TODO.Graph.LegendType.SDAX_LEGEND_FULL,
+        pointFlags: TODO.Graph.PointFlags.SDAX_VALUELABELS,
         explode: 1
       },
       6: {
-        legend: ListManager.Graph.LegendType.SDAX_LEGEND_FULL,
+        legend: TODO.Graph.LegendType.SDAX_LEGEND_FULL,
         explode: 1
       },
       7: {
-        legend: ListManager.Graph.LegendType.SDAX_LEGEND_NONE,
-        pointFlags: ListManager.Graph.PointFlags.SDAX_VALUELABELS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL_LEADERS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_SERIES_NAME | ListManager.Graph.PointFlags.SDAX_VALUELABELS_PERCENT,
+        legend: TODO.Graph.LegendType.SDAX_LEGEND_NONE,
+        pointFlags: TODO.Graph.PointFlags.SDAX_VALUELABELS | TODO.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL_LEADERS | TODO.Graph.PointFlags.SDAX_VALUELABELS_SERIES_NAME | TODO.Graph.PointFlags.SDAX_VALUELABELS_PERCENT,
         explode: 1
       }
     },
     Line: {
       Default: {
-        graphType: ListManager.Graph.GraphType.SDGRAPH_TYPE_LINE,
-        graphSubType: ListManager.Graph.GraphSubType.SDGRAPH_SUBTYPE_NONE,
-        legend: ListManager.Graph.LegendType.SDAX_LEGEND_FULL,
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_TITLE | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_TITLE | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS
+        graphType: TODO.Graph.GraphType.SDGRAPH_TYPE_LINE,
+        graphSubType: TODO.Graph.GraphSubType.SDGRAPH_SUBTYPE_NONE,
+        legend: TODO.Graph.LegendType.SDAX_LEGEND_FULL,
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_TITLE | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_TITLE | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS
       },
       1: {
       },
       2: {
       },
       3: {
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_TITLE | ListManager.Graph.AxisFlags.SDAX_HIDE_AXIS_LINE | ListManager.Graph.AxisFlags.SDAX_HIDE_LABELS | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_TITLE | ListManager.Graph.AxisFlags.SDAX_HIDE_LABELS | ListManager.Graph.AxisFlags.SDAX_HIDE_MAJOR_TICKS | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_TITLE | TODO.Graph.AxisFlags.SDAX_HIDE_AXIS_LINE | TODO.Graph.AxisFlags.SDAX_HIDE_LABELS | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_TITLE | TODO.Graph.AxisFlags.SDAX_HIDE_LABELS | TODO.Graph.AxisFlags.SDAX_HIDE_MAJOR_TICKS | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS
       },
       4: {
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
       },
       5: {
-        pointFlags: ListManager.Graph.PointFlags.SDAX_VALUELABELS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL_LEADERS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_ANGLED,
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
+        pointFlags: TODO.Graph.PointFlags.SDAX_VALUELABELS | TODO.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL_LEADERS | TODO.Graph.PointFlags.SDAX_VALUELABELS_ANGLED,
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
       },
       6: {
-        pointFlags: ListManager.Graph.PointFlags.SDAX_VALUELABELS,
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
+        pointFlags: TODO.Graph.PointFlags.SDAX_VALUELABELS,
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
       },
       9: {
-        pointFlags: ListManager.Graph.PointFlags.SDAX_VALUELABELS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL,
+        pointFlags: TODO.Graph.PointFlags.SDAX_VALUELABELS | TODO.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL,
         quadrant: 1,
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
       }
     },
     StackedBar: {
       Default: {
-        graphType: ListManager.Graph.GraphType.SDGRAPH_TYPE_STACKEDBAR,
-        graphSubType: ListManager.Graph.GraphSubType.SDGRAPH_SUBTYPE_NONE,
-        legend: ListManager.Graph.LegendType.SDAX_LEGEND_FULL,
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS
+        graphType: TODO.Graph.GraphType.SDGRAPH_TYPE_STACKEDBAR,
+        graphSubType: TODO.Graph.GraphSubType.SDGRAPH_SUBTYPE_NONE,
+        legend: TODO.Graph.LegendType.SDAX_LEGEND_FULL,
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS
       },
       1: {
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_TITLE | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_TITLE | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_TITLE | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_TITLE | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS
       },
       2: {
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
       },
       3: {
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_TITLE | ListManager.Graph.AxisFlags.SDAX_HIDE_LABELS | ListManager.Graph.AxisFlags.SDAX_HIDE_AXIS_LINE | ListManager.Graph.AxisFlags.SDAX_HIDE_MAJOR_TICKS | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_MAJOR_TICKS | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | ListManager.Graph.AxisFlags.SDAX_HIDE_TITLE | ListManager.Graph.AxisFlags.SDAX_HIDE_LABELS
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_TITLE | TODO.Graph.AxisFlags.SDAX_HIDE_LABELS | TODO.Graph.AxisFlags.SDAX_HIDE_AXIS_LINE | TODO.Graph.AxisFlags.SDAX_HIDE_MAJOR_TICKS | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_MAJOR_TICKS | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | TODO.Graph.AxisFlags.SDAX_HIDE_TITLE | TODO.Graph.AxisFlags.SDAX_HIDE_LABELS
       },
       4: {
-        pointFlags: ListManager.Graph.PointFlags.SDAX_VALUELABELS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL_LEADERS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_ANGLED,
+        pointFlags: TODO.Graph.PointFlags.SDAX_VALUELABELS | TODO.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL_LEADERS | TODO.Graph.PointFlags.SDAX_VALUELABELS_ANGLED,
         valueLabelStyleName: 'Style15',
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
       },
       5: {
-        pointFlags: ListManager.Graph.PointFlags.SDAX_VALUELABELS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL,
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
+        pointFlags: TODO.Graph.PointFlags.SDAX_VALUELABELS | TODO.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL,
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
       },
       6: {
-        pointFlags: ListManager.Graph.PointFlags.SDAX_VALUELABELS,
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
+        pointFlags: TODO.Graph.PointFlags.SDAX_VALUELABELS,
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
       },
       7: {
         quadrant: 1,
-        pointFlags: ListManager.Graph.PointFlags.SDAX_VALUELABELS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL_LEADERS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_ANGLED,
+        pointFlags: TODO.Graph.PointFlags.SDAX_VALUELABELS | TODO.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL_LEADERS | TODO.Graph.PointFlags.SDAX_VALUELABELS_ANGLED,
         valueLabelStyleName: 'Style15',
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
       },
       8: {
         quadrant: 1,
-        pointFlags: ListManager.Graph.PointFlags.SDAX_VALUELABELS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL,
+        pointFlags: TODO.Graph.PointFlags.SDAX_VALUELABELS | TODO.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL,
         valueLabelStyleName: 'Style15',
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
       },
       9: {
         quadrant: 1,
-        pointFlags: ListManager.Graph.PointFlags.SDAX_VALUELABELS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL_LEADERS,
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
+        pointFlags: TODO.Graph.PointFlags.SDAX_VALUELABELS | TODO.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL_LEADERS,
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
       }
     },
     StackedLine: {
       Default: {
-        graphType: ListManager.Graph.GraphType.SDGRAPH_TYPE_STACKEDLINE,
-        graphSubType: ListManager.Graph.GraphSubType.SDGRAPH_SUBTYPE_NONE,
-        legend: ListManager.Graph.LegendType.SDAX_LEGEND_FULL,
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_TITLE | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_TITLE | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS
+        graphType: TODO.Graph.GraphType.SDGRAPH_TYPE_STACKEDLINE,
+        graphSubType: TODO.Graph.GraphSubType.SDGRAPH_SUBTYPE_NONE,
+        legend: TODO.Graph.LegendType.SDAX_LEGEND_FULL,
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_TITLE | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_TITLE | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS
       },
       1: {
       },
       2: {
       },
       3: {
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_TITLE | ListManager.Graph.AxisFlags.SDAX_HIDE_AXIS_LINE | ListManager.Graph.AxisFlags.SDAX_HIDE_LABELS | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_TITLE | ListManager.Graph.AxisFlags.SDAX_HIDE_LABELS | ListManager.Graph.AxisFlags.SDAX_HIDE_MAJOR_TICKS | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_TITLE | TODO.Graph.AxisFlags.SDAX_HIDE_AXIS_LINE | TODO.Graph.AxisFlags.SDAX_HIDE_LABELS | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_TITLE | TODO.Graph.AxisFlags.SDAX_HIDE_LABELS | TODO.Graph.AxisFlags.SDAX_HIDE_MAJOR_TICKS | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS
       },
       4: {
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
       },
       5: {
-        pointFlags: ListManager.Graph.PointFlags.SDAX_VALUELABELS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL_LEADERS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_ANGLED,
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
+        pointFlags: TODO.Graph.PointFlags.SDAX_VALUELABELS | TODO.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL_LEADERS | TODO.Graph.PointFlags.SDAX_VALUELABELS_ANGLED,
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
       },
       6: {
-        pointFlags: ListManager.Graph.PointFlags.SDAX_VALUELABELS,
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
+        pointFlags: TODO.Graph.PointFlags.SDAX_VALUELABELS,
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
       },
       9: {
-        pointFlags: ListManager.Graph.PointFlags.SDAX_VALUELABELS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL,
+        pointFlags: TODO.Graph.PointFlags.SDAX_VALUELABELS | TODO.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL,
         quadrant: 1,
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
       }
     },
     LinearPie: {
       Default: {
-        graphType: ListManager.Graph.GraphType.SDGRAPH_TYPE_LINEARPIE,
-        graphSubType: ListManager.Graph.GraphSubType.SDGRAPH_SUBTYPE_NONE,
-        legend: ListManager.Graph.LegendType.SDAX_LEGEND_FULL,
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_TITLE | ListManager.Graph.AxisFlags.SDAX_HIDE_AXIS_LINE | ListManager.Graph.AxisFlags.SDAX_HIDE_LABELS | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_TITLE | ListManager.Graph.AxisFlags.SDAX_HIDE_AXIS_LINE | ListManager.Graph.AxisFlags.SDAX_HIDE_LABELS | ListManager.Graph.AxisFlags.SDAX_HIDE_MAJOR_TICKS | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        graphType: TODO.Graph.GraphType.SDGRAPH_TYPE_LINEARPIE,
+        graphSubType: TODO.Graph.GraphSubType.SDGRAPH_SUBTYPE_NONE,
+        legend: TODO.Graph.LegendType.SDAX_LEGEND_FULL,
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_TITLE | TODO.Graph.AxisFlags.SDAX_HIDE_AXIS_LINE | TODO.Graph.AxisFlags.SDAX_HIDE_LABELS | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_TITLE | TODO.Graph.AxisFlags.SDAX_HIDE_AXIS_LINE | TODO.Graph.AxisFlags.SDAX_HIDE_LABELS | TODO.Graph.AxisFlags.SDAX_HIDE_MAJOR_TICKS | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
         legendAtBottom: 1,
         quadrant: 3
       },
       1: {
-        pointFlags: ListManager.Graph.PointFlags.SDAX_VALUELABELS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL_LEADERS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_SERIES_NAME | ListManager.Graph.PointFlags.SDAX_VALUELABELS_PERCENT,
+        pointFlags: TODO.Graph.PointFlags.SDAX_VALUELABELS | TODO.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL_LEADERS | TODO.Graph.PointFlags.SDAX_VALUELABELS_SERIES_NAME | TODO.Graph.PointFlags.SDAX_VALUELABELS_PERCENT,
         explode: 1
       },
       2: {
-        legend: ListManager.Graph.LegendType.SDAX_LEGEND_NONE,
-        pointFlags: ListManager.Graph.PointFlags.SDAX_VALUELABELS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_SERIES_NAME | ListManager.Graph.PointFlags.SDAX_VALUELABELS_PERCENT,
+        legend: TODO.Graph.LegendType.SDAX_LEGEND_NONE,
+        pointFlags: TODO.Graph.PointFlags.SDAX_VALUELABELS | TODO.Graph.PointFlags.SDAX_VALUELABELS_SERIES_NAME | TODO.Graph.PointFlags.SDAX_VALUELABELS_PERCENT,
         explode: 1
       },
       3: {
-        legend: ListManager.Graph.LegendType.SDAX_LEGEND_NONE,
+        legend: TODO.Graph.LegendType.SDAX_LEGEND_NONE,
         pointFlags: 0,
         explode: 1
       },
       4: {
-        legend: ListManager.Graph.LegendType.SDAX_LEGEND_NONE,
-        pointFlags: ListManager.Graph.PointFlags.SDAX_VALUELABELS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL_LEADERS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_SERIES_NAME | ListManager.Graph.PointFlags.SDAX_VALUELABELS_PERCENT
+        legend: TODO.Graph.LegendType.SDAX_LEGEND_NONE,
+        pointFlags: TODO.Graph.PointFlags.SDAX_VALUELABELS | TODO.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL_LEADERS | TODO.Graph.PointFlags.SDAX_VALUELABELS_SERIES_NAME | TODO.Graph.PointFlags.SDAX_VALUELABELS_PERCENT
       },
       5: {
-        legend: ListManager.Graph.LegendType.SDAX_LEGEND_FULL,
-        pointFlags: ListManager.Graph.PointFlags.SDAX_VALUELABELS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_SERIES_NAME | ListManager.Graph.PointFlags.SDAX_VALUELABELS_PERCENT,
+        legend: TODO.Graph.LegendType.SDAX_LEGEND_FULL,
+        pointFlags: TODO.Graph.PointFlags.SDAX_VALUELABELS | TODO.Graph.PointFlags.SDAX_VALUELABELS_SERIES_NAME | TODO.Graph.PointFlags.SDAX_VALUELABELS_PERCENT,
         explode: 1
       },
       6: {
-        legend: ListManager.Graph.LegendType.SDAX_LEGEND_FULL,
+        legend: TODO.Graph.LegendType.SDAX_LEGEND_FULL,
         pointFlags: 0,
         explode: 1
       }
     },
     Area: {
       Default: {
-        graphType: ListManager.Graph.GraphType.SDGRAPH_TYPE_STACKEDLINE,
-        graphSubType: ListManager.Graph.GraphSubType.SDGRAPH_SUBTYPE_AREA,
-        pointFlags: ListManager.Graph.PointFlags.SDAX_FILL_LINE_AREA,
-        legend: ListManager.Graph.LegendType.SDAX_LEGEND_FULL,
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS
+        graphType: TODO.Graph.GraphType.SDGRAPH_TYPE_STACKEDLINE,
+        graphSubType: TODO.Graph.GraphSubType.SDGRAPH_SUBTYPE_AREA,
+        pointFlags: TODO.Graph.PointFlags.SDAX_FILL_LINE_AREA,
+        legend: TODO.Graph.LegendType.SDAX_LEGEND_FULL,
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS
       },
       1: {
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_TITLE | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_TITLE | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_TITLE | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_TITLE | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS
       },
       2: {
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
       },
       3: {
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_TITLE | ListManager.Graph.AxisFlags.SDAX_HIDE_LABELS | ListManager.Graph.AxisFlags.SDAX_HIDE_AXIS_LINE | ListManager.Graph.AxisFlags.SDAX_HIDE_MAJOR_TICKS | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_MAJOR_TICKS | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | ListManager.Graph.AxisFlags.SDAX_HIDE_TITLE | ListManager.Graph.AxisFlags.SDAX_HIDE_LABELS
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_TITLE | TODO.Graph.AxisFlags.SDAX_HIDE_LABELS | TODO.Graph.AxisFlags.SDAX_HIDE_AXIS_LINE | TODO.Graph.AxisFlags.SDAX_HIDE_MAJOR_TICKS | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_MAJOR_TICKS | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | TODO.Graph.AxisFlags.SDAX_HIDE_TITLE | TODO.Graph.AxisFlags.SDAX_HIDE_LABELS
       },
       4: {
-        pointFlags: ListManager.Graph.PointFlags.SDAX_FILL_LINE_AREA | ListManager.Graph.PointFlags.SDAX_VALUELABELS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL_LEADERS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_ANGLED,
+        pointFlags: TODO.Graph.PointFlags.SDAX_FILL_LINE_AREA | TODO.Graph.PointFlags.SDAX_VALUELABELS | TODO.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL_LEADERS | TODO.Graph.PointFlags.SDAX_VALUELABELS_ANGLED,
         valueLabelStyleName: 'Style15',
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
       },
       5: {
-        pointFlags: ListManager.Graph.PointFlags.SDAX_FILL_LINE_AREA | ListManager.Graph.PointFlags.SDAX_VALUELABELS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL,
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
+        pointFlags: TODO.Graph.PointFlags.SDAX_FILL_LINE_AREA | TODO.Graph.PointFlags.SDAX_VALUELABELS | TODO.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL,
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
       },
       6: {
-        pointFlags: ListManager.Graph.PointFlags.SDAX_FILL_LINE_AREA | ListManager.Graph.PointFlags.SDAX_VALUELABELS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL_LEADERS,
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
+        pointFlags: TODO.Graph.PointFlags.SDAX_FILL_LINE_AREA | TODO.Graph.PointFlags.SDAX_VALUELABELS | TODO.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL_LEADERS,
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
       }
     },
     LayeredArea: {
       Default: {
-        graphType: ListManager.Graph.GraphType.SDGRAPH_TYPE_LINE,
-        graphSubType: ListManager.Graph.GraphSubType.SDGRAPH_SUBTYPE_AREA,
-        pointFlags: ListManager.Graph.PointFlags.SDAX_FILL_LINE_AREA,
-        legend: ListManager.Graph.LegendType.SDAX_LEGEND_FULL,
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS
+        graphType: TODO.Graph.GraphType.SDGRAPH_TYPE_LINE,
+        graphSubType: TODO.Graph.GraphSubType.SDGRAPH_SUBTYPE_AREA,
+        pointFlags: TODO.Graph.PointFlags.SDAX_FILL_LINE_AREA,
+        legend: TODO.Graph.LegendType.SDAX_LEGEND_FULL,
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS
       },
       1: {
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_TITLE | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_TITLE | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_TITLE | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_TITLE | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS
       },
       2: {
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
       },
       3: {
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_TITLE | ListManager.Graph.AxisFlags.SDAX_HIDE_LABELS | ListManager.Graph.AxisFlags.SDAX_HIDE_AXIS_LINE | ListManager.Graph.AxisFlags.SDAX_HIDE_MAJOR_TICKS | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_HIDE_MAJOR_TICKS | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | ListManager.Graph.AxisFlags.SDAX_HIDE_TITLE | ListManager.Graph.AxisFlags.SDAX_HIDE_LABELS
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_TITLE | TODO.Graph.AxisFlags.SDAX_HIDE_LABELS | TODO.Graph.AxisFlags.SDAX_HIDE_AXIS_LINE | TODO.Graph.AxisFlags.SDAX_HIDE_MAJOR_TICKS | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_HIDE_MAJOR_TICKS | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS | TODO.Graph.AxisFlags.SDAX_HIDE_TITLE | TODO.Graph.AxisFlags.SDAX_HIDE_LABELS
       },
       4: {
-        pointFlags: ListManager.Graph.PointFlags.SDAX_FILL_LINE_AREA | ListManager.Graph.PointFlags.SDAX_VALUELABELS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL_LEADERS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_ANGLED,
+        pointFlags: TODO.Graph.PointFlags.SDAX_FILL_LINE_AREA | TODO.Graph.PointFlags.SDAX_VALUELABELS | TODO.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL_LEADERS | TODO.Graph.PointFlags.SDAX_VALUELABELS_ANGLED,
         valueLabelStyleName: 'Style15',
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
       },
       5: {
-        pointFlags: ListManager.Graph.PointFlags.SDAX_FILL_LINE_AREA | ListManager.Graph.PointFlags.SDAX_VALUELABELS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL,
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
+        pointFlags: TODO.Graph.PointFlags.SDAX_FILL_LINE_AREA | TODO.Graph.PointFlags.SDAX_VALUELABELS | TODO.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL,
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
       },
       6: {
-        pointFlags: ListManager.Graph.PointFlags.SDAX_FILL_LINE_AREA | ListManager.Graph.PointFlags.SDAX_VALUELABELS | ListManager.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL_LEADERS,
-        vertAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | ListManager.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
-        horizAxisFlags: ListManager.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
+        pointFlags: TODO.Graph.PointFlags.SDAX_FILL_LINE_AREA | TODO.Graph.PointFlags.SDAX_VALUELABELS | TODO.Graph.PointFlags.SDAX_VALUELABELS_EXTERNAL_LEADERS,
+        vertAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | TODO.Graph.AxisFlags.SDAX_HIDE_MINOR_TICKS,
+        horizAxisFlags: TODO.Graph.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR
       }
     }
   }

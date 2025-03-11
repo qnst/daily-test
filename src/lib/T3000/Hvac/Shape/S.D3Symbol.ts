@@ -1,10 +1,11 @@
 
 
 import BaseSymbol from '../Basic/B.Symbol';
-import ListManager from '../Data/ListManager';
 import T3Gv from '../Data/T3Gv'
 import ConstantData from '../Data/ConstantData'
 import ConstantData2 from '../Data/ConstantData2';
+import Instance from '../Data/Instance/Instance';
+import ShapeDataUtil from '../Data/ShapeDataUtil';
 
 class D3Symbol extends BaseSymbol {
 
@@ -183,7 +184,7 @@ class D3Symbol extends BaseSymbol {
       return;
     }
 
-    const fieldList = ListManager.SDData.FieldedDataGetFieldList(this.fieldDataTableID, true);
+    const fieldList = TODO.SDData.FieldedDataGetFieldList(this.fieldDataTableID, true);
 
     // Parse a dataMap string like "fieldName:start:flags" into an object
     const parseDataMapString = (dataMapString: string): { name: string; start: number; flags: string | null } => {
@@ -247,7 +248,7 @@ class D3Symbol extends BaseSymbol {
     };
 
     // Retrieve the field data table
-    const fieldDataTable = ListManager.SDData.GetFieldedDataTable(this.fieldDataTableID);
+    const fieldDataTable = TODO.SDData.GetFieldedDataTable(this.fieldDataTableID);
     if (!fieldDataTable) {
       console.log("S.D3Symbol: MapData - No field data table found.");
       return;
@@ -291,7 +292,7 @@ class D3Symbol extends BaseSymbol {
                 const field = fieldList[idx];
                 const value = parsedMap.flags === "label"
                   ? field.name
-                  : ListManager.SDData.FieldedDataGetFieldValue(this.fieldDataTableID, elementID, field.fieldID);
+                  : TODO.SDData.FieldedDataGetFieldValue(this.fieldDataTableID, elementID, field.fieldID);
                 if (typeof value !== "undefined") {
                   valueForField.push(value);
                 }
@@ -301,7 +302,7 @@ class D3Symbol extends BaseSymbol {
               const field = fieldList[fieldIndex as number];
               const value = parsedMap.flags === "label"
                 ? field.name
-                : ListManager.SDData.FieldedDataGetFieldValue(this.fieldDataTableID, elementID, field.fieldID);
+                : TODO.SDData.FieldedDataGetFieldValue(this.fieldDataTableID, elementID, field.fieldID);
               if (typeof value !== "undefined") {
                 valueForField = value;
               }
@@ -480,7 +481,7 @@ class D3Symbol extends BaseSymbol {
     }
 
     publicAttributes.forEach(attribute => {
-      if (ListManager.D3Symbol.DefaultStyleParams.indexOf(attribute) < 0) {
+      if (Instance.Shape.D3Symbol.DefaultStyleParams.indexOf(attribute) < 0) {
         result.push(attribute);
       }
     });
@@ -536,12 +537,12 @@ class D3Symbol extends BaseSymbol {
   WriteSDFAttributes(file, options) {
     console.log("S.D3Symbol: WriteSDFAttributes - Input:", { file, options });
 
-    ListManager.BaseSymbol.prototype.WriteSDFAttributes.call(this, file, options);
+    Instance.Shape.BaseSymbol.prototype.WriteSDFAttributes.call(this, file, options);
 
     if (this.d3Settings) {
       const d3SettingsString = this.ExportD3Settings();
       if (d3SettingsString) {
-        SDF.WriteString(file, d3SettingsString, ConstantData2.SDROpCodesByName.SDF_C_D3SETTINGS, options);
+        ShapeDataUtil.WriteString(file, d3SettingsString, ConstantData2.SDROpCodesByName.SDF_C_D3SETTINGS, options);
       }
     }
 
@@ -581,7 +582,7 @@ class D3Symbol extends BaseSymbol {
       }
     }
 
-    const result = ListManager.BaseShape.prototype.Resize.call(this, svgElement, newSize, additionalParams);
+    const result = Instance.Shape.BaseShape.prototype.Resize.call(this, svgElement, newSize, additionalParams);
     this.RenderControl(T3Gv.optManager.svgDoc, svgElement);
 
     console.log("S.D3Symbol: Resize - Output result:", result);
@@ -597,7 +598,7 @@ class D3Symbol extends BaseSymbol {
       newText = null;
     }
 
-    ListManager.BaseDrawingObject.prototype.ChangeTextAttributes.call(this, newText, newFont, newSize, newColor, newAlignment, newWeight, newStyle, newDecoration);
+    Instance.Shape.BaseDrawingObject.prototype.ChangeTextAttributes.call(this, newText, newFont, newSize, newColor, newAlignment, newWeight, newStyle, newDecoration);
     T3Gv.optManager.AddToDirtyList(this.BlockID);
 
     console.log("S.D3Symbol: ChangeTextAttributes - Completed");
@@ -606,7 +607,7 @@ class D3Symbol extends BaseSymbol {
   CreateActionTriggers(event, triggerType, action, response) {
     console.log("S.D3Symbol: CreateActionTriggers - Input parameters:", { event, triggerType, action, response });
 
-    const result = ListManager.BaseShape.prototype.CreateActionTriggers.apply(this, [
+    const result = Instance.Shape.BaseShape.prototype.CreateActionTriggers.apply(this, [
       event,
       triggerType,
       action,
@@ -621,7 +622,7 @@ class D3Symbol extends BaseSymbol {
     console.log("S.D3Symbol: RefreshFromFieldData - Input:", fieldDataTableID);
 
     if (!fieldDataTableID || this.fieldDataTableID === fieldDataTableID) {
-      ListManager.BaseDrawingObject.prototype.RefreshFromFieldData.call(this, fieldDataTableID);
+      Instance.Shape.BaseDrawingObject.prototype.RefreshFromFieldData.call(this, fieldDataTableID);
       this.UpdateSizeFromSettings();
       T3Gv.optManager.AddToDirtyList(this.BlockID);
 

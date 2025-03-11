@@ -54,7 +54,7 @@ import Element from '../Basic/B.Element'
 import Business from '../Opt/Business/OptAhUtil'
 import Commands from '../Opt/Business/ToolOpt'
 
-import SDF from "../Data/SDF";
+import SDF from "../Data/ShapeDataUtil";
 import Instance from "../Data/Instance/Instance"
 import ConstantData from "../Data/ConstantData"
 import PolyList from "../Model/PolyList"
@@ -662,12 +662,12 @@ class BaseLine extends BaseDrawingObject {
 
   HandleActionTriggerTrackCommon(e, t, a, r) {
     debugger
-    T3Gv.optManager.theActionStartX,
-      T3Gv.optManager.theActionStartY,
+    T3Gv.optManager.actionStartX,
+      T3Gv.optManager.actionStartY,
       $.extend(!0, {
-      }, T3Gv.optManager.theActionBBox),
+      }, T3Gv.optManager.actionBBox),
       $.extend(!0, {
-      }, T3Gv.optManager.theActionBBox);
+      }, T3Gv.optManager.actionBBox);
 
 
 
@@ -686,23 +686,23 @@ class BaseLine extends BaseDrawingObject {
     }
 
 
-    switch (T3Gv.optManager.theActionTriggerID) {
+    switch (T3Gv.optManager.actionTriggerId) {
       case ConstantData.ActionTriggerType.LINESTART:
         this.AdjustLineStart(
-          T3Gv.optManager.theActionSVGObject,
+          T3Gv.optManager.actionSvgObject,
           e,
           t,
-          T3Gv.optManager.theActionTriggerID,
+          T3Gv.optManager.actionTriggerId,
           a
         ),
           (this.r.x < 0 || this.r.y < 0) &&
           (
             i = n(this.StartPoint.x, this.StartPoint.y, this.r),
             this.AdjustLineStart(
-              T3Gv.optManager.theActionSVGObject,
+              T3Gv.optManager.actionSvgObject,
               i.x,
               i.y,
-              T3Gv.optManager.theActionTriggerID,
+              T3Gv.optManager.actionTriggerId,
               a
             )
           );
@@ -710,20 +710,20 @@ class BaseLine extends BaseDrawingObject {
       case ConstantData.ActionTriggerType.POLYLEND:
       case ConstantData.ActionTriggerType.LINEEND:
         this.AdjustLineEnd(
-          T3Gv.optManager.theActionSVGObject,
+          T3Gv.optManager.actionSvgObject,
           e,
           t,
-          T3Gv.optManager.theActionTriggerID,
+          T3Gv.optManager.actionTriggerId,
           a
         ),
           (this.r.x < 0 || this.r.y < 0) &&
           (
             i = n(this.EndPoint.x, this.EndPoint.y, this.r),
             this.AdjustLineEnd(
-              T3Gv.optManager.theActionSVGObject,
+              T3Gv.optManager.actionSvgObject,
               i.x,
               i.y,
-              T3Gv.optManager.theActionTriggerID,
+              T3Gv.optManager.actionTriggerId,
               a
             )
           );
@@ -742,11 +742,11 @@ class BaseLine extends BaseDrawingObject {
       case ConstantData.ActionTriggerType.BOTTOMLEFT:
       case ConstantData.ActionTriggerType.BOTTOMRIGHT:
         this.ModifyShape(
-          T3Gv.optManager.theActionSVGObject,
+          T3Gv.optManager.actionSvgObject,
           e,
           t,
-          T3Gv.optManager.theActionTriggerID,
-          T3Gv.optManager.theActionTriggerData,
+          T3Gv.optManager.actionTriggerId,
+          T3Gv.optManager.actionTriggerData,
           a
         ),
           this.UpdateFrame(),
@@ -754,38 +754,38 @@ class BaseLine extends BaseDrawingObject {
           (
             i = n(e, t, this.r),
             this.ModifyShape(
-              T3Gv.optManager.theActionSVGObject,
+              T3Gv.optManager.actionSvgObject,
               i.x,
               i.y,
-              T3Gv.optManager.theActionTriggerID,
-              T3Gv.optManager.theActionTriggerData
+              T3Gv.optManager.actionTriggerId,
+              T3Gv.optManager.actionTriggerData
             ),
             this.UpdateFrame()
           );
         break;
       case ConstantData.ActionTriggerType.MOVEPOLYSEG:
         this.MovePolySeg(
-          T3Gv.optManager.theActionSVGObject,
+          T3Gv.optManager.actionSvgObject,
           e,
           t,
-          T3Gv.optManager.theActionTriggerID,
-          T3Gv.optManager.theActionTriggerData
+          T3Gv.optManager.actionTriggerId,
+          T3Gv.optManager.actionTriggerData
         );
         break;
       case ConstantData.ActionTriggerType.DIMENSION_LINE_ADJ:
         this.DimensionLineDeflectionAdjust(
-          T3Gv.optManager.theActionSVGObject,
+          T3Gv.optManager.actionSvgObject,
           e,
           t,
-          T3Gv.optManager.theActionTriggerID,
-          T3Gv.optManager.theActionTriggerData
+          T3Gv.optManager.actionTriggerId,
+          T3Gv.optManager.actionTriggerData
         )
     }
   }
 
   AdjustRotate(e, t, a) {
-    var r = e - T3Gv.optManager.theRotatePivotX,
-      i = t - T3Gv.optManager.theRotatePivotY,
+    var r = e - T3Gv.optManager.rotatePivotX,
+      i = t - T3Gv.optManager.rotatePivotY,
       //Double =====
       enhance,
       n = 0;
@@ -802,10 +802,10 @@ class BaseLine extends BaseDrawingObject {
       !o &&
       (
         enhance = T3Gv.optManager.EnhanceSnaps(a),
-        n = enhance ? Math.round(n / T3Gv.optManager.enhanceRotateSnap) * T3Gv.optManager.enhanceRotateSnap : Math.round(n / T3Gv.optManager.theRotateSnap) * T3Gv.optManager.theRotateSnap
+        n = enhance ? Math.round(n / T3Gv.optManager.enhanceRotateSnap) * T3Gv.optManager.enhanceRotateSnap : Math.round(n / T3Gv.optManager.rotateSnap) * T3Gv.optManager.rotateSnap
       ),
-      this.Rotate(T3Gv.optManager.theActionSVGObject, n) &&
-      (T3Gv.optManager.theRotateEndRotation = n)
+      this.Rotate(T3Gv.optManager.actionSvgObject, n) &&
+      (T3Gv.optManager.rotateEndRotation = n)
   }
 
   DimensionLineDeflectionAdjust(e, t, a, r, i) {
@@ -897,17 +897,17 @@ class BaseLine extends BaseDrawingObject {
 
   HandleActionTriggerCallResize(e, t) {
     var a = this.Resize(
-      T3Gv.optManager.theActionSVGObject,
-      T3Gv.optManager.theActionNewBBox
+      T3Gv.optManager.actionSvgObject,
+      T3Gv.optManager.actionNewBBox
     );
-    T3Gv.optManager.theActionBBox.x += a.x,
-      T3Gv.optManager.theActionBBox.y += a.y,
-      T3Gv.optManager.theActionStartX += a.x,
-      T3Gv.optManager.theActionStartY += a.y
+    T3Gv.optManager.actionBBox.x += a.x,
+      T3Gv.optManager.actionBBox.y += a.y,
+      T3Gv.optManager.actionStartX += a.x,
+      T3Gv.optManager.actionStartY += a.y
   }
 
   HandleActionTriggerDoAutoScroll() {
-    T3Gv.optManager.autoScrollTimerID = T3Gv.optManager.autoScrollTimer.setTimeout('HandleActionTriggerDoAutoScroll', 100);
+    T3Gv.optManager.autoScrollTimerId = T3Gv.optManager.autoScrollTimer.setTimeout('HandleActionTriggerDoAutoScroll', 100);
     var e = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(T3Gv.optManager.autoScrollXPos, T3Gv.optManager.autoScrollYPos);
     T3Gv.optManager.PinRect &&
       T3Gv.optManager.PinTrackPoint(e),
@@ -949,9 +949,9 @@ class BaseLine extends BaseDrawingObject {
       }
       return T3Gv.optManager.autoScrollXPos = o,
         T3Gv.optManager.autoScrollYPos = s,
-        - 1 != T3Gv.optManager.autoScrollTimerID ? !1 : (
+        - 1 != T3Gv.optManager.autoScrollTimerId ? !1 : (
           T3Gv.optManager.autoScrollTimer = new HvTimer(this),/*new GPTimer(this), Double ===== */
-          T3Gv.optManager.autoScrollTimerID = T3Gv.optManager.autoScrollTimer.setTimeout(a, 0),
+          T3Gv.optManager.autoScrollTimerId = T3Gv.optManager.autoScrollTimer.setTimeout(a, 0),
           !1
         )
     }
@@ -969,7 +969,7 @@ class BaseLine extends BaseDrawingObject {
 
     if (
       Utils2.StopPropagationAndDefaults(e),
-      - 1 == T3Gv.optManager.theActionStoredObjectID
+      - 1 == T3Gv.optManager.actionStoredObjectId
     ) return !1;
 
     var n = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(e.gesture.center.clientX, e.gesture.center.clientY);
@@ -983,14 +983,14 @@ class BaseLine extends BaseDrawingObject {
     //   T3Gv.optManager.LinkParams.ConnectIndex >= 0,
     //   T3Gv.optManager.OverrideSnaps(e) &&
     //   (t = !0),
-    //   T3Gv.optManager.theActionTriggerID != ConstantData.ActionTriggerType.MODIFYSHAPE &&
+    //   T3Gv.optManager.actionTriggerId != ConstantData.ActionTriggerType.MODIFYSHAPE &&
     //   T3Gv.docHandler.documentConfig.enableSnap &&
     //   !t &&
     //   (
-    //     a = n.x - T3Gv.optManager.theActionStartX,
-    //     r = n.y - T3Gv.optManager.theActionStartY,
-    //     i = T3Gv.optManager.theActionTriggerID === ConstantData.ActionTriggerType.MOVEPOLYSEG,
-    //     T3Gv.optManager.theActionTriggerID === ConstantData.ActionTriggerType.ROTATE ||
+    //     a = n.x - T3Gv.optManager.actionStartX,
+    //     r = n.y - T3Gv.optManager.actionStartY,
+    //     i = T3Gv.optManager.actionTriggerId === ConstantData.ActionTriggerType.MOVEPOLYSEG,
+    //     T3Gv.optManager.actionTriggerId === ConstantData.ActionTriggerType.ROTATE ||
     //     this.CustomSnap(this.Frame.x, this.Frame.y, a, r, i, n) ||
     //     i ||
     //     (n = T3Gv.docHandler.SnapToGrid(n))
@@ -1014,13 +1014,13 @@ class BaseLine extends BaseDrawingObject {
       t = true;
     }
 
-    if (T3Gv.optManager.theActionTriggerID !== ConstantData.ActionTriggerType.MODIFYSHAPE &&
+    if (T3Gv.optManager.actionTriggerId !== ConstantData.ActionTriggerType.MODIFYSHAPE &&
       T3Gv.docHandler.documentConfig.enableSnap && !t) {
-      const a = n.x - T3Gv.optManager.theActionStartX;
-      const r = n.y - T3Gv.optManager.theActionStartY;
-      const i = T3Gv.optManager.theActionTriggerID === ConstantData.ActionTriggerType.MOVEPOLYSEG;
+      const a = n.x - T3Gv.optManager.actionStartX;
+      const r = n.y - T3Gv.optManager.actionStartY;
+      const i = T3Gv.optManager.actionTriggerId === ConstantData.ActionTriggerType.MOVEPOLYSEG;
 
-      if (T3Gv.optManager.theActionTriggerID === ConstantData.ActionTriggerType.ROTATE ||
+      if (T3Gv.optManager.actionTriggerId === ConstantData.ActionTriggerType.ROTATE ||
         this.CustomSnap(this.Frame.x, this.Frame.y, a, r, i, n) || i) {
         // Do nothing
       } else {
@@ -1045,21 +1045,21 @@ class BaseLine extends BaseDrawingObject {
     ) {
       var a = {};
       if (
-        a.BlockID = T3Gv.optManager.theActionStoredObjectID,
-        a.theActionTriggerID = T3Gv.optManager.theActionTriggerID,
-        a.theRotateEndRotation = T3Gv.optManager.theRotateEndRotation,
-        a.theRotatePivotX = T3Gv.optManager.theRotatePivotX,
-        a.theRotatePivotY = T3Gv.optManager.theRotatePivotY,
-        a.theRotateStartPoint = Utils1.DeepCopy(T3Gv.optManager.theRotateStartPoint),
+        a.BlockID = T3Gv.optManager.actionStoredObjectId,
+        a.actionTriggerId = T3Gv.optManager.actionTriggerId,
+        a.rotateEndRotation = T3Gv.optManager.rotateEndRotation,
+        a.rotatePivotX = T3Gv.optManager.rotatePivotX,
+        a.rotatePivotY = T3Gv.optManager.rotatePivotY,
+        a.rotateStartPoint = Utils1.DeepCopy(T3Gv.optManager.rotateStartPoint),
         a.CurveAdjust = this.CurveAdjust,
         a.IsReversed = this.IsReversed,
         a.Frame = Utils1.DeepCopy(this.Frame),
         a.StartPoint = Utils1.DeepCopy(this.StartPoint),
         a.EndPoint = Utils1.DeepCopy(this.EndPoint),
-        T3Gv.optManager.theActionTriggerData &&
+        T3Gv.optManager.actionTriggerData &&
         (
-          a.hitSegment = T3Gv.optManager.theActionTriggerData.hitSegment,
-          a.moveAngle = T3Gv.optManager.theActionTriggerData.moveAngle
+          a.hitSegment = T3Gv.optManager.actionTriggerData.hitSegment,
+          a.moveAngle = T3Gv.optManager.actionTriggerData.moveAngle
         ),
         T3Gv.optManager.ob.Frame &&
         (
@@ -1078,14 +1078,14 @@ class BaseLine extends BaseDrawingObject {
         (a.polylist = Utils1.DeepCopy(this.polylist)),
         this.pointlist &&
         (a.pointlist = Utils1.DeepCopy(this.pointlist)),
-        T3Gv.optManager.theActionTriggerID === ConstantData.ActionTriggerType.DIMENSION_LINE_ADJ
+        T3Gv.optManager.actionTriggerId === ConstantData.ActionTriggerType.DIMENSION_LINE_ADJ
       ) a.dimensionDeflectionH = this.dimensionDeflectionH,
         a.dimensionDeflectionV = this.dimensionDeflectionV;
       var r = Collab.BuildMessage(ConstantData.CollabMessages.Action_Line, a, !1, !0)
     }
-    switch (T3Gv.optManager.theActionTriggerID) {
+    switch (T3Gv.optManager.actionTriggerId) {
       case ConstantData.ActionTriggerType.ROTATE:
-        this.AfterRotateShape(T3Gv.optManager.theActionStoredObjectID);
+        this.AfterRotateShape(T3Gv.optManager.actionStoredObjectId);
         break;
       case ConstantData.ActionTriggerType.MODIFYSHAPE:
       case ConstantData.ActionTriggerType.SEGL_ONE:
@@ -1096,38 +1096,38 @@ class BaseLine extends BaseDrawingObject {
       case ConstantData.ActionTriggerType.POLYLEND:
       case ConstantData.ActionTriggerType.MOVEPOLYSEG:
         this.AfterModifyShape(
-          T3Gv.optManager.theActionStoredObjectID,
-          T3Gv.optManager.theActionTriggerID
+          T3Gv.optManager.actionStoredObjectId,
+          T3Gv.optManager.actionTriggerId
         );
         break;
       default:
         if (
           this.objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_BAR
-        ) switch (T3Gv.optManager.theActionTriggerID) {
+        ) switch (T3Gv.optManager.actionTriggerId) {
           case ConstantData.ActionTriggerType.LINEEND:
           case ConstantData.ActionTriggerType.LINESTART:
             T3Gv.optManager.GanttAdjustBar(
-              T3Gv.optManager.theActionStoredObjectID,
-              T3Gv.optManager.theActionTriggerID
+              T3Gv.optManager.actionStoredObjectId,
+              T3Gv.optManager.actionTriggerId
             )
         }
         T3Gv.optManager.ob.Frame &&
           (
             T3Gv.optManager.MaintainLink(
-              T3Gv.optManager.theActionStoredObjectID,
+              T3Gv.optManager.actionStoredObjectId,
               this,
               T3Gv.optManager.ob,
-              T3Gv.optManager.theActionTriggerID
+              T3Gv.optManager.actionTriggerId
             ),
             T3Gv.optManager.ob = {},
             T3Gv.optManager.SetLinkFlag(
-              T3Gv.optManager.theActionStoredObjectID,
+              T3Gv.optManager.actionStoredObjectId,
               ConstantData.LinkFlags.SED_L_MOVE
             ),
             T3Gv.optManager.UpdateLinks()
           )
     }
-    this.LM_ActionPostRelease(T3Gv.optManager.theActionStoredObjectID),
+    this.LM_ActionPostRelease(T3Gv.optManager.actionStoredObjectId),
       r &&
       (
         Collab.IsSecondary() &&
@@ -1144,11 +1144,11 @@ class BaseLine extends BaseDrawingObject {
         - 1 != this.CommentID ||
         this.HasFieldData()
       ) &&
-      T3Gv.optManager.AddToDirtyList(T3Gv.optManager.theActionStoredObjectID),
+      T3Gv.optManager.AddToDirtyList(T3Gv.optManager.actionStoredObjectId),
       t ||
       (
-        T3Gv.optManager.theActionStoredObjectID = - 1,
-        T3Gv.optManager.theActionSVGObject = null
+        T3Gv.optManager.actionStoredObjectId = - 1,
+        T3Gv.optManager.actionSvgObject = null
       ),
       T3Gv.optManager.ShowOverlayLayer(),
       T3Gv.optManager.CompleteOperation(null)
@@ -1248,11 +1248,11 @@ class BaseLine extends BaseDrawingObject {
         t[0].y = e.y,
         this.objecttype,
         ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL,
-        T3Gv.optManager.theActionTriggerID === ConstantData.ActionTriggerType.LINESTART ? t[0].id = ConstantData.HookPts.SED_KTL : t[0].id = ConstantData.HookPts.SED_KTR,
-        T3Gv.optManager.theDragDeltaX = 0,
-        T3Gv.optManager.theDragDeltaY = 0,
+        T3Gv.optManager.actionTriggerId === ConstantData.ActionTriggerType.LINESTART ? t[0].id = ConstantData.HookPts.SED_KTL : t[0].id = ConstantData.HookPts.SED_KTR,
+        T3Gv.optManager.dragDeltaX = 0,
+        T3Gv.optManager.dragDeltaY = 0,
         T3Gv.optManager.FindConnect(
-          T3Gv.optManager.theActionStoredObjectID,
+          T3Gv.optManager.actionStoredObjectId,
           this,
           t,
           !0,
@@ -1261,8 +1261,8 @@ class BaseLine extends BaseDrawingObject {
           e
         ) &&
         (
-          e.x += T3Gv.optManager.theDragDeltaX,
-          e.y += T3Gv.optManager.theDragDeltaY
+          e.x += T3Gv.optManager.dragDeltaX,
+          e.y += T3Gv.optManager.dragDeltaY
         )
       ),
       e
@@ -1287,10 +1287,10 @@ class BaseLine extends BaseDrawingObject {
   }
 
   AfterModifyShape(e, t) {
-    if (T3Gv.optManager.theActionSVGObject) {
-      var a = T3Gv.optManager.theActionSVGObject.GetElementByID(ConstantData.Defines.EllipseAxes);
+    if (T3Gv.optManager.actionSvgObject) {
+      var a = T3Gv.optManager.actionSvgObject.GetElementByID(ConstantData.Defines.EllipseAxes);
       null != a &&
-        T3Gv.optManager.theActionSVGObject.RemoveElement(a)
+        T3Gv.optManager.actionSvgObject.RemoveElement(a)
     }
     T3Gv.optManager.ob.Frame &&
       (
@@ -1370,8 +1370,8 @@ class BaseLine extends BaseDrawingObject {
     var a,
       r,
       i;
-    if (t) a = T3Gv.optManager.theActionStoredObjectID,
-      r = T3Gv.optManager.theActionTriggerID,
+    if (t) a = T3Gv.optManager.actionStoredObjectId,
+      r = T3Gv.optManager.actionTriggerId,
       T3Gv.optManager.PinRect = null,
       i = T3Gv.objectStore.PreserveBlock(a);
     else {
@@ -1385,13 +1385,13 @@ class BaseLine extends BaseDrawingObject {
         o.substring(ConstantData.Defines.Action.length, o.length),
         10
       ),
-        T3Gv.optManager.theActionStoredObjectID = a;
+        T3Gv.optManager.actionStoredObjectId = a;
       var s = n.GetTargetForEvent(e);
       if (null == s) return !1;
       i = T3Gv.objectStore.PreserveBlock(a),
         r = s.GetID(),
-        T3Gv.optManager.theActionTriggerID = r,
-        T3Gv.optManager.theActionTriggerData = s.GetUserData(),
+        T3Gv.optManager.actionTriggerId = r,
+        T3Gv.optManager.actionTriggerData = s.GetUserData(),
         T3Gv.optManager.PinRect = null
     }
     i.Data.objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_BAR &&
@@ -1402,14 +1402,14 @@ class BaseLine extends BaseDrawingObject {
       t ||
       T3Gv.optManager.SetControlDragMode(s),
       this.LM_ActionPreTrack(a, r),
-      T3Gv.optManager.theActionSVGObject = T3Gv.optManager.svgObjectLayer.GetElementByID(a),
+      T3Gv.optManager.actionSvgObject = T3Gv.optManager.svgObjectLayer.GetElementByID(a),
       (
         '' !== this.HyperlinkText ||
         - 1 != this.NoteID ||
         - 1 != this.CommentID ||
         this.HasFieldData()
       ) &&
-      this.HideAllIcons(T3Gv.optManager.svgDoc, T3Gv.optManager.theActionSVGObject);
+      this.HideAllIcons(T3Gv.optManager.svgDoc, T3Gv.optManager.actionSvgObject);
     var l = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(e.gesture.center.clientX, e.gesture.center.clientY),
       S = T3Gv.optManager.LinkParams &&
         T3Gv.optManager.LinkParams.ConnectIndex >= 0;
@@ -1420,44 +1420,44 @@ class BaseLine extends BaseDrawingObject {
       (l = T3Gv.docHandler.SnapToGrid(l));
     var c = (l = T3Gv.optManager.DoAutoGrowDrag(l)).x,
       u = l.y;
-    T3Gv.optManager.theActionLockAspectRatio = e.gesture.srcEvent.shiftKey,
+    T3Gv.optManager.actionLockAspectRatio = e.gesture.srcEvent.shiftKey,
       this.ResizeAspectConstrain &&
       (
-        T3Gv.optManager.theActionLockAspectRatio = !T3Gv.optManager.theActionLockAspectRatio
+        T3Gv.optManager.actionLockAspectRatio = !T3Gv.optManager.actionLockAspectRatio
       );
     var p = this.GetSVGFrame();
-    return T3Gv.optManager.theActionLockAspectRatio &&
+    return T3Gv.optManager.actionLockAspectRatio &&
       (
-        0 === p.height ? T3Gv.optManager.theActionLockAspectRatio = !1 : (
-          T3Gv.optManager.theActionAspectRatioWidth = p.width,
-          T3Gv.optManager.theActionAspectRatioHeight = p.height
+        0 === p.height ? T3Gv.optManager.actionLockAspectRatio = !1 : (
+          T3Gv.optManager.actionAspectRatioWidth = p.width,
+          T3Gv.optManager.actionAspectRatioHeight = p.height
         )
       ),
-      T3Gv.optManager.theActionBBox = $.extend(!0, {
+      T3Gv.optManager.actionBBox = $.extend(!0, {
       }, p),
-      T3Gv.optManager.theActionNewBBox = $.extend(!0, {
+      T3Gv.optManager.actionNewBBox = $.extend(!0, {
       }, p),
       T3Gv.optManager.HideOverlayLayer(),
-      T3Gv.optManager.theActionStartX = c,
-      T3Gv.optManager.theActionStartY = u,
-      T3Gv.optManager.theActionTriggerID == ConstantData.ActionTriggerType.ROTATE ? this.BeforeRotate(p) : T3Gv.optManager.theActionTriggerID !== ConstantData.ActionTriggerType.MODIFYSHAPE &&
-        T3Gv.optManager.theActionTriggerID !== ConstantData.ActionTriggerType.POLYLADJ ||
-        this.BeforeModifyShape(c, u, T3Gv.optManager.theActionTriggerData),
+      T3Gv.optManager.actionStartX = c,
+      T3Gv.optManager.actionStartY = u,
+      T3Gv.optManager.actionTriggerId == ConstantData.ActionTriggerType.ROTATE ? this.BeforeRotate(p) : T3Gv.optManager.actionTriggerId !== ConstantData.ActionTriggerType.MODIFYSHAPE &&
+        T3Gv.optManager.actionTriggerId !== ConstantData.ActionTriggerType.POLYLADJ ||
+        this.BeforeModifyShape(c, u, T3Gv.optManager.actionTriggerData),
       !0
   }
 
   BeforeRotate(e) {
-    T3Gv.optManager.theRotateKnobCenterDivisor = this.RotateKnobCenterDivisor(),
-      T3Gv.optManager.theRotateStartRotation = 180 * Math.atan2(
+    T3Gv.optManager.rotateKnobCenterDivisor = this.RotateKnobCenterDivisor(),
+      T3Gv.optManager.rotateStartRotation = 180 * Math.atan2(
         this.EndPoint.y - this.StartPoint.y,
         this.EndPoint.x - this.StartPoint.x
       ) / Math.PI,
-      T3Gv.optManager.theRotateEndRotation = T3Gv.optManager.theRotateStartRotation,
-      T3Gv.optManager.theRotatePivotX = e.x + e.width / T3Gv.optManager.theRotateKnobCenterDivisor.x,
-      T3Gv.optManager.theRotatePivotY = e.y + e.height / T3Gv.optManager.theRotateKnobCenterDivisor.y,
-      T3Gv.optManager.theRotateStartPoint = $.extend(!0, {
+      T3Gv.optManager.rotateEndRotation = T3Gv.optManager.rotateStartRotation,
+      T3Gv.optManager.rotatePivotX = e.x + e.width / T3Gv.optManager.rotateKnobCenterDivisor.x,
+      T3Gv.optManager.rotatePivotY = e.y + e.height / T3Gv.optManager.rotateKnobCenterDivisor.y,
+      T3Gv.optManager.rotateStartPoint = $.extend(!0, {
       }, this.StartPoint),
-      T3Gv.optManager.theRotateEndPoint = $.extend(!0, {
+      T3Gv.optManager.rotateEndPoint = $.extend(!0, {
       }, this.EndPoint)
   }
 
@@ -1466,10 +1466,10 @@ class BaseLine extends BaseDrawingObject {
       this.ResetAutoScrollTimer(),
       T3Gv.optManager.ob = {},
       T3Gv.optManager.LinkParams = null,
-      T3Gv.optManager.theActionTriggerID = - 1,
-      T3Gv.optManager.theActionTriggerData = null,
-      T3Gv.optManager.theActionStoredObjectID = - 1,
-      T3Gv.optManager.theActionSVGObject = null,
+      T3Gv.optManager.actionTriggerId = - 1,
+      T3Gv.optManager.actionTriggerData = null,
+      T3Gv.optManager.actionStoredObjectId = - 1,
+      T3Gv.optManager.actionSvgObject = null,
       Collab.UnBlockMessages()
   }
 
@@ -1504,12 +1504,12 @@ class BaseLine extends BaseDrawingObject {
 
   Rotate(e, t) {
     var a = {
-      x: T3Gv.optManager.theRotatePivotX,
-      y: T3Gv.optManager.theRotatePivotY
+      x: T3Gv.optManager.rotatePivotX,
+      y: T3Gv.optManager.rotatePivotY
     },
-      r = (t - T3Gv.optManager.theRotateStartRotation) / (180 / ConstantData.Geometry.PI),
-      i = T3Gv.optManager.RotatePointAroundPoint(a, T3Gv.optManager.theRotateStartPoint, r),
-      n = T3Gv.optManager.RotatePointAroundPoint(a, T3Gv.optManager.theRotateEndPoint, r);
+      r = (t - T3Gv.optManager.rotateStartRotation) / (180 / ConstantData.Geometry.PI),
+      i = T3Gv.optManager.RotatePointAroundPoint(a, T3Gv.optManager.rotateStartPoint, r),
+      n = T3Gv.optManager.RotatePointAroundPoint(a, T3Gv.optManager.rotateEndPoint, r);
     if (i.x < 0 || i.y < 0 || n.x < 0 || n.y < 0) return !1;
     if (
       T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto
@@ -1549,7 +1549,7 @@ class BaseLine extends BaseDrawingObject {
         t.layers[t.activelayer].flags & ConstantData.LayerFlags.SDLF_UseEdges
       ) &&
       (
-        !!T3Gv.optManager.FromOverlayLayer ||
+        !!T3Gv.optManager.fromOverlayLayer ||
         !!(
           e = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1)
         ) &&
@@ -1564,7 +1564,7 @@ class BaseLine extends BaseDrawingObject {
     const session = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
 
     const useEdges = layersManager && layersManager.activelayer >= 0 && (layersManager.layers[layersManager.activelayer].flags & ConstantData.LayerFlags.SDLF_UseEdges);
-    const fromOverlayLayer = T3Gv.optManager.FromOverlayLayer;
+    const fromOverlayLayer = T3Gv.optManager.fromOverlayLayer;
     const sessionLink = session && (session.flags & ConstantData.SessionFlags.SEDS_LLink);
 
     return !useEdges && (fromOverlayLayer || sessionLink);
@@ -2112,7 +2112,7 @@ class BaseLine extends BaseDrawingObject {
         u.width = l,
         u.height = l;
       var d = null;
-      return T3Gv.optManager.bTouchInitiated ? (
+      return T3Gv.optManager.touchInitiated ? (
         d = {
           svgDoc: e,
           shapeType: Document.CreateShapeType.OVAL,
@@ -2336,7 +2336,7 @@ class BaseLine extends BaseDrawingObject {
       a
     ) {
       if (
-        S = (T3Gv.optManager.bTouchInitiated, 2 * d / D),
+        S = (T3Gv.optManager.touchInitiated, 2 * d / D),
         c = Utils2.InflatePoint(this.StartPoint, S),
         g = Utils2.InflatePoint(this.EndPoint, S),
         i &&
@@ -2407,7 +2407,7 @@ class BaseLine extends BaseDrawingObject {
   }
 
   StartNewObjectDrawDoAutoScroll() {
-    T3Gv.optManager.autoScrollTimerID = T3Gv.optManager.autoScrollTimer.setTimeout('StartNewObjectDrawDoAutoScroll', 100);
+    T3Gv.optManager.autoScrollTimerId = T3Gv.optManager.autoScrollTimer.setTimeout('StartNewObjectDrawDoAutoScroll', 100);
     var e = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(T3Gv.optManager.autoScrollXPos, T3Gv.optManager.autoScrollYPos);
     e = T3Gv.optManager.DoAutoGrowDrag(e),
       T3Gv.docHandler.ScrollToPosition(e.x, e.y),
@@ -2418,13 +2418,13 @@ class BaseLine extends BaseDrawingObject {
 
     console.log(' 6 =======StartNewObjectDrawTrackCommon e=>', e);
 
-    // var r = e - T3Gv.optManager.theActionStartX,
-    //   i = t - T3Gv.optManager.theActionStartY;
+    // var r = e - T3Gv.optManager.actionStartX,
+    //   i = t - T3Gv.optManager.actionStartY;
     // Math.sqrt(r * r + i * i),
     //   $.extend(!0, {
-    //   }, T3Gv.optManager.theActionBBox);
+    //   }, T3Gv.optManager.actionBBox);
     // this.AdjustLineEnd(
-    //   T3Gv.optManager.theActionSVGObject,
+    //   T3Gv.optManager.actionSvgObject,
     //   e,
     //   t,
     //   ConstantData.ActionTriggerType.LINEEND,
@@ -2434,13 +2434,13 @@ class BaseLine extends BaseDrawingObject {
     // debugger
 
 
-    const deltaX = e - T3Gv.optManager.theActionStartX;
-    const deltaY = t - T3Gv.optManager.theActionStartY;
+    const deltaX = e - T3Gv.optManager.actionStartX;
+    const deltaY = t - T3Gv.optManager.actionStartY;
     const distance = Math.sqrt(deltaX * deltaY);
-    const actionBBox = $.extend(true, {}, T3Gv.optManager.theActionBBox);
+    const actionBBox = $.extend(true, {}, T3Gv.optManager.actionBBox);
 
     this.AdjustLineEnd(
-      T3Gv.optManager.theActionSVGObject,
+      T3Gv.optManager.actionSvgObject,
       e,
       t,
       ConstantData.ActionTriggerType.LINEEND,
@@ -2456,7 +2456,7 @@ class BaseLine extends BaseDrawingObject {
     Utils2.StopPropagationAndDefaults(e);
     var t,
       a = 0;
-    if (- 1 == T3Gv.optManager.theActionStoredObjectID) return !1;
+    if (- 1 == T3Gv.optManager.actionStoredObjectId) return !1;
     e.gesture ? (
       t = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(e.gesture.center.clientX, e.gesture.center.clientY),
       a = e.gesture.srcEvent.altKey
@@ -2470,8 +2470,8 @@ class BaseLine extends BaseDrawingObject {
       T3Gv.docHandler.documentConfig.enableSnap &&
       !r
     ) {
-      var i = t.x - T3Gv.optManager.theActionStartX,
-        n = t.y - T3Gv.optManager.theActionStartY;
+      var i = t.x - T3Gv.optManager.actionStartX,
+        n = t.y - T3Gv.optManager.actionStartY;
       this.CustomSnap(this.Frame.x, this.Frame.y, i, n, !1, t) ||
         (t = T3Gv.docHandler.SnapToGrid(t))
     }
@@ -2482,14 +2482,14 @@ class BaseLine extends BaseDrawingObject {
 
   CancelObjectDraw() {
     return T3Gv.optManager.unbindActionClickHammerEvents(),
-      T3Gv.optManager.LineStamp &&
+      T3Gv.optManager.lineStamp &&
       (
         T3Gv.optManager.isMobilePlatform ||
         T3Gv.optManager.WorkAreaHammer &&
         T3Gv.optManager.WorkAreaHammer.off('mousemove'),
-        T3Gv.optManager.LineStamp = !1
+        T3Gv.optManager.lineStamp = !1
       ),
-      T3Gv.optManager.FromOverlayLayer = !1,
+      T3Gv.optManager.fromOverlayLayer = !1,
       T3Gv.optManager.WorkAreaHammer.on('tap', EvtUtil.Evt_WorkAreaHammerClick),
       this.ResetAutoScrollTimer(),
       !0
@@ -2520,18 +2520,18 @@ class BaseLine extends BaseDrawingObject {
         n,
         o = 2 * ConstantData.Defines.SED_MinDim;
       if (
-        T3Gv.optManager.FromOverlayLayer ? (
-          i = T3Gv.optManager.theLineDrawStartX - a.x,
-          n = T3Gv.optManager.theLineDrawStartY - a.y,
+        T3Gv.optManager.fromOverlayLayer ? (
+          i = T3Gv.optManager.lineDrawStartX - a.x,
+          n = T3Gv.optManager.lineDrawStartY - a.y,
           minlen -= 20
         ) : (
-          i = T3Gv.optManager.theDrawStartX - a.x,
-          n = T3Gv.optManager.theDrawStartY - a.y
+          i = T3Gv.optManager.drawStartX - a.x,
+          n = T3Gv.optManager.drawStartY - a.y
         ),
-        !T3Gv.optManager.LineStamp &&
+        !T3Gv.optManager.lineStamp &&
         Math.abs(i) < o &&
         Math.abs(n) < o
-      ) return T3Gv.optManager.LineStamp = !0,
+      ) return T3Gv.optManager.lineStamp = !0,
         void (
           T3Gv.optManager.isMobilePlatform ||
           T3Gv.optManager.WorkAreaHammer &&
@@ -2547,16 +2547,16 @@ class BaseLine extends BaseDrawingObject {
         e.gesture &&
         e.gesture.stopDetect(),
         this.ResetAutoScrollTimer(),
-        T3Gv.optManager.FromOverlayLayer &&
+        T3Gv.optManager.fromOverlayLayer &&
         i * i + n * n < minlen * minlen
       ) return void SDUI.Commands.MainController.Shapes.CancelModalOperation();
       var s = {
         LinkParams: Utils1.DeepCopy(T3Gv.optManager.LinkParams)
       },
-        l = this.LM_DrawPostRelease(T3Gv.optManager.theActionStoredObjectID),
+        l = this.LM_DrawPostRelease(T3Gv.optManager.actionStoredObjectId),
         S = null;
       if (
-        T3Gv.optManager.FromOverlayLayer &&
+        T3Gv.optManager.fromOverlayLayer &&
         (S = gBusinessController.AddLineLabel(this.BlockID)),
         Collab.AllowMessage()
       ) {
@@ -2564,19 +2564,19 @@ class BaseLine extends BaseDrawingObject {
           attributes: {
           }
         };
-        c.attributes.StyleRecord = Utils1.DeepCopy(T3Gv.optManager.theDrawShape.StyleRecord),
-          c.attributes.StartArrowID = T3Gv.optManager.theDrawShape.StartArrowID,
-          c.attributes.EndArrowID = T3Gv.optManager.theDrawShape.EndArrowID,
-          c.attributes.StartArrowDisp = T3Gv.optManager.theDrawShape.StartArrowDisp,
-          c.attributes.ArrowSizeIndex = T3Gv.optManager.theDrawShape.ArrowSizeIndex,
-          c.attributes.TextGrow = T3Gv.optManager.theDrawShape.TextGrow,
-          c.attributes.TextAlign = T3Gv.optManager.theDrawShape.TextAlign,
-          c.attributes.TextDirection = T3Gv.optManager.theDrawShape.TextDirection,
-          c.attributes.TextFlags = T3Gv.optManager.theDrawShape.TextFlags,
-          c.attributes.Dimensions = T3Gv.optManager.theDrawShape.Dimensions,
-          c.attributes.StartPoint = Utils1.DeepCopy(T3Gv.optManager.theDrawShape.StartPoint),
-          c.attributes.EndPoint = Utils1.DeepCopy(T3Gv.optManager.theDrawShape.EndPoint),
-          c.attributes.Frame = Utils1.DeepCopy(T3Gv.optManager.theDrawShape.Frame),
+        c.attributes.StyleRecord = Utils1.DeepCopy(T3Gv.optManager.drawShape.StyleRecord),
+          c.attributes.StartArrowID = T3Gv.optManager.drawShape.StartArrowID,
+          c.attributes.EndArrowID = T3Gv.optManager.drawShape.EndArrowID,
+          c.attributes.StartArrowDisp = T3Gv.optManager.drawShape.StartArrowDisp,
+          c.attributes.ArrowSizeIndex = T3Gv.optManager.drawShape.ArrowSizeIndex,
+          c.attributes.TextGrow = T3Gv.optManager.drawShape.TextGrow,
+          c.attributes.TextAlign = T3Gv.optManager.drawShape.TextAlign,
+          c.attributes.TextDirection = T3Gv.optManager.drawShape.TextDirection,
+          c.attributes.TextFlags = T3Gv.optManager.drawShape.TextFlags,
+          c.attributes.Dimensions = T3Gv.optManager.drawShape.Dimensions,
+          c.attributes.StartPoint = Utils1.DeepCopy(T3Gv.optManager.drawShape.StartPoint),
+          c.attributes.EndPoint = Utils1.DeepCopy(T3Gv.optManager.drawShape.EndPoint),
+          c.attributes.Frame = Utils1.DeepCopy(T3Gv.optManager.drawShape.Frame),
           c.attributes.objecttype = this.objecttype,
           c.attributes.ShortRef = this.ShortRef,
           c.attributes.shapeparam = this.shapeparam,
@@ -2611,16 +2611,16 @@ class BaseLine extends BaseDrawingObject {
       p &&
         Collab.SendMessage(p),
         l ? T3Gv.optManager.PostObjectDraw(null) : T3Gv.optManager.PostObjectDraw(this.LM_DrawRelease),
-        T3Gv.optManager.LineStamp &&
+        T3Gv.optManager.lineStamp &&
         (
           T3Gv.optManager.isMobilePlatform ||
           T3Gv.optManager.WorkAreaHammer &&
           T3Gv.optManager.WorkAreaHammer.off('mousemove'),
-          T3Gv.optManager.LineStamp = !1
+          T3Gv.optManager.lineStamp = !1
         ),
-        T3Gv.optManager.FromOverlayLayer &&
+        T3Gv.optManager.fromOverlayLayer &&
         (
-          T3Gv.optManager.FromOverlayLayer = !1,
+          T3Gv.optManager.fromOverlayLayer = !1,
           gBusinessController.CompleteAction(this.BlockID, r)
         )
     } catch (e) {
@@ -2650,7 +2650,7 @@ class BaseLine extends BaseDrawingObject {
           a = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1)
         ) &&
         (
-          T3Gv.optManager.FromOverlayLayer ||
+          T3Gv.optManager.fromOverlayLayer ||
           (
             T3Gv.optManager.LinkParams.AllowJoin = a.flags & ConstantData.SessionFlags.SEDS_FreeHand
           )
@@ -2660,11 +2660,11 @@ class BaseLine extends BaseDrawingObject {
           n[0].id = ConstantData.HookPts.SED_KTL,
           n[0].x = e.x,
           n[0].y = e.y,
-          T3Gv.optManager.theDragDeltaX = 0,
-          T3Gv.optManager.theDragDeltaY = 0,
+          T3Gv.optManager.dragDeltaX = 0,
+          T3Gv.optManager.dragDeltaY = 0,
           r = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, !1),
           T3Gv.optManager.FindConnect(
-            T3Gv.optManager.theActionStoredObjectID,
+            T3Gv.optManager.actionStoredObjectId,
             this,
             n,
             !1,
@@ -2681,10 +2681,10 @@ class BaseLine extends BaseDrawingObject {
             T3Gv.optManager.LinkParams.Hookindex = - 1,
             T3Gv.optManager.LinkParams.ConnectInside = 0,
             T3Gv.optManager.LinkParams.ConnectHookFlag = 0,
-            e.x += T3Gv.optManager.theDragDeltaX,
-            e.y += T3Gv.optManager.theDragDeltaY,
-            this.StartPoint.x += T3Gv.optManager.theDragDeltaX,
-            this.StartPoint.y += T3Gv.optManager.theDragDeltaY,
+            e.x += T3Gv.optManager.dragDeltaX,
+            e.y += T3Gv.optManager.dragDeltaY,
+            this.StartPoint.x += T3Gv.optManager.dragDeltaX,
+            this.StartPoint.y += T3Gv.optManager.dragDeltaY,
             this.EndPoint.x = this.StartPoint.x,
             this.EndPoint.y = this.StartPoint.y,
             T3Gv.optManager.LinkParams.lpCircList = T3Gv.optManager.GetHookList(
@@ -2752,10 +2752,10 @@ class BaseLine extends BaseDrawingObject {
         r[0].x = e.x,
         r[0].y = e.y,
         r[0].id = ConstantData.HookPts.SED_KTR,
-        T3Gv.optManager.theDragDeltaX = 0,
-        T3Gv.optManager.theDragDeltaY = 0,
+        T3Gv.optManager.dragDeltaX = 0,
+        T3Gv.optManager.dragDeltaY = 0,
         T3Gv.optManager.FindConnect(
-          T3Gv.optManager.theActionStoredObjectID,
+          T3Gv.optManager.actionStoredObjectId,
           this,
           r,
           !0,
@@ -2764,8 +2764,8 @@ class BaseLine extends BaseDrawingObject {
           e
         ) &&
         (
-          e.x += T3Gv.optManager.theDragDeltaX,
-          e.y += T3Gv.optManager.theDragDeltaY
+          e.x += T3Gv.optManager.dragDeltaX,
+          e.y += T3Gv.optManager.dragDeltaY
         ),
         T3Gv.optManager.LinkParams.SJoinIndex >= 0 &&
         T3Gv.optManager.LinkParams.JoinIndex < 0 &&
@@ -2933,20 +2933,20 @@ class BaseLine extends BaseDrawingObject {
 
   // LM_DrawClick_ExceptionCleanup(e) {
   //   T3Gv.optManager.unbindActionClickHammerEvents();
-  //   T3Gv.optManager.LineStamp &&
+  //   T3Gv.optManager.lineStamp &&
   //     (
   //       T3Gv.optManager.isMobilePlatform ||
   //       T3Gv.optManager.WorkAreaHammer &&
   //       T3Gv.optManager.WorkAreaHammer.off('mousemove'),
-  //       T3Gv.optManager.LineStamp = !1
+  //       T3Gv.optManager.lineStamp = !1
   //     ),
   //     T3Gv.optManager.WorkAreaHammer.on('tap', EvtUtil.Evt_WorkAreaHammerClick),
   //     this.ResetAutoScrollTimer(),
   //     T3Gv.optManager.LinkParams = null,
-  //     T3Gv.optManager.theActionStoredObjectID = - 1,
-  //     T3Gv.optManager.theActionSVGObject = null,
-  //     T3Gv.optManager.LineStamp = !1,
-  //     T3Gv.optManager.FromOverlayLayer = !1,
+  //     T3Gv.optManager.actionStoredObjectId = - 1,
+  //     T3Gv.optManager.actionSvgObject = null,
+  //     T3Gv.optManager.lineStamp = !1,
+  //     T3Gv.optManager.fromOverlayLayer = !1,
   //     T3Gv.optManager.WorkAreaHammer.on('dragstart', EvtUtil.Evt_WorkAreaHammerDragStart),
   //     Collab.UnBlockMessages()
   // }
@@ -2955,20 +2955,20 @@ class BaseLine extends BaseDrawingObject {
   LM_DrawClick_ExceptionCleanup(e) {
     T3Gv.optManager.unbindActionClickHammerEvents();
 
-    if (T3Gv.optManager.LineStamp) {
+    if (T3Gv.optManager.lineStamp) {
       if (!T3Gv.optManager.isMobilePlatform && T3Gv.optManager.WorkAreaHammer) {
         T3Gv.optManager.WorkAreaHammer.off('mousemove');
       }
-      T3Gv.optManager.LineStamp = false;
+      T3Gv.optManager.lineStamp = false;
     }
 
     T3Gv.optManager.WorkAreaHammer.on('tap', EvtUtil.Evt_WorkAreaHammerClick);
     this.ResetAutoScrollTimer();
     T3Gv.optManager.LinkParams = null;
-    T3Gv.optManager.theActionStoredObjectID = -1;
-    T3Gv.optManager.theActionSVGObject = null;
-    T3Gv.optManager.LineStamp = false;
-    T3Gv.optManager.FromOverlayLayer = false;
+    T3Gv.optManager.actionStoredObjectId = -1;
+    T3Gv.optManager.actionSvgObject = null;
+    T3Gv.optManager.lineStamp = false;
+    T3Gv.optManager.fromOverlayLayer = false;
     T3Gv.optManager.WorkAreaHammer.on('dragstart', EvtUtil.Evt_WorkAreaHammerDragStart);
     // Collab.UnBlockMessages();
   }
@@ -3781,7 +3781,7 @@ class BaseLine extends BaseDrawingObject {
           theKnob.ExcludeFromExport(!0)
         ),
         n.AddElement(theKnob),
-        T3Gv.optManager.bTouchInitiated &&
+        T3Gv.optManager.touchInitiated &&
         (i = !1),
         i &&
         !m.locked &&

@@ -2316,7 +2316,7 @@ class Connector extends BaseDrawingObject {
       null != this.arraylist.hook &&
       !((a = this.arraylist.hook.length) < 1)
     ) {
-      var v = T3Gv.optManager.theActionSVGObject,
+      var v = T3Gv.optManager.actionSvgObject,
         G = v.GetElementByID(ConstantData.SVGElementClass.SHAPE),
         N = v.GetElementByID(ConstantData.SVGElementClass.SLOP),
         k = $.extend(!0, {
@@ -2333,11 +2333,11 @@ class Connector extends BaseDrawingObject {
         u = this.arraylist.styleflags & R.SEDA_Linear,
         d = this.arraylist.styleflags & ConstantData.SEDA_Styles.SEDA_FlowConn,
         this.vertical ? (
-          b = t - T3Gv.optManager.theActionStartY,
-          M = e - T3Gv.optManager.theActionStartX
+          b = t - T3Gv.optManager.actionStartY,
+          M = e - T3Gv.optManager.actionStartX
         ) : (
-          b = e - T3Gv.optManager.theActionStartX,
-          M = t - T3Gv.optManager.theActionStartY
+          b = e - T3Gv.optManager.actionStartX,
+          M = t - T3Gv.optManager.actionStartY
         ),
         L = this.arraylist.ht,
         I = this.arraylist.wd;
@@ -2353,19 +2353,19 @@ class Connector extends BaseDrawingObject {
       i++,
       0 !== x &&
       i++,
-      T3Gv.optManager.theActionTriggerID
+      T3Gv.optManager.actionTriggerId
       ) {
         case ConstantData.ActionTriggerType.CONNECTOR_ADJ:
           (E || O) &&
             (b = - b),
             (f = T3Gv.optManager.OldConnectorExtra + b) < - T3Gv.optManager.OldConnectorWd &&
             (f = - T3Gv.optManager.OldConnectorWd),
-            b = f - this.arraylist.hook[T3Gv.optManager.theActionTriggerData].extra,
-            this.arraylist.hook[T3Gv.optManager.theActionTriggerData].extra = f,
+            b = f - this.arraylist.hook[T3Gv.optManager.actionTriggerData].extra,
+            this.arraylist.hook[T3Gv.optManager.actionTriggerData].extra = f,
             c &&
-            T3Gv.optManager.theActionTriggerData < this.arraylist.hook.length - 1 &&
+            T3Gv.optManager.actionTriggerData < this.arraylist.hook.length - 1 &&
             (
-              this.arraylist.hook[T3Gv.optManager.theActionTriggerData + 1].extra = f
+              this.arraylist.hook[T3Gv.optManager.actionTriggerData + 1].extra = f
             ),
             (E || O) &&
             (b = - b),
@@ -2395,7 +2395,7 @@ class Connector extends BaseDrawingObject {
           break;
         case ConstantData.ActionTriggerType.CONNECTOR_PERP:
           n = L,
-            (c && T3Gv.optManager.theActionTriggerData % 2 || U && S) &&
+            (c && T3Gv.optManager.actionTriggerData % 2 || U && S) &&
             (M = - M),
             (S && c || S) &&
             (M = - M),
@@ -2407,10 +2407,10 @@ class Connector extends BaseDrawingObject {
             b = 0;
           break;
         case ConstantData.ActionTriggerType.CONNECTOR_HOOK:
-          n = (r = this.arraylist.hook[T3Gv.optManager.theActionTriggerData]).gap,
+          n = (r = this.arraylist.hook[T3Gv.optManager.actionTriggerData]).gap,
             P = s ? b : M,
             E ? P = - P : S ? s ||
-              (P = - P) : T3Gv.optManager.theActionTriggerData === ConstantData.ConnectorDefines.A_Cr &&
+              (P = - P) : T3Gv.optManager.actionTriggerData === ConstantData.ConnectorDefines.A_Cr &&
             (P = - P),
             r.gap = T3Gv.optManager.OldConnectorGap + P,
             p = T3Gv.optManager.OldConnectorExtra + P,
@@ -2432,7 +2432,7 @@ class Connector extends BaseDrawingObject {
             ) &&
             (r.extra = p),
             E ? P = - P : S ? s ||
-              (P = - P) : T3Gv.optManager.theActionTriggerData === ConstantData.ConnectorDefines.A_Cr &&
+              (P = - P) : T3Gv.optManager.actionTriggerData === ConstantData.ConnectorDefines.A_Cr &&
             (P = - P),
             M = 0,
             b = 0,
@@ -2453,8 +2453,8 @@ class Connector extends BaseDrawingObject {
           b,
           M,
           P,
-          T3Gv.optManager.theActionTriggerID,
-          T3Gv.optManager.theActionTriggerData,
+          T3Gv.optManager.actionTriggerId,
+          T3Gv.optManager.actionTriggerData,
           i,
           J,
           x
@@ -2477,7 +2477,7 @@ class Connector extends BaseDrawingObject {
           T3Gv.optManager.ConnectorList
         ) switch (
           a = T3Gv.optManager.ConnectorList.length,
-          T3Gv.optManager.theActionTriggerID
+          T3Gv.optManager.actionTriggerId
           ) {
             case ConstantData.ActionTriggerType.CONNECTOR_ADJ:
               for (this.arraylist.angle && (A = _ * this.arraylist.angle), l = 0; l < a; l++) {
@@ -2495,17 +2495,17 @@ class Connector extends BaseDrawingObject {
                 y = _;
               var z,
                 W = - 1;
-              T3Gv.optManager.theActionTriggerID === ConstantData.ActionTriggerType.LINEEND &&
+              T3Gv.optManager.actionTriggerId === ConstantData.ActionTriggerType.LINEEND &&
                 a > 0 &&
                 this.arraylist.hook[w.A_Cr].id >= 0 &&
                 (W = w.A_Cr),
-                T3Gv.optManager.theActionTriggerID === ConstantData.ActionTriggerType.LINESTART &&
+                T3Gv.optManager.actionTriggerId === ConstantData.ActionTriggerType.LINESTART &&
                 a > 0 &&
                 this.arraylist.hook[w.A_Cl].id >= 0 &&
                 (W = w.A_Cl);
               var q = c &&
                 this.arraylist.hook.length % 2 == 0 &&
-                T3Gv.optManager.theActionTriggerID === ConstantData.ActionTriggerType.LINESTART;
+                T3Gv.optManager.actionTriggerId === ConstantData.ActionTriggerType.LINESTART;
               for (l = 0; l < a; l++) {
                 if (
                   g = T3Gv.optManager.ConnectorList[l].locallist,
@@ -3757,7 +3757,7 @@ class Connector extends BaseDrawingObject {
       null != this.arraylist.hook &&
       !((a = this.arraylist.hook.length) < 1)
     ) {
-      var v = T3Gv.optManager.theActionSVGObject,
+      var v = T3Gv.optManager.actionSvgObject,
         G = v.GetElementByID(ConstantData.SVGElementClass.SHAPE),
         N = v.GetElementByID(ConstantData.SVGElementClass.SLOP),
         k = $.extend(!0, {
@@ -3774,11 +3774,11 @@ class Connector extends BaseDrawingObject {
         u = this.arraylist.styleflags & R.SEDA_Linear,
         d = this.arraylist.styleflags & ConstantData.SEDA_Styles.SEDA_FlowConn,
         this.vertical ? (
-          b = t - T3Gv.optManager.theActionStartY,
-          M = e - T3Gv.optManager.theActionStartX
+          b = t - T3Gv.optManager.actionStartY,
+          M = e - T3Gv.optManager.actionStartX
         ) : (
-          b = e - T3Gv.optManager.theActionStartX,
-          M = t - T3Gv.optManager.theActionStartY
+          b = e - T3Gv.optManager.actionStartX,
+          M = t - T3Gv.optManager.actionStartY
         ),
         L = this.arraylist.ht,
         I = this.arraylist.wd;
@@ -3794,19 +3794,19 @@ class Connector extends BaseDrawingObject {
       i++,
       0 !== x &&
       i++,
-      T3Gv.optManager.theActionTriggerID
+      T3Gv.optManager.actionTriggerId
       ) {
         case ConstantData.ActionTriggerType.CONNECTOR_ADJ:
           (E || O) &&
             (b = - b),
             (f = T3Gv.optManager.OldConnectorExtra + b) < - T3Gv.optManager.OldConnectorWd &&
             (f = - T3Gv.optManager.OldConnectorWd),
-            b = f - this.arraylist.hook[T3Gv.optManager.theActionTriggerData].extra,
-            this.arraylist.hook[T3Gv.optManager.theActionTriggerData].extra = f,
+            b = f - this.arraylist.hook[T3Gv.optManager.actionTriggerData].extra,
+            this.arraylist.hook[T3Gv.optManager.actionTriggerData].extra = f,
             c &&
-            T3Gv.optManager.theActionTriggerData < this.arraylist.hook.length - 1 &&
+            T3Gv.optManager.actionTriggerData < this.arraylist.hook.length - 1 &&
             (
-              this.arraylist.hook[T3Gv.optManager.theActionTriggerData + 1].extra = f
+              this.arraylist.hook[T3Gv.optManager.actionTriggerData + 1].extra = f
             ),
             (E || O) &&
             (b = - b),
@@ -3836,7 +3836,7 @@ class Connector extends BaseDrawingObject {
           break;
         case ConstantData.ActionTriggerType.CONNECTOR_PERP:
           n = L,
-            (c && T3Gv.optManager.theActionTriggerData % 2 || U && S) &&
+            (c && T3Gv.optManager.actionTriggerData % 2 || U && S) &&
             (M = - M),
             (S && c || S) &&
             (M = - M),
@@ -3848,10 +3848,10 @@ class Connector extends BaseDrawingObject {
             b = 0;
           break;
         case ConstantData.ActionTriggerType.CONNECTOR_HOOK:
-          n = (r = this.arraylist.hook[T3Gv.optManager.theActionTriggerData]).gap,
+          n = (r = this.arraylist.hook[T3Gv.optManager.actionTriggerData]).gap,
             P = s ? b : M,
             E ? P = - P : S ? s ||
-              (P = - P) : T3Gv.optManager.theActionTriggerData === ConstantData.ConnectorDefines.A_Cr &&
+              (P = - P) : T3Gv.optManager.actionTriggerData === ConstantData.ConnectorDefines.A_Cr &&
             (P = - P),
             r.gap = T3Gv.optManager.OldConnectorGap + P,
             p = T3Gv.optManager.OldConnectorExtra + P,
@@ -3873,7 +3873,7 @@ class Connector extends BaseDrawingObject {
             ) &&
             (r.extra = p),
             E ? P = - P : S ? s ||
-              (P = - P) : T3Gv.optManager.theActionTriggerData === ConstantData.ConnectorDefines.A_Cr &&
+              (P = - P) : T3Gv.optManager.actionTriggerData === ConstantData.ConnectorDefines.A_Cr &&
             (P = - P),
             M = 0,
             b = 0,
@@ -3894,8 +3894,8 @@ class Connector extends BaseDrawingObject {
           b,
           M,
           P,
-          T3Gv.optManager.theActionTriggerID,
-          T3Gv.optManager.theActionTriggerData,
+          T3Gv.optManager.actionTriggerId,
+          T3Gv.optManager.actionTriggerData,
           i,
           J,
           x
@@ -3918,7 +3918,7 @@ class Connector extends BaseDrawingObject {
           T3Gv.optManager.ConnectorList
         ) switch (
           a = T3Gv.optManager.ConnectorList.length,
-          T3Gv.optManager.theActionTriggerID
+          T3Gv.optManager.actionTriggerId
           ) {
             case ConstantData.ActionTriggerType.CONNECTOR_ADJ:
               for (this.arraylist.angle && (A = _ * this.arraylist.angle), l = 0; l < a; l++) {
@@ -3936,17 +3936,17 @@ class Connector extends BaseDrawingObject {
                 y = _;
               var z,
                 W = - 1;
-              T3Gv.optManager.theActionTriggerID === ConstantData.ActionTriggerType.LINEEND &&
+              T3Gv.optManager.actionTriggerId === ConstantData.ActionTriggerType.LINEEND &&
                 a > 0 &&
                 this.arraylist.hook[w.A_Cr].id >= 0 &&
                 (W = w.A_Cr),
-                T3Gv.optManager.theActionTriggerID === ConstantData.ActionTriggerType.LINESTART &&
+                T3Gv.optManager.actionTriggerId === ConstantData.ActionTriggerType.LINESTART &&
                 a > 0 &&
                 this.arraylist.hook[w.A_Cl].id >= 0 &&
                 (W = w.A_Cl);
               var q = c &&
                 this.arraylist.hook.length % 2 == 0 &&
-                T3Gv.optManager.theActionTriggerID === ConstantData.ActionTriggerType.LINESTART;
+                T3Gv.optManager.actionTriggerId === ConstantData.ActionTriggerType.LINESTART;
               for (l = 0; l < a; l++) {
                 if (
                   g = T3Gv.optManager.ConnectorList[l].locallist,
@@ -4110,15 +4110,15 @@ class Connector extends BaseDrawingObject {
         Collab.AllowMessage()
       ) {
         var n = {};
-        n.BlockID = T3Gv.optManager.theActionStoredObjectID,
-          n.theActionTriggerID = T3Gv.optManager.theActionTriggerID,
+        n.BlockID = T3Gv.optManager.actionStoredObjectId,
+          n.actionTriggerId = T3Gv.optManager.actionTriggerId,
           n.Frame = Utils1.DeepCopy(this.Frame),
           n.StartPoint = Utils1.DeepCopy(this.StartPoint),
           n.EndPoint = Utils1.DeepCopy(this.EndPoint),
           n.arraylist = Utils1.DeepCopy(this.arraylist),
           Collab.BuildMessage(ConstantData.CollabMessages.Action_Connector, n, !1)
       }
-      switch (T3Gv.optManager.theActionTriggerID) {
+      switch (T3Gv.optManager.actionTriggerId) {
         case ConstantData.ActionTriggerType.LINESTART:
         case ConstantData.ActionTriggerType.LINEEND:
           if (
@@ -4132,17 +4132,17 @@ class Connector extends BaseDrawingObject {
             hook.extra < - this.arraylist.wd &&
             (hook.extra = - this.arraylist.wd)
       }
-      this.Pr_Format(T3Gv.optManager.theActionStoredObjectID),
+      this.Pr_Format(T3Gv.optManager.actionStoredObjectId),
         T3Gv.optManager.SetLinkFlag(
-          T3Gv.optManager.theActionStoredObjectID,
+          T3Gv.optManager.actionStoredObjectId,
           ConstantData.LinkFlags.SED_L_MOVE
         ),
         T3Gv.optManager.UpdateLinks(),
         t ||
         (
-          this.LM_ActionPostRelease(T3Gv.optManager.theActionStoredObjectID),
-          T3Gv.optManager.theActionStoredObjectID = - 1,
-          T3Gv.optManager.theActionSVGObject = null
+          this.LM_ActionPostRelease(T3Gv.optManager.actionStoredObjectId),
+          T3Gv.optManager.actionStoredObjectId = - 1,
+          T3Gv.optManager.actionSvgObject = null
         ),
         T3Gv.optManager.ShowOverlayLayer(),
         T3Gv.optManager.CompleteOperation(null)
@@ -4290,7 +4290,7 @@ class Connector extends BaseDrawingObject {
       (D = 2),
       t === ConstantData.ActionTriggerType.CONNECTOR_HOOK &&
       (
-        a = this.arraylist.hook[T3Gv.optManager.theActionTriggerData],
+        a = this.arraylist.hook[T3Gv.optManager.actionTriggerData],
         T3Gv.optManager.OldConnectorGap = a.gap,
         T3Gv.optManager.OldConnectorExtra = a.extra
       );
@@ -4299,8 +4299,8 @@ class Connector extends BaseDrawingObject {
     switch (t) {
       case ConstantData.ActionTriggerType.CONNECTOR_ADJ:
         if (
-          D = T3Gv.optManager.theActionTriggerData,
-          a = this.arraylist.hook[T3Gv.optManager.theActionTriggerData],
+          D = T3Gv.optManager.actionTriggerData,
+          a = this.arraylist.hook[T3Gv.optManager.actionTriggerData],
           T3Gv.optManager.OldConnectorExtra = a.extra,
           o = this.arraylist.hook.length,
           m &&

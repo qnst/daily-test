@@ -34,7 +34,7 @@ import Element from '../Basic/B.Element';
 
 import WResult from '../Model/WResult'
 
-import SDF from '../Data/SDF'
+import SDF from '../Data/ShapeDataUtil'
 import Globals from '../Data/Globals'
 import $ from 'jquery'
 import Effects from '../Basic/B.Element.Effects'
@@ -517,7 +517,7 @@ class GroupSymbol extends BaseSymbol {
       !(
         this.NoRotate() ||
         this.NoGrow() ||
-        T3Gv.optManager.bTouchInitiated ||
+        T3Gv.optManager.touchInitiated ||
         R.locked ||
         N ||
         k

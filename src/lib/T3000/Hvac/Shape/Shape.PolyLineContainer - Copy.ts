@@ -301,28 +301,28 @@ class PolyLineContainer extends PolyLine {
     if (null === a)
       return !1;
     var r = a.ID;
-    T3Gv.optManager.theActionStoredObjectID = r;
+    T3Gv.optManager.actionStoredObjectId = r;
     T3Gv.objectStore.PreserveBlock(r);
     var i = ConstantData.ActionTriggerType.MOVEPOLYSEG;
-    T3Gv.optManager.theActionTriggerID = i,
+    T3Gv.optManager.actionTriggerId = i,
       this.LM_ActionPreTrack(r, i),
-      T3Gv.optManager.theActionSVGObject = a;
+      T3Gv.optManager.actionSvgObject = a;
     var n = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(e.gesture.center.clientX, e.gesture.center.clientY);
     n = T3Gv.optManager.DoAutoGrowDrag(n),
       t = new HitResult(-1, 0, null),
       this.Hit(n, !1, !1, t),
-      T3Gv.optManager.theActionTriggerData = {
+      T3Gv.optManager.actionTriggerData = {
         hitSegment: t.segment + 1,
         moveAngle: 9999
       };
     var o = n.x
       , s = n.y
       , l = this.GetSVGFrame();
-    return T3Gv.optManager.theActionBBox = $.extend(!0, {}, l),
-      T3Gv.optManager.theActionNewBBox = $.extend(!0, {}, l),
+    return T3Gv.optManager.actionBBox = $.extend(!0, {}, l),
+      T3Gv.optManager.actionNewBBox = $.extend(!0, {}, l),
       T3Gv.optManager.HideAllSVGSelectionStates(),
-      T3Gv.optManager.theActionStartX = o,
-      T3Gv.optManager.theActionStartY = s,
+      T3Gv.optManager.actionStartX = o,
+      T3Gv.optManager.actionStartY = s,
       t = new HitResult(-1, 0, null),
       this.Hit(n, !1, !1, t),
       !0
@@ -429,16 +429,16 @@ class PolyLineContainer extends PolyLine {
 
   MovePolySeg(e, t, a, r, i) {
     "use strict";
-    this.AdjustPolySeg(e, T3Gv.optManager.theActionStartX, T3Gv.optManager.theActionStartY, t, a, i, !1, 2, 1e3) && (this.rflags = Utils2.SetFlag(this.rflags, ConstantData.FloatingPointDim.SD_FP_Width, !1),
+    this.AdjustPolySeg(e, T3Gv.optManager.actionStartX, T3Gv.optManager.actionStartY, t, a, i, !1, 2, 1e3) && (this.rflags = Utils2.SetFlag(this.rflags, ConstantData.FloatingPointDim.SD_FP_Width, !1),
       this.rflags = Utils2.SetFlag(this.rflags, ConstantData.FloatingPointDim.SD_FP_Height, !1),
-      T3Gv.optManager.theActionStartX = t,
-      T3Gv.optManager.theActionStartY = a)
+      T3Gv.optManager.actionStartX = t,
+      T3Gv.optManager.actionStartY = a)
   }
 
   AfterModifyShape(e, t) {
     var a = this;
     t === ConstantData.ActionTriggerType.MOVEPOLYSEG && function (e) {
-      var t, r, i = T3Gv.optManager.theActionTriggerData.moveAngle, n = a.GetPolyPoints(ConstantData.Defines.NPOLYPTS, !1, !0, !1, null), o = n.length, s = 0, l = -1, S = !1, c = a.StyleRecord.Line.Thickness;
+      var t, r, i = T3Gv.optManager.actionTriggerData.moveAngle, n = a.GetPolyPoints(ConstantData.Defines.NPOLYPTS, !1, !0, !1, null), o = n.length, s = 0, l = -1, S = !1, c = a.StyleRecord.Line.Thickness;
       if (0 !== i) {
         i = 360 - i;
         var u = 2 * Math.PI * (i / 360);
@@ -497,7 +497,7 @@ class PolyLineContainer extends PolyLine {
                   S = !0)
       }
       S && T3Gv.optManager.AddToDirtyList(a.BlockID)
-    }(T3Gv.optManager.theActionTriggerData.hitSegment);
+    }(T3Gv.optManager.actionTriggerData.hitSegment);
     // ListManager.BaseLine.prototype.AfterModifyShape.call(this, e, t)
     // Double === TODO
     // super.AfterModifyShape(e, t);
@@ -506,10 +506,10 @@ class PolyLineContainer extends PolyLine {
 
 
   BaseLine_AfterModifyShape(e, t) {
-    if (T3Gv.optManager.theActionSVGObject) {
-      var a = T3Gv.optManager.theActionSVGObject.GetElementByID(ConstantData.Defines.EllipseAxes);
+    if (T3Gv.optManager.actionSvgObject) {
+      var a = T3Gv.optManager.actionSvgObject.GetElementByID(ConstantData.Defines.EllipseAxes);
       null != a &&
-        T3Gv.optManager.theActionSVGObject.RemoveElement(a)
+        T3Gv.optManager.actionSvgObject.RemoveElement(a)
     }
     T3Gv.optManager.ob.Frame &&
       (
@@ -816,7 +816,7 @@ class PolyLineContainer extends PolyLine {
 
   AfterRotateShape(e) {
     "use strict";
-    var t = T3Gv.optManager.theRotateEndRotation;
+    var t = T3Gv.optManager.rotateEndRotation;
     this.RotateAllInContainer(e, t),
       this.rflags && (this.rflags = Utils2.SetFlag(this.rflags, ConstantData.FloatingPointDim.SD_FP_Width, !1),
         this.rflags = Utils2.SetFlag(this.rflags, ConstantData.FloatingPointDim.SD_FP_Height, !1)),
@@ -835,20 +835,20 @@ class PolyLineContainer extends PolyLine {
       T3Gv.optManager.ClearSelectionClick(),
       (o = this.GetListOfEnclosedObjects(!1, !0)).push(this.BlockID),
       o.length <= 1) {
-      var S = T3Gv.optManager.theRotateStartRotation
-        , c = T3Gv.optManager.theRotateEndRotation;
+      var S = T3Gv.optManager.rotateStartRotation
+        , c = T3Gv.optManager.rotateEndRotation;
       return T3Gv.optManager.ob = Utils1.DeepCopy(this),
-        T3Gv.optManager.theRotateStartRotation = 0,
-        T3Gv.optManager.theRotateEndRotation = t,
-        T3Gv.optManager.theRotateStartPoint.x = this.RotateKnobPt.x,
-        T3Gv.optManager.theRotateStartPoint.y = this.RotateKnobPt.y,
-        T3Gv.optManager.theRotatePivotX = this.Frame.x + this.Frame.width / 2,
-        T3Gv.optManager.theRotatePivotY = this.Frame.y + this.Frame.height / 2,
+        T3Gv.optManager.rotateStartRotation = 0,
+        T3Gv.optManager.rotateEndRotation = t,
+        T3Gv.optManager.rotateStartPoint.x = this.RotateKnobPt.x,
+        T3Gv.optManager.rotateStartPoint.y = this.RotateKnobPt.y,
+        T3Gv.optManager.rotatePivotX = this.Frame.x + this.Frame.width / 2,
+        T3Gv.optManager.rotatePivotY = this.Frame.y + this.Frame.height / 2,
         // ListManager.PolyLine.prototype.AfterRotateShape.call(this, e),
         // Double === TODO
         super.AfterRotateShape(e),
-        T3Gv.optManager.theRotateStartRotation = S,
-        T3Gv.optManager.theRotateEndRotation = c,
+        T3Gv.optManager.rotateStartRotation = S,
+        T3Gv.optManager.rotateEndRotation = c,
         T3Gv.optManager.SelectObjects(o, !1, !1),
         T3Gv.optManager.ob = {},
         o

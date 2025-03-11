@@ -10,6 +10,7 @@ import ConstantData2 from '../Data/ConstantData2';
 import Instance from '../Data/Instance/Instance';
 import Point from '../Model/Point';
 import PolygonConstant from '../Opt/Business/PolygonConstant';
+import ShapeContant from '../Data/ShapeContant';
 
 class ShapeContainer extends Rect {
 
@@ -537,7 +538,7 @@ class ShapeContainer extends Rect {
         const createdIds: any[] = [];
         T3Gv.optManager.UpdateHook(closest < 0 ? someVariable : closest, -1, this.BlockID, hookPointID, hookLocation, null);
         createdIds.push(closest < 0 ? someVariable : closest);
-        T3Gv.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE);
+        T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
         T3Gv.optManager.CompleteOperation(createdIds);
       }
     }
@@ -852,7 +853,7 @@ class ShapeContainer extends Rect {
         if (childObject) {
           // Update position if needed
           if (childObject.Frame.y !== runningY) {
-            T3Gv.optManager.SetLinkFlag(childObject.BlockID, ConstantData.LinkFlags.SED_L_MOVE);
+            T3Gv.optManager.SetLinkFlag(childObject.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
           }
 
           // Track maximum width for the column
@@ -892,13 +893,13 @@ class ShapeContainer extends Rect {
           currentObject &&
           (currentObject.Frame.x + currentObject.Frame.width / 2) !== (containerInstance.Frame.x + listItems[j].pt.x)
         ) {
-          T3Gv.optManager.SetLinkFlag(currentObject.BlockID, ConstantData.LinkFlags.SED_L_MOVE);
+          T3Gv.optManager.SetLinkFlag(currentObject.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
           needsUpdate = true;
         }
       }
 
       if (needsUpdate) {
-        T3Gv.optManager.SetLinkFlag(containerInstance.BlockID, ConstantData.LinkFlags.SED_L_MOVE);
+        T3Gv.optManager.SetLinkFlag(containerInstance.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
       }
 
       return { start: currentIndex, colwidth: finalColumnWidth, top: runningY };
@@ -930,7 +931,7 @@ class ShapeContainer extends Rect {
         if (childObject) {
           // Update position if needed
           if (childObject.Frame.y / 2 !== currentBaseY) {
-            T3Gv.optManager.SetLinkFlag(childObject.BlockID, ConstantData.LinkFlags.SED_L_MOVE);
+            T3Gv.optManager.SetLinkFlag(childObject.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
           }
           objectWidth = childObject.Frame.width;
           objectHeight = childObject.Frame.height;
@@ -976,13 +977,13 @@ class ShapeContainer extends Rect {
           currentObject &&
           (currentObject.Frame.y + currentObject.Frame.height / 2) !== (basePoint.y + listItems[j].pt.y)
         ) {
-          T3Gv.optManager.SetLinkFlag(currentObject.BlockID, ConstantData.LinkFlags.SED_L_MOVE);
+          T3Gv.optManager.SetLinkFlag(currentObject.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
           needsUpdate = true;
         }
       }
 
       if (needsUpdate) {
-        T3Gv.optManager.SetLinkFlag(containerInstance.BlockID, ConstantData.LinkFlags.SED_L_MOVE);
+        T3Gv.optManager.SetLinkFlag(containerInstance.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
       }
 
       return { start: currentIndex, rowht: finalRowHeight, left: runningX };
@@ -1141,7 +1142,7 @@ class ShapeContainer extends Rect {
         const connectedObject = this.hooks.length ? T3Gv.optManager.GetObjectPtr(this.hooks[0].objid, false) : null;
         if (connectedObject && connectedObject instanceof ShapeContainer) {
           connectedObject.flags = Utils2.SetFlag(connectedObject.flags, ConstantData.ObjFlags.SEDO_Obj1, true);
-          T3Gv.optManager.SetLinkFlag(connectedObject.BlockID, ConstantData.LinkFlags.SED_L_MOVE);
+          T3Gv.optManager.SetLinkFlag(connectedObject.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
         }
 
         // Apply offsets if needed
@@ -1663,7 +1664,7 @@ class ShapeContainer extends Rect {
           );
 
           // Mark container for layout update
-          T3Gv.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE);
+          T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
         }
 
         let offsetX = 0,
@@ -1697,7 +1698,7 @@ class ShapeContainer extends Rect {
               ConstantData.ObjMoreFlags.SED_MF_ContainerChild,
               false
             );
-            T3Gv.optManager.SetLinkFlag(this.BlockID, ConstantData.LinkFlags.SED_L_MOVE);
+            T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
           }
         }
 

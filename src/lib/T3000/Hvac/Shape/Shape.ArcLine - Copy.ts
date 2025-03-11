@@ -452,7 +452,7 @@ class ArcLine extends BaseLine {
       m.knobID = ConstantData.ActionTriggerType.MODIFYSHAPE,
       C = this.GenericKnob(m),
       i.AddElement(C),
-      T3Gv.optManager.bTouchInitiated &&
+      T3Gv.optManager.touchInitiated &&
       (s = !1),
       s &&
       !m.locked &&
@@ -804,12 +804,12 @@ class ArcLine extends BaseLine {
   StartNewObjectDrawTrackCommon(e, t, a) {
     console.log('ListManager.ArcLine.prototype.StartNewObjectDrawTrackCommon e, t, a=>', e, t, a);
 
-    var r = T3Gv.optManager.theActionStartX,
+    var r = T3Gv.optManager.actionStartX,
       i = e - r,
-      n = t - T3Gv.optManager.theActionStartY,
+      n = t - T3Gv.optManager.actionStartY,
       o = Math.sqrt(i * i + n * n);
     $.extend(!0, {
-    }, T3Gv.optManager.theActionBBox);
+    }, T3Gv.optManager.actionBBox);
     this.CurveAdjust = o / 10,
       this.CurveAdjust < 1 &&
       (this.CurveAdjust = 1),
@@ -817,7 +817,7 @@ class ArcLine extends BaseLine {
       (this.CurveAdjust = 500),
       this.IsReversed = !(e >= r),
       this.AdjustLineEnd(
-        T3Gv.optManager.theActionSVGObject,
+        T3Gv.optManager.actionSvgObject,
         e,
         t,
         ConstantData.ActionTriggerType.LINEEND

@@ -581,7 +581,7 @@ class Polygon extends BaseShape {
     else {
       if (
         this.flags & ConstantData.ObjFlags.SEDO_ContConn &&
-        !T3Gv.optManager.FromOverlayLayer
+        !T3Gv.optManager.fromOverlayLayer
         // ) return u = ListManager.BaseDrawingObject.prototype.GetPerimPts.call(this, e, t, a, r, i, n);
       ) return u = this.BaseDrawingObject_GetPerimPts(e, t, a, r, i, n);
       for (

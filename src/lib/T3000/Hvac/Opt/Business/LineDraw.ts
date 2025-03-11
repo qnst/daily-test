@@ -41,7 +41,7 @@ Business.LineDraw.prototype = new Business.Base,
   },
   Business.LineDraw.prototype.CloseEdit = function (e) {
     e &&
-      (T3Gv.optManager.FromOverlayLayer = !0),
+      (T3Gv.optManager.fromOverlayLayer = !0),
       T3Gv.optManager.CloseEdit()
   },
   Business.LineDraw.prototype.AllowAdd = function (e, t) {
@@ -67,22 +67,22 @@ Business.LineDraw.prototype = new Business.Base,
     var l = this.AddSymbol(e);
     i >= 0 &&
       Business.ShiftConnectedShapes(a, i, r, t, !0, l),
-      T3Gv.optManager.LineDrawLineID = r;
-    if (Collab.AllowMessage()) {
-      var S = {
-        BlockID: a,
-        LineDrawLineID: T3Gv.optManager.LineDrawLineID,
-        symbolID: e,
-        ArrowID: t,
-        lineid: r,
-        shapeid: i
-      };
-      S.EndPoint = Utils1.DeepCopy(n),
-        S.StartPoint = Utils1.DeepCopy(o),
-        S.connect = Utils1.DeepCopy(s),
-        S.Def = Utils1.DeepCopy(sdp.def),
-        Collab.BuildMessage(ConstantData.CollabMessages.Pr_InsertSymbol, S, !1)
-    }
+      T3Gv.optManager.lineDrawLineId = r;
+    // if (Collab.AllowMessage()) {
+    //   var S = {
+    //     BlockID: a,
+    //     lineDrawLineId: T3Gv.optManager.lineDrawLineId,
+    //     symbolID: e,
+    //     ArrowID: t,
+    //     lineid: r,
+    //     shapeid: i
+    //   };
+    //   S.EndPoint = Utils1.DeepCopy(n),
+    //     S.StartPoint = Utils1.DeepCopy(o),
+    //     S.connect = Utils1.DeepCopy(s),
+    //     S.Def = Utils1.DeepCopy(sdp.def),
+    //     Collab.BuildMessage(ConstantData.CollabMessages.Pr_InsertSymbol, S, !1)
+    // }
     this.Pr_AddLine(o, n, s, 'segLine', a, t, l)
   },
   Business.LineDraw.prototype.Pr_GetCurrentSymbolID = function () {
@@ -152,7 +152,7 @@ Business.LineDraw.prototype = new Business.Base,
     }
     T3Gv.optManager.UpdateHook(u, - 1, i, ConstantData.HookPts.SED_KTL, a, null),
       s.AdjustLineEnd(null, t.x, t.y, ConstantData.ActionTriggerType.LINEEND),
-      T3Gv.optManager.LineDrawID = u,
+      T3Gv.optManager.lineDrawId = u,
       this.InsertShape(- 1, null, !0, o)
   },
   Business.LineDraw.prototype.AddLeftRight = function (e, t, a, r) {
@@ -209,10 +209,10 @@ Business.LineDraw.prototype = new Business.Base,
     if (a && a.gesture) {
       0 === S.RecentSymbols.length &&
         this.Initialize(),
-        T3Gv.optManager.FromOverlayLayer = !0;
+        T3Gv.optManager.fromOverlayLayer = !0;
       var f = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(a.gesture.center.clientX, a.gesture.center.clientY);
-      T3Gv.optManager.theLineDrawStartX = f.x,
-        T3Gv.optManager.theLineDrawStartY = f.y,
+      T3Gv.optManager.lineDrawStartX = f.x,
+        T3Gv.optManager.lineDrawStartY = f.y,
         SDUI.Commands.MainController.Shapes.DrawNewLineShape(l, !1, !0)
     } else {
       var L,
@@ -243,7 +243,7 @@ Business.LineDraw.prototype = new Business.Base,
             w = this.AddSymbol(E);
           Business.ShiftConnectedShapes(r, _, A, n, !0, w)
         }
-        T3Gv.optManager.LineDrawLineID = A
+        T3Gv.optManager.lineDrawLineId = A
       }
     }
     if (D = T3Gv.optManager.GetObjectPtr(r, !1)) {
@@ -317,17 +317,17 @@ Business.LineDraw.prototype = new Business.Base,
         l = T3Constant.DocContext.LineTool
     }
     if (a) {
-      T3Gv.optManager.FromOverlayLayer = !0,
+      T3Gv.optManager.fromOverlayLayer = !0,
         0 === c.RecentSymbols.length &&
         this.Initialize();
       var m = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(a.gesture.center.clientX, a.gesture.center.clientY);
-      T3Gv.optManager.theLineDrawStartX = m.x,
-        T3Gv.optManager.theLineDrawStartY = m.y,
+      T3Gv.optManager.lineDrawStartX = m.x,
+        T3Gv.optManager.lineDrawStartY = m.y,
         SDUI.Commands.MainController.Shapes.DrawNewLineShape(l, !1, !0),
-        T3Gv.optManager.theDrawShape &&
+        T3Gv.optManager.drawShape &&
         (
-          T3Gv.optManager.theDrawShape.hookflags = Utils2.SetFlag(
-            T3Gv.optManager.theDrawShape.hookflags,
+          T3Gv.optManager.drawShape.hookflags = Utils2.SetFlag(
+            T3Gv.optManager.drawShape.hookflags,
             ConstantData.HookFlags.SED_LC_NoContinuous,
             !0
           )
@@ -361,7 +361,7 @@ Business.LineDraw.prototype = new Business.Base,
             A = this.AddSymbol(R);
           Business.ShiftConnectedShapes(r, P, M, i, !0, A)
         }
-        T3Gv.optManager.LineDrawLineID = M
+        T3Gv.optManager.lineDrawLineId = M
       }
     }
     if (p = T3Gv.optManager.GetObjectPtr(r, !1)) {
@@ -451,7 +451,7 @@ Business.LineDraw.prototype = new Business.Base,
           _ = this.AddSymbol(A);
         Business.ShiftConnectedShapes(e.BlockID, R, P, i, !0, _)
       }
-      T3Gv.optManager.LineDrawLineID = P
+      T3Gv.optManager.lineDrawLineId = P
     }
     S.push(l);
     var E = e.GetPerimPts(e.BlockID, S, 1, !1, null, - 1),
@@ -479,10 +479,10 @@ Business.LineDraw.prototype = new Business.Base,
       case 'arcSegLine':
         o = T3Constant.DocContext.LineTool
     }
-    T3Gv.optManager.FromOverlayLayer = !0;
+    T3Gv.optManager.fromOverlayLayer = !0;
     var s = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(a.gesture.center.clientX, a.gesture.center.clientY);
-    T3Gv.optManager.theLineDrawStartX = s.x,
-      T3Gv.optManager.theLineDrawStartY = s.y,
+    T3Gv.optManager.lineDrawStartX = s.x,
+      T3Gv.optManager.lineDrawStartY = s.y,
       SDUI.Commands.MainController.Shapes.DrawNewLineShape(o, !1, !0);
     var l = {},
       S = T3Gv.optManager.GetObjectPtr(r, !1);
@@ -736,7 +736,7 @@ Business.LineDraw.prototype = new Business.Base,
         k = this.Pr_GetCurrentSymbolID();
       this.Pr_InsertSymbol(k, a, t, F, v, N, _[0], n)
     } else {
-      var U = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theActionStoredObjectID, !1);
+      var U = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.actionStoredObjectId, !1);
       if (U) {
         switch (a) {
           case ConstantData.ActionArrow.RIGHT:
@@ -768,7 +768,7 @@ Business.LineDraw.prototype = new Business.Base,
           (J || x) &&
           (
             this.Pr_ShiftDiagram(U, J, x, t, null),
-            T3Gv.optManager.OffsetShape(T3Gv.optManager.theActionStoredObjectID, J, x, 0)
+            T3Gv.optManager.OffsetShape(T3Gv.optManager.actionStoredObjectId, J, x, 0)
           );
         var O = T3Gv.optManager.svgDoc.ConvertDocToWindowCoords(r, i);
         U.LM_DrawRelease(e, O)
@@ -832,7 +832,7 @@ Business.LineDraw.prototype = new Business.Base,
     a &&
       1 === a.hooks.length &&
       (
-        T3Gv.optManager.LineDrawID = e,
+        T3Gv.optManager.lineDrawId = e,
         SDUI.Commands.MainController.ShowDropdown(
           Resources.Controls.Dropdowns.InsertShape.Id,
           t.x,
@@ -842,7 +842,7 @@ Business.LineDraw.prototype = new Business.Base,
       )
   },
   Business.LineDraw.prototype.InsertShape = function (e, t, a, r) {
-    var i = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.LineDrawID, !1),
+    var i = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.lineDrawId, !1),
       n = ConstantData.Defines.Shape_Width,
       o = ConstantData.Defines.Shape_Height,
       s = ConstantData.Defines.SED_CDim,
@@ -933,18 +933,18 @@ Business.LineDraw.prototype = new Business.Base,
         if (
           M.push(D),
           T3Gv.optManager.UpdateHook(
-            T3Gv.optManager.LineDrawID,
+            T3Gv.optManager.lineDrawId,
             - 1,
             D,
             ConstantData.HookPts.SED_KTR,
             y,
             null
           ),
-          T3Gv.optManager.SetLinkFlag(D, ConstantData.LinkFlags.SED_L_MOVE),
-          T3Gv.optManager.LineDrawLineID >= 0
+          T3Gv.optManager.SetLinkFlag(D, ShapeContant.LinkFlags.SED_L_MOVE),
+          T3Gv.optManager.lineDrawLineId >= 0
         ) {
           var P,
-            R = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.LineDrawLineID, !0),
+            R = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.lineDrawLineId, !0),
             A = i.hooks[0].objid;
           for (P = 0; P < R.hooks.length; P++) if (R.hooks[P].objid === A) {
             var _ = R.GetShapeConnectPoint(R.hooks[P].hookpt);
@@ -965,8 +965,8 @@ Business.LineDraw.prototype = new Business.Base,
                 _.x = E[0].x,
                 _.y = E[0].y
             }
-            T3Gv.optManager.UpdateHook(T3Gv.optManager.LineDrawLineID, P, D, R.hooks[P].hookpt, _, null),
-              T3Gv.optManager.SetLinkFlag(D, ConstantData.LinkFlags.SED_L_MOVE);
+            T3Gv.optManager.UpdateHook(T3Gv.optManager.lineDrawLineId, P, D, R.hooks[P].hookpt, _, null),
+              T3Gv.optManager.SetLinkFlag(D, ShapeContant.LinkFlags.SED_L_MOVE);
             break
           }
         }
@@ -982,7 +982,7 @@ Business.LineDraw.prototype = new Business.Base,
           !a
         ) {
           var F = {
-            LineDrawID: T3Gv.optManager.LineDrawID,
+            lineDrawId: T3Gv.optManager.lineDrawId,
             symbolID: t
           };
           F.StyleRecord = Utils1.DeepCopy(c.def.style),
@@ -995,8 +995,8 @@ Business.LineDraw.prototype = new Business.Base,
             Collab.BuildMessage(ConstantData.CollabMessages.LineDraw_InsertShape, F, !1)
         }
       }
-      T3Gv.optManager.LineDrawID = - 1,
-        T3Gv.optManager.LineDrawLineID = - 1
+      T3Gv.optManager.lineDrawId = - 1,
+        T3Gv.optManager.lineDrawLineId = - 1
     }
   },
   Business.LineDraw.prototype.IdleShapeMenu = function (e) {
