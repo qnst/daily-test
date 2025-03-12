@@ -5,7 +5,6 @@ import Utils1 from '../Helper/Utils1';
 import Utils2 from "../Helper/Utils2";
 import Utils3 from "../Helper/Utils3";
 import T3Gv from '../Data/T3Gv'
-import FileParser from '../Data/FileParser'
 import Point from '../Model/Point';
 import ConstantData from '../Data/ConstantData'
 import SelectionAttributes from '../Model/SelectionAttributes'
@@ -18,9 +17,9 @@ import SEDArray from '../Model/SEDArray'
 import ConstantData1 from "../Data/ConstantData1"
 import ArrowheadRecord from '../Model/ArrowheadRecord'
 import ConstantData2 from "../Data/ConstantData2"
-import OptAhUtil from '../Opt/Business/OptAhUtil';
+import OptAhUtil from '../Util/OptAhUtil';
 import Instance from '../Data/Instance/Instance';
-import ShapeContant from '../Data/ShapeContant';
+import ShapeConstant from '../Data/ShapeConstant';
 
 class Connector extends BaseDrawingObject {
 
@@ -1534,7 +1533,7 @@ class Connector extends BaseDrawingObject {
 
     OptAhUtil.FindTreeTop(
       connector,
-      ShapeContant.LinkFlags.SED_L_MOVE,
+      ShapeConstant.LinkFlags.SED_L_MOVE,
       {
         topconnector: -1,
         topshape: -1,
@@ -2259,7 +2258,7 @@ class Connector extends BaseDrawingObject {
       this.rflags = Utils2.SetFlag(this.rflags, ConstantData.FloatingPointDim.SD_FP_Height, false);
     }
 
-    T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
+    T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
 
     console.log("S.Connector: SetSize output:", { arraylist: this.arraylist, rflags: this.rflags });
   }
@@ -2845,7 +2844,7 @@ class Connector extends BaseDrawingObject {
       this.Pr_Format(T3Gv.optManager.actionStoredObjectId),
         T3Gv.optManager.SetLinkFlag(
           T3Gv.optManager.actionStoredObjectId,
-          ShapeContant.LinkFlags.SED_L_MOVE
+          ShapeConstant.LinkFlags.SED_L_MOVE
         ),
         T3Gv.optManager.UpdateLinks(),
         t ||
@@ -3068,7 +3067,7 @@ class Connector extends BaseDrawingObject {
             }
           }
           if (retrievedObject.hooks.length) {
-            T3Gv.optManager.SetLinkFlag(retrievedObject.hooks[0].objid, ShapeContant.LinkFlags.SED_L_MOVE);
+            T3Gv.optManager.SetLinkFlag(retrievedObject.hooks[0].objid, ShapeConstant.LinkFlags.SED_L_MOVE);
           }
         }
         break;
@@ -3578,11 +3577,11 @@ class Connector extends BaseDrawingObject {
           this._CollapseAssistant();
         }
       }
-      T3Gv.optManager.SetLinkFlag(connectorBlockId, ShapeContant.LinkFlags.SED_L_MOVE);
+      T3Gv.optManager.SetLinkFlag(connectorBlockId, ShapeConstant.LinkFlags.SED_L_MOVE);
       if (noTreeOverlap) {
         OptAhUtil.FindTreeTop(
           this,
-          ShapeContant.LinkFlags.SED_L_MOVE,
+          ShapeConstant.LinkFlags.SED_L_MOVE,
           {
             topconnector: -1,
             topshape: -1,
@@ -3592,7 +3591,7 @@ class Connector extends BaseDrawingObject {
       } else {
         const objectPtr = T3Gv.optManager.GetObjectPtr(connectorBlockId, true);
         if (objectPtr && objectPtr.hooks.length) {
-          T3Gv.optManager.SetLinkFlag(objectPtr.hooks[0].objid, ShapeContant.LinkFlags.SED_L_MOVE);
+          T3Gv.optManager.SetLinkFlag(objectPtr.hooks[0].objid, ShapeConstant.LinkFlags.SED_L_MOVE);
         }
       }
       this.Pr_Format(connectorBlockId);
@@ -4275,7 +4274,7 @@ class Connector extends BaseDrawingObject {
         },
         angle: this.arraylist.angle
       };
-      outputStream.writeStruct(FileParser.SDF_ARRAY_Struct, structToWrite);
+      outputStream.writeStruct(ShapeConstant.ArrayStruct, structToWrite);
     } else {
       structToWrite = {
         InstID: instanceID,
@@ -4288,10 +4287,10 @@ class Connector extends BaseDrawingObject {
         angle: this.arraylist.angle,
         curveparam: this.arraylist.curveparam
       };
-      outputStream.writeStruct(FileParser.SDF_ARRAY_Struct_34, structToWrite);
+      outputStream.writeStruct(ShapeConstant.ArrayStruct34, structToWrite);
     }
 
-    let drawArrayCode = ShapeDataUtil.Write_CODE(outputStream, ConstantData2.SDROpCodesByName.SDF_C_DRAWARRAY);
+    let drawArrayCode = ShapeDataUtil.Write_CODE(outputStream, ShapeConstant.OpCodeName.SDF_C_DRAWARRAY);
     ShapeDataUtil.Write_LENGTH(outputStream, drawArrayCode);
 
     // Compute the offset for hook rectangles relative to the frame
@@ -4344,7 +4343,7 @@ class Connector extends BaseDrawingObject {
         }
       }
 
-      let drawArrayHookCode = ShapeDataUtil.Write_CODE(outputStream, ConstantData2.SDROpCodesByName.SDF_C_DRAWARRAYHOOK);
+      let drawArrayHookCode = ShapeDataUtil.Write_CODE(outputStream, ShapeConstant.OpCodeName.SDF_C_DRAWARRAYHOOK);
 
       // Write hook structure based on output context type
       if (context.WriteWin32) {
@@ -4362,7 +4361,7 @@ class Connector extends BaseDrawingObject {
           },
           lgap: ShapeDataUtil.ToSDWinCoords(gapValue, context.coordScaleFactor)
         };
-        outputStream.writeStruct(FileParser.SDF_ARRAYHOOK_Struct_38, hookStruct);
+        outputStream.writeStruct(ShapeConstant.ArrayHookStruct38, hookStruct);
       } else {
         let hookStruct = {
           uniqueid: ShapeDataUtil.BlockIDtoUniqueID(currentHook.id, context),
@@ -4375,7 +4374,7 @@ class Connector extends BaseDrawingObject {
           },
           lgap: ShapeDataUtil.ToSDWinCoords(gapValue, context.coordScaleFactor)
         };
-        outputStream.writeStruct(FileParser.SDF_ARRAYHOOK_Struct_50, hookStruct);
+        outputStream.writeStruct(ShapeConstant.ArrayHookStruct50, hookStruct);
       }
 
       ShapeDataUtil.Write_LENGTH(outputStream, drawArrayHookCode);
@@ -4398,13 +4397,13 @@ class Connector extends BaseDrawingObject {
             tuniqueid: ShapeDataUtil.BlockIDtoUniqueID(-hookForText.textid, context)
           };
         }
-        let textCode = ShapeDataUtil.Write_CODE(outputStream, ConstantData2.SDROpCodesByName.SDF_C_DRAWARRAYTEXT);
-        outputStream.writeStruct(FileParser.SDF_ArrayHookText_Struct, textStruct);
+        let textCode = ShapeDataUtil.Write_CODE(outputStream, ShapeConstant.OpCodeName.SDF_C_DRAWARRAYTEXT);
+        outputStream.writeStruct(ShapeConstant.ArrayHookTextStruct, textStruct);
         ShapeDataUtil.Write_LENGTH(outputStream, textCode);
       }
     }
 
-    outputStream.writeUint16(ConstantData2.SDROpCodesByName.SDF_C_DRAWARRAY_END);
+    outputStream.writeUint16(ShapeConstant.OpCodeName.SDF_C_DRAWARRAY_END);
 
     // Adjust text flags based on text direction
     this.TextFlags = Utils2.SetFlag(this.TextFlags, ConstantData.TextFlags.SED_TF_HorizText, !this.TextDirection);
@@ -4545,7 +4544,7 @@ class Connector extends BaseDrawingObject {
       } else {
         childArrayId = T3Gv.optManager.FindChildArray(firstHookId, -1);
         if (childArrayId >= 0) {
-          T3Gv.optManager.SetLinkFlag(firstHookId, ShapeContant.LinkFlags.SED_L_MOVE);
+          T3Gv.optManager.SetLinkFlag(firstHookId, ShapeConstant.LinkFlags.SED_L_MOVE);
         }
       }
     }
@@ -4631,7 +4630,7 @@ class Connector extends BaseDrawingObject {
           );
 
           remainingHooks = 0;
-          T3Gv.optManager.SetLinkFlag(parentObjectId, ShapeContant.LinkFlags.SED_L_MOVE);
+          T3Gv.optManager.SetLinkFlag(parentObjectId, ShapeConstant.LinkFlags.SED_L_MOVE);
         }
       }
 
@@ -5180,7 +5179,7 @@ class Connector extends BaseDrawingObject {
           (
             Utils2.IsEqual(ee.h, te.h) &&
             Utils2.IsEqual(ee.v, te.v) ||
-            T3Gv.optManager.SetLinkFlag(this.hooks[0].objid, ShapeContant.LinkFlags.SED_L_MOVE)
+            T3Gv.optManager.SetLinkFlag(this.hooks[0].objid, ShapeConstant.LinkFlags.SED_L_MOVE)
           )
       } else te.h = 0,
         te.v = 0;
@@ -5250,11 +5249,11 @@ class Connector extends BaseDrawingObject {
         Utils2.IsEqual(this.arraylist.profile.vdist, ae.vdist) ||
         p &&
         (
-          T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE)
+          T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE)
           ,
           OptAhUtil.FindTreeTop(
             this,
-            ShapeContant.LinkFlags.SED_L_MOVE,
+            ShapeConstant.LinkFlags.SED_L_MOVE,
             {
               topconnector: - 1,
               topshape: - 1,
@@ -7584,7 +7583,7 @@ class Connector extends BaseDrawingObject {
         this.hooks[0].hookpt === ConstantData.HookPts.SED_LT;
 
       // Force an update to the linked object.
-      T3Gv.optManager.SetLinkFlag(this.hooks[0].objid, ShapeContant.LinkFlags.SED_L_MOVE);
+      T3Gv.optManager.SetLinkFlag(this.hooks[0].objid, ShapeConstant.LinkFlags.SED_L_MOVE);
 
       if (this.vertical) {
         if (isBothSides) {
@@ -7724,7 +7723,7 @@ class Connector extends BaseDrawingObject {
     }
 
     // Set link flag for the current connector and mark it for reformatting.
-    T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE | ShapeContant.LinkFlags.SED_L_CHANGE);
+    T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE | ShapeConstant.LinkFlags.SED_L_CHANGE);
     this.flags = Utils2.SetFlag(this.flags, ConstantData.ObjFlags.SEDO_Obj1, true);
     // Fix the hook based on the propagate flag.
     this._FixHook(propagate, false);
@@ -7736,7 +7735,7 @@ class Connector extends BaseDrawingObject {
       if (hookedObject && hookedObject.hooks.length) {
         // Update hook point for the hooked object.
         hookedObject.hooks[0].hookpt = this.GetBestHook(currentHook.id, hookedObject.hooks[0].hookpt, hookedObject.hooks[0].connect);
-        T3Gv.optManager.SetLinkFlag(currentHook.id, ShapeContant.LinkFlags.SED_L_MOVE);
+        T3Gv.optManager.SetLinkFlag(currentHook.id, ShapeConstant.LinkFlags.SED_L_MOVE);
         if (hookedObject.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.CONNECTOR) {
           // Recursively set direction for connector type objects.
           hookedObject._SetDirection(invertStyle, toggleOrientation, true);
@@ -7913,12 +7912,12 @@ class Connector extends BaseDrawingObject {
     }
 
     if (propagateCollapse && this.hooks.length > 0) {
-      T3Gv.optManager.SetLinkFlag(this.hooks[0].objid, ShapeContant.LinkFlags.SED_L_MOVE);
+      T3Gv.optManager.SetLinkFlag(this.hooks[0].objid, ShapeConstant.LinkFlags.SED_L_MOVE);
     }
 
     if (((this.extraflags & collapseExtraFlag) > 0) != collapseState || !propagateCollapse) {
       if (propagateCollapse || updateLinkFlags) {
-        T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
+        T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
       }
       if (!propagateCollapse && collapseState) {
         this.flags = Utils2.SetFlag(this.flags, notVisibleFlag, collapseState);
@@ -8050,7 +8049,7 @@ class Connector extends BaseDrawingObject {
       for (hookIndex = 0; hookIndex < totalMatches; hookIndex++) {
         currentConnector = T3Gv.optManager.GetObjectPtr(matchList[hookIndex].cobj.BlockID, true);
         currentConnector.arraylist.matchsizelen = 0;
-        T3Gv.optManager.SetLinkFlag(currentConnector.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
+        T3Gv.optManager.SetLinkFlag(currentConnector.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
         // Determine the new stub index for formatting
         const newStubIndex = (currentConnector.hooks[0].hookpt === hookPoints.SED_LL ||
           currentConnector.hooks[0].hookpt === hookPoints.SED_LT)
@@ -8083,7 +8082,7 @@ class Connector extends BaseDrawingObject {
         for (hookIndex = 0; hookIndex < totalMatches; hookIndex++) {
           currentConnector = T3Gv.optManager.GetObjectPtr(matchList[hookIndex].cobj.BlockID, true);
           currentConnector.arraylist.matchsizelen = 0;
-          T3Gv.optManager.SetLinkFlag(currentConnector.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
+          T3Gv.optManager.SetLinkFlag(currentConnector.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
           currentConnector.Pr_Format(currentConnector.BlockID);
           matchList[hookIndex].bkdist = currentConnector.arraylist.hook[connectorDefines.A_Bk].endpoint.h -
             currentConnector.arraylist.hook[connectorDefines.A_Bk].startpoint.h;

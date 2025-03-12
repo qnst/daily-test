@@ -8,7 +8,6 @@ import Utils1 from '../Helper/Utils1';
 import Utils2 from "../Helper/Utils2";
 import Utils3 from "../Helper/Utils3";
 import T3Gv from '../Data/T3Gv'
-import FileParser from '../Data/FileParser'
 import $ from 'jquery';
 import BaseShape from './S.BaseShape'
 import Point from '../Model/Point'
@@ -21,7 +20,7 @@ import HitResult from '../Model/HitResult'
 import SelectionAttributes from '../Model/SelectionAttributes'
 import ConstantData1 from '../Data/ConstantData1'
 import ConstantData2 from '../Data/ConstantData2'
-import ShapeContant from '../Data/ShapeContant';
+import ShapeConstant from '../Data/ShapeConstant';
 
 class PolyLine extends BaseLine {
 
@@ -563,7 +562,7 @@ class PolyLine extends BaseLine {
 
     // Recalculate frame and update link flag
     this.CalcFrame();
-    T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
+    T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
 
     console.log('S.PolyLine: SetSize output', { frame: this.Frame, startPoint: this.StartPoint, endPoint: this.EndPoint });
   }
@@ -1030,10 +1029,10 @@ class PolyLine extends BaseLine {
       }
 
       // Set link flags for the main block and all hooks.
-      T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
+      T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
       const hooksCount = this.hooks.length;
       for (hookIndex = 0; hookIndex < hooksCount; hookIndex++) {
-        T3Gv.optManager.SetLinkFlag(this.hooks[hookIndex].objid, ShapeContant.LinkFlags.SED_L_MOVE);
+        T3Gv.optManager.SetLinkFlag(this.hooks[hookIndex].objid, ShapeConstant.LinkFlags.SED_L_MOVE);
       }
 
       T3Gv.optManager.ActionTriggerData = cornerSegmentIndex;
@@ -1994,7 +1993,7 @@ class PolyLine extends BaseLine {
         this.rflags = Utils2.SetFlag(this.rflags, ConstantData.FloatingPointDim.SD_FP_Height, false);
       }
 
-      T3Gv.optManager.SetLinkFlag(event, ShapeContant.LinkFlags.SED_L_MOVE);
+      T3Gv.optManager.SetLinkFlag(event, ShapeConstant.LinkFlags.SED_L_MOVE);
       T3Gv.optManager.UpdateLinks();
       T3Gv.optManager.AddToDirtyList(event);
     }
@@ -2249,7 +2248,7 @@ class PolyLine extends BaseLine {
         if (T3Gv.optManager.ob && T3Gv.optManager.ob.Frame) {
           T3Gv.optManager.MaintainLink(this.BlockID, this, T3Gv.optManager.ob, ConstantData.ActionTriggerType.FLIP);
         }
-        T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
+        T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
       }
 
       if (this.polylist.closed) {
@@ -2274,7 +2273,7 @@ class PolyLine extends BaseLine {
         break;
     }
 
-    T3Gv.optManager.SetLinkFlag(blockID, ShapeContant.LinkFlags.SED_L_MOVE);
+    T3Gv.optManager.SetLinkFlag(blockID, ShapeConstant.LinkFlags.SED_L_MOVE);
     T3Gv.optManager.AddToDirtyList(blockID);
 
     console.log('S.PolyLine: LinkGrow output', { blockID, hookPoint, newPoint });
@@ -2754,8 +2753,8 @@ class PolyLine extends BaseLine {
           targetObject.RotationAngle = angle;
           T3Gv.optManager.SetLinkFlag(
             this.BlockID,
-            ShapeContant.LinkFlags.SED_L_MOVE |
-            ShapeContant.LinkFlags.SED_L_CHANGE
+            ShapeConstant.LinkFlags.SED_L_MOVE |
+            ShapeConstant.LinkFlags.SED_L_CHANGE
           );
           T3Gv.optManager.AddToDirtyList(objectTargetID);
         }
@@ -3005,7 +3004,7 @@ class PolyLine extends BaseLine {
     var tempArray = [];
     // Make a deep copy of this polyline object.
     var polyObj = Utils1.DeepCopy(this);
-    var writeCode = ShapeDataUtil.Write_CODE(writer, ConstantData2.SDROpCodesByName.SDF_C_DRAWPOLY);
+    var writeCode = ShapeDataUtil.Write_CODE(writer, ShapeConstant.OpCodeName.SDF_C_DRAWPOLY);
     var hasEMFHashWritten = false;
 
     // If line thickness is defined, the polyline is closed, and segments exist,
@@ -3098,7 +3097,7 @@ class PolyLine extends BaseLine {
         flags: polyObj.polylist.flags,
         ldim: { x: polyWidth, y: polyHeight }
       };
-      writer.writeStruct(FileParser.SDF_PolyList_Struct_20, polyStruct);
+      writer.writeStruct(ShapeConstant.PolyListStruct20, polyStruct);
     } else {
       polyStruct = {
         InstID: instanceID,
@@ -3106,7 +3105,7 @@ class PolyLine extends BaseLine {
         flags: polyObj.polylist.flags,
         ldim: { x: polyWidth, y: polyHeight }
       };
-      writer.writeStruct(FileParser.SDF_PolyList_Struct_24, polyStruct);
+      writer.writeStruct(ShapeConstant.PolyListStruct24, polyStruct);
     }
 
     ShapeDataUtil.Write_LENGTH(writer, writeCode);
@@ -3144,8 +3143,8 @@ class PolyLine extends BaseLine {
           flags: polyObj.polylist.segs[segIndex].flags,
           weight: polyObj.polylist.segs[segIndex].weight
         };
-        writeCode = ShapeDataUtil.Write_CODE(writer, ConstantData2.SDROpCodesByName.SDF_C_DRAWPOLYSEG);
-        writer.writeStruct(FileParser.SDF_PolySeg_Struct_40, segStruct);
+        writeCode = ShapeDataUtil.Write_CODE(writer, ShapeConstant.OpCodeName.SDF_C_DRAWPOLYSEG);
+        writer.writeStruct(ShapeConstant.PolySegStruct40, segStruct);
       } else {
         var segStructAlt = {
           otype: tempLineType.otype,
@@ -3157,14 +3156,14 @@ class PolyLine extends BaseLine {
           flags: polyObj.polylist.segs[segIndex].flags,
           weight: polyObj.polylist.segs[segIndex].weight
         };
-        writeCode = ShapeDataUtil.Write_CODE(writer, ConstantData2.SDROpCodesByName.SDF_C_DRAWPOLYSEG);
-        writer.writeStruct(FileParser.SDF_PolySeg_Struct_50, segStructAlt);
+        writeCode = ShapeDataUtil.Write_CODE(writer, ShapeConstant.OpCodeName.SDF_C_DRAWPOLYSEG);
+        writer.writeStruct(ShapeConstant.PolySegStruct50, segStructAlt);
       }
       ShapeDataUtil.Write_LENGTH(writer, writeCode);
     }
 
     // Write polyline end code.
-    writer.writeUint16(ConstantData2.SDROpCodesByName.SDF_C_DRAWPOLY_END);
+    writer.writeUint16(ShapeConstant.OpCodeName.SDF_C_DRAWPOLY_END);
 
     if (!(usePolyListDimensions)) {
       if (this.DataID >= 0) {
@@ -3185,26 +3184,26 @@ class PolyLine extends BaseLine {
       if ((options.WriteBlocks) && (polyID = this.DataID),
         ShapeDataUtil.WriteTextParams(writer, this, polyID, options),
         this.EMFHash && !hasEMFHashWritten) {
-        ShapeDataUtil.WriteString8(writer, this.EMFHash, ConstantData2.SDROpCodesByName.SDF_C_EMFHASH, options);
+        ShapeDataUtil.WriteString8(writer, this.EMFHash, ShapeConstant.OpCodeName.SDF_C_EMFHASH, options);
         hasEMFHashWritten = true;
       }
       var emfBlobBytes = this.GetEMFBlobBytes();
       if (emfBlobBytes) {
         ShapeDataUtil.WriteImageHeader(writer, this, options);
         if (this.EMFHash && !hasEMFHashWritten) {
-          ShapeDataUtil.WriteString8(writer, this.EMFHash, ConstantData2.SDROpCodesByName.SDF_C_EMFHASH, options);
+          ShapeDataUtil.WriteString8(writer, this.EMFHash, ShapeConstant.OpCodeName.SDF_C_EMFHASH, options);
         }
         if (options.WriteBlocks || options.WriteGroupBlock) {
           ShapeDataUtil.WriteEMFBlobBytesID(writer, this.EMFBlobBytesID, ConstantData2.ImageDir.dir_meta, options);
         } else {
-          ShapeDataUtil.WriteBlob(writer, emfBlobBytes.Bytes, ConstantData2.SDROpCodesByName.SDF_C_DRAWMETA);
+          ShapeDataUtil.WriteBlob(writer, emfBlobBytes.Bytes, ShapeConstant.OpCodeName.SDF_C_DRAWMETA);
         }
         var blobBytes = this.GetBlobBytes();
         if (blobBytes) {
           if (options.WriteBlocks || options.WriteGroupBlock) {
             ShapeDataUtil.WriteBlobBytesID(writer, this.BlobBytesID, ConstantData2.ImageDir.dir_png, options);
           } else {
-            ShapeDataUtil.WriteBlob(writer, blobBytes.Bytes, ConstantData2.SDROpCodesByName.SDF_C_DRAWPREVIEWPNG);
+            ShapeDataUtil.WriteBlob(writer, blobBytes.Bytes, ShapeConstant.OpCodeName.SDF_C_DRAWPREVIEWPNG);
           }
         }
       } else {
@@ -3217,7 +3216,7 @@ class PolyLine extends BaseLine {
               if (options.WriteBlocks || options.WriteGroupBlock) {
                 ShapeDataUtil.WriteBlobBytesID(writer, this.BlobBytesID, ConstantData2.ImageDir.dir_jpg, options);
               } else {
-                ShapeDataUtil.WriteBlob(writer, altBlobBytes.Bytes, ConstantData2.SDROpCodesByName.SDF_C_DRAWJPG);
+                ShapeDataUtil.WriteBlob(writer, altBlobBytes.Bytes, ShapeConstant.OpCodeName.SDF_C_DRAWJPG);
               }
               break;
             case ConstantData2.ImageDir.dir_png:
@@ -3225,7 +3224,7 @@ class PolyLine extends BaseLine {
               if (options.WriteBlocks || options.WriteGroupBlock) {
                 ShapeDataUtil.WriteBlobBytesID(writer, this.BlobBytesID, ConstantData2.ImageDir.dir_png, options);
               } else {
-                ShapeDataUtil.WriteBlob(writer, altBlobBytes.Bytes, ConstantData2.SDROpCodesByName.SDF_C_DRAWPNG);
+                ShapeDataUtil.WriteBlob(writer, altBlobBytes.Bytes, ShapeConstant.OpCodeName.SDF_C_DRAWPNG);
               }
               break;
           }
@@ -4626,9 +4625,9 @@ class PolyLine extends BaseLine {
       this.ModifyShape(event, segmentPoints[1].x, segmentPoints[1].y, ConstantData.ActionTriggerType.POLYLNODE, segmentIndex);
     }
 
-    T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
+    T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
     for (let i = 0; i < this.hooks.length; i++) {
-      T3Gv.optManager.SetLinkFlag(this.hooks[i].objid, ShapeContant.LinkFlags.SED_L_MOVE);
+      T3Gv.optManager.SetLinkFlag(this.hooks[i].objid, ShapeConstant.LinkFlags.SED_L_MOVE);
     }
 
     T3Gv.optManager.ActionTriggerData = segmentIndex;
@@ -4704,10 +4703,10 @@ class PolyLine extends BaseLine {
     const svgElement = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID);
     this.UpdateDimensionFromText(svgElement, text, userData);
 
-    T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
+    T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
 
     for (let i = 0; i < this.hooks.length; i++) {
-      T3Gv.optManager.SetLinkFlag(this.hooks[i].objid, ShapeContant.LinkFlags.SED_L_MOVE);
+      T3Gv.optManager.SetLinkFlag(this.hooks[i].objid, ShapeConstant.LinkFlags.SED_L_MOVE);
     }
 
     if (this.HyperlinkText !== "" || this.NoteID !== -1 || this.CommentID !== -1 || this.HasFieldData()) {
@@ -4908,10 +4907,10 @@ class PolyLine extends BaseLine {
       this.UpdateTotalDimensionFromText(event, dimensionLength);
     }
 
-    T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
+    T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
 
     for (let i = 0; i < this.hooks.length; i++) {
-      T3Gv.optManager.SetLinkFlag(this.hooks[i].objid, ShapeContant.LinkFlags.SED_L_MOVE);
+      T3Gv.optManager.SetLinkFlag(this.hooks[i].objid, ShapeConstant.LinkFlags.SED_L_MOVE);
     }
 
     T3Gv.optManager.ActionTriggerData = segmentIndex;
@@ -5321,7 +5320,7 @@ class PolyLine extends BaseLine {
         const enclosedObjects = this.GetListOfEnclosedObjects(false);
         for (let idx = 0; idx < enclosedObjects.length; idx++) {
           T3Gv.optManager.GetObjectPtr(enclosedObjects[idx], true).OffsetShape(offset.x, offset.y);
-          T3Gv.optManager.SetLinkFlag(enclosedObjects[idx], ShapeContant.LinkFlags.SED_L_MOVE);
+          T3Gv.optManager.SetLinkFlag(enclosedObjects[idx], ShapeConstant.LinkFlags.SED_L_MOVE);
           T3Gv.optManager.AddToDirtyList(enclosedObjects[idx]);
         }
         this.UpdateDrawing(event);

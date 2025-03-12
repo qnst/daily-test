@@ -14,7 +14,7 @@ import Path from './B.Path'
 import Group from './B.Group'
 import Layer from './B.Layer'
 import Symbol from './B.Symbol'
-import ShapeCopy from './Basic.ShapeCopy'
+import ShapeCopy from './B.ShapeCopy'
 import ShapeContainer from './B.ShapeContainer'
 import Text from './B.Text'
 import Formatter from "./B.Text.Formatter"

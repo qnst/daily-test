@@ -5,7 +5,6 @@ import Utils1 from '../Helper/Utils1';
 import Utils2 from "../Helper/Utils2";
 import Utils3 from "../Helper/Utils3";
 import T3Gv from '../Data/T3Gv'
-import FileParser from '../Data/FileParser'
 import ConstantData from '../Data/ConstantData'
 import SelectionAttributes from '../Model/SelectionAttributes'
 import SegLine from '../Model/SegLine';
@@ -14,7 +13,7 @@ import $ from 'jquery'
 import ShapeDataUtil from '../Data/ShapeDataUtil'
 import ConstantData2 from '../Data/ConstantData2'
 import Instance from '../Data/Instance/Instance';
-import ShapeContant from '../Data/ShapeContant';
+import ShapeConstant from '../Data/ShapeConstant';
 
 class SegmentedLine extends BaseLine {
 
@@ -1603,7 +1602,7 @@ class SegmentedLine extends BaseLine {
       this.AdjustLineStart(svgElement, this.StartPoint.x + deltaWidth, this.StartPoint.y + deltaHeight, 0);
     }
 
-    T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
+    T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
     console.log("= S.SegmentedLine: SetSize output", { deltaWidth, deltaHeight, isEndAdjusted });
   }
 
@@ -1743,7 +1742,7 @@ class SegmentedLine extends BaseLine {
           ConstantData.ActionTriggerType.ROTATE
         );
       }
-      T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
+      T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
     }
 
     T3Gv.optManager.ob = {};
@@ -2435,7 +2434,7 @@ class SegmentedLine extends BaseLine {
     }
 
     this.CalcFrame(true);
-    T3Gv.optManager.SetLinkFlag(elementId, ShapeContant.LinkFlags.SED_L_MOVE);
+    T3Gv.optManager.SetLinkFlag(elementId, ShapeConstant.LinkFlags.SED_L_MOVE);
     T3Gv.optManager.AddToDirtyList(elementId);
 
     console.log("= S.SegmentedLine: LinkGrow output", {
@@ -3317,11 +3316,11 @@ class SegmentedLine extends BaseLine {
     }
     console.log("= S.SegmentedLine: Padded segmentation rectangles", { lsegr: sdfData.lsegr });
 
-    const code = Write_CODE(writer, ConstantData2.SDROpCodesByName.SDF_C_DRAWSEGL);
+    const code = Write_CODE(writer, ShapeConstant.OpCodeName.SDF_C_DRAWSEGL);
     if (options.WriteWin32) {
-      writer.writeStruct(FileParser.SDF_SegLine_Struct, sdfData);
+      writer.writeStruct(ShapeConstant.SegLineStruct, sdfData);
     } else {
-      writer.writeStruct(FileParser.SDF_SegLine_Struct_210, sdfData);
+      writer.writeStruct(ShapeConstant.SegLineStruct210, sdfData);
     }
     Write_LENGTH(writer, code);
 

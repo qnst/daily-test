@@ -8,7 +8,7 @@ import Point from '../Model/Point'
 import Instance from '../Data/Instance/Instance';
 import ConstantData from '../Data/ConstantData'
 import ConstantData2 from '../Data/ConstantData2';
-import PolygonConstant from '../Opt/Business/PolygonConstant';
+import PolygonConstant from '../Util/PolygonConstant';
 
 class Rect extends BaseShape {
 

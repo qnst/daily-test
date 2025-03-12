@@ -17,7 +17,7 @@ import PolyPolyLine from "../../Basic/B.PolyPolyLine"
 import Rect from "../../Basic/B.Rect"
 import RRect from "../../Basic/B.RRect"
 import ShapeContainer from "../../Basic/B.ShapeContainer"
-import ShapeCopy from "../../Basic/Basic.ShapeCopy"
+import ShapeCopy from "../../Basic/B.ShapeCopy"
 import Symbol from "../../Basic/B.Symbol"
 import Edit from "../../Basic/B.Text.Edit"
 

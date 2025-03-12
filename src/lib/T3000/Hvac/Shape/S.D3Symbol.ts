@@ -6,6 +6,7 @@ import ConstantData from '../Data/ConstantData'
 import ConstantData2 from '../Data/ConstantData2';
 import Instance from '../Data/Instance/Instance';
 import ShapeDataUtil from '../Data/ShapeDataUtil';
+import ShapeConstant from '../Data/ShapeConstant';
 
 class D3Symbol extends BaseSymbol {
 
@@ -542,7 +543,7 @@ class D3Symbol extends BaseSymbol {
     if (this.d3Settings) {
       const d3SettingsString = this.ExportD3Settings();
       if (d3SettingsString) {
-        ShapeDataUtil.WriteString(file, d3SettingsString, ConstantData2.SDROpCodesByName.SDF_C_D3SETTINGS, options);
+        ShapeDataUtil.WriteString(file, d3SettingsString, ShapeConstant.OpCodeName.SDF_C_D3SETTINGS, options);
       }
     }
 

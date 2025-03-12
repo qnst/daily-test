@@ -12,7 +12,7 @@ import PolySeg from '../Model/PolySeg'
 import HitResult from '../Model/HitResult'
 import ConstantData2 from '../Data/ConstantData2'
 import T3Constant from '../Data/T3Constant';
-import ShapeContant from '../Data/ShapeContant';
+import ShapeConstant from '../Data/ShapeConstant';
 
 class PolyLineContainer extends PolyLine {
 
@@ -629,7 +629,7 @@ class PolyLineContainer extends PolyLine {
       this.rflags = Utils2.SetFlag(this.rflags, ConstantData.FloatingPointDim.SD_FP_Height, false);
     }
 
-    T3Gv.optManager.SetLinkFlag(event, ShapeContant.LinkFlags.SED_L_MOVE);
+    T3Gv.optManager.SetLinkFlag(event, ShapeConstant.LinkFlags.SED_L_MOVE);
     T3Gv.optManager.UpdateLinks();
 
     if (this.arcobj) {
@@ -733,9 +733,9 @@ class PolyLineContainer extends PolyLine {
     let newY = rotatedPoints[segmentIndex].y;
     this.AdjustPolySeg(event, adjustedX, adjustedY, newX, newY, hitSegmentData, true, 0);
 
-    T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
+    T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
     for (let i = 0; i < this.hooks.length; i++) {
-      T3Gv.optManager.SetLinkFlag(this.hooks[i].objid, ShapeContant.LinkFlags.SED_L_MOVE);
+      T3Gv.optManager.SetLinkFlag(this.hooks[i].objid, ShapeConstant.LinkFlags.SED_L_MOVE);
     }
 
     T3Gv.optManager.ActionTriggerData = segmentIndex;

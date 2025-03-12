@@ -4,11 +4,10 @@ import BaseLine from './S.BaseLine'
 import Utils1 from '../Helper/Utils1';
 import Utils2 from "../Helper/Utils2";
 import T3Gv from '../Data/T3Gv'
-import FileParser from '../Data/FileParser'
 import ConstantData from '../Data/ConstantData'
 import ConstantData2 from '../Data/ConstantData2';
 import ShapeDataUtil from '../Data/ShapeDataUtil';
-import ShapeContant from '../Data/ShapeContant';
+import ShapeConstant from '../Data/ShapeConstant';
 
 class FreehandLine extends BaseLine {
 
@@ -488,7 +487,7 @@ class FreehandLine extends BaseLine {
         t.attributes.extraflags = ConstantData.ExtraFlags.SEDE_SideKnobs,
         this.pointlist &&
         (t.attributes.pointlist = Utils1.DeepCopy(this.pointlist)),
-        t.LineTool = ShapeContant.LineToolTypes.FreehandLine, false &&
+        t.LineTool = ShapeConstant.LineToolTypes.FreehandLine, false &&
         (t.CreateList = [
           T3Gv.optManager.drawShape.BlockID
         ]),
@@ -540,7 +539,7 @@ class FreehandLine extends BaseLine {
     let freehandPoints = Utils1.DeepCopy(this).GetFreehandPoints(true);
 
     // Write the freehand line opcode
-    let codePosition = ShapeDataUtil.Write_CODE(writer, ConstantData2.SDROpCodesByName.SDF_C_FREEHANDLINE);
+    let codePosition = ShapeDataUtil.Write_CODE(writer, ShapeConstant.OpCodeName.SDF_C_FREEHANDLINE);
 
     // Prepare the data structure
     let pointData,
@@ -558,7 +557,7 @@ class FreehandLine extends BaseLine {
     }
 
     // Write the structure to the file
-    writer.writeStruct(FileParser.SDF_FreehandLine_Struct, lineData);
+    writer.writeStruct(ShapeConstant.FreehandLineStruct, lineData);
     ShapeDataUtil.Write_LENGTH(writer, codePosition);
 
     console.log('S.FreehandLine.WriteSDFAttributes - Output:', { freehandPoints });

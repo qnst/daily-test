@@ -2,7 +2,6 @@
 import Utils2 from "../Helper/Utils2";
 import Utils3 from "../Helper/Utils3";
 import T3Gv from '../Data/T3Gv'
-import FileParser from '../Data/FileParser'
 import EvtUtil from "../Event/EvtUtil";
 import Element from "../Basic/B.Element";
 import QuickStyle from "../Model/QuickStyle"

@@ -21,7 +21,7 @@ import ArrowheadRecord from '../Model/ArrowheadRecord'
 import ConstantData2 from "../Data/ConstantData2"
 import ShapeDataUtil from '../Data/ShapeDataUtil';
 import T3Constant from '../Data/T3Constant';
-import ShapeContant from '../Data/ShapeContant';
+import ShapeConstant from '../Data/ShapeConstant';
 
 class BaseLine extends BaseDrawingObject {
 
@@ -718,7 +718,7 @@ class BaseLine extends BaseDrawingObject {
         this.AdjustLineStart(svgElement, this.StartPoint.x + widthDifference, this.StartPoint.y + heightDifference, 0, true);
       }
 
-      T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
+      T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
     } else {
       this.UpdateDimensions(newWidth);
     }
@@ -853,7 +853,7 @@ class BaseLine extends BaseDrawingObject {
     }
 
     this.CalcFrame(true);
-    T3Gv.optManager.SetLinkFlag(blockID, ShapeContant.LinkFlags.SED_L_MOVE);
+    T3Gv.optManager.SetLinkFlag(blockID, ShapeConstant.LinkFlags.SED_L_MOVE);
     T3Gv.optManager.AddToDirtyList(blockID);
 
     console.log("= S.BaseLine: LinkGrow updated StartPoint:", this.StartPoint, "EndPoint:", this.EndPoint);
@@ -1410,7 +1410,7 @@ class BaseLine extends BaseDrawingObject {
         if (T3Gv.optManager.ob.Frame) {
           T3Gv.optManager.MaintainLink(T3Gv.optManager.actionStoredObjectId, this, T3Gv.optManager.ob, T3Gv.optManager.actionTriggerId);
           T3Gv.optManager.ob = {};
-          T3Gv.optManager.SetLinkFlag(T3Gv.optManager.actionStoredObjectId, ShapeContant.LinkFlags.SED_L_MOVE);
+          T3Gv.optManager.SetLinkFlag(T3Gv.optManager.actionStoredObjectId, ShapeConstant.LinkFlags.SED_L_MOVE);
           T3Gv.optManager.UpdateLinks();
         }
     }
@@ -1591,7 +1591,7 @@ class BaseLine extends BaseDrawingObject {
     }
 
     // Set link flag and update links
-    T3Gv.optManager.SetLinkFlag(blockID, ShapeContant.LinkFlags.SED_L_MOVE);
+    T3Gv.optManager.SetLinkFlag(blockID, ShapeConstant.LinkFlags.SED_L_MOVE);
     T3Gv.optManager.UpdateLinks();
 
     console.log("= S.BaseLine: AfterRotateShape completed for blockID:", blockID);
@@ -1620,7 +1620,7 @@ class BaseLine extends BaseDrawingObject {
       console.log("= S.BaseLine: Reset floating point dimensions flags");
     }
 
-    T3Gv.optManager.SetLinkFlag(blockID, ShapeContant.LinkFlags.SED_L_MOVE);
+    T3Gv.optManager.SetLinkFlag(blockID, ShapeConstant.LinkFlags.SED_L_MOVE);
     T3Gv.optManager.UpdateLinks();
     console.log("= S.BaseLine: Set link flag and updated links");
 
@@ -1689,7 +1689,7 @@ class BaseLine extends BaseDrawingObject {
       }
 
       // Set link flag and update links
-      T3Gv.optManager.SetLinkFlag(blockID, ShapeContant.LinkFlags.SED_L_MOVE);
+      T3Gv.optManager.SetLinkFlag(blockID, ShapeConstant.LinkFlags.SED_L_MOVE);
       T3Gv.optManager.UpdateLinks();
 
       // Clear linkParams
@@ -2701,7 +2701,7 @@ class BaseLine extends BaseDrawingObject {
         targetObj.RotationAngle = apparentAngle;
         T3Gv.optManager.SetLinkFlag(
           this.BlockID,
-          ShapeContant.LinkFlags.SED_L_MOVE | ShapeContant.LinkFlags.SED_L_CHANGE
+          ShapeConstant.LinkFlags.SED_L_MOVE | ShapeConstant.LinkFlags.SED_L_CHANGE
         );
         T3Gv.optManager.AddToDirtyList(targetId);
         console.log("= S.BaseLine: ChangeTarget updated targetObj.RotationAngle to:", apparentAngle);
@@ -5000,12 +5000,12 @@ class BaseLine extends BaseDrawingObject {
     console.log("= S.BaseLine: UpdateDimensionFromText completed");
 
     // Set link flag for the current block
-    T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
+    T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
     console.log("= S.BaseLine: Set link flag for BlockID", this.BlockID);
 
     // Set link flag for each hooked object
     for (let i = 0; i < this.hooks.length; i++) {
-      T3Gv.optManager.SetLinkFlag(this.hooks[i].objid, ShapeContant.LinkFlags.SED_L_MOVE);
+      T3Gv.optManager.SetLinkFlag(this.hooks[i].objid, ShapeConstant.LinkFlags.SED_L_MOVE);
       console.log("= S.BaseLine: Set link flag for hook object with id", this.hooks[i].objid);
     }
 
@@ -5066,14 +5066,14 @@ class BaseLine extends BaseDrawingObject {
     // Set link flags for this object.
     T3Gv.optManager.SetLinkFlag(
       this.BlockID,
-      ShapeContant.LinkFlags.SED_L_MOVE | ShapeContant.LinkFlags.SED_L_CHANGE
+      ShapeConstant.LinkFlags.SED_L_MOVE | ShapeConstant.LinkFlags.SED_L_CHANGE
     );
 
     // Set link flags for each hooked object.
     for (hookIndex = 0; hookIndex < this.hooks.length; hookIndex++) {
       T3Gv.optManager.SetLinkFlag(
         this.hooks[hookIndex].objid,
-        ShapeContant.LinkFlags.SED_L_MOVE | ShapeContant.LinkFlags.SED_L_CHANGE
+        ShapeConstant.LinkFlags.SED_L_MOVE | ShapeConstant.LinkFlags.SED_L_CHANGE
       );
     }
 

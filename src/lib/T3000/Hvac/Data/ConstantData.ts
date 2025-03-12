@@ -1413,7 +1413,7 @@ class ConstantData {
   //     UserLoginId: "",
   //     CloudFileMetadata: null,
   //     LineTool: SDUI.Resources.LineToolTypes.SegmentedLine,
-  //     ShapeTool: SDJS.FileParser.SDRShapeTypes.SED_S_Rect,
+  //     ShapeTool: SDJS.ShapeConstant.SDRShapeTypes.SED_S_Rect,
   //     UsingWallTool: !1,
   //     SelectionTool: SDUI.Resources.Tools.Tool_Select,
   //     SelectionToolSticky: !1,

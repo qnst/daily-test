@@ -8,7 +8,7 @@ import ConstantData from '../Data/ConstantData'
 import $ from 'jquery';
 import ConstantData2 from '../Data/ConstantData2';
 import ShapeDataUtil from '../Data/ShapeDataUtil';
-import PolygonConstant from '../Opt/Business/PolygonConstant';
+import PolygonConstant from '../Util/PolygonConstant';
 
 class SVGFragmentSymbol extends BaseSymbol {
 

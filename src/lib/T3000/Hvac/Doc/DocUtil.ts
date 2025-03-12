@@ -5,7 +5,6 @@ import $ from 'jquery'
 import T3Gv from '../Data/T3Gv'
 import EvtUtil from '../Event/EvtUtil'
 import Document from '../Basic/B.Document'
-import FileParser from '../Data/FileParser'
 import '../Helper/T3Hammer'
 import '../Helper/pathseg'
 import Utils1 from '../Helper/Utils1'
@@ -152,7 +151,7 @@ class DocUtil {
 
     // Initialize UI components visibility and content
     this.UpdateGridVisibility();
-    this.UpdatePageDividerVisibility();
+    // this.UpdatePageDividerVisibility();
     this.SetupRulers();
     this.UpdateGrid();
     this.UpdatePageDivider();
@@ -1621,49 +1620,49 @@ class DocUtil {
    * Ensures consistent display across document views
    * @returns boolean - True if visibility was changed, false otherwise
    */
-  UpdatePageDividerVisibility(): boolean {
-    console.log("= U.DocUtil: UpdatePageDividerVisibility - Input:", {
-      showPageDivider: this.docConfig.showPageDivider,
-      printFlags: T3Gv.optManager.contentHeader.Page.printflags,
-      layerExists: !!(this.svgDoc && this.svgDoc.GetLayer(this.pageDividerLayer))
-    });
+  // UpdatePageDividerVisibility(): boolean {
+  //   console.log("= U.DocUtil: UpdatePageDividerVisibility - Input:", {
+  //     showPageDivider: this.docConfig.showPageDivider,
+  //     printFlags: T3Gv.optManager.contentHeader.Page.printflags,
+  //     layerExists: !!(this.svgDoc && this.svgDoc.GetLayer(this.pageDividerLayer))
+  //   });
 
-    // Get the page divider layer from the SVG document
-    const pageDividerLayer = this.svgDoc ? this.svgDoc.GetLayer(this.pageDividerLayer) : null;
+  //   // Get the page divider layer from the SVG document
+  //   const pageDividerLayer = this.svgDoc ? this.svgDoc.GetLayer(this.pageDividerLayer) : null;
 
-    // Get print flags from the document configuration
-    const documentPrintFlags = T3Gv.optManager.contentHeader.Page.printflags;
+  //   // Get print flags from the document configuration
+  //   const documentPrintFlags = T3Gv.optManager.contentHeader.Page.printflags;
 
-    // Determine if page dividers should be shown based on print flags and config
-    const shouldShowDividers =
-      !(documentPrintFlags & FileParser.PrintFlags.SEP_OnePage) &&
-      !(documentPrintFlags & FileParser.PrintFlags.SEP_CustomPageSize) &&
-      this.docConfig.showPageDivider;
+  //   // Determine if page dividers should be shown based on print flags and config
+  //   const shouldShowDividers =
+  //     !(documentPrintFlags & ShapeConstant.PrintFlags.SEP_OnePage) &&
+  //     !(documentPrintFlags & ShapeConstant.PrintFlags.SEP_CustomPageSize) &&
+  //     this.docConfig.showPageDivider;
 
-    // If page divider layer doesn't exist, exit with false
-    if (!pageDividerLayer) {
-      console.log("= U.DocUtil: UpdatePageDividerVisibility - Output:", {
-        message: "Page divider layer not found."
-      });
-      return false;
-    }
+  //   // If page divider layer doesn't exist, exit with false
+  //   if (!pageDividerLayer) {
+  //     console.log("= U.DocUtil: UpdatePageDividerVisibility - Output:", {
+  //       message: "Page divider layer not found."
+  //     });
+  //     return false;
+  //   }
 
-    // If visibility state is already correct, no change needed
-    if (shouldShowDividers === pageDividerLayer.GetVisible()) {
-      console.log("= U.DocUtil: UpdatePageDividerVisibility - Output:", {
-        message: "Visibility unchanged.",
-        currentVisibility: pageDividerLayer.GetVisible()
-      });
-      return false;
-    } else {
-      // Update visibility and return true to indicate change
-      pageDividerLayer.SetVisible(shouldShowDividers);
-      console.log("= U.DocUtil: UpdatePageDividerVisibility - Output:", {
-        updatedVisibility: shouldShowDividers
-      });
-      return true;
-    }
-  }
+  //   // If visibility state is already correct, no change needed
+  //   if (shouldShowDividers === pageDividerLayer.GetVisible()) {
+  //     console.log("= U.DocUtil: UpdatePageDividerVisibility - Output:", {
+  //       message: "Visibility unchanged.",
+  //       currentVisibility: pageDividerLayer.GetVisible()
+  //     });
+  //     return false;
+  //   } else {
+  //     // Update visibility and return true to indicate change
+  //     pageDividerLayer.SetVisible(shouldShowDividers);
+  //     console.log("= U.DocUtil: UpdatePageDividerVisibility - Output:", {
+  //       updatedVisibility: shouldShowDividers
+  //     });
+  //     return true;
+  //   }
+  // }
 
   /**
    * Updates the page divider lines in the document
@@ -2300,7 +2299,7 @@ class DocUtil {
     this.docConfig = documentConfiguration;
     this.UpdateRulerVisibility();
     this.UpdateGridVisibility();
-    this.UpdatePageDividerVisibility();
+    // this.UpdatePageDividerVisibility();
     console.log("= U.DocUtil: UpdateConfig - Output: Updated docConfig", this.docConfig);
   }
 

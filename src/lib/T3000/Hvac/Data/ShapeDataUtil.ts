@@ -2,16 +2,14 @@
 
 import Utils2 from '../Helper/Utils2'
 import T3Gv from './T3Gv'
-import FileParser from './FileParser'
-import T3DataStream from '../Opt/Business/T3DataStream'
+import T3DataStream from '../Util/T3DataStream'
 import Utils1 from '../Helper/Utils1'
 import Utils3 from '../Helper/Utils3'
 import Globals from './Globals'
-import HashController from '../Opt/Business/HashController'
 import $ from 'jquery'
 import RulerConfig from '../Model/RulerConfig'
 import Polygon from '../Basic/B.Polygon'
-import PolygonShapeGenerator from "../Opt/Business/PolygonUtil"
+import PolygonShapeGenerator from "../Util/PolygonUtil"
 import QuickStyle from '../Model/QuickStyle'
 import SEDSession from '../Model/SEDSession'
 import LayersManager from '../Model/LayersManager'
@@ -36,8 +34,8 @@ import Layer from '../Model/Layer'
 import ConstantData1 from "./ConstantData1"
 import ConstantData2 from './ConstantData2'
 import TextureList from '../Model/TextureList'
-import PolygonConstant from '../Opt/Business/PolygonConstant'
-import ShapeContant from './ShapeContant'
+import PolygonConstant from '../Util/PolygonConstant'
+import ShapeConstant from './ShapeConstant'
 
 class ShapeDataUtil {
 
@@ -93,38 +91,38 @@ class ShapeDataUtil {
    */
   static TextAlignToWin(textAlign) {
     const winJustification = {
-      just: FileParser.TextJust.TA_CENTER,
-      vjust: FileParser.TextJust.TA_CENTER
+      just: ShapeConstant.TextJust.TA_CENTER,
+      vjust: ShapeConstant.TextJust.TA_CENTER
     };
 
     switch (textAlign) {
       case ConstantData.TextAlign.LEFT:
-        winJustification.just = FileParser.TextJust.TA_LEFT;
+        winJustification.just = ShapeConstant.TextJust.TA_LEFT;
         break;
       case ConstantData.TextAlign.RIGHT:
-        winJustification.just = FileParser.TextJust.TA_RIGHT;
+        winJustification.just = ShapeConstant.TextJust.TA_RIGHT;
         break;
       case ConstantData.TextAlign.TOPLEFT:
-        winJustification.just = FileParser.TextJust.TA_LEFT;
-        winJustification.vjust = FileParser.TextJust.TA_TOP;
+        winJustification.just = ShapeConstant.TextJust.TA_LEFT;
+        winJustification.vjust = ShapeConstant.TextJust.TA_TOP;
         break;
       case ConstantData.TextAlign.TOPCENTER:
-        winJustification.vjust = FileParser.TextJust.TA_TOP;
+        winJustification.vjust = ShapeConstant.TextJust.TA_TOP;
         break;
       case ConstantData.TextAlign.TOPRIGHT:
-        winJustification.just = FileParser.TextJust.TA_RIGHT;
-        winJustification.vjust = FileParser.TextJust.TA_TOP;
+        winJustification.just = ShapeConstant.TextJust.TA_RIGHT;
+        winJustification.vjust = ShapeConstant.TextJust.TA_TOP;
         break;
       case ConstantData.TextAlign.BOTTOMLEFT:
-        winJustification.just = FileParser.TextJust.TA_LEFT;
-        winJustification.vjust = FileParser.TextJust.TA_BOTTOM;
+        winJustification.just = ShapeConstant.TextJust.TA_LEFT;
+        winJustification.vjust = ShapeConstant.TextJust.TA_BOTTOM;
         break;
       case ConstantData.TextAlign.BOTTOMCENTER:
-        winJustification.vjust = FileParser.TextJust.TA_BOTTOM;
+        winJustification.vjust = ShapeConstant.TextJust.TA_BOTTOM;
         break;
       case ConstantData.TextAlign.BOTTOMRIGHT:
-        winJustification.just = FileParser.TextJust.TA_RIGHT;
-        winJustification.vjust = FileParser.TextJust.TA_BOTTOM;
+        winJustification.just = ShapeConstant.TextJust.TA_RIGHT;
+        winJustification.vjust = ShapeConstant.TextJust.TA_BOTTOM;
     }
 
     return winJustification;
@@ -262,7 +260,7 @@ class ShapeDataUtil {
     }
 
     // Write the text code and reserve space for length
-    const lengthPosition = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_DRAWTEXT);
+    const lengthPosition = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_DRAWTEXT);
 
     // Determine which struct format to write based on options
     if (options.WriteVisio || options.WriteWin32) {
@@ -312,7 +310,7 @@ class ShapeDataUtil {
       };
 
       // Write the parameters using the Win32/Visio struct format
-      dataStream.writeStruct(FileParser.SDF_DRAWTEXT_Struct_110, textParams);
+      dataStream.writeStruct(ShapeConstant.DrawTextStruct110, textParams);
     } else {
       // Create text parameters object for default format
       const textParams = {
@@ -353,7 +351,7 @@ class ShapeDataUtil {
       };
 
       // Write the parameters using the default struct format
-      dataStream.writeStruct(FileParser.SDF_DRAWTEXT_Struct_182, textParams);
+      dataStream.writeStruct(ShapeConstant.DrawTextStruct182, textParams);
     }
 
     // Write the length of the text data block
@@ -529,13 +527,13 @@ class ShapeDataUtil {
     result.sdp = new SEDSession();
     result.sdp.def.style = Utils1.DeepCopy(sessionBlock.def.style);
     result.isSymbol = isSymbolFlag !== 0;
-    result.gHash = new HashController();
+    // result.gHash = new HashController();
     result.tLMB = new LayersManager();
     result.AllowAddEMFHash = allowAddEMFHash;
     ShapeDataUtil.FragmentLoad_RefCount = 0;
 
     if (libraryFlags) {
-      if ((libraryFlags.ObjectAttributeFlags & ShapeContant.LibraryFlags.SEDL_NoColor) === 0) {
+      if ((libraryFlags.ObjectAttributeFlags & ShapeConstant.LibraryFlags.SEDL_NoColor) === 0) {
         result.SetColorChanges = true;
         result.ColorFilter = libraryFlags.ColorFilter;
       }
@@ -764,7 +762,7 @@ class ShapeDataUtil {
    */
   static ReadBuffer(buffer, result, offset, ignoreErrors, callback) {
     // Initialize a data stream from the buffer
-    const opCodes = FileParser.SDROpCodesByName;
+    const opCodes = ShapeConstant.OpCodeName;
     let dataStream = new T3DataStream(buffer);
     let minimumFileVersion = ShapeDataUtil.SDF_MINFVERSION;
 
@@ -789,7 +787,7 @@ class ShapeDataUtil {
     }
 
     // Read header structure
-    let fileHeader = dataStream.readStruct(FileParser.SDR_Parser_HeaderOnly_Struct);
+    let fileHeader = dataStream.readStruct(ShapeConstant.T3HeaderOnlyStruct);
     dataStream = null;
 
     // Validate file header and signature
@@ -805,7 +803,7 @@ class ShapeDataUtil {
     }
 
     // Check for version code
-    if (fileHeader.codes[0].code !== FileParser.SDROpCodesByName.SDF_C_VERSION) {
+    if (fileHeader.codes[0].code !== ShapeConstant.OpCodeName.cVersion) {
       result.error = ShapeDataUtil.Errors.UnknownFile;
       return result.error;
     }
@@ -833,14 +831,14 @@ class ShapeDataUtil {
 
     // Handle different source platform formats
     switch (fileHeader.codes[0].data.Platform) {
-      case FileParser.Platforms.SDF_SDJSBLOCK:
-      case FileParser.Platforms.SDF_SDJS:
+      case ShapeConstant.Platforms.SDF_SDJSBLOCK:
+      case ShapeConstant.Platforms.SDF_SDJS:
         // Native format, no special handling needed
         break;
-      case FileParser.Platforms.SDF_VISIO:
+      case ShapeConstant.Platforms.SDF_VISIO:
         result.IsVisio = true;
         break;
-      case FileParser.Platforms.SDF_VISIOLUCID:
+      case ShapeConstant.Platforms.SDF_VISIOLUCID:
         result.IsVisio = true;
         result.IsLucid = true;
         break;
@@ -869,7 +867,7 @@ class ShapeDataUtil {
     }
 
     // Set block reading flag for block format
-    if (fileHeader.codes[0].data.Platform === FileParser.Platforms.SDF_SDJSBLOCK) {
+    if (fileHeader.codes[0].data.Platform === ShapeConstant.Platforms.SDF_SDJSBLOCK) {
       result.ReadBlocks = true;
     }
 
@@ -891,7 +889,7 @@ class ShapeDataUtil {
     }
 
     // Read full file structure
-    fileHeader = dataStream.readStruct(FileParser.SDR_Parser_Struct);
+    fileHeader = dataStream.readStruct(ShapeConstant.T3Struct);
     dataStream = null;
 
     // Process file contents
@@ -915,7 +913,7 @@ class ShapeDataUtil {
    */
   static ReadBuffer_Complete(parsedData, result, ignoreErrors) {
     try {
-      const opCodes = FileParser.SDROpCodesByName;
+      const opCodes = ShapeConstant.OpCodeName;
       const CDim = ConstantData.Defines.SED_CDim;
       const minConnectorSegments = ConstantData.ConnectorDefines.SEDA_NSkip;
       let dataBlockLoaded = false;
@@ -923,7 +921,7 @@ class ShapeDataUtil {
       let hookLength, hookCount, textTable, textParent, svgElement, ganttInfo;
 
       // Process all codes until end of file
-      for (codeIndex = 1; parsedData.codes[codeIndex].code != opCodes.SDF_C_ENDFILE; codeIndex++) {
+      for (codeIndex = 1; parsedData.codes[codeIndex].code != opCodes.cEndFile; codeIndex++) {
         switch (parsedData.codes[codeIndex].code) {
           // Block directory information
           case opCodes.SDF_C_BLOCKDIRECTORY:
@@ -967,7 +965,7 @@ class ShapeDataUtil {
             break;
 
           // Process header section
-          case opCodes.SDF_C_HEADER:
+          case opCodes.cHeader:
             codeIndex = ShapeDataUtil.ReadHeader(parsedData, codeIndex, result, opCodes);
             if (result.error) {
               return result.error;
@@ -1359,7 +1357,7 @@ class ShapeDataUtil {
     let linksBlock;
     let tableObject;
     let connectorsToProcess = [];
-    let linkFlags = ShapeContant.LinkFlags.SED_L_MOVE;
+    let linkFlags = ShapeConstant.LinkFlags.SED_L_MOVE;
     let skipCount = ConstantData.ConnectorDefines.SEDA_NSkip;
     let textData = {};
     let coordinateDimension = ConstantData.Defines.SED_CDim;
@@ -1413,7 +1411,7 @@ class ShapeDataUtil {
                 if (linksBlock == null) {
                   linksBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, true);
                 }
-                T3Gv.optManager.InsertLink(linksBlock, objectId, currentHook, ShapeContant.LinkFlags.SED_L_MOVE);
+                T3Gv.optManager.InsertLink(linksBlock, objectId, currentHook, ShapeConstant.LinkFlags.SED_L_MOVE);
               }
 
               // Special handling for Visio segmented lines
@@ -1646,9 +1644,9 @@ class ShapeDataUtil {
 
     // Convert each component to hex and concatenate to form the HTML color string
     return '#' +
-      FileParser.decimalToHex(red, 2, true) +
-      FileParser.decimalToHex(green, 2, true) +
-      FileParser.decimalToHex(blue, 2, true);
+      ShapeConstant.decimalToHex(red, 2, true) +
+      ShapeConstant.decimalToHex(green, 2, true) +
+      ShapeConstant.decimalToHex(blue, 2, true);
   }
 
   /**
@@ -1736,7 +1734,7 @@ class ShapeDataUtil {
         case opCodes.SDF_C_HATCH:
           // Set hatch pattern if it's a valid hatch style
           if (codeData.codes[codeIndex].data.hatch >= 0 &&
-            codeData.codes[codeIndex].data.hatch < ShapeContant.SDGHatchStyleTotal) {
+            codeData.codes[codeIndex].data.hatch < ShapeConstant.SDGHatchStyleTotal) {
             fillObject.Hatch = codeData.codes[codeIndex].data.hatch;
           }
           break;
@@ -1775,7 +1773,7 @@ class ShapeDataUtil {
    * @returns Updated code index position after processing
    */
   static ReadSDLine(lineStyleObject, codeData, codeIndex, resultObject, opCodes) {
-    const linePatterns = ShapeContant.Windows_LinePatterns;
+    const linePatterns = ShapeConstant.WinLinePatterns;
     let linePattern, colorValue;
 
     // Process line thickness with scale factor
@@ -1815,7 +1813,7 @@ class ShapeDataUtil {
       case linePatterns.SEP_DDashed:
       case linePatterns.SEP_DDDashed:
         // Use predefined pattern data
-        lineStyleObject.LinePattern = ShapeContant.LinePatternData[
+        lineStyleObject.LinePattern = ShapeConstant.LinePatternData[
           linePattern - linePatterns.SEP_Solid
         ];
         break;
@@ -1953,7 +1951,7 @@ class ShapeDataUtil {
     paintObject.EndColor = ConstantData.Colors.Color_White;
     paintObject.GradientFlags = 0;
     paintObject.Texture = 0;
-    paintObject.TextureScale = new ShapeContant.TextureScale;
+    paintObject.TextureScale = new ShapeConstant.TextureScale;
     paintObject.EndOpacity = 1;
 
     // Fix fully opaque colors (remove alpha channel)
@@ -1983,7 +1981,7 @@ class ShapeDataUtil {
 
         case opCodes.SDF_C_RICHGRADIENT:
           // Create a rich gradient with specified type and angle
-          richGradient = new ShapeContant.SDRichGradient(
+          richGradient = new ShapeConstant.SDRichGradient(
             codeData.codes[codeIndex].data.gradienttype,
             codeData.codes[codeIndex].data.angle
           );
@@ -1995,7 +1993,7 @@ class ShapeDataUtil {
             stopColor = ShapeDataUtil.WinColorToHTML(codeData.codes[codeIndex].data.color);
             stopOpacity = ShapeDataUtil.WinColorToAlpha(codeData.codes[codeIndex].data.color);
 
-            gradientStop = new ShapeContant.SDRichGradientStop(
+            gradientStop = new ShapeConstant.SDRichGradientStop(
               stopColor,
               stopOpacity,
               codeData.codes[codeIndex].data.stop
@@ -2370,7 +2368,7 @@ class ShapeDataUtil {
         case opCodes.SDF_C_DRAWOBJ8:
           // Process version 8 drawing object
           codeIndex = ShapeDataUtil.ReadObject(codeData, codeIndex, resultObject, opCodes,
-            FileParser.SDROpCodesByName.SDF_C_DRAWOBJ8_END);
+            ShapeConstant.OpCodeName.SDF_C_DRAWOBJ8_END);
 
           if (codeIndex < 0) {
             return -1; // Error occurred while reading object
@@ -2380,7 +2378,7 @@ class ShapeDataUtil {
         case opCodes.SDF_C_DRAWOBJ:
           // Process standard drawing object
           codeIndex = ShapeDataUtil.ReadObject(codeData, codeIndex, resultObject, opCodes,
-            FileParser.SDROpCodesByName.SDF_C_DRAWOBJ_END);
+            ShapeConstant.OpCodeName.SDF_C_DRAWOBJ_END);
 
           if (codeIndex < 0) {
             return -1; // Error occurred while reading object
@@ -2575,13 +2573,13 @@ class ShapeDataUtil {
     let textAlignment = ConstantData.TextAlign.CENTER;
 
     switch (verticalAlignment) {
-      case FileParser.TextJust.TA_TOP:
+      case ShapeConstant.TextJust.TA_TOP:
         // Handle top alignment combined with horizontal alignment
         switch (horizontalAlignment) {
-          case FileParser.TextJust.TA_LEFT:
+          case ShapeConstant.TextJust.TA_LEFT:
             textAlignment = ConstantData.TextAlign.TOPLEFT;
             break;
-          case FileParser.TextJust.TA_RIGHT:
+          case ShapeConstant.TextJust.TA_RIGHT:
             textAlignment = ConstantData.TextAlign.TOPRIGHT;
             break;
           default:
@@ -2589,13 +2587,13 @@ class ShapeDataUtil {
         }
         break;
 
-      case FileParser.TextJust.TA_BOTTOM:
+      case ShapeConstant.TextJust.TA_BOTTOM:
         // Handle bottom alignment combined with horizontal alignment
         switch (horizontalAlignment) {
-          case FileParser.TextJust.TA_LEFT:
+          case ShapeConstant.TextJust.TA_LEFT:
             textAlignment = ConstantData.TextAlign.BOTTOMLEFT;
             break;
-          case FileParser.TextJust.TA_RIGHT:
+          case ShapeConstant.TextJust.TA_RIGHT:
             textAlignment = ConstantData.TextAlign.BOTTOMRIGHT;
             break;
           default:
@@ -2606,10 +2604,10 @@ class ShapeDataUtil {
       default:
         // Handle middle vertical alignment (default) with horizontal alignment
         switch (horizontalAlignment) {
-          case FileParser.TextJust.TA_LEFT:
+          case ShapeConstant.TextJust.TA_LEFT:
             textAlignment = ConstantData.TextAlign.LEFT;
             break;
-          case FileParser.TextJust.TA_RIGHT:
+          case ShapeConstant.TextJust.TA_RIGHT:
             textAlignment = ConstantData.TextAlign.RIGHT;
             break;
           default:
@@ -2660,11 +2658,11 @@ class ShapeDataUtil {
     sessionObject.dupdisp.y = ShapeDataUtil.ToSDJSCoords(displacement.y, resultObject.coordScaleFactor);
 
     // Process arrow properties
-    sessionObject.d_sarrow = sourceData.d_sarrow & FileParser.ArrowMasks.ARROW_T_MASK;
-    sessionObject.d_sarrowdisp = !!(sourceData.d_sarrow & FileParser.ArrowMasks.ARROW_DISP);
+    sessionObject.d_sarrow = sourceData.d_sarrow & ShapeConstant.ArrowMasks.ARROW_T_MASK;
+    sessionObject.d_sarrowdisp = !!(sourceData.d_sarrow & ShapeConstant.ArrowMasks.ARROW_DISP);
     sessionObject.d_arrowsize = sourceData.d_arrowsize;
-    sessionObject.d_earrow = sourceData.d_earrow & FileParser.ArrowMasks.ARROW_T_MASK;
-    sessionObject.d_earrowdisp = !!(sourceData.d_earrow & FileParser.ArrowMasks.ARROW_DISP);
+    sessionObject.d_earrow = sourceData.d_earrow & ShapeConstant.ArrowMasks.ARROW_T_MASK;
+    sessionObject.d_earrowdisp = !!(sourceData.d_earrow & ShapeConstant.ArrowMasks.ARROW_DISP);
 
     // Set text justification/alignment
     sessionObject.def.just = ShapeDataUtil.W32JustToJS(sourceData.just, false);
@@ -3251,13 +3249,13 @@ class ShapeDataUtil {
       (E = !0),
       o = ShapeDataUtil.ObjectIsGroup(a, e, t, r, i),
       p = (
-        e.codes[t].data.colorfilter & FileParser.SDRColorFilters.SD_NOCOLOR_ALL
-      ) === FileParser.SDRColorFilters.SD_NOCOLOR_ALL,
+        e.codes[t].data.colorfilter & ShapeConstant.SDRColorFilters.SD_NOCOLOR_ALL
+      ) === ShapeConstant.SDRColorFilters.SD_NOCOLOR_ALL,
       o ||
       p ||
       A ||
       (d = ShapeDataUtil.ObjectIsSymbol(a, e, t, r, i)),
-      e.codes[t].data.otype === FileParser.ObjectTypes.SED_Shape &&
+      e.codes[t].data.otype === ShapeConstant.ObjectTypes.SED_Shape &&
       (
         0 == (
           e.codes[t].data.moreflags & ConstantData.ObjMoreFlags.SED_MF_ContainerChild
@@ -3282,7 +3280,7 @@ class ShapeDataUtil {
           o,
           d,
           m,
-          i != FileParser.SDROpCodesByName.SDF_C_DRAWOBJ_END
+          i != ShapeConstant.OpCodeName.SDF_C_DRAWOBJ_END
         )
       )
     ) {
@@ -3587,7 +3585,7 @@ class ShapeDataUtil {
           break;
         case r.SDF_C_SVGIMAGEID:
           n.ImageID = e.codes[t].data.name,
-            n.ImageDir = FileParser.Image_Dir.dir_svg,
+            n.ImageDir = ShapeConstant.Image_Dir.dir_svg,
             n.ImageURL = Constants.FilePath_SymbolSVG + n.ImageID + '.svg';
           break;
         case r.SDF_C_EMFHASH:
@@ -3600,23 +3598,23 @@ class ShapeDataUtil {
           break;
         case r.SDF_C_DRAWJPG:
           n.ImageURL = e.codes[t].data.URL,
-            n.SetBlobBytes(e.codes[t].data.BlobBytes, FileParser.Image_Dir.dir_jpg);
+            n.SetBlobBytes(e.codes[t].data.BlobBytes, ShapeConstant.Image_Dir.dir_jpg);
           break;
         case r.SDF_C_DRAWPNG:
         case r.SDF_C_DRAWPREVIEWPNG:
           n.ImageURL = e.codes[t].data.URL,
-            n.SetBlobBytes(e.codes[t].data.BlobBytes, FileParser.Image_Dir.dir_png);
+            n.SetBlobBytes(e.codes[t].data.BlobBytes, ShapeConstant.Image_Dir.dir_png);
           break;
         case r.SDF_C_OLESTORAGE:
           n.SetOleBlobBytes(
             e.codes[t].data.BlobBytes,
-            FileParser.Image_Dir.dir_store
+            ShapeConstant.Image_Dir.dir_store
           );
           break;
         case r.SDF_C_DRAWSVG:
           n.ImageURL = e.codes[t].data.URL;
           var J = e.codes[t].data.BlobBytes;
-          n.SetBlobBytes(J, FileParser.Image_Dir.dir_svg),
+          n.SetBlobBytes(J, ShapeConstant.Image_Dir.dir_svg),
             n.SVGDim = Utils2.ParseSVGDimensions(J);
           break;
         case r.SDF_C_DRAWMETA:
@@ -3952,7 +3950,7 @@ class ShapeDataUtil {
   static LineTypeToWin32Type(lineType, dataClass, shortReference, paramValue, weightValue, resultObject) {
     // Initialize with default object type of a direct line
     const win32TypeInfo = {
-      otype: FileParser.ObjectTypes.SED_LineD,
+      otype: ShapeConstant.ObjectTypes.SED_LineD,
       dataClass: dataClass,
       shortReference: shortReference,
       param: paramValue,
@@ -3970,80 +3968,80 @@ class ShapeDataUtil {
       case ConstantData.LineType.SEGLINE:
         // Segmented straight line
         win32TypeInfo.otype = ConstantData2.ObjectTypes.SED_SegL;
-        win32TypeInfo.dataClass = FileParser.SeglTypes.SED_L_Line;
+        win32TypeInfo.dataClass = ShapeConstant.SeglTypes.SED_L_Line;
         break;
 
       case ConstantData.LineType.ARCSEGLINE:
         // Segmented arc line
-        win32TypeInfo.otype = FileParser.ObjectTypes.SED_SegL;
-        win32TypeInfo.dataClass = FileParser.SeglTypes.SED_L_Arc;
+        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SED_SegL;
+        win32TypeInfo.dataClass = ShapeConstant.SeglTypes.SED_L_Arc;
         break;
 
       case ConstantData.LineType.PARABOLA:
         // Parabolic curve
-        win32TypeInfo.otype = FileParser.ObjectTypes.SED_PolyL;
+        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SED_PolyL;
         win32TypeInfo.param = ShapeDataUtil.ToSDJSCoords(paramValue, resultObject.coordScaleFactor);
         win32TypeInfo.shortReference = ShapeDataUtil.ToSDJSCoords(shortReference, resultObject.coordScaleFactor);
         break;
 
       case ConstantData.LineType.NURBS:
         // Non-Uniform Rational B-Spline
-        win32TypeInfo.otype = FileParser.ObjectTypes.SED_NURBS;
+        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SED_NURBS;
         break;
 
       case ConstantData.LineType.NURBSSEG:
         // Segmented NURBS
-        win32TypeInfo.otype = FileParser.ObjectTypes.SED_NURBSSEG;
+        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SED_NURBSSEG;
         break;
 
       case ConstantData.LineType.ELLIPSE:
         // Elliptical curve
-        win32TypeInfo.otype = FileParser.ObjectTypes.SED_ELLIPSE;
+        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SED_ELLIPSE;
         break;
 
       case ConstantData.LineType.ELLIPSEEND:
         // End segment of elliptical curve
-        win32TypeInfo.otype = FileParser.ObjectTypes.SED_ELLIPSEEND;
+        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SED_ELLIPSEEND;
         break;
 
       case ConstantData.LineType.QUADBEZ:
         // Quadratic Bezier curve
-        win32TypeInfo.otype = FileParser.ObjectTypes.SED_QUADBEZ;
+        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SED_QUADBEZ;
         break;
 
       case ConstantData.LineType.QUADBEZCON:
         // Connected quadratic Bezier curve
-        win32TypeInfo.otype = FileParser.ObjectTypes.SED_QUADBEZCON;
+        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SED_QUADBEZCON;
         break;
 
       case ConstantData.LineType.CUBEBEZ:
         // Cubic Bezier curve
-        win32TypeInfo.otype = FileParser.ObjectTypes.SED_CUBEBEZ;
+        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SED_CUBEBEZ;
         break;
 
       case ConstantData.LineType.CUBEBEZCON:
         // Connected cubic Bezier curve
-        win32TypeInfo.otype = FileParser.ObjectTypes.SED_CUBEBEZCON;
+        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SED_CUBEBEZCON;
         break;
 
       case ConstantData.LineType.SPLINE:
         // Spline curve
-        win32TypeInfo.otype = FileParser.ObjectTypes.SED_SPLINE;
+        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SED_SPLINE;
         break;
 
       case ConstantData.LineType.SPLINECON:
         // Connected spline curve
-        win32TypeInfo.otype = FileParser.ObjectTypes.SED_SPLINECON;
+        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SED_SPLINECON;
         break;
 
       case ConstantData.LineType.MOVETO:
         // Move to point (without drawing)
-        win32TypeInfo.otype = FileParser.ObjectTypes.SED_MOVETO;
+        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SED_MOVETO;
         break;
 
       case ConstantData.LineType.MOVETO_NEWPOLY:
         // Move to point and start a new polygon
-        win32TypeInfo.otype = FileParser.ObjectTypes.SED_MOVETO_NEWPOLY;
+        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SED_MOVETO_NEWPOLY;
         break;
     }
 
@@ -4351,7 +4349,7 @@ class ShapeDataUtil {
     if (!skipAssociationCheck &&
       sourceData.associd >= 0 &&
       sourceData.flags & ConstantData.ObjFlags.SEDO_Assoc &&
-      sourceData.otype === FileParser.ObjectTypes.SED_Shape &&
+      sourceData.otype === ShapeConstant.ObjectTypes.SED_Shape &&
       (sourceData.moreflags & ConstantData.ObjMoreFlags.SED_MF_VisioText) == 0) {
 
       skipTextLink = true;
@@ -4408,7 +4406,7 @@ class ShapeDataUtil {
 
     // Create appropriate shape instance based on object type
     switch (sourceData.otype) {
-      case FileParser.ObjectTypes.SED_Shape:
+      case ShapeConstant.ObjectTypes.SED_Shape:
         // Handle shape objects (rectangle, oval, polygon, etc.)
         initialBounds = sourceData.hgframe ?
           ShapeDataUtil.ToSDJSRect(sourceData.hgframe, resultObject.coordScaleFactor) :
@@ -4438,19 +4436,19 @@ class ShapeDataUtil {
         shapeInstance.ResizeAspectConstrain = sourceData.objgrow === ConstantData.GrowBehavior.PROPORTIONAL;
         break;
 
-      case FileParser.ObjectTypes.SED_LineD:
+      case ShapeConstant.ObjectTypes.SED_LineD:
         // Handle direct line objects
         shapeInstance = ShapeDataUtil.CreateLineObject(objectConfig, sourceData, resultObject);
         break;
 
-      case FileParser.ObjectTypes.SED_SegL:
+      case ShapeConstant.ObjectTypes.SED_SegL:
         // Handle segmented line objects
-        shapeInstance = sourceData.dataclass === FileParser.SeglTypes.SED_L_Arc ?
+        shapeInstance = sourceData.dataclass === ShapeConstant.SeglTypes.SED_L_Arc ?
           new Instance.Shape.ArcSegmentedLine(objectConfig) :
           new Instance.Shape.SegmentedLine(objectConfig);
         break;
 
-      case FileParser.ObjectTypes.SED_Array:
+      case ShapeConstant.ObjectTypes.SED_Array:
         // Handle connector array objects
         objectConfig.fixedpoint = sourceData.lfixedpoint ?
           ShapeDataUtil.ToSDJSCoords(sourceData.lfixedpoint, resultObject.coordScaleFactor) :
@@ -4459,7 +4457,7 @@ class ShapeDataUtil {
         objectConfig.StartPoint = {};
         objectConfig.EndPoint = {};
 
-        if (sourceData.dataclass === FileParser.LineSubclass.SED_LCV) {
+        if (sourceData.dataclass === ShapeConstant.LineSubclass.SED_LCV) {
           // Vertical connector
           if (resultObject.GroupOffset.x) {
             objectConfig.fixedpoint += resultObject.GroupOffset.x;
@@ -4487,14 +4485,14 @@ class ShapeDataUtil {
         shapeInstance = new Instance.Shape.Connector(objectConfig);
         break;
 
-      case FileParser.ObjectTypes.SED_PolyL:
+      case ShapeConstant.ObjectTypes.SED_PolyL:
         // Handle polyline objects
         shapeInstance = objectConfig.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL ?
           new Instance.Shape.PolyLineContainer(objectConfig) :
           new Instance.Shape.PolyLine(objectConfig);
         break;
 
-      case FileParser.ObjectTypes.SED_Freehand:
+      case ShapeConstant.ObjectTypes.SED_Freehand:
         // Handle freehand line objects
         shapeInstance = new Instance.Shape.FreehandLine(objectConfig);
         break;
@@ -4539,7 +4537,7 @@ class ShapeDataUtil {
       shapeInstance.ObjGrow = sourceData.objgrow;
 
       // Set hook properties for non-array objects
-      if (sourceData.otype !== FileParser.ObjectTypes.SED_Array) {
+      if (sourceData.otype !== ShapeConstant.ObjectTypes.SED_Array) {
         shapeInstance.hookflags = sourceData.hookflags;
         shapeInstance.targflags = sourceData.targflags;
       }
@@ -4649,7 +4647,7 @@ class ShapeDataUtil {
         shapeInstance.StyleRecord = Utils1.DeepCopy(resultObject.sdp.def.style);
 
         // For shape objects, copy border style to line style
-        if (sourceData.otype === FileParser.ObjectTypes.SED_Shape) {
+        if (sourceData.otype === ShapeConstant.ObjectTypes.SED_Shape) {
           shapeInstance.StyleRecord.Line = Utils1.DeepCopy(resultObject.sdp.def.style.Border);
         }
       }
@@ -4681,7 +4679,7 @@ class ShapeDataUtil {
     resultObject.tLMB.layers = [];
 
     // Process layer data until we reach the end marker
-    while (codeData.codes[codeIndex].code != FileParser.SDROpCodesByName.SDF_C_END_LAYER) {
+    while (codeData.codes[codeIndex].code != ShapeConstant.OpCodeName.SDF_C_END_LAYER) {
       switch (codeData.codes[codeIndex].code) {
         case opCodes.SDF_C_LAYERFLAGS:
           // Create a new layer when we encounter layer flags
@@ -4867,12 +4865,12 @@ class ShapeDataUtil {
 
     // Handle special file format versions and set coordinate scale factor
     if (resultObject.WriteVisio || resultObject.WriteWin32) {
-      ShapeDataUtil.Write_SDF_C_VERSION(dataStream, FileParser.Platforms.SDF_SDJS, ShapeDataUtil.FVERSION2015);
+      ShapeDataUtil.Write_SDF_C_VERSION(dataStream, ShapeConstant.Platforms.SDF_SDJS, ShapeDataUtil.FVERSION2015);
       resultObject.coordScaleFactor = ShapeDataUtil.DRAWRES / T3Gv.docUtil.svgDoc.docInfo.docDpi;
     } else {
       ShapeDataUtil.Write_SDF_C_VERSION(
         dataStream,
-        FileParser.Platforms.SDF_SDJS,
+        ShapeConstant.Platforms.SDF_SDJS,
         T3Gv.optManager.FileVersion
       );
     }
@@ -4903,7 +4901,7 @@ class ShapeDataUtil {
       return null;
     } else {
       // Write end of file marker
-      dataStream.writeUint16(FileParser.SDROpCodesByName.SDF_C_ENDFILE);
+      dataStream.writeUint16(ShapeConstant.OpCodeName.cEndFile);
 
       // Return raw buffer or Blob based on parameters
       return (isSelectOnly || returnRawBuffer) ? dataStream.buffer : new Blob([dataStream.buffer]);
@@ -4995,10 +4993,10 @@ class ShapeDataUtil {
     };
 
     // Write version code to the data stream
-    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_VERSION);
+    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.cVersion);
 
     // Write the version structure and its length
-    dataStream.writeStruct(FileParser.SDF_VERSION_Struct, versionInfo);
+    dataStream.writeStruct(ShapeConstant.VersionStruct, versionInfo);
     ShapeDataUtil.Write_LENGTH(dataStream, codeOffset);
   }
 
@@ -5014,7 +5012,7 @@ class ShapeDataUtil {
    * @param skipCodes - Array of codes to skip during header writing (optional)
    */
   static WriteHeader(dataStream, resultObject, skipCodes) {
-    const opCodes = FileParser.SDROpCodesByName;
+    const opCodes = ShapeConstant.OpCodeName;
     const exportPath = "";
 
     // Write basic header information
@@ -5114,7 +5112,7 @@ class ShapeDataUtil {
     }
 
     // Write end of header marker
-    dataStream.writeUint16(opCodes.SDF_C_HEADER_END);
+    dataStream.writeUint16(opCodes.cHeaderEnd);
   }
 
   /**
@@ -5168,7 +5166,7 @@ class ShapeDataUtil {
    */
   static WriteSelectHeader(dataStream, resultObject) {
     if (!resultObject.WriteGroupBlock) {
-      dataStream.writeUint16(FileParser.SDROpCodesByName.SDF_C_HEADER_END);
+      dataStream.writeUint16(ShapeConstant.OpCodeName.cHeaderEnd);
     }
   }
 
@@ -5183,7 +5181,7 @@ class ShapeDataUtil {
    * @param resultObject - The object containing window settings and configuration data
    */
   static write_SDF_C_HEADER(dataStream, resultObject) {
-    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_HEADER);
+    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.cHeader);
 
     const headerData = {
       flags: 0,
@@ -5202,7 +5200,7 @@ class ShapeDataUtil {
       dateformat: resultObject.ctp.dateformat
     };
 
-    dataStream.writeStruct(FileParser.SDF_HEADER_Struct, headerData);
+    dataStream.writeStruct(ShapeConstant.HeaderStruct, headerData);
     ShapeDataUtil.Write_LENGTH(dataStream, codeOffset);
   }
 
@@ -5217,7 +5215,7 @@ class ShapeDataUtil {
    * @param resultObject - The object containing page configuration and document settings
    */
   static write_SDF_C_PAGE(dataStream, resultObject) {
-    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_PAGE);
+    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.cPage);
 
     // Calculate minimum size dimensions
     const minSizeDimensions = {
@@ -5303,9 +5301,9 @@ class ShapeDataUtil {
 
     // Write appropriate structure based on format
     if (resultObject.WriteVisio || resultObject.WriteWin32) {
-      dataStream.writeStruct(FileParser.SDF_PAGE_Struct_62, fullPageData);
+      dataStream.writeStruct(ShapeConstant.PageStruct62, fullPageData);
     } else {
-      dataStream.writeStruct(FileParser.SDF_PAGE_Struct_126, standardPageData);
+      dataStream.writeStruct(ShapeConstant.PageStruct126, standardPageData);
     }
 
     ShapeDataUtil.Write_LENGTH(dataStream, codeOffset);
@@ -5330,7 +5328,7 @@ class ShapeDataUtil {
     }
 
     // Special handling for PolyLine tool
-    if (windowsLineIndex === SDUI.WindowsLineTools.indexOf(ShapeContant.LineToolTypes.PolyLine)) {
+    if (windowsLineIndex === SDUI.WindowsLineTools.indexOf(ShapeConstant.LineToolTypes.PolyLine)) {
       windowsLineIndex++;
     }
 
@@ -5371,7 +5369,7 @@ class ShapeDataUtil {
   static WriteUIInfo(dataStream, resultObject) {
     let codeOffset;
     if (dataStream) {
-      codeOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_HEAD_UIINFO);
+      codeOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_HEAD_UIINFO);
     }
 
     // Initialize flags
@@ -5423,7 +5421,7 @@ class ShapeDataUtil {
     }
 
     // Write UI info data to the stream
-    dataStream.writeStruct(FileParser.SDF_UIInfo_Struct_60, uiInfoData);
+    dataStream.writeStruct(ShapeConstant.UIInfoStruct60, uiInfoData);
     ShapeDataUtil.Write_LENGTH(dataStream, codeOffset);
   }
 
@@ -5450,14 +5448,14 @@ class ShapeDataUtil {
     ShapeDataUtil.WriteString(
       dataStream,
       library.ItemId,
-      FileParser.SDROpCodesByName.SDF_C_SEARCHLIB,
+      ShapeConstant.OpCodeName.SDF_C_SEARCHLIB,
       resultObject
     );
 
     ShapeDataUtil.WriteString(
       dataStream,
       library.ContentTitle,
-      FileParser.SDROpCodesByName.SDF_C_SEARCHLIB_NAME,
+      ShapeConstant.OpCodeName.SDF_C_SEARCHLIB_NAME,
       resultObject
     );
 
@@ -5468,20 +5466,20 @@ class ShapeDataUtil {
       ShapeDataUtil.WriteString(
         dataStream,
         currentItem.ItemId,
-        FileParser.SDROpCodesByName.SDF_C_SEARCHLIBSYMBOL_ID,
+        ShapeConstant.OpCodeName.SDF_C_SEARCHLIBSYMBOL_ID,
         resultObject
       );
 
       ShapeDataUtil.WriteString(
         dataStream,
         currentItem.ContentTitle,
-        FileParser.SDROpCodesByName.SDF_C_SEARCHLIBSYMBOL_NAME,
+        ShapeConstant.OpCodeName.SDF_C_SEARCHLIBSYMBOL_NAME,
         resultObject
       );
     }
 
     // Write library end marker
-    dataStream.writeUint16(FileParser.SDROpCodesByName.SDF_C_SEARCHLIB_END);
+    dataStream.writeUint16(ShapeConstant.OpCodeName.SDF_C_SEARCHLIB_END);
   }
 
   /**
@@ -5496,11 +5494,11 @@ class ShapeDataUtil {
    * @param resultObject - Object containing context information for serialization
    */
   static WriteNativeID(dataStream, nativeId, resultObject) {
-    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_NATIVEID);
+    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_NATIVEID);
     const nativeIdData = {
       value: nativeId
     };
-    dataStream.writeStruct(FileParser.LONGVALUE_Struct, nativeIdData);
+    dataStream.writeStruct(ShapeConstant.LongValueStruct, nativeIdData);
     ShapeDataUtil.Write_LENGTH(dataStream, codeOffset);
   }
 
@@ -5517,11 +5515,11 @@ class ShapeDataUtil {
    * @param resultObject - Object containing context information for serialization
    */
   static WriteTableID(dataStream, tableId, resultObject) {
-    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_TABLEID);
+    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_TABLEID);
     const tableIdData = {
       value: tableId
     };
-    dataStream.writeStruct(FileParser.LONGVALUE_Struct, tableIdData);
+    dataStream.writeStruct(ShapeConstant.LongValueStruct, tableIdData);
     ShapeDataUtil.Write_LENGTH(dataStream, codeOffset);
   }
 
@@ -5542,7 +5540,7 @@ class ShapeDataUtil {
     const longValueData = {
       value: longValue
     };
-    dataStream.writeStruct(FileParser.LONGVALUE_Struct, longValueData);
+    dataStream.writeStruct(ShapeConstant.LongValueStruct, longValueData);
     ShapeDataUtil.Write_LENGTH(dataStream, codeOffset);
   }
 
@@ -5558,11 +5556,11 @@ class ShapeDataUtil {
    * @param resultObject - Object containing context information for serialization
    */
   static WriteGraphID(dataStream, graphId, resultObject) {
-    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_GRAPHID);
+    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_GRAPHID);
     const graphIdData = {
       value: graphId
     };
-    dataStream.writeStruct(FileParser.LONGVALUE_Struct, graphIdData);
+    dataStream.writeStruct(ShapeConstant.LongValueStruct, graphIdData);
     ShapeDataUtil.Write_LENGTH(dataStream, codeOffset);
   }
 
@@ -5578,11 +5576,11 @@ class ShapeDataUtil {
    * @param resultObject - Object containing context information for serialization
    */
   static WriteExpandedViewID(dataStream, expandedViewId, resultObject) {
-    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_EXPANDEDVIEWID);
+    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_EXPANDEDVIEWID);
     const expandedViewData = {
       value: expandedViewId
     };
-    dataStream.writeStruct(FileParser.LONGVALUE_Struct, expandedViewData);
+    dataStream.writeStruct(ShapeConstant.LongValueStruct, expandedViewData);
     ShapeDataUtil.Write_LENGTH(dataStream, codeOffset);
   }
 
@@ -5598,11 +5596,11 @@ class ShapeDataUtil {
    * @param resultObject - Object containing context information for serialization
    */
   static WriteGanttInfoID(dataStream, ganttInfoId, resultObject) {
-    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_GANTTINFOID);
+    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_GANTTINFOID);
     const ganttInfoData = {
       value: ganttInfoId
     };
-    dataStream.writeStruct(FileParser.LONGVALUE_Struct, ganttInfoData);
+    dataStream.writeStruct(ShapeConstant.LongValueStruct, ganttInfoData);
     ShapeDataUtil.Write_LENGTH(dataStream, codeOffset);
   }
 
@@ -5618,11 +5616,11 @@ class ShapeDataUtil {
    * @param resultObject - Object containing context information for serialization
    */
   static WriteCellNoteID(dataStream, cellNoteId, resultObject) {
-    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_NOTEID);
+    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_NOTEID);
     const cellNoteData = {
       value: cellNoteId
     };
-    dataStream.writeStruct(FileParser.LONGVALUE_Struct, cellNoteData);
+    dataStream.writeStruct(ShapeConstant.LongValueStruct, cellNoteData);
     ShapeDataUtil.Write_LENGTH(dataStream, codeOffset);
   }
 
@@ -5639,12 +5637,12 @@ class ShapeDataUtil {
    * @param resultObject - Object containing context information for serialization
    */
   static WriteBlobBytesID(dataStream, blobBytesId, blobType, resultObject) {
-    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_IMAGEID);
+    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_IMAGEID);
     const blobBytesData = {
       value: blobBytesId,
       type: blobType
     };
-    dataStream.writeStruct(FileParser.LONGVALUE2_Struct, blobBytesData);
+    dataStream.writeStruct(ShapeConstant.LongValue2Struct, blobBytesData);
     ShapeDataUtil.Write_LENGTH(dataStream, codeOffset);
   }
 
@@ -5661,12 +5659,12 @@ class ShapeDataUtil {
    * @param resultObject - Object containing context information for serialization
    */
   static WriteEMFBlobBytesID(dataStream, emfBlobBytesId, emfBlobType, resultObject) {
-    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_EMFID);
+    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_EMFID);
     const emfBlobData = {
       value: emfBlobBytesId,
       type: emfBlobType
     };
-    dataStream.writeStruct(FileParser.LONGVALUE2_Struct, emfBlobData);
+    dataStream.writeStruct(ShapeConstant.LongValue2Struct, emfBlobData);
     ShapeDataUtil.Write_LENGTH(dataStream, codeOffset);
   }
 
@@ -5683,12 +5681,12 @@ class ShapeDataUtil {
    * @param resultObject - Object containing context information for serialization
    */
   static WriteOleBlobBytesID(dataStream, oleBlobBytesId, oleBlobType, resultObject) {
-    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_OLESTORAGEID);
+    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_OLESTORAGEID);
     const oleBlobData = {
       value: oleBlobBytesId,
       type: oleBlobType
     };
-    dataStream.writeStruct(FileParser.LONGVALUE2_Struct, oleBlobData);
+    dataStream.writeStruct(ShapeConstant.LongValue2Struct, oleBlobData);
     ShapeDataUtil.Write_LENGTH(dataStream, codeOffset);
   }
 
@@ -5726,13 +5724,13 @@ class ShapeDataUtil {
    * @param resultObject - The result object whose fontlist will be populated
    */
   static BuildBlockFontList(resultObject) {
-    const fontCount = ShapeContant.WebFonts.length;
+    const fontCount = ShapeConstant.WebFonts.length;
 
     for (let fontIndex = 0; fontIndex < fontCount; fontIndex++) {
       const fontRecord = new ShapeDataUtil.FontRecord(
         fontIndex,
-        ShapeContant.WebFonts[fontIndex].Name,
-        ShapeContant.WebFonts[fontIndex].Category
+        ShapeConstant.WebFonts[fontIndex].Name,
+        ShapeConstant.WebFonts[fontIndex].Category
       );
 
       resultObject.fontlist.push(fontRecord);
@@ -5758,19 +5756,19 @@ class ShapeDataUtil {
     // Map font type to Windows font family constants
     switch (fontRecord.fontType) {
       case 'serif':
-        fontFamilyValue = FileParser.FontFamily.FF_ROMAN;
+        fontFamilyValue = ShapeConstant.FontFamily.FF_ROMAN;
         break;
       case 'sanserif':
-        fontFamilyValue = FileParser.FontFamily.FF_SWISS;
+        fontFamilyValue = ShapeConstant.FontFamily.FF_SWISS;
         break;
       case 'fixed':
-        fontFamilyValue = FileParser.FontFamily.FF_MODERN;
+        fontFamilyValue = ShapeConstant.FontFamily.FF_MODERN;
         break;
       case 'script':
-        fontFamilyValue = FileParser.FontFamily.FF_SCRIPT;
+        fontFamilyValue = ShapeConstant.FontFamily.FF_SCRIPT;
         break;
       case 'decorative':
-        fontFamilyValue = FileParser.FontFamily.FF_DECORATIVE;
+        fontFamilyValue = ShapeConstant.FontFamily.FF_DECORATIVE;
         break;
     }
 
@@ -5829,19 +5827,19 @@ class ShapeDataUtil {
 
     switch (justificationValue) {
       case 'top':
-        windowsJustValue = FileParser.TextJust.TA_TOP;
+        windowsJustValue = ShapeConstant.TextJust.TA_TOP;
         break;
       case 'left':
-        windowsJustValue = FileParser.TextJust.TA_LEFT;
+        windowsJustValue = ShapeConstant.TextJust.TA_LEFT;
         break;
       case 'bottom':
-        windowsJustValue = FileParser.TextJust.TA_BOTTOM;
+        windowsJustValue = ShapeConstant.TextJust.TA_BOTTOM;
         break;
       case 'right':
-        windowsJustValue = FileParser.TextJust.TA_RIGHT;
+        windowsJustValue = ShapeConstant.TextJust.TA_RIGHT;
         break;
       default:
-        windowsJustValue = FileParser.TextJust.TA_CENTER;
+        windowsJustValue = ShapeConstant.TextJust.TA_CENTER;
     }
 
     return windowsJustValue;
@@ -5865,7 +5863,7 @@ class ShapeDataUtil {
       return;
     }
 
-    const opCodes = FileParser.SDROpCodesByName;
+    const opCodes = ShapeConstant.OpCodeName;
 
     // Write texture list header
     const listCodeOffset = ShapeDataUtil.Write_CODE(dataStream, opCodes.SDF_O_TEXTURELIST);
@@ -5920,7 +5918,7 @@ class ShapeDataUtil {
 
       // Write texture properties
       let codeOffset = ShapeDataUtil.Write_CODE(dataStream, opCodes.SDF_O_TEXTURE);
-      dataStream.writeStruct(FileParser.SDF_TEXTURE_Struct, textureData);
+      dataStream.writeStruct(ShapeConstant.TextureStruct, textureData);
       ShapeDataUtil.Write_LENGTH(dataStream, codeOffset);
 
       // Write texture scaling information
@@ -5934,14 +5932,14 @@ class ShapeDataUtil {
       };
 
       codeOffset = ShapeDataUtil.Write_CODE(dataStream, opCodes.SDF_O_TEXTUREEXTRA);
-      dataStream.writeStruct(FileParser.SDF_TextureExtra_Struct, textureScaleData);
+      dataStream.writeStruct(ShapeConstant.TextureExtraStruct, textureScaleData);
       ShapeDataUtil.Write_LENGTH(dataStream, codeOffset);
 
       // Write texture name
       ShapeDataUtil.WriteString(dataStream, texture.name, opCodes.SDF_O_TEXTURENAME, resultObject);
 
       // Write binary data for custom textures
-      if (!(texture.flags & ShapeContant.TextureFlags.SD_Tx_Std) && texture.BlobBytes) {
+      if (!(texture.flags & ShapeConstant.TextureFlags.SD_Tx_Std) && texture.BlobBytes) {
         ShapeDataUtil.WriteBlob(dataStream, texture.BlobBytes, opCodes.SDF_O_TEXTUREDATA);
       }
     }
@@ -5990,7 +5988,7 @@ class ShapeDataUtil {
       dataStream,
       sessionData.def.style.Line,
       resultObject,
-      FileParser.SDROpCodesByName.SDF_C_BEGIN_LINE,
+      ShapeConstant.OpCodeName.SDF_C_BEGIN_LINE,
       null
     );
     ShapeDataUtil.WriteSDFill(dataStream, sessionData.background, resultObject);
@@ -6070,7 +6068,7 @@ class ShapeDataUtil {
           }
 
           // Set fill type based on vertical justification
-          if (textAlign.vjust === FileParser.TextJust.TA_CENTER) {
+          if (textAlign.vjust === ShapeConstant.TextJust.TA_CENTER) {
             rectObject.StyleRecord.Fill.Paint.FillType = ConstantData.FillTypes.SDFILL_SOLID;
           } else {
             rectObject.StyleRecord.Fill.Paint.FillType = ConstantData.FillTypes.SDFILL_TRANSPARENT;
@@ -6140,7 +6138,7 @@ class ShapeDataUtil {
     }
 
     // Write the drawing end marker
-    dataStream.writeUint16(FileParser.SDROpCodesByName.SDF_C_DRAW12_END);
+    dataStream.writeUint16(ShapeConstant.OpCodeName.SDF_C_DRAW12_END);
   }
 
   /**
@@ -6168,8 +6166,8 @@ class ShapeDataUtil {
       fractionaldenominator: resultObject.rulerConfig.fractionaldenominator
     };
 
-    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_O_RULER);
-    dataStream.writeStruct(FileParser.SDF_RULER_Struct_52, rulerData);
+    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_O_RULER);
+    dataStream.writeStruct(ShapeConstant.RulerStruct52, rulerData);
     ShapeDataUtil.Write_LENGTH(dataStream, codeOffset);
   }
 
@@ -6191,7 +6189,7 @@ class ShapeDataUtil {
       resultObject.WriteGroupBlock === 0
     ) {
       // Write list begin marker
-      const codeOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_RECENTSYMBOLS_BEGIN);
+      const codeOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_RECENTSYMBOLS_BEGIN);
       ShapeDataUtil.Write_LENGTH(dataStream, codeOffset);
 
       const symbolCount = resultObject.sdp.RecentSymbols.length;
@@ -6204,7 +6202,7 @@ class ShapeDataUtil {
         ShapeDataUtil.WriteString(
           dataStream,
           symbolItem.ItemId,
-          FileParser.SDROpCodesByName.SDF_C_RECENTSYMBOL_ID,
+          ShapeConstant.OpCodeName.SDF_C_RECENTSYMBOL_ID,
           resultObject
         );
 
@@ -6213,7 +6211,7 @@ class ShapeDataUtil {
         ShapeDataUtil.WriteString(
           dataStream,
           menuVisibilitySetting,
-          FileParser.SDROpCodesByName.SDF_C_RECENTSYMBOL_NOMENU,
+          ShapeConstant.OpCodeName.SDF_C_RECENTSYMBOL_NOMENU,
           resultObject
         );
 
@@ -6221,13 +6219,13 @@ class ShapeDataUtil {
         ShapeDataUtil.WriteString(
           dataStream,
           symbolItem.ContentTitle,
-          FileParser.SDROpCodesByName.SDF_C_RECENTSYMBOL_NAME,
+          ShapeConstant.OpCodeName.SDF_C_RECENTSYMBOL_NAME,
           resultObject
         );
       }
 
       // Write list end marker
-      dataStream.writeUint16(FileParser.SDROpCodesByName.SDF_C_RECENTSYMBOLS_END);
+      dataStream.writeUint16(ShapeConstant.OpCodeName.SDF_C_RECENTSYMBOLS_END);
     }
   }
 
@@ -6251,7 +6249,7 @@ class ShapeDataUtil {
     };
 
     // Write layer begin marker
-    const beginCodeOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_BEGIN_LAYER);
+    const beginCodeOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_BEGIN_LAYER);
     ShapeDataUtil.Write_LENGTH(dataStream, beginCodeOffset);
 
     // Write each layer definition
@@ -6259,7 +6257,7 @@ class ShapeDataUtil {
       currentLayer = layerArray[layerIndex];
 
       // Write layer flags
-      const flagsCodeOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_LAYERFLAGS);
+      const flagsCodeOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_LAYERFLAGS);
       dataStream.writeUint32(currentLayer.flags);
       ShapeDataUtil.Write_LENGTH(dataStream, flagsCodeOffset);
 
@@ -6267,12 +6265,12 @@ class ShapeDataUtil {
       ShapeDataUtil.WriteString(
         dataStream,
         currentLayer.name,
-        FileParser.SDROpCodesByName.SDF_C_LAYERNAME,
+        ShapeConstant.OpCodeName.SDF_C_LAYERNAME,
         resultObject
       );
 
       // Write layer type
-      const typeCodeOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_LAYERTYPE);
+      const typeCodeOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_LAYERTYPE);
       dataStream.writeUint32(currentLayer.layertype);
       ShapeDataUtil.Write_LENGTH(dataStream, typeCodeOffset);
 
@@ -6281,14 +6279,14 @@ class ShapeDataUtil {
         layerListData.n = currentLayer.zList.length;
         layerListData.zList = currentLayer.zList;
 
-        const listCodeOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_LAYERLIST);
-        dataStream.writeStruct(FileParser.SDF_LayerList_Struct, layerListData);
+        const listCodeOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_LAYERLIST);
+        dataStream.writeStruct(ShapeConstant.LayerListStruct, layerListData);
         ShapeDataUtil.Write_LENGTH(dataStream, listCodeOffset);
       }
     }
 
     // Write layer end marker
-    dataStream.writeUint16(FileParser.SDROpCodesByName.SDF_C_END_LAYER);
+    dataStream.writeUint16(ShapeConstant.OpCodeName.SDF_C_END_LAYER);
   }
 
   /**
@@ -6363,8 +6361,8 @@ class ShapeDataUtil {
       }
 
       // Write the links to the data stream
-      const codeOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_DRAWLINK);
-      dataStream.writeStruct(FileParser.SDF_LinkList_Struct, linkListData);
+      const codeOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_DRAWLINK);
+      dataStream.writeStruct(ShapeConstant.LinkListStruct, linkListData);
       ShapeDataUtil.Write_LENGTH(dataStream, codeOffset);
     }
   }
@@ -6422,7 +6420,7 @@ class ShapeDataUtil {
     objectCount = resultObject.zList.length;
 
     // Get default text block style and create variants for text objects
-    const defaultTextStyle = new QuickStyle();//ShapeContant.FindStyle(ConstantData.Defines.TextBlockStyle);
+    const defaultTextStyle = new QuickStyle();//ShapeConstant.FindStyle(ConstantData.Defines.TextBlockStyle);
     const transparentTextStyle = Utils1.DeepCopy(defaultTextStyle);
     const tableCellStyle = Utils1.DeepCopy(defaultTextStyle);
 
@@ -6547,12 +6545,12 @@ class ShapeDataUtil {
     // Process arrow styles and flags
     let startArrow = sessionData.d_sarrow;
     if (sessionData.d_sarrowdisp) {
-      startArrow += FileParser.ArrowMasks.ARROW_DISP;
+      startArrow += ShapeConstant.ArrowMasks.ARROW_DISP;
     }
 
     let endArrow = sessionData.d_earrow;
     if (sessionData.d_earrowdisp) {
-      endArrow += FileParser.ArrowMasks.ARROW_DISP;
+      endArrow += ShapeConstant.ArrowMasks.ARROW_DISP;
     }
 
     // Create default graph settings
@@ -6627,11 +6625,11 @@ class ShapeDataUtil {
     };
 
     // Write appropriate structure based on format
-    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_DRAW12);
+    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_DRAW12);
     if (resultObject.WriteVisio || resultObject.WriteWin32) {
-      dataStream.writeStruct(FileParser.SDF_C_DRAW12_Struct364, drawingData);
+      dataStream.writeStruct(ShapeConstant.CDraw12Struct364, drawingData);
     } else {
-      dataStream.writeStruct(FileParser.SDF_C_DRAW12_Struct440, drawingData);
+      dataStream.writeStruct(ShapeConstant.CDraw12Struct440, drawingData);
     }
 
     ShapeDataUtil.Write_LENGTH(dataStream, codeOffset);
@@ -6653,7 +6651,7 @@ class ShapeDataUtil {
    */
   static WriteStyle(dataStream, styleRecord, useBorder, resultObject, styleObject) {
     // Write style begin code and name
-    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_BEGIN_STYLE);
+    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_BEGIN_STYLE);
     dataStream.writeUCS2String(styleRecord.Name, T3DataStream.LITTLE_ENDIAN, styleRecord.Name.length + 1);
     ShapeDataUtil.Write_LENGTH(dataStream, codeOffset);
 
@@ -6668,7 +6666,7 @@ class ShapeDataUtil {
         dataStream,
         styleRecord.Border,
         resultObject,
-        FileParser.SDROpCodesByName.SDF_C_BEGIN_LINE,
+        ShapeConstant.OpCodeName.SDF_C_BEGIN_LINE,
         styleObject
       );
     } else {
@@ -6676,7 +6674,7 @@ class ShapeDataUtil {
         dataStream,
         styleRecord.Line,
         resultObject,
-        FileParser.SDROpCodesByName.SDF_C_BEGIN_LINE,
+        ShapeConstant.OpCodeName.SDF_C_BEGIN_LINE,
         styleObject
       );
     }
@@ -6688,7 +6686,7 @@ class ShapeDataUtil {
     ShapeDataUtil.WriteOutside(dataStream, styleRecord.OutsideEffect);
 
     // Write style end marker
-    dataStream.writeUint16(FileParser.SDROpCodesByName.SDF_C_END_STYLE);
+    dataStream.writeUint16(ShapeConstant.OpCodeName.SDF_C_END_STYLE);
   }
 
   /**
@@ -6708,7 +6706,7 @@ class ShapeDataUtil {
     let styleIndex;
 
     // Write style list begin marker
-    ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_BEGIN_STYLELIST);
+    ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_BEGIN_STYLELIST);
 
     // Write each style in the array
     styleCount = styleArray.length;
@@ -6717,7 +6715,7 @@ class ShapeDataUtil {
     }
 
     // Write style list end marker
-    dataStream.writeUint16(FileParser.SDROpCodesByName.SDF_C_END_STYLELIST);
+    dataStream.writeUint16(ShapeConstant.OpCodeName.SDF_C_END_STYLELIST);
   }
 
   /**
@@ -6733,14 +6731,14 @@ class ShapeDataUtil {
    */
   static WriteSDFill(dataStream, fillData, resultObject) {
     // Write fill begin marker
-    ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_BEGIN_FILL);
+    ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_BEGIN_FILL);
 
     // Write paint properties with white as default color
     ShapeDataUtil.WritePaint(dataStream, fillData.Paint, ConstantData.Colors.Color_White, resultObject);
 
     // Write hatch pattern if present
     if (fillData.Hatch) {
-      const codeOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_HATCH);
+      const codeOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_HATCH);
       dataStream.writeUint32(fillData.Hatch);
       ShapeDataUtil.Write_LENGTH(dataStream, codeOffset);
     }
@@ -6751,7 +6749,7 @@ class ShapeDataUtil {
     }
 
     // Write fill end marker
-    dataStream.writeUint16(FileParser.SDROpCodesByName.SDF_C_END_FILL);
+    dataStream.writeUint16(ShapeConstant.OpCodeName.SDF_C_END_FILL);
   }
 
   /**
@@ -6789,12 +6787,12 @@ class ShapeDataUtil {
       fillLineThickness = lineThickness / 2;
       lineThickness = 0;
       linePattern = resultObject.WriteWin32
-        ? ShapeContant.Windows_LinePatterns.SEP_FilledLine
-        : ShapeContant.LinePatternData.indexOf(lineData.LinePattern) + 1;
+        ? ShapeConstant.WinLinePatterns.SEP_FilledLine
+        : ShapeConstant.LinePatternData.indexOf(lineData.LinePattern) + 1;
     }
     // Normal line pattern handling
     else {
-      linePattern = ShapeContant.LinePatternData.indexOf(lineData.LinePattern) + 1;
+      linePattern = ShapeConstant.LinePatternData.indexOf(lineData.LinePattern) + 1;
       if (linePattern < 1) {
         linePattern = 1;  // Default to solid line if pattern not found
       }
@@ -6803,13 +6801,13 @@ class ShapeDataUtil {
     // Special handling for floor plan walls
     if (styleObject && styleObject.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL &&
       fillLineThickness === 0 &&
-      (styleObject.StyleRecord.Line.LinePattern === ShapeContant.Windows_LinePatterns.SEP_Solid ||
-        styleObject.StyleRecord.Line.LinePattern === ShapeContant.Windows_LinePatterns.SEP_None)) {
+      (styleObject.StyleRecord.Line.LinePattern === ShapeConstant.WinLinePatterns.SEP_Solid ||
+        styleObject.StyleRecord.Line.LinePattern === ShapeConstant.WinLinePatterns.SEP_None)) {
       fillLineThickness = lineThickness / 2;
       lineThickness = 0;
       linePattern = resultObject.WriteWin32
-        ? ShapeContant.Windows_LinePatterns.SEP_FilledLine
-        : ShapeContant.LinePatternData.indexOf(lineData.LinePattern) + 1;
+        ? ShapeConstant.WinLinePatterns.SEP_FilledLine
+        : ShapeConstant.LinePatternData.indexOf(lineData.LinePattern) + 1;
     }
 
     // Create and write line data structure
@@ -6820,9 +6818,9 @@ class ShapeDataUtil {
 
     // Write appropriate structure based on format
     if (resultObject.WriteVisio || resultObject.WriteWin32) {
-      dataStream.writeStruct(FileParser.SDF_BEGIN_LINE_Struct_8, lineStruct);
+      dataStream.writeStruct(ShapeConstant.BeginLineStruct8, lineStruct);
     } else {
-      dataStream.writeStruct(FileParser.SDF_BEGIN_LINE_Struct_14, lineStruct);
+      dataStream.writeStruct(ShapeConstant.BeginLineStruct14, lineStruct);
     }
 
     ShapeDataUtil.Write_LENGTH(dataStream, codeOffset);
@@ -6837,14 +6835,14 @@ class ShapeDataUtil {
         color: ShapeDataUtil.HTMLColorToWin(lineData.Paint.Color)
       };
 
-      const filledLineOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_FILLEDLINE);
-      dataStream.writeStruct(FileParser.SDF_FILLED_LINE_Struct, filledLineData);
+      const filledLineOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_FILLEDLINE);
+      dataStream.writeStruct(ShapeConstant.FilledLineStruct, filledLineData);
       ShapeDataUtil.Write_LENGTH(dataStream, filledLineOffset);
     }
 
     // Write hatch pattern if present
     if (lineData.Hatch) {
-      const hatchOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_HATCH);
+      const hatchOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_HATCH);
       dataStream.writeUint32(lineData.Hatch);
       ShapeDataUtil.Write_LENGTH(dataStream, hatchOffset);
     }
@@ -6855,7 +6853,7 @@ class ShapeDataUtil {
     }
 
     // Write line end marker
-    dataStream.writeUint16(FileParser.SDROpCodesByName.SDF_C_END_LINE);
+    dataStream.writeUint16(ShapeConstant.OpCodeName.SDF_C_END_LINE);
   }
 
   /**
@@ -6870,7 +6868,7 @@ class ShapeDataUtil {
    * @param resultObject - Object containing font lists, coordinate scale factors, and context information
    */
   static WriteSDTxf(dataStream, textFormatting, resultObject) {
-    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_BEGIN_TEXTF);
+    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_BEGIN_TEXTF);
 
     const textFormattingData = {
       fontid: ShapeDataUtil.GetFontID(textFormatting.FontName, resultObject.fontlist),
@@ -6878,7 +6876,7 @@ class ShapeDataUtil {
       face: textFormatting.Face
     };
 
-    dataStream.writeStruct(FileParser.SDF_BEGIN_TEXTF_Struct, textFormattingData);
+    dataStream.writeStruct(ShapeConstant.BeginTextfStruct, textFormattingData);
     ShapeDataUtil.Write_LENGTH(dataStream, codeOffset);
 
     // Write text color properties
@@ -6890,7 +6888,7 @@ class ShapeDataUtil {
     }
 
     // Write text formatting end marker
-    dataStream.writeUint16(FileParser.SDROpCodesByName.SDF_C_END_TEXTF);
+    dataStream.writeUint16(ShapeConstant.OpCodeName.SDF_C_END_TEXTF);
   }
 
   /**
@@ -6904,7 +6902,7 @@ class ShapeDataUtil {
    * @param outsideEffect - The outside effect properties to serialize
    */
   static WriteOutside(dataStream, outsideEffect) {
-    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_OUTSIDE);
+    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_OUTSIDE);
 
     // Ensure color is properly formatted
     if (typeof outsideEffect.Color !== 'string') {
@@ -6931,7 +6929,7 @@ class ShapeDataUtil {
     };
 
     // Write the effect data and length
-    dataStream.writeStruct(FileParser.SDF_OUTSIDE_EFFECT_Struct, outsideEffectData);
+    dataStream.writeStruct(ShapeConstant.OutSideEffectStruct, outsideEffectData);
     ShapeDataUtil.Write_LENGTH(dataStream, codeOffset);
   }
 
@@ -6949,7 +6947,7 @@ class ShapeDataUtil {
    */
   static WritePaint(dataStream, paintData, defaultColor, resultObject) {
     // Write paint begin marker
-    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_BEGIN_PAINT);
+    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_BEGIN_PAINT);
 
     // Use default color if none provided
     if (paintData.Color == null) {
@@ -6963,7 +6961,7 @@ class ShapeDataUtil {
     };
 
     // Write paint properties and length
-    dataStream.writeStruct(FileParser.SDF_BEGIN_PAINT_Struct, paintStruct);
+    dataStream.writeStruct(ShapeConstant.BeginPaintStruct, paintStruct);
     ShapeDataUtil.Write_LENGTH(dataStream, codeOffset);
 
     // Set default end color if none provided
@@ -6980,8 +6978,8 @@ class ShapeDataUtil {
           gradientflags: paintData.GradientFlags
         };
 
-        const gradientOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_GRADIENT);
-        dataStream.writeStruct(FileParser.SDF_GRADIENT_Struct, gradientData);
+        const gradientOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_GRADIENT);
+        dataStream.writeStruct(ShapeConstant.GradientStruct, gradientData);
         ShapeDataUtil.Write_LENGTH(dataStream, gradientOffset);
         break;
 
@@ -6999,8 +6997,8 @@ class ShapeDataUtil {
             nstops: stopCount
           };
 
-          const richGradientOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_RICHGRADIENT);
-          dataStream.writeStruct(FileParser.SDF_RICHGRADIENT_Struct, richGradientData);
+          const richGradientOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_RICHGRADIENT);
+          dataStream.writeStruct(ShapeConstant.RichGradientStruct, richGradientData);
           ShapeDataUtil.Write_LENGTH(dataStream, richGradientOffset);
 
           // Write each gradient stop
@@ -7010,8 +7008,8 @@ class ShapeDataUtil {
               stop: richGradient.stops[stopIndex].stop
             };
 
-            const stopOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_RICHGRADIENTSTOP);
-            dataStream.writeStruct(FileParser.SDF_RICHGRADIENTSTOP_Struct, stopData);
+            const stopOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_RICHGRADIENTSTOP);
+            dataStream.writeStruct(ShapeConstant.RichGradientStopStruct, stopData);
             ShapeDataUtil.Write_LENGTH(dataStream, stopOffset);
           }
         }
@@ -7019,7 +7017,7 @@ class ShapeDataUtil {
 
       case ConstantData.FillTypes.SDFILL_TEXTURE:
         // Write texture fill
-        const textureOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_TEXTURE);
+        const textureOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_TEXTURE);
         let textureId = paintData.Texture;
 
         // Convert texture name to index if not in block-writing mode
@@ -7036,7 +7034,7 @@ class ShapeDataUtil {
     }
 
     // Write paint end marker
-    dataStream.writeUint16(FileParser.SDROpCodesByName.SDF_C_END_PAINT);
+    dataStream.writeUint16(ShapeConstant.OpCodeName.SDF_C_END_PAINT);
   }
 
   /**
@@ -7115,9 +7113,9 @@ class ShapeDataUtil {
         width: 0,
         height: 0
       },
-      y = ShapeDataUtil.Write_CODE(e, FileParser.SDROpCodesByName.SDF_C_DRAWOBJ8),
+      y = ShapeDataUtil.Write_CODE(e, ShapeConstant.OpCodeName.SDF_C_DRAWOBJ8),
       f = - 1,
-      L = FileParser.SDROpCodesByName,
+      L = ShapeConstant.OpCodeName,
       I = ConstantData.ShapeClass,
       T = I.PLAIN;
     switch (
@@ -7391,7 +7389,7 @@ class ShapeDataUtil {
       extendedSnapRect: ShapeDataUtil.ToSDWinRect(a.Frame, r.coordScaleFactor, r.GroupOffset),
       dimensionDeflectionH: a.dimensionDeflectionH ? ShapeDataUtil.ToSDWinCoords(a.dimensionDeflectionH, r.coordScaleFactor) : 0,
       dimensionDeflectionV: a.dimensionDeflectionV ? ShapeDataUtil.ToSDWinCoords(a.dimensionDeflectionV, r.coordScaleFactor) : 0,
-      commentdir: FileParser.SDWFileDir.dir_text,
+      commentdir: ShapeConstant.SDWFileDir.dir_text,
       sequence: 0,
       hookdisp_x: ShapeDataUtil.ToSDWinCoords(a.hookdisp.x, r.coordScaleFactor),
       hookdisp_y: ShapeDataUtil.ToSDWinCoords(a.hookdisp.y, r.coordScaleFactor),
@@ -7403,7 +7401,7 @@ class ShapeDataUtil {
     };
     if (
       r.WriteVisio ||
-        r.WriteWin32 ? e.writeStruct(FileParser.SDF_DRAWOBJ8_Struct_316, _) : e.writeStruct(FileParser.SDF_DRAWOBJ8_Struct_448, _),
+        r.WriteWin32 ? e.writeStruct(ShapeConstant.DrawObj8Struct316, _) : e.writeStruct(ShapeConstant.DrawObj8Struct448, _),
       ShapeDataUtil.Write_LENGTH(e, y),
       ShapeDataUtil.WriteHooks(e, a, r),
       ShapeDataUtil.WriteObjData(e, a, r),
@@ -7428,7 +7426,7 @@ class ShapeDataUtil {
     a.BusinessName &&
       ShapeDataUtil.WriteString(e, a.BusinessName, L.SDF_C_BUSINESSNAME_STR, r),
       a.WriteSDFAttributes(e, r),
-      e.writeUint16(FileParser.SDROpCodesByName.SDF_C_DRAWOBJ8_END)
+      e.writeUint16(ShapeConstant.OpCodeName.SDF_C_DRAWOBJ8_END)
   }
 
   /**
@@ -7526,7 +7524,7 @@ class ShapeDataUtil {
           drawingObject.hooks[hookIndex].cellid;
 
         // Write hook data to stream
-        codeOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_DRAWHOOK);
+        codeOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_DRAWHOOK);
         hookData = {
           objid: ShapeDataUtil.BlockIDtoUniqueID(drawingObject.hooks[hookIndex].objid, resultObject),
           index: -1,
@@ -7536,7 +7534,7 @@ class ShapeDataUtil {
           cellid: cellId
         };
 
-        dataStream.writeStruct(FileParser.SDF_DRAWHOOK_Struct, hookData);
+        dataStream.writeStruct(ShapeConstant.DrawHookStruct, hookData);
         ShapeDataUtil.Write_LENGTH(dataStream, codeOffset);
       }
     }
@@ -7576,8 +7574,8 @@ class ShapeDataUtil {
     }
 
     // Write object data structure to stream
-    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_OBJDATA);
-    dataStream.writeStruct(FileParser.SDF_OBJDATA_Struct32, objectDataInfo);
+    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_OBJDATA);
+    dataStream.writeStruct(ShapeConstant.ObjDataStruct32, objectDataInfo);
     ShapeDataUtil.Write_LENGTH(dataStream, codeOffset);
   }
 
@@ -7594,7 +7592,7 @@ class ShapeDataUtil {
    * @param resultObject - Object containing style list references and context information
    */
   static WriteStyleOverrides(dataStream, drawingObject, resultObject) {
-    const matchFlags = ShapeContant.MatchFlags;
+    const matchFlags = ShapeConstant.MatchFlags;
     const styleCount = resultObject.lpStyles.length;
 
     // Special case for Visio format - always write full style information
@@ -7604,7 +7602,7 @@ class ShapeDataUtil {
         dataStream,
         drawingObject.StyleRecord.Line,
         resultObject,
-        FileParser.SDROpCodesByName.SDF_C_BEGIN_LINE,
+        ShapeConstant.OpCodeName.SDF_C_BEGIN_LINE,
         drawingObject
       );
       ShapeDataUtil.WriteSDTxf(dataStream, drawingObject.StyleRecord.Text, resultObject);
@@ -7618,7 +7616,7 @@ class ShapeDataUtil {
       drawingObject.objecttype !== ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
 
       // Compare the object's style to the reference style to find differences
-      // const styleDifferences = ShapeContant.SD_CompareStyles(
+      // const styleDifferences = ShapeConstant.SD_CompareStyles(
       //   drawingObject.StyleRecord,
       //   resultObject.lpStyles[drawingObject.tstyleindex],
       //   true
@@ -7641,7 +7639,7 @@ class ShapeDataUtil {
       //     dataStream,
       //     drawingObject.StyleRecord.Line,
       //     resultObject,
-      //     FileParser.SDROpCodesByName.SDF_C_BEGIN_LINE,
+      //     ShapeConstant.OpCodeName.SDF_C_BEGIN_LINE,
       //     drawingObject
       //   );
       // }
@@ -7687,11 +7685,11 @@ class ShapeDataUtil {
 
     // Add display flags to arrows if they should be displayed
     if (drawingObject.StartArrowDisp) {
-      startArrowId += FileParser.ArrowMasks.ARROW_DISP;
+      startArrowId += ShapeConstant.ArrowMasks.ARROW_DISP;
     }
 
     if (drawingObject.EndArrowDisp) {
-      endArrowId += FileParser.ArrowMasks.ARROW_DISP;
+      endArrowId += ShapeConstant.ArrowMasks.ARROW_DISP;
     }
 
     // For reversed lines, swap start and end arrowheads
@@ -7711,8 +7709,8 @@ class ShapeDataUtil {
     };
 
     // Write the arrow data to the stream
-    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, FileParser.SDROpCodesByName.SDF_C_DRAWARROW);
-    dataStream.writeStruct(FileParser.SDF_DRAWARROW_Struct, arrowheadData);
+    const codeOffset = ShapeDataUtil.Write_CODE(dataStream, ShapeConstant.OpCodeName.SDF_C_DRAWARROW);
+    dataStream.writeStruct(ShapeConstant.DrawArrowStruct, arrowheadData);
     ShapeDataUtil.Write_LENGTH(dataStream, codeOffset);
   }
 
@@ -7799,7 +7797,7 @@ class ShapeDataUtil {
   static SaveAllBlocks(stateId, deltaState) {
     if (true) {
       if (false) {
-        const pendingActionCount = T3Gv.optManager.SocketAction.length;
+        const pendingActionCount = T3Gv.optManager.socketAction.length;
         const socketActions = TODO.SocketActions;
 
         if (pendingActionCount) {
@@ -7810,7 +7808,7 @@ class ShapeDataUtil {
           };
 
           for (let actionIndex = 0; actionIndex < pendingActionCount; actionIndex++) {
-            switch (T3Gv.optManager.SocketAction[actionIndex]) {
+            switch (T3Gv.optManager.socketAction[actionIndex]) {
               case socketActions.SaveAllBlocks:
                 ShapeDataUtil.WriteAllBlocks();
                 ShapeDataUtil.HeaderFilters = [];
@@ -7819,7 +7817,7 @@ class ShapeDataUtil {
             }
           }
 
-          T3Gv.optManager.SocketAction = [];
+          T3Gv.optManager.socketAction = [];
         } else {
           ShapeDataUtil.WriteAllBlocks();
           ShapeDataUtil.HeaderFilters = [];
@@ -8050,7 +8048,7 @@ class ShapeDataUtil {
           if (countOnly) return true;
           serializedBlock = ShapeDataUtil.WriteNativeBlock(
             objectInstance,
-            FileParser.SDROpCodesByName.SDF_C_NATIVEBLOCK,
+            ShapeConstant.OpCodeName.SDF_C_NATIVEBLOCK,
             resultObject,
             blockIndex
           );
@@ -8064,7 +8062,7 @@ class ShapeDataUtil {
           if (countOnly) return true;
           serializedBlock = ShapeDataUtil.WriteNativeBlock(
             objectInstance,
-            FileParser.SDROpCodesByName.SDF_C_NATIVEWINBLOCK,
+            ShapeConstant.OpCodeName.SDF_C_NATIVEWINBLOCK,
             resultObject,
             blockIndex
           );
@@ -8410,7 +8408,7 @@ class ShapeDataUtil {
   static WriteBlockWrapper(dataStream, stateId, delta, blockType, blockId, blockIndex, totalBlocks, actionType) {
     const blockHeader = new ShapeDataUtil.BlockHeader(stateId, delta, blockType, blockId, blockIndex, totalBlocks);
     blockHeader.action = actionType;
-    dataStream.writeStruct(FileParser.BLOCK_HEADER_Struct, blockHeader);
+    dataStream.writeStruct(ShapeConstant.BlockHeaderStruct, blockHeader);
   }
 
   /**
@@ -8486,7 +8484,7 @@ class ShapeDataUtil {
       dataStream,
       resultObject.sdp.def.style.Line,
       resultObject,
-      FileParser.SDROpCodesByName.SDF_C_BEGIN_LINE,
+      ShapeConstant.OpCodeName.SDF_C_BEGIN_LINE,
       null
     );
 
@@ -8675,10 +8673,10 @@ class ShapeDataUtil {
     const idData = {
       value: nativeObject.ID
     };
-    dataStream.writeStruct(FileParser.LONGVALUE_Struct, idData);
+    dataStream.writeStruct(ShapeConstant.LongValueStruct, idData);
 
     // Write native binary data to the block
-    FileParser.write_nativebytearray(dataStream, nativeObject.Data);
+    ShapeConstant.writeNativeByteArray(dataStream, nativeObject.Data);
 
     // Finalize the block
     ShapeDataUtil.Write_LENGTH(dataStream, codeOffset);

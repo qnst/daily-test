@@ -16,27 +16,26 @@ import EvtUtil from "../Event/EvtUtil";
 import Collaboration from "../Data/Collaboration";
 import ArrowDefs from '../Model/ArrowDefs';
 import ArrowSizes from '../Model/ArrowSizes';
-import ToolOpt from './Business/ToolOpt';
+import ToolOpt from '../Util/ToolOpt';
 import Document from '../Basic/B.Document';
 import Utils1 from "../Helper/Utils1";
 import Utils2 from "../Helper/Utils2";
 import Utils3 from "../Helper/Utils3"
 import BaseLine from '../Shape/S.BaseLine';
-import FileParser from "../Data/FileParser";
 import '../Helper/T3Hammer'
 import PolyLine from '../Shape/S.PolyLine';
 import PolyLineContainer from '../Shape/S.PolyLineContainer';
 import BaseDrawingObject from '../Shape/S.BaseDrawingObject';
-import OptAhUtil from './Business/OptAhUtil';
+import OptAhUtil from '../Util/OptAhUtil';
 import GroupSymbol from '../Shape/S.GroupSymbol';
 import Connector from '../Shape/S.Connector';
-import WallOpt from './Business/WallOpt'
+import WallOpt from '../Util/WallOpt'
 import Point from '../Model/Point';
 import ShapeContainer from '../Shape/S.ShapeContainer'
 import SegmentedLine from '../Shape/S.SegmentedLine';
 import BaseShape from '../Shape/S.BaseShape';
 import SegmentData from '../Model/SegmentData'
-import PolygonShapeGenerator from "./Business/PolygonUtil"
+import PolygonShapeGenerator from "../Util/PolygonUtil"
 import DefaultStyle from "../Model/DefaultStyle"
 import TextParams from "../Model/TextParams"
 import Style from '../Basic/B.Element.Style'
@@ -57,407 +56,672 @@ import TextObject from "../Model/TextObject"
 import DynamicGuides from "../Model/DynamicGuides"
 import ConstantData2 from "../Data/ConstantData2"
 import T3Constant from "../Data/T3Constant";
-import PolygonConstant from "./Business/PolygonConstant";
-import PolygonUtil from "./Business/PolygonUtil";
-import ShapeContant from "../Data/ShapeContant";
+import PolygonConstant from "../Util/PolygonConstant";
+import PolygonUtil from "../Util/PolygonUtil";
+import ShapeConstant from "../Data/ShapeConstant";
 
 class OptHandler {
 
   //#region  Variables
 
-  // public bIsInitialized: boolean;
-  public svgDocId: string;
-  // public sendstate: number;
-  public rubberBand: any;
-  public rubberBandStartX: number;
-  public rubberBandStartY: number;
-  public rubberBandFrame: any;
-  public dragBBoxList: any[];
-  public dragElementList: any[];
-  public dragEnclosingRect: any;
-  public dragStartX: number;
-  public dragStartY: number;
-  public dragDeltaX: number;
-  public dragDeltaY: number;
-  public dragTargetId: any;
-  public dragTargetBBox: any;
-  public dragGotMove: boolean;
-  public dragGotAutoResizeRight: boolean;
-  public dragGotAutoResizeBottom: boolean;
-  public dragGotAutoResizeOldX: any[];
-  public dragGotAutoResizeOldY: any[];
-  public nudgeDelta: number;
-  public noUndo: boolean;
-  public actionStoredObjectId: number;
-  public actionSvgObject: any;
-  public actionTriggerId: number;
-  public actionTriggerData: number;
-  public actionStartX: number;
-  public actionStartY: number;
-  public actionTableLastX: number;
-  public actionTableLastY: number;
-  public actionOldExtra: number;
-  public actionBBox: any;
-  public actionNewBBox: any;
-  public actionLockAspectRatio: boolean;
-  public actionAspectRatioWidth: number;
-  public actionAspectRatioHeight: number;
-  public useDefaultStyle: boolean;
-  public newObjectVisible: boolean;
-  public emptySymbolList: any[];
-  public emptyEMFList: any[];
-  public addCount: number;
-  public lineStamp: boolean;
-  public drawStartX: number;
-  public drawStartY: number;
-  public lineDrawStartX: number;
-  public lineDrawStartY: number;
-  public fromOverlayLayer: boolean;
-  public lineDrawId: number;
-  public lineDrawLineId: number;
-  public dynamicGuides: any;
-  public rotateKnobCenterDivisor: any;
-  public rotateStartPoint: any;
-  public rotateEndPoint: any;
-  public rotateStartRotation: number;
-  public rotateObjectRadians: number;
-  public rotateEndRotation: number;
-  public rotatePivotX: number;
-  public rotatePivotY: number;
-  public rotateSnap: number;
-  public enhanceRotateSnap: number;
-  public drawShape: any;
-  public stampTimeout: any;
-  public wasClickInShape: boolean;
-  public autoScrollTimer: T3Timer;
-  public autoScrollTimerId: number;
-  public autoScrollXPos: number;
-  public autoScrollYPos: number;
-  public inAutoScroll: boolean;
-  public textEntryTimer: any;
-  public isGestureCapable: boolean;
-  public touchInitiated: boolean;
-  public mainAppElement: any;
-  public mainAppHammer: any;
-  public workAreaElement: any;
-  public WorkAreaHammer: any;
-  public workAreaTextInputProxy: any;
-  public virtualKeyboardLifterElementFrame: any;
-  public touchPanStarted: boolean;
-  public touchPanX: number;
-  public touchPanY: number;
-  public bIsFullScreen: boolean;
-  public TEHammer: any;
-  public TEWorkAreaHammer: any;
-  public TEClickAreaHammer: any;
-  public TEDecAreaHammer: any;
-  public TENoteAreaHammer: any;
-  public theSelectedListBlockID: number;
-  public sedSessionBlockId: number;
-  public tedSessionBlockId: number;
-  public layersManagerBlockId: number;
-  public stampCompleteCallback: any;
-  public stampCompleteUserData: any;
-  public stampHCenter: boolean;
-  public stampVCenter: boolean;
-  public stampShapeOffsetX: number;
-  public stampShapeOffsetY: number;
-  public stampSticky: boolean;
-  public lastOpDuplicate: boolean;
-  public nudgeOpen: boolean;
-  public nudgeX: number;
-  public nudgeY: number;
-  public nudgeGrowX: number;
-  public nudgeGrowY: number;
-  public currentModalOperation: number;
-  public formatPainterMode: number;
-  public formatPainterStyle: QuickStyle;
-  public formatPainterSticky: boolean;
-  public formatPainterText: QuickStyle;
-  public formatPainterParaFormat: ParagraphFormat;
-  public formatPainterArrows: any;
-  public svgDoc: Document;
-  public svgObjectLayer: any;
-  public svgOverlayLayer: any;
-  public svgHighlightLayer: any;
-  public eventTimestamp: number;
-  public actionArrowHideTimer: T3Timer;
-  public uniqueId: number;
-  public textClipboard: any;
-  public htmlClipboard: any;
-  public cutFromButton: boolean;
-  public imageClipboard: any;
-  public SVGroot: any;
-  public dirtyList: any[];
-  public dirtyListMoveOnly: any[];
-  public dirtyListReOrder: boolean;
-  public moveList: any[];
-  public moveBounds: any;
-  public pinRect: any;
-  public linkParams: any;
-  public rightClickParams: any;
-  public postMoveSelectId: any;
-  public bBuildingSymbols: boolean;
-  public bTokenizeStyle: boolean;
-  public bDrawEffects: boolean;
-  public initialStateID: number;
-  public nObjectStoreStart: number;
-  public cachedHeight: any;
-  public cachedWidth: any;
-  public bInDimensionEdit: boolean;
-  public curNoteShape: number;
-  public curNoteTableCell: any;
-  public curNoteGraphPint: any;
-  public bInNoteEdit: boolean;
-  public bNoteChanged: boolean;
-  public OldAllowSave: boolean;
-  public SocketAction: any[];
-  public PageAction: any[];
-  public PagesToDelete: any[];
-  public TextureList: TextureList;
-  public richGradients: any[];
-  public nStdTextures: number;
-  public hasBlockDirectory: boolean;
-  public FileVersion: number;
-  public activeExpandedView: any;
-  public commentUserIDs: any[];
-  public contentHeader: ContentHeader;
-  public linksBlockId: number;
-  public selectionState: any;
-  public OldFileMetaData: any;
-  public curHiliteShape: number;
-  public alternateStateManagerVars: any;
-  public bitmapImportCanvas: any;
-  public bitmapImportCanvasCTX: any;
-  public bitmapScaledCanvas: any;
-  public bitmapScaledCanvasCTX: any;
-  public bitmapImportSourceWidth: number;
-  public bitmapImportSourceHeight: number;
-  public bitmapImportDestWidth: number;
-  public bitmapImportDestHeight: number;
-  public bitmapImportMaxScaledWidth: number;
-  public bitmapImportMaxScaledHeight: number;
-  public bitmapImportDPI: number;
-  public bitmapImportMimeType: string;
-  public bitmapImportOriginalSize: number;
-  public bitmapImportScaledSize: number;
-  public scaledBitmapCallback: any;
-  public bitmapImportEXIFdata: any;
-  public bitmapImportFile: any;
-  public bitmapImportResult: any;
-  public symbolLibraryItemID: number;
-  public TopLeftPastePos: any;
-  public TopLeftPasteScrollPos: any;
-  public PasteCount: number;
-  public DoubleClickSymbolTimeStamp: number;
-  public ImportContext: any;
-  public svgCollabLayer: any;
-  public DocumentElement: any;
-  public DocumentElementHammer: any;
-  public editModeList: any;
-  public TETextHammer: any;
+  /**
+   * SVG document identifier and root elements
+   * Used for referencing and manipulating the main document structure
+   */
+  public svgDocId: string;           // Selector for the SVG container element
+  public svgDoc: Document;           // Reference to the SVG document
+  public svgObjectLayer: any;        // Main layer for drawing content
+  public svgOverlayLayer: any;       // Layer for UI elements (not exported)
+  public svgHighlightLayer: any;     // Layer for selection highlighting
+  public svgCollabLayer: any;        // Layer for collaboration indicators
+  public sVGroot: any;               // Root SVG DOM element
 
-  public collaboration: Collaboration;
+  /**
+   * Rubber band selection variables
+   * Used for implementing rectangular selection behavior
+   */
+  public rubberBand: any;            // Reference to selection rectangle element
+  public rubberBandStartX: number;   // Starting X coordinate for selection
+  public rubberBandStartY: number;   // Starting Y coordinate for selection
+  public rubberBandFrame: any;       // Bounding rectangle of selection area
+
+  /**
+   * Drag operation state variables
+   * Track the state of objects being moved by drag operations
+   */
+  public dragElementList: any[];     // List of elements being dragged
+  public dragBBoxList: any[];        // List of bounding boxes for dragged elements
+  public dragEnclosingRect: any;     // Rectangle enclosing all dragged elements
+  public dragStartX: number;         // Starting X coordinate for drag
+  public dragStartY: number;         // Starting Y coordinate for drag
+  public dragDeltaX: number;         // X distance moved during drag
+  public dragDeltaY: number;         // Y distance moved during drag
+  public dragTargetId: any;          // ID of the primary drag target
+  public dragTargetBBox: any;        // Bounding box of the target element
+  public dragGotMove: boolean;       // Flag indicating movement has occurred
+  public dragGotAutoResizeRight: boolean;    // Flag for auto-resize right during drag
+  public dragGotAutoResizeBottom: boolean;   // Flag for auto-resize bottom during drag
+  public dragGotAutoResizeOldX: any[];       // Previous X dimensions during auto-resize
+  public dragGotAutoResizeOldY: any[];       // Previous Y dimensions during auto-resize
+  public moveList: any[];            // List of objects to move together
+  public moveBounds: any;            // Bounds of the move operation
+  public pinRect: any;               // Constraining rectangle for movement
+
+  /**
+   * Action state tracking
+   * Variables for tracking the current editing action
+   */
+  public noUndo: boolean;            // Flag to disable undo recording
+  public actionStoredObjectId: number;  // ID of the object being acted upon
+  public actionSvgObject: any;       // SVG object being acted upon
+  public actionTriggerId: number;    // ID of the action trigger
+  public actionTriggerData: number;  // Data associated with the trigger
+  public actionStartX: number;       // Starting X coordinate for action
+  public actionStartY: number;       // Starting Y coordinate for action
+  public actionTableLastX: number;   // Last X coordinate for table actions
+  public actionTableLastY: number;   // Last Y coordinate for table actions
+  public actionOldExtra: number;     // Previous extra state data
+  public actionBBox: any;            // Original bounding box
+  public actionNewBBox: any;         // New bounding box after action
+  public actionLockAspectRatio: boolean;     // Whether to maintain width/height ratio
+  public actionAspectRatioWidth: number;     // Original width for aspect ratio
+  public actionAspectRatioHeight: number;    // Original height for aspect ratio
+  public currentModalOperation: number;      // Current modal operation type
+
+  /**
+   * Drawing state variables
+   * Track the state of drawing operations
+   */
+  public drawShape: any;             // Current shape being drawn
+  public drawStartX: number;         // Starting X position for drawing
+  public drawStartY: number;         // Starting Y position for drawing
+  public lineDrawStartX: number;     // Starting X for line drawing
+  public lineDrawStartY: number;     // Starting Y for line drawing
+  public lineDrawId: number;         // ID of the line being drawn
+  public lineDrawLineId: number;     // ID of the line element
+  public lineStamp: boolean;         // Whether in line stamp mode
+  public dynamicGuides: any;         // Alignment guides during drawing
+
+  /**
+   * Rotation state variables
+   * Track state during rotation operations
+   */
+  public rotateKnobCenterDivisor: any;   // Divisor for rotation knob center
+  public rotateStartPoint: any;          // Starting point for rotation
+  public rotateEndPoint: any;            // Ending point for rotation
+  public rotateObjectRadians: number;    // Rotation angle in radians
+  public rotateStartRotation: number;    // Starting rotation angle
+  public rotateEndRotation: number;      // Ending rotation angle
+  public rotatePivotX: number;           // X coordinate of rotation center
+  public rotatePivotY: number;           // Y coordinate of rotation center
+  public rotateSnap: number;             // Angle for rotation snapping
+  public enhanceRotateSnap: number;      // Enhanced rotation snapping angle
+
+  /**
+   * Auto-scroll variables
+   * Manage automatic scrolling during drag operations
+   */
+  public autoScrollTimer: T3Timer;       // Timer for auto-scrolling
+  public autoScrollTimerId: number;      // ID of the auto-scroll timer
+  public autoScrollXPos: number;         // X position for auto-scrolling
+  public autoScrollYPos: number;         // Y position for auto-scrolling
+  public inAutoScroll: boolean;          // Whether auto-scroll is active
+
+  /**
+   * Touch and gesture variables
+   * Support for touch interaction
+   */
+  public isGestureCapable: boolean;      // Whether device supports touch/gestures
+  public touchInitiated: boolean;        // Whether touch interaction started
+  public touchPanStarted: boolean;       // Whether panning via touch started
+  public touchPanX: number;              // X position for touch panning
+  public touchPanY: number;              // Y position for touch panning
+  public bIsFullScreen: boolean;         // Whether in fullscreen mode
+
+  /**
+   * UI elements and event handlers
+   * References to DOM elements and their event handlers
+   */
+  public mainAppElement: any;            // Main application DOM element
+  public mainAppHammer: any;             // Hammer manager for main element
+  public workAreaElement: any;           // Work area DOM element
+  public WorkAreaHammer: any;            // Hammer manager for work area
+  public documentElement: any;           // Document area DOM element
+  public documentElementHammer: any;     // Hammer manager for document element
+  public workAreaTextInputProxy: any;    // Proxy for text input in work area
+  public virtualKeyboardLifterElementFrame: any;  // Frame for virtual keyboard
+  public TEHammer: any;                  // Hammer manager for text editing
+  public TEWorkAreaHammer: any;          // Hammer manager for text edit work area
+  public clickAreaHammer: any;           // Hammer manager for click areas
+  public decAreaHammer: any;             // Hammer manager for decoration areas
+  public noteAreaHammer: any;            // Hammer manager for note areas
+  public textHammer: any;                // Hammer manager for text elements
+  public editModeList: any;              // Stack of edit modes
+
+  /**
+   * Block IDs for persistent object storage
+   * References to stored objects in the object manager
+   */
+  public theSelectedListBlockID: number; // ID for object selection storage
+  public sedSessionBlockId: number;      // ID for shape editing session data
+  public tedSessionBlockId: number;      // ID for text editing session data
+  public layersManagerBlockId: number;   // ID for layer management data
+  public linksBlockId: number;           // ID for connection links data
+
+  /**
+   * Stamp operation variables
+   * State for stamp/duplicate operations
+   */
+  public stampTimeout: any;              // Timeout for stamp operations
+  public stampCompleteCallback: any;     // Callback after stamp completion
+  public stampCompleteUserData: any;     // User data for stamp callback
+  public stampHCenter: boolean;          // Whether to center horizontally
+  public stampVCenter: boolean;          // Whether to center vertically
+  public stampShapeOffsetX: number;      // X offset for stamped shape
+  public stampShapeOffsetY: number;      // Y offset for stamped shape
+  public stampSticky: boolean;           // Whether stamp mode persists
+  public lastOpDuplicate: boolean;       // Whether last operation was duplicate
+
+  /**
+   * Format painter variables
+   * State for format painter functionality
+   */
+  public formatPainterMode: number;      // Current format painter mode
+  public formatPainterStyle: QuickStyle; // Style info for format painter
+  public formatPainterSticky: boolean;   // Whether format painter persists
+  public formatPainterText: QuickStyle;  // Text style for format painter
+  public formatPainterParaFormat: ParagraphFormat;  // Paragraph format for painter
+  public formatPainterArrows: any;       // Arrow style for format painter
+
+  /**
+   * Nudge operation variables
+   * State for nudge operations (small movements)
+   */
+  public nudgeDelta: number;             // Size of nudge movement
+  public nudgeOpen: boolean;             // Whether nudge panel is open
+  public nudgeX: number;                 // X coordinate for nudge
+  public nudgeY: number;                 // Y coordinate for nudge
+  public nudgeGrowX: number;             // X growth for nudge
+  public nudgeGrowY: number;             // Y growth for nudge
+
+  /**
+   * Document state variables
+   * Track document-wide states
+   */
+  public useDefaultStyle: boolean;       // Whether to use default style
+  public newObjectVisible: boolean;      // Whether new objects are visible
+  public TextureList: TextureList;       // List of available textures
+  public nStdTextures: number;           // Number of standard textures
+  public richGradients: any[];           // List of gradient definitions
+  public contentHeader: ContentHeader;   // Document metadata and settings
+  public FileVersion: number;            // File format version
+  public bDrawEffects: boolean;          // Whether to draw effects
+  public hasBlockDirectory: boolean;     // Whether block directory exists
+  public initialStateID: number;         // Initial state ID for undo
+  public nObjectStoreStart: number;      // Initial object store count
+
+  /**
+   * Clipboard and paste state
+   * Variables for clipboard operations
+   */
+  public textClipboard: any;             // Clipboard for text content
+  public htmlClipboard: any;             // Clipboard for HTML content
+  public imageClipboard: any;            // Clipboard for image content
+  public cutFromButton: boolean;         // Whether cut from button press
+  public topLeftPastePos: any;           // Position for paste operation
+  public topLeftPasteScrollPos: any;     // Scroll position during paste
+  public pasteCount: number;             // Count of paste operations
+
+  /**
+   * Dirty state tracking
+   * Variables for tracking modified objects
+   */
+  public dirtyList: any[];               // List of objects needing redraw
+  public dirtyListMoveOnly: any[];       // Objects moved without other changes
+  public dirtyListReOrder: boolean;      // Whether z-ordering changed
+
+  /**
+   * Note editing state
+   * Variables for note editing functionality
+   */
+  public curNoteShape: number;           // Current shape with note being edited
+  public curNoteTableCell: any;          // Current table cell with note
+  public curNoteGraphPint: any;          // Current graph point with note
+  public bInNoteEdit: boolean;           // Whether in note edit mode
+  public bNoteChanged: boolean;          // Whether note content changed
+
+  /**
+   * Symbol and bitmap handling
+   * Variables for external asset management
+   */
+  public emptySymbolList: any[];         // List of empty symbols
+  public emptyEMFList: any[];            // List of empty EMF files
+  public addCount: number;               // Count of added objects
+  public symbolLibraryItemID: number;    // ID in symbol library
+  public bitmapImportCanvas: any;        // Canvas for bitmap import
+  public bitmapImportCanvasCTX: any;     // Canvas context for bitmap import
+  public bitmapScaledCanvas: any;        // Canvas for scaled bitmaps
+  public bitmapScaledCanvasCTX: any;     // Context for scaled canvas
+  public bitmapImportSourceWidth: number;    // Original bitmap width
+  public bitmapImportSourceHeight: number;   // Original bitmap height
+  public bitmapImportDestWidth: number;      // Target bitmap width
+  public bitmapImportDestHeight: number;     // Target bitmap height
+  public bitmapImportMaxScaledWidth: number;  // Max scaled width
+  public bitmapImportMaxScaledHeight: number; // Max scaled height
+  public bitmapImportDPI: number;        // DPI for imported bitmap
+  public bitmapImportMimeType: string;   // MIME type of imported bitmap
+  public bitmapImportOriginalSize: number;   // Original size in bytes
+  public bitmapImportScaledSize: number;     // Scaled size in bytes
+  public scaledBitmapCallback: any;      // Callback after scaling
+  public bitmapImportEXIFdata: any;      // EXIF data from image
+  public bitmapImportFile: any;          // File being imported
+  public bitmapImportResult: any;        // Result of import operation
+
+  /**
+   * Miscellaneous state variables
+   * Various state tracking variables
+   */
+  public wasClickInShape: boolean;       // Whether last click was in shape
+  public textEntryTimer: any;            // Timer for text entry
+  public eventTimestamp: number;         // Timestamp of last event
+  public actionArrowHideTimer: T3Timer;  // Timer for hiding action arrows
+  public uniqueId: number;               // Counter for generating unique IDs
+  public fromOverlayLayer: boolean;      // Whether drawing from overlay layer
+  public postMoveSelectId: any;          // ID to select after move
+  public bBuildingSymbols: boolean;      // Whether building symbols
+  public bTokenizeStyle: boolean;        // Whether tokenizing style
+  public linkParams: any;                // Parameters for linking objects
+  public rightClickParams: any;          // Parameters from right-click
+  public bInDimensionEdit: boolean;      // Whether editing dimensions
+  public oldAllowSave: boolean;          // Previous save permission
+  public doubleClickSymbolTimeStamp: number;  // Time of last symbol double-click
+  public importContext: any;             // Context for import operations
+  public curHiliteShape: number;         // Currently highlighted shape
+  public cachedHeight: any;              // Cached height value
+  public cachedWidth: any;               // Cached width value
+
+  /**
+   * Collaboration state variables
+   * Variables for multi-user editing
+   */
+  public collaboration: Collaboration;   // Collaboration manager
+  public commentUserIDs: any[];          // User IDs for comments
+  public activeExpandedView: any;        // Currently expanded view
+  public alternateStateManagerVars: any; // Alternate state variables
+  public socketAction: any[];            // Actions for socket transmission
+  public pageAction: any[];              // Actions for page changes
+  public pagesToDelete: any[];           // Pages marked for deletion
+  public oldFileMetaData: any;           // Previous file metadata
+  public selectionState: any;            // Current selection state
 
   //#endregion
 
+  /**
+   * Initializes the OptHandler instance by setting up all required properties and resources
+   * This is the main setup method that prepares the SVG document, UI elements, and system state
+   * It creates necessary data structures for managing shapes, selections, and user interactions
+   */
   Initialize() {
+    // #region SVG Document Elements
+    /**
+     * Configure main SVG document references and layers
+     * These elements form the structure of the drawing document
+     */
+    this.svgDocId = '#svg-area';                // CSS selector for the SVG container
+    this.svgDoc = null;                         // SVG document reference (initialized later)
+    this.svgObjectLayer = null;                 // Main layer for drawing content
+    this.svgOverlayLayer = null;                // Layer for UI elements (not exported)
+    this.svgHighlightLayer = null;              // Layer for selection highlights
+    this.svgCollabLayer = null;                 // Layer for collaboration indicators
+    this.sVGroot = null;                        // Root SVG DOM element
+    // #endregion
 
-    // if (this.bIsInitialized) { return; }
+    // #region Selection & Rubber Band
+    /**
+     * Set up properties for rubber band selection
+     * These properties track state during rectangular selection operations
+     */
+    this.rubberBand = null;                     // Visual representation of selection area
+    this.rubberBandStartX = 0;                  // X position where selection started
+    this.rubberBandStartY = 0;                  // Y position where selection started
+    this.rubberBandFrame = {                    // Actual selection rectangle coordinates
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
+    };
+    // #endregion
 
-    //Selector for the SVG element container ('#svg-area')
-    this.svgDocId = '#svg-area';
+    // #region Drag & Drop Operations
+    /**
+     * Initialize properties for drag operations
+     * These track state during object movement and resizing
+     */
+    this.dragElementList = [];                  // List of elements being dragged
+    this.dragStartX = 0;                        // X position where drag started
+    this.dragStartY = 0;                        // Y position where drag started
+    this.dragDeltaX = 0;                        // X distance moved during drag
+    this.dragDeltaY = 0;                        // Y distance moved during drag
+    this.dragTargetId = null;                   // ID of main element being dragged
+    this.dragGotMove = false;                   // Whether movement has occurred
+    this.dragBBoxList = [];                     // Bounding boxes for dragged elements
+    this.dragTargetBBox = {};                   // Target element's bounding box
+    this.dragEnclosingRect = null;              // Rectangle enclosing all dragged elements
 
-    //Reference to the SVG document after initialization
-    this.svgDoc = null;
+    // Auto-resize during drag
+    this.dragGotAutoResizeRight = false;        // Whether right edge was auto-resized
+    this.dragGotAutoResizeBottom = false;       // Whether bottom edge was auto-resized
+    this.dragGotAutoResizeOldX = [];            // Previous X dimensions during resize
+    this.dragGotAutoResizeOldY = [];            // Previous Y dimensions during resize
 
-    //Main layer for drawing content
-    this.svgObjectLayer = null;
+    // Move lists
+    this.moveList = [];                         // Objects to move together
+    this.moveBounds = null;                     // Bounds of the move operation
+    this.pinRect = null;                        // Constraining rectangle for movement
+    // #endregion
 
-    //Layer for UI elements that shouldn't be exported
-    this.svgOverlayLayer = null;
+    // #region Action State
+    /**
+     * Initialize properties for tracking current user action state
+     * These properties maintain context about the current operation
+     */
+    this.noUndo = false;                        // Flag to disable undo recording
+    this.actionStoredObjectId = -1;             // ID of object being operated on
+    this.actionSvgObject = null;                // SVG object being acted upon
+    this.actionTriggerId = 0;                   // ID of triggering element
+    this.actionTriggerData = 0;                 // Data associated with the trigger
+    this.actionStartX = 0;                      // X coordinate where action started
+    this.actionStartY = 0;                      // Y coordinate where action started
+    this.actionTableLastX = 0;                  // Last X coordinate for table actions
+    this.actionTableLastY = 0;                  // Last Y coordinate for table actions
+    this.actionOldExtra = 0;                    // Previous extra state data
+    this.actionBBox = {};                       // Original bounding box
+    this.actionNewBBox = {};                    // New bounding box after action
 
-    //Layer for highlighting selected elements
-    this.svgHighlightLayer = null;
+    // Aspect ratio controls
+    this.actionLockAspectRatio = false;         // Whether to maintain width/height ratio
+    this.actionAspectRatioWidth = 0;            // Original width for aspect ratio
+    this.actionAspectRatioHeight = 0;           // Original height for aspect ratio
 
-    //Reference to the selection rectangle element
-    this.rubberBand = null;
+    // Modal state
+    this.currentModalOperation = ConstantData2.ModalOperations.NONE;  // Current modal operation type
+    // #endregion
 
-    //Starting coordinates for selection rectangle
-    this.rubberBandStartX = 0;
-    this.rubberBandStartY = 0;
+    // #region Drawing State
+    /**
+     * Initialize properties for shape drawing operations
+     * These track state during drawing new shapes
+     */
+    this.drawShape = null;                      // Current shape being drawn
+    this.drawStartX = 0;                        // Starting X position for drawing
+    this.drawStartY = 0;                        // Starting Y position for drawing
 
-    //The rectangular bounds of the selection area
-    this.rubberBandFrame = { x: 0, y: 0, width: 0, height: 0 };
+    // Line drawing state
+    this.lineDrawStartX = 0;                    // Starting X for line drawing
+    this.lineDrawStartY = 0;                    // Starting Y for line drawing
+    this.lineDrawId = -1;                       // ID of the line being drawn
+    this.lineDrawLineId = -1;                   // ID of the line element
+    this.lineStamp = false;                     // Whether in line stamp mode
 
-    //Elements being dragged
-    this.dragElementList = [];
+    this.fromOverlayLayer = false;              // Whether drawing comes from overlay
+    this.dynamicGuides = null;                  // Alignment guides during drawing
+    // #endregion
 
-    //Starting coordinates for drag operations
-    this.dragStartX = 0;
-    this.dragStartY = 0;
+    // #region Rotation State
+    /**
+     * Initialize properties for rotation operations
+     * These track state during object rotation
+     */
+    this.rotateKnobCenterDivisor = { x: 2, y: 2 }; // Divisor for rotation knob center
+    this.rotateStartPoint = {};                 // Starting point for rotation
+    this.rotateEndPoint = {};                   // Ending point for rotation
+    this.rotateObjectRadians = 0;               // Rotation angle in radians
+    this.rotateStartRotation = 0;               // Starting rotation angle
+    this.rotateEndRotation = 0;                 // Ending rotation angle
+    this.rotatePivotX = 0;                      // X coordinate of rotation center
+    this.rotatePivotY = 0;                      // Y coordinate of rotation center
+    this.rotateSnap = 5;                        // Angle for rotation snapping
+    this.enhanceRotateSnap = 45;                // Enhanced rotation snap angle
+    // #endregion
 
-    //Movement distance during dragging
-    this.dragDeltaX = 0;
-    this.dragDeltaY = 0;
+    // #region Auto-scroll & Touch
+    /**
+     * Initialize properties for auto-scrolling and touch interaction
+     * These handle automatic scrolling during drag operations
+     */
+    this.autoScrollTimer = new T3Timer(this);   // Timer for auto-scrolling
+    this.autoScrollTimerId = -1;                // ID of the auto-scroll timer
+    this.autoScrollXPos = 0;                    // X position for auto-scrolling
+    this.autoScrollYPos = 0;                    // Y position for auto-scrolling
+    this.inAutoScroll = false;                  // Whether auto-scroll is active
 
-    //ID of the primary drag target
-    this.dragTargetId = null;
+    // Touch gesture properties
+    this.isGestureCapable = 'ontouchstart' in window ||
+      ('onpointerdown' in window &&
+        navigator.maxTouchPoints &&
+        navigator.maxTouchPoints > 1);  // Device supports touch
+    this.touchInitiated = false;                // Whether touch interaction started
+    this.touchPanStarted = false;               // Whether panning via touch started
+    this.touchPanX = 0;                         // X position for touch panning
+    this.touchPanY = 0;                         // Y position for touch panning
+    this.bIsFullScreen = false;                 // Whether in fullscreen mode
+    // #endregion
 
-    //Flag indicating movement has occurred
-    this.dragGotMove = false;
+    // #region UI Elements & Event Handlers
+    /**
+     * Initialize properties for UI elements and event handlers
+     * These connect the application to the DOM and user events
+     */
+    this.mainAppElement = null;                 // Main application DOM element
+    this.mainAppHammer = null;                  // Hammer manager for main element
+    this.workAreaElement = null;                // Work area DOM element
+    this.WorkAreaHammer = null;                 // Hammer manager for work area
+    this.workAreaTextInputProxy = null;         // Proxy for text input in work area
+    this.virtualKeyboardLifterElementFrame = null; // Frame for virtual keyboard
 
-    this.dragGotAutoResizeRight = false;
-    this.dragGotAutoResizeBottom = false;
-    this.dragGotAutoResizeOldX = [];
-    this.dragGotAutoResizeOldY = [];
+    // Text editing and interaction handlers
+    this.TEHammer = null;                       // Hammer manager for text editing
+    this.TEWorkAreaHammer = null;               // Hammer manager for text edit work area
+    this.clickAreaHammer = null;                // Hammer manager for click areas
+    this.decAreaHammer = null;                  // Hammer manager for decoration areas
+    this.noteAreaHammer = null;                 // Hammer manager for note areas
+    this.textEntryTimer = null;                 // Timer for text entry actions
+    this.editModeList = null;                   // Stack of edit modes
+    // #endregion
 
-    this.dragBBoxList = [];
-    this.dragTargetBBox = {};
-    this.dragEnclosingRect = null;
+    // #region Block IDs
+    /**
+     * Initialize persistent storage block IDs
+     * These reference stored objects in the object manager
+     */
+    this.theSelectedListBlockID = -1;           // ID for selected objects list
+    this.sedSessionBlockId = -1;                // ID for shape editing session data
+    this.tedSessionBlockId = -1;                // ID for text editing session data
+    this.layersManagerBlockId = -1;             // ID for layer management data
+    this.linksBlockId = -1;                     // ID for connection links data
+    // #endregion
 
-    this.nudgeDelta = 10;
+    // #region Stamp Operations
+    /**
+     * Initialize properties for stamp/duplicate operations
+     * These track state during stamp and duplication operations
+     */
+    this.stampTimeout = null;                   // Timeout for stamp operations
+    this.stampCompleteCallback = null;          // Callback after stamp completion
+    this.stampCompleteUserData = null;          // User data for callback
+    this.stampHCenter = true;                   // Whether to center horizontally
+    this.stampVCenter = true;                   // Whether to center vertically
+    this.stampShapeOffsetX = 0;                 // X offset for stamped shape
+    this.stampShapeOffsetY = 0;                 // Y offset for stamped shape
+    this.stampSticky = false;                   // Whether stamp mode is persistent
+    this.lastOpDuplicate = false;               // Whether last op was duplicate
+    // #endregion
 
-    this.noUndo = false;
-    this.actionStoredObjectId = -1;
-    this.actionSvgObject = null;
-    this.actionTriggerId = 0;
-    this.actionTriggerData = 0;
-    this.actionStartX = 0;
-    this.actionStartY = 0;
-    this.actionTableLastX = 0;
-    this.actionTableLastY = 0;
-    this.actionOldExtra = 0;
-    this.actionBBox = {};
-    this.actionNewBBox = {};
-    this.actionLockAspectRatio = false;
-    this.actionAspectRatioWidth = 0;
-    this.actionAspectRatioHeight = 0;
-    this.useDefaultStyle = false;
-    this.newObjectVisible = false;
-    this.emptySymbolList = [];
-    this.emptyEMFList = [];
-    this.addCount = 0;
-    this.lineStamp = false;
-    this.drawStartX = 0;
-    this.drawStartY = 0;
-    this.lineDrawStartX = 0;
-    this.lineDrawStartY = 0;
-    this.fromOverlayLayer = false;
-    this.lineDrawId = -1;
-    this.lineDrawLineId = -1;
-    this.dynamicGuides = null;
+    // #region Format Painter
+    /**
+     * Initialize properties for format painter functionality
+     * These track state during format painting operations
+     */
+    this.formatPainterMode = ConstantData2.formatPainterModes.NONE;  // Format painter mode
+    this.formatPainterStyle = new QuickStyle();  // Style info for format painter
+    this.formatPainterSticky = false;            // Whether format painter persists
+    this.formatPainterText = new QuickStyle();   // Text style for format painter
+    this.formatPainterParaFormat = new ParagraphFormat();  // Paragraph format
+    this.formatPainterArrows = null;             // Arrow style for format painter
+    // #endregion
 
-    // Rotation Variables
-    this.rotateKnobCenterDivisor = { x: 2, y: 2 };
-    this.rotateStartPoint = {};
-    this.rotateEndPoint = {};
-    this.rotateObjectRadians = 0;
+    // #region Nudge Operations
+    /**
+     * Initialize properties for nudge operations (small movements)
+     * These track state during nudge operations
+     */
+    this.nudgeDelta = 10;                        // Size of nudge movement
+    this.nudgeOpen = false;                      // Whether nudge panel is open
+    this.nudgeX = 0;                             // X coordinate for nudge
+    this.nudgeY = 0;                             // Y coordinate for nudge
+    this.nudgeGrowX = 0;                         // X growth for nudge
+    this.nudgeGrowY = 0;                         // Y growth for nudge
+    // #endregion
 
-    //Start/end rotation angles
-    this.rotateStartRotation = 0;
-    this.rotateEndRotation = 0;
+    // #region Document State
+    /**
+     * Initialize properties for document-wide state
+     * These track the overall state of the document
+     */
+    this.useDefaultStyle = false;                // Whether to use default style
+    this.newObjectVisible = false;               // Whether new objects are visible
+    this.TextureList = new TextureList();        // List of available textures
+    this.nStdTextures = 0;                       // Number of standard textures
+    this.richGradients = [];                     // List of gradient definitions
+    this.contentHeader = new ContentHeader();    // Document metadata and settings
+    this.FileVersion = 41;                       // File format version
+    this.bDrawEffects = true;                    // Whether to draw effects
+    this.hasBlockDirectory = false;              // Whether block directory exists
+    this.initialStateID = T3Gv.stateManager.CurrentStateID;  // Initial state ID
+    this.nObjectStoreStart = T3Gv.objectStore.StoredObjects.length;  // Initial object count
+    // #endregion
 
-    //Center point for rotation operations
-    this.rotatePivotX = 0;
-    this.rotatePivotY = 0;
+    // #region Clipboard & Paste
+    /**
+     * Initialize properties for clipboard operations
+     * These track clipboard state and paste operations
+     */
+    this.textClipboard = null;                   // Clipboard for text content
+    this.htmlClipboard = null;                   // Clipboard for HTML content
+    this.imageClipboard = null;                  // Clipboard for image content
+    this.cutFromButton = false;                  // Whether cut from button press
+    this.topLeftPastePos = { x: 0, y: 0 };       // Position for paste operation
+    this.topLeftPasteScrollPos = { x: 0, y: 0 }; // Scroll position during paste
+    this.pasteCount = 0;                         // Count of paste operations
+    // #endregion
 
-    //Angle for rotation snapping (5 degrees)
-    this.rotateSnap = 5;
+    // #region Dirty State
+    /**
+     * Initialize properties for tracking modified objects
+     * These track which objects need updating
+     */
+    this.dirtyList = [];                         // List of objects needing redraw
+    this.dirtyListMoveOnly = [];                 // Objects moved without other changes
+    this.dirtyListReOrder = false;               // Whether z-ordering changed
+    // #endregion
 
-    //Enhanced rotation snapping (45 degrees)
-    this.enhanceRotateSnap = 45;
+    // #region Note Editing
+    /**
+     * Initialize properties for note editing functionality
+     * These track state during note editing
+     */
+    this.curNoteShape = -1;                      // Shape with note being edited
+    this.curNoteTableCell = null;                // Table cell with note being edited
+    this.curNoteGraphPint = null;                // Graph point with note
+    this.bInNoteEdit = false;                    // Whether in note edit mode
+    this.bNoteChanged = false;                   // Whether note content changed
+    // #endregion
 
-    this.drawShape = null;
-    this.stampTimeout = null;
-    this.wasClickInShape = false;
-    this.autoScrollTimer = new T3Timer(this);
-    this.autoScrollTimerId = -1;
-    this.autoScrollXPos = 0;
-    this.autoScrollYPos = 0;
-    this.inAutoScroll = false;
-    this.textEntryTimer = null;
+    // #region Miscellaneous State
+    /**
+     * Initialize other state tracking properties
+     * These track various utility states
+     */
+    this.wasClickInShape = false;                // Whether last click was in shape
+    this.eventTimestamp = 0;                     // Timestamp of last event
+    this.actionArrowHideTimer = new T3Timer(this);  // Timer for hiding arrows
+    this.uniqueId = 0;                           // Counter for generating IDs
+    this.bInDimensionEdit = false;               // Whether editing dimensions
+    this.oldAllowSave = true;                    // Previous save permission
+    this.postMoveSelectId = null;                // ID to select after move
+    this.bBuildingSymbols = false;               // Whether building symbols
+    this.bTokenizeStyle = false;                 // Whether tokenizing style
+    this.linkParams = null;                      // Parameters for linking objects
+    this.rightClickParams = null;                // Parameters from right-click
+    this.curHiliteShape = -1;                    // Currently highlighted shape
+    this.doubleClickSymbolTimeStamp = 0;         // Time of last symbol double-click
+    this.importContext = null;                   // Context for import operations
+    this.cachedHeight = null;                    // Cached height value
+    this.cachedWidth = null;                     // Cached width value
+    // #endregion
 
-    //Detects if device supports touch/gestures
-    this.isGestureCapable = 'ontouchstart' in window || ('onpointerdown' in window && navigator.maxTouchPoints && navigator.maxTouchPoints > 1);
+    // #region Symbol & Bitmap
+    /**
+     * Initialize properties for external asset management
+     * These handle symbol libraries and bitmap handling
+     */
+    this.emptySymbolList = [];                   // List of empty symbols
+    this.emptyEMFList = [];                      // List of empty EMF files
+    this.addCount = 0;                           // Count of added objects
+    this.symbolLibraryItemID = -1;               // ID in symbol library
 
-    //Flag for touch interaction initiation
-    this.touchInitiated = false;
+    // Bitmap import properties
+    this.bitmapImportCanvas = null;              // Canvas for bitmap import
+    this.bitmapImportCanvasCTX = null;           // Canvas context for bitmap import
+    this.bitmapScaledCanvas = null;              // Canvas for scaled bitmaps
+    this.bitmapScaledCanvasCTX = null;           // Context for scaled canvas
+    this.bitmapImportSourceWidth = 0;            // Original bitmap width
+    this.bitmapImportSourceHeight = 0;           // Original bitmap height
+    this.bitmapImportDestWidth = 800;            // Target bitmap width
+    this.bitmapImportDestHeight = 800;           // Target bitmap height
+    this.bitmapImportMaxScaledWidth = 1200;      // Max scaled width
+    this.bitmapImportMaxScaledHeight = 1200;     // Max scaled height
+    this.bitmapImportDPI = 200;                  // DPI for imported bitmap
+    this.bitmapImportMimeType = '';              // MIME type of imported bitmap
+    this.bitmapImportOriginalSize = 0;           // Original size in bytes
+    this.bitmapImportScaledSize = 0;             // Scaled size in bytes
+    this.scaledBitmapCallback = null;            // Callback after scaling
+    this.bitmapImportEXIFdata = null;            // EXIF data from image
+    this.bitmapImportFile = null;                // File being imported
+    this.bitmapImportResult = null;              // Result of import operation
+    // #endregion
 
-    this.mainAppElement = null;
-    this.mainAppHammer = null;
-    this.workAreaElement = null;
-    this.WorkAreaHammer = null;
-    this.workAreaTextInputProxy = null;
-    this.virtualKeyboardLifterElementFrame = null;
-    this.touchPanStarted = false;
-    this.touchPanX = 0;
-    this.touchPanY = 0;
-    this.bIsFullScreen = false;
-    this.TEHammer = null;
-    this.TEWorkAreaHammer = null;
-    this.TEClickAreaHammer = null;
-    this.TEDecAreaHammer = null;
-    this.TENoteAreaHammer = null;
+    // #region Collaboration
+    /**
+     * Initialize properties for multi-user collaboration
+     * These track state during collaborative editing
+     */
+    this.collaboration = new Collaboration();    // Collaboration manager
+    this.commentUserIDs = [];                    // User IDs for comments
+    this.activeExpandedView = null;              // Currently expanded view
+    this.alternateStateManagerVars = {           // Alternate state variables
+      bHasBeenSaved: false
+    };
+    this.socketAction = [];                      // Actions for socket transmission
+    this.pageAction = [];                        // Actions for page changes
+    this.pagesToDelete = [];                     // Pages marked for deletion
+    this.oldFileMetaData = null;                 // Previous file metadata
+    this.selectionState = new SelectionAttributes(); // Current selection state
+    // #endregion
 
-    //ID for object selection storage
-    this.theSelectedListBlockID = -1;
-
-    //ID for shape editing session data
-    this.sedSessionBlockId = -1;
-
-    //ID for text editing session data
-    this.tedSessionBlockId = -1;
-
-    //ID for layer management data
-    this.layersManagerBlockId = -1;
-
-    this.stampCompleteCallback = null;
-    this.stampCompleteUserData = null;
-    this.stampHCenter = true;
-    this.stampVCenter = true;
-    this.stampShapeOffsetX = 0;
-    this.stampShapeOffsetY = 0;
-    this.stampSticky = false;
-    this.lastOpDuplicate = false;
-    this.nudgeOpen = false;
-    this.nudgeX = 0;
-    this.nudgeY = 0;
-    this.nudgeGrowX = 0;
-    this.nudgeGrowY = 0;
-    this.currentModalOperation = ConstantData2.ModalOperations.NONE;
-
-    //Current format painter mode
-    this.formatPainterMode = ConstantData2.formatPainterModes.NONE;
-
-    //Style information for format painter
-    this.formatPainterStyle = new QuickStyle();
-
-    //Whether format painter persists after use
-    this.formatPainterSticky = false;
-    this.formatPainterText = new QuickStyle();
-    this.formatPainterParaFormat = new ParagraphFormat();
-    this.formatPainterArrows = null;
-
-    this.eventTimestamp = 0;
-    this.actionArrowHideTimer = new T3Timer(this);
-    this.uniqueId = 0;
-    this.textClipboard = null;
-    this.htmlClipboard = null;
-    this.cutFromButton = false;
-    this.imageClipboard = null;
-    const selectedListBlock = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.SELECTEDLIST_OBJECT, []);
+    // #region Block Creation & Initialization
+    /**
+     * Create persistent storage blocks and initialize the system
+     * These setup basic data structures required for document management
+     */
+    // Create selected list block
+    const selectedListBlock = T3Gv.objectStore.CreateBlock(
+      ConstantData.StoredObjectType.SELECTEDLIST_OBJECT,
+      []
+    );
     this.theSelectedListBlockID = selectedListBlock.ID;
 
-    this.TextureList = new TextureList();
-    this.nStdTextures = 0;
-    this.richGradients = [];
-    this.hasBlockDirectory = false;
-    this.FileVersion = 41;
-    this.activeExpandedView = null;
-    this.commentUserIDs = [];
-    this.contentHeader = new ContentHeader();
-
+    // Create session data block
     const sedSession = new SEDSession();
     sedSession.def.style = new QuickStyle();
     sedSession.def.pen = Utils1.DeepCopy(ConstantData.Defines.PenStylingDefault);
@@ -469,9 +733,13 @@ class OptHandler {
     sedSession.d_arrowsize = 1;
     sedSession.CurrentTheme = null;
 
-    const sedSessionBlock = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.SED_SESSION_OBJECT, sedSession);
+    const sedSessionBlock = T3Gv.objectStore.CreateBlock(
+      ConstantData.StoredObjectType.SED_SESSION_OBJECT,
+      sedSession
+    );
     this.sedSessionBlockId = sedSessionBlock.ID;
 
+    // Create layers manager block
     const layersManager = new LayersManager();
     const defaultLayer = new Layer();
     defaultLayer.name = ConstantData.Defines.DefaultLayerName;
@@ -479,115 +747,78 @@ class OptHandler {
     layersManager.nlayers = 1;
     layersManager.activelayer = 0;
 
-    const layersManagerBlock = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.LAYERS_MANAGER_OBJECT, layersManager);
+    const layersManagerBlock = T3Gv.objectStore.CreateBlock(
+      ConstantData.StoredObjectType.LAYERS_MANAGER_OBJECT,
+      layersManager
+    );
     this.layersManagerBlockId = layersManagerBlock.ID;
 
-    this.selectionState = new SelectionAttributes();
-
+    // Create text edit session block
     const tedSession = new TEDSession();
-    const tedSessionBlock = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.TED_SESSION_OBJECT, tedSession);
+    const tedSessionBlock = T3Gv.objectStore.CreateBlock(
+      ConstantData.StoredObjectType.TED_SESSION_OBJECT,
+      tedSession
+    );
     this.tedSessionBlockId = tedSessionBlock.ID;
 
-    const linksBlock = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.LINKLIST_OBJECT, []);
+    // Create links list block
+    const linksBlock = T3Gv.objectStore.CreateBlock(
+      ConstantData.StoredObjectType.LINKLIST_OBJECT,
+      []
+    );
     this.linksBlockId = linksBlock.ID;
+    // #endregion
 
-    this.dirtyList = [];
-    this.dirtyListMoveOnly = [];
-    this.dirtyListReOrder = false;
-    this.moveList = [];
-    this.moveBounds = null;
-    this.pinRect = null;
-    this.linkParams = null;
-    this.rightClickParams = null;
-    this.postMoveSelectId = null;
-    this.bBuildingSymbols = false;
-    this.bTokenizeStyle = false;
-    this.bDrawEffects = true;
-    this.initialStateID = T3Gv.stateManager.CurrentStateID;
-    this.nObjectStoreStart = T3Gv.objectStore.StoredObjects.length;
-    this.cachedHeight = null;
-    this.cachedWidth = null;
-    this.bInDimensionEdit = false;
-    this.curNoteShape = -1;
-    this.curNoteTableCell = null;
-    this.curNoteGraphPint = null;
-    this.bInNoteEdit = false;
-    this.bNoteChanged = false;
-    this.OldAllowSave = true;
-    this.SocketAction = [];
-    this.PageAction = [];
-    this.PagesToDelete = [];
-    this.OldFileMetaData = null;
-    this.curHiliteShape = -1;
-
-    this.alternateStateManagerVars = [];
-    this.alternateStateManagerVars.bHasBeenSaved = false;
-    this.bitmapImportCanvas = null;
-    this.bitmapImportCanvasCTX = null;
-    this.bitmapScaledCanvas = null;
-    this.bitmapScaledCanvasCTX = null;
-    this.bitmapImportSourceWidth = 0;
-    this.bitmapImportSourceHeight = 0;
-    this.bitmapImportDestWidth = 800;
-    this.bitmapImportDestHeight = 800;
-    this.bitmapImportMaxScaledWidth = 1200;
-    this.bitmapImportMaxScaledHeight = 1200;
-    this.bitmapImportDPI = 200;
-    this.bitmapImportMimeType = '';
-    this.bitmapImportOriginalSize = 0;
-    this.bitmapImportScaledSize = 0;
-    this.scaledBitmapCallback = null;
-    this.bitmapImportEXIFdata = null;
-    this.bitmapImportFile = null;
-    this.bitmapImportResult = null;
-    this.symbolLibraryItemID = -1;
-    // this.bIsInitialized = true;
-    this.TopLeftPastePos = { x: 0, y: 0 };
-    this.TopLeftPasteScrollPos = { x: 0, y: 0 };
-    this.PasteCount = 0;
-    this.DoubleClickSymbolTimeStamp = 0;
-    this.ImportContext = null;
-    // this.sendstate = 0;
-
+    // Initialize the system
     this.PreserveUndoState(true);
     this.InitSVGDocument();
-    this.SVGroot = this.svgDoc.svgObj.node;
+    this.sVGroot = this.svgDoc.svgObj.node;
     this.UpdateSelectionAttributes(null);
     this.BuildArrowheadLookupTables();
     this.SetEditMode(ConstantData.EditState.DEFAULT);
-
-    this.collaboration = new Collaboration();
   }
 
-  PreserveUndoState(preserveState) {
-    console.log('O.Opt PreserveUndoState - Input:', { preserveState });
+  /**
+   * Preserves the current state for undo functionality
+   * This function handles saving the current document state to allow for undo operations.
+   * It manages the state history stack and handles saving of changed blocks when appropriate.
+   *
+   * @param shouldKeepStateOpen - If true, keeps the current state open without finalizing it
+   *                              for future changes. If false, finalizes the state for undo history.
+   */
+  PreserveUndoState(shouldKeepStateOpen) {
+    console.log('O.Opt PreserveUndoState - Input:', { shouldKeepStateOpen });
 
+    // Skip if undo functionality is disabled
     if (!T3Gv.optManager.noUndo) {
-      // Check if the state manager exists
-      if (null === T3Gv.stateManager) {
+      // Verify state manager exists
+      if (T3Gv.stateManager === null) {
         throw new Error('stateManager is null');
       }
 
       // Only proceed if we have a valid state ID
       if (T3Gv.stateManager.CurrentStateID >= 0) {
-        // Check if state is currently open
+        // Check if state is currently open (being modified)
         const isStateOpen = Utils1.IsStateOpen();
 
-        // Preserve the current state
+        // Preserve the current application state
         T3Gv.stateManager.PreserveState();
 
-        // Add to history state if state was open
+        // Add state to history if it was open
         if (isStateOpen) {
           T3Gv.stateManager.AddToHistoryState();
         }
 
         // Save blocks and update dirty state if needed
-        if (!preserveState && isStateOpen) {
+        if (!shouldKeepStateOpen && isStateOpen) {
           if (this.GetDocDirtyState()) {
+            // Save only blocks that have changed
             ShapeDataUtil.SaveChangedBlocks(T3Gv.stateManager.CurrentStateID, 1);
           } else {
+            // Save all blocks if doc isn't already marked dirty
             ShapeDataUtil.SaveAllBlocks();
           }
+          // Mark document as having unsaved changes
           this.SetDocDirtyState(true);
         }
       }
@@ -596,16 +827,22 @@ class OptHandler {
     console.log('O.Opt PreserveUndoState - Output: State preserved');
   }
 
+  /**
+   * Initializes the SVG document structure by creating necessary layers and setting up event handlers
+   * This function sets up the main document structure with multiple layers for different purposes:
+   * - Object layer for the main content
+   * - Overlay layer for UI elements (not exported)
+   * - Highlight layer for selection highlights
+   * - Collaboration layer for multi-user functionality
+   * It also configures event handlers for user interactions.
+   */
   InitSVGDocument() {
-    console.log("O.Opt InitSVGDocument - Input: Starting SVG document initialization");
-
     // Get the session data from stored object
     const sessionData = T3Gv.objectStore.GetObject(this.sedSessionBlockId).Data;
 
     // Get current screen dimensions
     const screenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
     const screenHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-    console.log("O.Opt InitSVGDocument - Screen dimensions:", { width: screenWidth, height: screenHeight });
 
     // Initialize the document work area
     T3Gv.docUtil.InitializeWorkArea({
@@ -617,70 +854,65 @@ class OptHandler {
 
     // Get document object and initialize layers
     this.svgDoc = T3Gv.docUtil.DocObject();
-    console.log("O.Opt InitSVGDocument - Created SVG document object");
 
     // Add and configure the object layer (main content layer)
     this.svgObjectLayer = this.svgDoc.AddLayer('svgObjectLayer');
     this.svgDoc.SetDocumentLayer('svgObjectLayer');
-    console.log("O.Opt InitSVGDocument - Added object layer");
 
     // Add and configure the overlay layer (for UI elements)
     this.svgOverlayLayer = this.svgDoc.AddLayer('svgOverlayLayer');
     this.svgOverlayLayer.ExcludeFromExport(true);
-    console.log("O.Opt InitSVGDocument - Added overlay layer");
 
     // Add and configure the highlight layer (for highlighting elements)
     this.svgHighlightLayer = this.svgDoc.AddLayer('svgHighlightLayer');
     this.svgHighlightLayer.ExcludeFromExport(true);
-    console.log("O.Opt InitSVGDocument - Added highlight layer");
 
     // Add and configure the collaboration layer
     this.svgCollabLayer = this.svgDoc.AddLayer('svgCollabLayer');
     this.svgCollabLayer.ExcludeFromExport(true);
     this.svgCollabLayer.AllowScaling(false);
-    console.log("O.Opt InitSVGDocument - Added collaboration layer");
 
     // Get DOM elements
     this.mainAppElement = document.getElementById('main-app');
     this.workAreaElement = document.getElementById('svg-area');
-    this.DocumentElement = document.getElementById('document-area');
-    console.log("O.Opt InitSVGDocument - DOM elements acquired");
+    this.documentElement = document.getElementById('document-area');
 
     // Initialize Hammer.js for touch/gesture events
     this.WorkAreaHammer = new Hammer(this.workAreaElement);
-    this.DocumentElementHammer = new Hammer(this.DocumentElement);
-    console.log("O.Opt InitSVGDocument - Hammer instances created");
+    this.documentElementHammer = new Hammer(this.documentElement);
 
     // Bind event handlers
     this.WorkAreaHammer.on('tap', EvtUtil.Evt_WorkAreaHammerClick);
     this.WorkAreaHammer.on('wheel', EvtUtil.Evt_WorkAreaMouseWheel);
-    this.DocumentElementHammer.on('wheel', EvtUtil.Evt_WorkAreaMouseWheel);
+    this.documentElementHammer.on('wheel', EvtUtil.Evt_WorkAreaMouseWheel);
     this.WorkAreaHammer.on('dragstart', EvtUtil.Evt_WorkAreaHammerDragStart);
-    console.log("O.Opt InitSVGDocument - Event handlers registered");
-
-    console.log("O.Opt InitSVGDocument - Output: SVG document initialization completed");
   }
 
+  /**
+   * Determines the appropriate denominator for fractional inch measurements based on current ruler scale
+   * This function calculates what denominator should be used when displaying measurements as fractions.
+   * For smaller ruler scales (more zoomed in), it uses larger denominators for finer precision.
+   * For larger scales (more zoomed out), it uses smaller denominators for simpler fractions.
+   *
+   * @returns The denominator to use for fractional measurements (1, 2, 4, 8, or 16)
+   */
   GetFractionDenominator() {
-    console.log('O.Opt GetFractionDenominator - Input: No parameters');
-
     let denominator;
     const rulerScale = T3Gv.docUtil.rulerConfig.majorScale;
 
     // Determine denominator based on ruler scale
     if (rulerScale <= 1) {
-      denominator = 16;
+      denominator = 16;  // Use 16ths of an inch at smallest scale
     } else if (rulerScale <= 2) {
-      denominator = 8;
+      denominator = 8;   // Use 8ths of an inch
     } else if (rulerScale <= 4) {
-      denominator = 4;
+      denominator = 4;   // Use 4ths of an inch (quarters)
     } else if (rulerScale <= 8) {
-      denominator = 2;
+      denominator = 2;   // Use halves of an inch
     } else {
-      denominator = 1;
+      denominator = 1;   // Use whole inches at largest scale
     }
 
-    console.log('O.Opt GetFractionDenominator - Output:', denominator);
     return denominator;
   }
 
@@ -1025,7 +1257,7 @@ class OptHandler {
         this.selectionState.lockedTableSelected = true;
       }
 
-      if (SDUI.AppSettings.Application !== ShapeContant.Application.Builder &&
+      if (SDUI.AppSettings.Application !== ShapeConstant.Application.Builder &&
         object.objecttype === ConstantData.ObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER) {
         this.selectionState.lockedTableSelected = true;
       }
@@ -2233,22 +2465,22 @@ class OptHandler {
       this.textEntryTimer = null;
     }
 
-    if (this.TETextHammer) {
-      this.TETextHammer.off('dragstart');
-      this.TETextHammer.dispose();
-      this.TETextHammer = null;
+    if (this.textHammer) {
+      this.textHammer.off('dragstart');
+      this.textHammer.dispose();
+      this.textHammer = null;
     }
 
-    if (this.TEClickAreaHammer) {
-      this.TEClickAreaHammer.off('dragstart');
-      this.TEClickAreaHammer.dispose();
-      this.TEClickAreaHammer = null;
+    if (this.clickAreaHammer) {
+      this.clickAreaHammer.off('dragstart');
+      this.clickAreaHammer.dispose();
+      this.clickAreaHammer = null;
     }
 
-    if (this.TEDecAreaHammer) {
-      this.TEDecAreaHammer.off('dragstart');
-      this.TEDecAreaHammer.dispose();
-      this.TEDecAreaHammer = null;
+    if (this.decAreaHammer) {
+      this.decAreaHammer.off('dragstart');
+      this.decAreaHammer.dispose();
+      this.decAreaHammer = null;
     }
 
     if (this.TEWorkAreaHammer) {
@@ -4539,7 +4771,7 @@ class OptHandler {
               this.linkParams.ConnectInside
             );
             if ((hookUpdateStatus !== 0 && hookUpdateStatus !== undefined) === false) {
-              this.SetLinkFlag(this.linkParams.ConnectIndex, ShapeContant.LinkFlags.SED_L_MOVE);
+              this.SetLinkFlag(this.linkParams.ConnectIndex, ShapeConstant.LinkFlags.SED_L_MOVE);
             }
           }
         }
@@ -4831,7 +5063,7 @@ class OptHandler {
     // First pass: Delete marked links
     for (linkIndex = links.length - 1; linkIndex >= 0 && !(linkIndex >= links.length); linkIndex--) {
       // Handle links marked for deletion
-      if (links[linkIndex].flags & ShapeContant.LinkFlags.SED_L_DELT) {
+      if (links[linkIndex].flags & ShapeConstant.LinkFlags.SED_L_DELT) {
         // Ensure we're working with a modifiable copy of links
         if (!isLinksModified) {
           links = this.GetObjectPtr(this.linksBlockId, true);
@@ -4843,8 +5075,8 @@ class OptHandler {
       }
       // Handle links with missing or broken hook objects
       else if (
-        links[linkIndex].flags & ShapeContant.LinkFlags.SED_L_DELL ||
-        links[linkIndex].flagss & ShapeContant.LinkFlags.SED_L_BREAK ||
+        links[linkIndex].flags & ShapeConstant.LinkFlags.SED_L_DELL ||
+        links[linkIndex].flagss & ShapeConstant.LinkFlags.SED_L_BREAK ||
         (hookObject = this.GetObjectPtr(links[linkIndex].hookid, false)) == null
       ) {
         if (!isLinksModified) {
@@ -4880,7 +5112,7 @@ class OptHandler {
       };
 
       for (linkIndex = 0; linkIndex < linkCount; linkIndex++) {
-        linkHasMoveFlag = links[linkIndex].flags & ShapeContant.LinkFlags.SED_L_MOVE;
+        linkHasMoveFlag = links[linkIndex].flags & ShapeConstant.LinkFlags.SED_L_MOVE;
 
         if (linkHasMoveFlag) {
           targetObject = this.GetObjectPtr(links[linkIndex].targetid, false);
@@ -4890,7 +5122,7 @@ class OptHandler {
             treeTopInfo.topshape >= 0) {
             T3Gv.optManager.SetLinkFlag(
               treeTopInfo.topshape,
-              ShapeContant.LinkFlags.SED_L_MOVE
+              ShapeConstant.LinkFlags.SED_L_MOVE
             );
           }
 
@@ -4906,7 +5138,7 @@ class OptHandler {
       continueProcessing = false;
 
       for (linkIndex = 0; linkIndex < links.length; linkIndex++) {
-        if (links[linkIndex].flags & ShapeContant.LinkFlags.SED_L_MOVE) {
+        if (links[linkIndex].flags & ShapeConstant.LinkFlags.SED_L_MOVE) {
           // Ensure we're working with a modifiable copy of links
           if (!isLinksModified) {
             links = this.GetObjectPtr(this.linksBlockId, true);
@@ -4919,12 +5151,12 @@ class OptHandler {
           if (hookObject == null) {
             links[linkIndex].flags = Utils2.SetFlag(
               links[linkIndex].flags,
-              ShapeContant.LinkFlags.SED_L_DELL,
+              ShapeConstant.LinkFlags.SED_L_DELL,
               true
             );
             links[linkIndex].flags = Utils2.SetFlag(
               links[linkIndex].flags,
-              ShapeContant.LinkFlags.SED_L_MOVE,
+              ShapeConstant.LinkFlags.SED_L_MOVE,
               false
             );
             hasDeletedLinks = true;
@@ -4943,13 +5175,13 @@ class OptHandler {
             if (hookObject.objecttype === ConstantData.ObjectTypes.SD_OBJT_MULTIPLICITY) {
               links[linkIndex].flags = Utils2.SetFlag(
                 links[linkIndex].flags,
-                ShapeContant.LinkFlags.SED_L_CHANGE,
+                ShapeConstant.LinkFlags.SED_L_CHANGE,
                 false
               );
             }
 
             // If the link has the change flag set, update connection points
-            if (links[linkIndex].flags & ShapeContant.LinkFlags.SED_L_CHANGE) {
+            if (links[linkIndex].flags & ShapeConstant.LinkFlags.SED_L_CHANGE) {
               hookPoint = hookObject.HookToPoint(hookObject.hooks[hookIndex].hookpt, null);
 
               hookFlags = ConstantData.HookFlags.SED_LC_NoSnaps |
@@ -5004,7 +5236,7 @@ class OptHandler {
               // Clear the change flag
               links[linkIndex].flags = Utils2.SetFlag(
                 links[linkIndex].flags,
-                ShapeContant.LinkFlags.SED_L_CHANGE,
+                ShapeConstant.LinkFlags.SED_L_CHANGE,
                 false
               );
             }
@@ -5080,7 +5312,7 @@ class OptHandler {
             // Clear move flag and continue processing
             links[linkIndex].flags = Utils2.SetFlag(
               links[linkIndex].flags,
-              ShapeContant.LinkFlags.SED_L_MOVE,
+              ShapeConstant.LinkFlags.SED_L_MOVE,
               false
             );
             continueProcessing = true;
@@ -5094,13 +5326,13 @@ class OptHandler {
     // Clean up any links marked for deletion
     if (hasDeletedLinks) {
       for (linkIndex = links.length - 1; linkIndex >= 0 && !(linkIndex >= links.length); linkIndex--) {
-        if (links[linkIndex].flags & ShapeContant.LinkFlags.SED_L_DELT) {
+        if (links[linkIndex].flags & ShapeConstant.LinkFlags.SED_L_DELT) {
           this.DeleteLink(links, links[linkIndex].targetid, -1, null, 0, false);
           linkIndex = links.length;
         }
         else if (
-          links[linkIndex].flags & ShapeContant.LinkFlags.SED_L_DELL ||
-          links[linkIndex].flagss & ShapeContant.LinkFlags.SED_L_BREAK ||
+          links[linkIndex].flags & ShapeConstant.LinkFlags.SED_L_DELL ||
+          links[linkIndex].flagss & ShapeConstant.LinkFlags.SED_L_BREAK ||
           (hookObject = this.GetObjectPtr(links[linkIndex].hookid, false)) == null
         ) {
           this.DeleteLink(
@@ -5271,7 +5503,7 @@ class OptHandler {
         currentObj.hooks = currentObj.hooks.filter(h => h.objid != hookPairs[i].hookObjectId);
         const linkIndex = T3Gv.optManager.FindExactLink(links, hookPairs[i].hookObjectId, hookPairs[i].objectId);
         if (linkIndex >= 0) {
-          links[linkIndex].flags = Utils2.SetFlag(links[linkIndex].flags, ShapeContant.LinkFlags.SED_L_DELT, true);
+          links[linkIndex].flags = Utils2.SetFlag(links[linkIndex].flags, ShapeConstant.LinkFlags.SED_L_DELT, true);
         }
       }
     })(circularHookPairs);
@@ -8094,7 +8326,7 @@ class OptHandler {
 
               this.SetLinkFlag(
                 this.linkParams.ConnectIndex,
-                ShapeContant.LinkFlags.SED_L_MOVE
+                ShapeConstant.LinkFlags.SED_L_MOVE
               );
 
               this.CleanupHooks(this.dragTargetId, this.linkParams.ConnectIndex);
@@ -8295,7 +8527,7 @@ class OptHandler {
 
         this.SetLinkFlag(
           this.linkParams.ConnectIndex,
-          ShapeContant.LinkFlags.SED_L_MOVE
+          ShapeConstant.LinkFlags.SED_L_MOVE
         );
 
         this.CleanupHooks(
@@ -9054,7 +9286,7 @@ class OptHandler {
 
     // If position changed, set the link flag
     if (newX - originalPosition.x || newY - originalPosition.y) {
-      this.SetLinkFlag(objectId, ShapeContant.LinkFlags.SED_L_MOVE);
+      this.SetLinkFlag(objectId, ShapeConstant.LinkFlags.SED_L_MOVE);
     }
 
     console.log("O.Opt SetShapeOriginNoDirty - Output: Shape origin updated");
@@ -9122,7 +9354,7 @@ class OptHandler {
       if (hookObject &&
         (hookObject.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.CONNECTOR ||
           hookObject instanceof ShapeContainer)) {
-        this.SetLinkFlag(hookObjectId, ShapeContant.LinkFlags.SED_L_MOVE);
+        this.SetLinkFlag(hookObjectId, ShapeConstant.LinkFlags.SED_L_MOVE);
       }
     }
 
@@ -10372,7 +10604,7 @@ class OptHandler {
 
         T3Gv.optManager.SetLinkFlag(
           objectId,
-          ShapeContant.LinkFlags.SED_L_MOVE | ShapeContant.LinkFlags.SED_L_CHANGE
+          ShapeConstant.LinkFlags.SED_L_MOVE | ShapeConstant.LinkFlags.SED_L_CHANGE
         );
       }
     }
@@ -10398,7 +10630,7 @@ class OptHandler {
 
               T3Gv.optManager.SetLinkFlag(
                 moveObject.hooks[hookIndex].objid,
-                ShapeContant.LinkFlags.SED_L_MOVE | ShapeContant.LinkFlags.SED_L_CHANGE
+                ShapeConstant.LinkFlags.SED_L_MOVE | ShapeConstant.LinkFlags.SED_L_CHANGE
               );
             }
           }
@@ -11807,10 +12039,10 @@ class OptHandler {
     }
 
     // Set link flags for the object and connected objects
-    this.SetLinkFlag(objectId, ShapeContant.LinkFlags.SED_L_MOVE);
+    this.SetLinkFlag(objectId, ShapeConstant.LinkFlags.SED_L_MOVE);
 
     if (targetObject.hooks.length) {
-      this.SetLinkFlag(targetObject.hooks[0].objid, ShapeContant.LinkFlags.SED_L_MOVE);
+      this.SetLinkFlag(targetObject.hooks[0].objid, ShapeConstant.LinkFlags.SED_L_MOVE);
     }
 
     // Update the object's frame
@@ -12259,7 +12491,7 @@ class OptHandler {
 
       f.CalcFrame();
       T3Gv.optManager.AddToDirtyList(f.BlockID);
-      this.SetLinkFlag(e, ShapeContant.LinkFlags.SED_L_MOVE);
+      this.SetLinkFlag(e, ShapeConstant.LinkFlags.SED_L_MOVE);
       this.MaintainLink(e, f, null, _, !1);
       return k;
     }
@@ -12591,7 +12823,7 @@ class OptHandler {
       n = 0; n < M.length; n++)
       this.MoveLinks(c, M[n], null, null);
     if (this.DeleteObjects(M, !1),
-      this.SetLinkFlag(c, ShapeContant.LinkFlags.SED_L_MOVE),
+      this.SetLinkFlag(c, ShapeConstant.LinkFlags.SED_L_MOVE),
       this.MaintainLink(c, I, null, _, !1),
       this.UpdateLinks(),
       R.push(c),
@@ -12829,7 +13061,7 @@ class OptHandler {
                 // Just mark multiplicity links as moved
                 linksList[linkIndex].flags = Utils2.SetFlag(
                   linksList[linkIndex].flags,
-                  ShapeContant.LinkFlags.SED_L_MOVE,
+                  ShapeConstant.LinkFlags.SED_L_MOVE,
                   true
                 );
 
@@ -12954,7 +13186,7 @@ class OptHandler {
           this.RemoveFromSelectedList(objectId);
 
           // Mark for deletion in links
-          this.SetLinkFlag(objectId, ShapeContant.LinkFlags.SED_L_DELT);
+          this.SetLinkFlag(objectId, ShapeConstant.LinkFlags.SED_L_DELT);
 
           // Process hooks
           hookCount = objectData.hooks.length;
@@ -13492,7 +13724,7 @@ class OptHandler {
             );
 
             // Update link flags and format the connector
-            T3Gv.optManager.SetLinkFlag(sourceObject.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
+            T3Gv.optManager.SetLinkFlag(sourceObject.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
             childConnector.Pr_Format(connectorId);
             T3Gv.optManager.AddToDirtyList(connectorId);
           }
@@ -14009,7 +14241,7 @@ class OptHandler {
 
     // Get the target object
     const targetObject = this.GetObjectPtr(linkData.targetid, false);
-    const linkFlags = ShapeContant.LinkFlags;
+    const linkFlags = ShapeConstant.LinkFlags;
 
     // Check if target object exists
     if (targetObject == null) {
@@ -15061,7 +15293,7 @@ class OptHandler {
 
     // If there was any actual offset, update links and mark as dirty
     if (offsetX || offsetY) {
-      this.SetLinkFlag(shapeId, ShapeContant.LinkFlags.SED_L_MOVE);
+      this.SetLinkFlag(shapeId, ShapeConstant.LinkFlags.SED_L_MOVE);
       this.AddToDirtyList(shapeId, true);
     }
 
@@ -15611,7 +15843,7 @@ class OptHandler {
             this.rflags = Utils2.SetFlag(this.rflags, ConstantData.FloatingPointDim.SD_FP_Height, false);
           }
           if (shape instanceof PolyLineContainer) {
-            this.SetLinkFlag(selectedList[tempCounter], ShapeContant.LinkFlags.SED_L_MOVE);
+            this.SetLinkFlag(selectedList[tempCounter], ShapeConstant.LinkFlags.SED_L_MOVE);
             this.AddToDirtyList(selectedList[tempCounter]);
             rotatedSubList = shape.RotateAllInContainer(shape.BlockID, angleDegrees);
             if (rotatedSubList && rotatedSubList.length) {
@@ -15638,7 +15870,7 @@ class OptHandler {
         for (tempCounter = 0; tempCounter < totalSelected; tempCounter++) {
           shape = this.GetObjectPtr(selectedList[tempCounter], true);
           if (!(shape instanceof PolyLineContainer)) {
-            this.SetLinkFlag(selectedList[tempCounter], ShapeContant.LinkFlags.SED_L_MOVE);
+            this.SetLinkFlag(selectedList[tempCounter], ShapeConstant.LinkFlags.SED_L_MOVE);
             this.AddToDirtyList(selectedList[tempCounter]);
             if (shape instanceof BaseLine) {
               if (shape instanceof PolyLine) {
@@ -15822,7 +16054,7 @@ class OptHandler {
             currentDirtyFrame = currentObject.FramezList;
           }
 
-          this.SetLinkFlag(selectedObjects[i], ShapeContant.LinkFlags.SED_L_MOVE);
+          this.SetLinkFlag(selectedObjects[i], ShapeConstant.LinkFlags.SED_L_MOVE);
           this.AddToDirtyList(selectedObjects[i], true);
           currentAlignRect = currentObject.GetAlignRect();
 
@@ -16201,7 +16433,7 @@ class OptHandler {
                   }
                 }
                 childObj.flags = SDJS.Utils.SetFlag(childObj.flags, ConstantData.ObjFlags.SEDO_Obj1, true);
-                this.SetLinkFlag(childId, ShapeContant.LinkFlags.SED_L_MOVE);
+                this.SetLinkFlag(childId, ShapeConstant.LinkFlags.SED_L_MOVE);
               }
               childSearchIndex = childId;
             }
@@ -16504,7 +16736,7 @@ class OptHandler {
           o.hooks[d].connect,
           o.hooks[d].cellid
         ),
-        this.SetLinkFlag(o.hooks[d].objid, ShapeContant.LinkFlags.SED_L_MOVE),
+        this.SetLinkFlag(o.hooks[d].objid, ShapeConstant.LinkFlags.SED_L_MOVE),
         this.UpdateLinks(),
         M[1];
       if (_ >= 0 && E < 0) return o.hooks[0].hookpt === ConstantData.HookPts.SED_KTL ? (
@@ -17009,15 +17241,15 @@ class OptHandler {
       textEditorWrapper.Activate(activationEvent, additionalOptions);
 
       // Initialize Hammer instances for various elements
-      this.TETextHammer = Hammer(textEditorWrapper.editor.parent.textElem.node);
-      this.TEClickAreaHammer = Hammer(textEditorWrapper.editor.parent.clickAreaElem.node);
-      this.TEDecAreaHammer = Hammer(textEditorWrapper.editor.parent.decorationAreaElem.node);
+      this.textHammer = Hammer(textEditorWrapper.editor.parent.textElem.node);
+      this.clickAreaHammer = Hammer(textEditorWrapper.editor.parent.clickAreaElem.node);
+      this.decAreaHammer = Hammer(textEditorWrapper.editor.parent.decorationAreaElem.node);
       this.TEWorkAreaHammer = Hammer(document.getElementById('svg-area'));
 
       // Register drag event listeners
-      this.TETextHammer.on("dragstart", this.TEDragStartFactory(textEditorWrapper.editor));
-      this.TEClickAreaHammer.on("dragstart", this.TEClickAreaDragStartFactory(textEditorWrapper.editor));
-      this.TEDecAreaHammer.on("dragstart", this.TEClickAreaDragStartFactory(textEditorWrapper.editor));
+      this.textHammer.on("dragstart", this.TEDragStartFactory(textEditorWrapper.editor));
+      this.clickAreaHammer.on("dragstart", this.TEClickAreaDragStartFactory(textEditorWrapper.editor));
+      this.decAreaHammer.on("dragstart", this.TEClickAreaDragStartFactory(textEditorWrapper.editor));
       this.TEWorkAreaHammer.on("drag", this.TEDragFactory(textEditorWrapper.editor));
       this.TEWorkAreaHammer.on("dragend", this.TEDragEndFactory(textEditorWrapper.editor));
     }
@@ -17509,11 +17741,11 @@ class OptHandler {
           messageData.theTEWasResized = true;
           this.SetLinkFlag(
             session.theActiveTextEditObjectID,
-            ShapeContant.LinkFlags.SED_L_MOVE
+            ShapeConstant.LinkFlags.SED_L_MOVE
           );
 
           if (drawingObject.hooks.length) {
-            this.SetLinkFlag(drawingObject.hooks[0].objid, ShapeContant.LinkFlags.SED_L_MOVE);
+            this.SetLinkFlag(drawingObject.hooks[0].objid, ShapeConstant.LinkFlags.SED_L_MOVE);
           }
 
           session.theTEWasResized = false;
@@ -17753,26 +17985,26 @@ class OptHandler {
 
     // Update face flag for bold text
     if (textStyle.weight === 'bold') {
-      sdText.Face += FileParser.TextFace.St_Bold;
+      sdText.Face += ShapeConstant.TextFace.St_Bold;
     }
 
     // Update face flag for italic text
     if (textStyle.style === 'italic') {
-      sdText.Face += FileParser.TextFace.St_Italic;
+      sdText.Face += ShapeConstant.TextFace.St_Italic;
     }
 
     // Update face flag based on subscript or superscript offset
     if (textStyle.baseOffset === 'sub') {
-      sdText.Face += FileParser.TextFace.St_Sub;
+      sdText.Face += ShapeConstant.TextFace.St_Sub;
     } else if (textStyle.baseOffset === 'super') {
-      sdText.Face += FileParser.TextFace.St_Super;
+      sdText.Face += ShapeConstant.TextFace.St_Super;
     }
 
     // Update face flag for text decorations (underline or strike-through)
     if (textStyle.decoration === 'underline') {
-      sdText.Face += FileParser.TextFace.St_Under;
+      sdText.Face += ShapeConstant.TextFace.St_Under;
     } else if (textStyle.decoration === 'line-through') {
-      sdText.Face += FileParser.TextFace.St_Strike;
+      sdText.Face += ShapeConstant.TextFace.St_Strike;
     }
 
     // Set text color properties
@@ -18941,9 +19173,9 @@ class OptHandler {
         // }
         for (index = 0; index < count; index++) {
           currentObject = this.GetObjectPtr(selectedObjects[index], true);
-          this.SetLinkFlag(selectedObjects[index], ShapeContant.LinkFlags.SED_L_MOVE);
+          this.SetLinkFlag(selectedObjects[index], ShapeConstant.LinkFlags.SED_L_MOVE);
           if (currentObject.hooks.length) {
-            this.SetLinkFlag(currentObject.hooks[0].objid, ShapeContant.LinkFlags.SED_L_MOVE);
+            this.SetLinkFlag(currentObject.hooks[0].objid, ShapeConstant.LinkFlags.SED_L_MOVE);
           }
           this.AddToDirtyList(selectedObjects[index]);
           if (isRotationQualified(currentObject)) {
@@ -19325,7 +19557,7 @@ class OptHandler {
         currentObject.rflags = Utils2.SetFlag(currentObject.rflags, ConstantData.FloatingPointDim.SD_FP_Width, false);
         currentObject.rflags = Utils2.SetFlag(currentObject.rflags, ConstantData.FloatingPointDim.SD_FP_Height, false);
       }
-      this.SetLinkFlag(objectId, ShapeContant.LinkFlags.SED_L_MOVE);
+      this.SetLinkFlag(objectId, ShapeConstant.LinkFlags.SED_L_MOVE);
       this.AddToDirtyList(objectId);
     }
 
@@ -19519,14 +19751,14 @@ class OptHandler {
         if (selectedCell.flags & TODO.Table.CellFlags.SDT_F_Clickhere) {
           switch (selectedCell.celltype) {
             case TODO.Table.CellTypes.SDT_CT_PERSON:
-              replaceIndex = ShapeContant.ReplaceTextStrings.Indexes.PersonClick;
+              replaceIndex = ShapeConstant.ReplaceTextStrings.Indexes.PersonClick;
               break;
             default:
               replaceIndex = (source.TextFlags & ConstantData.TextFlags.SED_TF_OneClick)
-                ? ShapeContant.ReplaceTextStrings.Indexes.Click
-                : ShapeContant.ReplaceTextStrings.Indexes.DoubleClick;
+                ? ShapeConstant.ReplaceTextStrings.Indexes.Click
+                : ShapeConstant.ReplaceTextStrings.Indexes.DoubleClick;
           }
-          resultText = ShapeContant.ReplaceTextStrings[replaceIndex];
+          resultText = ShapeConstant.ReplaceTextStrings[replaceIndex];
           clipboard.Paste(resultText);
           selectedCell.flags = Utils2.SetFlag(selectedCell.flags, TODO.Table.CellFlags.SDT_F_Clickhere, false);
           console.log("O.Opt ReverseReplaceStdText - Output:", true);
@@ -19535,8 +19767,8 @@ class OptHandler {
       }
     } else if (source.TextFlags & ConstantData.TextFlags.SED_TF_Clickhere) {
       resultText = (source.TextFlags & ConstantData.TextFlags.SED_TF_OneClick)
-        ? ShapeContant.ReplaceTextStrings[ShapeContant.ReplaceTextStrings.Indexes.Click]
-        : ShapeContant.ReplaceTextStrings[ShapeContant.ReplaceTextStrings.Indexes.DoubleClick];
+        ? ShapeConstant.ReplaceTextStrings[ShapeConstant.ReplaceTextStrings.Indexes.Click]
+        : ShapeConstant.ReplaceTextStrings[ShapeConstant.ReplaceTextStrings.Indexes.DoubleClick];
       clipboard.Paste(resultText);
       source.TextFlags = Utils2.SetFlag(source.TextFlags, ConstantData.TextFlags.SED_TF_Clickhere, false);
       console.log("O.Opt ReverseReplaceStdText - Output:", true);
@@ -19559,27 +19791,27 @@ class OptHandler {
     console.log("O.Opt ReplaceStdText - Input:", { textSource, currentText, textEditor, checkOnly });
 
     let index, tableData, textPart, tempPart, isMatched, upperText;
-    let replaceStringCount = ShapeContant.ReplaceTextStrings.length;
+    let replaceStringCount = ShapeConstant.ReplaceTextStrings.length;
 
     // Get substring from currentText to compare with the first replacement string.
-    replaceStringCount = ShapeContant.ReplaceTextStrings[0].length;
+    replaceStringCount = ShapeConstant.ReplaceTextStrings[0].length;
     textPart = currentText.slice(0, replaceStringCount);
 
     // Get substring from currentText to compare with the second replacement string.
-    replaceStringCount = ShapeContant.ReplaceTextStrings[1].length;
+    replaceStringCount = ShapeConstant.ReplaceTextStrings[1].length;
     tempPart = currentText.slice(0, replaceStringCount);
 
     // Determine if either starting substring matches (case insensitive).
-    isMatched = textPart.toUpperCase() === ShapeContant.ReplaceTextStrings[0].toUpperCase() ||
-      tempPart.toUpperCase() === ShapeContant.ReplaceTextStrings[1].toUpperCase();
+    isMatched = textPart.toUpperCase() === ShapeConstant.ReplaceTextStrings[0].toUpperCase() ||
+      tempPart.toUpperCase() === ShapeConstant.ReplaceTextStrings[1].toUpperCase();
 
     // Get the complete currentText in uppercase.
     upperText = currentText.toUpperCase();
 
     // Loop through all replacement strings starting from index 1.
-    replaceStringCount = ShapeContant.ReplaceTextStrings.length;
+    replaceStringCount = ShapeConstant.ReplaceTextStrings.length;
     for (index = 1; index < replaceStringCount; index++) {
-      if (isMatched || upperText === ShapeContant.ReplaceTextStrings[index].toUpperCase()) {
+      if (isMatched || upperText === ShapeConstant.ReplaceTextStrings[index].toUpperCase()) {
         // If only checking, log and return true immediately.
         if (checkOnly) {
           console.log("O.Opt ReplaceStdText - Output:", true);
@@ -19789,7 +20021,7 @@ class OptHandler {
     // Update link flags for containers
     const containerCount = containerIds.length;
     for (index = 0; index < containerCount; index++) {
-      T3Gv.optManager.SetLinkFlag(containerIds[index], ShapeContant.LinkFlags.SED_L_MOVE);
+      T3Gv.optManager.SetLinkFlag(containerIds[index], ShapeConstant.LinkFlags.SED_L_MOVE);
     }
 
     // Update all links
@@ -19824,7 +20056,7 @@ class OptHandler {
     if (targetObject && targetObject.hooks) {
       const hookCount = targetObject.hooks.length;
       for (let hookIndex = 0; hookIndex < hookCount; hookIndex++) {
-        T3Gv.optManager.InsertLink(linkList, objectId, hookIndex, ShapeContant.LinkFlags.SED_L_MOVE);
+        T3Gv.optManager.InsertLink(linkList, objectId, hookIndex, ShapeConstant.LinkFlags.SED_L_MOVE);
       }
     }
     console.log("O.Opt RebuildLinks - Output: Completed");
@@ -20105,29 +20337,29 @@ class OptHandler {
     };
 
     if (
-      workArea.scrollX === T3Gv.optManager.TopLeftPasteScrollPos.x &&
-      workArea.scrollY === T3Gv.optManager.TopLeftPasteScrollPos.y
+      workArea.scrollX === T3Gv.optManager.topLeftPasteScrollPos.x &&
+      workArea.scrollY === T3Gv.optManager.topLeftPasteScrollPos.y
     ) {
-      pastePosition = T3Gv.optManager.TopLeftPastePos;
+      pastePosition = T3Gv.optManager.topLeftPastePos;
       pastePosition.x += 50;
       pastePosition.y += 50;
-      T3Gv.optManager.PasteCount++;
-      if (T3Gv.optManager.PasteCount > 5) {
-        T3Gv.optManager.PasteCount = 0;
+      T3Gv.optManager.pasteCount++;
+      if (T3Gv.optManager.pasteCount > 5) {
+        T3Gv.optManager.pasteCount = 0;
         pastePosition = {
           x: (workArea.scrollX + offset) / scale,
           y: (workArea.scrollY + offset) / scale
         };
       }
     } else {
-      T3Gv.optManager.PasteCount = 0;
+      T3Gv.optManager.pasteCount = 0;
     }
 
-    T3Gv.optManager.TopLeftPastePos = {
+    T3Gv.optManager.topLeftPastePos = {
       x: pastePosition.x,
       y: pastePosition.y
     };
-    T3Gv.optManager.TopLeftPasteScrollPos = {
+    T3Gv.optManager.topLeftPasteScrollPos = {
       x: workArea.scrollX,
       y: workArea.scrollY
     };
@@ -20202,34 +20434,34 @@ class OptHandler {
     if (tedSession.theActiveTextEditObjectID !== -1) {
       businessManager = OptAhUtil.GetSelectionBusinessManager();
       if (businessManager) {
-        selectionContexts.push(ShapeContant.Contexts.Text);
+        selectionContexts.push(ShapeConstant.Contexts.Text);
         selectionContexts.push(this.GetAutomationContext(businessManager));
         console.log("O.Opt GetSelectionContext - Output:", selectionContexts);
         return selectionContexts;
       } else {
-        console.log("O.Opt GetSelectionContext - Output:", ShapeContant.Contexts.Text);
-        return ShapeContant.Contexts.Text;
+        console.log("O.Opt GetSelectionContext - Output:", ShapeConstant.Contexts.Text);
+        return ShapeConstant.Contexts.Text;
       }
     }
 
     // Check if the active edit element corresponds to dimension or note text.
     const activeEditElement = this.svgDoc.GetActiveEdit();
     if (activeEditElement !== null && activeEditElement.ID === ConstantData.SVGElementClass.DIMENSIONTEXT) {
-      console.log("O.Opt GetSelectionContext - Output:", ShapeContant.Contexts.DimensionText);
-      return ShapeContant.Contexts.DimensionText;
+      console.log("O.Opt GetSelectionContext - Output:", ShapeConstant.Contexts.DimensionText);
+      return ShapeConstant.Contexts.DimensionText;
     }
     if (activeEditElement !== null && activeEditElement.ID === ConstantData.SVGElementClass.NOTETEXT) {
-      console.log("O.Opt GetSelectionContext - Output:", ShapeContant.Contexts.NoteText);
-      return ShapeContant.Contexts.NoteText;
+      console.log("O.Opt GetSelectionContext - Output:", ShapeConstant.Contexts.NoteText);
+      return ShapeConstant.Contexts.NoteText;
     }
 
     // Check if a table is active.
     if (this.Table_GetActiveID() !== -1) {
-      selectionContexts.push(ShapeContant.Contexts.Table);
-      selectionContexts.push(ShapeContant.Contexts.Text);
+      selectionContexts.push(ShapeConstant.Contexts.Table);
+      selectionContexts.push(ShapeConstant.Contexts.Text);
       businessManager = OptAhUtil.GetSelectionBusinessManager();
       if (businessManager) {
-        selectionContexts.push(ShapeContant.Contexts.Automation);
+        selectionContexts.push(ShapeConstant.Contexts.Automation);
       }
       console.log("O.Opt GetSelectionContext - Output:", selectionContexts);
       return selectionContexts;
@@ -20245,22 +20477,22 @@ class OptHandler {
       const targetObject = T3Gv.objectStore.GetObject(targetObjectId);
       const objectData = targetObject.Data;
       if (businessManager && /*!T3Gv.optManager.Comment_IsTarget(targetObjectId)*/ true) {
-        selectionContexts.push(ShapeContant.Contexts.Automation);
+        selectionContexts.push(ShapeConstant.Contexts.Automation);
       }
       if (objectData.AllowTextEdit()) {
         if (selectionContexts.length) {
-          selectionContexts.push(ShapeContant.Contexts.Text);
+          selectionContexts.push(ShapeConstant.Contexts.Text);
           console.log("O.Opt GetSelectionContext - Output:", selectionContexts);
           return selectionContexts;
         } else {
-          console.log("O.Opt GetSelectionContext - Output:", ShapeContant.Contexts.Text);
-          return ShapeContant.Contexts.Text;
+          console.log("O.Opt GetSelectionContext - Output:", ShapeConstant.Contexts.Text);
+          return ShapeConstant.Contexts.Text;
         }
       }
     }
 
-    console.log("O.Opt GetSelectionContext - Output:", ShapeContant.Contexts.None);
-    return ShapeContant.Contexts.None;
+    console.log("O.Opt GetSelectionContext - Output:", ShapeConstant.Contexts.None);
+    return ShapeConstant.Contexts.None;
   }
 
   // /**
@@ -20575,14 +20807,14 @@ class OptHandler {
         }
 
         let isBinaryImage = false;
-        let imageType = FileParser.GetImageBlobType(ConstantData2.ImageDir.dir_svg);
+        let imageType = ShapeConstant.GetImageBlobType(ConstantData2.ImageDir.dir_svg);
 
         // Determine image type from extension
         if (imageUrl.toLowerCase().indexOf('.png') > 0) {
-          imageType = FileParser.GetImageBlobType(ConstantData2.ImageDir.dir_png);
+          imageType = ShapeConstant.GetImageBlobType(ConstantData2.ImageDir.dir_png);
           isBinaryImage = true;
         } else if (imageUrl.toLowerCase().indexOf('.jpg') > 0) {
-          imageType = FileParser.GetImageBlobType(ConstantData2.ImageDir.dir_jpg);
+          imageType = ShapeConstant.GetImageBlobType(ConstantData2.ImageDir.dir_jpg);
           isBinaryImage = true;
         }
 
@@ -20599,7 +20831,7 @@ class OptHandler {
                 imageBytes[0] === 255 &&
                 imageBytes[1] === 216 &&
                 imageBytes[2] === 255) {
-                imageType = FileParser.GetImageBlobType(ConstantData2.ImageDir.dir_jpg);
+                imageType = ShapeConstant.GetImageBlobType(ConstantData2.ImageDir.dir_jpg);
                 formatDetected = true;
               }
 
@@ -20614,13 +20846,13 @@ class OptHandler {
                 imageBytes[5] === 10 &&
                 imageBytes[6] === 26 &&
                 imageBytes[7] === 10) {
-                imageType = FileParser.GetImageBlobType(ConstantData2.ImageDir.dir_png);
+                imageType = ShapeConstant.GetImageBlobType(ConstantData2.ImageDir.dir_png);
                 formatDetected = true;
               }
 
               // Default to SVG if no binary format detected
               if (!formatDetected) {
-                imageType = FileParser.GetImageBlobType(ConstantData2.ImageDir.dir_svg);
+                imageType = ShapeConstant.GetImageBlobType(ConstantData2.ImageDir.dir_svg);
               }
             }
 
@@ -20875,18 +21107,18 @@ class OptHandler {
     console.log("O.Opt GetAutomationContext - Input:", businessManager);
 
     const sessionObject = T3Gv.optManager.GetObjectPtr(this.sedSessionBlockId, false);
-    let automationContext = ShapeContant.Contexts.Automation;
+    let automationContext = ShapeConstant.Contexts.Automation;
 
     if (businessManager) {
       automationContext = businessManager.GetAutomationContext();
     }
 
     // Check if the context is Automation and if control arrows should be disabled
-    if (automationContext === ShapeContant.Contexts.Automation) {
+    if (automationContext === ShapeConstant.Contexts.Automation) {
       if (sessionObject.moreflags & ConstantData.SessionMoreFlags.SEDSM_NoCtrlArrow) {
-        automationContext = ShapeContant.Contexts.AutomationNoCtrl;
+        automationContext = ShapeConstant.Contexts.AutomationNoCtrl;
       } else {
-        automationContext = ShapeContant.Contexts.Automation;
+        automationContext = ShapeConstant.Contexts.Automation;
       }
     }
 
@@ -21101,7 +21333,7 @@ class OptHandler {
               if (objectInstance) {
                 objectData = objectInstance.Data;
                 blobBytes = objectData.GetBlobBytes();
-                imageType = FileParser.GetImageBlobType(blobBytes.ImageDir);
+                imageType = ShapeConstant.GetImageBlobType(blobBytes.ImageDir);
                 objectData.ImageURL = T3Gv.optManager.MakeURL(null, blobBytes.Bytes, imageType);
               }
             }
@@ -21138,7 +21370,7 @@ class OptHandler {
 
               if (objectData.BlobBytesID >= 0 && this.IsBlobURL(objectData.ImageURL)) {
                 blobBytes = objectData.GetBlobBytes();
-                imageType = FileParser.GetImageBlobType(blobBytes.ImageDir);
+                imageType = ShapeConstant.GetImageBlobType(blobBytes.ImageDir);
                 objectData.ImageURL = T3Gv.optManager.MakeURL(null, blobBytes.Bytes, imageType);
               }
             }
@@ -21160,7 +21392,7 @@ class OptHandler {
                   blobBytes = objectData.GetBlobBytes();
 
                   if (blobBytes) {
-                    imageType = FileParser.GetImageBlobType(blobBytes.ImageDir);
+                    imageType = ShapeConstant.GetImageBlobType(blobBytes.ImageDir);
 
                     if (this.IsBlobURL(objectData.ImageURL)) {
                       objectData.ImageURL = T3Gv.optManager.MakeURL(null, blobBytes.Bytes, imageType);
@@ -21178,7 +21410,7 @@ class OptHandler {
               blobBytes = objectData.GetBlobBytes();
 
               if (blobBytes) {
-                imageType = FileParser.GetImageBlobType(blobBytes.ImageDir);
+                imageType = ShapeConstant.GetImageBlobType(blobBytes.ImageDir);
 
                 if (this.IsBlobURL(objectData.ImageURL)) {
                   objectData.ImageURL = T3Gv.optManager.MakeURL(null, blobBytes.Bytes, imageType);
@@ -21282,7 +21514,7 @@ class OptHandler {
       this.selectionState.lockedTableSelected = (tableData.flags & TODO.Table.TableFlags.SDT_TF_LOCK) > 0;
 
       // Check if this is a special table in non-Builder application
-      if (SDUI.AppSettings.Application !== ShapeContant.Application.Builder &&
+      if (SDUI.AppSettings.Application !== ShapeConstant.Application.Builder &&
         tableObject.objecttype === ConstantData.ObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER) {
         this.selectionState.lockedTableSelected = true;
       }
@@ -21777,7 +22009,7 @@ class OptHandler {
 
                     // Update link flags
                     if (!skipLinkFlagUpdate) {
-                      this.Resize_SetLinkFlag(shapeId, ShapeContant.LinkFlags.SED_L_MOVE);
+                      this.Resize_SetLinkFlag(shapeId, ShapeConstant.LinkFlags.SED_L_MOVE);
                     }
                   }
                 }
@@ -22440,7 +22672,7 @@ class OptHandler {
           0 == Z.toLowerCase().indexOf('blob:') &&
           u[Z]
         ) Y = u[Z],
-          pe = 'data:' + FileParser.GetImageBlobType(Y.ImageDir) + ';base64,' + Utils2.ArrayBufferToBase64(Y.Bytes),
+          pe = 'data:' + ShapeConstant.GetImageBlobType(Y.ImageDir) + ';base64,' + Utils2.ArrayBufferToBase64(Y.Bytes),
           X.setAttribute('xlink:href', pe);
         else if (
           0 === Z.toLowerCase().indexOf(Constants.FilePath_CMSRoot.toLowerCase())

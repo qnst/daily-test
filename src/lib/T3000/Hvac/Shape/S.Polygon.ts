@@ -4,16 +4,15 @@ import Utils1 from '../Helper/Utils1';
 import Utils2 from "../Helper/Utils2";
 import Utils3 from "../Helper/Utils3";
 import T3Gv from '../Data/T3Gv'
-import FileParser from '../Data/FileParser'
-import PolygonShapeGenerator from '../Opt/Business/PolygonUtil'
+import PolygonShapeGenerator from '../Util/PolygonUtil'
 import $ from 'jquery'
 import ConstantData from '../Data/ConstantData'
 import ConstantData2 from '../Data/ConstantData2';
-import PolygonConstant from '../Opt/Business/PolygonConstant';
-import PolygonUtil from '../Opt/Business/PolygonUtil';
+import PolygonConstant from '../Util/PolygonConstant';
+import PolygonUtil from '../Util/PolygonUtil';
 import ShapeDataUtil from "../Data/ShapeDataUtil";
 import Instance from '../Data/Instance/Instance';
-import ShapeContant from '../Data/ShapeContant';
+import ShapeConstant from '../Data/ShapeConstant';
 
 class Polygon extends BaseShape {
 
@@ -780,7 +779,7 @@ class Polygon extends BaseShape {
       if (this.polylist) {
         Instance.Shape.PolyLine.prototype.WriteSDFAttributes.call(this, writer, context, true);
       } else {
-        let code = ShapeDataUtil.Write_CODE(writer, ConstantData2.SDROpCodesByName.SDF_C_DRAWPOLY);
+        let code = ShapeDataUtil.Write_CODE(writer, ShapeConstant.OpCodeName.SDF_C_DRAWPOLY);
         vertexCount = this.VertexArray.length;
         width = ShapeDataUtil.ToSDWinCoords(this.Frame.width, context.coordScaleFactor);
         height = ShapeDataUtil.ToSDWinCoords(this.Frame.height, context.coordScaleFactor);
@@ -795,7 +794,7 @@ class Polygon extends BaseShape {
             flags: ConstantData.PolyListFlags.SD_PLF_FreeHand,
             ldim: { x: width, y: height }
           };
-          writer.writeStruct(FileParser.SDF_PolyList_Struct_20, polyListStruct);
+          writer.writeStruct(ShapeConstant.PolyListStruct20, polyListStruct);
         } else {
           polyListStruct = {
             InstID: polyId,
@@ -803,7 +802,7 @@ class Polygon extends BaseShape {
             flags: ConstantData.PolyListFlags.SD_PLF_FreeHand,
             ldim: { x: width, y: height }
           };
-          writer.writeStruct(FileParser.SDF_PolyList_Struct_24, polyListStruct);
+          writer.writeStruct(ShapeConstant.PolyListStruct24, polyListStruct);
         }
         ShapeDataUtil.Write_LENGTH(writer, code);
 
@@ -819,11 +818,11 @@ class Polygon extends BaseShape {
             lpt: { x: vertexX, y: vertexY },
             dimDeflection: 0
           };
-          code = ShapeDataUtil.Write_CODE(writer, ConstantData2.SDROpCodesByName.SDF_C_DRAWPOLYSEG);
-          writer.writeStruct(FileParser.SDF_PolySeg_Struct, polySegment);
+          code = ShapeDataUtil.Write_CODE(writer, ShapeConstant.OpCodeName.SDF_C_DRAWPOLYSEG);
+          writer.writeStruct(ShapeConstant.PolySegStruct, polySegment);
           ShapeDataUtil.Write_LENGTH(writer, code);
         }
-        writer.writeUint16(ConstantData2.SDROpCodesByName.SDF_C_DRAWPOLY_END);
+        writer.writeUint16(ShapeConstant.OpCodeName.SDF_C_DRAWPOLY_END);
       }
     }
     super.WriteSDFAttributes(writer, context);
@@ -914,11 +913,11 @@ class Polygon extends BaseShape {
 
     T3Gv.optManager.SetLinkFlag(
       this.BlockID,
-      ShapeContant.LinkFlags.SED_L_MOVE | ShapeContant.LinkFlags.SED_L_CHANGE
+      ShapeConstant.LinkFlags.SED_L_MOVE | ShapeConstant.LinkFlags.SED_L_CHANGE
     );
 
     if (this.hooks.length) {
-      T3Gv.optManager.SetLinkFlag(this.hooks[0].objid, ShapeContant.LinkFlags.SED_L_MOVE);
+      T3Gv.optManager.SetLinkFlag(this.hooks[0].objid, ShapeConstant.LinkFlags.SED_L_MOVE);
     }
 
     this.NeedsSIndentCount = true;

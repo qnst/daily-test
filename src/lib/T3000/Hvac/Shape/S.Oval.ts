@@ -8,7 +8,7 @@ import $ from 'jquery'
 import Point from '../Model/Point'
 import ConstantData from '../Data/ConstantData'
 import ConstantData2 from '../Data/ConstantData2';
-import PolygonConstant from '../Opt/Business/PolygonConstant';
+import PolygonConstant from '../Util/PolygonConstant';
 
 class Oval extends BaseShape {
 

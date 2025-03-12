@@ -9,7 +9,7 @@ import BaseDrawingObject from './S.BaseDrawingObject'
 import $ from 'jquery'
 import ConstantData from '../Data/ConstantData'
 import ConstantData2 from '../Data/ConstantData2';
-import PolygonConstant from '../Opt/Business/PolygonConstant';
+import PolygonConstant from '../Util/PolygonConstant';
 
 class RRect extends BaseShape {
 

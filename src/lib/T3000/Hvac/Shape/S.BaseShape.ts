@@ -7,10 +7,9 @@ import Utils1 from '../Helper/Utils1';
 import Utils2 from "../Helper/Utils2";
 import Utils3 from "../Helper/Utils3";
 import EvtUtil from "../Event/EvtUtil";
-import FileParser from '../Data/FileParser'
 import $ from 'jquery';
 import Point from '../Model/Point';
-import OptAhUtil from '../Opt/Business/OptAhUtil';
+import OptAhUtil from '../Util/OptAhUtil';
 import ShapeDataUtil from '../Data/ShapeDataUtil'
 import Instance from '../Data/Instance/Instance'
 import ConstantData from '../Data/ConstantData'
@@ -20,8 +19,8 @@ import Rectangle from '../Model/Rectangle'
 import DynamicGuides from '../Model/DynamicGuides'
 import ConstantData2 from '../Data/ConstantData2'
 import T3Constant from '../Data/T3Constant';
-import PolygonConstant from '../Opt/Business/PolygonConstant';
-import ShapeContant from '../Data/ShapeContant';
+import PolygonConstant from '../Util/PolygonConstant';
+import ShapeConstant from '../Data/ShapeConstant';
 
 class BaseShape extends BaseDrawingObject {
 
@@ -2878,7 +2877,7 @@ class BaseShape extends BaseDrawingObject {
           a &&
           T3Gv.optManager.theActionTable.ht != a.ht &&
           (this.sizedim.height = this.Frame.height),
-          T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE),
+          T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE),
           t();
         break;
       case ConstantData.ActionTriggerType.TABLE_COL:
@@ -2886,7 +2885,7 @@ class BaseShape extends BaseDrawingObject {
           a &&
           T3Gv.optManager.theActionTable.wd != a.wd &&
           (this.sizedim.width = this.Frame.width),
-          T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE),
+          T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE),
           t();
         break;
       case ConstantData.ActionTriggerType.TABLE_SELECT:
@@ -2907,7 +2906,7 @@ class BaseShape extends BaseDrawingObject {
         }
         break;
       case ConstantData.ActionTriggerType.TABLE_EDIT:
-        T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
+        T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
         break;
       case ConstantData.ActionTriggerType.CENTERLEFT:
       case ConstantData.ActionTriggerType.CENTERRIGHT:
@@ -3393,7 +3392,7 @@ class BaseShape extends BaseDrawingObject {
         if (childShape) {
           const childLinkFlag = linkFlags ? linkFlags[childShape.BlockID] : null;
           childShape.OffsetShape(offsetX, offsetY, childLinkFlag);
-          T3Gv.optManager.SetLinkFlag(childShapeId, ShapeContant.LinkFlags.SED_L_MOVE);
+          T3Gv.optManager.SetLinkFlag(childShapeId, ShapeConstant.LinkFlags.SED_L_MOVE);
           T3Gv.optManager.AddToDirtyList(childShapeId);
         }
       }
@@ -3921,10 +3920,10 @@ class BaseShape extends BaseDrawingObject {
         }
       }
 
-      T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
+      T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
 
       for (let i = 0; i < this.hooks.length; i++) {
-        T3Gv.optManager.SetLinkFlag(this.hooks[i].objid, ShapeContant.LinkFlags.SED_L_MOVE);
+        T3Gv.optManager.SetLinkFlag(this.hooks[i].objid, ShapeConstant.LinkFlags.SED_L_MOVE);
       }
 
       if (this instanceof Instance.Shape.Polygon) {
@@ -5393,7 +5392,7 @@ class BaseShape extends BaseDrawingObject {
       ShapeDataUtil.WriteString8(
         outputStream,
         this.EMFHash,
-        ConstantData2.SDROpCodesByName.SDF_C_EMFHASH,
+        ShapeConstant.OpCodeName.SDF_C_EMFHASH,
         options
       );
       hasWrittenEMFHash = true;
@@ -5409,7 +5408,7 @@ class BaseShape extends BaseDrawingObject {
         ShapeDataUtil.WriteString8(
           outputStream,
           this.EMFHash,
-          ConstantData2.SDROpCodesByName.SDF_C_EMFHASH,
+          ShapeConstant.OpCodeName.SDF_C_EMFHASH,
           options
         );
       }
@@ -5418,7 +5417,7 @@ class BaseShape extends BaseDrawingObject {
       if (options.WriteBlocks || options.WriteGroupBlock) {
         ShapeDataUtil.WriteEMFBlobBytesID(outputStream, this.EMFBlobBytesID, ConstantData2.ImageDir.dir_meta, options);
       } else {
-        ShapeDataUtil.WriteBlob(outputStream, emfBlobBytes.Bytes, ConstantData2.SDROpCodesByName.SDF_C_DRAWMETA);
+        ShapeDataUtil.WriteBlob(outputStream, emfBlobBytes.Bytes, ShapeConstant.OpCodeName.SDF_C_DRAWMETA);
       }
 
       // Handle preview blob bytes
@@ -5430,7 +5429,7 @@ class BaseShape extends BaseDrawingObject {
           ShapeDataUtil.WriteBlob(
             outputStream,
             blobBytes.Bytes,
-            ConstantData2.SDROpCodesByName.SDF_C_DRAWPREVIEWPNG
+            ShapeConstant.OpCodeName.SDF_C_DRAWPREVIEWPNG
           );
         }
       }
@@ -5447,7 +5446,7 @@ class BaseShape extends BaseDrawingObject {
             if (options.WriteBlocks || options.WriteGroupBlock) {
               ShapeDataUtil.WriteBlobBytesID(outputStream, this.BlobBytesID, ConstantData2.ImageDir.dir_jpg, options);
             } else {
-              ShapeDataUtil.WriteBlob(outputStream, blobBytes.Bytes, ConstantData2.SDROpCodesByName.SDF_C_DRAWJPG);
+              ShapeDataUtil.WriteBlob(outputStream, blobBytes.Bytes, ShapeConstant.OpCodeName.SDF_C_DRAWJPG);
             }
             break;
 
@@ -5456,7 +5455,7 @@ class BaseShape extends BaseDrawingObject {
             if (options.WriteBlocks || options.WriteGroupBlock) {
               ShapeDataUtil.WriteBlobBytesID(outputStream, this.BlobBytesID, ConstantData2.ImageDir.dir_png, options);
             } else {
-              ShapeDataUtil.WriteBlob(outputStream, blobBytes.Bytes, ConstantData2.SDROpCodesByName.SDF_C_DRAWPNG);
+              ShapeDataUtil.WriteBlob(outputStream, blobBytes.Bytes, ShapeConstant.OpCodeName.SDF_C_DRAWPNG);
             }
             break;
 
@@ -5465,7 +5464,7 @@ class BaseShape extends BaseDrawingObject {
             if (options.WriteBlocks) {
               ShapeDataUtil.WriteBlobBytesID(outputStream, this.BlobBytesID, ConstantData2.ImageDir.dir_svg, options);
             } else {
-              ShapeDataUtil.WriteBlob(outputStream, blobBytes.Bytes, ConstantData2.SDROpCodesByName.SDF_C_DRAWSVG);
+              ShapeDataUtil.WriteBlob(outputStream, blobBytes.Bytes, ShapeConstant.OpCodeName.SDF_C_DRAWSVG);
             }
             break;
         }
@@ -5479,7 +5478,7 @@ class BaseShape extends BaseDrawingObject {
         ShapeDataUtil.WriteString(
           outputStream,
           this.ImageID,
-          ConstantData2.SDROpCodesByName.SDF_C_SVGIMAGEID,
+          ShapeConstant.OpCodeName.SDF_C_SVGIMAGEID,
           options
         );
         hasWrittenEMFHash = true;
@@ -5491,7 +5490,7 @@ class BaseShape extends BaseDrawingObject {
       ShapeDataUtil.WriteString8(
         outputStream,
         this.EMFHash,
-        ConstantData2.SDROpCodesByName.SDF_C_EMFHASH,
+        ShapeConstant.OpCodeName.SDF_C_EMFHASH,
         options
       );
       hasWrittenEMFHash = true;
@@ -5507,7 +5506,7 @@ class BaseShape extends BaseDrawingObject {
       if (options.WriteBlocks) {
         ShapeDataUtil.WriteOleBlobBytesID(outputStream, this.OleBlobBytesID, ConstantData2.ImageDir.dir_store, options);
       } else {
-        ShapeDataUtil.WriteBlob(outputStream, blobBytes.Bytes, ConstantData2.SDROpCodesByName.SDF_C_OLESTORAGE);
+        ShapeDataUtil.WriteBlob(outputStream, blobBytes.Bytes, ShapeConstant.OpCodeName.SDF_C_OLESTORAGE);
       }
     }
 
@@ -5518,8 +5517,8 @@ class BaseShape extends BaseDrawingObject {
       } else {
         const nativeObject = T3Gv.optManager.GetObjectPtr(this.NativeID, false);
         if (nativeObject) {
-          const codePosition = ShapeDataUtil.Write_CODE(outputStream, ConstantData2.SDROpCodesByName.SDF_C_NATIVESTORAGE);
-          FileParser.write_nativesdfbuffer(outputStream, nativeObject);
+          const codePosition = ShapeDataUtil.Write_CODE(outputStream, ShapeConstant.OpCodeName.SDF_C_NATIVESTORAGE);
+          ShapeConstant.writeNativeSdfBuffer(outputStream, nativeObject);
           ShapeDataUtil.Write_LENGTH(outputStream, codePosition);
         }
       }
@@ -5742,9 +5741,9 @@ class BaseShape extends BaseDrawingObject {
     }
 
     // Set link flags for this shape and all connected hook objects
-    T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
+    T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
     for (let i = 0, hooksCount = this.hooks.length; i < hooksCount; i++) {
-      T3Gv.optManager.SetLinkFlag(this.hooks[i].objid, ShapeContant.LinkFlags.SED_L_MOVE);
+      T3Gv.optManager.SetLinkFlag(this.hooks[i].objid, ShapeConstant.LinkFlags.SED_L_MOVE);
     }
 
     T3Gv.optManager.AddToDirtyList(this.BlockID);
@@ -6566,7 +6565,7 @@ class BaseShape extends BaseDrawingObject {
               containerList.List[index].extra = 0;
             }
             // Update link flag for containerShape and mark it as an object type
-            T3Gv.optManager.SetLinkFlag(containerShape.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
+            T3Gv.optManager.SetLinkFlag(containerShape.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
             containerShape.flags = Utils2.SetFlag(containerShape.flags, ConstantData.ObjFlags.SEDO_Obj1, true);
 
             // Log output with updated extra value and return

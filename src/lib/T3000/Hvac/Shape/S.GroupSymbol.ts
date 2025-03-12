@@ -4,7 +4,6 @@ import BaseSymbol from './S.BaseSymbol'
 import Utils1 from '../Helper/Utils1';
 import Utils2 from "../Helper/Utils2";
 import T3Gv from '../Data/T3Gv'
-import FileParser from '../Data/FileParser'
 import WResult from '../Model/WResult'
 import ShapeDataUtil from '../Data/ShapeDataUtil'
 import $ from 'jquery'
@@ -12,7 +11,8 @@ import Effects from '../Basic/B.Element.Effects'
 import Instance from '../Data/Instance/Instance'
 import ConstantData from '../Data/ConstantData'
 import ConstantData2 from '../Data/ConstantData2'
-import PolygonConstant from '../Opt/Business/PolygonConstant';
+import PolygonConstant from '../Util/PolygonConstant';
+import ShapeConstant from '../Data/ShapeConstant';
 
 class GroupSymbol extends BaseSymbol {
 
@@ -739,8 +739,8 @@ class GroupSymbol extends BaseSymbol {
       nativeStorageResult.docDpi = T3Gv.docUtil.svgDoc.docInfo.docDpi;
 
       buffer = ShapeDataUtil.WriteBuffer(nativeStorageResult, true, true, true);
-      codeLength = ShapeDataUtil.Write_CODE(writer, ConstantData2.SDROpCodesByName.SDF_C_NATIVESTORAGE);
-      FileParser.write_nativebuffer(writer, buffer);
+      codeLength = ShapeDataUtil.Write_CODE(writer, ShapeConstant.OpCodeName.SDF_C_NATIVESTORAGE);
+      ShapeConstant.writeNativeBuffer(writer, buffer);
       ShapeDataUtil.Write_LENGTH(writer, codeLength);
     }
 

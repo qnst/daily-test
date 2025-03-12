@@ -12,7 +12,7 @@ import Point from '../Model/Point'
 import $ from 'jquery'
 import Instance from '../Data/Instance/Instance'
 import ConstantData2 from '../Data/ConstantData2'
-import ShapeContant from '../Data/ShapeContant'
+import ShapeConstant from '../Data/ShapeConstant'
 
 class ArcLine extends BaseLine {
   public CurveAdjust: any;
@@ -861,7 +861,7 @@ class ArcLine extends BaseLine {
           ConstantData.ActionTriggerType.ROTATE
         );
       }
-      T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeContant.LinkFlags.SED_L_MOVE);
+      T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
     }
 
     // Reset the backup object
