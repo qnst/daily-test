@@ -1312,12 +1312,12 @@ class BaseDrawingObject {
     }
 
     // Set up right click parameters
-    T3Gv.optManager.RightClickParams = new RightClickData();
-    T3Gv.optManager.RightClickParams.TargetID = element.GetID();
-    T3Gv.optManager.RightClickParams.HitPt.x = docCoords.x;
-    T3Gv.optManager.RightClickParams.HitPt.y = docCoords.y;
-    T3Gv.optManager.RightClickParams.Locked = (this.flags & ConstantData.ObjFlags.SEDO_Lock) > 0;
-    console.log("= S.BaseDrawingObject: RightClickParams set to:", T3Gv.optManager.RightClickParams);
+    T3Gv.optManager.rightClickParams = new RightClickData();
+    T3Gv.optManager.rightClickParams.TargetID = element.GetID();
+    T3Gv.optManager.rightClickParams.HitPt.x = docCoords.x;
+    T3Gv.optManager.rightClickParams.HitPt.y = docCoords.y;
+    T3Gv.optManager.rightClickParams.Locked = (this.flags & ConstantData.ObjFlags.SEDO_Lock) > 0;
+    console.log("= S.BaseDrawingObject: RightClickParams set to:", T3Gv.optManager.rightClickParams);
 
     // Show the appropriate contextual menu based on read-only status
     if (T3Gv.docUtil.IsReadOnly()) {
@@ -1441,7 +1441,7 @@ class BaseDrawingObject {
     let textFormatData = new TextFormatData();
     let defaultStyle = new DefaultStyle();
     const activeTableID = T3Gv.optManager.Table_GetActiveID();
-    const sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+    const sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
 
     // Deep copy the StyleRecord's Text settings and update font information from session block
     textFormatData = Utils1.DeepCopy(this.StyleRecord.Text);
@@ -1921,7 +1921,7 @@ class BaseDrawingObject {
   //       e.just = this.TextAlign.slice(t + 1, this.TextAlign.length)
   //     ) : e.just = this.TextAlign
   //   }
-  //   var a = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+  //   var a = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1),
   //     r = $.extend(!0, {
   //     }, this.StyleRecord.Text);
   //   return r.FontId = T3Gv.optManager.GetFontIdByName(a.def.lf.fontName),
@@ -2047,7 +2047,7 @@ class BaseDrawingObject {
   GetLengthInRulerUnits(length: number, offset?: number): string {
     console.log("= S.BaseDrawingObject: GetLengthInRulerUnits input:", { length, offset });
 
-    const sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+    const sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
     let result = '';
     let feet = 0;
     let inches = 0;
@@ -2339,8 +2339,8 @@ class BaseDrawingObject {
         textShape.SetEditCallback(this.DimensionEditCallback, this);
       }
 
-      textShape.SetFormat(T3Gv.optManager.theContentHeader.DimensionFontStyle);
-      textShape.SetConstraints(T3Gv.optManager.theContentHeader.MaxWorkDim.x, 0, 0);
+      textShape.SetFormat(T3Gv.optManager.contentHeader.DimensionFontStyle);
+      textShape.SetConstraints(T3Gv.optManager.contentHeader.MaxWorkDim.x, 0, 0);
       textShape.SetRenderingEnabled(true);
 
       if (isAreaDimension) {
@@ -2444,8 +2444,8 @@ class BaseDrawingObject {
       textShape.SetEditCallback(this.DimensionEditCallback, this);
     }
 
-    textShape.SetFormat(T3Gv.optManager.theContentHeader.DimensionFontStyle);
-    textShape.SetConstraints(T3Gv.optManager.theContentHeader.MaxWorkDim.x, 0, 0);
+    textShape.SetFormat(T3Gv.optManager.contentHeader.DimensionFontStyle);
+    textShape.SetConstraints(T3Gv.optManager.contentHeader.MaxWorkDim.x, 0, 0);
     textShape.SetRenderingEnabled(true);
 
     if (isAreaDimension) {
@@ -2545,7 +2545,7 @@ class BaseDrawingObject {
       dimensionInfo.text.SetUserData(angleChangeData);
       dimensionInfo.text.SetID(ConstantData.SVGElementClass.DIMENSIONTEXT);
       dimensionInfo.text.SetEditCallback(this.DimensionEditCallback, this);
-      dimensionInfo.text.SetConstraints(T3Gv.optManager.theContentHeader.MaxWorkDim.x, 0, 0);
+      dimensionInfo.text.SetConstraints(T3Gv.optManager.contentHeader.MaxWorkDim.x, 0, 0);
       dimensionInfo.text.SetRenderingEnabled(true);
       dimensionInfo.text.SetPos(dimensionInfo.textRect.x, dimensionInfo.textRect.y);
 
@@ -2836,7 +2836,7 @@ class BaseDrawingObject {
 
     // Create text shape
     textShape = T3Gv.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.TEXT);
-    textShape.SetFormat(T3Gv.optManager.theContentHeader.DimensionFontStyle);
+    textShape.SetFormat(T3Gv.optManager.contentHeader.DimensionFontStyle);
     textShape.SetText(text);
     textDimensions = textShape.GetTextMinDimensions();
 
@@ -2896,8 +2896,8 @@ class BaseDrawingObject {
 
     textShape = T3Gv.optManager.svgDoc.CreateShape(ConstantData.CreateShapeType.TEXT);
     textShape.SetText(text);
-    textShape.SetFormat(T3Gv.optManager.theContentHeader.DimensionFontStyle);
-    textShape.SetConstraints(T3Gv.optManager.theContentHeader.MaxWorkDim.x, 0, 0);
+    textShape.SetFormat(T3Gv.optManager.contentHeader.DimensionFontStyle);
+    textShape.SetConstraints(T3Gv.optManager.contentHeader.MaxWorkDim.x, 0, 0);
 
     this.GetDimensionTextInfo(startPoint, endPoint, angle, textShape, segmentIndex, textFramePoints, leftArrowPoints, rightArrowPoints, isStandoff);
 
@@ -3005,7 +3005,7 @@ class BaseDrawingObject {
     console.log("= S.BaseDrawingObject: GetHookedObjectDescList input:", { dimensionPoints, context });
 
     let result: any[] = [];
-    let linkManager = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, false);
+    let linkManager = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, false);
     let boundingRect = new Rectangle(0, 0, 0, 0);
     let hookPoints: Point[] = [];
     let hookObject: any = null;
@@ -3998,7 +3998,7 @@ class BaseDrawingObject {
       this.ShortRef != ConstantData2.LineTypes.SED_LS_MeasuringTape &&
       this.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL
     ) {
-      const linkObj = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, false);
+      const linkObj = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, false);
       if (linkObj && T3Gv.optManager.FindLink(linkObj, this.BlockID, true) >= 0) {
         useStandOff = true;
       }
@@ -4204,7 +4204,7 @@ class BaseDrawingObject {
 
 
     if (check3) {
-      var linkObject = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, false);
+      var linkObject = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, false);
       if (linkObject) {
 
         const fdLink = T3Gv.optManager.FindLink(linkObject, this.BlockID, !0);
@@ -4403,7 +4403,7 @@ class BaseDrawingObject {
     if (
       check3
     ) {
-      var linkObject = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, false);
+      var linkObject = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, false);
       if (linkObject) {
 
         const fdLink = T3Gv.optManager.FindLink(linkObject, this.BlockID, !0);
@@ -4909,7 +4909,7 @@ class BaseDrawingObject {
     console.log("= S.BaseDrawingObject: UnitsToCoord - Input:", { value, offset });
 
     // Ensure the SED session block is retrieved (result unused here)
-    T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+    T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
 
     const toUnits = this.GetToUnits();
     value += offset * T3Gv.docUtil.rulerConfig.majorScale;
@@ -4923,7 +4923,7 @@ class BaseDrawingObject {
     console.log("= S.BaseDrawingObject: ConvToUnits input:", { value, offset });
 
     // Ensure the SED session block is retrieved (though result is unused here)
-    T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+    T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
 
     const toUnits = this.GetToUnits();
     const majorScale = T3Gv.docUtil.rulerConfig.majorScale;
@@ -6150,12 +6150,12 @@ class BaseDrawingObject {
   CreateRichGradientRecord(index: number) {
     console.log("= S.BaseDrawingObject: CreateRichGradientRecord - Input:", { index });
 
-    if (index < 0 || index >= T3Gv.optManager.RichGradients.length) {
+    if (index < 0 || index >= T3Gv.optManager.richGradients.length) {
       console.log("= S.BaseDrawingObject: CreateRichGradientRecord - Output:", null, "(Invalid index)");
       return null;
     }
 
-    const richGradient = T3Gv.optManager.RichGradients[index];
+    const richGradient = T3Gv.optManager.richGradients[index];
     let gradientRecord: {
       type: any;
       startPos: any;
@@ -6383,7 +6383,7 @@ class BaseDrawingObject {
     let currentIndex: number = $.inArray(currentBlockID, frontLayerZList);
 
     // Retrieve the links object.
-    let linksObj = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, true);
+    let linksObj = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, true);
     if (linksObj) {
       // Start finding links starting for the current block.
       let linkIndex: number = T3Gv.optManager.FindLink(linksObj, currentBlockID, true);

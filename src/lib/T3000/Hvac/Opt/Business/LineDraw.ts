@@ -33,7 +33,7 @@ Business.LineDraw.prototype = new Business.Base,
         '20b488f4-1c92-4725-98bb-01668dc744ea',
         '7a2607ef-e894-4766-b80f-902328ea8bfd'
       ],
-      r = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+      r = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1),
       i = a.length;
     if (r.RecentSymbols && 0 === r.RecentSymbols.length) for (r.RecentSymbols = [], e = 0; e < i; e++) t = new RecentSymbol(a[e], '', !1),
       r.RecentSymbols.push(t);
@@ -88,7 +88,7 @@ Business.LineDraw.prototype = new Business.Base,
   Business.LineDraw.prototype.Pr_GetCurrentSymbolID = function () {
     var e,
       t,
-      a = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
+      a = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1);
     t = a.RecentSymbols.length;
     var r = SDUI.Commands.MainController.Symbols.GetSelectedButton();
     if (r) for (e = 0; e < t; e++) if (a.RecentSymbols[e].ItemId === r && a.RecentSymbols[e].NoMenu) {
@@ -161,7 +161,7 @@ Business.LineDraw.prototype = new Business.Base,
       o = [],
       s = ConstantData.Defines.SED_CDim,
       l = 'segLine',
-      S = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+      S = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1),
       c = ConstantData.ActionArrow,
       u = !1;
     if (
@@ -274,7 +274,7 @@ Business.LineDraw.prototype = new Business.Base,
       s = ConstantData.Defines.SED_CDim,
       l = 'segLine',
       S = ConstantData.ActionArrow,
-      c = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
+      c = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1);
     if (
       (
         r = T3Gv.optManager.SD_GetVisioTextParent(r),
@@ -396,7 +396,7 @@ Business.LineDraw.prototype = new Business.Base,
       c = 0,
       u = 0,
       p = 'segLine',
-      d = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+      d = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1),
       D = ConstantData.Defines.SED_CDim;
     a ? (
       (o = d.def.h_arraywidth) < ConstantData.Defines.MinLineDrawGap &&
@@ -584,7 +584,7 @@ Business.LineDraw.prototype = new Business.Base,
           e.y === o &&
           (e.y = o - 5)
       },
-      d = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+      d = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1),
       D = T3Gv.optManager.GetObjectPtr(t, !1),
       g = D.flags & ConstantData.ObjFlags.SEDO_UseConnect &&
         D.ConnectPoints,
@@ -778,7 +778,7 @@ Business.LineDraw.prototype = new Business.Base,
   Business.LineDraw.prototype.Pr_ShiftDiagram = function (e, t, a, r, i) {
     if (0 !== t || 0 !== a) {
       var n,
-        o = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, !1);
+        o = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, !1);
       if (
         n = r ? T3Gv.optManager.GetObjectPtr(r, !1) : T3Gv.optManager.GetObjectPtr(e.hooks[0].objid, !1)
       ) {
@@ -805,7 +805,7 @@ Business.LineDraw.prototype = new Business.Base,
           x: t,
           y: a,
           id: e.BlockID,
-          theMoveList: S,
+          moveList: S,
           newshapeid: i
         }
       }
@@ -848,8 +848,8 @@ Business.LineDraw.prototype = new Business.Base,
       s = ConstantData.Defines.SED_CDim,
       l = 0,
       S = 0,
-      c = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
-      u = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, !1),
+      c = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1),
+      u = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, !1),
       p = '',
       d = !1;
     if (
@@ -1003,7 +1003,7 @@ Business.LineDraw.prototype = new Business.Base,
     var t,
       a,
       r,
-      i = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+      i = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1),
       n = i.RecentSymbols.length,
       o = function (e) {
         var t,
@@ -1071,7 +1071,7 @@ Business.LineDraw.prototype = new Business.Base,
     GlobalDatagFlowChartManager.SwimlaneAction(e, t)
   },
   Business.LineDraw.prototype.AddShape = function (e, t) {
-    var a = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
+    var a = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1);
     null == t &&
       (t = {
         x: 0,
@@ -1107,7 +1107,7 @@ Business.LineDraw.prototype = new Business.Base,
   Business.LineDraw.prototype.Navigate = function (e, t) {
     var a,
       r = !1,
-      i = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theTEDSessionBlockID, !1),
+      i = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.tedSessionBlockId, !1),
       n = {},
       o = ConstantData.Defines.SED_CDim,
       s = [];
@@ -1170,7 +1170,7 @@ Business.LineDraw.prototype = new Business.Base,
     }
   },
   Business.LineDraw.prototype.AllowActionButtons = function (e, t) {
-    if (e.IsSwimlane() || T3Gv.optManager.NudgeOpen) return null;
+    if (e.IsSwimlane() || T3Gv.optManager.nudgeOpen) return null;
     if (e.flags & ConstantData.ObjFlags.SEDO_NoLinking) return null;
     if (!t && T3Gv.optManager.SD_GetVisioTextChild(e.BlockID) >= 0) return null;
     var a = e.flags & ConstantData.ObjFlags.SEDO_UseConnect &&
@@ -1212,7 +1212,7 @@ Business.LineDraw.prototype = new Business.Base,
       c,
       u,
       p,
-      d = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+      d = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1),
       D = [],
       g = ConstantData.ObjectTypes,
       h = ConstantData.HookPts,
@@ -1321,7 +1321,7 @@ Business.LineDraw.prototype = new Business.Base,
     }
     m &&
       (
-        d = GlobalDataT3Gv.optManager.GetObjectPtr(GlobalDataT3Gv.optManager.theSEDSessionBlockID, !0),
+        d = GlobalDataT3Gv.optManager.GetObjectPtr(GlobalDataT3Gv.optManager.sedSessionBlockId, !0),
         I < 20 &&
         (I = 20),
         e ? d.def.v_arraywidth = I : d.def.h_arraywidth = I

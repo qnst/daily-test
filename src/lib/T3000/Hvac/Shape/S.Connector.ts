@@ -248,7 +248,7 @@ class Connector extends BaseDrawingObject {
       textData.Data.runtimeText = textElement.GetRuntimeText();
     }
 
-    textElement.SetConstraints(T3Gv.optManager.theContentHeader.MaxWorkDim.x, 0, rect.height);
+    textElement.SetConstraints(T3Gv.optManager.contentHeader.MaxWorkDim.x, 0, rect.height);
     if (this.bInGroup) {
       textElement.DisableHyperlinks(true);
     }
@@ -269,7 +269,7 @@ class Connector extends BaseDrawingObject {
     let isCauseEffectMain = this.objecttype === ConstantData.ObjectTypes.SD_OBJT_CAUSEEFFECT_MAIN;
     let skipCount = ConstantData.ConnectorDefines.SEDA_NSkip;
 
-    T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+    T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
 
     if (this.flags & ConstantData.ObjFlags.SEDO_NotVisible) {
       if (this.hooks.length && !isCoManager && !isChildOfAssistant && !isFlowChartConnector && !isCauseEffectMain && !isGenoConnector) {
@@ -608,7 +608,7 @@ class Connector extends BaseDrawingObject {
     const totalHooks = this.arraylist.hook.length;
     const isLinear = Boolean(this.arraylist.styleflags & ConstantData.SEDA_Styles.SEDA_Linear);
     const textAlignment = ShapeDataUtil.TextAlignToWin(this.TextAlign);
-    const backgroundObj = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+    const backgroundObj = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
 
     // Update background color and fill based on text alignment
     this.StyleRecord.Fill.Paint.Color = backgroundObj.background.Paint.Color;
@@ -2470,7 +2470,7 @@ class Connector extends BaseDrawingObject {
         new SelectionAttributes(),
         ConstantData.ConnectorDefines
       ),
-      F = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
+      F = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1);
     if (
       null != this.arraylist &&
       null != this.arraylist.hook &&
@@ -2890,7 +2890,7 @@ class Connector extends BaseDrawingObject {
       localParameters = {},
       childHookList = [],
       connectorMultiplier = 1,
-      linksObject = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, false),
+      linksObject = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, false),
       isBothSidesNoStagger = (this.arraylist.styleflags & ConstantData.SEDA_Styles.SEDA_BothSides) &&
         ((this.arraylist.styleflags & ConstantData.SEDA_Styles.SEDA_Stagger) === 0),
       isLinear = (this.arraylist.styleflags & ConstantData.SEDA_Styles.SEDA_Linear) > 0,
@@ -3442,7 +3442,7 @@ class Connector extends BaseDrawingObject {
 
     const styleConstants = ConstantData.SEDA_Styles;
     const autoFormatFlags = Business.FlowChart.AutoFormatFlags;
-    const sessionObject = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+    const sessionObject = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
     const isLinear = (this.arraylist.styleflags & styleConstants.SEDA_Linear) > 0;
     const isFlowConnector = this.arraylist.styleflags & styleConstants.SEDA_FlowConn;
     let blockIdToUse = -1;
@@ -3489,7 +3489,7 @@ class Connector extends BaseDrawingObject {
     const bothSides = this.arraylist.styleflags & ConstantData.SEDA_Styles.SEDA_BothSides;
     const isLinear = this.arraylist.styleflags & ConstantData.SEDA_Styles.SEDA_Linear;
     const isFlowConnector = this.arraylist.styleflags & ConstantData.SEDA_Styles.SEDA_FlowConn;
-    const sessionObject = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+    const sessionObject = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
     const noTreeOverlap = sessionObject.flags & ConstantData.SessionFlags.SEDS_NoTreeOverlap;
     const skipCount = ConstantData.ConnectorDefines.SEDA_NSkip;
 
@@ -3607,7 +3607,7 @@ class Connector extends BaseDrawingObject {
     console.log("S.Connector: DeleteObject called with no input parameters");
 
     const styleConstants = ConstantData.SEDA_Styles;
-    const sessionObject = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+    const sessionObject = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
     const isFlowConnector = Boolean(this.arraylist.styleflags & styleConstants.SEDA_FlowConn);
     const autoFormatFlags = Business.FlowChart.AutoFormatFlags;
 
@@ -4703,7 +4703,7 @@ class Connector extends BaseDrawingObject {
       ee = {},
       te = {},
       ae = {},
-      re = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+      re = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1),
       ie = [],
       ne = !1,
       oe = {},
@@ -7926,7 +7926,7 @@ class Connector extends BaseDrawingObject {
         this.flags = Utils2.SetFlag(this.flags, notVisibleFlag, false);
       }
       T3Gv.optManager.AddToDirtyList(this.BlockID);
-      T3Gv.optManager.DirtyListReOrder = true;
+      T3Gv.optManager.dirtyListReOrder = true;
       if (this.flags & notVisibleFlag) {
         deselectedList.push(this.BlockID);
         T3Gv.optManager.DeSelect(deselectedList);
@@ -7946,7 +7946,7 @@ class Connector extends BaseDrawingObject {
                 obj.flags = Utils2.SetFlag(obj.flags, notVisibleFlag, false);
               }
               T3Gv.optManager.AddToDirtyList(this.arraylist.hook[i].id);
-              T3Gv.optManager.DirtyListReOrder = true;
+              T3Gv.optManager.dirtyListReOrder = true;
               if (obj.flags & notVisibleFlag) {
                 deselectedList.push(this.arraylist.hook[i].id);
               }

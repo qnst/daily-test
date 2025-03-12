@@ -115,17 +115,17 @@ class ToolUtil1 {
     var wallThickness = thickness * T3Gv.docHandler.rulerSettings.major /
       (T3Gv.docHandler.rulerSettings.majorScale * conversionFactor);
 
-    var sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+    var sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
 
     if (!Utils2.IsEqual(sessionBlock.def.wallThickness, wallThickness, 0.01) || wallObj) {
       T3Gv.optManager.CloseEdit(true, true);
-      sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, true);
+      sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, true);
 
       if (!wallObj) {
         sessionBlock.def.wallThickness = wallThickness;
       }
 
-      var sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+      var sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
       T3Gv.optManager.CompleteOperation(null);
     }
 
@@ -327,7 +327,7 @@ class ToolUtil1 {
   DrawNewLine = function (e, t, a, r) {
     console.log(' => ============DrawNewLineShape 2 e, t, a, r=>', e, t, a, r);
 
-    var i = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data,
+    var i = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data,
       n = 0 == (i.def.textflags & ConstantData.TextFlags.SED_TF_HorizText),
       o = i.d_sarrow,
       s = i.d_earrow,
@@ -437,7 +437,7 @@ class ToolUtil1 {
     console.log('StampRectangle 2 t=', t)
     var a,
       r,
-      i = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
+      i = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1);
     t ? (
       a = ConstantData.Defines.Shape_Square,//ListManager.Model.ts 100
       r = ConstantData.Defines.Shape_Square//ListManager.Model.ts 100
@@ -469,7 +469,7 @@ class ToolUtil1 {
   StampRoundRect = function (e, t) {
     var a,
       r,
-      i = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
+      i = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1);
     t ? (
       a = ConstantData.Defines.Shape_Square,
       r = ConstantData.Defines.Shape_Square
@@ -543,7 +543,7 @@ class ToolUtil1 {
 
   StampTextLabel = function (e, t) {
     // Commands.MainController.Selection.SetSelectionTool(Resources.Tools.Tool_Text, e);
-    var a = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theTEDSessionBlockID, !1);
+    var a = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.tedSessionBlockId, !1);
     if (t || - 1 == a.theActiveTextEditObjectID) {
       if (!t) {
         var r = T3Gv.optManager.GetTargetSelect();
@@ -558,7 +558,7 @@ class ToolUtil1 {
         }
       }
     } else T3Gv.optManager.DeactivateTextEdit();
-    var o = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data,
+    var o = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data,
       s = Utils4.FindStyle(ConstantData.Defines.TextBlockStyle);
     null == s &&
       (s = o.def.style);
@@ -903,8 +903,8 @@ class ToolUtil1 {
     try {
       T3Gv.optManager.PastePoint = null,
         e &&
-        T3Gv.optManager.RightClickParams &&
-        (T3Gv.optManager.PastePoint = T3Gv.optManager.RightClickParams.HitPt),
+        T3Gv.optManagerrightClickParams &&
+        (T3Gv.optManager.PastePoint = T3Gv.optManagerrightClickParams.HitPt),
         Clipboard.PasteFromUIaction()
     } catch (e) {
       throw e
@@ -916,8 +916,8 @@ class ToolUtil1 {
 
     try {
       T3Gv.optManager.PastePoint = null;
-      if (e && T3Gv.optManager.RightClickParams) {
-        T3Gv.optManager.PastePoint = T3Gv.optManager.RightClickParams.HitPt;
+      if (e && T3Gv.optManagerrightClickParams) {
+        T3Gv.optManager.PastePoint = T3Gv.optManagerrightClickParams.HitPt;
       }
       Clipboard.PasteFromUIaction();
     } catch (error) {
@@ -1009,7 +1009,7 @@ class ToolUtil1 {
 
   IsActiveTextEdit = function () {
     try {
-      return - 1 != T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theTEDSessionBlockID, !1).theActiveTextEditObjectID
+      return - 1 != T3Gv.optManager.GetObjectPtr(T3Gv.optManager.tedSessionBlockId, !1).theActiveTextEditObjectID
     } catch (e) {
       T3Gv.optManager.ExceptionCleanup(e)
     }
@@ -1145,7 +1145,7 @@ class ToolUtil1 {
 
   DrawNewSegLine = function (e, t, a) {
     var r,
-      i = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data,
+      i = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data,
       n = 0 == (i.def.textflags & ConstantData.TextFlags.SED_TF_HorizText),
       o = i.d_sarrow,
       s = i.d_earrow,
@@ -1201,7 +1201,7 @@ class ToolUtil1 {
 
   DrawNewArcSegLine = function (e, t, a) {
     var r,
-      i = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data,
+      i = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data,
       n = 0 == (i.def.textflags & ConstantData.TextFlags.SED_TF_HorizText),
       o = i.d_sarrow,
       s = i.d_earrow,
@@ -1256,7 +1256,7 @@ class ToolUtil1 {
 
   DrawNewPolyLine = function (e, t, a) {
     var r,
-      i = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data,
+      i = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data,
       n = 0 == (i.def.textflags & ConstantData.TextFlags.SED_TF_HorizText),
       o = i.d_sarrow,
       s = i.d_earrow,
@@ -1315,9 +1315,9 @@ class ToolUtil1 {
 
   DrawNewPolyLineContainer = function (e, t, a) {
     var r,
-      i = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data,
+      i = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data,
       n = (
-        T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+        T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1),
         0 == (i.def.textflags & ConstantData.TextFlags.SED_TF_HorizText)
       );
     a ? r = Utils1.DeepCopy(a.Data.attributes) : (
@@ -1362,7 +1362,7 @@ class ToolUtil1 {
   }
 
   DrawNewFreehandLine = function (e, t, a) {
-    var r = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data;
+    var r = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data;
     a ? attributes = Utils1.DeepCopy(a.Data.attributes) : (
       attributes = {
         Frame: {
@@ -1403,7 +1403,7 @@ class ToolUtil1 {
 
   DrawNewArcLine = function (e, t, a) {
     var r,
-      i = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data,
+      i = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data,
       n = 0 == (i.def.textflags & ConstantData.TextFlags.SED_TF_HorizText),
       o = i.d_sarrow,
       s = i.d_earrow,

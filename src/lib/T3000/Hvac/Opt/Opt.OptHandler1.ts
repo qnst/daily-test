@@ -42,7 +42,7 @@ class OptHandler1 {
   public textEntryTimer: any;
   public TopLeftPastePos: any;
   public TopLeftPasteScrollPos: any;
-  public theContentHeader: any;
+  public contentHeader: any;
   public inZoomIdle: boolean;
   public rubberBandFrame: any;
   public rubberBandStartX: number = 0;
@@ -84,12 +84,12 @@ class OptHandler1 {
     this.svgObjectLayer = null;
     this.svgOverlayLayer = null;
     this.svgHighlightLayer = null;
-    this.theContentHeader = new ContentHeader();
+    this.contentHeader = new ContentHeader();
     this.InitSVGDocument();
     this.SVGroot = this.svgDoc.svgObj.node;
     this.TopLeftPastePos = { x: 0, y: 0 };
     this.TopLeftPasteScrollPos = { x: 0, y: 0 };
-    this.theContentHeader = new ContentHeader();
+    this.contentHeader = new ContentHeader();
 
     //#endregion
   }

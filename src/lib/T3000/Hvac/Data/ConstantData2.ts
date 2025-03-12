@@ -137,7 +137,7 @@ class ConstantData2 {
     SPLITWALL: 8
   }
 
-  static FormatPainterModes = {
+  static formatPainterModes = {
     NONE: 0,
     OBJECT: 1,
     TEXT: 2,

@@ -83,10 +83,10 @@ class EvtUtil {
 
     // Handle right-click contextual menu
     if (isRightClick) {
-      T3Gv.optManager.RightClickParams = new RightClickData();
+      T3Gv.optManager.rightClickParams = new RightClickData();
 
       // Convert window coordinates to document coordinates
-      T3Gv.optManager.RightClickParams.HitPt = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(
+      T3Gv.optManager.rightClickParams.HitPt = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(
         event.gesture.center.clientX,
         event.gesture.center.clientY
       );
@@ -936,7 +936,7 @@ class EvtUtil {
 
     // Cancel any active selections or moves
     T3Gv.optManager.RubberBandSelect_Cancel();
-    if (T3Gv.optManager.theMoveList && T3Gv.optManager.theMoveList.length) {
+    if (T3Gv.optManager.moveList && T3Gv.optManager.moveList.length) {
       T3Gv.optManager.LM_MoveRelease(event);
     }
 
@@ -993,7 +993,7 @@ class EvtUtil {
     T3Gv.optManager.RubberBandSelect_Cancel();
 
     // Release any active move operation
-    if (T3Gv.optManager.theMoveList && T3Gv.optManager.theMoveList.length) {
+    if (T3Gv.optManager.moveList && T3Gv.optManager.moveList.length) {
       T3Gv.optManager.LM_MoveRelease(event);
     }
 
@@ -1069,8 +1069,8 @@ class EvtUtil {
 
     // Cancel any active selections or moves
     T3Gv.optManager.RubberBandSelect_Cancel();
-    if (T3Gv.optManager.theMoveList &&
-      T3Gv.optManager.theMoveList.length) {
+    if (T3Gv.optManager.moveList &&
+      T3Gv.optManager.moveList.length) {
       T3Gv.optManager.LM_MoveRelease(event);
     }
 

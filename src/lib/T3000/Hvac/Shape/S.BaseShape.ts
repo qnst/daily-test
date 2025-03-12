@@ -707,7 +707,7 @@ class BaseShape extends BaseDrawingObject {
 
           if (this.TextGrow === ConstantData.TextGrowBehavior.HORIZONTAL) {
             textElement.SetConstraints(
-              T3Gv.optManager.theContentHeader.MaxWorkDim.x,
+              T3Gv.optManager.contentHeader.MaxWorkDim.x,
               this.trect.width,
               this.trect.height
             );
@@ -745,7 +745,7 @@ class BaseShape extends BaseDrawingObject {
     let tableResult;
     let rectCopy;
     let resizedTable;
-    const sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+    const sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
 
     if (this.SymbolURL && this.SymbolURL.length > 0) {
       console.log("= S.BaseShape - ChangeShape output: SymbolURL exists, returning false");
@@ -915,7 +915,7 @@ class BaseShape extends BaseDrawingObject {
       if (this.TextFlags & (textFlagConstants.SED_TF_AttachA + textFlagConstants.SED_TF_AttachB)) {
         style = Utils3.FindStyle(ConstantData.Defines.TextBlockStyle);
       } else {
-        style = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false).def.style;
+        style = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false).def.style;
       }
       const newStyle = {
         StyleRecord: {
@@ -1660,9 +1660,9 @@ class BaseShape extends BaseDrawingObject {
         if (Math.floor(t.x) < 0) return !0;
         if (Math.floor(t.y) < 0) return !0;
         if (
-          T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto
+          T3Gv.optManager.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto
         ) {
-          var i = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
+          var i = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1);
           if (t.x + t.width > i.dim.x) return !0;
           if (t.y + t.height > i.dim.y) return !0
         }
@@ -1866,7 +1866,7 @@ class BaseShape extends BaseDrawingObject {
           T3Gv.optManager.PolyLineToShape(R.BlockID, !0);
         if (
           s = (R = T3Gv.optManager.GetObjectPtr(this.BlockID, !1)).trect,
-          l = this.TextGrow === ConstantData.TextGrowBehavior.HORIZONTAL ? T3Gv.optManager.theContentHeader.MaxWorkDim.x : s.width,
+          l = this.TextGrow === ConstantData.TextGrowBehavior.HORIZONTAL ? T3Gv.optManager.contentHeader.MaxWorkDim.x : s.width,
           T3Gv.optManager.actionSvgObject &&
           T3Gv.optManager.actionSvgObject.textElem
         ) {
@@ -2132,9 +2132,9 @@ class BaseShape extends BaseDrawingObject {
         ) break;
         if (j.y < 0) break;
         if (
-          T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto
+          T3Gv.optManager.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto
         ) {
-          var z = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
+          var z = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1);
           if (j.x + j.width > z.dim.x) break;
           if (j.y + j.height > z.dim.y) break
         }
@@ -2257,7 +2257,7 @@ class BaseShape extends BaseDrawingObject {
         var h,
           m = g.textElem;
         n = this.trect,
-          h = this.TextGrow === ConstantData.TextGrowBehavior.HORIZONTAL ? T3Gv.optManager.theContentHeader.MaxWorkDim.x : n.width,
+          h = this.TextGrow === ConstantData.TextGrowBehavior.HORIZONTAL ? T3Gv.optManager.contentHeader.MaxWorkDim.x : n.width,
           i = m ? m.CalcTextFit(h) : {
             width: 0,
             height: 0
@@ -2427,8 +2427,8 @@ class BaseShape extends BaseDrawingObject {
       coords.y = frameRect.top;
     }
 
-    if (T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto) {
-      const sessionBlock = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data;
+    if (T3Gv.optManager.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto) {
+      const sessionBlock = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data;
       if (coords.x > sessionBlock.dim.x - frameRect.right) {
         coords.x = sessionBlock.dim.x - frameRect.right;
       }
@@ -2768,7 +2768,7 @@ class BaseShape extends BaseDrawingObject {
 
       // Handle container adjustment
       if (T3Gv.optManager.actionTriggerId === ConstantData.ActionTriggerType.CONTAINER_ADJ) {
-        T3Gv.optManager.theMoveList = [];
+        T3Gv.optManager.moveList = [];
         T3Gv.optManager.dragElementList.length = 0;
         T3Gv.optManager.dragBBoxList.length = 0;
         T3Gv.optManager.actionOldExtra = 0;
@@ -2855,19 +2855,19 @@ class BaseShape extends BaseDrawingObject {
         T3Gv.optManager.currentModalOperation === ConstantData2.ModalOperations.FORMATPAINTER
       ) {
         if (
-          T3Gv.optManager.FormatPainterMode === TODO.FormatPainterModes.TABLE ||
-          T3Gv.optManager.FormatPainterMode === TODO.FormatPainterModes.OBJECT
+          T3Gv.optManager.formatPainterMode === TODO.formatPainterModes.TABLE ||
+          T3Gv.optManager.formatPainterMode === TODO.formatPainterModes.OBJECT
         ) {
           var e = T3Gv.optManager.Table_GetActiveID();
-          T3Gv.optManager.Table_PasteFormat(e, T3Gv.optManager.FormatPainterStyle, !1)
+          T3Gv.optManager.Table_PasteFormat(e, T3Gv.optManager.formatPainterStyle, !1)
         }
-        !0 !== T3Gv.optManager.FormatPainterSticky &&
+        !0 !== T3Gv.optManager.formatPainterSticky &&
           T3Gv.optManager.SetFormatPainter(!0, !1)
       }
     };
     this.objecttype !== ConstantData.ObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER &&
       T3Gv.optManager.UpdateLinks(),
-      T3Gv.optManager.LinkParams = null;
+      T3Gv.optManager.linkParams = null;
     var a = this.GetTable(!1);
     switch (
     T3Gv.optManager.SetEditMode(ConstantData.EditState.DEFAULT),
@@ -2896,13 +2896,13 @@ class BaseShape extends BaseDrawingObject {
           T3Gv.optManager.currentModalOperation === TODO.ModalOperations.FORMATPAINTER
         ) {
           if (
-            T3Gv.optManager.FormatPainterMode === TODO.FormatPainterModes.TABLE ||
-            T3Gv.optManager.FormatPainterMode === TODO.FormatPainterModes.OBJECT
+            T3Gv.optManager.formatPainterMode === TODO.formatPainterModes.TABLE ||
+            T3Gv.optManager.formatPainterMode === TODO.formatPainterModes.OBJECT
           ) {
             var r = T3Gv.optManager.Table_GetActiveID();
-            T3Gv.optManager.Table_PasteFormat(r, T3Gv.optManager.FormatPainterStyle, !1)
+            T3Gv.optManager.Table_PasteFormat(r, T3Gv.optManager.formatPainterStyle, !1)
           }
-          !0 !== T3Gv.optManager.FormatPainterSticky &&
+          !0 !== T3Gv.optManager.formatPainterSticky &&
             T3Gv.optManager.SetFormatPainter(!0, !1)
         }
         break;
@@ -2927,7 +2927,7 @@ class BaseShape extends BaseDrawingObject {
 
     console.log('LM_SetupActionClick', e, t, a, r, i);
 
-    T3Gv.optManager.theEventTimestamp = Date.now(),
+    T3Gv.optManager.eventTimestamp = Date.now(),
       T3Gv.optManager.SetUIAdaptation(e);
     var n,
       o,
@@ -3064,7 +3064,7 @@ class BaseShape extends BaseDrawingObject {
         T3Gv.optManager.actionStartY = L.y;
       var b = this.Pr_GetAdjustShapeList();
       if (!b) return !1;
-      T3Gv.optManager.theMoveList = b.list,
+      T3Gv.optManager.moveList = b.list,
         T3Gv.optManager.dragElementList = b.svglist,
         T3Gv.optManager.dragBBoxList = b.framelist,
         T3Gv.optManager.actionTableLastY = 0,
@@ -3147,7 +3147,7 @@ class BaseShape extends BaseDrawingObject {
     T3Gv.optManager.UnbindActionClickHammerEvents();
     this.ResetAutoScrollTimer();
     T3Gv.optManager.ob = {};
-    T3Gv.optManager.LinkParams = null;
+    T3Gv.optManager.linkParams = null;
     T3Gv.optManager.actionTriggerId = -1;
     T3Gv.optManager.actionTriggerData = null;
     T3Gv.optManager.actionStoredObjectId = -1;
@@ -3342,7 +3342,7 @@ class BaseShape extends BaseDrawingObject {
     console.log("= S.BaseShape - LM_DrawClick_ExceptionCleanup input:", exception);
     T3Gv.optManager.UnbindActionClickHammerEvents();
     this.ResetAutoScrollTimer();
-    T3Gv.optManager.LinkParams = null;
+    T3Gv.optManager.linkParams = null;
     T3Gv.optManager.actionStoredObjectId = -1;
     T3Gv.optManager.actionSvgObject = null;
     T3Gv.optManager.WorkAreaHammer.on('dragstart', EvtUtil.Evt_WorkAreaHammerDragStart);
@@ -3724,10 +3724,10 @@ class BaseShape extends BaseDrawingObject {
     let blockIDs = [this.BlockID];
 
     if (isSinglePoint) {
-      T3Gv.optManager.LinkParams && (T3Gv.optManager.LinkParams.AutoSinglePoint = true);
+      T3Gv.optManager.linkParams && (T3Gv.optManager.linkParams.AutoSinglePoint = true);
       singlePoint = true;
     } else {
-      T3Gv.optManager.LinkParams && (T3Gv.optManager.LinkParams.AutoSinglePoint = false);
+      T3Gv.optManager.linkParams && (T3Gv.optManager.linkParams.AutoSinglePoint = false);
       singlePoint = false;
     }
 
@@ -3990,7 +3990,7 @@ class BaseShape extends BaseDrawingObject {
   AllowLink() {
     console.log("= S.BaseShape - AllowLink input");
 
-    let sessionObject = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+    let sessionObject = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
     let dropOnTableFlag = this.flags & ConstantData.ObjFlags.SEDO_DropOnTable;
     let result;
 
@@ -5227,7 +5227,7 @@ class BaseShape extends BaseDrawingObject {
         this.TextFlags & ConstantData.TextFlags.SED_TF_AttachA
       ) switch (
         c.SetRenderingEnabled(!0),
-        c.SetConstraints(T3Gv.optManager.theContentHeader.MaxWorkDim.x, 0, 0),
+        c.SetConstraints(T3Gv.optManager.contentHeader.MaxWorkDim.x, 0, 0),
         (p = c.GetTextMinDimensions()).width,
         p.height,
         this.TextAlign
@@ -5249,7 +5249,7 @@ class BaseShape extends BaseDrawingObject {
               c.SetParagraphAlignment(ConstantData.TextAlign.CENTER)
         } else if (this.TextFlags & ConstantData.TextFlags.SED_TF_AttachB) switch (
           c.SetRenderingEnabled(!0),
-          c.SetConstraints(T3Gv.optManager.theContentHeader.MaxWorkDim.x, 0, 0),
+          c.SetConstraints(T3Gv.optManager.contentHeader.MaxWorkDim.x, 0, 0),
           (p = c.GetTextMinDimensions()).width,
           this.TextAlign
         ) {
@@ -5274,7 +5274,7 @@ class BaseShape extends BaseDrawingObject {
                 this.Frame.height + this.TMargins.bottom
               ),
                 c.SetParagraphAlignment(ConstantData.TextAlign.CENTER)
-          } else this.TextGrow == ConstantData.TextGrowBehavior.HORIZONTAL ? c.SetConstraints(T3Gv.optManager.theContentHeader.MaxWorkDim.x, i.width, i.height) : c.SetConstraints(i.width, i.width, i.height);
+          } else this.TextGrow == ConstantData.TextGrowBehavior.HORIZONTAL ? c.SetConstraints(T3Gv.optManager.contentHeader.MaxWorkDim.x, i.width, i.height) : c.SetConstraints(i.width, i.width, i.height);
       c.SetRenderingEnabled(!0),
         c.SetEditCallback(T3Gv.optManager.TextCallback, t)
     }
@@ -5304,7 +5304,7 @@ class BaseShape extends BaseDrawingObject {
               r.SetPos(a.width / 2 - n.width / 2, - n.height - this.TMargins.top),
                 r.SetParagraphAlignment(ConstantData.TextAlign.CENTER)
           }
-          r.SetConstraints(T3Gv.optManager.theContentHeader.MaxWorkDim.x, 0, 0)
+          r.SetConstraints(T3Gv.optManager.contentHeader.MaxWorkDim.x, 0, 0)
         } else if (this.TextFlags & ConstantData.TextFlags.SED_TF_AttachB) {
           switch ((n = r.GetTextMinDimensions()).width, this.TextAlign) {
             case ConstantData.TextAlign.TOPLEFT:
@@ -5323,12 +5323,12 @@ class BaseShape extends BaseDrawingObject {
               r.SetPos(a.width / 2 - n.width / 2, a.height + this.TMargins.bottom),
                 r.SetParagraphAlignment(ConstantData.TextAlign.CENTER)
           }
-          r.SetConstraints(T3Gv.optManager.theContentHeader.MaxWorkDim.x, 0, 0)
+          r.SetConstraints(T3Gv.optManager.contentHeader.MaxWorkDim.x, 0, 0)
         } else {
           r.SetPos(i.x - a.x, i.y - a.y);
           var o = i.width;
           this.TextGrow == ConstantData.TextGrowBehavior.HORIZONTAL &&
-            (o = T3Gv.optManager.theContentHeader.MaxWorkDim.x),
+            (o = T3Gv.optManager.contentHeader.MaxWorkDim.x),
             r.SetConstraints(o, i.width, i.height)
         }
       }
@@ -6007,7 +6007,7 @@ class BaseShape extends BaseDrawingObject {
     console.log("= S.BaseShape - GetActionButtons input:", {});
 
     // Check if the session disallows action buttons
-    const sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+    const sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
     if (sessionBlock.moreflags & ConstantData.SessionMoreFlags.SEDSM_NoActionButton) {
       console.log("= S.BaseShape - GetActionButtons output:", null);
       return null;
@@ -6020,7 +6020,7 @@ class BaseShape extends BaseDrawingObject {
     }
 
     // Check active text/table/outline object conditions
-    const tedSession = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theTEDSessionBlockID, false);
+    const tedSession = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.tedSessionBlockId, false);
     if (
       this.BlockID === tedSession.theActiveTextEditObjectID ||
       this.BlockID === tedSession.theActiveTableObjectID ||
@@ -6031,7 +6031,7 @@ class BaseShape extends BaseDrawingObject {
     }
 
     // Check layer settings: if the active layer is using edges, no buttons should be available.
-    const layersManager = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, false);
+    const layersManager = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.layersManagerBlockId, false);
     if (layersManager && (layersManager.layers[layersManager.activelayer].flags & ConstantData.LayerFlags.SDLF_UseEdges)) {
       console.log("= S.BaseShape - GetActionButtons output:", null);
       return null;

@@ -280,7 +280,7 @@ class PolyLineContainer extends PolyLine {
         }
 
         T3Gv.optManager.SelectObjects(selectedObjects, false, false);
-        T3Gv.optManager.PostMoveSelectID = this.BlockID;
+        T3Gv.optManager.postMoveSelectId = this.BlockID;
         T3Gv.optManager.HideAllSVGSelectionStates();
         console.log("= S.PolyLineContainer: Output selectedObjects:", selectedObjects);
         return false;
@@ -297,7 +297,7 @@ class PolyLineContainer extends PolyLine {
   SetupInterceptMove(event) {
     console.log("= S.PolyLineContainer: Input event:", event);
 
-    T3Gv.optManager.theEventTimestamp = Date.now();
+    T3Gv.optManager.eventTimestamp = Date.now();
     event.stopPropagation();
 
     const svgElement = T3Gv.optManager.svgObjectLayer.FindElementByDOMElement(event.currentTarget);
@@ -1177,7 +1177,7 @@ class PolyLineContainer extends PolyLine {
 
     for (let i = 0; i < zList.length; i++) {
       if (zList[i] !== this.BlockID) {
-        if (T3Gv.optManager.theMoveList && T3Gv.optManager.theMoveList.includes(zList[i])) {
+        if (T3Gv.optManager.moveList && T3Gv.optManager.moveList.includes(zList[i])) {
           continue;
         }
 

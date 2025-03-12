@@ -62,7 +62,7 @@ class WallOpt {
     let scaleFactor;
 
     // Get session data from object store
-    const sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data;
+    const sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data;
 
     // Set default wall thickness
     sessionData.def.wallThickness = 8.33325;
@@ -290,8 +290,8 @@ class WallOpt {
         targetId = targetElement.GetID();
       } else {
         // For right-click events
-        hitPoint = Utils1.DeepCopy(T3Gv.optManager.RightClickParams.HitPt);
-        targetId = T3Gv.optManager.RightClickParams.TargetID;
+        hitPoint = Utils1.DeepCopy(T3Gv.optManager.rightClickParams.HitPt);
+        targetId = T3Gv.optManager.rightClickParams.TargetID;
         targetElement = T3Gv.optManager.svgObjectLayer.GetElementByID(targetId);
       }
 
@@ -420,7 +420,7 @@ class WallOpt {
   AddMeasureLine() {
     console.log('U.WallUtil AddMeasureLine input: none');
 
-    const sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data;
+    const sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data;
     const isTextVertical = (sessionData.def.textflags & ConstantData.TextFlags.SED_TF_HorizText) === 0;
     let dimensions = ConstantData.DimensionFlags.SED_DF_Always | sessionData.dimensions;
     dimensions = Utils2.SetFlag(dimensions, ConstantData.DimensionFlags.SED_DF_Standoff, false);
@@ -467,7 +467,7 @@ class WallOpt {
     console.log('U.WallUtil AddMeasureArea input: none');
 
     // Get session data
-    const sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data;
+    const sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data;
 
     // Determine text orientation
     const isTextVertical = (sessionData.def.textflags & ConstantData.TextFlags.SED_TF_HorizText) === 0;

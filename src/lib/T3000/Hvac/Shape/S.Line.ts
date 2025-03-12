@@ -193,7 +193,7 @@ class Line extends BaseLine {
     let styleRecord = this.StyleRecord;
 
     if (styleRecord == null) {
-      let sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+      let sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
       if (sessionBlock) {
         styleRecord = sessionBlock.def.style;
       }
@@ -379,7 +379,7 @@ class Line extends BaseLine {
     }
 
     let adjustForLineAngleSnap = false;
-    if (T3Gv.optManager.LinkParams && T3Gv.optManager.LinkParams.ConnectIndex >= 0) {
+    if (T3Gv.optManager.linkParams && T3Gv.optManager.linkParams.ConnectIndex >= 0) {
       adjustForLineAngleSnap = true;
     }
 
@@ -497,7 +497,7 @@ class Line extends BaseLine {
     this.EnforceMinimum(false);
 
     // Determine if line angle snap adjustment is needed
-    const linkParamsExist = T3Gv.optManager.LinkParams && T3Gv.optManager.LinkParams.ConnectIndex >= 0;
+    const linkParamsExist = T3Gv.optManager.linkParams && T3Gv.optManager.linkParams.ConnectIndex >= 0;
     const adjustForSnap = forceAngleSnap || linkParamsExist;
 
     if (adjustForSnap) {
@@ -596,7 +596,7 @@ class Line extends BaseLine {
       T3Gv.optManager.UpdateDisplayCoordinates(this.Frame, deepCopiedEndPoint, ConstantData.CursorTypes.Grow, this);
 
       if (
-        (T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto) &&
+        (T3Gv.optManager.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto) &&
         (deepCopiedEndPoint.x !== this.EndPoint.x || deepCopiedEndPoint.y !== this.EndPoint.y)
       ) {
         const error = new Error("bounds error");

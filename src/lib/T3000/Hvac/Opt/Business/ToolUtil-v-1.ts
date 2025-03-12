@@ -106,17 +106,17 @@ class ToolUtil {
     var wallThickness = thickness * T3Gv.docHandler.rulerSettings.major /
       (T3Gv.docHandler.rulerSettings.majorScale * conversionFactor);
 
-    var sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+    var sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
 
     if (!Utils2.IsEqual(sessionBlock.def.wallThickness, wallThickness, 0.01) || wallObj) {
       T3Gv.optManager.CloseEdit(true, true);
-      sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, true);
+      sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, true);
 
       if (!wallObj) {
         sessionBlock.def.wallThickness = wallThickness;
       }
 
-      var sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+      var sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
       T3Gv.optManager.CompleteOperation(null);
     }
 
@@ -270,7 +270,7 @@ class ToolUtil {
   DrawNewLine = function (event, lineType, isDrawing, referenceObject) {
     console.log("O.ToolOpt DrawNewLine input:", event, lineType, isDrawing, referenceObject);
 
-    const sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data;
+    const sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data;
     const isVerticalText = 0 == (sessionData.def.textflags & ConstantData.TextFlags.SED_TF_HorizText);
     let startArrowID = sessionData.d_sarrow;
     let endArrowID = sessionData.d_earrow;
@@ -465,7 +465,7 @@ class ToolUtil {
     console.log("O.ToolOpt StampRectangle input:", isDragDropMode, isSquare);
 
     let width, height;
-    const sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+    const sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
 
     // Set dimensions based on whether we want a square or rectangle
     if (isSquare) {
@@ -514,7 +514,7 @@ class ToolUtil {
     console.log("O.ToolOpt StampRoundRect input:", isDragDropMode, isSquare);
 
     let width, height;
-    const sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+    const sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
 
     // Set dimensions based on whether we want a square or rectangle
     if (isSquare) {
@@ -621,7 +621,7 @@ class ToolUtil {
     console.log("O.ToolOpt StampTextLabel input:", isDragDropMode, skipTargetCheck);
 
     // Get the text edit session block
-    var textEditSession = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theTEDSessionBlockID, false);
+    var textEditSession = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.tedSessionBlockId, false);
 
     // Check if we need to handle existing active text editing
     if (skipTargetCheck || textEditSession.theActiveTextEditObjectID == -1) {
@@ -643,7 +643,7 @@ class ToolUtil {
     }
 
     // Get session data and default text style
-    var sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data;
+    var sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data;
     var defaultTextStyle = Utils4.FindStyle(ConstantData.Defines.TextBlockStyle);
 
     if (defaultTextStyle == null) {
@@ -948,8 +948,8 @@ class ToolUtil {
     try {
       T3Gv.optManager.PastePoint = null;
 
-      if (eventData && T3Gv.optManager.RightClickParams) {
-        T3Gv.optManager.PastePoint = T3Gv.optManager.RightClickParams.HitPt;
+      if (eventData && T3Gv.optManagerrightClickParams) {
+        T3Gv.optManager.PastePoint = T3Gv.optManagerrightClickParams.HitPt;
       }
 
       Clipboard.PasteFromUIaction();
@@ -1112,7 +1112,7 @@ class ToolUtil {
     console.log("O.ToolOpt IsActiveTextEdit input: no parameters");
 
     try {
-      const textEditSession = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theTEDSessionBlockID, false);
+      const textEditSession = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.tedSessionBlockId, false);
       const isActive = textEditSession.theActiveTextEditObjectID !== -1;
 
       console.log("O.ToolOpt IsActiveTextEdit output:", isActive);
@@ -1237,7 +1237,7 @@ class ToolUtil {
     console.log("O.ToolOpt DrawNewSegLine input:", isDrawing, eventObject, referenceObject);
 
     let attributes;
-    const sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data;
+    const sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data;
     const isVerticalText = 0 == (sessionData.def.textflags & ConstantData.TextFlags.SED_TF_HorizText);
     let startArrowID = sessionData.d_sarrow;
     let endArrowID = sessionData.d_earrow;
@@ -1329,7 +1329,7 @@ class ToolUtil {
     console.log("O.ToolOpt DrawNewArcSegLine input:", isDrawing, eventObject, referenceObject);
 
     let attributes;
-    const sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data;
+    const sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data;
     const isVerticalText = 0 == (sessionData.def.textflags & ConstantData.TextFlags.SED_TF_HorizText);
     let startArrowID = sessionData.d_sarrow;
     let endArrowID = sessionData.d_earrow;
@@ -1420,7 +1420,7 @@ class ToolUtil {
     console.log("O.ToolOpt DrawNewPolyLine input:", isDrawing, eventObject, referenceObject);
 
     let attributes;
-    const sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data;
+    const sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data;
     const isVerticalText = 0 == (sessionData.def.textflags & ConstantData.TextFlags.SED_TF_HorizText);
     let startArrowID = sessionData.d_sarrow;
     let endArrowID = sessionData.d_earrow;
@@ -1516,8 +1516,8 @@ class ToolUtil {
     console.log("O.ToolOpt DrawNewPolyLineContainer input:", isDrawing, eventObject, referenceObject);
 
     let attributes;
-    const sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data;
-    const sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+    const sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data;
+    const sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
     const isVerticalText = 0 == (sessionData.def.textflags & ConstantData.TextFlags.SED_TF_HorizText);
 
     // Create attributes from reference or defaults
@@ -1585,7 +1585,7 @@ class ToolUtil {
     console.log("O.ToolOpt DrawNewFreehandLine input:", isDrawing, eventObject, referenceObject);
 
     let attributes;
-    const sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data;
+    const sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data;
 
     if (referenceObject) {
       attributes = Utils1.DeepCopy(referenceObject.Data.attributes);
@@ -1648,7 +1648,7 @@ class ToolUtil {
     console.log("O.ToolOpt DrawNewArcLine input:", isDrawing, eventObject, referenceObject);
 
     let attributes;
-    const sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data;
+    const sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data;
     const isVerticalText = 0 == (sessionData.def.textflags & ConstantData.TextFlags.SED_TF_HorizText);
     let startArrowID = sessionData.d_sarrow;
     let endArrowID = sessionData.d_earrow;

@@ -23,7 +23,7 @@ class BusinessController {
           SelectionManagerName: n,
           CreateList: []
         },
-          l = gListManager.GetObjectPtr(gListManager.theSEDSessionBlockID, !1);
+          l = gListManager.GetObjectPtr(gListManager.sedSessionBlockId, !1);
         return s.def = Utils1.DeepCopy(l.def),
           s.symbolID = SDUI.Commands.MainController.Symbols.CurrentSymbol,
           Collab.BuildMessage(o, s, !0, !0)
@@ -371,7 +371,7 @@ class BusinessController {
       else a = Business.GetSelectionBusinessManager(e);
       if (
         null == a &&
-        'FLOWCHART' === gListManager.theContentHeader.BusinessModule &&
+        'FLOWCHART' === gListManager.contentHeader.BusinessModule &&
         (a = T3Gv.gBusinessManager),
         null == a
       ) this.GrowRight();
@@ -411,7 +411,7 @@ class BusinessController {
       else a = Business.GetSelectionBusinessManager(e);
       if (
         null == a &&
-        'FLOWCHART' === T3Gv.optManager.theContentHeader.BusinessModule &&
+        'FLOWCHART' === T3Gv.optManager.contentHeader.BusinessModule &&
         (a = T3Gv.gBusinessManager),
         null == a
       ) this.GrowLeft();
@@ -451,7 +451,7 @@ class BusinessController {
       else a = Business.GetSelectionBusinessManager(e);
       if (
         null == a &&
-        'FLOWCHART' === gListManager.theContentHeader.BusinessModule &&
+        'FLOWCHART' === gListManager.contentHeader.BusinessModule &&
         (a = T3Gv.gBusinessManager),
         null == a
       ) this.GrowDown();
@@ -491,7 +491,7 @@ class BusinessController {
       else a = Business.GetSelectionBusinessManager(e);
       if (
         null == a &&
-        'FLOWCHART' === gListManager.theContentHeader.BusinessModule &&
+        'FLOWCHART' === gListManager.contentHeader.BusinessModule &&
         (a = gBusinessManager),
         null == a
       ) this.GrowUp();

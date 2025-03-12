@@ -245,7 +245,7 @@ class BaseSymbol extends BaseShape {
 
     T3Gv.optManager.SetEditMode(ConstantData.EditState.DEFAULT);
     T3Gv.optManager.UpdateLinks();
-    T3Gv.optManager.LinkParams = null;
+    T3Gv.optManager.linkParams = null;
 
     this.sizedim.width = this.Frame.width;
     this.sizedim.height = this.Frame.height;

@@ -311,10 +311,10 @@ class DocHandler {
           };
         }
       } else if (this.scaleToPage && adjustedRect.width > 0 && adjustedRect.height > 0) {
-        const pageWidth = T3Gv.optManager.theContentHeader.Page.papersize.x -
-          (T3Gv.optManager.theContentHeader.Page.margins.left + T3Gv.optManager.theContentHeader.Page.margins.right);
-        const pageHeight = T3Gv.optManager.theContentHeader.Page.papersize.y -
-          (T3Gv.optManager.theContentHeader.Page.margins.top + T3Gv.optManager.theContentHeader.Page.margins.bottom);
+        const pageWidth = T3Gv.optManager.contentHeader.Page.papersize.x -
+          (T3Gv.optManager.contentHeader.Page.margins.left + T3Gv.optManager.contentHeader.Page.margins.right);
+        const pageHeight = T3Gv.optManager.contentHeader.Page.papersize.y -
+          (T3Gv.optManager.contentHeader.Page.margins.top + T3Gv.optManager.contentHeader.Page.margins.bottom);
 
         tempArea = this.svgDoc.CalcScaleToFit(adjustedRect.width - 20, adjustedRect.height - 20, pageWidth, pageHeight);
         targetDimensions = {
@@ -679,7 +679,7 @@ class DocHandler {
         (this.rulerSettings.showpixels = e.showpixels),
         t ||
         (
-          sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0),
+          sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !0),
           sdp.rulerSettings = Utils1.DeepCopy(this.rulerSettings)
         ),
         this.ResetRulers(),
@@ -978,11 +978,11 @@ class DocHandler {
         n = this.rulerSettings.nGrid * T,
         e = '',
         t = '',
-        p = T3Gv.optManager.theContentHeader.Page.papersize.x - (
-          T3Gv.optManager.theContentHeader.Page.margins.left + T3Gv.optManager.theContentHeader.Page.margins.right
+        p = T3Gv.optManager.contentHeader.Page.papersize.x - (
+          T3Gv.optManager.contentHeader.Page.margins.left + T3Gv.optManager.contentHeader.Page.margins.right
         ) / 2,
-        d = T3Gv.optManager.theContentHeader.Page.papersize.y - (
-          T3Gv.optManager.theContentHeader.Page.margins.top + T3Gv.optManager.theContentHeader.Page.margins.bottom
+        d = T3Gv.optManager.contentHeader.Page.papersize.y - (
+          T3Gv.optManager.contentHeader.Page.margins.top + T3Gv.optManager.contentHeader.Page.margins.bottom
         ) / 2,
         D = Utils1.RoundCoordLP(f.docScreenWidth + 2 * p * f.docToScreenScale),
         g = Utils1.RoundCoordLP(f.docScreenHeight + 2 * d * f.docToScreenScale),
@@ -1053,12 +1053,12 @@ class DocHandler {
   UpdatePageDividerVisibility = () => {
     console.log("= D.DocHandler UpdatePageDividerVisibility - Input:", {
       showPageDivider: this.documentConfig.showPageDivider,
-      printFlags: T3Gv.optManager.theContentHeader.Page.printflags,
+      printFlags: T3Gv.optManager.contentHeader.Page.printflags,
       layerExists: !!(this.svgDoc && this.svgDoc.GetLayer(this.pageDividerLayer))
     });
 
     const pageDividerLayer = this.svgDoc ? this.svgDoc.GetLayer(this.pageDividerLayer) : null;
-    const printFlags = T3Gv.optManager.theContentHeader.Page.printflags;
+    const printFlags = T3Gv.optManager.contentHeader.Page.printflags;
     const shouldShow =
       !(printFlags & FileParser.PrintFlags.SEP_OnePage) &&
       !(printFlags & FileParser.PrintFlags.SEP_CustomPageSize) &&
@@ -1111,17 +1111,17 @@ class DocHandler {
           margins.top = 50;
           margins.bottom = 50;
         }
-      })(T3Gv.optManager.theContentHeader.Page.papersize, T3Gv.optManager.theContentHeader.Page.margins);
+      })(T3Gv.optManager.contentHeader.Page.papersize, T3Gv.optManager.contentHeader.Page.margins);
 
       // Calculate effective paper width and height based on margins
       let paperWidth =
-        T3Gv.optManager.theContentHeader.Page.papersize.x -
-        (T3Gv.optManager.theContentHeader.Page.margins.left +
-          T3Gv.optManager.theContentHeader.Page.margins.right);
+        T3Gv.optManager.contentHeader.Page.papersize.x -
+        (T3Gv.optManager.contentHeader.Page.margins.left +
+          T3Gv.optManager.contentHeader.Page.margins.right);
       let paperHeight =
-        T3Gv.optManager.theContentHeader.Page.papersize.y -
-        (T3Gv.optManager.theContentHeader.Page.margins.top +
-          T3Gv.optManager.theContentHeader.Page.margins.bottom);
+        T3Gv.optManager.contentHeader.Page.papersize.y -
+        (T3Gv.optManager.contentHeader.Page.margins.top +
+          T3Gv.optManager.contentHeader.Page.margins.bottom);
 
       // Scale dimensions to screen coordinates
       paperWidth *= workArea.docToScreenScale;
@@ -1532,14 +1532,14 @@ class DocHandler {
 
   SetPageMargins = (e) => {
     try {
-      if (T3Gv.optManager.theContentHeader.Page.margins.left !== e) {
+      if (T3Gv.optManager.contentHeader.Page.margins.left !== e) {
         if (
           Collab.AllowMessage() &&
           Collab.BeginSecondaryEdit(),
-          T3Gv.optManager.theContentHeader.Page.margins.left = e,
-          T3Gv.optManager.theContentHeader.Page.margins.top = e,
-          T3Gv.optManager.theContentHeader.Page.margins.right = e,
-          T3Gv.optManager.theContentHeader.Page.margins.bottom = e,
+          T3Gv.optManager.contentHeader.Page.margins.left = e,
+          T3Gv.optManager.contentHeader.Page.margins.top = e,
+          T3Gv.optManager.contentHeader.Page.margins.right = e,
+          T3Gv.optManager.contentHeader.Page.margins.bottom = e,
           T3Gv.optManager.FitDocumentWorkAreaToPaperSize(),
           Collab.AllowMessage()
         ) {
@@ -1560,10 +1560,10 @@ class DocHandler {
       if (
         Collab.AllowMessage() &&
         Collab.BeginSecondaryEdit(),
-        T3Gv.optManager.theContentHeader.Page.margins.left = e,
-        T3Gv.optManager.theContentHeader.Page.margins.top = t,
-        T3Gv.optManager.theContentHeader.Page.margins.right = a,
-        T3Gv.optManager.theContentHeader.Page.margins.bottom = r,
+        T3Gv.optManager.contentHeader.Page.margins.left = e,
+        T3Gv.optManager.contentHeader.Page.margins.top = t,
+        T3Gv.optManager.contentHeader.Page.margins.right = a,
+        T3Gv.optManager.contentHeader.Page.margins.bottom = r,
         T3Gv.optManager.FitDocumentWorkAreaToPaperSize(),
         Collab.AllowMessage()
       ) {

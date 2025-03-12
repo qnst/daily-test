@@ -131,7 +131,7 @@ class FreehandLine extends BaseLine {
     let o = this.Frame,
       s = this.StyleRecord;
     if (s = this.SVGTokenizerHook(s), null == s) {
-      let e = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
+      let e = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1);
       e &&
         (s = e.def.style)
     }
@@ -492,7 +492,7 @@ class FreehandLine extends BaseLine {
         (t.CreateList = [
           T3Gv.optManager.drawShape.BlockID
         ]),
-        t.LinkParams = Utils1.DeepCopy(T3Gv.optManager.LinkParams),
+        t.linkParams = Utils1.DeepCopy(T3Gv.optManager.linkParams),
         t.Actions = [];
     }
     this.LM_DrawPostRelease(T3Gv.optManager.actionStoredObjectId),

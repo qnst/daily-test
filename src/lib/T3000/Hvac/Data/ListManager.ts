@@ -14,7 +14,7 @@
 
 //   Defines: null,
 //   ModalOperations: null,
-//   FormatPainterModes: null,
+//   formatPainterModes: null,
 //   ArrowheadLookupTable: null,
 //   ArrowheadSizeTable: null,
 // }
@@ -167,7 +167,7 @@
 // }
 
 // Object.freeze(ListManager.ModalOperations),
-//   ListManager.FormatPainterModes = {
+//   ListManager.formatPainterModes = {
 //     NONE: 0,
 //     OBJECT: 1,
 //     TEXT: 2,
@@ -839,7 +839,7 @@
 //   SPLITWALL: 8
 // }
 
-// ListManager.FormatPainterModes = {
+// ListManager.formatPainterModes = {
 //   NONE: 0,
 //   OBJECT: 1,
 //   TEXT: 2,

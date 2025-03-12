@@ -87,7 +87,7 @@ class PolyLine extends BaseLine {
     const frame = this.Frame;
     let styleRecord = this.StyleRecord;
 
-    styleRecord = this.SVGTokenizerHook(styleRecord) || T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false)?.def.style;
+    styleRecord = this.SVGTokenizerHook(styleRecord) || T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false)?.def.style;
 
     const strokeColor = styleRecord.Line.Paint.Color;
     let strokeWidth = styleRecord.Line.Thickness;
@@ -894,7 +894,7 @@ class PolyLine extends BaseLine {
 
     // Get the segment where the corner was hit.
     const cornerSegmentIndex = this.PolyHitSeg(cornerPoint);
-    const linksObject = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, false);
+    const linksObject = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, false);
     let hookList: any[] = [];
 
     // If no svgElement provided, get by BlockID.
@@ -1918,8 +1918,8 @@ class PolyLine extends BaseLine {
     Utils2.GetPolyRect(boundingRect, polyPoints);
 
     if (boundingRect.x >= 0 && boundingRect.y >= 0) {
-      if (T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto) {
-        const sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+      if (T3Gv.optManager.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto) {
+        const sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
         if (boundingRect.x + boundingRect.width > sessionBlock.dim.x || boundingRect.y + boundingRect.height > sessionBlock.dim.y) {
           return;
         }
@@ -2775,9 +2775,9 @@ class PolyLine extends BaseLine {
     console.log("S.PolyLine: LM_DrawPreTrack input", { event });
 
     if (
-      T3Gv.optManager.LinkParams &&
-      (T3Gv.optManager.LinkParams.ConnectIndex >= 0 ||
-        T3Gv.optManager.LinkParams.JoinIndex >= 0)
+      T3Gv.optManager.linkParams &&
+      (T3Gv.optManager.linkParams.ConnectIndex >= 0 ||
+        T3Gv.optManager.linkParams.JoinIndex >= 0)
     ) {
       this.LM_DrawRelease();
       console.log("S.PolyLine: LM_DrawPreTrack output", false);
@@ -2800,7 +2800,7 @@ class PolyLine extends BaseLine {
     }
 
     this.ResetAutoScrollTimer();
-    T3Gv.optManager.LinkParams = null;
+    T3Gv.optManager.linkParams = null;
     T3Gv.optManager.actionStoredObjectId = -1;
     T3Gv.optManager.actionSvgObject = null;
     T3Gv.optManager.WorkAreaHammer.on("dragstart", EvtUtil.Evt_WorkAreaHammerDragStart);
@@ -2928,7 +2928,7 @@ class PolyLine extends BaseLine {
     //   if (Collab.IsSecondary()) {
     //     messagePayload.CreateList = [T3Gv.optManager.drawShape.BlockID];
     //   }
-    //   messagePayload.LinkParams = Utils1.DeepCopy(T3Gv.optManager.LinkParams);
+    //   messagePayload.linkParams = Utils1.DeepCopy(T3Gv.optManager.linkParams);
     //   messagePayload.Actions = [];
 
     //   let action = new Collab.MessageAction(ConstantData.CollabMessageActions.CreateLine);
@@ -2950,9 +2950,9 @@ class PolyLine extends BaseLine {
 
     // If there is an active link (either ConnectIndex or JoinIndex is set), release the drawing.
     if (
-      T3Gv.optManager.LinkParams &&
-      (T3Gv.optManager.LinkParams.ConnectIndex >= 0 ||
-        T3Gv.optManager.LinkParams.JoinIndex >= 0)
+      T3Gv.optManager.linkParams &&
+      (T3Gv.optManager.linkParams.ConnectIndex >= 0 ||
+        T3Gv.optManager.linkParams.JoinIndex >= 0)
     ) {
       this.LM_DrawRelease(event);
     } else {

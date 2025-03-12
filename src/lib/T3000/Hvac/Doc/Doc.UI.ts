@@ -162,7 +162,7 @@ class UI {
 
     if (T3Gv.optManager) {
       if (e !== null) {
-        if (e !== T3Gv.optManager.theContentHeader.BusinessModule) {
+        if (e !== T3Gv.optManager.contentHeader.BusinessModule) {
           T3Gv.gBusinessManager = null;
           T3Gv.optManager.SetBusinessModule(e);
         }
@@ -393,7 +393,7 @@ class UI {
         // }
 
         // for (const t in Business.Objects) {
-        //   if (t === gListManager.theContentHeader.BusinessModule) {
+        //   if (t === gListManager.contentHeader.BusinessModule) {
         //     gBusinessManager = Business.Objects[t];
         //     break;
         //   }

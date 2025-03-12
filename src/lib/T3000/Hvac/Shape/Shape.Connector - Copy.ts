@@ -348,7 +348,7 @@ class Connector extends BaseDrawingObject {
     ),
       c.Data.runtimeText ||
       (c.Data.runtimeText = S.GetRuntimeText()),
-      S.SetConstraints(T3Gv.optManager.theContentHeader.MaxWorkDim.x, 0, r.height),
+      S.SetConstraints(T3Gv.optManager.contentHeader.MaxWorkDim.x, 0, r.height),
       this.bInGroup &&
       S.DisableHyperlinks(!0),
       S.SetRenderingEnabled(!0),
@@ -367,7 +367,7 @@ class Connector extends BaseDrawingObject {
       s,
       l,
       S = ConstantData.ConnectorDefines.SEDA_NSkip;
-    T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
+    T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1);
     if (
       i = (
         this.arraylist.styleflags & ConstantData.SEDA_Styles.SEDA_CoManager
@@ -668,7 +668,7 @@ class Connector extends BaseDrawingObject {
       r = this.arraylist.hook.length,
       i = this.arraylist.styleflags & ConstantData.SEDA_Styles.SEDA_Linear,
       n = SDF.TextAlignToWin(this.TextAlign),
-      o = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
+      o = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1);
     if (
       this.StyleRecord.Fill.Paint.Color = o.background.Paint.Color,
       n.vjust === FileParser.TextJust.TA_CENTER ? (
@@ -1446,11 +1446,11 @@ class Connector extends BaseDrawingObject {
         !0
     }
     if (
-      T3Gv.optManager.RightClickParams = new RightClickData(),
-      T3Gv.optManager.RightClickParams.TargetID = r.GetID(),
-      T3Gv.optManager.RightClickParams.HitPt.x = a.x,
-      T3Gv.optManager.RightClickParams.HitPt.y = a.y,
-      T3Gv.optManager.RightClickParams.Locked = (this.flags & ConstantData.ObjFlags.SEDO_Lock) > 0,
+      T3Gv.optManagerrightClickParams = new RightClickData(),
+      T3Gv.optManagerrightClickParams.TargetID = r.GetID(),
+      T3Gv.optManagerrightClickParams.HitPt.x = a.x,
+      T3Gv.optManagerrightClickParams.HitPt.y = a.y,
+      T3Gv.optManagerrightClickParams.Locked = (this.flags & ConstantData.ObjFlags.SEDO_Lock) > 0,
       null != T3Gv.optManager.GetActiveTextEdit()
     ) {
       var u = T3Gv.optManager.svgDoc.GetActiveEdit(),
@@ -2310,7 +2310,7 @@ class Connector extends BaseDrawingObject {
         new SelectionAttributes(),
         ConstantData.ConnectorDefines
       ),
-      F = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
+      F = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1);
     if (
       null != this.arraylist &&
       null != this.arraylist.hook &&
@@ -2887,11 +2887,11 @@ class Connector extends BaseDrawingObject {
         !0
     }
     if (
-      T3Gv.optManager.RightClickParams = new RightClickData(),
-      T3Gv.optManager.RightClickParams.TargetID = r.GetID(),
-      T3Gv.optManager.RightClickParams.HitPt.x = a.x,
-      T3Gv.optManager.RightClickParams.HitPt.y = a.y,
-      T3Gv.optManager.RightClickParams.Locked = (this.flags & ConstantData.ObjFlags.SEDO_Lock) > 0,
+      T3Gv.optManagerrightClickParams = new RightClickData(),
+      T3Gv.optManagerrightClickParams.TargetID = r.GetID(),
+      T3Gv.optManagerrightClickParams.HitPt.x = a.x,
+      T3Gv.optManagerrightClickParams.HitPt.y = a.y,
+      T3Gv.optManagerrightClickParams.Locked = (this.flags & ConstantData.ObjFlags.SEDO_Lock) > 0,
       null != T3Gv.optManager.GetActiveTextEdit()
     ) {
       var u = T3Gv.optManager.svgDoc.GetActiveEdit(),
@@ -3751,7 +3751,7 @@ class Connector extends BaseDrawingObject {
         new SelectionAttributes(),
         ConstantData.ConnectorDefines
       ),
-      F = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
+      F = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1);
     if (
       null != this.arraylist &&
       null != this.arraylist.hook &&
@@ -4187,7 +4187,7 @@ class Connector extends BaseDrawingObject {
       p = {},
       d = [],
       D = 1,
-      g = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, !1),
+      g = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, !1),
       h = this.arraylist.styleflags & ConstantData.SEDA_Styles.SEDA_BothSides &&
         0 == (
           this.arraylist.styleflags & ConstantData.SEDA_Styles.SEDA_Stagger
@@ -4655,7 +4655,7 @@ class Connector extends BaseDrawingObject {
       i,
       n = ConstantData.SEDA_Styles,
       o = Business.FlowChart.AutoFormatFlags,
-      s = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+      s = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1),
       l = (
         this.arraylist.styleflags,
         n.SEDA_GenoConn,
@@ -4698,7 +4698,7 @@ class Connector extends BaseDrawingObject {
       D = this.arraylist.styleflags & ConstantData.SEDA_Styles.SEDA_BothSides,
       g = this.arraylist.styleflags & ConstantData.SEDA_Styles.SEDA_Linear,
       h = this.arraylist.styleflags & ConstantData.SEDA_Styles.SEDA_FlowConn,
-      m = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+      m = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1),
       C = m.flags & ConstantData.SessionFlags.SEDS_NoTreeOverlap,
       y = ConstantData.ConnectorDefines.SEDA_NSkip;
     if (null != t) {
@@ -4792,7 +4792,7 @@ class Connector extends BaseDrawingObject {
       i,
       n,
       o = ConstantData.SEDA_Styles,
-      s = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+      s = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1),
       l = this.arraylist.styleflags & o.SEDA_FlowConn,
       S = Business.FlowChart.AutoFormatFlags;
     for (e = this.arraylist.hook.length, t = 0; t < e; t++) if (- 1 != (a = this.arraylist.hook[t]).textid) {
@@ -5685,7 +5685,7 @@ class Connector extends BaseDrawingObject {
       ee = {},
       te = {},
       ae = {},
-      re = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+      re = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1),
       ie = [],
       ne = !1,
       oe = {},
@@ -8249,7 +8249,7 @@ class Connector extends BaseDrawingObject {
       c = (
         this.arraylist.styleflags,
         s.SEDA_FlowConn,
-        T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+        T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1),
         ConstantData.ConnectorDefines.SEDA_NSkip
       ),
       u = function (e, t) {
@@ -8337,7 +8337,7 @@ class Connector extends BaseDrawingObject {
           e ? this.flags = Utils2.SetFlag(this.flags, S, e) : 0 === o &&
         (this.flags = Utils2.SetFlag(this.flags, S, !1)),
         T3Gv.optManager.AddToDirtyList(this.BlockID),
-        T3Gv.optManager.DirtyListReOrder = !0,
+        T3Gv.optManager.dirtyListReOrder = !0,
         this.flags & S &&
         (u.push(this.BlockID), T3Gv.optManager.DeSelect(u)),
         s = this.arraylist.hook.length,
@@ -8357,7 +8357,7 @@ class Connector extends BaseDrawingObject {
                 e ? r.flags = Utils2.SetFlag(r.flags, S, e) : 0 === o &&
               (r.flags = Utils2.SetFlag(r.flags, S, !1)),
               T3Gv.optManager.AddToDirtyList(this.arraylist.hook[i].id),
-              T3Gv.optManager.DirtyListReOrder = !0,
+              T3Gv.optManager.dirtyListReOrder = !0,
               r.flags & S &&
               u.push(this.arraylist.hook[i].id),
               r.flags & S &&
@@ -8515,7 +8515,7 @@ class Connector extends BaseDrawingObject {
       b = {},
       M = {},
       P = this,
-      R = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, !1),
+      R = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, !1),
       A = function (e, t, a, r, i) {
         T = Utils1.DeepCopy(P),
           0 === i ? (T.StartArrowID = 0, T.EndArrowID = 0) : - 1 === i &&

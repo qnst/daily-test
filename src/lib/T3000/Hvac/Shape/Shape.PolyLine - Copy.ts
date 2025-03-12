@@ -207,7 +207,7 @@ class PolyLine extends BaseLine {
     var o = this.Frame
       , s = this.StyleRecord;
     if (null == (s = this.SVGTokenizerHook(s))) {
-      var l = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
+      var l = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1);
       l && (s = l.def.style)
     }
     s.Fill.Paint.Color;
@@ -687,7 +687,7 @@ class PolyLine extends BaseLine {
 
 
     "use strict";
-    var a, r, i, n, o, s, l, S, c, u = !1, p = this.PolyHitSeg(t), d = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, !1), D = (Utils1.DeepCopy(this),
+    var a, r, i, n, o, s, l, S, c, u = !1, p = this.PolyHitSeg(t), d = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, !1), D = (Utils1.DeepCopy(this),
       []);
     if (null == e && (e = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID)),
       null != e && void 0 !== this.polylist.segs[p]) {
@@ -1362,8 +1362,8 @@ class PolyLine extends BaseLine {
       Utils3.RotatePointsAboutCenter(this.Frame, r / 360 * (2 * Math.PI), s),
       Utils2.GetPolyRect(l, s),
       !(l.x < 0 || l.y < 0)) {
-      if (T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto) {
-        var S = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
+      if (T3Gv.optManager.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto) {
+        var S = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1);
         if (l.x + l.width > S.dim.x)
           return;
         if (l.y + l.height > S.dim.y)
@@ -2041,9 +2041,9 @@ class PolyLine extends BaseLine {
 
 
   LM_DrawPreTrack(e) {
-    return T3Gv.optManager.LinkParams && (
-      T3Gv.optManager.LinkParams.ConnectIndex >= 0 ||
-      T3Gv.optManager.LinkParams.JoinIndex >= 0) ?
+    return T3Gv.optManager.linkParams && (
+      T3Gv.optManager.linkParams.ConnectIndex >= 0 ||
+      T3Gv.optManager.linkParams.JoinIndex >= 0) ?
       (this.LM_DrawRelease(),
         !1) : (
         // ListManager.BaseLine.prototype.LM_DrawPreTrack.call(this, e),
@@ -2058,7 +2058,7 @@ class PolyLine extends BaseLine {
       T3Gv.optManager.isMobilePlatform || ($(window).unbind("mousemove"),
         T3Gv.optManager.WorkAreaHammer.on("tap", EvtUtil.Evt_WorkAreaHammerClick)),
       this.ResetAutoScrollTimer(),
-      T3Gv.optManager.LinkParams = null,
+      T3Gv.optManager.linkParams = null,
       T3Gv.optManager.actionStoredObjectId = -1,
       T3Gv.optManager.actionSvgObject = null,
       T3Gv.optManager.WorkAreaHammer.on("dragstart", EvtUtil.Evt_WorkAreaHammerDragStart)
@@ -2144,7 +2144,7 @@ class PolyLine extends BaseLine {
         n.LineTool = ConstantData.DocumentContext.LineTool,
         Collab.AddNewBlockToSecondary(T3Gv.optManager.drawShape.BlockID),
         Collab.IsSecondary() && (n.CreateList = [T3Gv.optManager.drawShape.BlockID]),
-        n.LinkParams = Utils1.DeepCopy(T3Gv.optManager.LinkParams),
+        n.linkParams = Utils1.DeepCopy(T3Gv.optManager.linkParams),
         n.Actions = [];
       var o = new Collab.MessageAction(ConstantData.CollabMessageActions.CreateLine);
       n.Actions.push(o),
@@ -2159,7 +2159,7 @@ class PolyLine extends BaseLine {
 
   LM_DrawExtend(e) {
     var t, a, r, i = {};
-    if (T3Gv.optManager.LinkParams && (T3Gv.optManager.LinkParams.ConnectIndex >= 0 || T3Gv.optManager.LinkParams.JoinIndex >= 0))
+    if (T3Gv.optManager.linkParams && (T3Gv.optManager.linkParams.ConnectIndex >= 0 || T3Gv.optManager.linkParams.JoinIndex >= 0))
       this.LM_DrawRelease(e);
     else {
       var n = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(e.gesture.center.clientX, e.gesture.center.clientY);
@@ -2183,13 +2183,13 @@ class PolyLine extends BaseLine {
       var s = n.textElem;
       s && (a = s.GetSpellAtLocation(e.gesture.center.clientX, e.gesture.center.clientY)) >= 0 && T3Gv.optManager.ActivateTextEdit(n, e, !0)
     }
-    if (T3Gv.optManager.RightClickParams = new RightClickData(),
-      T3Gv.optManager.RightClickParams.TargetID = n.GetID(),
-      T3Gv.optManager.RightClickParams.HitPt.x = r.x,
-      T3Gv.optManager.RightClickParams.HitPt.y = r.y,
-      T3Gv.optManager.RightClickParams.Locked = (this.flags & ConstantData.ObjFlags.SEDO_Lock) > 0,
+    if (T3Gv.optManagerrightClickParams = new RightClickData(),
+      T3Gv.optManagerrightClickParams.TargetID = n.GetID(),
+      T3Gv.optManagerrightClickParams.HitPt.x = r.x,
+      T3Gv.optManagerrightClickParams.HitPt.y = r.y,
+      T3Gv.optManagerrightClickParams.Locked = (this.flags & ConstantData.ObjFlags.SEDO_Lock) > 0,
       this.Hit(r, !1, !1, i),
-      i.hitcode && (T3Gv.optManager.RightClickParams.segment = i.segment),
+      i.hitcode && (T3Gv.optManagerrightClickParams.segment = i.segment),
       null != T3Gv.optManager.GetActiveTextEdit()) {
       var l = T3Gv.optManager.svgDoc.GetActiveEdit();
       a = -1,

@@ -444,8 +444,8 @@ class ShapeDataUtil {
       this.tLMB = null,
       this.BlockzList = [],
       this.DeleteList = [],
-      this.RichGradients = [],
-      this.HasBlockDirectory = !1,
+      this.richGradients = [],
+      this.hasBlockDirectory = !1,
       this.updatetext = !1,
       this.LibraryPathTarget = '',
       this.SetColorChanges = !1,
@@ -521,7 +521,7 @@ class ShapeDataUtil {
     let result = new ShapeDataUtil.Result();
 
     let formattedTextObject = null;
-    let sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, true);
+    let sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, true);
     let objectsToRemove = [];
 
     result.isTemplate = false;
@@ -571,7 +571,7 @@ class ShapeDataUtil {
 
     if (errorCode !== ShapeDataUtil.Errors.WaitingForCallBack) {
       const isPlanningDocument = T3Gv.optManager.IsPlanningDocument();
-      const layersManager = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, true);
+      const layersManager = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.layersManagerBlockId, true);
 
       objectCount = result.zList.length;
       for (index = 0; index < objectCount; index++) {
@@ -627,7 +627,7 @@ class ShapeDataUtil {
 
       linksCount = result.links.length;
       if (!skipLinks && linksCount > 0) {
-        let linksBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, true);
+        let linksBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, true);
         for (index = 0; index < linksCount; index++) {
           linksBlock.push(result.links[index]);
         }
@@ -685,7 +685,7 @@ class ShapeDataUtil {
 
           // Check if we need to adjust document size
           if (boundingRect.x + boundingRect.width > sessionBlock.dim.x) {
-            if (T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto) {
+            if (T3Gv.optManager.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto) {
               offsetX = boundingRect.x + boundingRect.width - sessionBlock.dim.x;
               newWidth = 0;
             } else {
@@ -695,7 +695,7 @@ class ShapeDataUtil {
           }
 
           if (boundingRect.y + boundingRect.height > sessionBlock.dim.y) {
-            if (T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto) {
+            if (T3Gv.optManager.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto) {
               offsetY = boundingRect.y + boundingRect.height - sessionBlock.dim.y;
             } else {
               newHeight = boundingRect.y + boundingRect.height;
@@ -704,7 +704,7 @@ class ShapeDataUtil {
           }
 
           if (newWidth || newHeight) {
-            const layersManagerBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, false);
+            const layersManagerBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.layersManagerBlockId, false);
             const layerCount = layersManagerBlock.nlayers;
             let activeLayerUsesEdges = false;
             let anyVisibleLayerUsesEdges = false;
@@ -927,7 +927,7 @@ class ShapeDataUtil {
         switch (parsedData.codes[codeIndex].code) {
           // Block directory information
           case opCodes.SDF_C_BLOCKDIRECTORY:
-            result.HasBlockDirectory = true;
+            result.hasBlockDirectory = true;
             break;
 
           // Process Smart Draw data blocks
@@ -1411,7 +1411,7 @@ class ShapeDataUtil {
               // Insert link if needed
               if (links.length === 0 && !ignoreErrors) {
                 if (linksBlock == null) {
-                  linksBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, true);
+                  linksBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, true);
                 }
                 T3Gv.optManager.InsertLink(linksBlock, objectId, currentHook, ShapeContant.LinkFlags.SED_L_MOVE);
               }
@@ -2046,7 +2046,7 @@ class ShapeDataUtil {
     // If a rich gradient was defined, add it to the rich gradients collection
     if (richGradient !== undefined) {
       paintObject.GradientFlags = T3Gv.optManager.SD_AddRichGradient(
-        resultObject.RichGradients,
+        resultObject.richGradients,
         richGradient
       );
     }
@@ -2231,7 +2231,7 @@ class ShapeDataUtil {
 
     // Special handling for Genograms panel if not a symbol
     if (!resultObject.isSymbol &&
-      T3Gv.optManager.theContentHeader.smartpanelname === 'Genograms') {
+      T3Gv.optManager.contentHeader.smartpanelname === 'Genograms') {
       // Enable linking lines
       sessionObject.flags = Utils2.SetFlag(sessionObject.flags, sessionFlags.SEDS_LLink, true);
       // Hide connector expansion handles
@@ -4751,9 +4751,9 @@ class ShapeDataUtil {
     const result = new ShapeDataUtil.WResult;
 
     // Get current session, layer manager and content header
-    result.sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
-    result.tLMB = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, false);
-    result.ctp = T3Gv.optManager.theContentHeader;
+    result.sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
+    result.tLMB = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.layersManagerBlockId, false);
+    result.ctp = T3Gv.optManager.contentHeader;
 
     // Mark as selection-only operation
     result.selectonly = true;
@@ -4770,7 +4770,7 @@ class ShapeDataUtil {
     result.docDpi = T3Gv.docUtil.svgDoc.docInfo.docDpi;
     result.zList = selectedObjects;
     result.noTables = skipTables;
-    result.RichGradients = T3Gv.optManager.RichGradients;
+    result.richGradients = T3Gv.optManager.richGradients;
 
     // Update layer information for selected objects
     T3Gv.optManager.UpdateObjectLayerIndices(result);
@@ -4835,7 +4835,7 @@ class ShapeDataUtil {
     // Additional resources
     this.TextureList = [];             // List of textures
     this.LibraryPathTarget = '';       // Target library path
-    this.RichGradients = [];           // Enhanced gradient definitions
+    this.richGradients = [];           // Enhanced gradient definitions
 
     // Format flags
     this.WriteVisio = false;           // Whether to write in Visio format
@@ -4891,7 +4891,7 @@ class ShapeDataUtil {
     }
 
     // Write structured data if available and not ignored
-    if (T3Gv.optManager.theContentHeader.SDDataID >= 0 && !ignoreDataCheck) {
+    if (T3Gv.optManager.contentHeader.SDDataID >= 0 && !ignoreDataCheck) {
       ShapeDataUtil.WriteSDDATA(dataStream, resultObject);
     }
 
@@ -5026,7 +5026,7 @@ class ShapeDataUtil {
       if (!resultObject.WriteBlocks) {
         ShapeDataUtil.WriteString(
           dataStream,
-          T3Gv.optManager.theContentHeader.importSourcePath,
+          T3Gv.optManager.contentHeader.importSourcePath,
           opCodes.SDF_C_IMPORT_SOURCE_PATH,
           resultObject
         );
@@ -5038,7 +5038,7 @@ class ShapeDataUtil {
     if (skipCodes == null || skipCodes.indexOf(opCodes.SDF_C_BUSINESSMODULE) == -1) {
       ShapeDataUtil.WriteString(
         dataStream,
-        T3Gv.optManager.theContentHeader.BusinessModule,
+        T3Gv.optManager.contentHeader.BusinessModule,
         opCodes.SDF_C_BUSINESSMODULE,
         resultObject
       );
@@ -5048,7 +5048,7 @@ class ShapeDataUtil {
     if (skipCodes == null || skipCodes.indexOf(opCodes.SDF_C_SYMBOLSEARCHSTRING) == -1) {
       ShapeDataUtil.WriteString(
         dataStream,
-        T3Gv.optManager.theContentHeader.SymbolSearchString,
+        T3Gv.optManager.contentHeader.SymbolSearchString,
         opCodes.SDF_C_SYMBOLSEARCHSTRING,
         resultObject
       );
@@ -5056,8 +5056,8 @@ class ShapeDataUtil {
 
     // Write organization chart table information if not explicitly skipped
     if (skipCodes == null || skipCodes.indexOf(opCodes.SDF_C_ORGCHARTTABLE) == -1) {
-      if (T3Gv.optManager.theContentHeader.orgcharttable.length) {
-        let tableIndex = TODO.OrgChartTables.indexOf(T3Gv.optManager.theContentHeader.orgcharttable);
+      if (T3Gv.optManager.contentHeader.orgcharttable.length) {
+        let tableIndex = TODO.OrgChartTables.indexOf(T3Gv.optManager.contentHeader.orgcharttable);
 
         if (tableIndex >= 0) {
           // Write standard org chart table
@@ -5069,7 +5069,7 @@ class ShapeDataUtil {
           );
         } else {
           // Check if it's a mind map table
-          // tableIndex = TODO.MindMapTables.indexOf(T3Gv.optManager.theContentHeader.orgcharttable);
+          // tableIndex = TODO.MindMapTables.indexOf(T3Gv.optManager.contentHeader.orgcharttable);
 
           // if (tableIndex >= 0) {
           //   ShapeDataUtil.WriteString(
@@ -5085,7 +5085,7 @@ class ShapeDataUtil {
         if (tableIndex < 0) {
           ShapeDataUtil.WriteString(
             dataStream,
-            T3Gv.optManager.theContentHeader.orgcharttable,
+            T3Gv.optManager.contentHeader.orgcharttable,
             opCodes.SDF_C_ORGCHARTTABLE,
             resultObject
           );
@@ -5097,16 +5097,16 @@ class ShapeDataUtil {
     if (skipCodes == null) {
       ShapeDataUtil.WriteString(
         dataStream,
-        T3Gv.optManager.theContentHeader.smarthelpname,
+        T3Gv.optManager.contentHeader.smarthelpname,
         opCodes.SDF_C_GUIDE,
         resultObject
       );
 
       // Write parent page ID if available
-      if (T3Gv.optManager.theContentHeader.ParentPageID.length) {
+      if (T3Gv.optManager.contentHeader.ParentPageID.length) {
         ShapeDataUtil.WriteString(
           dataStream,
-          T3Gv.optManager.theContentHeader.ParentPageID,
+          T3Gv.optManager.contentHeader.ParentPageID,
           opCodes.SDF_C_PARENTPAGEID,
           resultObject
         );
@@ -5403,10 +5403,10 @@ class ShapeDataUtil {
       linetoolindex: ShapeDataUtil.JStoWinLineTool(ConstantData.DocumentContext.LineTool),
       shapetoolindex: ConstantData.DocumentContext.ShapeTool,
       datetime2007: 0,
-      holidaymask: T3Gv.optManager.theContentHeader.holidaymask,
+      holidaymask: T3Gv.optManager.contentHeader.holidaymask,
       datetime1: 0,
       datetime2: 0,
-      nonworkingdays: T3Gv.optManager.theContentHeader.nonworkingdays,
+      nonworkingdays: T3Gv.optManager.contentHeader.nonworkingdays,
       swimlaneformat: ConstantData.DocumentContext.SwimlaneFormat,
       autocontainer: autoContainer,
       actascontainer: actAsContainer,
@@ -6987,7 +6987,7 @@ class ShapeDataUtil {
 
       case ConstantData.FillTypes.SDFILL_RICHGRADIENT:
         // Write multi-stop rich gradient
-        const richGradient = resultObject.RichGradients[paintData.GradientFlags];
+        const richGradient = resultObject.richGradients[paintData.GradientFlags];
 
         if (richGradient) {
           const stopCount = richGradient.stops.length;
@@ -8080,7 +8080,7 @@ class ShapeDataUtil {
       case objectTypes.SDDATA_OBJECT:
         // Handle data objects
         if (countOnly) return true;
-        if (T3Gv.optManager.theContentHeader.SDDataID >= 0) {
+        if (T3Gv.optManager.contentHeader.SDDataID >= 0) {
           serializedBlock = ShapeDataUtil.WriteSDDataBlock(resultObject, blockIndex);
         }
         break;
@@ -8139,11 +8139,11 @@ class ShapeDataUtil {
       const objectCount = stateObjects.length;
 
       // Initialize result object with document context
-      resultObject.sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
-      resultObject.ctp = T3Gv.optManager.theContentHeader;
-      resultObject.tLMB = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, false);
-      resultObject.fontlist = T3Gv.optManager.theContentHeader.FontList;
-      resultObject.RichGradients = T3Gv.optManager.RichGradients;
+      resultObject.sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
+      resultObject.ctp = T3Gv.optManager.contentHeader;
+      resultObject.tLMB = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.layersManagerBlockId, false);
+      resultObject.fontlist = T3Gv.optManager.contentHeader.FontList;
+      resultObject.richGradients = T3Gv.optManager.richGradients;
       resultObject.WriteBlocks = true;
 
       // Get current view settings from the work area
@@ -8171,44 +8171,44 @@ class ShapeDataUtil {
       }
 
       // Update content header flags with current configuration
-      T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
-        T3Gv.optManager.theContentHeader.flags,
+      T3Gv.optManager.contentHeader.flags = Utils2.SetFlag(
+        T3Gv.optManager.contentHeader.flags,
         ConstantData.ContentHeaderFlags.CT_ShowGrid,
         T3Gv.docUtil.docConfig.showGrid
       );
 
-      T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
-        T3Gv.optManager.theContentHeader.flags,
+      T3Gv.optManager.contentHeader.flags = Utils2.SetFlag(
+        T3Gv.optManager.contentHeader.flags,
         ConstantData.ContentHeaderFlags.CT_ShowRulers,
         T3Gv.docUtil.docConfig.showRulers
       );
 
-      T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
-        T3Gv.optManager.theContentHeader.flags,
+      T3Gv.optManager.contentHeader.flags = Utils2.SetFlag(
+        T3Gv.optManager.contentHeader.flags,
         ConstantData.ContentHeaderFlags.CT_SnapToGridC,
         T3Gv.docUtil.docConfig.centerSnap && T3Gv.docUtil.docConfig.enableSnap
       );
 
-      T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
-        T3Gv.optManager.theContentHeader.flags,
+      T3Gv.optManager.contentHeader.flags = Utils2.SetFlag(
+        T3Gv.optManager.contentHeader.flags,
         ConstantData.ContentHeaderFlags.CT_SnapToGridTL,
         !T3Gv.docUtil.docConfig.centerSnap && T3Gv.docUtil.docConfig.enableSnap
       );
 
-      T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
-        T3Gv.optManager.theContentHeader.flags,
+      T3Gv.optManager.contentHeader.flags = Utils2.SetFlag(
+        T3Gv.optManager.contentHeader.flags,
         ConstantData.ContentHeaderFlags.CT_ShowPageDividers,
         T3Gv.docUtil.docConfig.showPageDivider
       );
 
-      T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
-        T3Gv.optManager.theContentHeader.flags,
+      T3Gv.optManager.contentHeader.flags = Utils2.SetFlag(
+        T3Gv.optManager.contentHeader.flags,
         ConstantData.ContentHeaderFlags.CT_SnapToShapes_Off,
         T3Gv.docUtil.docConfig.snapToShapes == 0
       );
 
-      T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
-        T3Gv.optManager.theContentHeader.flags,
+      T3Gv.optManager.contentHeader.flags = Utils2.SetFlag(
+        T3Gv.optManager.contentHeader.flags,
         ConstantData.ContentHeaderFlags.CT_ShowRulers,
         T3Gv.docUtil.docConfig.showRulers
       );
@@ -8497,7 +8497,7 @@ class ShapeDataUtil {
 
     // Write custom textures (non-standard ones)
     const textureCount = T3Gv.optManager.TextureList.Textures.length;
-    const standardTextureCount = T3Gv.optManager.NStdTextures;
+    const standardTextureCount = T3Gv.optManager.nStdTextures;
 
     if (textureCount > standardTextureCount) {
       for (let textureIndex = standardTextureCount; textureIndex < textureCount; textureIndex++) {

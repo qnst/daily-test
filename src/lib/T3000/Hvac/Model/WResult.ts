@@ -33,7 +33,7 @@ class WResult {
   public delta: number;
   public TextureList: any[];
   public LibraryPathTarget: string;
-  public RichGradients: any[];
+  public richGradients: any[];
   public KeepSegDir: boolean;
   public WriteWin32: boolean;
 
@@ -71,7 +71,7 @@ class WResult {
     this.delta = 0;
     this.TextureList = [];
     this.LibraryPathTarget = '';
-    this.RichGradients = [];
+    this.richGradients = [];
     this.KeepSegDir = false;
     this.WriteWin32 = false;
 

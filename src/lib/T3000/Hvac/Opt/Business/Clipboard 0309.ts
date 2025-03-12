@@ -97,7 +97,7 @@ class Clipboard {
 
   static DoCutCopy(event, action, canUseAsyncClipboard, clipboardData, imageInfo) {
     // Set the HTML clipboard content
-    T3Gv.optManager.theHtmlClipboard = this.GetCutCopyHTML();
+    T3Gv.optManager.htmlClipboard = this.GetCutCopyHTML();
 
     // Handle cut and copy actions
     if (action === "cut") {
@@ -220,10 +220,10 @@ class Clipboard {
   }
 
   static PasteFF(e) {
-    T3Gv.optManager.theTextClipboard = Clipboard.PlainTextToSDObj(e.getData("Text"));
+    T3Gv.optManager.textClipboard = Clipboard.PlainTextToSDObj(e.getData("Text"));
     const htmlData = e.getData("text/html");
     if (htmlData !== undefined && htmlData !== null && htmlData.length > 0) {
-      T3Gv.optManager.theHtmlClipboard = htmlData;
+      T3Gv.optManager.htmlClipboard = htmlData;
     }
     Clipboard.FocusOnIEclipboardDiv();
     setTimeout(() => {
@@ -237,7 +237,7 @@ class Clipboard {
         for (let i = 0; i < binaryData.length; i++) {
           uintArray[i] = binaryData.charCodeAt(i);
         }
-        T3Gv.optManager.theImageClipboard = new Blob([uintArray], { type: mimeType });
+        T3Gv.optManager.imageClipboard = new Blob([uintArray], { type: mimeType });
       }
       Clipboard.Paste();
       Clipboard.IEclipboardDiv.empty();
@@ -250,16 +250,16 @@ class Clipboard {
   }
 
   static PasteIE(e) {
-    T3Gv.optManager.theTextClipboard = Clipboard.PlainTextToSDObj(e.getData("Text"));
+    T3Gv.optManager.textClipboard = Clipboard.PlainTextToSDObj(e.getData("Text"));
     const files = e.files;
     for (let i = 0; i < files.length; i++) {
       if (files[i].type.indexOf("image") === 0) {
-        T3Gv.optManager.theImageClipboard = files[i].slice(0, files[i].size - 1);
+        T3Gv.optManager.imageClipboard = files[i].slice(0, files[i].size - 1);
       }
     }
     this.IEclipboardDiv.empty();
     setTimeout(() => {
-      T3Gv.optManager.theHtmlClipboard = this.IEclipboardDiv.html();
+      T3Gv.optManager.htmlClipboard = this.IEclipboardDiv.html();
       this.Paste();
       this.IEclipboardDiv.empty();
       this.FocusOnClipboardInput();
@@ -269,13 +269,13 @@ class Clipboard {
   static PasteChrome(e) {
     void 0 !== e.types && null != e.types && Array.prototype.forEach.call(e.types, (function (t, a) {
       t.match(/image.*/) || void 0 !== e.items && e.items[a].type.match(/image.*/) ?
-        T3Gv.optManager.theImageClipboard = e.items[a].getAsFile() :
+        T3Gv.optManager.imageClipboard = e.items[a].getAsFile() :
         t.match(/text\/plain/) || void 0 !== e.items && e.items[a].type.match(/text\/plain/) ?
           e.items[a].getAsString((function (e) {
-            T3Gv.optManager.theTextClipboard = Clipboard.PlainTextToSDObj(e)
+            T3Gv.optManager.textClipboard = Clipboard.PlainTextToSDObj(e)
           }
           )) : (t.match(/text\/html/) || e.items[a].type.match(/text\/html/)) && e.items[a].getAsString((function (e) {
-            T3Gv.optManager.theHtmlClipboard = e
+            T3Gv.optManager.htmlClipboard = e
           }
           ))
     }
@@ -285,9 +285,9 @@ class Clipboard {
   }
 
   static ClearInteralClipboard() {
-    T3Gv.optManager.theTextClipboard = null;
-    T3Gv.optManager.theHtmlClipboard = null;
-    T3Gv.optManager.theImageClipboard = null;
+    T3Gv.optManager.textClipboard = null;
+    T3Gv.optManager.htmlClipboard = null;
+    T3Gv.optManager.imageClipboard = null;
   }
 
   static PasteFromUIaction() {
@@ -319,21 +319,21 @@ class Clipboard {
       {
         typeRegex: /text\/html/,
         handler: (item) => item.text().then((text) => {
-          T3Gv.optManager.theHtmlClipboard = text;
+          T3Gv.optManager.htmlClipboard = text;
           return true;
         })
       },
       {
         typeRegex: /text\/plain/,
         handler: (item) => item.text().then((text) => {
-          T3Gv.optManager.theTextClipboard = Clipboard.PlainTextToSDObj(text);
+          T3Gv.optManager.textClipboard = Clipboard.PlainTextToSDObj(text);
           return true;
         })
       },
       {
         typeRegex: /image.*/,
         handler: (item) => {
-          T3Gv.optManager.theImageClipboard = item;
+          T3Gv.optManager.imageClipboard = item;
           return true;
         }
       }
@@ -407,7 +407,7 @@ class Clipboard {
       this.IEclipboardDiv.empty();
       setTimeout(() => {
         const htmlData = this.IEclipboardDiv.html();
-        this.Paste(textData, htmlData, T3Gv.optManager.theImageClipboard);
+        this.Paste(textData, htmlData, T3Gv.optManager.imageClipboard);
         this.IEclipboardDiv.empty();
         this.FocusOnClipboardInput();
       }, 0);
@@ -432,21 +432,21 @@ class Clipboard {
   static Paste() {
     //debugger
     /mobile|ip(ad|hone|od)|android|silk/i.test(navigator.userAgent);
-    const htmlObject = Clipboard.GetHTMLAsObject(T3Gv.optManager.theHtmlClipboard);
+    const htmlObject = Clipboard.GetHTMLAsObject(T3Gv.optManager.htmlClipboard);
     let header = null;
 
     if (htmlObject !== null) {
       header = Clipboard.GetHeaderFromHTML(htmlObject);
     }
 
-    if (htmlObject === null && T3Gv.optManager.theHtmlClipboard) {
+    if (htmlObject === null && T3Gv.optManager.htmlClipboard) {
       Clipboard.LastCutCopy = -1;
-      if (T3Gv.optManager.theImageClipboard && T3Gv.optManager.theImageClipboard.size > 0) {
-        T3Gv.optManager.theContentHeader.ClipboardType = ConstantData.ClipboardType.Image;
+      if (T3Gv.optManager.imageClipboard && T3Gv.optManager.imageClipboard.size > 0) {
+        T3Gv.optManager.contentHeader.ClipboardType = ConstantData.ClipboardType.Image;
       } else {
-        T3Gv.optManager.theContentHeader.ClipboardType = ConstantData.ClipboardType.Text;
+        T3Gv.optManager.contentHeader.ClipboardType = ConstantData.ClipboardType.Text;
       }
-      T3Gv.optManager.theContentHeader.ClipboardBuffer = null;
+      T3Gv.optManager.contentHeader.ClipboardBuffer = null;
       T3Gv.optManager.PasteObjects();
       return;
     }
@@ -460,8 +460,8 @@ class Clipboard {
 
   static GetCutCopyText() {
     const isMobile = /mobile|ip(ad|hone|od)|android|silk/i.test(navigator.userAgent);
-    const isTextClipboard = T3Gv.optManager.theContentHeader.ClipboardType === ConstantData.ClipboardType.Text;
-    const textClipboard = T3Gv.optManager.theTextClipboard;
+    const isTextClipboard = T3Gv.optManager.contentHeader.ClipboardType === ConstantData.ClipboardType.Text;
+    const textClipboard = T3Gv.optManager.textClipboard;
 
     if (!isTextClipboard || textClipboard == null) {
       return "";
@@ -474,12 +474,12 @@ class Clipboard {
     const isMobile = /mobile|ip(ad|hone|od)|android|silk/i.test(navigator.userAgent);
     let clipboardContent = "";
 
-    if (T3Gv.optManager.theContentHeader.ClipboardType === ConstantData.ClipboardType.Text && T3Gv.optManager.theTextClipboard) {
-      clipboardContent += T3Gv.optManager.theTextClipboard ? T3Gv.optManager.theTextClipboard.text : "";
+    if (T3Gv.optManager.contentHeader.ClipboardType === ConstantData.ClipboardType.Text && T3Gv.optManager.textClipboard) {
+      clipboardContent += T3Gv.optManager.textClipboard ? T3Gv.optManager.textClipboard.text : "";
     }
 
     const clipboardHeader = {
-      clipboardType: T3Gv.optManager.theContentHeader.ClipboardType,
+      clipboardType: T3Gv.optManager.contentHeader.ClipboardType,
       timestamp: this.LastCutCopy
     };
 
@@ -487,8 +487,8 @@ class Clipboard {
       clipboardContent += `<div>${extraHTML}</div>`;
     }
 
-    if (T3Gv.optManager.theContentHeader.ClipboardType === ConstantData.ClipboardType.Text) {
-      const textData = JSON.stringify(T3Gv.optManager.theTextClipboard);
+    if (T3Gv.optManager.contentHeader.ClipboardType === ConstantData.ClipboardType.Text) {
+      const textData = JSON.stringify(T3Gv.optManager.textClipboard);
       const textBytes = new Uint8Array(textData.length);
       for (let i = 0; i < textData.length; i++) {
         textBytes[i] = textData.charCodeAt(i);
@@ -496,13 +496,13 @@ class Clipboard {
       clipboardContent += base64js.fromByteArray(textBytes);
     }
 
-    if (T3Gv.optManager.theContentHeader.ClipboardType === ConstantData.ClipboardType.LM) {
-      const lmBytes = new Uint8Array(T3Gv.optManager.theContentHeader.ClipboardBuffer);
+    if (T3Gv.optManager.contentHeader.ClipboardType === ConstantData.ClipboardType.LM) {
+      const lmBytes = new Uint8Array(T3Gv.optManager.contentHeader.ClipboardBuffer);
       clipboardContent += base64js.fromByteArray(lmBytes);
     }
 
-    if (T3Gv.optManager.theContentHeader.ClipboardType === ConstantData.ClipboardType.Table) {
-      const tableData = JSON.stringify(T3Gv.optManager.theContentHeader.ClipboardBuffer);
+    if (T3Gv.optManager.contentHeader.ClipboardType === ConstantData.ClipboardType.Table) {
+      const tableData = JSON.stringify(T3Gv.optManager.contentHeader.ClipboardBuffer);
       const tableBytes = new Uint8Array(tableData.length);
       for (let i = 0; i < tableData.length; i++) {
         tableBytes[i] = tableData.charCodeAt(i);

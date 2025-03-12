@@ -290,10 +290,10 @@ class DocUtil {
           };
         }
       } else if (this.scaleToPage && adjustedRect.width > 0 && adjustedRect.height > 0) {
-        const pageWidth = T3Gv.optManager.theContentHeader.Page.papersize.x -
-          (T3Gv.optManager.theContentHeader.Page.margins.left + T3Gv.optManager.theContentHeader.Page.margins.right);
-        const pageHeight = T3Gv.optManager.theContentHeader.Page.papersize.y -
-          (T3Gv.optManager.theContentHeader.Page.margins.top + T3Gv.optManager.theContentHeader.Page.margins.bottom);
+        const pageWidth = T3Gv.optManager.contentHeader.Page.papersize.x -
+          (T3Gv.optManager.contentHeader.Page.margins.left + T3Gv.optManager.contentHeader.Page.margins.right);
+        const pageHeight = T3Gv.optManager.contentHeader.Page.papersize.y -
+          (T3Gv.optManager.contentHeader.Page.margins.top + T3Gv.optManager.contentHeader.Page.margins.bottom);
 
         tempArea = this.svgDoc.CalcScaleToFit(adjustedRect.width - 20, adjustedRect.height - 20, pageWidth, pageHeight);
         targetDimensions = {
@@ -666,7 +666,7 @@ class DocUtil {
       }
 
       if (!propagate) {
-        sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, true);
+        sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, true);
         sdp.rulerSettings = Utils1.DeepCopy(this.rulerSettings);
       }
 
@@ -1061,8 +1061,8 @@ class DocUtil {
       let pathMinor = "";
 
       // Calculate margins and document boundaries
-      const paperSize = T3Gv.optManager.theContentHeader.Page.papersize;
-      const margins = T3Gv.optManager.theContentHeader.Page.margins;
+      const paperSize = T3Gv.optManager.contentHeader.Page.papersize;
+      const margins = T3Gv.optManager.contentHeader.Page.margins;
       const paperMarginX =
         paperSize.x - (margins.left + margins.right) / 2;
       const paperMarginY =
@@ -1177,12 +1177,12 @@ class DocUtil {
 
     console.log("= D.DocHandler UpdatePageDividerVisibility - Input:", {
       showPageDivider: this.documentConfig.showPageDivider,
-      printFlags: T3Gv.optManager.theContentHeader.Page.printflags,
+      printFlags: T3Gv.optManager.contentHeader.Page.printflags,
       layerExists: !!(this.svgDoc && this.svgDoc.GetLayer(this.pageDividerLayer))
     });
 
     const pageDividerLayer = this.svgDoc ? this.svgDoc.GetLayer(this.pageDividerLayer) : null;
-    const printFlags = T3Gv.optManager.theContentHeader.Page.printflags;
+    const printFlags = T3Gv.optManager.contentHeader.Page.printflags;
     const shouldShow =
       !(printFlags & FileParser.PrintFlags.SEP_OnePage) &&
       !(printFlags & FileParser.PrintFlags.SEP_CustomPageSize) &&
@@ -1235,17 +1235,17 @@ class DocUtil {
           margins.top = 50;
           margins.bottom = 50;
         }
-      })(T3Gv.optManager.theContentHeader.Page.papersize, T3Gv.optManager.theContentHeader.Page.margins);
+      })(T3Gv.optManager.contentHeader.Page.papersize, T3Gv.optManager.contentHeader.Page.margins);
 
       // Calculate effective paper width and height based on margins
       let paperWidth =
-        T3Gv.optManager.theContentHeader.Page.papersize.x -
-        (T3Gv.optManager.theContentHeader.Page.margins.left +
-          T3Gv.optManager.theContentHeader.Page.margins.right);
+        T3Gv.optManager.contentHeader.Page.papersize.x -
+        (T3Gv.optManager.contentHeader.Page.margins.left +
+          T3Gv.optManager.contentHeader.Page.margins.right);
       let paperHeight =
-        T3Gv.optManager.theContentHeader.Page.papersize.y -
-        (T3Gv.optManager.theContentHeader.Page.margins.top +
-          T3Gv.optManager.theContentHeader.Page.margins.bottom);
+        T3Gv.optManager.contentHeader.Page.papersize.y -
+        (T3Gv.optManager.contentHeader.Page.margins.top +
+          T3Gv.optManager.contentHeader.Page.margins.bottom);
 
       // Scale dimensions to screen coordinates
       paperWidth *= workArea.docToScreenScale;
@@ -1735,14 +1735,14 @@ class DocUtil {
 
   // SetPageMargins = (e) => {
   //   try {
-  //     if (T3Gv.optManager.theContentHeader.Page.margins.left !== e) {
+  //     if (T3Gv.optManager.contentHeader.Page.margins.left !== e) {
   //       if (
   //         Collab.AllowMessage() &&
   //         Collab.BeginSecondaryEdit(),
-  //         T3Gv.optManager.theContentHeader.Page.margins.left = e,
-  //         T3Gv.optManager.theContentHeader.Page.margins.top = e,
-  //         T3Gv.optManager.theContentHeader.Page.margins.right = e,
-  //         T3Gv.optManager.theContentHeader.Page.margins.bottom = e,
+  //         T3Gv.optManager.contentHeader.Page.margins.left = e,
+  //         T3Gv.optManager.contentHeader.Page.margins.top = e,
+  //         T3Gv.optManager.contentHeader.Page.margins.right = e,
+  //         T3Gv.optManager.contentHeader.Page.margins.bottom = e,
   //         T3Gv.optManager.FitDocumentWorkAreaToPaperSize(),
   //         Collab.AllowMessage()
   //       ) {
@@ -1763,10 +1763,10 @@ class DocUtil {
   //     if (
   //       Collab.AllowMessage() &&
   //       Collab.BeginSecondaryEdit(),
-  //       T3Gv.optManager.theContentHeader.Page.margins.left = e,
-  //       T3Gv.optManager.theContentHeader.Page.margins.top = t,
-  //       T3Gv.optManager.theContentHeader.Page.margins.right = a,
-  //       T3Gv.optManager.theContentHeader.Page.margins.bottom = r,
+  //       T3Gv.optManager.contentHeader.Page.margins.left = e,
+  //       T3Gv.optManager.contentHeader.Page.margins.top = t,
+  //       T3Gv.optManager.contentHeader.Page.margins.right = a,
+  //       T3Gv.optManager.contentHeader.Page.margins.bottom = r,
   //       T3Gv.optManager.FitDocumentWorkAreaToPaperSize(),
   //       Collab.AllowMessage()
   //     ) {

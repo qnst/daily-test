@@ -14,7 +14,7 @@ const ListManager = {
 
   Defines: null,
   ModalOperations: null,
-  FormatPainterModes: null,
+  formatPainterModes: null,
   ArrowheadLookupTable: null,
   ArrowheadSizeTable: null,
 }
@@ -1111,14 +1111,14 @@ ListManager.ModalOperations = {
 }
 
 Object.freeze(ListManager.ModalOperations),
-  ListManager.FormatPainterModes = {
+  ListManager.formatPainterModes = {
     NONE: 0,
     OBJECT: 1,
     TEXT: 2,
     TABLE: 3
   }
 
-// Object.freeze(ListManager.FormatPainterModes),
+// Object.freeze(ListManager.formatPainterModes),
 // ListManager.DimensionFlags = {
 //   SED_DF_EndPts: 1,
 //   SED_DF_AllSeg: 2,
@@ -3024,14 +3024,14 @@ ListManager.ModalOperations = {
 }
 
 // Object.freeze(ListManager.ModalOperations),
-ListManager.FormatPainterModes = {
+ListManager.formatPainterModes = {
   NONE: 0,
   OBJECT: 1,
   TEXT: 2,
   TABLE: 3
 }
 
-// Object.freeze(ListManager.FormatPainterModes),
+// Object.freeze(ListManager.formatPainterModes),
 // ListManager.DimensionFlags = {
 //   SED_DF_EndPts: 1,
 //   SED_DF_AllSeg: 2,

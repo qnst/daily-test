@@ -152,9 +152,9 @@ class OptHandler {
   public TEDecAreaHammer: any;
   public TENoteAreaHammer: any;
   public theSelectedListBlockID: number;
-  public theSEDSessionBlockID: number;
-  public theTEDSessionBlockID: number;
-  public theLayersManagerBlockID: number;
+  public sedSessionBlockId: number;
+  public tedSessionBlockId: number;
+  public layersManagerBlockId: number;
   public stampCompleteCallback: any;
   public stampCompleteUserData: any;
   public stampHCenter: boolean;
@@ -162,40 +162,40 @@ class OptHandler {
   public stampShapeOffsetX: number;
   public stampShapeOffsetY: number;
   public stampSticky: boolean;
-  public LastOpDuplicate: boolean;
-  public NudgeOpen: boolean;
-  public NudgeX: number;
-  public NudgeY: number;
-  public NudgeGrowX: number;
-  public NudgeGrowY: number;
+  public lastOpDuplicate: boolean;
+  public nudgeOpen: boolean;
+  public nudgeX: number;
+  public nudgeY: number;
+  public nudgeGrowX: number;
+  public nudgeGrowY: number;
   public currentModalOperation: number;
-  public FormatPainterMode: number;
-  public FormatPainterStyle: QuickStyle;
-  public FormatPainterSticky: boolean;
-  public FormatPainterText: QuickStyle;
-  public FormatPainterParaFormat: ParagraphFormat;
-  public FormatPainterArrows: any;
+  public formatPainterMode: number;
+  public formatPainterStyle: QuickStyle;
+  public formatPainterSticky: boolean;
+  public formatPainterText: QuickStyle;
+  public formatPainterParaFormat: ParagraphFormat;
+  public formatPainterArrows: any;
   public svgDoc: Document;
   public svgObjectLayer: any;
   public svgOverlayLayer: any;
   public svgHighlightLayer: any;
-  public theEventTimestamp: number;
+  public eventTimestamp: number;
   public actionArrowHideTimer: HvTimer;
   public uniqueID: number;
-  public theTextClipboard: any;
-  public theHtmlClipboard: any;
-  public CutFromButton: boolean;
-  public theImageClipboard: any;
+  public textClipboard: any;
+  public htmlClipboard: any;
+  public cutFromButton: boolean;
+  public imageClipboard: any;
   public SVGroot: any;
-  public theDirtyList: any[];
-  public theDirtyListMoveOnly: any[];
-  public DirtyListReOrder: boolean;
-  public theMoveList: any[];
-  public theMoveBounds: any;
-  public PinRect: any;
-  public LinkParams: any;
+  public dirtyList: any[];
+  public dirtyListMoveOnly: any[];
+  public dirtyListReOrder: boolean;
+  public moveList: any[];
+  public moveBounds: any;
+  public pinRect: any;
+  public linkParams: any;
   public RightClickParams: any;
-  public PostMoveSelectID: any;
+  public postMoveSelectId: any;
   public bBuildingSymbols: boolean;
   public bTokenizeStyle: boolean;
   public bDrawEffects: boolean;
@@ -214,15 +214,15 @@ class OptHandler {
   public PageAction: any[];
   public PagesToDelete: any[];
   public TextureList: SDTextureList;
-  public RichGradients: any[];
-  public NStdTextures: number;
-  public HasBlockDirectory: boolean;
+  public richGradients: any[];
+  public nStdTextures: number;
+  public hasBlockDirectory: boolean;
   public FileVersion: number;
-  public ActiveExpandedView: any;
-  public CommentUserIDs: any[];
-  public theContentHeader: ContentHeader;
-  public theLinksBlockID: number;
-  public SelectionState: any;
+  public activeExpandedView: any;
+  public commentUserIDs: any[];
+  public contentHeader: ContentHeader;
+  public linksBlockId: number;
+  public selectionState: any;
   public OldFileMetaData: any;
   public curHiliteShape: number;
   public alternateStateManagerVars: any;
@@ -351,9 +351,9 @@ class OptHandler {
     this.TEDecAreaHammer = null;
     this.TENoteAreaHammer = null;
     this.theSelectedListBlockID = -1;
-    this.theSEDSessionBlockID = -1;
-    this.theTEDSessionBlockID = -1;
-    this.theLayersManagerBlockID = -1;
+    this.sedSessionBlockId = -1;
+    this.tedSessionBlockId = -1;
+    this.layersManagerBlockId = -1;
     this.stampCompleteCallback = null;
     this.stampCompleteUserData = null;
     this.stampHCenter = true;
@@ -361,30 +361,30 @@ class OptHandler {
     this.stampShapeOffsetX = 0;
     this.stampShapeOffsetY = 0;
     this.stampSticky = false;
-    this.LastOpDuplicate = false;
-    this.NudgeOpen = false;
-    this.NudgeX = 0;
-    this.NudgeY = 0;
-    this.NudgeGrowX = 0;
-    this.NudgeGrowY = 0;
+    this.lastOpDuplicate = false;
+    this.nudgeOpen = false;
+    this.nudgeX = 0;
+    this.nudgeY = 0;
+    this.nudgeGrowX = 0;
+    this.nudgeGrowY = 0;
     this.currentModalOperation = ConstantData2.ModalOperations.NONE;
-    this.FormatPainterMode = ConstantData2.FormatPainterModes.NONE;
-    this.FormatPainterStyle = new QuickStyle();
-    this.FormatPainterSticky = false;
-    this.FormatPainterText = new QuickStyle();
-    this.FormatPainterParaFormat = new ParagraphFormat();
-    this.FormatPainterArrows = null;
+    this.formatPainterMode = ConstantData2.formatPainterModes.NONE;
+    this.formatPainterStyle = new QuickStyle();
+    this.formatPainterSticky = false;
+    this.formatPainterText = new QuickStyle();
+    this.formatPainterParaFormat = new ParagraphFormat();
+    this.formatPainterArrows = null;
     this.svgDoc = null;
     this.svgObjectLayer = null;
     this.svgOverlayLayer = null;
     this.svgHighlightLayer = null;
-    this.theEventTimestamp = 0;
+    this.eventTimestamp = 0;
     this.actionArrowHideTimer = new HvTimer(this);
     this.uniqueID = 0;
-    this.theTextClipboard = null;
-    this.theHtmlClipboard = null;
-    this.CutFromButton = false;
-    this.theImageClipboard = null;
+    this.textClipboard = null;
+    this.htmlClipboard = null;
+    this.cutFromButton = false;
+    this.imageClipboard = null;
 
     const selectedListBlock = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.SELECTEDLIST_OBJECT, []);
     this.theSelectedListBlockID = selectedListBlock.ID;
@@ -392,13 +392,13 @@ class OptHandler {
     let defaultStyle = new QuickStyle();
 
     this.TextureList = new SDTextureList();
-    this.NStdTextures = 0;
-    this.RichGradients = [];
-    this.HasBlockDirectory = false;
+    this.nStdTextures = 0;
+    this.richGradients = [];
+    this.hasBlockDirectory = false;
     this.FileVersion = 41;// SDF.SDF_FVERSION2022;
-    this.ActiveExpandedView = null;
-    this.CommentUserIDs = [];
-    this.theContentHeader = new ContentHeader();
+    this.activeExpandedView = null;
+    this.commentUserIDs = [];
+    this.contentHeader = new ContentHeader();
 
     const sedSession = new SEDSession();
     sedSession.def.style = defaultStyle;
@@ -412,7 +412,7 @@ class OptHandler {
     sedSession.CurrentTheme = null;
 
     const sedSessionBlock = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.SED_SESSION_OBJECT, sedSession);
-    this.theSEDSessionBlockID = sedSessionBlock.ID;
+    this.sedSessionBlockId = sedSessionBlock.ID;
 
     const layersManager = new LayersManager();
     const defaultLayer = new Layer();
@@ -422,31 +422,31 @@ class OptHandler {
     layersManager.activelayer = 0;
 
     const layersManagerBlock = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.LAYERS_MANAGER_OBJECT, layersManager);
-    this.theLayersManagerBlockID = layersManagerBlock.ID;
+    this.layersManagerBlockId = layersManagerBlock.ID;
 
-    this.SelectionState = new SelectionAttributes();
+    this.selectionState = new SelectionAttributes();
 
     const tedSession = new TEDSession();// new ListManager.TEDSession();
     const tedSessionBlock = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.TED_SESSION_OBJECT, tedSession);
-    this.theTEDSessionBlockID = tedSessionBlock.ID;
+    this.tedSessionBlockId = tedSessionBlock.ID;
 
     const linksBlock = T3Gv.objectStore.CreateBlock(ConstantData.StoredObjectType.LINKLIST_OBJECT, []);
-    this.theLinksBlockID = linksBlock.ID;
+    this.linksBlockId = linksBlock.ID;
 
     this.PreserveUndoState(true);
     this.InitSVGDocument();
     this.SVGroot = this.svgDoc.svgObj.node;
     this.UpdateSelectionAttributes(null);
     this.BuildArrowheadLookupTables();
-    this.theDirtyList = [];
-    this.theDirtyListMoveOnly = [];
-    this.DirtyListReOrder = false;
-    this.theMoveList = [];
-    this.theMoveBounds = null;
-    this.PinRect = null;
-    this.LinkParams = null;
-    this.RightClickParams = null;
-    this.PostMoveSelectID = null;
+    this.dirtyList = [];
+    this.dirtyListMoveOnly = [];
+    this.dirtyListReOrder = false;
+    this.moveList = [];
+    this.moveBounds = null;
+    this.pinRect = null;
+    this.linkParams = null;
+    thisrightClickParams = null;
+    this.postMoveSelectId = null;
     this.bBuildingSymbols = false;
     this.bTokenizeStyle = false;
     this.bDrawEffects = true;
@@ -524,7 +524,7 @@ class OptHandler {
 
   InitSVGDocument() {
 
-    var e = T3Gv.objectStore.GetObject(this.theSEDSessionBlockID).Data;
+    var e = T3Gv.objectStore.GetObject(this.sedSessionBlockId).Data;
 
     const screenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
     const screenHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
@@ -599,7 +599,7 @@ class OptHandler {
         topshape: - 1,
         foundtree: !1
       },
-      f = T3Gv.optManager.GetObjectPtr(this.theSEDSessionBlockID, !1),
+      f = T3Gv.optManager.GetObjectPtr(this.sedSessionBlockId, !1),
       L = ConstantData.TextFace,
       I = {},
       T = ConstantData.ObjectTypes,
@@ -619,89 +619,89 @@ class OptHandler {
         ConstantData.Collab_AnimationMessages.ChangeSelection,
         e
       ),
-      this.SelectionState.nselect = 0,
-      this.SelectionState.nlineselected = 0,
-      this.SelectionState.nshapeselected = 0,
-      this.SelectionState.nconnectorselected = 0,
-      this.SelectionState.ngroupsselected = 0,
-      this.SelectionState.nimageselected = 0,
-      this.SelectionState.IsTargetTable = !1,
-      this.SelectionState.allowalign = 0,
-      this.SelectionState.width = 0,
-      this.SelectionState.widthstr = '',
-      this.SelectionState.height = 0,
-      this.SelectionState.heightstr = '',
-      this.SelectionState.left = 0,
-      this.SelectionState.leftstr = '',
-      this.SelectionState.top = 0,
-      this.SelectionState.topstr = '',
-      this.SelectionState.paste = this.GetClipboardType(),
+      this.selectionState.nselect = 0,
+      this.selectionState.nlineselected = 0,
+      this.selectionState.nshapeselected = 0,
+      this.selectionState.nconnectorselected = 0,
+      this.selectionState.ngroupsselected = 0,
+      this.selectionState.nimageselected = 0,
+      this.selectionState.IsTargetTable = !1,
+      this.selectionState.allowalign = 0,
+      this.selectionState.width = 0,
+      this.selectionState.widthstr = '',
+      this.selectionState.height = 0,
+      this.selectionState.heightstr = '',
+      this.selectionState.left = 0,
+      this.selectionState.leftstr = '',
+      this.selectionState.top = 0,
+      this.selectionState.topstr = '',
+      this.selectionState.paste = this.GetClipboardType(),
       D = Collab.GetUndoState(),
-      this.SelectionState.undo = D.undo,
-      this.SelectionState.redo = D.redo,
-      this.SelectionState.TextDirection = 0,
-      this.SelectionState.dimensions = 0,
-      this.SelectionState.ncells_selected = 0,
-      this.SelectionState.cell_notext = !1,
-      this.SelectionState.celltype = 0,
-      this.SelectionState.cellselected = !1,
-      this.SelectionState.cellflags = 0,
+      this.selectionState.undo = D.undo,
+      this.selectionState.redo = D.redo,
+      this.selectionState.TextDirection = 0,
+      this.selectionState.dimensions = 0,
+      this.selectionState.ncells_selected = 0,
+      this.selectionState.cell_notext = !1,
+      this.selectionState.celltype = 0,
+      this.selectionState.cellselected = !1,
+      this.selectionState.cellflags = 0,
 
       //Double ====
-      // this.SelectionState.NTableCols = GlobalDatagOptions.newTableCols,
-      // this.SelectionState.NTableRows = GlobalDatagOptions.newTableRows,
-      this.SelectionState.ntablesselected = 0,
-      this.SelectionState.bInNoteEdit = this.bInNoteEdit,
-      this.SelectionState.allowcopy = !1,
-      this.SelectionState.selectionhastext = !1,
-      this.SelectionState.npolylinecontainerselected = 0,
-      this.SelectionState.projectTableSelected = !1,
-      this.SelectionState.lockedTableSelected = !1,
-      this.SelectionState.nsegs = 0,
-      this.SelectionState.polyclosed = !1,
-      this.SelectionState.iswallselected = !1,
-      this.SelectionState.WallThickness = 0,
-      this.SelectionState.subtype = 0,
-      this.SelectionState.objecttype = 0,
-      this.SelectionState.datasetElemID = - 1,
-      this.SelectionState.tselect = - 1,
-      this.SelectionState.fixedCornerRadius = - 2,
-      this.SelectionState.lineCornerRadius = - 2,
-      this.SelectionState.connectorCanHaveCurve = !1,
-      this.SelectionState.CurrentSelectionBusinessManager = T3Gv.gBusinessManager,
-      this.SelectionState.isJiraCard = !1,
+      // this.selectionState.NTableCols = GlobalDatagOptions.newTableCols,
+      // this.selectionState.NTableRows = GlobalDatagOptions.newTableRows,
+      this.selectionState.ntablesselected = 0,
+      this.selectionState.bInNoteEdit = this.bInNoteEdit,
+      this.selectionState.allowcopy = !1,
+      this.selectionState.selectionhastext = !1,
+      this.selectionState.npolylinecontainerselected = 0,
+      this.selectionState.projectTableSelected = !1,
+      this.selectionState.lockedTableSelected = !1,
+      this.selectionState.nsegs = 0,
+      this.selectionState.polyclosed = !1,
+      this.selectionState.iswallselected = !1,
+      this.selectionState.WallThickness = 0,
+      this.selectionState.subtype = 0,
+      this.selectionState.objecttype = 0,
+      this.selectionState.datasetElemID = - 1,
+      this.selectionState.tselect = - 1,
+      this.selectionState.fixedCornerRadius = - 2,
+      this.selectionState.lineCornerRadius = - 2,
+      this.selectionState.connectorCanHaveCurve = !1,
+      this.selectionState.CurrentSelectionBusinessManager = T3Gv.gBusinessManager,
+      this.selectionState.isJiraCard = !1,
       T3Gv.optManager.bInDimensionEdit
-    ) this.SelectionState.fontid = -1,// T3Gv.optManager.GetFontIdByName(T3Gv.optManager.theContentHeader.DimensionFont.fontName),
-      this.SelectionState.fontsize = T3Gv.optManager.theContentHeader.DimensionFont.fontSize,
-      this.SelectionState.bold = (T3Gv.optManager.theContentHeader.DimensionFont.face & L.Bold) > 0,
-      this.SelectionState.italic = (T3Gv.optManager.theContentHeader.DimensionFont.face & L.Italic) > 0,
-      this.SelectionState.underline = (T3Gv.optManager.theContentHeader.DimensionFont.face & L.Underline) > 0,
-      this.SelectionState.superscript = (T3Gv.optManager.theContentHeader.DimensionFont.face & L.Subscript) > 0,
-      this.SelectionState.subscript = (T3Gv.optManager.theContentHeader.DimensionFont.face & L.Subscript) > 0,
-      this.SelectionState.CurrentSelectionBusinessManager = null;
-    else if (0 === m || this.bInNoteEdit) this.SelectionState.fontid = -1,// T3Gv.optManager.GetFontIdByName(f.def.lf.fontName),
-      this.SelectionState.fontsize = f.def.style.Text.FontSize,
-      this.SelectionState.bold = (f.def.style.Text.Face & L.Bold) > 0,
-      this.SelectionState.italic = (f.def.style.Text.Face & L.Italic) > 0,
-      this.SelectionState.underline = (f.def.style.Text.Face & L.Underline) > 0,
-      this.SelectionState.superscript = (f.def.style.Text.Face & L.Subscript) > 0,
-      this.SelectionState.subscript = (f.def.style.Text.Face & L.Subscript) > 0,
-      this.SelectionState.TextDirection = 0 == (f.def.textflags & ConstantData.TextFlags.SED_TF_HorizText),
-      this.SelectionState.dimensions = f.dimensions & ConstantData.DimensionFlags.SED_DF_Always ||
+    ) this.selectionState.fontid = -1,// T3Gv.optManager.GetFontIdByName(T3Gv.optManager.contentHeader.DimensionFont.fontName),
+      this.selectionState.fontsize = T3Gv.optManager.contentHeader.DimensionFont.fontSize,
+      this.selectionState.bold = (T3Gv.optManager.contentHeader.DimensionFont.face & L.Bold) > 0,
+      this.selectionState.italic = (T3Gv.optManager.contentHeader.DimensionFont.face & L.Italic) > 0,
+      this.selectionState.underline = (T3Gv.optManager.contentHeader.DimensionFont.face & L.Underline) > 0,
+      this.selectionState.superscript = (T3Gv.optManager.contentHeader.DimensionFont.face & L.Subscript) > 0,
+      this.selectionState.subscript = (T3Gv.optManager.contentHeader.DimensionFont.face & L.Subscript) > 0,
+      this.selectionState.CurrentSelectionBusinessManager = null;
+    else if (0 === m || this.bInNoteEdit) this.selectionState.fontid = -1,// T3Gv.optManager.GetFontIdByName(f.def.lf.fontName),
+      this.selectionState.fontsize = f.def.style.Text.FontSize,
+      this.selectionState.bold = (f.def.style.Text.Face & L.Bold) > 0,
+      this.selectionState.italic = (f.def.style.Text.Face & L.Italic) > 0,
+      this.selectionState.underline = (f.def.style.Text.Face & L.Underline) > 0,
+      this.selectionState.superscript = (f.def.style.Text.Face & L.Subscript) > 0,
+      this.selectionState.subscript = (f.def.style.Text.Face & L.Subscript) > 0,
+      this.selectionState.TextDirection = 0 == (f.def.textflags & ConstantData.TextFlags.SED_TF_HorizText),
+      this.selectionState.dimensions = f.dimensions & ConstantData.DimensionFlags.SED_DF_Always ||
       f.dimensions & ConstantData.DimensionFlags.SED_DF_Select,
       this.bInNoteEdit &&
       this.curNoteShape >= 0 &&
       null != (
         d = Business.GetSelectionBusinessManager(this.curNoteShape)
       ) &&
-      (this.SelectionState.CurrentSelectionBusinessManager = d);
+      (this.selectionState.CurrentSelectionBusinessManager = d);
     else {
       for (
         t = this.GetTargetSelect(),
-        this.SelectionState.nselect = m,
-        this.SelectionState.nlineselected = 0,
-        this.SelectionState.nshapeselected = 0,
-        this.SelectionState.nconnectorselected = 0,
+        this.selectionState.nselect = m,
+        this.selectionState.nlineselected = 0,
+        this.selectionState.nshapeselected = 0,
+        this.selectionState.nconnectorselected = 0,
         t >= 0 &&
         (
           null != (i = this.GetObjectPtr(t, !1)) &&
@@ -711,42 +711,42 @@ class OptHandler {
         t >= 0 &&
         (
           null != (d = Business.GetSelectionBusinessManager(t)) &&
-          (this.SelectionState.CurrentSelectionBusinessManager = d),
-          this.SelectionState.tselect = t,
+          (this.selectionState.CurrentSelectionBusinessManager = d),
+          this.selectionState.tselect = t,
           (i = this.GetObjectPtr(t, !1)) &&
           (
-            this.SelectionState.colorfilter = i.colorfilter,
+            this.selectionState.colorfilter = i.colorfilter,
             i.GetPositionRect(),
-            this.SelectionState.subtype = i.subtype,
-            this.SelectionState.objecttype = i.objecttype,
-            this.SelectionState.datasetElemID = i.datasetElemID,
+            this.selectionState.subtype = i.subtype,
+            this.selectionState.objecttype = i.objecttype,
+            this.selectionState.datasetElemID = i.datasetElemID,
             s = i.GetDimensionsForDisplay(),
-            this.SelectionState.left = s.x,
-            this.SelectionState.top = s.y,
-            this.SelectionState.width = s.width,
-            this.SelectionState.height = s.height,
+            this.selectionState.left = s.x,
+            this.selectionState.top = s.y,
+            this.selectionState.width = s.width,
+            this.selectionState.height = s.height,
             i.objecttype === T.SD_OBJT_FLOORPLAN_WALL &&
             (
-              this.SelectionState.WallThickness = i.StyleRecord.Line.Thickness
+              this.selectionState.WallThickness = i.StyleRecord.Line.Thickness
             ),
-            this.SelectionState.leftstr = i.GetLengthInRulerUnits(
-              this.SelectionState.left,
+            this.selectionState.leftstr = i.GetLengthInRulerUnits(
+              this.selectionState.left,
               T3Gv.docHandler.rulerSettings.originx
             ),
-            this.SelectionState.topstr = i.GetLengthInRulerUnits(
-              this.SelectionState.top,
+            this.selectionState.topstr = i.GetLengthInRulerUnits(
+              this.selectionState.top,
               T3Gv.docHandler.rulerSettings.originy
             ),
-            this.SelectionState.widthstr = i.GetLengthInRulerUnits(this.SelectionState.width),
-            0 !== s.height ? this.SelectionState.heightstr = i.GetLengthInRulerUnits(this.SelectionState.height) : this.SelectionState.heightstr = '',
+            this.selectionState.widthstr = i.GetLengthInRulerUnits(this.selectionState.width),
+            0 !== s.height ? this.selectionState.heightstr = i.GetLengthInRulerUnits(this.selectionState.height) : this.selectionState.heightstr = '',
             (S = T3Gv.optManager.Table_HideUI(i) ? null : i.GetTable(!1)) &&
             (
-              this.SelectionState.IsTargetTable = !0,
-              this.SelectionState.NTableRows = S.rows.length,
-              this.SelectionState.NTableCols = S.cols.length,
-              this.SelectionState.ntablesselected++
+              this.selectionState.IsTargetTable = !0,
+              this.selectionState.NTableRows = S.rows.length,
+              this.selectionState.NTableCols = S.cols.length,
+              this.selectionState.ntablesselected++
             ),
-            this.SelectionState.selectionhastext = i.DataID >= 0
+            this.selectionState.selectionhastext = i.DataID >= 0
           ),
           Business.FindTreeTop(i, 0, y) ? (
             o = y.topshape >= 0 ? y.topshape : y.topconnector,
@@ -759,8 +759,8 @@ class OptHandler {
       ) if (
           p = e[a],
           n ? - 1 === n.indexOf(p) &&
-            (this.SelectionState.allowalign = !0) : p != t &&
-          (this.SelectionState.allowalign = !0),
+            (this.selectionState.allowalign = !0) : p != t &&
+          (this.selectionState.allowalign = !0),
           (r = this.GetObjectPtr(p, !1)) instanceof BaseDrawingObject &&
           (
             u = (c = -1/*T3Gv.optManager.SD_GetVisioTextChild(p)*/) >= 0 ? this.GetObjectPtr(c, !1) : r,
@@ -770,24 +770,24 @@ class OptHandler {
           switch (
           r.ImageURL &&
           r.ImageURL.length &&
-          this.SelectionState.nimageselected++,
+          this.selectionState.nimageselected++,
           (r.IsSwimlane() || r instanceof ShapeContainer) &&
           (
-            this.SelectionState.lockedTableSelected = !0,
-            this.SelectionState.IsTargetTable = !0
+            this.selectionState.lockedTableSelected = !0,
+            this.selectionState.IsTargetTable = !0
           ),
           (S = r.GetTable(!1)) &&
           (
             (S.flags & ListManager.Table.TableFlags.SDT_TF_LOCK) > 0 &&
-            (this.SelectionState.lockedTableSelected = !0),
+            (this.selectionState.lockedTableSelected = !0),
             SDUI.AppSettings.Application !== Resources.Application.Builder &&
             r.objecttype === T.SD_OBJT_TABLE_WITH_SHAPECONTAINER &&
-            (this.SelectionState.lockedTableSelected = !0),
+            (this.selectionState.lockedTableSelected = !0),
             T3Gv.optManager.Table_GetCellWithType(S, ListManager.Table.CellTypes.SD_CT_JIRA_ISSUEKEY) &&
-            (this.SelectionState.isJiraCard = !0)
+            (this.selectionState.isJiraCard = !0)
           ),
           r.objecttype === T.SD_OBJT_FLOORPLAN_WALL &&
-          (this.SelectionState.iswallselected = !0),
+          (this.selectionState.iswallselected = !0),
           h = r.DrawingObjectBaseClass,
           r instanceof PolyLineContainer &&
           (h = C.SHAPE),
@@ -795,93 +795,93 @@ class OptHandler {
           ) {
             case C.SHAPE:
               switch (
-              this.SelectionState.nshapeselected++,
+              this.selectionState.nshapeselected++,
               S &&
-              this.SelectionState.ntablesselected++,
+              this.selectionState.ntablesselected++,
               r.ShapeType
               ) {
                 case b.RECT:
                 case b.RRECT:
-                  r.moreflags & ConstantData.ObjMoreFlags.SED_MF_FixedRR ? - 2 === this.SelectionState.fixedCornerRadius ? this.SelectionState.fixedCornerRadius = 100 * r.shapeparam : this.SelectionState.fixedCornerRadius !== 100 * r.shapeparam &&
-                    (this.SelectionState.fixedCornerRadius = - 1) : - 2 === this.SelectionState.fixedCornerRadius &&
-                      0 === r.shapeparam ? this.SelectionState.fixedCornerRadius = 0 : this.SelectionState.fixedCornerRadius = - 1
+                  r.moreflags & ConstantData.ObjMoreFlags.SED_MF_FixedRR ? - 2 === this.selectionState.fixedCornerRadius ? this.selectionState.fixedCornerRadius = 100 * r.shapeparam : this.selectionState.fixedCornerRadius !== 100 * r.shapeparam &&
+                    (this.selectionState.fixedCornerRadius = - 1) : - 2 === this.selectionState.fixedCornerRadius &&
+                      0 === r.shapeparam ? this.selectionState.fixedCornerRadius = 0 : this.selectionState.fixedCornerRadius = - 1
               }
               break;
             case C.CONNECTOR:
-              this.SelectionState.nconnectorselected++,
+              this.selectionState.nconnectorselected++,
                 r.AllowCurveOnConnector() &&
                 (
-                  this.SelectionState.connectorCanHaveCurve = !0,
-                  - 2 === this.SelectionState.lineCornerRadius ? this.SelectionState.lineCornerRadius = r.arraylist.curveparam : this.SelectionState.lineCornerRadius !== r.arraylist.curveparam &&
-                    (this.SelectionState.lineCornerRadius = - 1)
+                  this.selectionState.connectorCanHaveCurve = !0,
+                  - 2 === this.selectionState.lineCornerRadius ? this.selectionState.lineCornerRadius = r.arraylist.curveparam : this.selectionState.lineCornerRadius !== r.arraylist.curveparam &&
+                    (this.selectionState.lineCornerRadius = - 1)
                 );
             case C.LINE:
-              this.SelectionState.nlineselected++,
+              this.selectionState.nlineselected++,
                 g = r.TextDirection,
-                0 === this.SelectionState.TextDirection ? this.SelectionState.TextDirection = g : this.SelectionState.TextDirection !== g &&
-                  (this.SelectionState.TextDirection = - 1),
+                0 === this.selectionState.TextDirection ? this.selectionState.TextDirection = g : this.selectionState.TextDirection !== g &&
+                  (this.selectionState.TextDirection = - 1),
                 r.LineType === ConstantData.LineType.SEGLINE &&
                 (
-                  - 2 === this.SelectionState.lineCornerRadius ? this.SelectionState.lineCornerRadius = r.segl.curveparam : this.SelectionState.lineCornerRadius !== r.segl.curveparam &&
-                    (this.SelectionState.lineCornerRadius = - 1)
+                  - 2 === this.selectionState.lineCornerRadius ? this.selectionState.lineCornerRadius = r.segl.curveparam : this.selectionState.lineCornerRadius !== r.segl.curveparam &&
+                    (this.selectionState.lineCornerRadius = - 1)
                 )
           }
           u.DataID >= 0 &&
-            (this.SelectionState.selectionhastext = !0),
+            (this.selectionState.selectionhastext = !0),
             (r instanceof GroupSymbol || r.NativeID >= 0) &&
-            this.SelectionState.ngroupsselected++;
+            this.selectionState.ngroupsselected++;
           var M = this.Table_GetActiveID();
           r instanceof PolyLineContainer &&
-            this.SelectionState.npolylinecontainerselected++,
+            this.selectionState.npolylinecontainerselected++,
             r.objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART &&
-            (this.SelectionState.projectTableSelected = !0),
+            (this.selectionState.projectTableSelected = !0),
             r.subtype === ConstantData.ObjectSubTypes.SD_SUBT_TASK &&
-            (this.SelectionState.projectTableSelected = !0),
+            (this.selectionState.projectTableSelected = !0),
             r instanceof PolyLine &&
             r.polylist &&
             r.polylist.segs &&
             (
-              this.SelectionState.nsegs = r.polylist.segs.length,
-              this.SelectionState.polyclosed = r.polylist.closed
+              this.selectionState.nsegs = r.polylist.segs.length,
+              this.selectionState.polyclosed = r.polylist.closed
             ),
             M === t ? this.Table_UpdateSelectionAttributes(M, !1) : (
               l = u.GetTextFormat(!0, I),
               I.hastext &&
-              (this.SelectionState.selectionhastext = !0),
+              (this.selectionState.selectionhastext = !0),
               0 === a ? (
-                this.SelectionState.fontid = l.FontId,
-                this.SelectionState.fontsize = l.FontSize,
-                this.SelectionState.bold = (l.Face & L.Bold) > 0,
-                this.SelectionState.italic = (l.Face & L.Italic) > 0,
-                this.SelectionState.underline = (l.Face & L.Underline) > 0,
-                this.SelectionState.superscript = (l.Face & L.Superscript) > 0,
-                this.SelectionState.subscript = (l.Face & L.Subscript) > 0
+                this.selectionState.fontid = l.FontId,
+                this.selectionState.fontsize = l.FontSize,
+                this.selectionState.bold = (l.Face & L.Bold) > 0,
+                this.selectionState.italic = (l.Face & L.Italic) > 0,
+                this.selectionState.underline = (l.Face & L.Underline) > 0,
+                this.selectionState.superscript = (l.Face & L.Superscript) > 0,
+                this.selectionState.subscript = (l.Face & L.Subscript) > 0
               ) : (
-                this.SelectionState.fontid !== l.FontId &&
-                (this.SelectionState.fontid = - 1),
-                this.SelectionState.fontsize !== l.FontSize &&
-                (this.SelectionState.fontsize = - 1),
-                this.SelectionState.bold !== (l.Face & L.Bold) > 0 &&
-                (this.SelectionState.bold = !1),
-                this.SelectionState.italic !== (l.Face & L.Italic) > 0 &&
-                (this.SelectionState.italic = !1),
-                this.SelectionState.underline !== (l.Face & L.Underline) > 0 &&
-                (this.SelectionState.underline = !1),
-                this.SelectionState.superscript !== (l.Face & L.Superscript) > 0 &&
-                (this.SelectionState.superscript = !1),
-                this.SelectionState.subscript !== (l.Face & L.Subscript) > 0 &&
-                (this.SelectionState.subscript = !1)
+                this.selectionState.fontid !== l.FontId &&
+                (this.selectionState.fontid = - 1),
+                this.selectionState.fontsize !== l.FontSize &&
+                (this.selectionState.fontsize = - 1),
+                this.selectionState.bold !== (l.Face & L.Bold) > 0 &&
+                (this.selectionState.bold = !1),
+                this.selectionState.italic !== (l.Face & L.Italic) > 0 &&
+                (this.selectionState.italic = !1),
+                this.selectionState.underline !== (l.Face & L.Underline) > 0 &&
+                (this.selectionState.underline = !1),
+                this.selectionState.superscript !== (l.Face & L.Superscript) > 0 &&
+                (this.selectionState.superscript = !1),
+                this.selectionState.subscript !== (l.Face & L.Subscript) > 0 &&
+                (this.selectionState.subscript = !1)
               )
             ),
-            this.SelectionState.dimensions |= r.Dimensions & (
+            this.selectionState.dimensions |= r.Dimensions & (
               ConstantData.DimensionFlags.SED_DF_Always | ConstantData.DimensionFlags.SED_DF_Select
             )
         }
-      this.theMoveList = null
+      this.moveList = null
     }
-    this.SelectionState.allowcopy = this.SelectionState.nselect > 0;
+    this.selectionState.allowcopy = this.selectionState.nselect > 0;
     var P = new SelectionAttributes;
-    $.extend(!0, P, this.SelectionState),
+    $.extend(!0, P, this.selectionState),
       T3Gv.docHandler.rulerSettings.showpixels &&
       P.fontsize >= 0 &&
       (P.fontsize = this.PixelstoPoints(P.fontsize))
@@ -915,27 +915,27 @@ class OptHandler {
 
   GetClipboardType() {
     console.log('============ T3Gv.clipboardManager', T3Gv.clipboardManager);
-    var e = this.GetObjectPtr(this.theTEDSessionBlockID, !1);
+    var e = this.GetObjectPtr(this.tedSessionBlockId, !1);
     T3Gv.clipboardManager.Get();
     return - 1 != e.theActiveTextEditObjectID ||
       this.bInNoteEdit ? e.theActiveTableObjectID >= 0 &&
-        this.theContentHeader.ClipboardType === ConstantData.ClipboardType.Table &&
-        this.theContentHeader.ClipboardBuffer ? ConstantData.ClipboardType.Table : this.theTextClipboard &&
-          this.theTextClipboard.text ? ConstantData.ClipboardType.Text : ConstantData.ClipboardType.None : e.theActiveTableObjectID >= 0 &&
+        this.contentHeader.ClipboardType === ConstantData.ClipboardType.Table &&
+        this.contentHeader.ClipboardBuffer ? ConstantData.ClipboardType.Table : this.textClipboard &&
+          this.textClipboard.text ? ConstantData.ClipboardType.Text : ConstantData.ClipboardType.None : e.theActiveTableObjectID >= 0 &&
             (
-              this.theContentHeader.ClipboardType === ConstantData.ClipboardType.Table &&
-              this.theContentHeader.ClipboardBuffer ||
-              this.theTextClipboard &&
-              this.theTextClipboard.text
-            ) ? ConstantData.ClipboardType.Table : T3Gv.optManager.theContentHeader.ClipboardBuffer &&
-              this.theContentHeader.ClipboardType === ConstantData.ClipboardType.LM ? ConstantData.ClipboardType.LM : this.GetTargetSelect() >= 0 &&
-                this.theTextClipboard &&
-                this.theTextClipboard.text ? ConstantData.ClipboardType.Text : ConstantData.ClipboardType.None
+              this.contentHeader.ClipboardType === ConstantData.ClipboardType.Table &&
+              this.contentHeader.ClipboardBuffer ||
+              this.textClipboard &&
+              this.textClipboard.text
+            ) ? ConstantData.ClipboardType.Table : T3Gv.optManager.contentHeader.ClipboardBuffer &&
+              this.contentHeader.ClipboardType === ConstantData.ClipboardType.LM ? ConstantData.ClipboardType.LM : this.GetTargetSelect() >= 0 &&
+                this.textClipboard &&
+                this.textClipboard.text ? ConstantData.ClipboardType.Text : ConstantData.ClipboardType.None
   }
 
   GetTargetSelect() {
     var e;
-    e = this.GetObjectPtr(this.theSEDSessionBlockID, !1);
+    e = this.GetObjectPtr(this.sedSessionBlockId, !1);
     var t = this.Table_GetActiveID();
     t >= 0 &&
       (e.tselect = t);
@@ -950,7 +950,7 @@ class OptHandler {
   }
 
   Table_GetActiveID() {
-    return this.GetObjectPtr(this.theTEDSessionBlockID, !1).theActiveTableObjectID
+    return this.GetObjectPtr(this.tedSessionBlockId, !1).theActiveTableObjectID
   }
 
   // GetFontIdByName(e) {
@@ -1039,7 +1039,7 @@ class OptHandler {
   }
 
   // SetBusinessModule(e) {
-  //   this.theContentHeader.BusinessModule = e
+  //   this.contentHeader.BusinessModule = e
   // }
 
   ShowXY(xy) {
@@ -1140,7 +1140,7 @@ class OptHandler {
           (t.x = 0),
           t.y < 0 &&
           (t.y = 0);
-        var C = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
+        var C = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1);
         t.x > C.dim.x &&
           (t.x = C.dim.x),
           t.y > C.dim.y &&
@@ -1229,7 +1229,7 @@ class OptHandler {
         t.x = Math.max(0, t.x);
         t.y = Math.max(0, t.y);
 
-        const sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+        const sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
         t.x = Math.min(sessionBlock.dim.x, t.x);
         t.y = Math.min(sessionBlock.dim.y, t.y);
       }
@@ -1479,7 +1479,7 @@ class OptHandler {
     console.log("O.Opt CloseEdit - Input:", { skipShapeClose, closeOption, skipTooltipProcessing });
     if (!Collab.IsProcessingMessage()) {
       let isNudgeActive = false;
-      if (this.NudgeOpen) {
+      if (this.nudgeOpen) {
         isNudgeActive = true;
         T3Gv.optManager.CloseOpenNudge();
       }
@@ -1511,7 +1511,7 @@ class OptHandler {
 
   SetTargetSelect(targetId: number, preserveSession: boolean) {
     console.log("O.Opt SetTargetSelect - Input:", { targetId, preserveSession });
-    let sessionData = this.GetObjectPtr(this.theSEDSessionBlockID, preserveSession);
+    let sessionData = this.GetObjectPtr(this.sedSessionBlockId, preserveSession);
     sessionData.tselect = targetId;
     let dimensions: any = null;
     if (targetId > 0) {
@@ -1574,15 +1574,15 @@ class OptHandler {
         }
       }
       if (this.currentModalOperation === ConstantData2.ModalOperations.FORMATPAINTER) {
-        if (this.FormatPainterSticky) {
-          console.log('O.Opt StartRubberBandSelect - FormatPainterSticky active; aborting.');
+        if (this.formatPainterSticky) {
+          console.log('O.Opt StartRubberBandSelect - formatPainterSticky active; aborting.');
           return;
         }
         this.SetFormatPainter(true, false);
       }
 
       // Ensure any active edit is closed
-      this.GetObjectPtr(this.theTEDSessionBlockID, false);
+      this.GetObjectPtr(this.tedSessionBlockId, false);
       T3Gv.optManager.CloseEdit();
 
       // Create the rubber band shape as a rectangle
@@ -1675,7 +1675,7 @@ class OptHandler {
   VisibleZList() {
     console.log('O.Opt VisibleZList: input');
 
-    const layersManager = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
+    const layersManager = T3Gv.optManager.GetObjectPtr(this.layersManagerBlockId, false);
     const layers = layersManager.layers;
     const numberOfLayers = layersManager.nlayers;
     const activeLayerIndex = layersManager.activelayer;
@@ -1781,7 +1781,7 @@ class OptHandler {
   ActiveVisibleZList() {
     console.log('O.Opt ActiveVisibleZList: input');
 
-    const layersManager = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
+    const layersManager = T3Gv.optManager.GetObjectPtr(this.layersManagerBlockId, false);
     const layers = layersManager.layers;
     const numberOfLayers = layersManager.nlayers;
     const activeLayerIndex = layersManager.activelayer;
@@ -1830,7 +1830,7 @@ class OptHandler {
       this.currentModalOperation === ConstantData2.ModalOperations.FORMATPAINTER
     ) this.currentModalOperation = ConstantData2.ModalOperations.NONE,
       this.SetEditMode(ConstantData.EditState.DEFAULT),
-      this.FormatPainterSticky = !1;
+      this.formatPainterSticky = !1;
     else if (!e) if (
       this.CancelModalOperation(),
       a = T3Gv.optManager.GetActiveTextEdit(),
@@ -1838,78 +1838,78 @@ class OptHandler {
       null != a
     ) {
       this.currentModalOperation = ConstantData2.ModalOperations.FORMATPAINTER,
-        this.FormatPainterMode = ConstantData2.FormatPainterModes.TEXT,
-        this.FormatPainterSticky = t;
+        this.formatPainterMode = ConstantData2.formatPainterModes.TEXT,
+        this.formatPainterSticky = t;
       var S = this.svgDoc.GetActiveEdit();
       S &&
         (
-          this.FormatPainterText = S.GetSelectedFormat(),
-          this.FormatPainterStyle = {
+          this.formatPainterText = S.GetSelectedFormat(),
+          this.formatPainterStyle = {
             StyleRecord: {
             }
           },
-          this.FormatPainterStyle.Text = new TextFormatData(),
-          this.TextStyleToSDText(this.FormatPainterStyle.Text, this.FormatPainterText),
+          this.formatPainterStyle.Text = new TextFormatData(),
+          this.TextStyleToSDText(this.formatPainterStyle.Text, this.formatPainterText),
           this.SetEditMode(ConstantData.EditState.FORMATPAINT)
         )
     } else if (i >= 0) {
       if ((r = this.GetObjectPtr(i, !1)) && (o = r.GetTable(!1))) if (o.select >= 0) {
         this.currentModalOperation = ConstantData2.ModalOperations.FORMATPAINTER,
-          this.FormatPainterSticky = t,
-          this.FormatPainterMode = ConstantData2.FormatPainterModes.TABLE,
-          this.FormatPainterStyle = {
+          this.formatPainterSticky = t,
+          this.formatPainterMode = ConstantData2.formatPainterModes.TABLE,
+          this.formatPainterStyle = {
             StyleRecord: {
             }
           },
           n = o.cells[o.select],
-          this.FormatPainterStyle.Text = Utils1.DeepCopy(n.Text),
-          this.FormatPainterStyle.hline = Utils1.DeepCopy(n.hline),
-          this.FormatPainterStyle.vline = Utils1.DeepCopy(n.vline),
-          this.FormatPainterStyle.Fill = Utils1.DeepCopy(n.fill),
-          this.FormatPainterStyle.vjust = n.vjust,
-          this.FormatPainterStyle.just = n.just,
-          this.FormatPainterText = this.CalcDefaultInitialTextStyle(this.FormatPainterStyle.Text);
+          this.formatPainterStyle.Text = Utils1.DeepCopy(n.Text),
+          this.formatPainterStyle.hline = Utils1.DeepCopy(n.hline),
+          this.formatPainterStyle.vline = Utils1.DeepCopy(n.vline),
+          this.formatPainterStyle.Fill = Utils1.DeepCopy(n.fill),
+          this.formatPainterStyle.vjust = n.vjust,
+          this.formatPainterStyle.just = n.just,
+          this.formatPainterText = this.CalcDefaultInitialTextStyle(this.formatPainterStyle.Text);
         var c = {};
         c.just = n.just,
           c.bullet = 'none',
           c.spacing = 0;
         var u = this.svgObjectLayer.GetElementByID(r.BlockID);
         this.Table_GetTextParaFormat(o, c, u, !1, !1, o.select),
-          this.FormatPainterParaFormat = c,
+          this.formatPainterParaFormat = c,
           this.SetEditMode(ConstantData.EditState.FORMATPAINT)
       } else o.rselect >= 0 ? (
         this.currentModalOperation = ConstantData2.ModalOperations.FORMATPAINTER,
-        this.FormatPainterSticky = t,
-        this.FormatPainterMode = ConstantData2.FormatPainterModes.TABLE,
-        this.FormatPainterStyle = {
+        this.formatPainterSticky = t,
+        this.formatPainterMode = ConstantData2.formatPainterModes.TABLE,
+        this.formatPainterStyle = {
           StyleRecord: {
           }
         },
         s = o.rows[o.rselect],
         n = o.cells[s.start + s.segments[0].start],
-        this.FormatPainterStyle.hline = Utils1.DeepCopy(n.hline),
+        this.formatPainterStyle.hline = Utils1.DeepCopy(n.hline),
         this.SetEditMode(ConstantData.EditState.FORMATPAINT)
       ) : o.cselect >= 0 &&
       (
         this.currentModalOperation = ConstantData2.ModalOperations.FORMATPAINTER,
-        this.FormatPainterSticky = t,
-        this.FormatPainterMode = ConstantData2.FormatPainterModes.TABLE,
-        this.FormatPainterStyle = {
+        this.formatPainterSticky = t,
+        this.formatPainterMode = ConstantData2.formatPainterModes.TABLE,
+        this.formatPainterStyle = {
           StyleRecord: {
           }
         },
         l = o.cols[o.cselect],
-        this.FormatPainterStyle.vline = Utils1.DeepCopy(l.vline),
+        this.formatPainterStyle.vline = Utils1.DeepCopy(l.vline),
         this.SetEditMode(ConstantData.EditState.FORMATPAINT)
       )
     } else (a = this.GetTargetSelect()) >= 0 &&
       (r = this.GetObjectPtr(a, !1)) &&
       (
         this.currentModalOperation = ConstantData2.ModalOperations.FORMATPAINTER,
-        this.FormatPainterSticky = t,
-        this.FormatPainterMode = ConstantData2.FormatPainterModes.OBJECT,
-        this.FormatPainterStyle = Utils1.DeepCopy(r.StyleRecord),
-        this.FormatPainterStyle.Border = Utils1.DeepCopy(r.StyleRecord.Line),
+        this.formatPainterSticky = t,
+        this.formatPainterMode = ConstantData2.formatPainterModes.OBJECT,
+        this.formatPainterStyle = Utils1.DeepCopy(r.StyleRecord),
+        this.formatPainterStyle.Border = Utils1.DeepCopy(r.StyleRecord.Line),
         !(
           r.ImageURL ||
           r.SymbolURL ||
@@ -1917,24 +1917,24 @@ class OptHandler {
         ) ||
         r instanceof SVGFragmentSymbol ||
         (
-          delete this.FormatPainterStyle.Fill,
-          delete this.FormatPainterStyle.Name,
+          delete this.formatPainterStyle.Fill,
+          delete this.formatPainterStyle.Name,
           (
-            0 === this.FormatPainterStyle.Line.Thickness ||
+            0 === this.formatPainterStyle.Line.Thickness ||
             r instanceof GroupSymbol
           ) &&
           (
-            delete this.FormatPainterStyle.Line,
-            delete this.FormatPainterStyle.Border
+            delete this.formatPainterStyle.Line,
+            delete this.formatPainterStyle.Border
           )
         ),
-        this.FormatPainterText = r.GetTextFormat(!1, null),
-        null === this.FormatPainterText &&
+        this.formatPainterText = r.GetTextFormat(!1, null),
+        null === this.formatPainterText &&
         (
-          this.FormatPainterText = this.CalcDefaultInitialTextStyle(this.FormatPainterStyle.Text)
+          this.formatPainterText = this.CalcDefaultInitialTextStyle(this.formatPainterStyle.Text)
         ),
-        this.FormatPainterParaFormat = r.GetTextParaFormat(!1),
-        this.FormatPainterArrows = r.GetArrowheadFormat(),
+        this.formatPainterParaFormat = r.GetTextParaFormat(!1),
+        this.formatPainterArrows = r.GetArrowheadFormat(),
         this.SetEditMode(ConstantData.EditState.FORMATPAINT)
       );
     // Commands.MainController.Selection.SetFormatPainterHighlight(
@@ -1945,7 +1945,7 @@ class OptHandler {
   DeactivateAllTextEdit(skipShapeClose: boolean, closeOption: any) {
     console.log('O.Opt DeactivateAllTextEdit - Input:', { skipShapeClose, closeOption });
 
-    const tedSession = this.GetObjectPtr(this.theTEDSessionBlockID, false);
+    const tedSession = this.GetObjectPtr(this.tedSessionBlockId, false);
     if (tedSession.theActiveTextEditObjectID !== -1) {
       this.DeactivateTextEdit(skipShapeClose, closeOption);
     } else {
@@ -1999,7 +1999,7 @@ class OptHandler {
   CloseShapeEdit(providedOutlineId, useAlternate, alternateOutlineId) {
     console.log("O.Opt CloseShapeEdit - Input:", { providedOutlineId, useAlternate, alternateOutlineId });
 
-    let sessionData = this.GetObjectPtr(this.theTEDSessionBlockID, false);
+    let sessionData = this.GetObjectPtr(this.tedSessionBlockId, false);
     let activeOutlineId = sessionData.theActiveOutlineObjectID;
 
     // If using the alternate outline id then override activeOutlineId.
@@ -2038,7 +2038,7 @@ class OptHandler {
       }
       if (!useAlternate) {
         // Reset the active outline id.
-        sessionData = this.GetObjectPtr(this.theTEDSessionBlockID, true);
+        sessionData = this.GetObjectPtr(this.tedSessionBlockId, true);
         sessionData.theActiveOutlineObjectID = -1;
       }
       this.CompleteOperation();
@@ -2301,7 +2301,7 @@ class OptHandler {
   //     T3Gv.stateManager.ExceptionCleanup(),
   //     this.ResizeSVGDocument(),
   //     this.RenderAllSVGObjects();
-  //   var t = this.GetObjectPtr(this.theSEDSessionBlockID, !1);
+  //   var t = this.GetObjectPtr(this.sedSessionBlockId, !1);
   //   Resources.CurrentTheme.Name !== t.CurrentTheme &&
   //     (new SDUI.ThemeController).SwitchTheme(t.CurrentTheme);
   //   var a = this.GetObjectPtr(this.theSelectedListBlockID, !1);
@@ -2335,7 +2335,7 @@ class OptHandler {
       this.ResizeSVGDocument();
       this.RenderAllSVGObjects();
 
-      const sessionData = this.GetObjectPtr(this.theSEDSessionBlockID, false);
+      const sessionData = this.GetObjectPtr(this.sedSessionBlockId, false);
       const selectedList = this.GetObjectPtr(this.theSelectedListBlockID, false);
       this.UpdateSelectionAttributes(selectedList);
 
@@ -2518,7 +2518,7 @@ class OptHandler {
       this.UpdateSelectionAttributes(selectedList);
     }
 
-    this.LastOpDuplicate = false;
+    this.lastOpDuplicate = false;
     this.ScrollObjectIntoView(-1, false);
 
     if (Clipboard && Clipboard.FocusOnClipboardInput) {
@@ -2532,7 +2532,7 @@ class OptHandler {
     console.log("O.Opt DrawNewObject - Input:", { newShape, clearExistingSection });
 
     this.SetModalOperation(ConstantData2.ModalOperations.DRAW);
-    this.GetObjectPtr(this.theTEDSessionBlockID, false);
+    this.GetObjectPtr(this.tedSessionBlockId, false);
     this.CloseEdit();
 
     this.lineDrawId = -1;
@@ -2588,7 +2588,7 @@ class OptHandler {
     }
 
     // Determine if snapping should be enabled
-    let hasLinkParam = this.LinkParams && this.LinkParams.SConnectIndex >= 0;
+    let hasLinkParam = this.linkParams && this.linkParams.SConnectIndex >= 0;
     let needOverrideSnaps = this.OverrideSnaps(inputEvent);
     hasLinkParam = hasLinkParam || needOverrideSnaps;
     const isSnapEnabled = T3Gv.docHandler.documentConfig.enableSnap && !hasLinkParam;
@@ -2648,24 +2648,24 @@ class OptHandler {
     this.actionStoredObjectId = layerZList[layerCount - 1];
 
     // If a circular link list exists, add the new object to it
-    if (this.LinkParams && this.LinkParams.lpCircList) {
-      this.LinkParams.lpCircList.push(this.actionStoredObjectId);
+    if (this.linkParams && this.linkParams.lpCircList) {
+      this.linkParams.lpCircList.push(this.actionStoredObjectId);
     }
 
     // Get the corresponding SVG object for the new object
     this.actionSvgObject = this.svgObjectLayer.GetElementByID(this.actionStoredObjectId);
 
     // Handle connection highlights if there is a connect index
-    if (this.LinkParams && this.LinkParams.SConnectIndex >= 0) {
-      this.HiliteConnect(this.LinkParams.SConnectIndex, this.LinkParams.SConnectPt, true, false, drawShape.BlockID, this.LinkParams.SConnectInside);
-      this.LinkParams.SHiliteConnect = this.LinkParams.SConnectIndex;
-      this.LinkParams.SHiliteInside = this.LinkParams.SConnectInside;
+    if (this.linkParams && this.linkParams.SConnectIndex >= 0) {
+      this.HiliteConnect(this.linkParams.SConnectIndex, this.linkParams.SConnectPt, true, false, drawShape.BlockID, this.linkParams.SConnectInside);
+      this.linkParams.SHiliteConnect = this.linkParams.SConnectIndex;
+      this.linkParams.SHiliteInside = this.linkParams.SConnectInside;
     }
 
     // Handle join highlights if there is a join index
-    if (this.LinkParams && this.LinkParams.SJoinIndex >= 0) {
-      this.HiliteConnect(this.LinkParams.SJoinIndex, this.LinkParams.SConnectPt, true, true, drawShape.BlockID, null);
-      this.LinkParams.SHiliteJoin = this.LinkParams.SJoinIndex;
+    if (this.linkParams && this.linkParams.SJoinIndex >= 0) {
+      this.HiliteConnect(this.linkParams.SJoinIndex, this.linkParams.SConnectPt, true, true, drawShape.BlockID, null);
+      this.linkParams.SHiliteJoin = this.linkParams.SJoinIndex;
     }
 
     console.log("O.Opt StartNewObjectDraw - Output: New object drawn with ID", this.actionStoredObjectId);
@@ -2722,14 +2722,14 @@ class OptHandler {
       x = t.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.LINE &&
         t.objecttype !== ConstantData.ObjectTypes.SD_OBJT_GANTT_BAR;
     if (null == a) return !1;
-    if (null == (s = this.LinkParams.lpCircList)) return !1;
-    _.x = this.LinkParams.ConnectPt.x,
-      _.y = this.LinkParams.ConnectPt.y,
+    if (null == (s = this.linkParams.lpCircList)) return !1;
+    _.x = this.linkParams.ConnectPt.x,
+      _.y = this.linkParams.ConnectPt.y,
       A = t.hookflags,
       A = Utils2.SetFlag(A, ConstantData.HookFlags.SED_LC_AttachToLine, !1),
-      (C = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1)) &&
+      (C = this.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1)) &&
       (G = C.flags),
-      i ? (w.push(ConstantData.DrawingObjectBaseClass.LINE), v = w) : this.LinkParams.ArraysOnly &&
+      i ? (w.push(ConstantData.DrawingObjectBaseClass.LINE), v = w) : this.linkParams.ArraysOnly &&
         (
           t.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.CONNECTOR ? (w.push(ConstantData.DrawingObjectBaseClass.SHAPE), v = w) : t.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.SHAPE ? (
             w.push(ConstantData.DrawingObjectBaseClass.CONNECTOR),
@@ -2742,7 +2742,7 @@ class OptHandler {
       F.push(ConstantData.DrawingObjectBaseClass.LINE),
       T3Gv.optManager.fromOverlayLayer &&
       (w.push(ConstantData.DrawingObjectBaseClass.SHAPE), v = w),
-      this.LinkParams.JoinIndex = - 1;
+      this.linkParams.JoinIndex = - 1;
     for (var O = 0; O < a.length; O++) {
       if (
         I = 0,
@@ -2761,30 +2761,30 @@ class OptHandler {
           b.hitcode === ConstantData.HitCodes.SED_PLApp
         )
       ) {
-        this.LinkParams.JoinIndex = b.objectid,
-          this.LinkParams.JoinData = b.segment,
-          this.LinkParams.JoinSourceData = a[O].id,
+        this.linkParams.JoinIndex = b.objectid,
+          this.linkParams.JoinData = b.segment,
+          this.linkParams.JoinSourceData = a[O].id,
           p = b.pt.x - a[O].x,
           d = b.pt.y - a[O].y,
           this.dragDeltaX = p,
           this.dragDeltaY = d,
-          this.LinkParams.JoinData === ConstantData.HookPts.SED_KTL ? (this.LinkParams.ConnectPt.x = 0, this.LinkParams.ConnectPt.y = 0) : (
-            this.LinkParams.ConnectPt.x = ConstantData.Defines.SED_CDim,
-            this.LinkParams.ConnectPt.y = ConstantData.Defines.SED_CDim
+          this.linkParams.JoinData === ConstantData.HookPts.SED_KTL ? (this.linkParams.ConnectPt.x = 0, this.linkParams.ConnectPt.y = 0) : (
+            this.linkParams.ConnectPt.x = ConstantData.Defines.SED_CDim,
+            this.linkParams.ConnectPt.y = ConstantData.Defines.SED_CDim
           );
         break
       }
       if (
-        this.LinkParams.PrevConnect >= 0 &&
-        (g = this.GetObjectPtr(this.LinkParams.PrevConnect, !1))
+        this.linkParams.PrevConnect >= 0 &&
+        (g = this.GetObjectPtr(this.linkParams.PrevConnect, !1))
       ) if (
-          L = Utils1.DeepCopy(T3Gv.optManager.LinkParams.ContainerPt[0]),
+          L = Utils1.DeepCopy(T3Gv.optManager.linkParams.ContainerPt[0]),
           g.IsShapeContainer(t, L)
         ) {
           var B = g.GetHitTestFrame(t);
           Utils2.pointInRect(B, L) &&
             (
-              b.objectid = this.LinkParams.PrevConnect,
+              b.objectid = this.linkParams.PrevConnect,
               b.hitcode = ConstantData.HitCodes.SED_InContainer,
               b.cellid = null
             )
@@ -2795,7 +2795,7 @@ class OptHandler {
             (b = {
               cellid: null
             }),
-            b.objectid = this.LinkParams.PrevConnect,
+            b.objectid = this.linkParams.PrevConnect,
             b.hitcode = I,
             b.cellid = null
           );
@@ -2806,7 +2806,7 @@ class OptHandler {
           (U = !0, L = b.theContainerPt),
           !U
         ) if (i) {
-          if (this.LinkParams.AutoInsert) {
+          if (this.linkParams.AutoInsert) {
             if (
               t.DrawingObjectBaseClass != ConstantData.DrawingObjectBaseClass.SHAPE
             ) continue;
@@ -2821,8 +2821,8 @@ class OptHandler {
           ) continue
         } else if (
             m = D.targflags,
-            this.LinkParams.ArraysOnly ||
-              0 != (G & ConstantData.SessionFlags.SEDS_SLink) ? this.LinkParams.ArraysOnly &&
+            this.linkParams.ArraysOnly ||
+              0 != (G & ConstantData.SessionFlags.SEDS_SLink) ? this.linkParams.ArraysOnly &&
               D.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.LINE &&
             (
               m = Utils2.SetFlag(m, ConstantData.HookFlags.SED_LC_Shape, !0)
@@ -2863,10 +2863,10 @@ class OptHandler {
           this.dragDeltaX = p,
           this.dragDeltaY = d,
           i &&
-          this.LinkParams.AutoInsert
+          this.linkParams.AutoInsert
         ) {
           if (
-            this.LinkParams.AutoPoints = [],
+            this.linkParams.AutoPoints = [],
             f = $.extend(!0, {
             }, t.Frame),
             Math.floor((t.RotationAngle + 45) / 90)
@@ -2881,149 +2881,149 @@ class OptHandler {
           if (
             f.x += p,
             f.y += d,
-            !D.GetFrameIntersects(f, t, this.LinkParams.AutoPoints, this.LinkParams)
+            !D.GetFrameIntersects(f, t, this.linkParams.AutoPoints, this.linkParams)
           ) continue
         }
         T = !0,
-          this.LinkParams.ConnectIndex = b.objectid,
-          this.LinkParams.ConnectIndex >= 0 &&
-          this.LinkParams.ConnectIndexHistory.indexOf(this.LinkParams.ConnectIndex) < 0 &&
-          this.LinkParams.ConnectIndexHistory.push(this.LinkParams.ConnectIndex),
-          this.LinkParams.ConnectPt.x = P[u].x,
-          this.LinkParams.ConnectPt.y = P[u].y,
-          this.LinkParams.ConnectInside = P[u].cellid,
-          this.LinkParams.HookIndex = y,
-          this.LinkParams.AutoInsert &&
+          this.linkParams.ConnectIndex = b.objectid,
+          this.linkParams.ConnectIndex >= 0 &&
+          this.linkParams.ConnectIndexHistory.indexOf(this.linkParams.ConnectIndex) < 0 &&
+          this.linkParams.ConnectIndexHistory.push(this.linkParams.ConnectIndex),
+          this.linkParams.ConnectPt.x = P[u].x,
+          this.linkParams.ConnectPt.y = P[u].y,
+          this.linkParams.ConnectInside = P[u].cellid,
+          this.linkParams.HookIndex = y,
+          this.linkParams.AutoInsert &&
             i &&
-            !T3Gv.optManager.LinkParams.AutoSinglePoint ? this.LinkParams.ConnectHookFlag = ConstantData.HookFlags.SED_LC_AutoInsert : this.LinkParams.ArraysOnly &&
+            !T3Gv.optManager.linkParams.AutoSinglePoint ? this.linkParams.ConnectHookFlag = ConstantData.HookFlags.SED_LC_AutoInsert : this.linkParams.ArraysOnly &&
               D.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.LINE &&
               t.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.SHAPE &&
-              J(y) ? this.LinkParams.ConnectHookFlag = ConstantData.HookFlags.SED_LC_HookReverse : this.LinkParams.ConnectHookFlag = 0;
+              J(y) ? this.linkParams.ConnectHookFlag = ConstantData.HookFlags.SED_LC_HookReverse : this.linkParams.ConnectHookFlag = 0;
         break
       }
     }
     return T ||
       (
-        this.LinkParams.ConnectIndex >= 0 &&
-        this.LinkParams.ConnectIndexHistory.indexOf(this.LinkParams.ConnectIndex) < 0 &&
-        this.LinkParams.ConnectIndexHistory.push(this.LinkParams.ConnectIndex),
-        this.LinkParams.ConnectIndex = - 1
+        this.linkParams.ConnectIndex >= 0 &&
+        this.linkParams.ConnectIndexHistory.indexOf(this.linkParams.ConnectIndex) < 0 &&
+        this.linkParams.ConnectIndexHistory.push(this.linkParams.ConnectIndex),
+        this.linkParams.ConnectIndex = - 1
       ),
-      this.LinkParams.JoinIndex != this.LinkParams.HiliteJoin &&
+      this.linkParams.JoinIndex != this.linkParams.HiliteJoin &&
       r &&
       (
-        this.LinkParams.HiliteConnect >= 0 &&
+        this.linkParams.HiliteConnect >= 0 &&
         (
           this.HiliteConnect(
-            this.LinkParams.HiliteConnect,
-            this.LinkParams.ConnectPt,
+            this.linkParams.HiliteConnect,
+            this.linkParams.ConnectPt,
             !1,
             !1,
             e,
-            this.LinkParams.HiliteInside
+            this.linkParams.HiliteInside
           ),
-          this.LinkParams.HiliteConnect = - 1,
-          this.LinkParams.HiliteInside = null,
+          this.linkParams.HiliteConnect = - 1,
+          this.linkParams.HiliteInside = null,
           this.UndoEditMode()
         ),
-        this.LinkParams.JoinIndex >= 0 &&
-          this.LinkParams.HiliteJoin < 0 ? this.GetEditMode() != ConstantData.EditState.LINKJOIN &&
-        this.SetEditMode(ConstantData.EditState.LINKJOIN, null, !0) : this.LinkParams.JoinIndex < 0 &&
-        this.LinkParams.HiliteJoin >= 0 &&
+        this.linkParams.JoinIndex >= 0 &&
+          this.linkParams.HiliteJoin < 0 ? this.GetEditMode() != ConstantData.EditState.LINKJOIN &&
+        this.SetEditMode(ConstantData.EditState.LINKJOIN, null, !0) : this.linkParams.JoinIndex < 0 &&
+        this.linkParams.HiliteJoin >= 0 &&
         this.UndoEditMode(),
-        this.LinkParams.HiliteJoin >= 0 &&
+        this.linkParams.HiliteJoin >= 0 &&
         (
           this.HiliteConnect(
-            this.LinkParams.HiliteJoin,
-            this.LinkParams.ConnectPt,
+            this.linkParams.HiliteJoin,
+            this.linkParams.ConnectPt,
             !1,
             !0,
             e,
             null
           ),
-          this.LinkParams.HiliteJoin = - 1,
+          this.linkParams.HiliteJoin = - 1,
           this.UndoEditMode()
         ),
-        this.LinkParams.JoinIndex >= 0 &&
+        this.linkParams.JoinIndex >= 0 &&
         (
           this.HiliteConnect(
-            this.LinkParams.JoinIndex,
-            this.LinkParams.ConnectPt,
+            this.linkParams.JoinIndex,
+            this.linkParams.ConnectPt,
             !0,
             !0,
             e,
             null
           ),
-          this.LinkParams.HiliteJoin = this.LinkParams.JoinIndex,
+          this.linkParams.HiliteJoin = this.linkParams.JoinIndex,
           this.GetEditMode() != ConstantData.EditState.LINKJOIN &&
           this.SetEditMode(ConstantData.EditState.LINKJOIN, null, !0)
         )
       ),
-      this.LinkParams.HiliteConnect == this.LinkParams.ConnectIndex &&
-        this.LinkParams.HiliteInside == this.LinkParams.ConnectInside ||
+      this.linkParams.HiliteConnect == this.linkParams.ConnectIndex &&
+        this.linkParams.HiliteInside == this.linkParams.ConnectInside ||
         !r ? T &&
         r &&
-        this.LinkParams.HiliteConnect === this.LinkParams.ConnectIndex &&
-        this.LinkParams.HiliteInside === this.LinkParams.ConnectInside &&
+        this.linkParams.HiliteConnect === this.linkParams.ConnectIndex &&
+        this.linkParams.HiliteInside === this.linkParams.ConnectInside &&
         1 === M.length &&
       (
-        _.x == this.LinkParams.ConnectPt.x &&
-        _.y == this.LinkParams.ConnectPt.y ||
+        _.x == this.linkParams.ConnectPt.x &&
+        _.y == this.linkParams.ConnectPt.y ||
         this.MoveConnectHilite(
-          this.LinkParams.ConnectIndex,
-          this.LinkParams.ConnectPt,
-          this.LinkParams.ConnectInside
+          this.linkParams.ConnectIndex,
+          this.linkParams.ConnectPt,
+          this.linkParams.ConnectInside
         )
       ) : (
-        this.LinkParams.HiliteJoin >= 0 &&
+        this.linkParams.HiliteJoin >= 0 &&
         (
           this.HiliteConnect(
-            this.LinkParams.HiliteJoin,
-            this.LinkParams.ConnectPt,
+            this.linkParams.HiliteJoin,
+            this.linkParams.ConnectPt,
             !1,
             !0,
             e,
             null
           ),
-          this.LinkParams.HiliteJoin = - 1,
+          this.linkParams.HiliteJoin = - 1,
           this.UndoEditMode()
         ),
-        this.LinkParams.ConnectIndex >= 0 &&
-          this.LinkParams.HiliteConnect < 0 ? this.GetEditMode() != ConstantData.EditState.LINKCONNECT &&
-        this.SetEditMode(ConstantData.EditState.LINKCONNECT, null, !0) : this.LinkParams.ConnectIndex < 0 &&
-        this.LinkParams.HiliteConnect >= 0 &&
+        this.linkParams.ConnectIndex >= 0 &&
+          this.linkParams.HiliteConnect < 0 ? this.GetEditMode() != ConstantData.EditState.LINKCONNECT &&
+        this.SetEditMode(ConstantData.EditState.LINKCONNECT, null, !0) : this.linkParams.ConnectIndex < 0 &&
+        this.linkParams.HiliteConnect >= 0 &&
         (
-          h = this.GetObjectPtr(this.LinkParams.HiliteConnect, !1),
-          t.OnDisconnect(e, h, this.LinkParams.HookIndex, M[u]),
+          h = this.GetObjectPtr(this.linkParams.HiliteConnect, !1),
+          t.OnDisconnect(e, h, this.linkParams.HookIndex, M[u]),
           this.UndoEditMode()
         ),
-        this.LinkParams.HiliteConnect >= 0 &&
+        this.linkParams.HiliteConnect >= 0 &&
         (
           this.HiliteConnect(
-            this.LinkParams.HiliteConnect,
-            this.LinkParams.ConnectPt,
+            this.linkParams.HiliteConnect,
+            this.linkParams.ConnectPt,
             !1,
             !1,
             e,
-            this.LinkParams.HiliteInside
+            this.linkParams.HiliteInside
           ),
-          this.LinkParams.HiliteConnect = - 1,
-          this.LinkParams.HiliteInside = null,
+          this.linkParams.HiliteConnect = - 1,
+          this.linkParams.HiliteInside = null,
           this.UndoEditMode()
         ),
-        this.LinkParams.ConnectIndex >= 0 &&
+        this.linkParams.ConnectIndex >= 0 &&
         (
           this.HiliteConnect(
-            this.LinkParams.ConnectIndex,
-            this.LinkParams.ConnectPt,
+            this.linkParams.ConnectIndex,
+            this.linkParams.ConnectPt,
             !0,
             !1,
             e,
-            this.LinkParams.ConnectInside
+            this.linkParams.ConnectInside
           ),
-          this.LinkParams.HiliteConnect = this.LinkParams.ConnectIndex,
-          this.LinkParams.HiliteInside = this.LinkParams.ConnectInside,
-          t.OnConnect(e, D, this.LinkParams.HookIndex, M[u], o),
+          this.linkParams.HiliteConnect = this.linkParams.ConnectIndex,
+          this.linkParams.HiliteInside = this.linkParams.ConnectInside,
+          t.OnConnect(e, D, this.linkParams.HookIndex, M[u], o),
           this.GetEditMode() != ConstantData.EditState.LINKCONNECT &&
           this.SetEditMode(ConstantData.EditState.LINKCONNECT, null, !0)
         )
@@ -3115,7 +3115,7 @@ class OptHandler {
 
           // If the object is a ShapeContainer, check if the point is inside its container point.
           if (currentObject instanceof ShapeContainer) {
-            const containerPoint = Utils1.DeepCopy(T3Gv.optManager.LinkParams.ContainerPt[0]);
+            const containerPoint = Utils1.DeepCopy(T3Gv.optManager.linkParams.ContainerPt[0]);
             if (currentObject.IsShapeContainer(containerObject, containerPoint) && Utils2.pointInRect(hitTestFrame, containerPoint)) {
               hitResult.objectid = visibleObjects[idx];
               hitResult.hitcode = ConstantData.HitCodes.SED_InContainer;
@@ -3223,7 +3223,7 @@ class OptHandler {
       (S = e.SymbolData.Id, c = e.SymbolData.Title)
     ) : this.AllowAddToRecent(e) &&
     (S = ListManager.StandardShapeSymbolIDs[e.dataclass], u = !0);
-    var d = T3Gv.objectStore.GetObject(this.theSEDSessionBlockID).Data;
+    var d = T3Gv.objectStore.GetObject(this.sedSessionBlockId).Data;
     if (void 0 === t && (t = !0), t) {
       e.StyleRecord = Utils1.DeepCopy(d.def.style),
         e.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.SHAPE &&
@@ -3320,7 +3320,7 @@ class OptHandler {
     }
     this.ZListPreserve(o).push(C.ID);
     var b = e instanceof BaseLine,
-      M = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1),
+      M = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.layersManagerBlockId, !1),
       P = M.layers[M.activelayer].layertype === ConstantData.LayerTypes.SD_LAYERT_MINDMAP ||
         M.layers[M.activelayer].layertype === ConstantData.LayerTypes.SD_LAYERT_GANTT;
     return Collab.IsProcessingMessage() ? this.AddToDirtyList(C.ID) : this.IsTopMostVisibleLayer() ||
@@ -3412,7 +3412,7 @@ class OptHandler {
       }
     }
 
-    const sessionData = T3Gv.objectStore.GetObject(this.theSEDSessionBlockID).Data;
+    const sessionData = T3Gv.objectStore.GetObject(this.sedSessionBlockId).Data;
 
     if (shouldStyleCopy === undefined) {
       shouldStyleCopy = true;
@@ -3529,7 +3529,7 @@ class OptHandler {
     this.ZListPreserve(layerFlag).push(newBlock.ID);
 
     const isBaseline = drawingObject instanceof BaseLine;
-    const layersData = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, false);
+    const layersData = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.layersManagerBlockId, false);
     const isSpecialLayer = layersData.layers[layersData.activelayer].layertype === ConstantData.LayerTypes.SD_LAYERT_MINDMAP ||
       layersData.layers[layersData.activelayer].layertype === ConstantData.LayerTypes.SD_LAYERT_GANTT;
 
@@ -3710,7 +3710,7 @@ class OptHandler {
 
   ZListPreserve(additionalLayerFlag) {
     console.log('O.Opt zListPreserve - Input:', additionalLayerFlag);
-    const layersManager = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, true);
+    const layersManager = T3Gv.optManager.GetObjectPtr(this.layersManagerBlockId, true);
     const layers = layersManager.layers;
     const activeLayerIndex = layersManager.activelayer;
     let currentLayer = layers[activeLayerIndex];
@@ -3733,7 +3733,7 @@ class OptHandler {
 
   IsTopMostVisibleLayer() {
     console.log('O.Opt isTopMostVisibleLayer - Input');
-    const layersManager = this.GetObjectPtr(this.theLayersManagerBlockID, false);
+    const layersManager = this.GetObjectPtr(this.layersManagerBlockId, false);
     const result = layersManager.activelayer === this.GetTopMostVisibleLayer();
     console.log('O.Opt isTopMostVisibleLayer - Output:', result);
     return result;
@@ -3741,7 +3741,7 @@ class OptHandler {
 
   GetTopMostVisibleLayer() {
     console.log('O.Opt getTopMostVisibleLayer - Input');
-    const layersManager = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
+    const layersManager = T3Gv.optManager.GetObjectPtr(this.layersManagerBlockId, false);
     const layers = layersManager.layers;
     const totalLayers = layersManager.nlayers;
     for (let i = 0; i < totalLayers; ++i) {
@@ -3782,7 +3782,7 @@ class OptHandler {
   ActiveLayerZList() {
     console.log('O.Opt ActiveLayerZList - Input');
 
-    const layersManager = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
+    const layersManager = T3Gv.optManager.GetObjectPtr(this.layersManagerBlockId, false);
     const activeLayerZList = layersManager.layers[layersManager.activelayer].zList;
 
     console.log('O.Opt ActiveLayerZList - Output:', activeLayerZList);
@@ -3917,10 +3917,10 @@ class OptHandler {
       dragPoint.y = 0;
     }
 
-    let sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data;
+    let sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data;
 
     // If auto-grow is disabled by content header flags, constrain coordinates to session dimensions
-    if (T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto) {
+    if (T3Gv.optManager.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto) {
       if (dragPoint.x > sessionData.dim.x) {
         dragPoint.x = sessionData.dim.x;
       }
@@ -3937,19 +3937,19 @@ class OptHandler {
         T3Gv.optManager.dragGotAutoResizeOldX.push(sessionData.dim.x);
 
         // Refresh session data from the preserved block
-        sessionData = T3Gv.objectStore.PreserveBlock(T3Gv.optManager.theSEDSessionBlockID).Data;
+        sessionData = T3Gv.objectStore.PreserveBlock(T3Gv.optManager.sedSessionBlockId).Data;
         newDimension = {
           x: sessionData.dim.x +
-            T3Gv.optManager.theContentHeader.Page.papersize.x -
-            (T3Gv.optManager.theContentHeader.Page.margins.left +
-              T3Gv.optManager.theContentHeader.Page.margins.right),
+            T3Gv.optManager.contentHeader.Page.papersize.x -
+            (T3Gv.optManager.contentHeader.Page.margins.left +
+              T3Gv.optManager.contentHeader.Page.margins.right),
           y: sessionData.dim.y
         };
 
         T3Gv.optManager.UpdateEdgeLayers([], sessionData.dim, newDimension);
-        sessionData.dim.x += T3Gv.optManager.theContentHeader.Page.papersize.x -
-          (T3Gv.optManager.theContentHeader.Page.margins.left +
-            T3Gv.optManager.theContentHeader.Page.margins.right);
+        sessionData.dim.x += T3Gv.optManager.contentHeader.Page.papersize.x -
+          (T3Gv.optManager.contentHeader.Page.margins.left +
+            T3Gv.optManager.contentHeader.Page.margins.right);
         T3Gv.optManager.inAutoScroll = true;
         T3Gv.optManager.ResizeSVGDocument();
         T3Gv.optManager.inAutoScroll = false;
@@ -3960,7 +3960,7 @@ class OptHandler {
         T3Gv.optManager.dragGotAutoResizeRight &&
         dragPoint.x < T3Gv.optManager.dragGotAutoResizeOldX.slice(-1).pop()
       ) {
-        sessionData = T3Gv.objectStore.PreserveBlock(T3Gv.optManager.theSEDSessionBlockID).Data;
+        sessionData = T3Gv.objectStore.PreserveBlock(T3Gv.optManager.sedSessionBlockId).Data;
         newDimension = {
           x: T3Gv.optManager.dragGotAutoResizeOldX.pop(),
           y: sessionData.dim.y
@@ -3980,19 +3980,19 @@ class OptHandler {
       if (dragPoint.y > sessionData.dim.y) {
         T3Gv.optManager.dragGotAutoResizeOldY.push(sessionData.dim.y);
 
-        sessionData = T3Gv.objectStore.PreserveBlock(T3Gv.optManager.theSEDSessionBlockID).Data;
+        sessionData = T3Gv.objectStore.PreserveBlock(T3Gv.optManager.sedSessionBlockId).Data;
         newDimension = {
           x: sessionData.dim.x,
           y: sessionData.dim.y +
-            T3Gv.optManager.theContentHeader.Page.papersize.y -
-            (T3Gv.optManager.theContentHeader.Page.margins.top +
-              T3Gv.optManager.theContentHeader.Page.margins.bottom)
+            T3Gv.optManager.contentHeader.Page.papersize.y -
+            (T3Gv.optManager.contentHeader.Page.margins.top +
+              T3Gv.optManager.contentHeader.Page.margins.bottom)
         };
 
         T3Gv.optManager.UpdateEdgeLayers([], sessionData.dim, newDimension);
-        sessionData.dim.y += T3Gv.optManager.theContentHeader.Page.papersize.y -
-          (T3Gv.optManager.theContentHeader.Page.margins.top +
-            T3Gv.optManager.theContentHeader.Page.margins.bottom);
+        sessionData.dim.y += T3Gv.optManager.contentHeader.Page.papersize.y -
+          (T3Gv.optManager.contentHeader.Page.margins.top +
+            T3Gv.optManager.contentHeader.Page.margins.bottom);
         T3Gv.optManager.inAutoScroll = true;
         T3Gv.optManager.ResizeSVGDocument();
         T3Gv.optManager.inAutoScroll = false;
@@ -4003,7 +4003,7 @@ class OptHandler {
         T3Gv.optManager.dragGotAutoResizeBottom &&
         dragPoint.y < T3Gv.optManager.dragGotAutoResizeOldY.slice(-1).pop()
       ) {
-        sessionData = T3Gv.objectStore.PreserveBlock(T3Gv.optManager.theSEDSessionBlockID).Data;
+        sessionData = T3Gv.objectStore.PreserveBlock(T3Gv.optManager.sedSessionBlockId).Data;
         newDimension = {
           x: sessionData.dim.x,
           y: T3Gv.optManager.dragGotAutoResizeOldY.pop()
@@ -4042,7 +4042,7 @@ class OptHandler {
     console.log("O.Opt GetLengthInRulerUnits - Input:", { lengthInUnits, skipFeetConversion, offset, displayFlags });
 
     // Get session data for ruler settings
-    let sessionData = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+    let sessionData = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
     let resultString = "";
     let feetPart = 0;
     let inchPart = 0;
@@ -4263,81 +4263,81 @@ class OptHandler {
     let flowHookResult: boolean = false;
 
     // Process HiliteConnect if available
-    if (this.LinkParams && this.LinkParams.HiliteConnect >= 0) {
+    if (this.linkParams && this.linkParams.HiliteConnect >= 0) {
       this.HiliteConnect(
-        T3Gv.optManager.LinkParams.HiliteConnect,
-        this.LinkParams.ConnectPt,
+        T3Gv.optManager.linkParams.HiliteConnect,
+        this.linkParams.ConnectPt,
         false,
         false,
         this.dragTargetId,
-        this.LinkParams.HiliteInside
+        this.linkParams.HiliteInside
       );
-      this.LinkParams.HiliteConnect = -1;
+      this.linkParams.HiliteConnect = -1;
       // Fix potential typo: resetting HiliteInside to null
-      this.LinkParams.HiliteInside = null;
+      this.linkParams.HiliteInside = null;
     }
 
     // Process HiliteJoin if available
-    if (this.LinkParams && this.LinkParams.HiliteJoin >= 0) {
+    if (this.linkParams && this.linkParams.HiliteJoin >= 0) {
       this.HiliteConnect(
-        T3Gv.optManager.LinkParams.HiliteJoin,
-        this.LinkParams.ConnectPt,
+        T3Gv.optManager.linkParams.HiliteJoin,
+        this.linkParams.ConnectPt,
         false,
         true,
         this.dragTargetId,
         null
       );
-      this.LinkParams.HiliteJoin = -1;
+      this.linkParams.HiliteJoin = -1;
     }
 
     // Reset edit mode to default
     this.SetEditMode(ConstantData.EditState.DEFAULT);
 
     if (completeOperation) {
-      if (this.LinkParams && this.LinkParams.JoinIndex >= 0) {
+      if (this.linkParams && this.linkParams.JoinIndex >= 0) {
         // If a join index exists, perform PolyLJoin
         this.PolyLJoin(
-          this.LinkParams.JoinIndex,
-          this.LinkParams.JoinData,
+          this.linkParams.JoinIndex,
+          this.linkParams.JoinData,
           this.dragTargetId,
-          this.LinkParams.JoinSourceData,
+          this.linkParams.JoinSourceData,
           false
         );
-      } else if (this.LinkParams && (this.LinkParams.ConnectIndex >= 0 || this.LinkParams.InitialHook >= 0)) {
+      } else if (this.linkParams && (this.linkParams.ConnectIndex >= 0 || this.linkParams.InitialHook >= 0)) {
         // If connection indexes or an initial hook exists, handle flow chart hook logic
         if (T3Gv.gFlowChartManager) {
           flowHookResult = T3Gv.gFlowChartManager.FlowChartHook(
             this.actionStoredObjectId,
-            this.LinkParams.InitialHook,
-            this.LinkParams.ConnectIndex,
-            this.LinkParams.HookIndex,
-            this.LinkParams.ConnectPt
+            this.linkParams.InitialHook,
+            this.linkParams.ConnectIndex,
+            this.linkParams.HookIndex,
+            this.linkParams.ConnectPt
           );
         }
         if (!flowHookResult) {
-          if (this.LinkParams.ConnectHookFlag === ConstantData.HookFlags.SED_LC_AutoInsert) {
-            this.SD_AutoInsertShape(this.actionStoredObjectId, this.LinkParams.ConnectIndex);
-          } else if (this.LinkParams.ConnectHookFlag === ConstantData.HookFlags.SED_LC_HookReverse) {
+          if (this.linkParams.ConnectHookFlag === ConstantData.HookFlags.SED_LC_AutoInsert) {
+            this.SD_AutoInsertShape(this.actionStoredObjectId, this.linkParams.ConnectIndex);
+          } else if (this.linkParams.ConnectHookFlag === ConstantData.HookFlags.SED_LC_HookReverse) {
             this.LM_ReverseHook(this.actionStoredObjectId);
           } else {
             hookUpdateStatus = this.UpdateHook(
               this.actionStoredObjectId,
-              this.LinkParams.InitialHook,
-              this.LinkParams.ConnectIndex,
-              this.LinkParams.HookIndex,
-              this.LinkParams.ConnectPt,
-              this.LinkParams.ConnectInside
+              this.linkParams.InitialHook,
+              this.linkParams.ConnectIndex,
+              this.linkParams.HookIndex,
+              this.linkParams.ConnectPt,
+              this.linkParams.ConnectInside
             );
             if ((hookUpdateStatus !== 0 && hookUpdateStatus !== undefined) === false) {
-              this.SetLinkFlag(this.LinkParams.ConnectIndex, ConstantData.LinkFlags.SED_L_MOVE);
+              this.SetLinkFlag(this.linkParams.ConnectIndex, ConstantData.LinkFlags.SED_L_MOVE);
             }
           }
         }
       }
     }
 
-    // Reset LinkParams
-    this.LinkParams = null;
+    // Reset linkParams
+    this.linkParams = null;
 
     console.log("O.Opt LM_StampPostRelease - Output: Operation completed");
   }
@@ -4359,7 +4359,7 @@ class OptHandler {
     }
 
     // Close nudge if open and check state ID
-    if (this.NudgeOpen) {
+    if (this.nudgeOpen) {
       T3Gv.optManager.CloseOpenNudge();
     }
     if (T3Gv.stateManager.CurrentStateID <= 0) {
@@ -4368,11 +4368,11 @@ class OptHandler {
     }
 
     // Get session and layer data
-    const sessionObject = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+    const sessionObject = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
     const spellCheckEnabled = sessionObject.EnableSpellCheck;
-    const layersManager = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, false);
+    const layersManager = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.layersManagerBlockId, false);
     const activeLayerType = layersManager.layers[layersManager.activelayer].layertype;
-    const tedSession = this.GetObjectPtr(this.theTEDSessionBlockID, false);
+    const tedSession = this.GetObjectPtr(this.tedSessionBlockId, false);
 
     // Check if text editing is active; flush text and preserve undo state if necessary
     const isTextEditingActive = tedSession.theActiveTextEditObjectID !== -1 &&
@@ -4404,7 +4404,7 @@ class OptHandler {
     this.UpdateLineHops(true);
 
     // Update spell check settings if changed
-    const sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+    const sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
     if (spellCheckEnabled !== sessionBlock.EnableSpellCheck) {
       SDUI.Commands.MainController.Document.SetSpellCheck(sessionBlock.EnableSpellCheck, false);
     }
@@ -4416,13 +4416,13 @@ class OptHandler {
     }
 
     // Update page settings if changed
-    if (T3Gv.docHandler.PagesNotEqual(sessionObject.Page, T3Gv.optManager.theContentHeader.Page)) {
-      T3Gv.optManager.theContentHeader.Page = Utils1.DeepCopy(sessionObject.Page);
+    if (T3Gv.docHandler.PagesNotEqual(sessionObject.Page, T3Gv.optManager.contentHeader.Page)) {
+      T3Gv.optManager.contentHeader.Page = Utils1.DeepCopy(sessionObject.Page);
     }
 
     // Ensure an active outline is selected if no selection exists
     const selectedList = this.GetObjectPtr(this.theSelectedListBlockID, false);
-    const tedSessionAfter = this.GetObjectPtr(this.theTEDSessionBlockID, false);
+    const tedSessionAfter = this.GetObjectPtr(this.tedSessionBlockId, false);
     if (tedSessionAfter.theActiveOutlineObjectID !== -1 && selectedList.length === 0) {
       const activeOutlineObjects: number[] = [];
       activeOutlineObjects.push(tedSessionAfter.theActiveOutlineObjectID);
@@ -4520,12 +4520,12 @@ class OptHandler {
       ],
       P = {},
       R = ConstantData,
-      A = this.GetObjectPtr(this.theLinksBlockID, !1),
+      A = this.GetObjectPtr(this.linksBlockId, !1),
       _ = !1;
     if (null == A) return this.UpdateLineHops(!0),
       1;
     T3Gv.optManager.FixAnyCircularHooks();
-    var E = this.GetObjectPtr(this.theSEDSessionBlockID, !1),
+    var E = this.GetObjectPtr(this.sedSessionBlockId, !1),
       w = T3Gv.docHandler.documentConfig.enableSnap;
     for (
       T3Gv.docHandler.documentConfig.enableSnap = !1,
@@ -4535,7 +4535,7 @@ class OptHandler {
       a--
     ) A[a].flags & R.LinkFlags.SED_L_DELT ? (
       _ ||
-      (A = this.GetObjectPtr(this.theLinksBlockID, !0), _ = !0),
+      (A = this.GetObjectPtr(this.linksBlockId, !0), _ = !0),
       this.DeleteLink(A, A[a].targetid, - 1, null, 0, !1),
       a = A.length
     ) : (
@@ -4545,7 +4545,7 @@ class OptHandler {
     ) &&
     (
       _ ||
-      (A = this.GetObjectPtr(this.theLinksBlockID, !0), _ = !0),
+      (A = this.GetObjectPtr(this.linksBlockId, !0), _ = !0),
       this.DeleteLink(A, A[a].targetid, A[a].hookid, A[a].cellid, 0, !1),
       a = A.length
     );
@@ -4572,7 +4572,7 @@ class OptHandler {
     }
     for (; f;) for (f = !1, a = 0; a < A.length; a++) if (A[a].flags & R.LinkFlags.SED_L_MOVE) if (
       _ ||
-      (A = this.GetObjectPtr(this.theLinksBlockID, !0), _ = !0),
+      (A = this.GetObjectPtr(this.linksBlockId, !0), _ = !0),
       null == (D = this.GetObjectPtr(A[a].hookid, !0))
     ) A[a].flags = Utils2.SetFlag(A[a].flags, R.LinkFlags.SED_L_DELL, !0),
       A[a].flags = Utils2.SetFlag(A[a].flags, R.LinkFlags.SED_L_MOVE, !1),
@@ -4684,7 +4684,7 @@ class OptHandler {
           y
         )
       ) for (l = 0; l < y; l++) this.OffsetShape(m[l], p, u, ConstantData.ActionTriggerType.UPDATELINKS);
-      this.theMoveList = null
+      this.moveList = null
     }
     return T3Gv.docHandler.documentConfig.enableSnap = w,
       0
@@ -4697,7 +4697,7 @@ class OptHandler {
     const hookIds = initialLinkObject
       ? [initialLinkObject.BlockID]
       : (() => {
-        const links = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, false);
+        const links = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, false);
         let ids: number[] = [];
         const linksCount = links.length;
         for (let i = 0; i < linksCount; i++) {
@@ -4760,7 +4760,7 @@ class OptHandler {
 
     // Process the found circular hook pairs
     (function processCircularHooks(hookPairs: Array<{ objectId: number; hookObjectId: number }>) {
-      const links = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, false);
+      const links = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, false);
       const hookPairsCount = hookPairs.length;
       for (let i = 0; i < hookPairsCount; i++) {
         const currentObj = T3Gv.optManager.GetObjectPtr(hookPairs[i].objectId, true);
@@ -4819,11 +4819,11 @@ class OptHandler {
   AddToDirtyList(objectId: number, isMoveOnly: boolean) {
     console.log('O.Opt AddToDirtyList - Input:', { objectId, isMoveOnly });
 
-    if (this.theDirtyList.indexOf(objectId) < 0) {
-      this.theDirtyList.push(objectId);
-      this.theDirtyListMoveOnly[objectId] = !!isMoveOnly;
+    if (this.dirtyList.indexOf(objectId) < 0) {
+      this.dirtyList.push(objectId);
+      this.dirtyListMoveOnly[objectId] = !!isMoveOnly;
     } else if (!isMoveOnly) {
-      this.theDirtyListMoveOnly[objectId] = false;
+      this.dirtyListMoveOnly[objectId] = false;
     }
 
     console.log('O.Opt AddToDirtyList - Output: Dirty list updated');
@@ -4899,7 +4899,7 @@ class OptHandler {
     console.log("O.Opt UpdateLineHops - Input:", { forceUpdate });
 
     // Retrieve the session object and check if hops are allowed
-    const session = this.GetObjectPtr(this.theSEDSessionBlockID, false);
+    const session = this.GetObjectPtr(this.sedSessionBlockId, false);
     if (session.flags & ConstantData.SessionFlags.SEDS_AllowHops) {
       this.HideHopTargets();
       const visibleObjects = this.VisibleZList();
@@ -5028,12 +5028,12 @@ class OptHandler {
 
     // If no redraw is set from the same editor, clear dirty list and reset flag.
     if (Collab.NoRedrawFromSameEditor) {
-      this.theDirtyList.length = 0;
+      this.dirtyList.length = 0;
       Collab.NoRedrawFromSameEditor = false;
     }
 
     // Process if there are dirty objects.
-    if (this.theDirtyList.length !== 0) {
+    if (this.dirtyList.length !== 0) {
       // Get all visible object IDs and active visible object IDs.
       const visibleObjectIds = this.VisibleZList();
       const activeVisibleObjectIds = this.ActiveVisibleZList();
@@ -5052,16 +5052,16 @@ class OptHandler {
       })(visibleObjectIds);
 
       // Sort the dirty list based on the ordering in the visible list.
-      T3Gv.optManager.theDirtyList.sort((objectId1, objectId2) => {
+      T3Gv.optManager.dirtyList.sort((objectId1, objectId2) => {
         return visibleObjectIds.indexOf(objectId1) < visibleObjectIds.indexOf(objectId2) ? -1 : 1;
       });
 
       // Loop through each dirty object.
-      const dirtyCount = this.theDirtyList.length;
+      const dirtyCount = this.dirtyList.length;
       for (let index = 0; index < dirtyCount; index++) {
         let hasSelectionState = false;
-        const objectId = this.theDirtyList[index];
-        const isMoveOnly = this.theDirtyListMoveOnly[objectId];
+        const objectId = this.dirtyList[index];
+        const isMoveOnly = this.dirtyListMoveOnly[objectId];
 
         // Find the position of the object in the filtered visible list; if not found, search in the full visible list.
         let positionIndex = filteredVisibleObjectIds.indexOf(objectId);
@@ -5087,7 +5087,7 @@ class OptHandler {
       }
 
       // If a reordering of the dirty list is needed, reassign each SVG element to its new position.
-      if (T3Gv.optManager.DirtyListReOrder) {
+      if (T3Gv.optManager.dirtyListReOrder) {
         const count = filteredVisibleObjectIds.length;
         for (let idx = 0; idx < count; idx++) {
           const id = filteredVisibleObjectIds[idx];
@@ -5107,9 +5107,9 @@ class OptHandler {
   ClearDirtyList() {
     console.log('O.Opt ClearDirtyList - Input: No parameters');
 
-    this.theDirtyList = [];
-    this.theDirtyListMoveOnly = [];
-    this.DirtyListReOrder = false;
+    this.dirtyList = [];
+    this.dirtyListMoveOnly = [];
+    this.dirtyListReOrder = false;
 
     console.log('O.Opt ClearDirtyList - Output: Dirty list cleared');
   }
@@ -5128,7 +5128,7 @@ class OptHandler {
     let needMinWidthEnforcement = false;
 
     // Get the layers manager to check layer settings
-    const layersManager = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
+    const layersManager = T3Gv.optManager.GetObjectPtr(this.layersManagerBlockId, false);
 
     // Check for edge layers and their visibility
     if (layersManager.layers[layersManager.activelayer].flags & ConstantData.LayerFlags.SDLF_UseEdges) {
@@ -5152,9 +5152,9 @@ class OptHandler {
 
     let newWidth;
     let newHeight;
-    let sessionData = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
-    let paperSize = T3Gv.optManager.theContentHeader.Page.papersize;
-    let margins = T3Gv.optManager.theContentHeader.Page.margins;
+    let sessionData = this.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
+    let paperSize = T3Gv.optManager.contentHeader.Page.papersize;
+    let margins = T3Gv.optManager.contentHeader.Page.margins;
     let pageWidth = paperSize.x - (margins.left + margins.right);
     let pageHeight = paperSize.y - (margins.top + margins.bottom);
     let newDocumentSize = {};
@@ -5173,18 +5173,18 @@ class OptHandler {
 
     // Apply minimum size constraints if using edges but not on edge layer
     if (shouldUseEdges && !isUsingEdgeLayer) {
-      if (newHeight < T3Gv.optManager.theContentHeader.Page.minsize.y) {
-        newHeight = T3Gv.optManager.theContentHeader.Page.minsize.y;
+      if (newHeight < T3Gv.optManager.contentHeader.Page.minsize.y) {
+        newHeight = T3Gv.optManager.contentHeader.Page.minsize.y;
         needMinHeightEnforcement = true;
       }
-      if (newWidth < T3Gv.optManager.theContentHeader.Page.minsize.x) {
-        newWidth = T3Gv.optManager.theContentHeader.Page.minsize.x;
+      if (newWidth < T3Gv.optManager.contentHeader.Page.minsize.x) {
+        newWidth = T3Gv.optManager.contentHeader.Page.minsize.x;
         needMinWidthEnforcement = true;
       }
     }
 
     // Handle page-based layouts
-    if (this.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_Pages && !isUsingEdgeLayer) {
+    if (this.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_Pages && !isUsingEdgeLayer) {
       let widthInPages = Math.ceil(newWidth / pageWidth);
       let heightInPages = Math.ceil(newHeight / pageHeight);
 
@@ -5232,7 +5232,7 @@ class OptHandler {
       }
 
       // Honor no-auto-grow flag
-      if (this.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto) {
+      if (this.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto) {
         if (newDocumentSize.x < sessionData.dim.x) newDocumentSize.x = sessionData.dim.x;
         if (newDocumentSize.y < sessionData.dim.y) newDocumentSize.y = sessionData.dim.y;
       }
@@ -5259,22 +5259,22 @@ class OptHandler {
             newDocumentSize.y = pageHeight;
           }
 
-          if (!(this.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto)) {
-            T3Gv.optManager.theContentHeader.Page.minsize.y = newDocumentSize.y;
-            T3Gv.optManager.theContentHeader.Page.minsize.x = newDocumentSize.x;
+          if (!(this.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto)) {
+            T3Gv.optManager.contentHeader.Page.minsize.y = newDocumentSize.y;
+            T3Gv.optManager.contentHeader.Page.minsize.x = newDocumentSize.x;
           }
         } else {
-          T3Gv.optManager.theContentHeader.Page.minsize.x = pageWidth;
-          T3Gv.optManager.theContentHeader.Page.minsize.y = pageHeight;
+          T3Gv.optManager.contentHeader.Page.minsize.x = pageWidth;
+          T3Gv.optManager.contentHeader.Page.minsize.y = pageHeight;
         }
       }
 
       // Apply minimum size constraints
-      if (newDocumentSize.x < T3Gv.optManager.theContentHeader.Page.minsize.x) {
-        newDocumentSize.x = T3Gv.optManager.theContentHeader.Page.minsize.x;
+      if (newDocumentSize.x < T3Gv.optManager.contentHeader.Page.minsize.x) {
+        newDocumentSize.x = T3Gv.optManager.contentHeader.Page.minsize.x;
       }
-      if (newDocumentSize.y < T3Gv.optManager.theContentHeader.Page.minsize.y) {
-        newDocumentSize.y = T3Gv.optManager.theContentHeader.Page.minsize.y;
+      if (newDocumentSize.y < T3Gv.optManager.contentHeader.Page.minsize.y) {
+        newDocumentSize.y = T3Gv.optManager.contentHeader.Page.minsize.y;
       }
     }
 
@@ -5293,7 +5293,7 @@ class OptHandler {
     } else {
       // Handle no-auto-grow constraint
       if (
-        this.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto &&
+        this.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto &&
         !allowOverride &&
         (!isGrowing || isExactPageMultiple(sessionData.dim, pageWidth, pageHeight))
       ) {
@@ -5311,7 +5311,7 @@ class OptHandler {
         shouldPreserve = false;
       }
 
-      sessionData = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, shouldPreserve);
+      sessionData = this.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, shouldPreserve);
       this.UpdateEdgeLayers([], sessionData.dim, newDocumentSize);
       sessionData.dim.x = newDocumentSize.x;
       sessionData.dim.y = newDocumentSize.y;
@@ -5343,7 +5343,7 @@ class OptHandler {
     let heightPadding = 0;
 
     // Get layers manager to check layer settings
-    const layersManager = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, false);
+    const layersManager = T3Gv.optManager.GetObjectPtr(this.layersManagerBlockId, false);
 
     // Initialize empty enclosing rectangle
     let enclosingRect = {
@@ -5379,7 +5379,7 @@ class OptHandler {
           heightPadding = 25;
 
           const objectsInEdgeLayer = objectsFromEdgeLayers.length;
-          const sessionData = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+          const sessionData = this.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
 
           // Check for annotations near the bottom of the document
           for (let i = 0; i < objectsInEdgeLayer; i++) {
@@ -5451,7 +5451,7 @@ class OptHandler {
     const visioTextFlag = ConstantData.ObjMoreFlags.SED_MF_VisioText;
 
     if (objectsToSelect && objectsToSelect.length > 0) {
-      const tedSession = this.GetObjectPtr(this.theTEDSessionBlockID, false);
+      const tedSession = this.GetObjectPtr(this.tedSessionBlockId, false);
 
       // Close text editing if active
       if (tedSession.theActiveTextEditObjectID !== -1) {
@@ -5532,7 +5532,7 @@ class OptHandler {
 
       // Update the target selection
       this.SetTargetSelect(selectedIndex, preserveSelectionState);
-      this.LastOpDuplicate = false;
+      this.lastOpDuplicate = false;
       this.UpdateSelectionAttributes(selectedList);
       this.HideAllSVGSelectionStates();
       this.RenderAllSVGSelectionStates();
@@ -5544,7 +5544,7 @@ class OptHandler {
   GetMoveList(e, t, a, r, i, n) {
     var o,
       s;
-    this.theMoveList = [];
+    this.moveList = [];
     var l,
       S,
       c,
@@ -5552,8 +5552,8 @@ class OptHandler {
       p,
       d,
       D,
-      g = this.GetObjectPtr(this.theLinksBlockID, !1);
-    if (null == g) return this.theMoveList;
+      g = this.GetObjectPtr(this.linksBlockId, !1);
+    if (null == g) return this.moveList;
     if (
       c = n ? ConstantData.ListCodes.SED_LC_TARGONLY : ConstantData.ListCodes.SED_LC_MOVETARG,
       e >= 0 &&
@@ -5581,7 +5581,7 @@ class OptHandler {
           continue
         } (0 === s.hooks.length || a) &&
           (
-            this.theMoveList = this.GetHookList(g, this.theMoveList, l[o], s, c, i)
+            this.moveList = this.GetHookList(g, this.moveList, l[o], s, c, i)
           )
       }
     if (
@@ -5589,22 +5589,22 @@ class OptHandler {
       (s = this.GetObjectPtr(e, !1)) &&
       (0 === s.hooks.length || a) &&
       (
-        this.theMoveList = this.GetHookList(g, this.theMoveList, e, s, c, i)
+        this.moveList = this.GetHookList(g, this.moveList, e, s, c, i)
       ),
       a
-    ) for (u = this.theMoveList.length, o = 0; o < u; o++) for (
+    ) for (u = this.moveList.length, o = 0; o < u; o++) for (
 
       //Double add var before s
-      var s = this.GetObjectPtr(this.theMoveList[o], !1),
+      var s = this.GetObjectPtr(this.moveList[o], !1),
       list = s.GetListOfEnclosedObjects(!0),
       p = list.length,
       d = 0;
       d < p;
       d++
     ) D = list[d],
-      this.theMoveList.indexOf(D) < 0 &&
-      this.theMoveList.push(D);
-    return this.theMoveList
+      this.moveList.indexOf(D) < 0 &&
+      this.moveList.push(D);
+    return this.moveList
   }
 
   GetHookList(links, hookList, objectId, object, listCode, boundsRect) {
@@ -5893,7 +5893,7 @@ class OptHandler {
       ConstantData.DocumentContext.HTMLFocusControl &&
         ConstantData.DocumentContext.HTMLFocusControl.blur &&
         ConstantData.DocumentContext.HTMLFocusControl.blur(),
-        this.NudgeOpen &&
+        this.nudgeOpen &&
         T3Gv.optManager.CloseOpenNudge();
       var t = this.LM_SetupMove(e);
       if (1 != t) return - 1 === t ? void Collab.UnLockMessages() : (
@@ -5945,7 +5945,7 @@ class OptHandler {
       )
     ) return !1;
     a = t.GetTargetForEvent(e),
-      this.theEventTimestamp = Date.now(),
+      this.eventTimestamp = Date.now(),
       Utils2.StopPropagationAndDefaults(e);
     var S = t.GetID(),
       c = T3Gv.optManager.GetObjectPtr(S, !1);
@@ -5977,7 +5977,7 @@ class OptHandler {
       p = this.svgDoc.ConvertWindowToDocCoords(e.gesture.center.clientX, e.gesture.center.clientY);
     if (
       this.currentModalOperation !== ConstantData2.ModalOperations.FORMATPAINTER ||
-      this.FormatPainterMode !== ConstantData2.FormatPainterModes.OBJECT
+      this.formatPainterMode !== ConstantData2.formatPainterModes.OBJECT
     ) {
       var d = t.GetTargetForEvent(e),
         D = d.GetID(),
@@ -6117,20 +6117,20 @@ class OptHandler {
       (this.dragTargetId = M.id),
       this.IsConnectorEndShape(n, null, T) ? this.dragTargetId = T.id : this.IsGenogramPartner(n, b) &&
         (this.dragTargetId = b.id),
-      this.theMoveBounds = {
+      this.moveBounds = {
         x: 0,
         y: 0,
         width: 0,
         height: 0
       },
-      this.PinRect = null,
+      this.pinRect = null,
       this.Dynamic_Guides = new DynamicGuides(),
       n.objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_BAR
-    ) this.theMoveBounds = n.GetMoveRect(!1, !1),
+    ) this.moveBounds = n.GetMoveRect(!1, !1),
       (P = []).push(this.dragTargetId),
-      this.PinRect = {},
-      this.PinRect = n.AdjustPinRect(this.PinRect, !0);
-    else var P = this.GetMoveList(this.dragTargetId, !0, !0, !1, this.theMoveBounds, !1);
+      this.pinRect = {},
+      this.pinRect = n.AdjustPinRect(this.pinRect, !0);
+    else var P = this.GetMoveList(this.dragTargetId, !0, !0, !1, this.moveBounds, !1);
     var R = 0;
     P &&
       (R = P.length),
@@ -6164,7 +6164,7 @@ class OptHandler {
         ) : n.flags & ConstantData.ObjFlags.SEDO_NotVisible ||
         w.push(_)
       );
-    for (R = (P = w).length, this.theMoveList = P, A = 0; A < R; ++A) _ = P[A],
+    for (R = (P = w).length, this.moveList = P, A = 0; A < R; ++A) _ = P[A],
       E = (n = this.GetObjectPtr(_, !1)).GetSVGFrame(),
       this.dragBBoxList.push(E),
       this.dragElementList.push(_),
@@ -6172,9 +6172,9 @@ class OptHandler {
       _ == this.dragTargetId &&
       (this.dragTargetBBox = $.extend(!0, {
       }, E));
-    return this.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto &&
+    return this.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto &&
       (
-        this.dragEnclosingRect = T3Gv.optManager.GetListSRect(this.theMoveList)
+        this.dragEnclosingRect = T3Gv.optManager.GetListSRect(this.moveList)
       ),
       this.LM_MovePreTrack(P, e),
       !0
@@ -6184,10 +6184,10 @@ class OptHandler {
     console.log('O.Opt LM_Move_ExceptionCleanup - Input:', error);
 
     // Clean up resources
-    T3Gv.optManager.LinkParams = null;
+    T3Gv.optManager.linkParams = null;
     T3Gv.optManager.dragBBoxList = [];
     T3Gv.optManager.dragElementList = [];
-    T3Gv.optManager.theMoveList = null;
+    T3Gv.optManager.moveList = null;
     T3Gv.optManager.dragEnclosingRect = null;
     T3Gv.optManager.dragGotMove = false;
     T3Gv.optManager.UnbindShapeMoveHammerEvents();
@@ -6419,7 +6419,7 @@ class OptHandler {
     console.log("O.Opt FindChildArray - Input:", { objectId, excludeConnectorId });
 
     // Get the links block
-    const links = this.GetObjectPtr(this.theLinksBlockID, false);
+    const links = this.GetObjectPtr(this.linksBlockId, false);
 
     // Find the starting link index for this object
     const linkIndex = this.FindLink(links, objectId, true);
@@ -6454,19 +6454,19 @@ class OptHandler {
   }
 
   LM_MovePreTrack(e, t) {
-    T3Gv.optManager.GetObjectPtr(this.theSEDSessionBlockID, !1);
+    T3Gv.optManager.GetObjectPtr(this.sedSessionBlockId, !1);
     var a,
       r = t.gesture &&
         t.gesture.srcEvent &&
         t.gesture.srcEvent.altKey;
     (
-      this.LinkParams = new LinkParameters(),
-      this.LinkParams.AutoInsert = this.AllowAutoInsert(),
-      this.LinkParams.AutoInsert
+      this.linkParams = new LinkParameters(),
+      this.linkParams.AutoInsert = this.AllowAutoInsert(),
+      this.linkParams.AutoInsert
     ) &&
       (
         this.GetObjectPtr(T3Gv.optManager.theSelectedListBlockID, !1).length > 1 &&
-        (this.LinkParams.AutoInsert = !1),
+        (this.linkParams.AutoInsert = !1),
         t.gesture &&
         t.gesture.srcEvent &&
         t.gesture.srcEvent.altKey
@@ -6479,37 +6479,37 @@ class OptHandler {
         ) &&
         e.indexOf(a.hooks[0].objid) < 0 &&
         (
-          this.LinkParams.ConnectIndex = a.hooks[0].objid,
-          this.LinkParams.PrevConnect = a.hooks[0].objid,
-          this.LinkParams.ConnectIndexHistory.push(a.hooks[0].objid),
-          this.LinkParams.ConnectPt.x = a.hooks[0].connect.x,
-          this.LinkParams.ConnectPt.y = a.hooks[0].connect.y,
-          this.LinkParams.ConnectInside = a.hooks[0].cellid,
-          this.LinkParams.HookIndex = a.hooks[0].hookpt,
-          this.LinkParams.InitialHook = 0
+          this.linkParams.ConnectIndex = a.hooks[0].objid,
+          this.linkParams.PrevConnect = a.hooks[0].objid,
+          this.linkParams.ConnectIndexHistory.push(a.hooks[0].objid),
+          this.linkParams.ConnectPt.x = a.hooks[0].connect.x,
+          this.linkParams.ConnectPt.y = a.hooks[0].connect.y,
+          this.linkParams.ConnectInside = a.hooks[0].cellid,
+          this.linkParams.HookIndex = a.hooks[0].hookpt,
+          this.linkParams.InitialHook = 0
         );
-      var i = this.GetObjectPtr(this.theLinksBlockID, !1);
+      var i = this.GetObjectPtr(this.linksBlockId, !1);
       if (
-        this.LinkParams.lpCircList = this.GetHookList(
+        this.linkParams.lpCircList = this.GetHookList(
           i,
-          this.LinkParams.lpCircList,
+          this.linkParams.lpCircList,
           this.dragTargetId,
           a,
           ConstantData.ListCodes.SED_LC_CIRCTARG,
           {
           }
         ),
-        this.JoinHookList(this.LinkParams.lpCircList, e),
-        this.LinkParams.AutoInsert &&
+        this.JoinHookList(this.linkParams.lpCircList, e),
+        this.linkParams.AutoInsert &&
         a instanceof BaseShape &&
         this.HealLine(a, !0, null) > 0 &&
         1 == r &&
         (
-          this.LinkParams.lpCircList = [],
-          this.LinkParams.lpCircList.push(this.dragTargetId),
-          this.theMoveList = [],
-          this.theMoveList.push(this.dragTargetId),
-          this.LinkParams.AutoHeal = !0
+          this.linkParams.lpCircList = [],
+          this.linkParams.lpCircList.push(this.dragTargetId),
+          this.moveList = [],
+          this.moveList.push(this.dragTargetId),
+          this.linkParams.AutoHeal = !0
         ),
         this.AllowSnapToShapes()
       ) {
@@ -6545,7 +6545,7 @@ class OptHandler {
   }
 
   AllowSnapToShapes() {
-    T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
+    T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1);
     return T3Gv.docHandler.documentConfig.snapToShapes
   }
 
@@ -6563,13 +6563,13 @@ class OptHandler {
     console.log(' ===========       ListManager.LM.prototype.LM_MoveTrack e, t=> ======', e, t);
 
     var a;
-    if (!(Date.now() - this.theEventTimestamp < 250)) {
+    if (!(Date.now() - this.eventTimestamp < 250)) {
       if (!this.dragGotMove) {
-        var r = this.theMoveList;
+        var r = this.moveList;
         if (r && r.length) {
           if (this.DragDuplicate(e)) {
             var i = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSelectedListBlockID, !0),
-              n = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0);
+              n = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !0);
             for (i.length = 0, p = 0; p < r.length; p++) i.push(r[p]);
             var o = this.GetObjectPtr(this.dragTargetId, !1),
               s = - 1,
@@ -6581,18 +6581,18 @@ class OptHandler {
             for (i.length = 0, p = 0; p < c.length; p++) i.push(c[p]);
             for (
               T3Gv.optManager.MoveDuplicated = !0,
-              this.theMoveList.length = 0,
+              this.moveList.length = 0,
               this.dragElementList.length = 0,
               this.dragBBoxList.length = 0,
-              this.LinkParams.lpCircList = [],
-              this.LinkParams.InitialHook = - 1,
+              this.linkParams.lpCircList = [],
+              this.linkParams.InitialHook = - 1,
               p = c.length - 1;
               p >= 0;
               p--
             ) null != (d = this.GetObjectPtr(c[p], !1)) &&
               (
-                this.theMoveList.push(c[p]),
-                this.LinkParams.lpCircList.push(c[p]),
+                this.moveList.push(c[p]),
+                this.linkParams.lpCircList.push(c[p]),
                 this.dragElementList.push(c[p]),
                 S = d.GetSVGFrame(),
                 l &&
@@ -6601,7 +6601,7 @@ class OptHandler {
                 (this.dragTargetId = c[p], n.tselect = c[p]),
                 this.dragBBoxList.push(S)
               );
-            r = this.theMoveList
+            r = this.moveList
           }
           for (var u = r.length, p = 0; p < u; ++p) {
             var d,
@@ -6613,8 +6613,8 @@ class OptHandler {
       }
       if (
         this.dragGotMove = !0,
-        a = this.LinkParams &&
-        this.LinkParams.ConnectIndex >= 0,
+        a = this.linkParams &&
+        this.linkParams.ConnectIndex >= 0,
         t
       ) this.ResetAutoScrollTimer();
       else if (!this.AutoScrollCommon(e, !a, 'HandleObjectDragDoAutoScroll')) return;
@@ -6647,23 +6647,23 @@ class OptHandler {
         var s,
           l,
           S = this.GetObjectPtr(T3Gv.optManager.theSelectedListBlockID, !1);
-        for (s = this.theMoveList.length, a = 0; a < s; a++) l = this.theMoveList[a],
+        for (s = this.moveList.length, a = 0; a < s; a++) l = this.moveList[a],
           - 1 === S.indexOf(l) &&
           S.push(l);
-        for (n = 0, (i = this.theMoveList) && (n = i.length), a = 0; a < n; a++) r = i[a],
+        for (n = 0, (i = this.moveList) && (n = i.length), a = 0; a < n; a++) r = i[a],
           this.AddToDirtyList(r);
         this.RenderDirtySVGObjects()
       }
       return this.LM_MovePostRelease(!1),
         this.RenderAllSVGSelectionStates(),
-        this.theMoveList = null,
+        this.moveList = null,
         void Collab.UnBlockMessages()
     }
-    if (n = 0, (i = this.theMoveList) && (n = i.length), 0 !== n) {
+    if (n = 0, (i = this.moveList) && (n = i.length), 0 !== n) {
       var c = null,
         u = {},
         p = {
-          theMoveList: [],
+          moveList: [],
           thePointList: [],
           dragDeltaX: this.dragDeltaX,
           MoveDuplicated: T3Gv.optManager.MoveDuplicated
@@ -6695,7 +6695,7 @@ class OptHandler {
             }
           }
           this.SetShapeOriginNoDirty(r, u.x, u.y),
-            this.LinkParams.ConnectHookFlag === ConstantData.HookFlags.SED_LC_AutoInsert &&
+            this.linkParams.ConnectHookFlag === ConstantData.HookFlags.SED_LC_AutoInsert &&
             d.UpdateFrame(d.Frame),
             (
               d.Dimensions & ConstantData.DimensionFlags.SED_DF_Always ||
@@ -6706,13 +6706,13 @@ class OptHandler {
             this.AddToDirtyList(r),
             Collab.AllowMessage() &&
             (
-              p.theMoveList.push(r),
+              p.moveList.push(r),
               p.thePointList.push(Utils1.DeepCopy(u))
             )
         }
       }
       if (Collab.AllowMessage()) {
-        p.LinkParams = Utils1.DeepCopy(T3Gv.optManager.LinkParams);
+        p.linkParams = Utils1.DeepCopy(T3Gv.optManager.linkParams);
         var y = Collab.BuildMessage(ConstantData.CollabMessages.MoveObjects, p, !1, !0)
       }
       if (
@@ -6728,16 +6728,16 @@ class OptHandler {
           Collab.SendMessage(y)
         ),
         !t &&
-        this.LastOpDuplicate
+        this.lastOpDuplicate
       ) {
         o = !0;
-        var f = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0);
+        var f = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !0);
         f.dupdisp.x += this.dragDeltaX,
           f.dupdisp.y += this.dragDeltaY
       }
       this.CompleteOperation(null),
         t ||
-        (o && (this.LastOpDuplicate = !0), this.theMoveList = null)
+        (o && (this.lastOpDuplicate = !0), this.moveList = null)
     }
   }
 
@@ -6745,33 +6745,33 @@ class OptHandler {
     var a = !1,
       r = [];
     if (
-      this.LinkParams &&
-      this.LinkParams.HiliteConnect >= 0 &&
+      this.linkParams &&
+      this.linkParams.HiliteConnect >= 0 &&
       (
         this.HiliteConnect(
-          T3Gv.optManager.LinkParams.HiliteConnect,
-          this.LinkParams.ConnectPt,
+          T3Gv.optManager.linkParams.HiliteConnect,
+          this.linkParams.ConnectPt,
           !1,
           !1,
           this.dragTargetId,
-          this.LinkParams.ConnectPt,
-          this.LinkParams.HiliteInside
+          this.linkParams.ConnectPt,
+          this.linkParams.HiliteInside
         ),
-        this.LinkParams.HiliteConnect = - 1,
-        this.LinkParams.HiliteInside = null
+        this.linkParams.HiliteConnect = - 1,
+        this.linkParams.HiliteInside = null
       ),
-      this.LinkParams &&
-      this.LinkParams.HiliteJoin >= 0 &&
+      this.linkParams &&
+      this.linkParams.HiliteJoin >= 0 &&
       (
         this.HiliteConnect(
-          T3Gv.optManager.LinkParams.HiliteJoin,
-          this.LinkParams.ConnectPt,
+          T3Gv.optManager.linkParams.HiliteJoin,
+          this.linkParams.ConnectPt,
           !1,
           !0,
           this.dragTargetId,
           null
         ),
-        this.LinkParams.HiliteJoin = - 1
+        this.linkParams.HiliteJoin = - 1
       ),
       t ||
       this.SetEditMode(ConstantData.EditState.DEFAULT),
@@ -6783,38 +6783,38 @@ class OptHandler {
         e.objecttype === ConstantData.ObjectTypes.SD_OBJT_NG_EVENT_LABEL
       ) {
         let e = this.dragDeltaX,
-          r = this.theMoveList;
+          r = this.moveList;
         null != t?.Data?.dragDeltaX &&
           (e = t.Data.dragDeltaX),
-          null != t?.Data?.theMoveList &&
-          (r = t.Data.theMoveList),
+          null != t?.Data?.moveList &&
+          (r = t.Data.moveList),
           a = T3Gv.optManager.TimelineMoveEvent(this.dragTargetId, r, e, !0)
-      } else if (this.LinkParams.JoinIndex >= 0) this.PolyLJoin(
-        this.LinkParams.JoinIndex,
-        this.LinkParams.JoinData,
+      } else if (this.linkParams.JoinIndex >= 0) this.PolyLJoin(
+        this.linkParams.JoinIndex,
+        this.linkParams.JoinData,
         this.dragTargetId,
-        this.LinkParams.JoinSourceData,
+        this.linkParams.JoinSourceData,
         !1
       );
       else if (
-        this.LinkParams &&
+        this.linkParams &&
         (
-          this.LinkParams.ConnectIndex >= 0 ||
-          this.LinkParams.InitialHook >= 0
+          this.linkParams.ConnectIndex >= 0 ||
+          this.linkParams.InitialHook >= 0
         )
       ) T3Gv.gFlowChartManager &&
         (
           a = T3Gv.gFlowChartManager.FlowChartHook(
             this.dragTargetId,
-            this.LinkParams.InitialHook,
-            this.LinkParams.ConnectIndex,
-            this.LinkParams.HookIndex,
-            this.LinkParams.ConnectPt
+            this.linkParams.InitialHook,
+            this.linkParams.ConnectIndex,
+            this.linkParams.HookIndex,
+            this.linkParams.ConnectPt
           )
         ),
         a ||
         (
-          this.LinkParams.ConnectHookFlag === ConstantData.HookFlags.SED_LC_AutoInsert ? this.SD_AutoInsertShape(this.dragTargetId, this.LinkParams.ConnectIndex) : this.LinkParams.ConnectHookFlag === ConstantData.HookFlags.SED_LC_HookReverse ? this.LM_ReverseHook(this.dragTargetId) : (
+          this.linkParams.ConnectHookFlag === ConstantData.HookFlags.SED_LC_AutoInsert ? this.SD_AutoInsertShape(this.dragTargetId, this.linkParams.ConnectIndex) : this.linkParams.ConnectHookFlag === ConstantData.HookFlags.SED_LC_HookReverse ? this.LM_ReverseHook(this.dragTargetId) : (
             a = function () {
               var e = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSelectedListBlockID, !1);
               if (e.length <= 1) return !1;
@@ -6830,14 +6830,14 @@ class OptHandler {
               list = [],
                 connect = [];
               var c = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.dragTargetId, !1);
-              if (T3Gv.optManager.LinkParams.ConnectIndex >= 0) {
+              if (T3Gv.optManager.linkParams.ConnectIndex >= 0) {
                 if (
                   (
-                    S = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.LinkParams.ConnectIndex, !1)
+                    S = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linkParams.ConnectIndex, !1)
                   ) &&
                   S instanceof ShapeContainer
                 ) {
-                  a = T3Gv.optManager.LinkParams.ConnectIndex,
+                  a = T3Gv.optManager.linkParams.ConnectIndex,
                     i = e.length;
                   var u = S.ContainerList.flags & ConstantData.ContainerListFlags.Sparse;
                   if (c.hooks.length && c.hooks[0].objid === a) for (r = 0; r < i; r++) (n = e[r]) !== T3Gv.optManager.dragTargetId &&
@@ -6845,8 +6845,8 @@ class OptHandler {
                     t.hooks[0].objid === a &&
                     (
                       u ? (
-                        s = T3Gv.optManager.LinkParams.ConnectPt.x - c.hooks[0].connect.x,
-                        l = T3Gv.optManager.LinkParams.ConnectPt.y - c.hooks[0].connect.y,
+                        s = T3Gv.optManager.linkParams.ConnectPt.x - c.hooks[0].connect.x,
+                        l = T3Gv.optManager.linkParams.ConnectPt.y - c.hooks[0].connect.y,
                         (s || l) &&
                         (
                           list.push(n),
@@ -6860,12 +6860,12 @@ class OptHandler {
                           })
                         )
                       ) : (
-                        (o = T3Gv.optManager.LinkParams.ConnectPt.x) < 0 &&
+                        (o = T3Gv.optManager.linkParams.ConnectPt.x) < 0 &&
                         (o = 0),
                         list.push(n),
                         connect.push({
                           x: o,
-                          y: T3Gv.optManager.LinkParams.ConnectPt.y + list.length
+                          y: T3Gv.optManager.linkParams.ConnectPt.y + list.length
                         })
                       )
                     );
@@ -6875,11 +6875,11 @@ class OptHandler {
                       S.IsShapeContainer(t) &&
                       (
                         list.push(n),
-                        (o = T3Gv.optManager.LinkParams.ConnectPt.x) < 0 &&
+                        (o = T3Gv.optManager.linkParams.ConnectPt.x) < 0 &&
                         (o = 0),
                         connect.push({
                           x: o,
-                          y: T3Gv.optManager.LinkParams.ConnectPt.y + list.length
+                          y: T3Gv.optManager.linkParams.ConnectPt.y + list.length
                         })
                       )
                     )
@@ -6904,7 +6904,7 @@ class OptHandler {
               if ((i = list.length) > 0) {
                 for (
                   list.unshift(T3Gv.optManager.dragTargetId),
-                  connect.unshift(T3Gv.optManager.LinkParams.ConnectPt),
+                  connect.unshift(T3Gv.optManager.linkParams.ConnectPt),
                   i++,
                   r = 0;
                   r < i;
@@ -6912,19 +6912,19 @@ class OptHandler {
                 ) n = list[r],
                   T3Gv.optManager.UpdateHook(
                     n,
-                    T3Gv.optManager.LinkParams.InitialHook,
-                    T3Gv.optManager.LinkParams.ConnectIndex,
-                    T3Gv.optManager.LinkParams.HookIndex,
+                    T3Gv.optManager.linkParams.InitialHook,
+                    T3Gv.optManager.linkParams.ConnectIndex,
+                    T3Gv.optManager.linkParams.HookIndex,
                     connect[r],
-                    T3Gv.optManager.LinkParams.ConnectInside
+                    T3Gv.optManager.linkParams.ConnectInside
                   ),
                   T3Gv.optManager.SetLinkFlag(
-                    T3Gv.optManager.LinkParams.ConnectIndex,
+                    T3Gv.optManager.linkParams.ConnectIndex,
                     ConstantData.LinkFlags.SED_L_MOVE
                   ),
                   T3Gv.optManager.CleanupHooks(
                     T3Gv.optManager.dragTargetId,
-                    T3Gv.optManager.LinkParams.ConnectIndex
+                    T3Gv.optManager.linkParams.ConnectIndex
                   );
                 return !0
               }
@@ -6934,17 +6934,17 @@ class OptHandler {
             (
               this.UpdateHook(
                 this.dragTargetId,
-                this.LinkParams.InitialHook,
-                this.LinkParams.ConnectIndex,
-                this.LinkParams.HookIndex,
-                this.LinkParams.ConnectPt,
-                this.LinkParams.ConnectInside
+                this.linkParams.InitialHook,
+                this.linkParams.ConnectIndex,
+                this.linkParams.HookIndex,
+                this.linkParams.ConnectPt,
+                this.linkParams.ConnectInside
               ),
               this.SetLinkFlag(
-                this.LinkParams.ConnectIndex,
+                this.linkParams.ConnectIndex,
                 ConstantData.LinkFlags.SED_L_MOVE
               ),
-              this.CleanupHooks(this.dragTargetId, this.LinkParams.ConnectIndex)
+              this.CleanupHooks(this.dragTargetId, this.linkParams.ConnectIndex)
             )
           )
         );
@@ -6958,18 +6958,18 @@ class OptHandler {
       this.IsGanttBar(this.dragTargetId) &&
         this.GanttAdjustBar(this.dragTargetId, 0),
         t ||
-        null != this.PostMoveSelectID &&
+        null != this.postMoveSelectId &&
         (
-          r.push(this.PostMoveSelectID),
+          r.push(this.postMoveSelectId),
           this.SelectObjects(r, !1, !1),
-          this.PostMoveSelectID = null
+          this.postMoveSelectId = null
         )
     }
     e &&
       this.UpdateLinks(),
       t ||
       (
-        this.LinkParams = null,
+        this.linkParams = null,
         T3Gv.optManager.ob = {},
         this.dragEnclosingRect = null,
         this.dragElementList = [],
@@ -7021,32 +7021,32 @@ class OptHandler {
     if (this.dragTargetId < 0) return e;
     if (null == (a = this.GetObjectPtr(this.dragTargetId, !1))) return e;
     if (
-      this.LinkParams &&
-      this.LinkParams.AutoHeal &&
+      this.linkParams &&
+      this.linkParams.AutoHeal &&
       (
         n = Math.abs(e.x - this.dragStartX),
         o = Math.abs(e.y - this.dragStartY),
         n > 50 ||
         o > 50 ||
-        this.LinkParams.AutoInsert &&
-        this.LinkParams.ConnectIndex >= 0
+        this.linkParams.AutoInsert &&
+        this.linkParams.ConnectIndex >= 0
       )
     ) {
       i = this.HealLine(a, !1, l),
-        this.LinkParams.AutoHeal = !1,
-        this.LinkParams.AutoHealID = a.BlockID,
+        this.linkParams.AutoHeal = !1,
+        this.linkParams.AutoHealID = a.BlockID,
         i >= 0 &&
         (l.push(i), this.DeleteObjects(l, !1));
-      var S = this.theDirtyList.indexOf(this.dragTargetId);
+      var S = this.dirtyList.indexOf(this.dragTargetId);
       S >= 0 &&
-        this.theDirtyList.splice(S, 1),
+        this.dirtyList.splice(S, 1),
         this.RenderDirtySVGObjects(),
         S >= 0 &&
         this.AddToDirtyList(this.dragTargetId);
-      this.GetMoveList(this.dragTargetId, !0, !0, !1, this.theMoveBounds, !1)
+      this.GetMoveList(this.dragTargetId, !0, !0, !1, this.moveBounds, !1)
     }
     if (
-      this.PinRect &&
+      this.pinRect &&
       this.PinMoveRect(e),
       r = this.Move_GetHookPoints(
         this.dragTargetId,
@@ -7058,8 +7058,8 @@ class OptHandler {
       if (
         this.dragDeltaX = 0,
         this.dragDeltaY = 0,
-        T3Gv.optManager.LinkParams.DropOnLine ||
-        T3Gv.optManager.LinkParams.AutoInsert
+        T3Gv.optManager.linkParams.DropOnLine ||
+        T3Gv.optManager.linkParams.AutoInsert
       ) {
         (s = $.extend(!0, {
         }, a.Frame)).x += e.x - this.dragStartX,
@@ -7070,7 +7070,7 @@ class OptHandler {
           t = this.FindConnect(
             this.dragTargetId,
             a,
-            T3Gv.optManager.LinkParams.cpt,
+            T3Gv.optManager.linkParams.cpt,
             !0,
             !0,
             !1,
@@ -7092,11 +7092,11 @@ class OptHandler {
               r,
               !0,
               !1,
-              T3Gv.optManager.LinkParams.AllowJoin,
+              T3Gv.optManager.linkParams.AllowJoin,
               e
             )
           ) ||
-          T3Gv.optManager.LinkParams.JoinIndex >= 0
+          T3Gv.optManager.linkParams.JoinIndex >= 0
         ) &&
         (e.x += this.dragDeltaX, e.y += this.dragDeltaY)
     }
@@ -7116,15 +7116,15 @@ class OptHandler {
       u = ConstantData.ExtraFlags,
       p = ConstantData.Defines.SED_CDim;
     if (null == t) return null;
-    if (null == this.LinkParams) return null;
+    if (null == this.linkParams) return null;
     if (t.hooks && 2 === t.hooks.length) return null;
     if (t.flags & ConstantData.ObjFlags.SEDO_Assoc) return null;
     if (t.PreventLink()) return null;
     if (
       !t.AllowLink() &&
-      this.LinkParams &&
-      (this.LinkParams.ArraysOnly = !0),
-      (i = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1)) &&
+      this.linkParams &&
+      (this.linkParams.ArraysOnly = !0),
+      (i = this.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1)) &&
       (
         l = i.flags & ConstantData.SessionFlags.SEDS_AttLink &&
         t.hookflags & ConstantData.HookFlags.SED_LC_AttachToLine,
@@ -7141,27 +7141,27 @@ class OptHandler {
     ) {
       if (
         l &&
-        (this.LinkParams.DropOnLine = !0),
+        (this.linkParams.DropOnLine = !0),
         o.push(new Point(t.attachpoint.x, t.attachpoint.y)),
         t.extraflags & (u.SEDE_FlipHoriz | u.SEDE_FlipVert)
       ) {
         var d = new Rectangle(0, 0, p, p);
         T3Gv.optManager.FlipPoints(d, t.extraflags, o)
       }
-      this.LinkParams.cpt = t.GetPerimPts(e, o, ConstantData.HookPts.SED_KAT, !1, null, - 1),
-        this.LinkParams.cpt[0].id = ConstantData.HookPts.SED_KAT,
-        this.LinkParams.cpt[0].x += a,
-        this.LinkParams.cpt[0].y += r
+      this.linkParams.cpt = t.GetPerimPts(e, o, ConstantData.HookPts.SED_KAT, !1, null, - 1),
+        this.linkParams.cpt[0].id = ConstantData.HookPts.SED_KAT,
+        this.linkParams.cpt[0].x += a,
+        this.linkParams.cpt[0].y += r
     }
     t.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.SHAPE &&
       (
         s.push(new Point(p / 2, 0)),
-        this.LinkParams.ContainerPt = t.GetPerimPts(e, s, ConstantData.HookPts.SED_KAT, !1, null, - 1),
-        this.LinkParams.ContainerPt[0].id = ConstantData.HookPts.SED_KAT,
-        this.LinkParams.ContainerPt[0].x += a,
-        this.LinkParams.ContainerPt[0].y += r
+        this.linkParams.ContainerPt = t.GetPerimPts(e, s, ConstantData.HookPts.SED_KAT, !1, null, - 1),
+        this.linkParams.ContainerPt[0].id = ConstantData.HookPts.SED_KAT,
+        this.linkParams.ContainerPt[0].x += a,
+        this.linkParams.ContainerPt[0].y += r
       ),
-      this.LinkParams.AllowJoin = S &&
+      this.linkParams.AllowJoin = S &&
       t.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.LINE,
       n = t.GetHookPoints(!0),
       n = t.GetPerimPts(e, n, 0, !1, null, - 1);
@@ -7174,12 +7174,12 @@ class OptHandler {
     console.log('ListManager.LM.prototype.HandleObjectDragMoveCommon e, t, a, r=>', e, t, a, r);
     var i;
     function n() {
-      T3Gv.optManager.dragDeltaX < - T3Gv.optManager.theMoveBounds.x &&
-        (T3Gv.optManager.dragDeltaX = - T3Gv.optManager.theMoveBounds.x),
-        T3Gv.optManager.dragDeltaY < - T3Gv.optManager.theMoveBounds.y &&
-        (T3Gv.optManager.dragDeltaY = - T3Gv.optManager.theMoveBounds.y)
+      T3Gv.optManager.dragDeltaX < - T3Gv.optManager.moveBounds.x &&
+        (T3Gv.optManager.dragDeltaX = - T3Gv.optManager.moveBounds.x),
+        T3Gv.optManager.dragDeltaY < - T3Gv.optManager.moveBounds.y &&
+        (T3Gv.optManager.dragDeltaY = - T3Gv.optManager.moveBounds.y)
     }
-    if (T3Gv.optManager.PinRect) {
+    if (T3Gv.optManager.pinRect) {
       var o = {
         x: e,
         y: t
@@ -7192,11 +7192,11 @@ class OptHandler {
       T3Gv.optManager.dragDeltaY = t - T3Gv.optManager.dragStartY,
       n();
     var s = {
-      x: T3Gv.optManager.dragDeltaX + T3Gv.optManager.theMoveBounds.x + T3Gv.optManager.theMoveBounds.width,
-      y: T3Gv.optManager.dragDeltaY + T3Gv.optManager.theMoveBounds.y + T3Gv.optManager.theMoveBounds.height
+      x: T3Gv.optManager.dragDeltaX + T3Gv.optManager.moveBounds.x + T3Gv.optManager.moveBounds.width,
+      y: T3Gv.optManager.dragDeltaY + T3Gv.optManager.moveBounds.y + T3Gv.optManager.moveBounds.height
     };
     s = T3Gv.optManager.DoAutoGrowDrag(s);
-    var l = this.theMoveList,
+    var l = this.moveList,
       S = 0;
     if (l && (S = l.length), 0 !== S) {
       var c,
@@ -7209,10 +7209,10 @@ class OptHandler {
         },
         g = {},
         h = {};
-      i = this.LinkParams &&
+      i = this.linkParams &&
         (
-          this.LinkParams.ConnectIndex >= 0 ||
-          this.LinkParams.JoinIndex >= 0
+          this.linkParams.ConnectIndex >= 0 ||
+          this.linkParams.JoinIndex >= 0
         ) ||
         a;
       var m = this.EnhanceSnaps(r);
@@ -7252,7 +7252,7 @@ class OptHandler {
             h.y += T3Gv.optManager.dragDeltaY;
           var T = new ListManager.Dynamic_Guides;
           null != (
-            y = this.DynamicSnaps_GetSnapObjects(I, h, T, this.theMoveList, null, L)
+            y = this.DynamicSnaps_GetSnapObjects(I, h, T, this.moveList, null, L)
           ).x &&
             (
               f.x += y.x,
@@ -7308,14 +7308,14 @@ class OptHandler {
         (
           Math.abs(T3Gv.optManager.dragDeltaX) >= Math.abs(T3Gv.optManager.dragDeltaY) ? T3Gv.optManager.dragDeltaY = 0 : T3Gv.optManager.dragDeltaX = 0
         );
-      var b = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
+      var b = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1);
       if (
-        T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto
+        T3Gv.optManager.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto
       ) {
-        var M = T3Gv.optManager.theMoveBounds.x + T3Gv.optManager.theMoveBounds.width + T3Gv.optManager.dragDeltaX;
+        var M = T3Gv.optManager.moveBounds.x + T3Gv.optManager.moveBounds.width + T3Gv.optManager.dragDeltaX;
         M > b.dim.x &&
           (T3Gv.optManager.dragDeltaX -= M - b.dim.x);
-        var P = T3Gv.optManager.theMoveBounds.y + T3Gv.optManager.theMoveBounds.height + T3Gv.optManager.dragDeltaY;
+        var P = T3Gv.optManager.moveBounds.y + T3Gv.optManager.moveBounds.height + T3Gv.optManager.dragDeltaY;
         P > b.dim.y &&
           (T3Gv.optManager.dragDeltaY -= P - b.dim.y)
       }
@@ -7329,7 +7329,7 @@ class OptHandler {
         u < S;
         ++u
       ) {
-        if (d = T3Gv.optManager.dragBBoxList[u], this.theMoveList[u] === R) {
+        if (d = T3Gv.optManager.dragBBoxList[u], this.moveList[u] === R) {
           C = this.GetObjectPtr(R, !1);
           var A = {
             x: d.x + T3Gv.optManager.dragDeltaX,
@@ -7342,9 +7342,9 @@ class OptHandler {
               (A = C.GetDimensionsForDisplay()).x += T3Gv.optManager.dragDeltaX,
               A.y += T3Gv.optManager.dragDeltaY,
               (
-                this.LinkParams &&
-                this.LinkParams.ConnectIndex >= 0 ||
-                this.LinkParams.ConnectIndexHistory.length > 0
+                this.linkParams &&
+                this.linkParams.ConnectIndex >= 0 ||
+                this.linkParams.ConnectIndexHistory.length > 0
               ) &&
               this.HandleHookedObjectMoving(C, A)
             ),
@@ -7373,7 +7373,7 @@ class OptHandler {
             height: d.height
           };
           Collab.SendSVGEvent(
-            this.theMoveList[u],
+            this.moveList[u],
             ConstantData.CollabSVGEventTypes.Object_Move,
             w
           )
@@ -7417,11 +7417,11 @@ class OptHandler {
   SetLinkFlag(e, t) {
     var a,
       r,
-      i = this.GetObjectPtr(this.theLinksBlockID, !1);
+      i = this.GetObjectPtr(this.linksBlockId, !1);
     if (null == i) return 1;
     if ((a = this.FindLink(i, e, !0)) >= 0) {
       if (
-        i = this.GetObjectPtr(this.theLinksBlockID, !0),
+        i = this.GetObjectPtr(this.linksBlockId, !0),
         null == (r = this.GetObjectPtr(e, !0))
       ) return 1;
       for (
@@ -7455,7 +7455,7 @@ class OptHandler {
       s = 0,
       l = {},
       S = [],
-      c = this.GetObjectPtr(this.theLinksBlockID, !0);
+      c = this.GetObjectPtr(this.linksBlockId, !0);
     if (null != c && t.AllowMaintainLink() && (n = this.FindLink(c, e, !0)) >= 0) for (; n < c.length && c[n].targetid === e;) {
       if (o = this.GetObjectPtr(c[n].hookid, !1)) {
         if (o.associd === e && o.flags & ConstantData.ObjFlags.SEDO_Assoc) {
@@ -7547,7 +7547,7 @@ class OptHandler {
     if (this.GetEditMode() !== ConstantData.EditState.DEFAULT) return !1;
     var a = this.svgObjectLayer.GetElementByID(e.tag);
     if (
-      this.GetObjectPtr(this.theTEDSessionBlockID, !1).theActiveTextEditObjectID !== e.BlockID
+      this.GetObjectPtr(this.tedSessionBlockId, !1).theActiveTextEditObjectID !== e.BlockID
     ) {
       var r = e.GetTable(!1);
       if (r) {
@@ -7584,7 +7584,7 @@ class OptHandler {
       c,
       u,
       p,
-      d = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1),
+      d = T3Gv.optManager.GetObjectPtr(this.layersManagerBlockId, !1),
       D = d.layers,
       g = d.nlayers,
       h = ConstantData.Defines.AnnoHotDist,
@@ -7593,8 +7593,8 @@ class OptHandler {
       y = h,
       f = t.x - 2 * h,
       L = t.y - 2 * h,
-      I = Utils1.DeepCopy(this.theDirtyList);
-    for (this.theDirtyList = [], r = 0; r < g; r++) if (
+      I = Utils1.DeepCopy(this.dirtyList);
+    for (this.dirtyList = [], r = 0; r < g; r++) if (
       r !== d.activelayer &&
       D[r].flags & ConstantData.LayerFlags.SDLF_UseEdges
     ) for (o = (i = D[r].zList).length, n = 0; n < o; n++) l = i[n],
@@ -7610,12 +7610,12 @@ class OptHandler {
       );
     m &&
       T3Gv.optManager.RenderDirtySVGObjects(),
-      this.theDirtyList = I
+      this.dirtyList = I
   }
 
 
   ResizeSVGDocument() {
-    var e = T3Gv.objectStore.GetObject(this.theSEDSessionBlockID).Data;
+    var e = T3Gv.objectStore.GetObject(this.sedSessionBlockId).Data;
     T3Gv.docHandler.ResizeDocument(e.dim.x, e.dim.y)
   }
 
@@ -7753,7 +7753,7 @@ class OptHandler {
       s,
       l,
       S = e.ID,
-      c = this.GetObjectPtr(this.theTEDSessionBlockID, !1),
+      c = this.GetObjectPtr(this.tedSessionBlockId, !1),
       u = [],
       p = {};
     var theTextLength;
@@ -7782,16 +7782,16 @@ class OptHandler {
       var h = this.GetObjectPtr(S, !0),
         m = h.GetTextObject(t, !1, p);
       if (null != m) {
-        if (null == r) c = this.GetObjectPtr(this.theTEDSessionBlockID, !0);
+        if (null == r) c = this.GetObjectPtr(this.tedSessionBlockId, !0);
         else if (r.EditorID === Collab.EditorID) {
-          (c = this.GetObjectPtr(this.theTEDSessionBlockID, !1)).theActiveTextEditObjectID = - 1;
+          (c = this.GetObjectPtr(this.tedSessionBlockId, !1)).theActiveTextEditObjectID = - 1;
           var C = c.theActiveTableObjectID;
           c.theTEWasResized = !1,
             c.theTEWasEdited = !1,
-            (c = this.GetObjectPtr(this.theTEDSessionBlockID, !0)).theActiveTextEditObjectID = S,
+            (c = this.GetObjectPtr(this.tedSessionBlockId, !0)).theActiveTextEditObjectID = S,
             c.theActiveTableObjectID = C
-        } else (c = this.GetObjectPtr(this.theTEDSessionBlockID, !1)).EditorID = r.EditorID,
-          (c = this.GetObjectPtr(this.theTEDSessionBlockID, !0)).EditorID = Collab.EditorID;
+        } else (c = this.GetObjectPtr(this.tedSessionBlockId, !1)).EditorID = r.EditorID,
+          (c = this.GetObjectPtr(this.tedSessionBlockId, !0)).EditorID = Collab.EditorID;
         if (e = this.svgObjectLayer.GetElementByID(S), - 1 == m) {
           h = this.GetObjectPtr(S, !0);
           if (
@@ -7972,7 +7972,7 @@ class OptHandler {
     /*
    try {
     this.SetModalOperation(ConstantData2.ModalOperations.DRAGDROP);
-    this.GetObjectPtr(this.theTEDSessionBlockID, !1);
+    this.GetObjectPtr(this.tedSessionBlockId, !1);
     this.CloseEdit(),
       this.stampCompleteCallback = i ||
       null,
@@ -8015,7 +8015,7 @@ class OptHandler {
 
     try {
       this.SetModalOperation(ConstantData2.ModalOperations.DRAGDROP);
-      this.GetObjectPtr(this.theTEDSessionBlockID, false);
+      this.GetObjectPtr(this.tedSessionBlockId, false);
       this.CloseEdit();
       this.stampCompleteCallback = i || null;
       this.stampCompleteUserData = n || null;
@@ -8130,7 +8130,7 @@ class OptHandler {
     console.log('======== ListManager.LM.prototype.MouseStampNewShape 6 n=', n)
 
     this.SetModalOperation(ConstantData2.ModalOperations.STAMP);
-    this.GetObjectPtr(this.theTEDSessionBlockID, !1);
+    this.GetObjectPtr(this.tedSessionBlockId, !1);
     this.DeactivateTextEdit(!1),
       this.stampCompleteCallback = i ||
       null,
@@ -8193,8 +8193,8 @@ class OptHandler {
         u = this.svgDoc.ConvertWindowToDocCoords(e.clientX, e.clientY),
         p = this.drawShape.flags & ConstantData.ObjFlags.SEDO_TextOnly;
       if (!p) {
-        var d = this.LinkParams &&
-          this.LinkParams.SConnectIndex >= 0;
+        var d = this.linkParams &&
+          this.linkParams.SConnectIndex >= 0;
         this.OverrideSnaps(e) &&
           (d = !0),
           T3Gv.docHandler.documentConfig.enableSnap &&
@@ -8208,24 +8208,24 @@ class OptHandler {
       if (
         this.stampVCenter &&
         (g -= this.drawShape.Frame.height / 2),
-        this.theMoveList &&
-        this.theMoveList.length
+        this.moveList &&
+        this.moveList.length
       ) for (
-          r = this.theMoveList.length,
+          r = this.moveList.length,
           D - this.stampShapeOffsetX,
           g - this.stampShapeOffsetY,
           a = 0;
           a < r;
           a++
-        ) (i = this.GetObjectPtr(this.theMoveList[a], !0)) &&
+        ) (i = this.GetObjectPtr(this.moveList[a], !0)) &&
           (
             i.UpdateFrame(i.Frame),
             S = Utils1.DeepCopy(i.Frame),
             c.FrameList.push(S),
-            Collab.AddNewBlockToSecondary(this.theMoveList[a]),
+            Collab.AddNewBlockToSecondary(this.moveList[a]),
             i.dataStyleOverride = null
           ),
-          i = this.GetObjectPtr(this.theMoveList[a], !0);
+          i = this.GetObjectPtr(this.moveList[a], !0);
       else {
         if (this.drawShape) {
           if (
@@ -8249,7 +8249,7 @@ class OptHandler {
         }
         this.GetObjectPtr(this.actionStoredObjectId, !0)
       }
-      c.LinkParams = Utils1.DeepCopy(this.LinkParams);
+      c.linkParams = Utils1.DeepCopy(this.linkParams);
       var m = this.BuildCreateMessage(c, !1);
       if (
         this.SetLinkFlagsOnFilledClosedPolylines(),
@@ -8264,8 +8264,8 @@ class OptHandler {
         this.WorkAreaHammer.enable(!0),
         p ||
         l.push(this.actionStoredObjectId),
-        this.theMoveList &&
-          this.theMoveList.length ? (l = this.theMoveList.slice(0), this.actionStoredObjectId = - 1) : this.AddToDirtyList(this.actionStoredObjectId),
+        this.moveList &&
+          this.moveList.length ? (l = this.moveList.slice(0), this.actionStoredObjectId = - 1) : this.AddToDirtyList(this.actionStoredObjectId),
         n
       ) {
         var C = [
@@ -8276,7 +8276,7 @@ class OptHandler {
       this.IsTopMostVisibleLayer() ||
         this.MarkAllAllVisibleHigherLayerObjectsDirty(),
         this.RenderDirtySVGObjects(),
-        this.theMoveList = null,
+        this.moveList = null,
         this.stampCompleteCallback &&
         this.actionStoredObjectId >= 0 &&
         this.stampCompleteCallback(this.actionStoredObjectId, this.stampCompleteUserData),
@@ -8333,10 +8333,10 @@ class OptHandler {
         e,
         ConstantData.LinkFlags.SED_L_MOVE | ConstantData.LinkFlags.SED_L_CHANGE
       ),
-      this.theMoveList &&
-      this.theMoveList.length
-    ) for (t = 0; t < this.theMoveList.length; t++) if (
-      (r = this.GetObjectPtr(this.theMoveList[t], !0)) &&
+      this.moveList &&
+      this.moveList.length
+    ) for (t = 0; t < this.moveList.length; t++) if (
+      (r = this.GetObjectPtr(this.moveList[t], !0)) &&
       r.hooks.length > 0
     ) for (a = 0; a < r.hooks.length; a++) {
       var n = this.GetObjectPtr(r.hooks[a].objid, !1);
@@ -8379,7 +8379,7 @@ class OptHandler {
         $(window).unbind('mousemove', EvtUtil.Evt_MouseStampObjectMove),
         T3Gv.optManager.WorkAreaHammer.enable(!0)
       ),
-      this.theMoveList = null,
+      this.moveList = null,
       this.stampCompleteCallback = null,
       this.stampCompleteUserData = null,
       this.stampShapeOffsetX = 0,
@@ -8425,7 +8425,7 @@ class OptHandler {
       T3Gv.optManager.UnbindDragDropOrStamp(),
       this.stampCompleteCallback = null,
       this.stampCompleteUserData = null,
-      this.theMoveList = null,
+      this.moveList = null,
       this.stampShapeOffsetX = 0,
       this.stampShapeOffsetY = 0,
       this.stampHCenter = !1,
@@ -8434,13 +8434,13 @@ class OptHandler {
 
 
   LM_StampPreTrack() {
-    T3Gv.optManager.GetObjectPtr(this.theSEDSessionBlockID, !1);
-    this.LinkParams = new LinkParameters(),
-      this.LinkParams.AutoInsert = this.AllowAutoInsert(),
+    T3Gv.optManager.GetObjectPtr(this.sedSessionBlockId, !1);
+    this.linkParams = new LinkParameters(),
+      this.linkParams.AutoInsert = this.AllowAutoInsert(),
       this.drawShape &&
       this.drawShape.flags &&
       this.drawShape.flags & ConstantData.ObjFlags.SEDO_DropOnBorder &&
-      (this.LinkParams.DropOnLine = !0)
+      (this.linkParams.DropOnLine = !0)
   }
 
 
@@ -8477,7 +8477,7 @@ class OptHandler {
         // this.UpdateTools(),
         Collab.UnLockMessages(),
         void Collab.UnBlockMessages();
-      if (null == this.LinkParams) return void this.CancelObjectDragDrop(!0);
+      if (null == this.linkParams) return void this.CancelObjectDragDrop(!0);
       var c = this.svgDoc.ConvertWindowToDocCoords(e.gesture.center.clientX, e.gesture.center.clientY);
       if (
         this.drawShape &&
@@ -8486,8 +8486,8 @@ class OptHandler {
         ),
         !a
       ) {
-        var u = this.LinkParams &&
-          this.LinkParams.SConnectIndex >= 0;
+        var u = this.linkParams &&
+          this.linkParams.SConnectIndex >= 0;
         this.OverrideSnaps(e) &&
           (u = !0),
           T3Gv.docHandler.documentConfig.enableSnap &&
@@ -8505,22 +8505,22 @@ class OptHandler {
         h = {
           FrameList: []
         };
-      if (this.theMoveList && this.theMoveList.length) for (
-        g = this.theMoveList[0],
-        i = this.theMoveList.length,
+      if (this.moveList && this.moveList.length) for (
+        g = this.moveList[0],
+        i = this.moveList.length,
         p - this.stampShapeOffsetX,
         d - this.stampShapeOffsetY,
         r = 0;
         r < i;
         r++
-      ) Collab.AddNewBlockToSecondary(this.theMoveList[r]),
-        (n = this.GetObjectPtr(this.theMoveList[r], !0)) &&
+      ) Collab.AddNewBlockToSecondary(this.moveList[r]),
+        (n = this.GetObjectPtr(this.moveList[r], !0)) &&
         (
           n.UpdateFrame(n.Frame),
           D = Utils1.DeepCopy(n.Frame),
           h.FrameList.push(D)
         ),
-        n = this.GetObjectPtr(this.theMoveList[r], !0);
+        n = this.GetObjectPtr(this.moveList[r], !0);
       else {
         if (this.drawShape) {
           if (
@@ -8541,14 +8541,14 @@ class OptHandler {
           this.drawShape.UpdateFrame(this.drawShape.Frame),
             D = Utils1.DeepCopy(this.drawShape.Frame),
             h.FrameList.push(D),
-            this.LinkParams.AutoInsert &&
+            this.linkParams.AutoInsert &&
             (h.RotationAngle = this.drawShape.RotationAngle),
             Collab.AddNewBlockToSecondary(this.drawShape.BlockID)
         }
         this.GetObjectPtr(this.actionStoredObjectId, !0)
       }
       if (
-        h.LinkParams = Utils1.DeepCopy(this.LinkParams),
+        h.linkParams = Utils1.DeepCopy(this.linkParams),
         h.AllowMany = !0,
         h.CustomSymbol = !1,
         this.drawShape &&
@@ -8577,8 +8577,8 @@ class OptHandler {
         // Double ===
         f instanceof FloorPlan &&
         f.EnsureCubicleBehindOutline(this.actionStoredObjectId),
-        this.theMoveList &&
-          this.theMoveList.length ? (S = this.theMoveList.slice(0), this.actionStoredObjectId = - 1) : this.AddToDirtyList(this.actionStoredObjectId),
+        this.moveList &&
+          this.moveList.length ? (S = this.moveList.slice(0), this.actionStoredObjectId = - 1) : this.AddToDirtyList(this.actionStoredObjectId),
         o
       ) {
         var L = [
@@ -8590,7 +8590,7 @@ class OptHandler {
         this.MarkAllAllVisibleHigherLayerObjectsDirty(),
         this.RenderDirtySVGObjects(),
         this.SetLinkFlagsOnFilledClosedPolylines(),
-        this.theMoveList = null,
+        this.moveList = null,
         this.stampCompleteCallback &&
         this.actionStoredObjectId >= 0 &&
         this.stampCompleteCallback(this.actionStoredObjectId, this.stampCompleteUserData),
@@ -8661,9 +8661,9 @@ class OptHandler {
       if (
         this.dragBBoxList = [],
         this.dragElementList = [],
-        this.theMoveList &&
-        this.theMoveList.length
-      ) for (o = this.theMoveList.length, l = this.theMoveList, s = 0; s < o; ++s) S = l[s],
+        this.moveList &&
+        this.moveList.length
+      ) for (o = this.moveList.length, l = this.moveList, s = 0; s < o; ++s) S = l[s],
         null != (c = this.GetObjectPtr(S, !1)) &&
         (
           u = c.GetSVGFrame(),
@@ -8691,11 +8691,11 @@ class OptHandler {
           S == this.actionStoredObjectId &&
           (this.dragTargetBBox = $.extend(!0, {
           }, u)),
-          this.dragEnclosingRect = T3Gv.optManager.GetListSRect(this.theMoveList, !1, !0)
+          this.dragEnclosingRect = T3Gv.optManager.GetListSRect(this.moveList, !1, !0)
         );
       else if (a) {
         var d = this.GetObjectPtr(t, !1),
-          D = T3Gv.optManager.GetObjectPtr(this.theSEDSessionBlockID, !1),
+          D = T3Gv.optManager.GetObjectPtr(this.sedSessionBlockId, !1),
           g = null != d.ImageURL &&
             d.ImageURL.length > 0;
         d &&
@@ -8706,8 +8706,8 @@ class OptHandler {
           this.AddSVGObject(n, t, !0, !1)
       }
       this.actionSvgObject = this.svgObjectLayer.GetElementByID(this.actionStoredObjectId),
-        this.LinkParams &&
-        this.LinkParams.lpCircList.push(this.actionStoredObjectId),
+        this.linkParams &&
+        this.linkParams.lpCircList.push(this.actionStoredObjectId),
         T3Gv.optManager.ShowFrame(!0),
         T3Gv.optManager.ShowXY(!0)
     }
@@ -8726,9 +8726,9 @@ class OptHandler {
       this.dragBBoxList = [];
       this.dragElementList = [];
 
-      if (this.theMoveList && this.theMoveList.length) {
-        for (let i = 0; i < this.theMoveList.length; i++) {
-          let moveObjectID = this.theMoveList[i];
+      if (this.moveList && this.moveList.length) {
+        for (let i = 0; i < this.moveList.length; i++) {
+          let moveObjectID = this.moveList[i];
           let moveObject = this.GetObjectPtr(moveObjectID, false);
 
           if (moveObject) {
@@ -8756,12 +8756,12 @@ class OptHandler {
               this.dragTargetBBox = $.extend(true, {}, svgFrame);
             }
 
-            this.dragEnclosingRect = T3Gv.optManager.GetListSRect(this.theMoveList, false, true);
+            this.dragEnclosingRect = T3Gv.optManager.GetListSRect(this.moveList, false, true);
           }
         }
       } else if (hasNativeData) {
         let newObject = this.GetObjectPtr(newObjectID, false);
-        let sessionBlock = T3Gv.optManager.GetObjectPtr(this.theSEDSessionBlockID, false);
+        let sessionBlock = T3Gv.optManager.GetObjectPtr(this.sedSessionBlockId, false);
         let hasImageURL = newObject.ImageURL && newObject.ImageURL.length > 0;
 
         if (newObject && newObject.SymbolID !== ConstantData.Defines.Floorplan_WallOpeningID && !hasImageURL) {
@@ -8774,8 +8774,8 @@ class OptHandler {
 
       this.actionSvgObject = this.svgObjectLayer.GetElementByID(this.actionStoredObjectId);
 
-      if (this.LinkParams) {
-        this.LinkParams.lpCircList.push(this.actionStoredObjectId);
+      if (this.linkParams) {
+        this.linkParams.lpCircList.push(this.actionStoredObjectId);
       }
 
       T3Gv.optManager.ShowFrame(true);
@@ -8856,7 +8856,7 @@ class OptHandler {
           f.y < T3Gv.optManager.svgDoc.docInfo.dispY
         ) {
           if (this.newObjectVisible) {
-            if (this.theMoveList && this.theMoveList.length) for (n = this.theMoveList.length, i = 0; i < n; ++i) p = this.theMoveList[i],
+            if (this.moveList && this.moveList.length) for (n = this.moveList.length, i = 0; i < n; ++i) p = this.moveList[i],
               (d = T3Gv.optManager.GetSVGDragElement(i)) &&
               d.SetVisible(!1);
             else this.actionSvgObject.SetVisible(!1);
@@ -8867,7 +8867,7 @@ class OptHandler {
           return
         }
         if (!this.newObjectVisible) {
-          if (this.theMoveList && this.theMoveList.length) for (n = this.theMoveList.length, i = 0; i < n; ++i) p = this.theMoveList[i],
+          if (this.moveList && this.moveList.length) for (n = this.moveList.length, i = 0; i < n; ++i) p = this.moveList[i],
             (d = T3Gv.optManager.GetSVGDragElement(i)) &&
             d.SetVisible(!0);
           else this.actionSvgObject.SetVisible(!0);
@@ -8884,8 +8884,8 @@ class OptHandler {
           r.Frame.width;
         var b,
           M,
-          P = this.LinkParams &&
-            this.LinkParams.SConnectIndex >= 0;
+          P = this.linkParams &&
+            this.linkParams.SConnectIndex >= 0;
         this.OverrideSnaps(a) &&
           (P = !0);
         var R = {
@@ -8893,7 +8893,7 @@ class OptHandler {
           y: null
         };
         if (
-          !(this.theMoveList && this.theMoveList.length > 0) &&
+          !(this.moveList && this.moveList.length > 0) &&
           this.AllowSnapToShapes() &&
           !T
         ) {
@@ -8907,7 +8907,7 @@ class OptHandler {
             w.x = C.x - o.width / 2,
               w.y = C.y - o.height / 2,
               null != (
-                R = this.DynamicSnaps_GetSnapObjects(_, w, E, this.theMoveList, null, A)
+                R = this.DynamicSnaps_GetSnapObjects(_, w, E, this.moveList, null, A)
               ).x &&
               (w.x += R.x, C.x += R.x),
               null != R.y &&
@@ -8919,9 +8919,9 @@ class OptHandler {
           !P &&
           !T &&
           (
-            this.theMoveList &&
-              this.theMoveList.length ? (
-              D = this.theMoveList.indexOf(this.actionStoredObjectId),
+            this.moveList &&
+              this.moveList.length ? (
+              D = this.moveList.indexOf(this.actionStoredObjectId),
               b = Utils1.DeepCopy(T3Gv.optManager.dragBBoxList[D]),
               o = r.GetSnapRect()
             ) : (b = Utils1.DeepCopy(this.actionBBox), o = r.GetSnapRect()),
@@ -8958,9 +8958,9 @@ class OptHandler {
               (C.y += v.y)
           }
         }
-        if (this.theMoveList && this.theMoveList.length) {
-          n = this.theMoveList.length,
-            D = this.theMoveList.indexOf(this.actionStoredObjectId),
+        if (this.moveList && this.moveList.length) {
+          n = this.moveList.length,
+            D = this.moveList.indexOf(this.actionStoredObjectId),
             o = this.dragEnclosingRect,
             L = {
               x: C.x + o.width / 2,
@@ -8993,7 +8993,7 @@ class OptHandler {
             i = 0;
             i < n;
             ++i
-          ) if (p = this.theMoveList[i], S = this.GetObjectPtr(p)) {
+          ) if (p = this.moveList[i], S = this.GetObjectPtr(p)) {
             if (p !== this.actionStoredObjectId) {
               if (null == (o = T3Gv.optManager.dragBBoxList[i])) continue;
               S.SetShapeOrigin(o.x + s, o.y + l)
@@ -9044,9 +9044,9 @@ class OptHandler {
             y.y + l - h < 0 ? (l = - y.y + h, h = 0) : l = C.y - o.y - o.height / 2,
             r.SetShapeOrigin(o.x + s, o.y + l),
             (
-              this.LinkParams &&
-              this.LinkParams.ConnectIndex >= 0 ||
-              this.LinkParams.ConnectIndexHistory.length > 0
+              this.linkParams &&
+              this.linkParams.ConnectIndex >= 0 ||
+              this.linkParams.ConnectIndexHistory.length > 0
             ) &&
             (
               (m = Utils1.DeepCopy(o)).x += s,
@@ -9054,8 +9054,8 @@ class OptHandler {
               this.HandleHookedObjectMoving(r, m)
             ),
             this.actionSvgObject.SetPos(o.x + s - g, o.y + l - h);
-          var U = this.LinkParams &&
-            this.LinkParams.SConnectIndex >= 0;
+          var U = this.linkParams &&
+            this.linkParams.SConnectIndex >= 0;
           E &&
             (
               U ? this.Dynamic_Guides &&
@@ -9154,7 +9154,7 @@ class OptHandler {
   LM_StampDuringTrack(e, t) {
     var a;
     if (this.actionStoredObjectId < 0) return e;
-    if (this.theMoveList && this.theMoveList.length) return e;
+    if (this.moveList && this.moveList.length) return e;
     if (null == t) return e;
     if (
       a = this.Move_GetHookPoints(this.actionStoredObjectId, t, 0, 0)
@@ -9163,13 +9163,13 @@ class OptHandler {
         this.dragDeltaX = 0,
         this.dragDeltaY = 0,
         (
-          T3Gv.optManager.LinkParams.DropOnLine ||
-          T3Gv.optManager.LinkParams.AutoInsert
+          T3Gv.optManager.linkParams.DropOnLine ||
+          T3Gv.optManager.linkParams.AutoInsert
         ) &&
         this.FindConnect(
           this.actionStoredObjectId,
           t,
-          T3Gv.optManager.LinkParams.cpt,
+          T3Gv.optManager.linkParams.cpt,
           !0,
           !0,
           !1,
@@ -9189,10 +9189,10 @@ class OptHandler {
             a,
             !0,
             !1,
-            T3Gv.optManager.LinkParams.AllowJoin,
+            T3Gv.optManager.linkParams.AllowJoin,
             e
           ) ||
-          T3Gv.optManager.LinkParams.JoinIndex >= 0
+          T3Gv.optManager.linkParams.JoinIndex >= 0
         ) &&
         (e.x += this.dragDeltaX, e.y += this.dragDeltaY)
     }
@@ -9282,7 +9282,7 @@ class OptHandler {
       o,
       s;
     s = a ||
-      this.GetObjectPtr(this.theLinksBlockID, !1),
+      this.GetObjectPtr(this.linksBlockId, !1),
       null == r &&
       (r = ConstantData.DrawingObjectBaseClass.CONNECTOR);
     var l = this.FindLink(s, e, !0);
@@ -10545,7 +10545,7 @@ class OptHandler {
       D,
       g = [],
       h = {},
-      m = this.GetObjectPtr(this.theLinksBlockID, !0);
+      m = this.GetObjectPtr(this.linksBlockId, !0);
     if (null == m) return 1;
     if (S = m.length, null == this.GetObjectPtr(t, !1)) return 1;
     if (null == (o = this.GetObjectPtr(e, !1))) return 1;
@@ -10614,7 +10614,7 @@ class OptHandler {
       p,
       d,
       D = [],
-      g = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1);
+      g = T3Gv.optManager.GetObjectPtr(this.layersManagerBlockId, !1);
     if (null != e) {
       for (a = (r = e.length ? e.length : 0) - 1; a >= 0; a--) {
         i = e[a];
@@ -10673,7 +10673,7 @@ class OptHandler {
   RemoveFromAllZLists(e) {
     var t,
       a,
-      r = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0),
+      r = T3Gv.optManager.GetObjectPtr(this.layersManagerBlockId, !0),
       i = (r.layers, r.nlayers),
       n = [];
     for (t = 0; t < i; ++t) if (n = r.layers[t].zList, - 1 != (a = $.inArray(e, n))) return void n.splice(a, 1)
@@ -10688,16 +10688,16 @@ class OptHandler {
         (
           t = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSelectedListBlockID, !0)
         ).splice(a, 1),
-        e === T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1).tselect &&
+        e === T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1).tselect &&
         (
-          T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0).tselect = - 1
+          T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !0).tselect = - 1
         )
       )
   }
 
   ZList() {
     var e,
-      t = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1),
+      t = T3Gv.optManager.GetObjectPtr(this.layersManagerBlockId, !1),
       a = (t.layers, []);
     for (e = t.nlayers - 1; e >= 0; e--) a = a.concat(t.layers[e].zList);
     return a
@@ -10793,7 +10793,7 @@ class OptHandler {
   }
 
   FrontMostLayerZListPreserve() {
-    return T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0).layers[0].zList
+    return T3Gv.optManager.GetObjectPtr(this.layersManagerBlockId, !0).layers[0].zList
   }
 
   UndoEditMode() {
@@ -10818,7 +10818,7 @@ class OptHandler {
       p = this.GetObjectPtr(e, !0);
     if (null == p) return 1;
     l = p.hooks.length;
-    var d = this.GetObjectPtr(this.theLinksBlockID, !0);
+    var d = this.GetObjectPtr(this.linksBlockId, !0);
     if (null == d) return 1;
     if (p.hooks.length > t && t >= 0 && (S = p.hooks[t].cellid), a >= 0) {
       if (null == (o = this.GetObjectPtr(a, !0))) return 1
@@ -11109,26 +11109,26 @@ class OptHandler {
       r = 0,
       i = null;
     if (
-      this.LinkParams &&
-      this.LinkParams.ConnectIndex >= 0 &&
-      (i = this.GetObjectPtr(this.LinkParams.ConnectIndex, !1)) &&
+      this.linkParams &&
+      this.linkParams.ConnectIndex >= 0 &&
+      (i = this.GetObjectPtr(this.linkParams.ConnectIndex, !1)) &&
       i.HookedObjectMoving &&
       i.HookedObjectMoving({
-        linkParams: this.LinkParams,
+        linkParams: this.linkParams,
         movingShapeID: e.BlockID,
         movingShapeBBox: t
       }),
-      this.LinkParams &&
-      this.LinkParams.ConnectIndexHistory.length > 0
+      this.linkParams &&
+      this.linkParams.ConnectIndexHistory.length > 0
     ) {
-      r = this.LinkParams.ConnectIndexHistory.length;
-      for (a = 0; a < r; a++) this.LinkParams.ConnectIndexHistory[a] !== this.LinkParams.ConnectIndex &&
+      r = this.linkParams.ConnectIndexHistory.length;
+      for (a = 0; a < r; a++) this.linkParams.ConnectIndexHistory[a] !== this.linkParams.ConnectIndex &&
         (
-          i = this.GetObjectPtr(this.LinkParams.ConnectIndexHistory[a], !1)
+          i = this.GetObjectPtr(this.linkParams.ConnectIndexHistory[a], !1)
         ) &&
         i.HookedObjectMoving &&
         i.HookedObjectMoving({
-          linkParams: this.LinkParams,
+          linkParams: this.linkParams,
           movingShapeID: e.BlockID,
           movingShapeBBox: t
         })
@@ -11141,7 +11141,7 @@ class OptHandler {
 
   GetActiveTextEdit() {
     var e = null,
-      t = this.GetObjectPtr(this.theTEDSessionBlockID, !1);
+      t = this.GetObjectPtr(this.tedSessionBlockId, !1);
     return - 1 != t.theActiveTextEditObjectID &&
       (e = t.theActiveTextEditObjectID),
       e
@@ -11911,8 +11911,8 @@ class OptHandler {
       if (
         Collab.IsSecondary() &&
         (
-          this.theMoveList &&
-            this.theMoveList.length ? a = a.concat(this.theMoveList) : a.push(this.drawShape.BlockID)
+          this.moveList &&
+            this.moveList.length ? a = a.concat(this.moveList) : a.push(this.drawShape.BlockID)
         ),
         this.drawShape.SymbolID
       ) {
@@ -11967,7 +11967,7 @@ class OptHandler {
 
   RotateShapes(e, t) {
     var a = T3Gv.optManager.GetObjectPtr(this.theSelectedListBlockID, !1)
-      , r = this.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
+      , r = this.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1);
     t && (a = t);
     var i, n, o = a.length;
     if (0 !== o) {
@@ -12068,7 +12068,7 @@ class OptHandler {
                 (i = T3Gv.optManager.SD_GetVisioTextChild(a[u])) >= 0 && (n = T3Gv.optManager.GetObjectPtr(i, !0)) && (n.VisioRotationDiff ? n.RotationAngle = e - n.VisioRotationDiff : n.RotationAngle = e,
                   n.UpdateFrame(n.Frame),
                   this.AddToDirtyList(i)),
-                this.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto && (S = d.r.x + d.r.width,
+                this.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto && (S = d.r.x + d.r.width,
                   c = d.r.y + d.r.height,
                   S > r.dim.x && (D = r.dim.x - S),
                   c > r.dim.y && (g = r.dim.y - c)),
@@ -12439,7 +12439,7 @@ class OptHandler {
       M = [],
       P = [],
       R = [],
-      A = this.GetObjectPtr(this.theLinksBlockID, !1),
+      A = this.GetObjectPtr(this.linksBlockId, !1),
       _ = - 1,
       E = - 1,
       w = !1,
@@ -12605,7 +12605,7 @@ class OptHandler {
         2 === T &&
         function () {
           var t,
-            a = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
+            a = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1);
           Utils2.IsEqual(L.y, f.y, 2) ? (
             e.Frame.width + a.def.h_arraywidth,
             0,
@@ -12797,7 +12797,7 @@ class OptHandler {
     var r,
       i,
       n,
-      o = this.GetObjectPtr(this.theLinksBlockID, !1),
+      o = this.GetObjectPtr(this.linksBlockId, !1),
       s = this.FindLink(o, e, !0),
       l = [];
     if (r = o.length, s >= 0) for (; s < r && o[s].targetid === e;) i = o[s].hookid,
@@ -12815,7 +12815,7 @@ class OptHandler {
 
   IsPlanningDocument() {
     var e,
-      t = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1),
+      t = T3Gv.optManager.GetObjectPtr(this.layersManagerBlockId, !1),
       a = t.nlayers,
       r = 0,
       i = t.layers;
@@ -12852,16 +12852,16 @@ class OptHandler {
       throw new Error('stateManager is null');
     if (e) T3Gv.optManager.CancelModalOperation();
     else if (T3Gv.stateManager.CurrentStateID + 1 >= T3Gv.stateManager.States.length) return !1;
-    var t = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+    var t = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1),
       a = t.EnableSpellCheck,
       r = 0 === t.RecentSymbols.length,
-      i = this.GetObjectPtr(this.theTEDSessionBlockID, !1);
+      i = this.GetObjectPtr(this.tedSessionBlockId, !1);
     - 1 != i.theActiveTextEditObjectID &&
       i.theTELastOp !== ConstantData.TELastOp.INIT &&
       i.theTELastOp !== ConstantData.TELastOp.TIMEOUT &&
       i.theTELastOp !== ConstantData.TELastOp.SELECT &&
       (this.FlushTextToLMBlock(), this.PreserveUndoState(!1));
-    var n = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1),
+    var n = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.layersManagerBlockId, !1),
       o = n.layers[n.activelayer].layertype;
     this.Redo_DeleteURLs();
     // var s = SDJS.Editor.IsStateOpen();
@@ -12873,19 +12873,19 @@ class OptHandler {
       this.ResizeSVGDocument(),
       this.UpdateLineHops(!0),
       a !== (
-        t = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1)
+        t = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1)
       ).EnableSpellCheck &&
       SDUI.Commands.MainController.Document.SetSpellCheck(t.EnableSpellCheck, !1);
     var S = T3Gv.docHandler.rulerSettings;
     T3Gv.docHandler.RulersNotEqual(t.rulerSettings, S) &&
       T3Gv.docHandler.SetRulers(t.rulerSettings, !0),
-      T3Gv.docHandler.PagesNotEqual(t.Page, T3Gv.optManager.theContentHeader.Page) &&
+      T3Gv.docHandler.PagesNotEqual(t.Page, T3Gv.optManager.contentHeader.Page) &&
       (
-        T3Gv.optManager.theContentHeader.Page = Utils1.DeepCopy(t.Page)
+        T3Gv.optManager.contentHeader.Page = Utils1.DeepCopy(t.Page)
       );
     var c = this.GetObjectPtr(this.theSelectedListBlockID, !1);
     if (
-      - 1 != (i = this.GetObjectPtr(this.theTEDSessionBlockID, !1)).theActiveOutlineObjectID &&
+      - 1 != (i = this.GetObjectPtr(this.tedSessionBlockId, !1)).theActiveOutlineObjectID &&
       0 === c.length
     ) {
       var u = [];
@@ -12896,7 +12896,7 @@ class OptHandler {
       T3Gv.optManager.InUndo = !0,
       this.RenderAllSVGObjects(),
       T3Gv.optManager.InUndo = !1;
-    var p = this.GetObjectPtr(this.theSEDSessionBlockID, !1);
+    var p = this.GetObjectPtr(this.sedSessionBlockId, !1);
     // Resources.CurrentTheme.Name !== p.CurrentTheme &&
     //   (new SDUI.ThemeController).SwitchTheme(p.CurrentTheme);
     - 1 != i.theActiveTextEditObjectID &&
@@ -12911,7 +12911,7 @@ class OptHandler {
     } else this.ShowFrame(!1);
     if (
       o != (
-        n = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1)
+        n = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.layersManagerBlockId, !1)
       ).layers[n.activelayer].layertype
     ) switch (n.layers[n.activelayer].layertype) {
       case ConstantData.LayerTypes.SD_LAYERT_MINDMAP:
@@ -12954,7 +12954,7 @@ class OptHandler {
     try {
       var t,
         a,
-        r = this.GetObjectPtr(this.theTEDSessionBlockID, !1),
+        r = this.GetObjectPtr(this.tedSessionBlockId, !1),
         i = this.Table_GetActiveID(),
         n = !1,
         o = !1;
@@ -12964,8 +12964,8 @@ class OptHandler {
         a.objecttype === ConstantData.ObjectTypes.SD_OBJT_GANTT_CHART &&
         (
           n = !0,
-          this.theContentHeader.ClipboardBuffer &&
-          this.theContentHeader.ClipboardType === ConstantData.ClipboardType.LM &&
+          this.contentHeader.ClipboardBuffer &&
+          this.contentHeader.ClipboardType === ConstantData.ClipboardType.LM &&
           (o = !0)
         ),
         (- 1 != r.theActiveTextEditObjectID || this.bInNoteEdit) &&
@@ -12973,55 +12973,55 @@ class OptHandler {
       ) {
         if (
           r.theActiveTableObjectID >= 0 &&
-          this.theContentHeader.ClipboardType === ConstantData.ClipboardType.Table &&
-          this.theContentHeader.ClipboardBuffer
+          this.contentHeader.ClipboardType === ConstantData.ClipboardType.Table &&
+          this.contentHeader.ClipboardBuffer
         ) return void this.Table_PasteCellContent(r.theActiveTableObjectID);
-        if (this.theTextClipboard && this.theTextClipboard.text) {
+        if (this.textClipboard && this.textClipboard.text) {
           if (Clipboard.isIe) {
-            var s = this.theTextClipboard.text.length;
+            var s = this.textClipboard.text.length;
             s >= 2 &&
-              '\r' === this.theTextClipboard.text[s - 2] &&
-              '\n' === this.theTextClipboard.text[s - 1] &&
+              '\r' === this.textClipboard.text[s - 2] &&
+              '\n' === this.textClipboard.text[s - 1] &&
               (
-                this.theTextClipboard.text = this.theTextClipboard.text.slice(0, - 2)
+                this.textClipboard.text = this.textClipboard.text.slice(0, - 2)
               )
           } (t = this.svgDoc.GetActiveEdit()) &&
             (
               Collab.BeginSecondaryEdit(),
               this.RegisterLastTEOp(ConstantData.TELastOp.PASTE),
-              t.Paste(this.theTextClipboard, !0),
+              t.Paste(this.textClipboard, !0),
               this.RegisterLastTEOp(ConstantData.TELastOp.TIMEOUT)
             )
         }
         return
       }
       if (T3Gv.optManager.bInDimensionEdit) return void (
-        this.theTextClipboard &&
-        this.theTextClipboard.text &&
+        this.textClipboard &&
+        this.textClipboard.text &&
         (t = this.svgDoc.GetActiveEdit()) &&
-        t.Paste(this.theTextClipboard, !0)
+        t.Paste(this.textClipboard, !0)
       );
       if (
-        this.theTextClipboard &&
-        this.theTextClipboard.text &&
-        '\r\n' !== this.theTextClipboard.text
+        this.textClipboard &&
+        this.textClipboard.text &&
+        '\r\n' !== this.textClipboard.text
       ) if (- 1 != this.GetTargetSelect()) return void this.TargetPasteText();
-      return this.theImageClipboard &&
-        this.theContentHeader.ClipboardType === ConstantData.ClipboardType.Image ? void T3Gv.optManager.SetBackgroundImage(this.theImageClipboard, 0) : r.theActiveTableObjectID >= 0 &&
+      return this.imageClipboard &&
+        this.contentHeader.ClipboardType === ConstantData.ClipboardType.Image ? void T3Gv.optManager.SetBackgroundImage(this.imageClipboard, 0) : r.theActiveTableObjectID >= 0 &&
           (
-            this.theContentHeader.ClipboardType === ConstantData.ClipboardType.Table &&
-            this.theContentHeader.ClipboardBuffer ||
-            this.theTextClipboard &&
-            this.theTextClipboard.text &&
-            '\r\n' !== this.theTextClipboard.text
+            this.contentHeader.ClipboardType === ConstantData.ClipboardType.Table &&
+            this.contentHeader.ClipboardBuffer ||
+            this.textClipboard &&
+            this.textClipboard.text &&
+            '\r\n' !== this.textClipboard.text
           ) ? void this.Table_PasteCellContent(r.theActiveTableObjectID) : (
         this.CloseEdit(n),
         void (
-          this.theContentHeader.ClipboardBuffer &&
-          this.theContentHeader.ClipboardType === ConstantData.ClipboardType.LM &&
+          this.contentHeader.ClipboardBuffer &&
+          this.contentHeader.ClipboardType === ConstantData.ClipboardType.LM &&
           (
             Collab.BeginSecondaryEdit(),
-            this.PasteLM(this.theContentHeader.ClipboardBuffer)
+            this.PasteLM(this.contentHeader.ClipboardBuffer)
           )
         )
       )
@@ -13034,8 +13034,8 @@ class OptHandler {
 
 
   TargetPasteText() {
-    if (!this.theTextClipboard) return !1;
-    if (null == this.theTextClipboard.text) return !1;
+    if (!this.textClipboard) return !1;
+    if (null == this.textClipboard.text) return !1;
     var e = this.GetTargetSelect();
     if (- 1 != e) {
       var t = this.GetObjectPtr(e, !1);
@@ -13047,7 +13047,7 @@ class OptHandler {
           i = r.GetText().length;
         return r.SetSelectedRange(0, i),
           this.RegisterLastTEOp(ConstantData.TELastOp.PASTE),
-          r.Paste(this.theTextClipboard, !0),
+          r.Paste(this.textClipboard, !0),
           this.RegisterLastTEOp(ConstantData.TELastOp.TIMEOUT),
           !0
       }
@@ -13262,7 +13262,7 @@ class OptHandler {
     var t = ConstantData.TELastOp;
     if (!this.bInNoteEdit) {
       Collab.BeginSecondaryEdit();
-      var a = this.GetObjectPtr(this.theTEDSessionBlockID, !1),
+      var a = this.GetObjectPtr(this.tedSessionBlockId, !1),
         r = a.theTELastOp;
       if (
         null != this.textEntryTimer &&
@@ -13350,7 +13350,7 @@ class OptHandler {
     var a,
       r,
       i,
-      n = this.GetObjectPtr(this.theTEDSessionBlockID, !1),
+      n = this.GetObjectPtr(this.tedSessionBlockId, !1),
       o = !1,
       s = null,
       l = {};
@@ -13365,7 +13365,7 @@ class OptHandler {
     }
     if (- 1 != n.theActiveTextEditObjectID) {
       Collab.BeginSecondaryEdit(),
-        n = this.GetObjectPtr(this.theTEDSessionBlockID, !0);
+        n = this.GetObjectPtr(this.tedSessionBlockId, !0);
       var c,
         u = !1,
         p = !1,
@@ -13591,7 +13591,7 @@ class OptHandler {
   GetFrontBackLayersForSelected() {
     var e,
       t,
-      a = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1),
+      a = T3Gv.optManager.GetObjectPtr(this.layersManagerBlockId, !1),
       r = a.layers,
       i = a.nlayers,
       n = - 1,
@@ -13623,7 +13623,7 @@ class OptHandler {
   FindLayerForShapeID(e) {
     var t,
       a,
-      r = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1),
+      r = T3Gv.optManager.GetObjectPtr(this.layersManagerBlockId, !1),
       i = r.layers,
       n = r.nlayers;
     for (a = 0; a < n; ++a) if (t = i[a].zList, - 1 != $.inArray(e, t)) return a;
@@ -13677,7 +13677,7 @@ class OptHandler {
 
 
   ZListPreserveForLayer(e) {
-    return T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0).layers[e].zList
+    return T3Gv.optManager.GetObjectPtr(this.layersManagerBlockId, !0).layers[e].zList
   }
 
 
@@ -13725,7 +13725,7 @@ class OptHandler {
 
   SetBackgroundColor() {
     var e,
-      t = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+      t = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1),
       a = T3Gv.docHandler.GetBackground();
     if (t && a) {
       var r = t.background.Paint;
@@ -13772,7 +13772,7 @@ class OptHandler {
 
 
   GetBackgroundTransparent() {
-    var e = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+    var e = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1),
       t = T3Gv.docHandler.GetBackground(),
       a = !0;
     if (e && t) {
@@ -13935,7 +13935,7 @@ class OptHandler {
     t ||
       this.GetObjectPtr(this.theSelectedListBlockID, !0);
     var m,
-      C = this.GetObjectPtr(this.theLinksBlockID, !0),
+      C = this.GetObjectPtr(this.linksBlockId, !0),
       y = null;
     for (u = h.length, n = 0; n < u; ++n) {
       if (
@@ -14026,7 +14026,7 @@ class OptHandler {
     return l.length &&
       T3Gv.optManager.Comment_Group(l),
       c = (S = this.ActiveVisibleZList()).length,
-      I.ConvertToNative(T3Gv.optManager.RichGradients, a),
+      I.ConvertToNative(T3Gv.optManager.richGradients, a),
       i &&
       Collab.AllowMessage() &&
       Collab.SendMessage(d),
@@ -14034,7 +14034,7 @@ class OptHandler {
       r ||
       a ||
       this.RenderAllSVGObjects(),
-      this.theMoveList = null,
+      this.moveList = null,
       T
   }
 
@@ -14519,13 +14519,13 @@ class OptHandler {
       this.WorkAreaHammer.on('tap', EvtUtil.Evt_WorkAreaHammerClick),
       this.stampCompleteCallback = null,
       this.stampCompleteUserData = null,
-      this.theMoveList = null,
+      this.moveList = null,
       this.stampShapeOffsetX = 0,
       this.stampShapeOffsetY = 0,
       this.stampHCenter = !1,
       this.stampVCenter = !1,
       this.drawShape = null,
-      this.theMoveList = null,
+      this.moveList = null,
       this.actionStoredObjectId = - 1,
       this.actionSvgObject = null
     //,
@@ -14538,8 +14538,8 @@ class OptHandler {
       r = this.svgDoc.ConvertWindowToDocCoords(e.gesture.center.clientX, e.gesture.center.clientY),
       i = this.drawShape.flags & ConstantData.ObjFlags.SEDO_TextOnly;
     if (!i) {
-      var n = this.LinkParams &&
-        this.LinkParams.SConnectIndex >= 0;
+      var n = this.linkParams &&
+        this.linkParams.SConnectIndex >= 0;
       this.OverrideSnaps(e) &&
         (n = !0),
         T3Gv.docHandler.documentConfig.enableSnap &&
@@ -14561,14 +14561,14 @@ class OptHandler {
       this.BuildCreateMessage(Collab_Data, !0),
       this.GetObjectPtr(this.actionStoredObjectId, !0),
       this.SetEditMode(ConstantData.EditState.DEFAULT),
-      this.theMoveList &&
-        this.theMoveList.length ? (
+      this.moveList &&
+        this.moveList.length ? (
         this.DeleteObjects(a, !1),
-        a = this.theMoveList.slice(0),
+        a = this.moveList.slice(0),
         this.actionStoredObjectId = - 1
       ) : this.AddToDirtyList(this.actionStoredObjectId),
       this.RenderDirtySVGObjects(),
-      this.theMoveList = null,
+      this.moveList = null,
       this.WorkAreaHammer.on('tap', EvtUtil.Evt_WorkAreaHammerClick),
       this.CompleteOperation(a),
       this.stampCompleteCallback &&
@@ -14680,7 +14680,7 @@ class OptHandler {
       C = m.length;
     if (0 !== C) {
       var y = null,
-        f = this.GetObjectPtr(this.theLinksBlockID, !0),
+        f = this.GetObjectPtr(this.linksBlockId, !0),
         L = (T3Gv.optManager.ZListPreserve(), g.x),
         I = g.y,
         T = g.width / p.InitialGroupBounds.width;
@@ -14706,7 +14706,7 @@ class OptHandler {
           // y instanceof ListManager.GroupSymbol &&
           y instanceof GroupSymbol &&
           y.NativeID < 0 &&
-          y.ConvertToNative(T3Gv.optManager.RichGradients, !1),
+          y.ConvertToNative(T3Gv.optManager.richGradients, !1),
           y.ScaleObject(L, I, h, p.RotationAngle, T, b, !0),
           i = 0,
           0,
@@ -14785,7 +14785,7 @@ class OptHandler {
   InsertObjectsIntoLayerAt(e, t) {
     var a = this.FindLayerForShapeID(e);
     if (a >= 0) {
-      var r = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !0).layers,
+      var r = T3Gv.optManager.GetObjectPtr(this.layersManagerBlockId, !0).layers,
         i = r[a].zList,
         n = i.indexOf(e),
         o = i.length,
@@ -14798,10 +14798,10 @@ class OptHandler {
 
   CutObjects(e) {
     try {
-      if (T3Gv.optManager.CutFromButton && e) return void (T3Gv.optManager.CutFromButton = !1);
+      if (T3Gv.optManager.cutFromButton && e) return void (T3Gv.optManager.cutFromButton = !1);
       if (
-        T3Gv.optManager.CutFromButton = !0 !== e,
-        - 1 != this.GetObjectPtr(this.theTEDSessionBlockID, !1).theActiveTextEditObjectID ||
+        T3Gv.optManager.cutFromButton = !0 !== e,
+        - 1 != this.GetObjectPtr(this.tedSessionBlockId, !1).theActiveTextEditObjectID ||
         this.bInNoteEdit ||
         T3Gv.optManager.bInDimensionEdit
       ) {
@@ -14809,13 +14809,13 @@ class OptHandler {
         return void (
           t &&
           (
-            this.theTextClipboard = t.Copy(!0),
+            this.textClipboard = t.Copy(!0),
             Collab.BeginSecondaryEdit(),
             this.RegisterLastTEOp(ConstantData.TELastOp.CUT),
             t.Delete(),
-            // SDUI.Commands.MainController.Selection.SetPasteEnable(null != this.theTextClipboard),
-            this.theContentHeader.ClipboardBuffer = null,
-            this.theContentHeader.ClipboardType = ConstantData.ClipboardType.Text,
+            // SDUI.Commands.MainController.Selection.SetPasteEnable(null != this.textClipboard),
+            this.contentHeader.ClipboardBuffer = null,
+            this.contentHeader.ClipboardType = ConstantData.ClipboardType.Text,
             this.RegisterLastTEOp(ConstantData.TELastOp.TIMEOUT)
           )
         )
@@ -14868,8 +14868,8 @@ class OptHandler {
         buffer: SDF.WriteSelect(c, !1, !0, !1)
       };
       for (
-        this.theContentHeader.ClipboardBuffer = SDF.WriteSelect(c, !1, !0, !1),
-        this.theContentHeader.ClipboardType = ConstantData.ClipboardType.LM,
+        this.contentHeader.ClipboardBuffer = SDF.WriteSelect(c, !1, !0, !1),
+        this.contentHeader.ClipboardType = ConstantData.ClipboardType.LM,
         t = (
           n = (r = this.GetObjectPtr(this.theSelectedListBlockID, !1)).length
         ) - 1;
@@ -14889,7 +14889,7 @@ class OptHandler {
       r,
       i,
       n,
-      o = T3Gv.optManager.GetObjectPtr(this.theLayersManagerBlockID, !1),
+      o = T3Gv.optManager.GetObjectPtr(this.layersManagerBlockId, !1),
       s = o.layers,
       l = o.nlayers;
     for (r = 0; r < l; ++r) for (t = (a = s[r].zList).length, i = 0; i < t; ++i) (n = T3Gv.optManager.GetObjectPtr(a[i], !1)) &&
@@ -14961,7 +14961,7 @@ class OptHandler {
   }
 
   CopyObjects() {
-    var e = this.GetObjectPtr(this.theTEDSessionBlockID, !1),
+    var e = this.GetObjectPtr(this.tedSessionBlockId, !1),
       t = this.Table_GetActiveID();
     if (
       - 1 != e.theActiveTextEditObjectID ||
@@ -14972,24 +14972,24 @@ class OptHandler {
       if (a) {
         var r = a.Copy(!0);
         r &&
-          (this.theTextClipboard = r),
-          SDUI.Commands.MainController.Selection.SetPasteEnable(null != this.theTextClipboard),
-          this.theContentHeader.ClipboardBuffer = null,
-          this.theContentHeader.ClipboardType = ConstantData.ClipboardType.Text
+          (this.textClipboard = r),
+          SDUI.Commands.MainController.Selection.SetPasteEnable(null != this.textClipboard),
+          this.contentHeader.ClipboardBuffer = null,
+          this.contentHeader.ClipboardType = ConstantData.ClipboardType.Text
       }
-      return this.theTextClipboard
+      return this.textClipboard
     }
     if (t >= 0) this.Table_CopyCellContent(t),
-      this.theTextClipboard = null;
+      this.textClipboard = null;
     else {
       if (!this.AreSelectedObjects()) return;
       this.CloseEdit(),
         this.CopyObjectsCommon(!1),
-        this.theTextClipboard = null
+        this.textClipboard = null
     }
     var i = this.GetObjectPtr(this.theSelectedListBlockID, !1);
     return this.UpdateSelectionAttributes(i),
-      this.theContentHeader.ClipboardBuffer
+      this.contentHeader.ClipboardBuffer
   }
 
 
@@ -15000,7 +15000,7 @@ class OptHandler {
     var e,
       t = [];
     if (
-      - 1 != this.GetObjectPtr(this.theTEDSessionBlockID, !1).theActiveTextEditObjectID
+      - 1 != this.GetObjectPtr(this.tedSessionBlockId, !1).theActiveTextEditObjectID
     ) return (e = Business.GetSelectionBusinessManager()) ? (
       t.push(Resources.Contexts.Text),
       t.push(this.GetAutomationContext(e)),
@@ -15052,7 +15052,7 @@ class OptHandler {
     var r = this.svgDoc.GetActiveEdit();
     if (r && r.IsActive()) {
       if (!this.bInNoteEdit) {
-        var i = this.GetObjectPtr(this.theTEDSessionBlockID, !1);
+        var i = this.GetObjectPtr(this.tedSessionBlockId, !1);
         if (- 1 != i.theActiveTextEditObjectID) switch (t) {
           case ConstantData2.Keys.Left_Arrow:
           case ConstantData2.Keys.Right_Arrow:
@@ -15088,7 +15088,7 @@ class OptHandler {
   HandleKeyPress(e, t) {
     var a = this.svgDoc.GetActiveEdit();
     if (a && a.IsActive()) {
-      if (!this.bInNoteEdit) - 1 != this.GetObjectPtr(this.theTEDSessionBlockID, !1).theActiveTextEditObjectID &&
+      if (!this.bInNoteEdit) - 1 != this.GetObjectPtr(this.tedSessionBlockId, !1).theActiveTextEditObjectID &&
         this.RegisterLastTEOp(ConstantData.TELastOp.CHAR);
       if (a.HandleKeyPressEvent(e)) return e.preventDefault(),
         !0
@@ -15366,7 +15366,7 @@ class OptHandler {
 
 
   GetAutomationContext(e) {
-    var t = T3Gv.optManager.GetObjectPtr(this.theSEDSessionBlockID, !1),
+    var t = T3Gv.optManager.GetObjectPtr(this.sedSessionBlockId, !1),
       a = Resources.Contexts.Automation;
     return e &&
       (a = e.GetAutomationContext()),
@@ -15385,14 +15385,14 @@ class OptHandler {
         this.AreSelectedObjects())
     ) {
       var r = T3Gv.optManager.GetObjectPtr(
-        T3Gv.optManager.theSEDSessionBlockID,
-        !1 === this.LastOpDuplicate && !t
+        T3Gv.optManager.sedSessionBlockId,
+        !1 === this.lastOpDuplicate && !t
       );
       e
         ? ((r.dupdisp.x = 0), (r.dupdisp.y = 0))
         : t
           ? ((r.dupdisp.x = t.Data.dupdisp.x), (r.dupdisp.y = t.Data.dupdisp.y))
-          : this.LastOpDuplicate || ((r.dupdisp.x = 50), (r.dupdisp.y = 50));
+          : this.lastOpDuplicate || ((r.dupdisp.x = 50), (r.dupdisp.y = 50));
       var i = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSelectedListBlockID, !1);
       if (!t && Collab.AllowMessage()) {
         var n = {
@@ -15421,7 +15421,7 @@ class OptHandler {
         ),
           e ||
           (this.CompleteOperation(a.selectedList),
-            t || (this.LastOpDuplicate = !0));
+            t || (this.lastOpDuplicate = !0));
       }
       return (
         !t &&
@@ -15450,14 +15450,14 @@ class OptHandler {
 
 
   GetDocDirtyState() {
-    return T3Gv.optManager.theContentHeader.DocIsDirty
+    return T3Gv.optManager.contentHeader.DocIsDirty
   }
 
 
   SetDocDirtyState(e, t) {
-    T3Gv.optManager.theContentHeader.DocIsDirty = e,
-      e ? T3Gv.optManager.theContentHeader.AllowReplace = !1 : !0 === t &&
-        (T3Gv.optManager.theContentHeader.AllowReplace = !0)
+    T3Gv.optManager.contentHeader.DocIsDirty = e,
+      e ? T3Gv.optManager.contentHeader.AllowReplace = !1 : !0 === t &&
+        (T3Gv.optManager.contentHeader.AllowReplace = !0)
     // ,
     // null != SDUI.Initializer &&
     // SDUI.Initializer.GetAppCloseFunction()
@@ -15574,27 +15574,27 @@ class OptHandler {
       a = r.cells[r.select],
       o = r.select,
       l = a,
-      this.SelectionState.lockedTableSelected = (r.flags & ListManager.Table.TableFlags.SDT_TF_LOCK) > 0,
+      this.selectionState.lockedTableSelected = (r.flags & ListManager.Table.TableFlags.SDT_TF_LOCK) > 0,
       SDUI.AppSettings.Application !== Resources.Application.Builder &&
       S.objecttype === ConstantData.ObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER &&
-      (this.SelectionState.lockedTableSelected = !0),
-      this.SelectionState.ncells_selected = 1,
-      this.SelectionState.cell_notext = (a.flags & p) > 0,
-      this.SelectionState.celltype = a.celltype,
-      this.SelectionState.cellflags = a.flags,
-      this.SelectionState.cellselected = !0,
+      (this.selectionState.lockedTableSelected = !0),
+      this.selectionState.ncells_selected = 1,
+      this.selectionState.cell_notext = (a.flags & p) > 0,
+      this.selectionState.celltype = a.celltype,
+      this.selectionState.cellflags = a.flags,
+      this.selectionState.cellselected = !0,
       S.subtype === ConstantData.ObjectSubTypes.SD_SUBT_TASK ||
-        S.subtype === ConstantData.ObjectSubTypes.SD_SUBT_TASKMAP ? this.SelectionState.datasetElemID = S.datasetElemID : this.SelectionState.datasetElemID = a.datarecordID,
+        S.subtype === ConstantData.ObjectSubTypes.SD_SUBT_TASKMAP ? this.selectionState.datasetElemID = S.datasetElemID : this.selectionState.datasetElemID = a.datarecordID,
       (s = this.GetClipboardType()) === ConstantData.ClipboardType.LM &&
       (s = ConstantData.ClipboardType.None),
-      this.SelectionState.paste = s,
+      this.selectionState.paste = s,
       T3Gv.optManager.Table_HideUI(S) &&
       (
-        this.SelectionState.IsTargetTable = !1,
-        this.SelectionState.ntablesselected = 0,
-        this.SelectionState.NTableRows = GlobalDatagOptions.newTableRows,
-        this.SelectionState.NTableCols = GlobalDatagOptions.newTableCols,
-        this.SelectionState.ncells_selected = 0,
+        this.selectionState.IsTargetTable = !1,
+        this.selectionState.ntablesselected = 0,
+        this.selectionState.NTableRows = GlobalDatagOptions.newTableRows,
+        this.selectionState.NTableCols = GlobalDatagOptions.newTableCols,
+        this.selectionState.ncells_selected = 0,
         c = !0
       ),
       l.celltype
@@ -15610,30 +15610,30 @@ class OptHandler {
         case D.SDT_CT_SUBCOLHEADER:
         case D.SDT_CT_ROWREPEATER:
         case D.SDT_CT_GANTT_DATEBLOCK_TITLE:
-          this.SelectionState.IsTargetTable = !1,
-            this.SelectionState.ntablesselected = 0,
-            this.SelectionState.NTableRows = GlobalDatagOptions.newTableRows,
-            this.SelectionState.NTableCols = GlobalDatagOptions.newTableCols,
-            this.SelectionState.ncells_selected = 0,
+          this.selectionState.IsTargetTable = !1,
+            this.selectionState.ntablesselected = 0,
+            this.selectionState.NTableRows = GlobalDatagOptions.newTableRows,
+            this.selectionState.NTableCols = GlobalDatagOptions.newTableCols,
+            this.selectionState.ncells_selected = 0,
             c = !0
       }
       if (t) return;
       for (
-        this.SelectionState.fontid = a.Text.FontId,
-        this.SelectionState.fontsize = a.Text.FontSize,
-        this.SelectionState.bold = (a.Text.Face & d.Bold) > 0,
-        this.SelectionState.italic = (a.Text.Face & d.Italic) > 0,
-        this.SelectionState.underline = (a.Text.Face & d.Underline) > 0,
-        this.SelectionState.superscript = (a.Text.Face & d.Superscript) > 0,
-        this.SelectionState.subscript = (a.Text.Face & d.Subscript) > 0,
-        this.SelectionState.cell_notext = (a.flags & p) > 0,
-        this.SelectionState.celltype = a.celltype,
-        this.SelectionState.cellselected = !0,
-        this.SelectionState.cellflags = a.flags,
+        this.selectionState.fontid = a.Text.FontId,
+        this.selectionState.fontsize = a.Text.FontSize,
+        this.selectionState.bold = (a.Text.Face & d.Bold) > 0,
+        this.selectionState.italic = (a.Text.Face & d.Italic) > 0,
+        this.selectionState.underline = (a.Text.Face & d.Underline) > 0,
+        this.selectionState.superscript = (a.Text.Face & d.Superscript) > 0,
+        this.selectionState.subscript = (a.Text.Face & d.Subscript) > 0,
+        this.selectionState.cell_notext = (a.flags & p) > 0,
+        this.selectionState.celltype = a.celltype,
+        this.selectionState.cellselected = !0,
+        this.selectionState.cellflags = a.flags,
         a.DataID >= 0 &&
         (
-          this.SelectionState.selectionhastext = !0,
-          this.SelectionState.allowcopy = !0
+          this.selectionState.selectionhastext = !0,
+          this.selectionState.allowcopy = !0
         ),
         i = r.cells.length,
         n = 0;
@@ -15643,33 +15643,33 @@ class OptHandler {
         (
           (a = r.cells[n]).DataID >= 0 &&
           (
-            this.SelectionState.selectionhastext = !0,
-            this.SelectionState.allowcopy = !0
+            this.selectionState.selectionhastext = !0,
+            this.selectionState.allowcopy = !0
           ),
           a.flags & u &&
           (
-            this.SelectionState.fontid !== a.Text.FontId &&
-            (this.SelectionState.fontid = - 1),
-            this.SelectionState.fontsize !== a.Text.FontSize &&
-            (this.SelectionState.fontsize = - 1),
-            this.SelectionState.bold !== (a.Text.Face & d.Bold) > 0 &&
-            (this.SelectionState.bold = !1),
-            this.SelectionState.italic !== (a.Text.Face & d.Italic) > 0 &&
-            (this.SelectionState.italic = !1),
-            this.SelectionState.underline !== (a.Text.Face & d.Underline) > 0 &&
-            (this.SelectionState.underline = !1),
-            this.SelectionState.superscript !== (a.Text.Face & d.Superscript) > 0 &&
-            (this.SelectionState.superscript = !1),
-            this.SelectionState.subscript !== (a.Text.Face & d.Subscript) > 0 &&
-            (this.SelectionState.subscript = !1),
-            this.SelectionState.cell_notext !== (a.flags & p) > 0 &&
-            (this.SelectionState.cell_notext = !1),
-            this.SelectionState.celltype !== a.celltype &&
-            (this.SelectionState.celltype = 0),
-            this.SelectionState.cellflags !== a.cellflags &&
-            (this.SelectionState.cellflags = 0),
+            this.selectionState.fontid !== a.Text.FontId &&
+            (this.selectionState.fontid = - 1),
+            this.selectionState.fontsize !== a.Text.FontSize &&
+            (this.selectionState.fontsize = - 1),
+            this.selectionState.bold !== (a.Text.Face & d.Bold) > 0 &&
+            (this.selectionState.bold = !1),
+            this.selectionState.italic !== (a.Text.Face & d.Italic) > 0 &&
+            (this.selectionState.italic = !1),
+            this.selectionState.underline !== (a.Text.Face & d.Underline) > 0 &&
+            (this.selectionState.underline = !1),
+            this.selectionState.superscript !== (a.Text.Face & d.Superscript) > 0 &&
+            (this.selectionState.superscript = !1),
+            this.selectionState.subscript !== (a.Text.Face & d.Subscript) > 0 &&
+            (this.selectionState.subscript = !1),
+            this.selectionState.cell_notext !== (a.flags & p) > 0 &&
+            (this.selectionState.cell_notext = !1),
+            this.selectionState.celltype !== a.celltype &&
+            (this.selectionState.celltype = 0),
+            this.selectionState.cellflags !== a.cellflags &&
+            (this.selectionState.cellflags = 0),
             c ||
-            this.SelectionState.ncells_selected++
+            this.selectionState.ncells_selected++
           )
         )
     }
@@ -15677,7 +15677,7 @@ class OptHandler {
 
 
   ResetActiveTextEditAfterUndo(e) {
-    var t = this.GetObjectPtr(this.theTEDSessionBlockID, !1);
+    var t = this.GetObjectPtr(this.tedSessionBlockId, !1);
     if (- 1 != t.theActiveTextEditObjectID) {
       var a = this.GetObjectPtr(t.theActiveTextEditObjectID, !1);
       if (!a) return;
@@ -15733,7 +15733,7 @@ class OptHandler {
 
 
   TextResizeCommon(e, t, a, r, i) {
-    var n = this.GetObjectPtr(this.theTEDSessionBlockID, !1),
+    var n = this.GetObjectPtr(this.tedSessionBlockId, !1),
       o = this.GetObjectPtr(e, !1);
     // if (o instanceof ListManager.BaseShape) {
     // if (o instanceof GlobalDataShape.BaseShape) {
@@ -15903,7 +15903,7 @@ class OptHandler {
                       g = (u = o.GetTextParams(!1)).trect,
                       R = o.GetSVGFrame(p),
                       l.SetPos(g.x - R.x, g.y - R.y),
-                      l.SetConstraints(T3Gv.optManager.theContentHeader.MaxWorkDim.x, g.width, g.height)
+                      l.SetConstraints(T3Gv.optManager.contentHeader.MaxWorkDim.x, g.width, g.height)
                     ),
                     o.ResizeInTextEdit(s, p),
                     this.TextResizeNeedPageResize(o, p.x + p.width, p.y + p.height),
@@ -15988,7 +15988,7 @@ class OptHandler {
                     }
                   } else {
                     if (_ && _.selectedText >= 0) {
-                      l.SetConstraints(T3Gv.optManager.theContentHeader.MaxWorkDim.x, g.width, g.height);
+                      l.SetConstraints(T3Gv.optManager.contentHeader.MaxWorkDim.x, g.width, g.height);
                       break
                     }
                     D = !1,

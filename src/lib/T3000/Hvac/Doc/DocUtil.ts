@@ -354,10 +354,10 @@ class DocUtil {
           };
         }
       } else if (this.scaleToPage && availableRect.width > 0 && availableRect.height > 0) {
-        const pageWidth = T3Gv.optManager.theContentHeader.Page.papersize.x -
-          (T3Gv.optManager.theContentHeader.Page.margins.left + T3Gv.optManager.theContentHeader.Page.margins.right);
-        const pageHeight = T3Gv.optManager.theContentHeader.Page.papersize.y -
-          (T3Gv.optManager.theContentHeader.Page.margins.top + T3Gv.optManager.theContentHeader.Page.margins.bottom);
+        const pageWidth = T3Gv.optManager.contentHeader.Page.papersize.x -
+          (T3Gv.optManager.contentHeader.Page.margins.left + T3Gv.optManager.contentHeader.Page.margins.right);
+        const pageHeight = T3Gv.optManager.contentHeader.Page.papersize.y -
+          (T3Gv.optManager.contentHeader.Page.margins.top + T3Gv.optManager.contentHeader.Page.margins.bottom);
 
         calculationResult = this.svgDoc.CalcScaleToFit(availableRect.width - 20, availableRect.height - 20, pageWidth, pageHeight);
         targetDimensions = {
@@ -1075,7 +1075,7 @@ class DocUtil {
 
       // Store settings in session data if not propagating
       if (!shouldPropagate) {
-        sessionDataPointer = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, true);
+        sessionDataPointer = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, true);
         sessionDataPointer.rulerConfig = Utils1.DeepCopy(this.rulerConfig);
       }
 
@@ -1502,8 +1502,8 @@ class DocUtil {
       let minorPathCommands = "";
 
       // Calculate margins and document boundaries
-      const paperSize = T3Gv.optManager.theContentHeader.Page.papersize;
-      const margins = T3Gv.optManager.theContentHeader.Page.margins;
+      const paperSize = T3Gv.optManager.contentHeader.Page.papersize;
+      const margins = T3Gv.optManager.contentHeader.Page.margins;
       const paperMarginWidth =
         paperSize.x - (margins.left + margins.right) / 2;
       const paperMarginHeight =
@@ -1624,7 +1624,7 @@ class DocUtil {
   UpdatePageDividerVisibility(): boolean {
     console.log("= U.DocUtil: UpdatePageDividerVisibility - Input:", {
       showPageDivider: this.docConfig.showPageDivider,
-      printFlags: T3Gv.optManager.theContentHeader.Page.printflags,
+      printFlags: T3Gv.optManager.contentHeader.Page.printflags,
       layerExists: !!(this.svgDoc && this.svgDoc.GetLayer(this.pageDividerLayer))
     });
 
@@ -1632,7 +1632,7 @@ class DocUtil {
     const pageDividerLayer = this.svgDoc ? this.svgDoc.GetLayer(this.pageDividerLayer) : null;
 
     // Get print flags from the document configuration
-    const documentPrintFlags = T3Gv.optManager.theContentHeader.Page.printflags;
+    const documentPrintFlags = T3Gv.optManager.contentHeader.Page.printflags;
 
     // Determine if page dividers should be shown based on print flags and config
     const shouldShowDividers =
@@ -1687,7 +1687,7 @@ class DocUtil {
       let pathCommands = '';
 
       // Get document page settings
-      const pageSettings = T3Gv.optManager.theContentHeader.Page;
+      const pageSettings = T3Gv.optManager.contentHeader.Page;
       const paperSize = pageSettings.papersize;
       const margins = pageSettings.margins;
 

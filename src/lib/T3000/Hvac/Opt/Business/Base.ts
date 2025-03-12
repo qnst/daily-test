@@ -17,11 +17,11 @@ class Base {
       s = !1;
     if (!e || null != e.BlockID) {
       var l = 0 === (
-        c = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1)
+        c = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1)
       ).RecentSymbols.length,
         S = o(t);
       if (i) if (S >= 0) return (
-        c = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0)
+        c = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !0)
       ).RecentSymbols.splice(S, 1)
       if (
         S > 0 &&
@@ -32,7 +32,7 @@ class Base {
           (s = !0),
           e.flags & ConstantData.ObjFlags.SEDO_NoLinking &&
           (s = !0);
-        var c = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0);
+        var c = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !0);
         n = new RecentSymbol(t, a, s),
           c.RecentSymbols.unshift(n),
           c.RecentSymbols.length > ConstantData.Defines.MaxRecentSymbols &&

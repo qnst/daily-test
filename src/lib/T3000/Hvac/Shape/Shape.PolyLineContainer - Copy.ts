@@ -279,7 +279,7 @@ class PolyLineContainer extends PolyLine {
             this.MostlyContains(t) && a.push(t.BlockID)
           }
         return T3Gv.optManager.SelectObjects(a, !1, !1),
-          T3Gv.optManager.PostMoveSelectID = this.BlockID,
+          T3Gv.optManager.postMoveSelectId = this.BlockID,
           T3Gv.optManager.HideAllSVGSelectionStates(),
           !1
       }
@@ -295,7 +295,7 @@ class PolyLineContainer extends PolyLine {
   SetupInterceptMove(e) {
     "use strict";
     var t;
-    T3Gv.optManager.theEventTimestamp = Date.now(),
+    T3Gv.optManager.eventTimestamp = Date.now(),
       e.stopPropagation();
     var a = T3Gv.optManager.svgObjectLayer.FindElementByDOMElement(e.currentTarget);
     if (null === a)
@@ -925,10 +925,10 @@ class PolyLineContainer extends PolyLine {
     for (Utils2.GetPolyRect(M, b),
       o = 0; o < T.length; o++)
       if (T[o] !== this.BlockID) {
-        if (T3Gv.optManager.theMoveList && T3Gv.optManager.theMoveList.length) {
+        if (T3Gv.optManager.moveList && T3Gv.optManager.moveList.length) {
           var R = !1;
-          for (s = 0; s < T3Gv.optManager.theMoveList.length; s++)
-            if (T3Gv.optManager.theMoveList[s] === T[o]) {
+          for (s = 0; s < T3Gv.optManager.moveList.length; s++)
+            if (T3Gv.optManager.moveList[s] === T[o]) {
               R = !0;
               break
             }

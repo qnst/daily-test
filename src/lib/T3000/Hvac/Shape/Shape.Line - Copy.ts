@@ -288,7 +288,7 @@ class Line extends BaseLine {
     var s = this.Frame,
       l = this.StyleRecord;
     if (null == (l = this.SVGTokenizerHook(l))) {
-      var S = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
+      var S = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1);
       S &&
         (l = S.def.style)
     }
@@ -448,8 +448,8 @@ class Line extends BaseLine {
       n ||
       this.EnforceMinimum(!0);
     var S = !1;
-    T3Gv.optManager.LinkParams &&
-      T3Gv.optManager.LinkParams.ConnectIndex >= 0 &&
+    T3Gv.optManager.linkParams &&
+      T3Gv.optManager.linkParams.ConnectIndex >= 0 &&
       (S = !0),
       i &&
       (S = !0),
@@ -555,8 +555,8 @@ class Line extends BaseLine {
     //   this.EnforceMinimum(!1);
     // var l = !1;
     // if (
-    //   T3Gv.optManager.LinkParams &&
-    //   T3Gv.optManager.LinkParams.ConnectIndex >= 0 &&
+    //   T3Gv.optManager.linkParams &&
+    //   T3Gv.optManager.linkParams.ConnectIndex >= 0 &&
     //   (l = !0),
     //   i &&
     //   (l = !0),
@@ -651,7 +651,7 @@ class Line extends BaseLine {
     //       ConstantData.CursorTypes.Grow,
     //       this
     //     ),
-    //     T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto &&
+    //     T3Gv.optManager.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto &&
     //     (D.x != this.EndPoint.x || D.y != this.EndPoint.y)
     //   ) {
     //     var g = new Error(Resources.Strings.Error_Bounds);
@@ -680,7 +680,7 @@ class Line extends BaseLine {
     this.EndPoint.y = endPointY;
     this.EnforceMinimum(false);
 
-    var linkParamsExist = T3Gv.optManager.LinkParams && T3Gv.optManager.LinkParams.ConnectIndex >= 0;
+    var linkParamsExist = T3Gv.optManager.linkParams && T3Gv.optManager.linkParams.ConnectIndex >= 0;
     var adjustForLineAngleSnap = i || linkParamsExist;
 
     if (adjustForLineAngleSnap) {
@@ -774,7 +774,7 @@ class Line extends BaseLine {
 
       T3Gv.optManager.UpdateDisplayCoordinates(this.Frame, deepCopiedEndPoint, ConstantData.CursorTypes.Grow, this);
 
-      if (T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto &&
+      if (T3Gv.optManager.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto &&
         (deepCopiedEndPoint.x != this.EndPoint.x || deepCopiedEndPoint.y != this.EndPoint.y)) {
         var error = new Error(Resources.Strings.Error_Bounds);
         error.name = '1';

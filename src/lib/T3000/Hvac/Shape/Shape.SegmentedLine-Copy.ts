@@ -828,7 +828,7 @@ class SegmentedLine extends BaseLine {
         y: 0
       },
       R = ConstantData.Defines.SED_CDim;
-    T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
+    T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1);
     if (
       T3Gv.optManager.AllowAutoInsert() &&
       (b = !0),
@@ -1089,13 +1089,13 @@ class SegmentedLine extends BaseLine {
     // ListManager.BaseLine.prototype.LM_DrawPreTrack.call(this, e),
     // Double === TODO
     super.LM_DrawPreTrack(e),
-      T3Gv.optManager.LinkParams &&
-      T3Gv.optManager.LinkParams.SConnectIndex >= 0 &&
+      T3Gv.optManager.linkParams &&
+      T3Gv.optManager.linkParams.SConnectIndex >= 0 &&
       (
-        t = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.LinkParams.SConnectIndex, !1)
+        t = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linkParams.SConnectIndex, !1)
       ) &&
       (
-        this.segl.firstdir = t.GetSegLFace(T3Gv.optManager.LinkParams.SConnectPt, this.EndPoint, e)
+        this.segl.firstdir = t.GetSegLFace(T3Gv.optManager.linkParams.SConnectPt, this.EndPoint, e)
       ),
       !0
   }
@@ -1152,13 +1152,13 @@ class SegmentedLine extends BaseLine {
       y: a
     };
     if (
-      T3Gv.optManager.LinkParams &&
-      T3Gv.optManager.LinkParams.ConnectIndex >= 0
+      T3Gv.optManager.linkParams &&
+      T3Gv.optManager.linkParams.ConnectIndex >= 0
     ) {
-      var o = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.LinkParams.ConnectIndex, !1);
+      var o = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linkParams.ConnectIndex, !1);
       o &&
         (
-          this.segl.lastdir = o.GetSegLFace(T3Gv.optManager.LinkParams.ConnectPt, this.StartPoint, n)
+          this.segl.lastdir = o.GetSegLFace(T3Gv.optManager.linkParams.ConnectPt, this.StartPoint, n)
         )
     } else T3Gv.optManager.ob &&
       T3Gv.optManager.ob.BlockID === this.BlockID &&
@@ -1196,13 +1196,13 @@ class SegmentedLine extends BaseLine {
       y: a
     };
     if (
-      T3Gv.optManager.LinkParams &&
-      T3Gv.optManager.LinkParams.ConnectIndex >= 0
+      T3Gv.optManager.linkParams &&
+      T3Gv.optManager.linkParams.ConnectIndex >= 0
     ) {
-      var o = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.LinkParams.ConnectIndex, !1);
+      var o = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linkParams.ConnectIndex, !1);
       o &&
         (
-          this.segl.firstdir = o.GetSegLFace(T3Gv.optManager.LinkParams.ConnectPt, this.EndPoint, n)
+          this.segl.firstdir = o.GetSegLFace(T3Gv.optManager.linkParams.ConnectPt, this.EndPoint, n)
         )
     } else T3Gv.optManager.ob &&
       T3Gv.optManager.ob.BlockID === this.BlockID &&
@@ -1784,13 +1784,13 @@ class SegmentedLine extends BaseLine {
       l = T3Gv.optManager.svgObjectLayer.GetElementByID(e);
     switch (a) {
       case ConstantData.HookPts.SED_KTL:
-        this.segl.firstdir = t.GetSegLFace(T3Gv.optManager.LinkParams.ConnectPt, this.EndPoint, r),
+        this.segl.firstdir = t.GetSegLFace(T3Gv.optManager.linkParams.ConnectPt, this.EndPoint, r),
           s = ConstantData.ActionTriggerType.LINEEND,
           n = this.EndPoint.x,
           o = this.EndPoint.y;
         break;
       case ConstantData.HookPts.SED_KTR:
-        this.segl.lastdir = t.GetSegLFace(T3Gv.optManager.LinkParams.ConnectPt, this.StartPoint, r),
+        this.segl.lastdir = t.GetSegLFace(T3Gv.optManager.linkParams.ConnectPt, this.StartPoint, r),
           s = ConstantData.ActionTriggerType.LINESTART,
           n = this.StartPoint.x,
           o = this.StartPoint.y

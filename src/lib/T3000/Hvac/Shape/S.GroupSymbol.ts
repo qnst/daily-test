@@ -272,7 +272,7 @@ class GroupSymbol extends BaseSymbol {
             this.UpdateFrame(newFrame);
           }
         }
-        this.ConvertToNative(T3Gv.optManager.RichGradients, false);
+        this.ConvertToNative(T3Gv.optManager.richGradients, false);
       }
     }
     console.log("S.GroupSymbol - ChangeTextAttributes output executed");
@@ -643,7 +643,7 @@ class GroupSymbol extends BaseSymbol {
 
     let preservedBlock: any;
     const result = new WResult();
-    result.RichGradients = richGradients;
+    result.richGradients = richGradients;
 
     const shapesCount = this.ShapesInGroup.length;
     if (shapesCount > 0) {
@@ -655,13 +655,13 @@ class GroupSymbol extends BaseSymbol {
         shapeObj.GetTextures(result.TextureList);
       }
 
-      result.sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
-      result.tLMB = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, false);
-      result.ctp = T3Gv.optManager.theContentHeader;
+      result.sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
+      result.tLMB = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.layersManagerBlockId, false);
+      result.ctp = T3Gv.optManager.contentHeader;
       result.GroupOffset.x = 0;
       result.GroupOffset.y = 0;
       result.WriteGroupBlock = true;
-      result.fontlist = T3Gv.optManager.theContentHeader.FontList;
+      result.fontlist = T3Gv.optManager.contentHeader.FontList;
 
       T3Gv.docUtil.svgDoc.GetWorkArea();
       result.docDpi = T3Gv.docUtil.svgDoc.docInfo.docDpi;
@@ -705,7 +705,7 @@ class GroupSymbol extends BaseSymbol {
       dataId = -1;
     }
 
-    nativeStorageResult.RichGradients = T3Gv.optManager.RichGradients;
+    nativeStorageResult.richGradients = T3Gv.optManager.richGradients;
 
     ShapeDataUtil.WriteTextParams(writer, this, dataId, writeOptions);
 
@@ -720,9 +720,9 @@ class GroupSymbol extends BaseSymbol {
         shapeObj.GetTextures(nativeStorageResult.TextureList);
       }
 
-      nativeStorageResult.sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
-      nativeStorageResult.tLMB = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, false);
-      nativeStorageResult.ctp = T3Gv.optManager.theContentHeader;
+      nativeStorageResult.sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
+      nativeStorageResult.tLMB = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.layersManagerBlockId, false);
+      nativeStorageResult.ctp = T3Gv.optManager.contentHeader;
 
       if (this.InitialGroupBounds.x > 0 || this.InitialGroupBounds.y > 0) {
         nativeStorageResult.GroupOffset.x = this.Frame.x + writeOptions.GroupOffset.x;

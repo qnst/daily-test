@@ -116,10 +116,10 @@ EvtUtil.Evt_WorkAreaHammerClick = function (event) {
 
   // Handle right-click contextual menu
   if (isRightClick) {
-    T3Gv.optManager.RightClickParams = new RightClickData();
+    T3Gv.optManagerrightClickParams = new RightClickData();
 
     // Convert window coordinates to document coordinates
-    T3Gv.optManager.RightClickParams.HitPt = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(
+    T3Gv.optManagerrightClickParams.HitPt = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(
       event.gesture.center.clientX,
       event.gesture.center.clientY
     );
@@ -967,7 +967,7 @@ EvtUtil.Evt_WorkAreaHammerPinchIn = function (event) {
 
   // Cancel any active selections or moves
   T3Gv.optManager.RubberBandSelect_Cancel();
-  if (T3Gv.optManager.theMoveList && T3Gv.optManager.theMoveList.length) {
+  if (T3Gv.optManager.moveList && T3Gv.optManager.moveList.length) {
     T3Gv.optManager.LM_MoveRelease(event);
   }
 
@@ -1024,7 +1024,7 @@ EvtUtil.Evt_WorkAreaHammerPan = function (event) {
   T3Gv.optManager.RubberBandSelect_Cancel();
 
   // Release any active move operation
-  if (T3Gv.optManager.theMoveList && T3Gv.optManager.theMoveList.length) {
+  if (T3Gv.optManager.moveList && T3Gv.optManager.moveList.length) {
     T3Gv.optManager.LM_MoveRelease(event);
   }
 
@@ -1100,8 +1100,8 @@ EvtUtil.Evt_WorkAreaHammerPinchOut = function (event) {
 
   // Cancel any active selections or moves
   T3Gv.optManager.RubberBandSelect_Cancel();
-  if (T3Gv.optManager.theMoveList &&
-    T3Gv.optManager.theMoveList.length) {
+  if (T3Gv.optManager.moveList &&
+    T3Gv.optManager.moveList.length) {
     T3Gv.optManager.LM_MoveRelease(event);
   }
 

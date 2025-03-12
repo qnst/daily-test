@@ -59,7 +59,7 @@ WallOpt.prototype.AddWall = function (e, t) {
       var a,
         r,
         i,
-        n = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data;
+        n = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data;
       ConstantData.Defines.SED_MaxJSLineThick;
       ConstantData.DocumentContext.CurrentSelectionBusinessManager !== T3Gv.gFloorplanManager &&
         (
@@ -116,7 +116,7 @@ WallOpt.prototype.AddWall = function (e, t) {
 
 
 
-  var sedSession = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data;
+  var sedSession = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data;
 
   // ConstantData.Defines.SED_MaxJSLineThick;
 
@@ -311,8 +311,8 @@ WallOpt.prototype.AddCorner = function (e) {
           r = T3Gv.optManager.svgObjectLayer.FindElementByDOMElement(e.currentTarget)
         ).GetID()
       ) : (
-        t = Utils1.DeepCopy(T3Gv.optManager.RightClickParams.HitPt),
-        a = T3Gv.optManager.RightClickParams.TargetID,
+        t = Utils1.DeepCopy(T3Gv.optManagerrightClickParams.HitPt),
+        a = T3Gv.optManagerrightClickParams.TargetID,
         r = T3Gv.optManager.svgObjectLayer.GetElementByID(a)
       );
     var i = T3Gv.optManager.GetObjectPtr(a, !0);
@@ -379,7 +379,7 @@ WallOpt.prototype.NotifySetEditMode = function (e) {
 }
 
 WallOpt.prototype.AddMeasureLine = function () {
-  // var e = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data,
+  // var e = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data,
   //   t = 0 == (e.def.textflags & ConstantData.TextFlags.SED_TF_HorizText),
   //   a = ConstantData.DimensionFlags.SED_DF_Always | e.dimensions;
   // a = Utils2.SetFlag(a, ConstantData.DimensionFlags.SED_DF_Standoff, !1),
@@ -431,7 +431,7 @@ WallOpt.prototype.AddMeasureLine = function () {
 
 
 
-  var sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data;
+  var sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data;
   var isTextVertical = (sessionData.def.textflags & ConstantData.TextFlags.SED_TF_HorizText) === 0;
   var dimensions = ConstantData.DimensionFlags.SED_DF_Always | sessionData.dimensions;
   dimensions = Utils2.SetFlag(dimensions, ConstantData.DimensionFlags.SED_DF_Standoff, false);
@@ -474,7 +474,7 @@ WallOpt.prototype.AddMeasureLine = function () {
 }
 
 WallOpt.prototype.AddMeasureArea = function () {
-  var e = T3Gv.objectStore.GetObject(T3Gv.optManager.theSEDSessionBlockID).Data,
+  var e = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data,
     t = 0 == (e.def.textflags & ConstantData.TextFlags.SED_TF_HorizText),
     a = Utils1.DeepCopy(e.def.style);
   this.StopAddingWalls();

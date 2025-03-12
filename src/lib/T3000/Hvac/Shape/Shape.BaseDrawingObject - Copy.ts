@@ -1401,11 +1401,11 @@ class BaseDrawingObject {
     var t = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(e.gesture.center.clientX, e.gesture.center.clientY),
       a = T3Gv.optManager.svgObjectLayer.FindElementByDOMElement(e.currentTarget);
     if (!T3Gv.optManager.SelectObjectFromClick(e, a)) return !1;
-    T3Gv.optManager.RightClickParams = new RightClickData(),
-      T3Gv.optManager.RightClickParams.TargetID = a.GetID(),
-      T3Gv.optManager.RightClickParams.HitPt.x = t.x,
-      T3Gv.optManager.RightClickParams.HitPt.y = t.y,
-      T3Gv.optManager.RightClickParams.Locked = (this.flags & ConstantData.ObjFlags.SEDO_Lock) > 0,
+    T3Gv.optManagerrightClickParams = new RightClickData(),
+      T3Gv.optManagerrightClickParams.TargetID = a.GetID(),
+      T3Gv.optManagerrightClickParams.HitPt.x = t.x,
+      T3Gv.optManagerrightClickParams.HitPt.y = t.y,
+      T3Gv.optManagerrightClickParams.Locked = (this.flags & ConstantData.ObjFlags.SEDO_Lock) > 0,
       T3Gv.docHandler.IsReadOnly() ? Commands.MainController.ShowContextualMenu(
         Resources.Controls.ContextMenus.DefaultReadOnly.Id.toLowerCase(),
         e.gesture.center.clientX,
@@ -1503,7 +1503,7 @@ class BaseDrawingObject {
       c = new TextFormatData(),// Resources.TextFormatData,
       u = new DefaultStyle(),// new Formatter.DefaultStyle() /* Basic.Text.Formatter.DefaultStyle*/,
       p = T3Gv.optManager.Table_GetActiveID(),
-      d = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
+      d = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1);
     if (
       (c = Utils1.DeepCopy(this.StyleRecord.Text)).FontId = -1/* T3Gv.optManager.GetFontIdByName(d.def.lf.fontName)*/,
       c.FontName = d.def.lf.fontName,
@@ -1758,7 +1758,7 @@ class BaseDrawingObject {
         e.just = this.TextAlign.slice(t + 1, this.TextAlign.length)
       ) : e.just = this.TextAlign
     }
-    var a = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+    var a = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1),
       r = $.extend(!0, {
       }, this.StyleRecord.Text);
     return r.FontId = -1,// T3Gv.optManager.GetFontIdByName(a.def.lf.fontName),
@@ -1859,7 +1859,7 @@ class BaseDrawingObject {
 
   // GetLengthInRulerUnits(e, t) {
 
-  //   var a = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+  //   var a = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1),
   //     r = '',
   //     i = 0,
   //     n = 0,
@@ -1929,7 +1929,7 @@ class BaseDrawingObject {
 
 
   GetLengthInRulerUnits(length: number, offset?: number): string {
-    const sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+    const sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
     let result = '';
     let feet = 0;
     let inches = 0;
@@ -2312,8 +2312,8 @@ class BaseDrawingObject {
   //         f.SetID(ConstantData.SVGElementClass.DIMENSIONTEXT),
   //         f.SetEditCallback(this.DimensionEditCallback, this)
   //       ),
-  //       f.SetFormat(T3Gv.optManager.theContentHeader.DimensionFontStyle),
-  //       f.SetConstraints(T3Gv.optManager.theContentHeader.MaxWorkDim.x, 0, 0),
+  //       f.SetFormat(T3Gv.optManager.contentHeader.DimensionFontStyle),
+  //       f.SetConstraints(T3Gv.optManager.contentHeader.MaxWorkDim.x, 0, 0),
   //       f.SetRenderingEnabled(!0),
   //       a
   //     ) {
@@ -2449,8 +2449,8 @@ class BaseDrawingObject {
         textShape.SetEditCallback(this.DimensionEditCallback, this);
       }
 
-      textShape.SetFormat(T3Gv.optManager.theContentHeader.DimensionFontStyle);
-      textShape.SetConstraints(T3Gv.optManager.theContentHeader.MaxWorkDim.x, 0, 0);
+      textShape.SetFormat(T3Gv.optManager.contentHeader.DimensionFontStyle);
+      textShape.SetConstraints(T3Gv.optManager.contentHeader.MaxWorkDim.x, 0, 0);
       textShape.SetRenderingEnabled(true);
 
       if (isAreaDimension) {
@@ -2589,8 +2589,8 @@ class BaseDrawingObject {
       textShape.SetEditCallback(this.DimensionEditCallback, this);
     }
 
-    textShape.SetFormat(T3Gv.optManager.theContentHeader.DimensionFontStyle);
-    textShape.SetConstraints(T3Gv.optManager.theContentHeader.MaxWorkDim.x, 0, 0);
+    textShape.SetFormat(T3Gv.optManager.contentHeader.DimensionFontStyle);
+    textShape.SetConstraints(T3Gv.optManager.contentHeader.MaxWorkDim.x, 0, 0);
     textShape.SetRenderingEnabled(true);
 
     // debugger
@@ -2722,7 +2722,7 @@ class BaseDrawingObject {
         o.text.SetUserData(s),
         o.text.SetID(ConstantData.SVGElementClass.DIMENSIONTEXT),
         o.text.SetEditCallback(this.DimensionEditCallback, this),
-        o.text.SetConstraints(T3Gv.optManager.theContentHeader.MaxWorkDim.x, 0, 0),
+        o.text.SetConstraints(T3Gv.optManager.contentHeader.MaxWorkDim.x, 0, 0),
         o.text.SetRenderingEnabled(!0),
         o.text.SetPos(o.textRect.x, o.textRect.y),
         0 != this.RotationAngle &&
@@ -2965,7 +2965,7 @@ class BaseDrawingObject {
       l += '°',
       (
         s = T3Gv.optManager.svgDoc.CreateShape(Document.CreateShapeType.TEXT)
-      ).SetFormat(T3Gv.optManager.theContentHeader.DimensionFontStyle),
+      ).SetFormat(T3Gv.optManager.contentHeader.DimensionFontStyle),
       s.SetText(l),
       a = s.GetTextMinDimensions();
       h < o &&
@@ -3002,8 +3002,8 @@ class BaseDrawingObject {
     return (
       o = T3Gv.optManager.svgDoc.CreateShape(Document.CreateShapeType.TEXT)
     ).SetText(t),
-      o.SetFormat(T3Gv.optManager.theContentHeader.DimensionFontStyle),
-      o.SetConstraints(T3Gv.optManager.theContentHeader.MaxWorkDim.x, 0, 0),
+      o.SetFormat(T3Gv.optManager.contentHeader.DimensionFontStyle),
+      o.SetConstraints(T3Gv.optManager.contentHeader.MaxWorkDim.x, 0, 0),
       this.GetDimensionTextInfo(a, r, e, o, i, s, l, S, n),
       o = null,
       Utils2.GetPolyRect(c, l),
@@ -3103,7 +3103,7 @@ class BaseDrawingObject {
       I = null,
       T = (
         new Rectangle(0, 0, 0, 0),
-        T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, !1)
+        T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, !1)
       );
     if (Utils2.GetPolyRect(C, e), T) for (
       s = T3Gv.optManager.FindLink(T, this.BlockID, !0),
@@ -4078,7 +4078,7 @@ class BaseDrawingObject {
       this.ShortRef != ConstantData2.LineTypes.SED_LS_MeasuringTape &&
       this.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL
     ) {
-      var L = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, !1);
+      var L = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, !1);
       if (L) T3Gv.optManager.FindLink(L, this.BlockID, !0) >= 0 &&
         (f = !0)
     }
@@ -4322,11 +4322,11 @@ class BaseDrawingObject {
 
       check3
     ) {
-      // var L = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, !1);
+      // var L = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, !1);
       // if (L) T3Gv.optManager.FindLink(L, this.BlockID, !0) >= 0 &&
       //   (isStdOff = !0)
 
-      var linkObject = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, false);
+      var linkObject = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, false);
       if (linkObject) {
 
         const fdLink = T3Gv.optManager.FindLink(linkObject, this.BlockID, !0);
@@ -4637,11 +4637,11 @@ class BaseDrawingObject {
 
       check3
     ) {
-      // var L = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, !1);
+      // var L = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, !1);
       // if (L) T3Gv.optManager.FindLink(L, this.BlockID, !0) >= 0 &&
       //   (isStdOff = !0)
 
-      var linkObject = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, false);
+      var linkObject = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, false);
       if (linkObject) {
 
         const fdLink = T3Gv.optManager.FindLink(linkObject, this.BlockID, !0);
@@ -5124,7 +5124,7 @@ class BaseDrawingObject {
 
   UnitsToCoord(e, t) {
     //'use strict';
-    T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
+    T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1);
     var a = this.GetToUnits();
     return e += t * T3Gv.docHandler.rulerSettings.majorScale,
       e /= a
@@ -5132,7 +5132,7 @@ class BaseDrawingObject {
 
   ConvToUnits(e, t) {
     //'use strict';
-    T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
+    T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1);
     return e * this.GetToUnits() - t * T3Gv.docHandler.rulerSettings.majorScale
   }
 
@@ -6162,8 +6162,8 @@ class BaseDrawingObject {
         startPos: Basic.Element.Style.GradientPos.LEFTTOP,
         stops: []
       };
-    if (e < 0 || e >= T3Gv.optManager.RichGradients.length) return null;
-    switch ((a = T3Gv.optManager.RichGradients[e]).gradienttype) {
+    if (e < 0 || e >= T3Gv.optManager.richGradients.length) return null;
+    switch ((a = T3Gv.optManager.richGradients[e]).gradienttype) {
       case Resources.RichGradientTypes.SDFILL_RICHGRADIENT_LINEAR:
         r.type = Basic.Element.Style.GradientStyle.LINEAR,
           r.angle = a.angle;
@@ -6319,7 +6319,7 @@ class BaseDrawingObject {
       a = !1,
       r = T3Gv.optManager.FrontMostLayerZListPreserve(),
       i = $.inArray(this.BlockID, r),
-      n = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, !0);
+      n = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, !0);
     if (n) for (
       e = T3Gv.optManager.FindLink(n, this.BlockID, !0);
       e >= 0 &&

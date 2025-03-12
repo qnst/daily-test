@@ -145,9 +145,9 @@
 //     Collab.objectStore = objectStore,
 //       Collab.stateManager = stateManager,
 //       Collab.CURRENT_SEQ_OBJECT_ID = CURRENT_SEQ_OBJECT_ID,
-//       Collab.ContentHeader = SDJS.Editor.DeepCopy(gListManager.theContentHeader),
+//       Collab.ContentHeader = SDJS.Editor.DeepCopy(gListManager.contentHeader),
 //       Collab.CreateList = [],
-//       Collab.ContentHeader.ClipboardBuffer = gListManager.theContentHeader.ClipboardBuffer;
+//       Collab.ContentHeader.ClipboardBuffer = gListManager.contentHeader.ClipboardBuffer;
 //     var e = new SDJS.Editor.BaseStateManager
 //       , t = new SDJS.Editor.ObjectStore;
 //     stateManager = e,
@@ -166,9 +166,9 @@
 //     Collab.objectStore = objectStore,
 //       Collab.stateManager = stateManager,
 //       Collab.CURRENT_SEQ_OBJECT_ID = CURRENT_SEQ_OBJECT_ID,
-//       Collab.ContentHeader = SDJS.Editor.DeepCopy(gListManager.theContentHeader),
+//       Collab.ContentHeader = SDJS.Editor.DeepCopy(gListManager.contentHeader),
 //       Collab.CreateList = [],
-//       Collab.ContentHeader.ClipboardBuffer = gListManager.theContentHeader.ClipboardBuffer;
+//       Collab.ContentHeader.ClipboardBuffer = gListManager.contentHeader.ClipboardBuffer;
 //     var e = new Editor.BaseStateManager
 //       , t = new Editor.ObjectStore;
 //     stateManager = e,
@@ -184,9 +184,9 @@
 //     Collab.objectStore = objectStore;
 //     Collab.stateManager = stateManager;
 //     Collab.CURRENT_SEQ_OBJECT_ID = CURRENT_SEQ_OBJECT_ID;
-//     Collab.ContentHeader = SDJS.Editor.DeepCopy(gListManager.theContentHeader);
+//     Collab.ContentHeader = SDJS.Editor.DeepCopy(gListManager.contentHeader);
 //     Collab.CreateList = [];
-//     Collab.ContentHeader.ClipboardBuffer = gListManager.theContentHeader.ClipboardBuffer;
+//     Collab.ContentHeader.ClipboardBuffer = gListManager.contentHeader.ClipboardBuffer;
 
 //     var newStateManager = new SDJS.Editor.BaseStateManager();
 //     var newObjectStore = new SDJS.Editor.ObjectStore();
@@ -209,11 +209,11 @@
 // Collab.CloseSecondaryEdit = function (e) {
 //   if (Collab.IsSecondary()) {
 //     if (null != Collab.objectStore) {
-//       var t = gListManager.GetObjectPtr(gListManager.theSEDSessionBlockID, !1),
+//       var t = gListManager.GetObjectPtr(gListManager.sedSessionBlockId, !1),
 //         a = t.tselect,
 //         r = T3Gv.objectStore.GetObject(gListManager.theSelectedListBlockID),
 //         i = Utils1.DeepCopy(r.Data),
-//         n = T3Gv.objectStore.GetObject(gListManager.theTEDSessionBlockID),
+//         n = T3Gv.objectStore.GetObject(gListManager.tedSessionBlockId),
 //         o = Utils1.DeepCopy(n.Data),
 //         s = Utils1.DeepCopy(t.def),
 //         l = t.d_sarrow,
@@ -228,7 +228,7 @@
 //         Collab.objectStore = null,
 //         Collab.stateManager = null,
 //         (
-//           t = gListManager.GetObjectPtr(gListManager.theSEDSessionBlockID, !1)
+//           t = gListManager.GetObjectPtr(gListManager.sedSessionBlockId, !1)
 //         ).def = s,
 //         t.d_sarrow = l,
 //         t.d_earrow = S,
@@ -251,18 +251,18 @@
 //                 Collab.SecondarySelection.theSelectedRange = Utils1.DeepCopy(d.GetSelectedRange()),
 //                 gListManager.TEUnregisterEvents()
 //               ),
-//               (n = T3Gv.objectStore.GetObject(gListManager.theTEDSessionBlockID)).Data.theActiveTextEditObjectID = - 1
+//               (n = T3Gv.objectStore.GetObject(gListManager.tedSessionBlockId)).Data.theActiveTextEditObjectID = - 1
 //           }
 //           o.theActiveTableObjectID >= 0 &&
 //             (
-//               (n = T3Gv.objectStore.GetObject(gListManager.theTEDSessionBlockID)).Data.theActiveTableObjectID = - 1,
+//               (n = T3Gv.objectStore.GetObject(gListManager.tedSessionBlockId)).Data.theActiveTableObjectID = - 1,
 //               Collab.SecondarySelection.theActiveTableObjectID = - 1
 //             )
 //         }
 //       } else t.tselect = a,
 //         (r = T3Gv.objectStore.GetObject(gListManager.theSelectedListBlockID)).Data = i,
-//         (n = T3Gv.objectStore.GetObject(gListManager.theTEDSessionBlockID)).Data = o;
-//       gListManager.theContentHeader = Collab.ContentHeader
+//         (n = T3Gv.objectStore.GetObject(gListManager.tedSessionBlockId)).Data = o;
+//       gListManager.contentHeader = Collab.ContentHeader
 //     }
 //     Collab.NewBlockIDs = [],
 //       Collab.NewDataTableIDs = []
@@ -294,7 +294,7 @@
 //         this.selectedList = Utils1.DeepCopy(
 //           T3Gv.objectStore.GetObject(gListManager.theSelectedListBlockID).Data
 //         ),
-//         r = gListManager.GetObjectPtr(gListManager.theSEDSessionBlockID, !1),
+//         r = gListManager.GetObjectPtr(gListManager.sedSessionBlockId, !1),
 //         this.tselect = r.tselect,
 //         this.ActiveTableID = gListManager.Table_GetActiveID(),
 //         this.ActiveTableID >= 0
@@ -1154,28 +1154,28 @@
 //     (
 //       t = Collab.GetRemappedID(a, t),
 //       e.Data.BlockID = t,
-//       e.Data.LinkParams &&
+//       e.Data.linkParams &&
 //       (
-//         e.Data.LinkParams.ConnectIndex = Collab.GetRemappedID(a, e.Data.LinkParams.ConnectIndex),
-//         e.Data.LinkParams.SConnectIndex = Collab.GetRemappedID(a, e.Data.LinkParams.SConnectIndex),
-//         e.Data.LinkParams.JoinIndex = Collab.GetRemappedID(a, e.Data.LinkParams.JoinIndex),
-//         e.Data.LinkParams.SJoinIndex = Collab.GetRemappedID(a, e.Data.LinkParams.SJoinIndex)
+//         e.Data.linkParams.ConnectIndex = Collab.GetRemappedID(a, e.Data.linkParams.ConnectIndex),
+//         e.Data.linkParams.SConnectIndex = Collab.GetRemappedID(a, e.Data.linkParams.SConnectIndex),
+//         e.Data.linkParams.JoinIndex = Collab.GetRemappedID(a, e.Data.linkParams.JoinIndex),
+//         e.Data.linkParams.SJoinIndex = Collab.GetRemappedID(a, e.Data.linkParams.SJoinIndex)
 //       )
 //     ),
 //     !((t = Collab.ValidateShapeID(t)) < 0)
 //   ) {
 //     e.Data.CreateList &&
 //       (Collab.CreateList = [], Collab.ProcessCreateList = !0),
-//       e.Data.LinkParams &&
+//       e.Data.linkParams &&
 //       (
-//         e.Data.LinkParams.ConnectIndex = Collab.ValidateShapeID(e.Data.LinkParams.ConnectIndex),
-//         e.Data.LinkParams.SConnectIndex = Collab.ValidateShapeID(e.Data.LinkParams.SConnectIndex),
-//         e.Data.LinkParams.JoinIndex = Collab.ValidateShapeID(e.Data.LinkParams.JoinIndex),
-//         e.Data.LinkParams.SJoinIndex = Collab.ValidateShapeID(e.Data.LinkParams.SJoinIndex)
+//         e.Data.linkParams.ConnectIndex = Collab.ValidateShapeID(e.Data.linkParams.ConnectIndex),
+//         e.Data.linkParams.SConnectIndex = Collab.ValidateShapeID(e.Data.linkParams.SConnectIndex),
+//         e.Data.linkParams.JoinIndex = Collab.ValidateShapeID(e.Data.linkParams.JoinIndex),
+//         e.Data.linkParams.SJoinIndex = Collab.ValidateShapeID(e.Data.linkParams.SJoinIndex)
 //       );
 //     var r = gListManager.actionStoredObjectId,
 //       i = gListManager.actionTriggerId,
-//       n = gListManager.LinkParams,
+//       n = gListManager.linkParams,
 //       o = gListManager.ob,
 //       s = gListManager.GetObjectPtr(t, !0),
 //       l = gListManager.rotateStartRotation,
@@ -1191,7 +1191,7 @@
 //       gListManager.rotateStartPoint = e.Data.rotateStartPoint,
 //       gListManager.actionStoredObjectId = e.Data.BlockID,
 //       gListManager.actionTriggerId = e.Data.actionTriggerId,
-//       gListManager.LinkParams = e.Data.LinkParams,
+//       gListManager.linkParams = e.Data.linkParams,
 //       gListManager.actionTriggerData = {},
 //       gListManager.actionTriggerData.hitSegment = e.Data.hitSegment,
 //       gListManager.actionTriggerData.moveAngle = e.Data.moveAngle;
@@ -1237,7 +1237,7 @@
 //       gListManager.rotatePivotY = u,
 //       gListManager.rotateStartPoint = p,
 //       gListManager.actionStoredObjectId = r,
-//       gListManager.LinkParams = n,
+//       gListManager.linkParams = n,
 //       gListManager.actionTriggerId = i,
 //       gListManager.actionTriggerData = d,
 //       gListManager.ob = o
@@ -1271,31 +1271,31 @@
 // Collab.MoveObjects = function (e) {
 //   var t,
 //     a;
-//   t = e.Data.theMoveList.length;
+//   t = e.Data.moveList.length;
 //   var r = Collab.GetRemapList(e),
 //     i = [];
-//   if (r) for (a = 0; a < t; a++) e.Data.theMoveList[a] = Collab.GetRemappedID(r, e.Data.theMoveList[a]);
-//   for (a = 0; a < t; a++) e.Data.theMoveList[a] = Collab.ValidateShapeID(e.Data.theMoveList[a]),
-//     e.Data.theMoveList[a] >= 0 &&
-//     i.push(e.Data.theMoveList[a]);
+//   if (r) for (a = 0; a < t; a++) e.Data.moveList[a] = Collab.GetRemappedID(r, e.Data.moveList[a]);
+//   for (a = 0; a < t; a++) e.Data.moveList[a] = Collab.ValidateShapeID(e.Data.moveList[a]),
+//     e.Data.moveList[a] >= 0 &&
+//     i.push(e.Data.moveList[a]);
 //   if (0 !== i.length) {
-//     var n = gListManager.theMoveList,
-//       o = gListManager.LinkParams,
+//     var n = gListManager.moveList,
+//       o = gListManager.linkParams,
 //       s = gListManager.dragTargetId;
 //     if (
-//       gListManager.theMoveList = i,
-//       gListManager.LinkParams = e.Data.LinkParams,
+//       gListManager.moveList = i,
+//       gListManager.linkParams = e.Data.linkParams,
 //       gListManager.dragTargetId = i[0],
 //       e.Data.MoveDuplicated &&
 //       (Collab.NoRedrawFromSameEditor = !1),
 //       e.Data.CreateList &&
 //       (Collab.CreateList = [], Collab.ProcessCreateList = !0),
-//       e.Data.LinkParams.AutoHealID >= 0
+//       e.Data.linkParams.AutoHealID >= 0
 //     ) {
-//       var l = e.Data.LinkParams.AutoHealID;
+//       var l = e.Data.linkParams.AutoHealID;
 //       if (r) {
-//         l = Collab.GetRemappedID(r, e.Data.LinkParams.AutoHealID);
-//         e.Data.LinkParams.AutoHealID = l
+//         l = Collab.GetRemappedID(r, e.Data.linkParams.AutoHealID);
+//         e.Data.linkParams.AutoHealID = l
 //       }
 //       var S = [];
 //       if ((l = Collab.ValidateShapeID(l)) >= 0) {
@@ -1306,8 +1306,8 @@
 //       }
 //     }
 //     gListManager.LM_MoveRelease(null, e),
-//       gListManager.theMoveList = n,
-//       gListManager.LinkParams = o,
+//       gListManager.moveList = n,
+//       gListManager.linkParams = o,
 //       gListManager.dragTargetId = s,
 //       e.Data.CreateList &&
 //       e.Data.CreateList.length &&
@@ -1612,7 +1612,7 @@
 // }
 
 // Collab.Dialog_Options = function (e) {
-//   var t = gListManager.GetObjectPtr(gListManager.theSEDSessionBlockID, !0);
+//   var t = gListManager.GetObjectPtr(gListManager.sedSessionBlockId, !0);
 //   t.flags = Utils.SetFlag(
 //     t.flags,
 //     ListManager.SessionFlags.SEDS_LLink,
@@ -2029,22 +2029,22 @@
 // }
 
 // Collab.NudgeSelectedObjects = function (e) {
-//   var t = gListManager.NudgeOpen,
-//     a = gListManager.NudgeX,
-//     r = gListManager.NudgeY,
-//     i = gListManager.NudgeGrowX,
-//     n = gListManager.NudgeGrowY;
+//   var t = gListManager.nudgeOpen,
+//     a = gListManager.nudgeX,
+//     r = gListManager.nudgeY,
+//     i = gListManager.nudgeGrowX,
+//     n = gListManager.nudgeGrowY;
 //   0 === e.Data.growX &&
 //     0 === e.Data.growY ||
 //     gListManager.NudgeSelectedObjects(e.Data.growX, e.Data.growY, !0),
 //     0 === e.Data.deltaX &&
 //     0 === e.Data.deltaY ||
 //     gListManager.NudgeSelectedObjects(e.Data.deltaX, e.Data.deltaY, !1),
-//     gListManager.NudgeOpen = t,
-//     gListManager.NudgeX = a,
-//     gListManager.NudgeY = r,
-//     gListManager.NudgeGrowX = i,
-//     gListManager.NudgeGrowY = n,
+//     gListManager.nudgeOpen = t,
+//     gListManager.nudgeX = a,
+//     gListManager.nudgeY = r,
+//     gListManager.nudgeGrowX = i,
+//     gListManager.nudgeGrowY = n,
 //     gListManager.CompleteOperation()
 // }
 
@@ -2219,7 +2219,7 @@
 
 // Collab.InsertTable = function (e) {
 //   Collab.ProcessCreateList = !0;
-//   var t = gListManager.GetObjectPtr(gListManager.theSEDSessionBlockID, !1),
+//   var t = gListManager.GetObjectPtr(gListManager.sedSessionBlockId, !1),
 //     a = t.def.style;
 //   t.def.style = e.Data.StyleRecord,
 //     gListManager.InsertTable(!1, e.Data.nrows, e.Data.ncols),
@@ -2300,25 +2300,25 @@
 //     (t = Collab.GetRemappedID(a, t), e.Data.BlockID = t),
 //     !((t = Collab.ValidateShapeID(t)) < 0)
 //   ) {
-//     var r = gListManager.FormatPainterMode,
-//       i = gListManager.FormatPainterText,
-//       n = gListManager.FormatPainterStyle,
-//       o = gListManager.FormatPainterParaFormat,
-//       s = gListManager.FormatPainterArrows,
-//       l = gListManager.FormatPainterSticky;
-//     gListManager.FormatPainterMode = e.Data.FormatPainterMode,
-//       gListManager.FormatPainterText = e.Data.FormatPainterText,
-//       gListManager.FormatPainterStyle = e.Data.FormatPainterStyle,
-//       gListManager.FormatPainterParaFormat = e.Data.FormatPainterParaFormat,
-//       gListManager.FormatPainterArrows = e.Data.FormatPainterArrows,
-//       gListManager.FormatPainterSticky = !1,
+//     var r = gListManager.formatPainterMode,
+//       i = gListManager.formatPainterText,
+//       n = gListManager.formatPainterStyle,
+//       o = gListManager.formatPainterParaFormat,
+//       s = gListManager.formatPainterArrows,
+//       l = gListManager.formatPainterSticky;
+//     gListManager.formatPainterMode = e.Data.formatPainterMode,
+//       gListManager.formatPainterText = e.Data.formatPainterText,
+//       gListManager.formatPainterStyle = e.Data.formatPainterStyle,
+//       gListManager.formatPainterParaFormat = e.Data.formatPainterParaFormat,
+//       gListManager.formatPainterArrows = e.Data.formatPainterArrows,
+//       gListManager.formatPainterSticky = !1,
 //       gListManager.FormatPainterClick(t, null, e),
-//       gListManager.FormatPainterMode = r,
-//       gListManager.FormatPainterText = i,
-//       gListManager.FormatPainterStyle = n,
-//       gListManager.FormatPainterParaFormat = o,
-//       gListManager.FormatPainterArrows = s,
-//       gListManager.FormatPainterSticky = l
+//       gListManager.formatPainterMode = r,
+//       gListManager.formatPainterText = i,
+//       gListManager.formatPainterStyle = n,
+//       gListManager.formatPainterParaFormat = o,
+//       gListManager.formatPainterArrows = s,
+//       gListManager.formatPainterSticky = l
 //   }
 // }
 
@@ -2330,23 +2330,23 @@
 //     (t = Collab.GetRemappedID(a, t), e.Data.BlockID = t),
 //     !((t = Collab.ValidateShapeID(t)) < 0)
 //   ) {
-//     var r = gListManager.FormatPainterMode,
-//       i = gListManager.FormatPainterText,
-//       n = gListManager.FormatPainterStyle,
-//       o = gListManager.FormatPainterParaFormat,
-//       s = gListManager.FormatPainterSticky;
-//     gListManager.FormatPainterMode = e.Data.FormatPainterMode,
-//       gListManager.FormatPainterText = e.Data.FormatPainterText,
-//       gListManager.FormatPainterStyle = e.Data.FormatPainterStyle,
-//       gListManager.FormatPainterParaFormat = e.Data.FormatPainterParaFormat,
-//       gListManager.FormatPainterArrows = e.Data.FormatPainterArrows,
-//       gListManager.FormatPainterSticky = !1,
-//       gListManager.Table_PasteFormat(t, gListManager.FormatPainterStyle, !0),
-//       gListManager.FormatPainterMode = r,
-//       gListManager.FormatPainterText = i,
-//       gListManager.FormatPainterStyle = n,
-//       gListManager.FormatPainterParaFormat = o,
-//       gListManager.FormatPainterSticky = s
+//     var r = gListManager.formatPainterMode,
+//       i = gListManager.formatPainterText,
+//       n = gListManager.formatPainterStyle,
+//       o = gListManager.formatPainterParaFormat,
+//       s = gListManager.formatPainterSticky;
+//     gListManager.formatPainterMode = e.Data.formatPainterMode,
+//       gListManager.formatPainterText = e.Data.formatPainterText,
+//       gListManager.formatPainterStyle = e.Data.formatPainterStyle,
+//       gListManager.formatPainterParaFormat = e.Data.formatPainterParaFormat,
+//       gListManager.formatPainterArrows = e.Data.formatPainterArrows,
+//       gListManager.formatPainterSticky = !1,
+//       gListManager.Table_PasteFormat(t, gListManager.formatPainterStyle, !0),
+//       gListManager.formatPainterMode = r,
+//       gListManager.formatPainterText = i,
+//       gListManager.formatPainterStyle = n,
+//       gListManager.formatPainterParaFormat = o,
+//       gListManager.formatPainterSticky = s
 //   }
 // }
 
@@ -2449,7 +2449,7 @@
 //       if (
 //         (null == h || h.formatter.fmtText.text !== e.Data.runtimeText) &&
 //         (Collab.NoRedrawFromSameEditor = !1),
-//         gListManager.theDirtyList.push(e.Data.BlockID),
+//         gListManager.dirtyList.push(e.Data.BlockID),
 //         gListManager.RenderDirtySVGObjects(),
 //         h = (g = gListManager.svgObjectLayer.GetElementByID(i.BlockID)).textElem,
 //         i instanceof BaseShape &&
@@ -2522,12 +2522,12 @@
 //       var S = n.arraylist.lasttexthook
 //     }
 //     if (e.EditorID === Collab.EditorID) {
-//       var c = gListManager.GetObjectPtr(gListManager.theTEDSessionBlockID, !1);
+//       var c = gListManager.GetObjectPtr(gListManager.tedSessionBlockId, !1);
 //       c.theActiveTextEditObjectID = e.Data.BlockID,
 //         null != e.Data.TableSelect &&
 //         (c.theActiveTableObjectID = e.Data.BlockID),
 //         (
-//           c = gListManager.GetObjectPtr(gListManager.theTEDSessionBlockID, !0)
+//           c = gListManager.GetObjectPtr(gListManager.tedSessionBlockId, !0)
 //         ).theActiveTextEditObjectID = - 1,
 //         l = - 1
 //     }
@@ -2579,7 +2579,7 @@
 //           n.DataID = t,
 //           n.arraylist.lasttexthook = S
 //         );
-//       var g = gListManager.GetObjectPtr(gListManager.theSEDSessionBlockID, !1),
+//       var g = gListManager.GetObjectPtr(gListManager.sedSessionBlockId, !1),
 //         h = g.tselect;
 //       e.Data.closetable &&
 //         e.EditorID === Collab.EditorID &&
@@ -2608,7 +2608,7 @@
 //     ) switch (r[i].ActionType) {
 //       case a.CreateSymbol:
 //         s.symbolID;
-//         var S = gListManager.GetObjectPtr(gListManager.theSEDSessionBlockID, !1),
+//         var S = gListManager.GetObjectPtr(gListManager.sedSessionBlockId, !1),
 //           c = S.def.style;
 //         if (
 //           S.def.style = s.StyleRecord,
@@ -2648,27 +2648,27 @@
 //         }
 //         break;
 //       case a.LinkObject:
-//         if (null == s.LinkParams) break;
+//         if (null == s.linkParams) break;
 //         if (p = gListManager.GetObjectPtr(n, !0)) {
 //           var h = Collab.GetRemapList(e);
 //           h &&
 //             (
-//               s.LinkParams.ConnectIndex = Collab.GetRemappedID(h, s.LinkParams.ConnectIndex),
-//               s.LinkParams.InitialHook = Collab.GetRemappedID(h, s.LinkParams.InitialHook),
-//               s.LinkParams.SConnectIndex = Collab.GetRemappedID(h, s.LinkParams.SConnectIndex),
-//               s.LinkParams.JoinIndex = Collab.GetRemappedID(h, s.LinkParams.JoinIndex),
-//               s.LinkParams.SJoinIndex = Collab.GetRemappedID(h, s.LinkParams.SJoinIndex)
+//               s.linkParams.ConnectIndex = Collab.GetRemappedID(h, s.linkParams.ConnectIndex),
+//               s.linkParams.InitialHook = Collab.GetRemappedID(h, s.linkParams.InitialHook),
+//               s.linkParams.SConnectIndex = Collab.GetRemappedID(h, s.linkParams.SConnectIndex),
+//               s.linkParams.JoinIndex = Collab.GetRemappedID(h, s.linkParams.JoinIndex),
+//               s.linkParams.SJoinIndex = Collab.GetRemappedID(h, s.linkParams.SJoinIndex)
 //             ),
-//             s.LinkParams.ConnectIndex = Collab.ValidateShapeID(s.LinkParams.ConnectIndex),
-//             s.LinkParams.InitialHook = Collab.ValidateShapeID(s.LinkParams.InitialHook),
-//             s.LinkParams.SConnectIndex = Collab.ValidateShapeID(s.LinkParams.SConnectIndex),
-//             s.LinkParams.JoinIndex = Collab.ValidateShapeID(s.LinkParams.JoinIndex),
-//             s.LinkParams.SJoinIndex = Collab.ValidateShapeID(s.LinkParams.SJoinIndex);
+//             s.linkParams.ConnectIndex = Collab.ValidateShapeID(s.linkParams.ConnectIndex),
+//             s.linkParams.InitialHook = Collab.ValidateShapeID(s.linkParams.InitialHook),
+//             s.linkParams.SConnectIndex = Collab.ValidateShapeID(s.linkParams.SConnectIndex),
+//             s.linkParams.JoinIndex = Collab.ValidateShapeID(s.linkParams.JoinIndex),
+//             s.linkParams.SJoinIndex = Collab.ValidateShapeID(s.linkParams.SJoinIndex);
 //           var m = gListManager.actionStoredObjectId;
 //           switch (
 //           gListManager.actionStoredObjectId = n,
-//           gListManager.LinkParams = s.LinkParams,
-//           s.LinkParams.AutoInsert &&
+//           gListManager.linkParams = s.linkParams,
+//           s.linkParams.AutoInsert &&
 //           null != s.RotationAngle &&
 //           p.RotationAngle !== s.RotationAngle &&
 //           (p.RotationAngle = s.RotationAngle),
@@ -2696,7 +2696,7 @@
 //       Collab.AddToRemapList(e, e.Data.CreateList, Collab.CreateList, 0),
 //       Collab.ProcessCreateList = !1,
 //       Collab.CreateList = [],
-//       gListManager.theMoveList = null
+//       gListManager.moveList = null
 //   }
 // }
 
@@ -2814,11 +2814,11 @@
 //       u &&
 //         (e.tselect = Collab.GetRemappedID(u, e.tselect)),
 //         e.tselect = Collab.ValidateShapeID(e.tselect);
-//       var d = gListManager.GetObjectPtr(gListManager.theSEDSessionBlockID, !1);
+//       var d = gListManager.GetObjectPtr(gListManager.sedSessionBlockId, !1);
 //       r = d.tselect;
 //       var D = T3Gv.objectStore.GetObject(gListManager.theSelectedListBlockID);
 //       i = Utils1.DeepCopy(D.Data);
-//       var g = gListManager.GetObjectPtr(gListManager.theTEDSessionBlockID, !1);
+//       var g = gListManager.GetObjectPtr(gListManager.tedSessionBlockId, !1);
 //       if (n = g.theActiveTableObjectID, g.theActiveTableObjectID = - 1, n >= 0) {
 //         var h = gListManager.GetObjectPtr(n, !1);
 //         if (h && h.GetTable) var m = h.GetTable(!1);
@@ -2916,7 +2916,7 @@
 //             t
 //           ) i = l,
 //             r = s;
-//           else gListManager.GetObjectPtr(gListManager.theSEDSessionBlockID, !1).tselect = s,
+//           else gListManager.GetObjectPtr(gListManager.sedSessionBlockId, !1).tselect = s,
 //             T3Gv.objectStore.GetObject(gListManager.theSelectedListBlockID).Data = l,
 //             gListManager.ClearSVGOverlayLayer(),
 //             gListManager.RenderAllSVGSelectionStates();
@@ -2936,13 +2936,13 @@
 //         u = ListManager.Table.CellFlags.SDT_F_Select;
 //       h(e, !0),
 //         gListManager.SetDimensionVisibility(o, !1);
-//       var p = gListManager.GetObjectPtr(gListManager.theSEDSessionBlockID, !1);
+//       var p = gListManager.GetObjectPtr(gListManager.sedSessionBlockId, !1);
 //       p.tselect !== r &&
 //         (p.tselect = r),
 //         t.Data = i,
 //         a = gListManager.ActiveVisibleZList(),
 //         e.ActiveTableID = Collab.ValidateEditID(e.ActiveTableID, a, !0);
-//       var d = gListManager.GetObjectPtr(gListManager.theTEDSessionBlockID, !1);
+//       var d = gListManager.GetObjectPtr(gListManager.tedSessionBlockId, !1);
 //       if (e.ActiveTableID >= 0 && e.selectedCells) {
 //         d.theActiveTableObjectID = - 1;
 //         var D,
@@ -3009,7 +3009,7 @@
 //       (p = Collab.AddEditor(e.EditorID, e.UserID)) &&
 //       (p.NewDataTableMap = [])
 //     );
-//   var y = gListManager.GetObjectPtr(gListManager.theTEDSessionBlockID, !1),
+//   var y = gListManager.GetObjectPtr(gListManager.tedSessionBlockId, !1),
 //     f = gListManager.svgDoc.GetActiveEdit();
 //   switch (
 //   - 1 != y.theActiveTextEditObjectID &&
@@ -3646,7 +3646,7 @@
 //   if (
 //     o ? m() : h(e, !1),
 //     (
-//       y = gListManager.GetObjectPtr(gListManager.theTEDSessionBlockID, !1)
+//       y = gListManager.GetObjectPtr(gListManager.tedSessionBlockId, !1)
 //     ).theActiveTextEditObjectID = Collab.ValidateEditID(y.theActiveTextEditObjectID, a, !0),
 //     y.theActiveTableObjectID = Collab.ValidateEditID(y.theActiveTableObjectID, a, !0),
 //     y.theActiveOutlineObjectID = Collab.ValidateEditID(y.theActiveOutlineObjectID, a),
@@ -3735,7 +3735,7 @@
 //   //   var e = Collab.GetNextClientMessage();
 //   //   e &&
 //   //     (
-//   //       gListManager.NudgeOpen &&
+//   //       gListManager.nudgeOpen &&
 //   //       (
 //   //         Collab.LockMessages(),
 //   //         gListManager.CloseOpenNudge(),
@@ -3824,10 +3824,10 @@
 //           T3Gv.optManager.WorkAreaHammer.on('dragstart', Evt_WorkAreaHammerDragStart),
 //           T3Gv.optManager.WorkAreaHammer.on('tap', Evt_WorkAreaHammerClick)
 //         ),
-//         T3Gv.optManager.LinkParams = null,
+//         T3Gv.optManager.linkParams = null,
 //         T3Gv.optManager.dragBBoxList = [],
 //         T3Gv.optManager.dragElementList = [],
-//         T3Gv.optManager.theMoveList = null,
+//         T3Gv.optManager.moveList = null,
 //         T3Gv.optManager.dragEnclosingRect = null,
 //         T3Gv.optManager.dragGotMove = !1,
 //         T3Gv.optManager.ResetAutoScrollTimer(),
@@ -3858,7 +3858,7 @@
 //     Collab.ProcessMessage = !1,
 //     Collab.ProcessUIOperation = !1,
 //     Collab.EditorID = SDUI.SDBackplane.ClientID,
-//     gListManager.GetObjectPtr(gListManager.theTEDSessionBlockID, !1).EditorID = Collab.EditorID,
+//     gListManager.GetObjectPtr(gListManager.tedSessionBlockId, !1).EditorID = Collab.EditorID,
 //     '' === ConstantData.DocumentContext.UserName &&
 //     SDUI.Utils.GetUser(ConstantData.DocumentContext.UserId),
 //     void $(document).on(

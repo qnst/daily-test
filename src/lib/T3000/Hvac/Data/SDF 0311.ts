@@ -448,8 +448,8 @@ class SDF {
       this.tLMB = null,
       this.BlockzList = [],
       this.DeleteList = [],
-      this.RichGradients = [],
-      this.HasBlockDirectory = !1,
+      this.richGradients = [],
+      this.hasBlockDirectory = !1,
       this.updatetext = !1,
       this.LibraryPathTarget = '',
       this.SetColorChanges = !1,
@@ -575,7 +575,7 @@ class SDF {
   static UnsupportedTypes = []
 
   // static ReadFileFromBuffer(e, t) {
-  //   T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
+  //   T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1);
   //   var a = SDF.ReadBuffer(e, t, 0, !1, SDF.ReadFileFromBuffer_Complete);
   //   return a &&
   //     a != SDF.Errors.WaitingForCallBack ? (
@@ -625,7 +625,7 @@ class SDF {
   //     S,
   //     c = [],
   //     u = !1,
-  //     p = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
+  //     p = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1),
   //     d = (ConstantData.DrawingObjectBaseClass.CONNECTOR, 0),
   //     D = ConstantData.LayerTypes,
   //     g = ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL,
@@ -721,7 +721,7 @@ class SDF {
   //         ),
   //         SDUI.Commands.MainController.Document.SetSpellCheck(
   //           (
-  //             T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_AutoSpell
+  //             T3Gv.optManager.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_AutoSpell
   //           ) > 0,
   //           !1
   //         ),
@@ -729,42 +729,42 @@ class SDF {
   //       ) : (
   //         SDUI.Commands.MainController.Document.SetSnapEnable(
   //           (
-  //             T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_SnapToGridC
+  //             T3Gv.optManager.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_SnapToGridC
   //           ) > 0 ||
   //           (
-  //             T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_SnapToGridTL
+  //             T3Gv.optManager.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_SnapToGridTL
   //           ) > 0
   //         ),
   //         SDUI.Commands.MainController.Document.ForceCenterSnapEnable(
   //           (
-  //             T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_SnapToGridC
+  //             T3Gv.optManager.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_SnapToGridC
   //           ) > 0
   //         ),
   //         SDUI.Commands.MainController.Document.SetGridVisibility(
   //           (
-  //             T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_ShowGrid
+  //             T3Gv.optManager.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_ShowGrid
   //           ) > 0,
   //           !1
   //         ),
   //         SDUI.Commands.MainController.Document.SetPageDividerVisibility(
   //           (
-  //             T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_ShowPageDividers
+  //             T3Gv.optManager.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_ShowPageDividers
   //           ) > 0
   //         ),
   //         SDUI.Commands.MainController.Document.SetSpellCheck(
   //           (
-  //             T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_AutoSpell
+  //             T3Gv.optManager.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_AutoSpell
   //           ) > 0,
   //           !1
   //         ),
   //         SDUI.Commands.MainController.Document.ToggleSnapToShape(
   //           0 == (
-  //             T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_SnapToShapes_Off
+  //             T3Gv.optManager.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_SnapToShapes_Off
   //           )
   //         ),
   //         SDUI.Commands.MainController.Document.SetRulerVisibility(
   //           (
-  //             T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_ShowRulers
+  //             T3Gv.optManager.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_ShowRulers
   //           ) > 0
   //         )
   //       ),
@@ -776,7 +776,7 @@ class SDF {
   //     ),
   //     !e.LoadBlockList
   //   ) {
-  //     var f = T3Gv.objectStore.GetObject(T3Gv.optManager.theContentHeader.SDDataID);
+  //     var f = T3Gv.objectStore.GetObject(T3Gv.optManager.contentHeader.SDDataID);
   //     e.SDData ? f ? f.Data.SDData = e.SDData : (
   //       f = T3Gv.objectStore.CreateBlock(
   //         ConstantData.StoredObjectType.SDDATA_OBJECT,
@@ -784,15 +784,15 @@ class SDF {
   //           SDData: e.SDData
   //         }
   //       ),
-  //       T3Gv.optManager.theContentHeader.SDDataID = f.ID
+  //       T3Gv.optManager.contentHeader.SDDataID = f.ID
   //     ) : f &&
-  //     (f.Delete(), T3Gv.optManager.theContentHeader.SDDataID = - 1)
+  //     (f.Delete(), T3Gv.optManager.contentHeader.SDDataID = - 1)
   //   }
   //   (e.IsLucid || e.IsVisio) &&
   //     (
-  //       'LINEDRAW' === T3Gv.optManager.theContentHeader.BusinessModule ||
-  //         'MANUALCHART' === T3Gv.optManager.theContentHeader.BusinessModule ? (
-  //         T3Gv.optManager.theContentHeader.BusinessModule = 'LINEDRAW_SWIMLANE',
+  //       'LINEDRAW' === T3Gv.optManager.contentHeader.BusinessModule ||
+  //         'MANUALCHART' === T3Gv.optManager.contentHeader.BusinessModule ? (
+  //         T3Gv.optManager.contentHeader.BusinessModule = 'LINEDRAW_SWIMLANE',
   //         T3Gv.docUtil.rulerConfig.units === ConstantData.RulerUnits.SED_Feet &&
   //         (
   //           T3Gv.docUtil.rulerConfig.units = ConstantData.RulerUnits.SED_Inches
@@ -801,35 +801,35 @@ class SDF {
   //         p.def.v_arraywidth = 75,
   //         p.def.arraywd = 25,
   //         p.def.arrayht = 25
-  //       ) : 'FLOORPLAN' === T3Gv.optManager.theContentHeader.BusinessModule &&
+  //       ) : 'FLOORPLAN' === T3Gv.optManager.contentHeader.BusinessModule &&
   //       (
   //         p.flags = Utils2.SetFlag(p.flags, ConstantData.SessionFlags.SEDS_FreeHand, !0)
   //       )
   //     );
   //   var L,
   //     I,
-  //     T = T3Gv.optManager.theContentHeader.BusinessModule;
+  //     T = T3Gv.optManager.contentHeader.BusinessModule;
   //   if (
-  //     T3Gv.optManager.theContentHeader.BusinessModule = '',
+  //     T3Gv.optManager.contentHeader.BusinessModule = '',
   //     SDJS_init_business_manager(T),
-  //     T3Gv.optManager.theContentHeader.smartpanelname = 'smartpanel',
-  //     T3Gv.optManager.theContentHeader.smartpanelname
+  //     T3Gv.optManager.contentHeader.smartpanelname = 'smartpanel',
+  //     T3Gv.optManager.contentHeader.smartpanelname
   //   ) {
   //     switch (d) {
 
   //       case D.SD_LAYERT_MINDMAP:
-  //         T3Gv.optManager.theContentHeader.smartpanelname = 'mind maps',
+  //         T3Gv.optManager.contentHeader.smartpanelname = 'mind maps',
   //           p.flags = Utils2.SetFlag(p.flags, ConstantData.SessionFlags.SEDS_LLink, !0)
   //     }
   //     gBusinessManager instanceof Business.LineDraw ||
   //       gBusinessManager instanceof Business.FlowChart ||
   //       (p.def.h_arraywidth = 75, p.def.v_arraywidth = 75);
   //     var M = [],
-  //       P = T3Gv.optManager.theContentHeader.lp_list.lib.length;
+  //       P = T3Gv.optManager.contentHeader.lp_list.lib.length;
   //     e.IsVisio &&
   //       0 === P &&
   //       (
-  //         T3Gv.optManager.theContentHeader.lp_list.lib.push(
+  //         T3Gv.optManager.contentHeader.lp_list.lib.push(
   //           new ListManager.LibListEntry('Office\\Standard Shapes.SDL')
   //         ),
   //         P = 1
@@ -845,7 +845,7 @@ class SDF {
   //       A < P;
   //       A++
   //     ) {
-  //       var _ = T3Gv.optManager.theContentHeader.lp_list.lib[A];
+  //       var _ = T3Gv.optManager.contentHeader.lp_list.lib[A];
   //       if (_.SearchResults) {
   //         var E = R(e, _.libGuid);
   //         E &&
@@ -873,13 +873,13 @@ class SDF {
   //     e.PVersion < SDF.SDF_PVERSION864 &&
   //     !e.isTemplate &&
   //     (
-  //       T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
-  //         T3Gv.optManager.theContentHeader.flags,
+  //       T3Gv.optManager.contentHeader.flags = Utils2.SetFlag(
+  //         T3Gv.optManager.contentHeader.flags,
   //         ConstantData.ContentHeaderFlags.CT_HideLeftPanel,
   //         !1
   //       )
   //     ),
-  //     T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_HideLeftPanel ? SDUI.Commands.MainController.SmartPanels.ToggleLeftPanel(!1, !0) : SDUI.Commands.MainController.SmartPanels.ToggleLeftPanel(!1, !1),
+  //     T3Gv.optManager.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_HideLeftPanel ? SDUI.Commands.MainController.SmartPanels.ToggleLeftPanel(!1, !0) : SDUI.Commands.MainController.SmartPanels.ToggleLeftPanel(!1, !1),
 
   //     Clipboard &&
   //     Clipboard.FocusOnClipboardInput &&
@@ -946,9 +946,9 @@ class SDF {
   //         void 0 === e.sdp.background.Paint.Texture ? e.sdp.background.Paint.FillType = ConstantData.FillTypes.SDFILL_TRANSPARENT : e.sdp.background.Paint.Texture < e.TextureList.Textures.length ? e.sdp.background.Paint.Texture = e.TextureList.Textures[e.sdp.background.Paint.Texture].index : e.sdp.background.Paint.FillType = ConstantData.FillTypes.SDFILL_TRANSPARENT
   //       )
   //     ),
-  //     T3Gv.optManager.RichGradients = e.RichGradients,
-  //     T3Gv.optManager.HasBlockDirectory = e.HasBlockDirectory,
-  //     (r = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, !0)).length = 0,
+  //     T3Gv.optManager.richGradients = e.richGradients,
+  //     T3Gv.optManager.hasBlockDirectory = e.hasBlockDirectory,
+  //     (r = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, !0)).length = 0,
   //     t = e.links.length,
   //     a = 0;
   //     a < t;
@@ -974,12 +974,12 @@ class SDF {
   //       )
   //   }
   //   if (
-  //     T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto ? (
-  //       T3Gv.optManager.theContentHeader.MaxWorkDim.x = e.sdp.dim.x - 2 * ConstantData.Defines.SED_EdgeSlop,
-  //       T3Gv.optManager.theContentHeader.MaxWorkDim.y = e.sdp.dim.y - 2 * ConstantData.Defines.SED_EdgeSlop
+  //     T3Gv.optManager.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto ? (
+  //       T3Gv.optManager.contentHeader.MaxWorkDim.x = e.sdp.dim.x - 2 * ConstantData.Defines.SED_EdgeSlop,
+  //       T3Gv.optManager.contentHeader.MaxWorkDim.y = e.sdp.dim.y - 2 * ConstantData.Defines.SED_EdgeSlop
   //     ) : (
-  //       T3Gv.optManager.theContentHeader.MaxWorkDim.x = ConstantData.Defines.MaxWorkDimX,
-  //       T3Gv.optManager.theContentHeader.MaxWorkDim.y = ConstantData.Defines.MaxWorkDimY
+  //       T3Gv.optManager.contentHeader.MaxWorkDim.x = ConstantData.Defines.MaxWorkDimX,
+  //       T3Gv.optManager.contentHeader.MaxWorkDim.y = ConstantData.Defines.MaxWorkDimY
   //     ),
   //     u
   //   ) for (t = e.zList.length, a = 0; a < t; a++) (l = T3Gv.optManager.GetObjectPtr(e.zList[a], !1)).objecttype === g &&
@@ -998,7 +998,7 @@ class SDF {
   //     );
   //   if (
   //     (e.IsLucid || e.IsVisio) &&
-  //     'LINEDRAW_SWIMLANE' === T3Gv.optManager.theContentHeader.BusinessModule
+  //     'LINEDRAW_SWIMLANE' === T3Gv.optManager.contentHeader.BusinessModule
   //   ) for (t = e.zList.length, a = 0; a < t; a++) (l = T3Gv.optManager.GetObjectPtr(e.zList[a], !1)).DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.LINE &&
   //     2 === l.hooks.length &&
   //     0 === l.objecttype &&
@@ -1008,7 +1008,7 @@ class SDF {
   //     );
   //   if (e.IsLucid) {
   //     for (
-  //       'LINEDRAW_SWIMLANE' === T3Gv.optManager.theContentHeader.BusinessModule &&
+  //       'LINEDRAW_SWIMLANE' === T3Gv.optManager.contentHeader.BusinessModule &&
   //       (
   //         ConstantData.DocumentContext.LineTool = Resources.LineToolTypes.SegmentedLine,
   //         e.sdp.flags = Utils2.SetFlag(e.sdp.flags, ConstantData.SessionFlags.SEDS_AutoInsert, !0)
@@ -1024,18 +1024,18 @@ class SDF {
   //     SDUI.MarketingActionLogger.Log(SDUI.MarketingActionCodes.ImportLucid_Complete)
   //   } (e.IsLucid || e.IsVisio) &&
   //     (
-  //       !T3Gv.optManager.theContentHeader.SDDataID ||
-  //       T3Gv.optManager.theContentHeader.SDDataID < 0
+  //       !T3Gv.optManager.contentHeader.SDDataID ||
+  //       T3Gv.optManager.contentHeader.SDDataID < 0
   //     ) &&
   //     ListManager.SDData.CreateDefaultSDData(),
-  //     e.sdp.Page = Utils1.DeepCopy(T3Gv.optManager.theContentHeader.Page),
+  //     e.sdp.Page = Utils1.DeepCopy(T3Gv.optManager.contentHeader.Page),
   //     T3Gv.optManager.UpdateLinks(),
   //     T3Gv.optManager.UpdateLineHops(!0),
   //     GlobalDatagFlowChartManager.UpdateSwimlanes(),
   //     T3Gv.optManager.RenderAllSVGObjects();
   //   var J,
   //     x,
-  //     O = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theTEDSessionBlockID, !1);
+  //     O = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.tedSessionBlockId, !1);
   //   for (
   //     O.theActiveTextEditObjectID = - 1,
   //     O.theActiveTableObjectID = - 1,
@@ -1103,7 +1103,7 @@ class SDF {
   //   }
   //   T3Gv.optManager.PreserveUndoState(!0),
   //     T3Gv.optManager.ResetStateManager(),
-  //     T3Gv.optManager.theContentHeader.Save_HistoryState = - 1,
+  //     T3Gv.optManager.contentHeader.Save_HistoryState = - 1,
   //     T3Gv.optManager.ClearFutureUndoStates(),
   //     T3Gv.optManager.SetDocDirtyState(!1),
   //     ConstantData.DocumentContext.AllowLayers = 0 == (e.sdp.flags & ConstantData.SessionFlags.SEDS_LockLayers),
@@ -1149,7 +1149,7 @@ class SDF {
       P = new SDF.Result;
 
     var gFmtTextObj = null;
-    var R = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0),
+    var R = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !0),
       A = [];
     P.isTemplate = !1,
       P.IgnoreHeader = !0,
@@ -1187,7 +1187,7 @@ class SDF {
       _ !== SDF.Errors.WaitingForCallBack
     ) {
       var E = T3Gv.optManager.IsPlanningDocument(),
-        w = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !0);
+        w = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.layersManagerBlockId, !0);
       for (
         g = P.zList.length,
         h = 0;
@@ -1236,7 +1236,7 @@ class SDF {
         b > 0
       ) {
         for (
-          m = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, !0),
+          m = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, !0),
           h = 0;
           h < b;
           h++
@@ -1270,17 +1270,17 @@ class SDF {
           if (
             y.x + y.width > R.dim.x &&
             (
-              T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto ? (f = y.x + y.width - R.dim.x, I = 0) : (I = y.x + y.width, R.dim.x = I)
+              T3Gv.optManager.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto ? (f = y.x + y.width - R.dim.x, I = 0) : (I = y.x + y.width, R.dim.x = I)
             ),
             y.y + y.height > R.dim.y &&
             (
-              T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto ? L = y.y + y.height - R.dim.y : (T = y.y + y.height, R.dim.y = T)
+              T3Gv.optManager.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto ? L = y.y + y.height - R.dim.y : (T = y.y + y.height, R.dim.y = T)
             ),
             I ||
             T
           ) {
             var N = (
-              w = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1)
+              w = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.layersManagerBlockId, !1)
             ).nlayers,
               k = !1,
               U = !1;
@@ -1329,7 +1329,7 @@ class SDF {
   //     c,
   //     u,
   //     p,
-  //     d = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !0),
+  //     d = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !0),
   //     D = {
   //       selectedList: []
   //     };
@@ -1349,7 +1349,7 @@ class SDF {
   //     (p = n.GetTable(!1)) &&
   //     T3Gv.optManager.Table_Format(n, p, n.TextGrow, !1);
   //   for (
-  //     i = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, !0),
+  //     i = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, !0),
   //     u = e.links.length,
   //     r = 0;
   //     r < u;
@@ -1679,7 +1679,7 @@ class SDF {
       ) {
         switch (e.codes[r].code) {
           case D.SDF_C_BLOCKDIRECTORY:
-            t.HasBlockDirectory = !0;
+            t.hasBlockDirectory = !0;
             break;
           case D.SDF_C_SDDATABLOCK:
             ListManager.SDData.LoadDataSets(e.codes[r].data.bytes, !0, !0, t),
@@ -2009,7 +2009,7 @@ class SDF {
         r ||
         (
           null == D &&
-          (D = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, !0)),
+          (D = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, !0)),
           T3Gv.optManager.InsertLink(D, s, S, ConstantData.LinkFlags.SED_L_MOVE)
         ),
         a.IsVisio &&
@@ -2120,15 +2120,15 @@ class SDF {
   //     0 === a.WindowSettings.wscale ? a.WindowSettings.wscale = 1 : a.WindowSettings.wscale /= 1000,
   //     a.WindowSettings.wflags = e.codes[t].data.wflags,
   //     null == e.codes[t].data.longflags ? a.IgnoreHeader ||
-  //       (T3Gv.optManager.theContentHeader.flags = e.codes[t].data.flags) : a.IgnoreHeader ||
+  //       (T3Gv.optManager.contentHeader.flags = e.codes[t].data.flags) : a.IgnoreHeader ||
   //     (
-  //       T3Gv.optManager.theContentHeader.flags = e.codes[t].data.longflags
+  //       T3Gv.optManager.contentHeader.flags = e.codes[t].data.longflags
   //     ),
   //     null != e.codes[t].data.dateformat &&
   //     (
   //       a.IgnoreHeader ||
   //       (
-  //         T3Gv.optManager.theContentHeader.dateformat = e.codes[t].data.dateformat
+  //         T3Gv.optManager.contentHeader.dateformat = e.codes[t].data.dateformat
   //       )
   //     ),
   //     t++;
@@ -2148,30 +2148,30 @@ class SDF {
   //       case r.SDF_C_SYMBOLSEARCHSTRING:
   //         a.IgnoreHeader ||
   //           (
-  //             T3Gv.optManager.theContentHeader.SymbolSearchString = e.codes[t].data.name
+  //             T3Gv.optManager.contentHeader.SymbolSearchString = e.codes[t].data.name
   //           );
   //         break;
   //       case r.SDF_C_PARENTPAGEID:
   //         a.IgnoreHeader ||
   //           (
-  //             T3Gv.optManager.theContentHeader.ParentPageID = e.codes[t].data.name
+  //             T3Gv.optManager.contentHeader.ParentPageID = e.codes[t].data.name
   //           );
   //         break;
   //       case r.SDF_C_TASKPANEL:
   //         if (a.IgnoreHeader) break;
   //         if (
-  //           T3Gv.optManager.theContentHeader.smartpanelname = e.codes[t].data.name,
-  //           SDF.UnsupportedPanels.indexOf(T3Gv.optManager.theContentHeader.smartpanelname) >= 0
+  //           T3Gv.optManager.contentHeader.smartpanelname = e.codes[t].data.name,
+  //           SDF.UnsupportedPanels.indexOf(T3Gv.optManager.contentHeader.smartpanelname) >= 0
   //         ) return a.error = SDF.Errors.UnsupportedPanel,
   //           - 1;
   //         (a.AddEMFHash || a.isTemplate) &&
   //           (
-  //             T3Gv.optManager.theContentHeader.smartpanelname = SDF.RemapPanel(T3Gv.optManager.theContentHeader.smartpanelname)
+  //             T3Gv.optManager.contentHeader.smartpanelname = SDF.RemapPanel(T3Gv.optManager.contentHeader.smartpanelname)
   //           );
   //         break;
   //       case r.SDF_C_BUSINESSMODULE:
   //         if (a.IgnoreHeader) break;
-  //         T3Gv.optManager.theContentHeader.BusinessModule = e.codes[t].data.name;
+  //         T3Gv.optManager.contentHeader.BusinessModule = e.codes[t].data.name;
   //         break;
   //       case r.SDF_C_BEGIN_THEME12:
   //         if (a.IgnoreHeader) break;
@@ -2196,22 +2196,22 @@ class SDF {
   //       case r.SDF_C_EXPORTPATH:
   //         a.isTemplate ||
   //           (
-  //             T3Gv.optManager.theContentHeader.exportpath = e.codes[t].data.name,
+  //             T3Gv.optManager.contentHeader.exportpath = e.codes[t].data.name,
   //             ConstantData.DocumentContext.PublishUrl = e.codes[t].data.name
   //           );
   //         break;
   //       case r.SDF_C_DEFAULTLIBS:
   //         if (a.isTemplate) break;
-  //         T3Gv.optManager.theContentHeader.defaultlibs = e.codes[t].data.name;
+  //         T3Gv.optManager.contentHeader.defaultlibs = e.codes[t].data.name;
   //         break;
   //       case r.SDF_C_ORIGTEMPLATE:
-  //         T3Gv.optManager.theContentHeader.originaltemplatename = e.codes[t].data.name;
+  //         T3Gv.optManager.contentHeader.originaltemplatename = e.codes[t].data.name;
   //         break;
   //       case r.SDF_C_PRESENTATION_BACKGROUND:
   //       case r.SDF_C_PRESENTATION_NAME:
   //         break;
   //       case r.SDF_C_IMPORT_SOURCE_PATH:
-  //         T3Gv.optManager.theContentHeader.importSourcePath = e.codes[t].data.name;
+  //         T3Gv.optManager.contentHeader.importSourcePath = e.codes[t].data.name;
   //         break;
   //       case r.SDF_C_LIBLIST:
   //         if (a.IgnoreHeader) break;
@@ -2226,11 +2226,11 @@ class SDF {
   //         a.PVersion,
   //           SDF.SDF_PVERSION804,
   //           a.PVersion < SDF.SDF_PVERSION816 ? (
-  //             T3Gv.optManager.theContentHeader.nonworkingdays = ConstantData.Defines.DEFAULT_NONWORKINGDAYS,
-  //             T3Gv.optManager.theContentHeader.holidaymask = 0
+  //             T3Gv.optManager.contentHeader.nonworkingdays = ConstantData.Defines.DEFAULT_NONWORKINGDAYS,
+  //             T3Gv.optManager.contentHeader.holidaymask = 0
   //           ) : (
-  //             T3Gv.optManager.theContentHeader.nonworkingdays = e.codes[t].data.nonworkingdays,
-  //             T3Gv.optManager.theContentHeader.holidaymask = e.codes[t].data.holidaymask
+  //             T3Gv.optManager.contentHeader.nonworkingdays = e.codes[t].data.nonworkingdays,
+  //             T3Gv.optManager.contentHeader.holidaymask = e.codes[t].data.holidaymask
   //           ),
   //           a.shapetoolindex = e.codes[t].data.shapetoolindex,
   //           a.linetoolindex = e.codes[t].data.linetoolindex,
@@ -2253,21 +2253,21 @@ class SDF {
   //         break;
   //       case r.SDF_C_GUIDE:
   //         if (a.IgnoreHeader) break;
-  //         T3Gv.optManager.theContentHeader.smarthelpname = e.codes[t].data.name;
+  //         T3Gv.optManager.contentHeader.smarthelpname = e.codes[t].data.name;
   //         break;
   //       case r.SDF_C_ORGCHARTTABLE:
   //         if (a.IgnoreHeader) break;
   //         (
   //           i = ListManager.WinOrgChartTables.indexOf(e.codes[t].data.name)
-  //         ) >= 0 ? T3Gv.optManager.theContentHeader.orgcharttable = ListManager.OrgChartTables[i] : (
+  //         ) >= 0 ? T3Gv.optManager.contentHeader.orgcharttable = ListManager.OrgChartTables[i] : (
   //           i = ListManager.WinMindMapTables.indexOf(e.codes[t].data.name)
   //         ) >= 0 &&
   //         (
-  //           T3Gv.optManager.theContentHeader.orgcharttable = ListManager.MindMapTables[i]
+  //           T3Gv.optManager.contentHeader.orgcharttable = ListManager.MindMapTables[i]
   //         ),
   //           i < 0 &&
   //           (
-  //             T3Gv.optManager.theContentHeader.orgcharttable = e.codes[t].data.name
+  //             T3Gv.optManager.contentHeader.orgcharttable = e.codes[t].data.name
   //           );
   //         break;
   //       case r.SDF_C_KANBAN_PC_TITLE:
@@ -2275,30 +2275,30 @@ class SDF {
   //         break;
   //       case r.SDF_C_DIMFONT:
   //         if (a.IgnoreHeader) break;
-  //         T3Gv.optManager.theContentHeader.DimensionFont.fontName = e.codes[t].data.lfFaceName,
-  //           T3Gv.optManager.theContentHeader.DimensionFont.fontSize = Math.abs(
+  //         T3Gv.optManager.contentHeader.DimensionFont.fontName = e.codes[t].data.lfFaceName,
+  //           T3Gv.optManager.contentHeader.DimensionFont.fontSize = Math.abs(
   //             Math.round(e.codes[t].data.lfHeight * a.coordScaleFactor * 72 / 100)
   //           ),
-  //           T3Gv.optManager.theContentHeader.DimensionFont.face = 0,
-  //           T3Gv.optManager.theContentHeader.DimensionFont.face = Utils2.SetFlag(
-  //             T3Gv.optManager.theContentHeader.DimensionFont.face,
+  //           T3Gv.optManager.contentHeader.DimensionFont.face = 0,
+  //           T3Gv.optManager.contentHeader.DimensionFont.face = Utils2.SetFlag(
+  //             T3Gv.optManager.contentHeader.DimensionFont.face,
   //             ConstantData.TextFace.Italic,
   //             e.codes[t].data.lfItalic
   //           ),
-  //           T3Gv.optManager.theContentHeader.DimensionFont.face = Utils2.SetFlag(
-  //             T3Gv.optManager.theContentHeader.DimensionFont.face,
+  //           T3Gv.optManager.contentHeader.DimensionFont.face = Utils2.SetFlag(
+  //             T3Gv.optManager.contentHeader.DimensionFont.face,
   //             ConstantData.TextFace.Bold,
   //             e.codes[t].data.lfWeight > 400
   //           ),
   //           e.codes[t].data.lfUnderline &&
   //           (
-  //             T3Gv.optManager.theContentHeader.DimensionFont.face = Utils2.SetFlag(
-  //               T3Gv.optManager.theContentHeader.DimensionFont.face,
+  //             T3Gv.optManager.contentHeader.DimensionFont.face = Utils2.SetFlag(
+  //               T3Gv.optManager.contentHeader.DimensionFont.face,
   //               ConstantData.TextFace.Underline,
   //               e.codes[t].data.lfUnderline
   //             )
   //           ),
-  //           T3Gv.optManager.theContentHeader.DimensionFontStyle = SDF.LogFontToFontStyle(T3Gv.optManager.theContentHeader.DimensionFont),
+  //           T3Gv.optManager.contentHeader.DimensionFontStyle = SDF.LogFontToFontStyle(T3Gv.optManager.contentHeader.DimensionFont),
   //           0;
   //         break;
   //       default:
@@ -2336,29 +2336,29 @@ class SDF {
 
   // static ReadPage(e, t) {
   //   null == e.lpapersize ? (
-  //     T3Gv.optManager.theContentHeader.Page.papersize.x = SDF.ToSDJSCoords(e.papersize.x, t.coordScaleFactor),
-  //     T3Gv.optManager.theContentHeader.Page.papersize.y = SDF.ToSDJSCoords(e.papersize.y, t.coordScaleFactor)
+  //     T3Gv.optManager.contentHeader.Page.papersize.x = SDF.ToSDJSCoords(e.papersize.x, t.coordScaleFactor),
+  //     T3Gv.optManager.contentHeader.Page.papersize.y = SDF.ToSDJSCoords(e.papersize.y, t.coordScaleFactor)
   //   ) : (
-  //     T3Gv.optManager.theContentHeader.Page.papersize.x = SDF.ToSDJSCoords(e.lpapersize.x, t.coordScaleFactor),
-  //     T3Gv.optManager.theContentHeader.Page.papersize.y = SDF.ToSDJSCoords(e.lpapersize.y, t.coordScaleFactor)
+  //     T3Gv.optManager.contentHeader.Page.papersize.x = SDF.ToSDJSCoords(e.lpapersize.x, t.coordScaleFactor),
+  //     T3Gv.optManager.contentHeader.Page.papersize.y = SDF.ToSDJSCoords(e.lpapersize.y, t.coordScaleFactor)
   //   ),
-  //     T3Gv.optManager.theContentHeader.Page.margins.left = SDF.ToSDJSCoords(e.margins.left, t.coordScaleFactor),
-  //     T3Gv.optManager.theContentHeader.Page.margins.top = SDF.ToSDJSCoords(e.margins.top, t.coordScaleFactor),
-  //     T3Gv.optManager.theContentHeader.Page.margins.right = SDF.ToSDJSCoords(e.margins.right, t.coordScaleFactor),
-  //     T3Gv.optManager.theContentHeader.Page.margins.bottom = SDF.ToSDJSCoords(e.margins.bottom, t.coordScaleFactor),
-  //     T3Gv.optManager.theContentHeader.Page.printflags = e.printflags,
-  //     null == e.printscale ? T3Gv.optManager.theContentHeader.Page.printscale = 0 : T3Gv.optManager.theContentHeader.Page.printscale = e.printscale,
-  //     T3Gv.optManager.theContentHeader.Page.landscape = e.landscape,
+  //     T3Gv.optManager.contentHeader.Page.margins.left = SDF.ToSDJSCoords(e.margins.left, t.coordScaleFactor),
+  //     T3Gv.optManager.contentHeader.Page.margins.top = SDF.ToSDJSCoords(e.margins.top, t.coordScaleFactor),
+  //     T3Gv.optManager.contentHeader.Page.margins.right = SDF.ToSDJSCoords(e.margins.right, t.coordScaleFactor),
+  //     T3Gv.optManager.contentHeader.Page.margins.bottom = SDF.ToSDJSCoords(e.margins.bottom, t.coordScaleFactor),
+  //     T3Gv.optManager.contentHeader.Page.printflags = e.printflags,
+  //     null == e.printscale ? T3Gv.optManager.contentHeader.Page.printscale = 0 : T3Gv.optManager.contentHeader.Page.printscale = e.printscale,
+  //     T3Gv.optManager.contentHeader.Page.landscape = e.landscape,
   //     null == e.MinSize ? (
-  //       T3Gv.optManager.theContentHeader.Page.minsize.x = T3Gv.optManager.theContentHeader.Page.papersize.x - T3Gv.optManager.theContentHeader.Page.margins.left - T3Gv.optManager.theContentHeader.Page.margins.right,
-  //       T3Gv.optManager.theContentHeader.Page.minsize.y = T3Gv.optManager.theContentHeader.Page.papersize.y - T3Gv.optManager.theContentHeader.Page.margins.top - T3Gv.optManager.theContentHeader.Page.margins.bottom
+  //       T3Gv.optManager.contentHeader.Page.minsize.x = T3Gv.optManager.contentHeader.Page.papersize.x - T3Gv.optManager.contentHeader.Page.margins.left - T3Gv.optManager.contentHeader.Page.margins.right,
+  //       T3Gv.optManager.contentHeader.Page.minsize.y = T3Gv.optManager.contentHeader.Page.papersize.y - T3Gv.optManager.contentHeader.Page.margins.top - T3Gv.optManager.contentHeader.Page.margins.bottom
   //     ) : (
-  //       T3Gv.optManager.theContentHeader.Page.minsize.x = SDF.ToSDJSCoords(e.MinSize.x, t.coordScaleFactor),
-  //       T3Gv.optManager.theContentHeader.Page.minsize.y = SDF.ToSDJSCoords(e.MinSize.y, t.coordScaleFactor)
+  //       T3Gv.optManager.contentHeader.Page.minsize.x = SDF.ToSDJSCoords(e.MinSize.x, t.coordScaleFactor),
+  //       T3Gv.optManager.contentHeader.Page.minsize.y = SDF.ToSDJSCoords(e.MinSize.y, t.coordScaleFactor)
   //     ),
   //     t.PaperType = SDJS.DocumentHandler.PrintHandler.CalcPaperTypeFromSize(
-  //       T3Gv.optManager.theContentHeader.Page.papersize.x,
-  //       T3Gv.optManager.theContentHeader.Page.papersize.y
+  //       T3Gv.optManager.contentHeader.Page.papersize.x,
+  //       T3Gv.optManager.contentHeader.Page.papersize.y
   //     )
   // }
 
@@ -2513,8 +2513,8 @@ class SDF {
   //     n = - 1,
   //     o = - 1;
   //   for (
-  //     T3Gv.optManager.theContentHeader.lp_list.lib.length = 0,
-  //     T3Gv.optManager.theContentHeader.lp_list.selected = e.codes[t].data.selected,
+  //     T3Gv.optManager.contentHeader.lp_list.lib.length = 0,
+  //     T3Gv.optManager.contentHeader.lp_list.selected = e.codes[t].data.selected,
   //     a.SearchResults = [],
   //     a.SearchLibs = [],
   //     t++;
@@ -2525,33 +2525,33 @@ class SDF {
   //         a.CurrentSymbol = e.codes[t].data.name;
   //         break;
   //       case r.SDF_C_LIBLIST_PATH:
-  //         T3Gv.optManager.theContentHeader.lp_list.lib.push(new ListManager.LibListEntry(e.codes[t].data.name)),
+  //         T3Gv.optManager.contentHeader.lp_list.lib.push(new ListManager.LibListEntry(e.codes[t].data.name)),
   //           n++;
   //         break;
   //       case r.SDF_C_LIBLIST_GUID:
-  //         T3Gv.optManager.theContentHeader.lp_list.lib.push(new ListManager.LibListEntry('')),
+  //         T3Gv.optManager.contentHeader.lp_list.lib.push(new ListManager.LibListEntry('')),
   //           n++,
-  //           T3Gv.optManager.theContentHeader.lp_list.lib[n].libGuid = e.codes[t].data.name;
+  //           T3Gv.optManager.contentHeader.lp_list.lib[n].libGuid = e.codes[t].data.name;
   //         break;
   //       case r.SDF_C_LIBLIST_ENTRY:
   //         n >= 0 &&
   //           (
-  //             T3Gv.optManager.theContentHeader.lp_list.lib[n].scrollpos = e.codes[t].data.value
+  //             T3Gv.optManager.contentHeader.lp_list.lib[n].scrollpos = e.codes[t].data.value
   //           );
   //         break;
   //       case r.SDF_C_LIB_COLLAPSED:
   //         n >= 0 &&
   //           (
-  //             T3Gv.optManager.theContentHeader.lp_list.lib[n].Collapsed = e.codes[t].data.value
+  //             T3Gv.optManager.contentHeader.lp_list.lib[n].Collapsed = e.codes[t].data.value
   //           );
   //         break;
   //       case r.SDF_C_SEARCHLIB:
   //         i = e.codes[t].data.name,
   //           t = SDF.ReadSearchResultLibrary(e, t, a, r),
-  //           T3Gv.optManager.theContentHeader.lp_list.lib.push(new ListManager.LibListEntry('')),
+  //           T3Gv.optManager.contentHeader.lp_list.lib.push(new ListManager.LibListEntry('')),
   //           n++,
-  //           T3Gv.optManager.theContentHeader.lp_list.lib[n].SearchResults = !0,
-  //           T3Gv.optManager.theContentHeader.lp_list.lib[n].libGuid = i;
+  //           T3Gv.optManager.contentHeader.lp_list.lib[n].SearchResults = !0,
+  //           T3Gv.optManager.contentHeader.lp_list.lib[n].libGuid = i;
   //         break;
   //       case r.SDF_C_LIBLIST_SEARCH_RESULT_ID:
   //         a.SearchResults.push(new ListManager.LibListEntry(e.codes[t].data.name)),
@@ -2971,7 +2971,7 @@ class SDF {
     }
     return void 0 !== n &&
       (
-        e.GradientFlags = T3Gv.optManager.SD_AddRichGradient(r.RichGradients, n)
+        e.GradientFlags = T3Gv.optManager.SD_AddRichGradient(r.richGradients, n)
       ),
       a
   }
@@ -3090,7 +3090,7 @@ class SDF {
   static FixDefaults(e, t) {
     var a = ConstantData.SessionFlags;
     t.isSymbol ||
-      'Genograms' === T3Gv.optManager.theContentHeader.smartpanelname &&
+      'Genograms' === T3Gv.optManager.contentHeader.smartpanelname &&
       (
         e.flags = Utils2.SetFlag(e.flags, a.SEDS_LLink, !0),
         e.flags = Utils2.SetFlag(e.flags, a.SEDS_HideConnExpand, !0)
@@ -4983,7 +4983,7 @@ class SDF {
   //     o.ReadingGroup = !0,
   //     o.imageids = a.imageids,
   //     o.usedimageids = a.usedimageids,
-  //     o.RichGradients = a.RichGradients,
+  //     o.richGradients = a.richGradients,
   //     o.IsVisio = a.IsVisio,
   //     o.PVersion = a.PVersion,
   //     o.FVersion = a.FVersion,
@@ -5029,7 +5029,7 @@ class SDF {
   //         ListManager.DataSetNameList[ListManager.DataSetNameListIndexes.DATASET_FIELDEDDATA]
   //       ) >= 0
   //     ) {
-  //       var s = T3Gv.objectStore.GetObject(T3Gv.optManager.theContentHeader.SDDataID);
+  //       var s = T3Gv.objectStore.GetObject(T3Gv.optManager.contentHeader.SDDataID);
   //       if (a.SDData) if (s) {
   //         var l = s.Data.SDData;
   //         s.Data.SDData = a.SDData
@@ -5039,12 +5039,12 @@ class SDF {
   //           SDData: a.SDData
   //         }
   //       ),
-  //         T3Gv.optManager.theContentHeader.SDDataID = s.ID;
+  //         T3Gv.optManager.contentHeader.SDDataID = s.ID;
   //       T3Gv.optManager.SDData_Transfer(o.zList, o.SDData, !1),
   //         l &&
   //         (s.Data.SDData = l)
   //     }
-  //     return e.ConvertToNative(o.RichGradients, !1),
+  //     return e.ConvertToNative(o.richGradients, !1),
   //       0
   //   }
   //   return SDF.Errors.BadFormat
@@ -7053,9 +7053,9 @@ class SDF {
 
   static WriteSelect(e, t, a, r, i) {
     var n = new SDF.WResult;
-    n.sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
-      n.tLMB = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1),
-      n.ctp = T3Gv.optManager.theContentHeader,
+    n.sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1),
+      n.tLMB = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.layersManagerBlockId, !1),
+      n.ctp = T3Gv.optManager.contentHeader,
       n.selectonly = !0,
       r &&
       (n.KeepSegDir = !0);
@@ -7063,7 +7063,7 @@ class SDF {
     return n.docDpi = T3Gv.docUtil.svgDoc.docInfo.docDpi,
       n.zList = e,
       n.noTables = t,
-      n.RichGradients = T3Gv.optManager.RichGradients,
+      n.richGradients = T3Gv.optManager.richGradients,
       T3Gv.optManager.UpdateObjectLayerIndices(n),
       SDF.WriteBuffer(n, !0, !0, i)
   }
@@ -7100,7 +7100,7 @@ class SDF {
       this.delta = 0,
       this.TextureList = [],
       this.LibraryPathTarget = '',
-      this.RichGradients = [],
+      this.richGradients = [],
       this.WriteVisio = !1,
       this.KeepSegDir = !1,
       this.WriteWin32 = !1
@@ -7128,7 +7128,7 @@ class SDF {
     ) {
       if (SDF.WriteSelectHeader(n, e), e.error) return null
     } else if (SDF.WriteHeader(n, e, null), e.error) return null;
-    return T3Gv.optManager.theContentHeader.SDDataID >= 0 &&
+    return T3Gv.optManager.contentHeader.SDDataID >= 0 &&
       !r &&
       SDF.WriteSDDATA(n, e),
       SDF.WriteDraw(n, e),
@@ -7186,7 +7186,7 @@ class SDF {
         t.WriteBlocks ||
         SDF.WriteString(
           e,
-          T3Gv.optManager.theContentHeader.importSourcePath,
+          T3Gv.optManager.contentHeader.importSourcePath,
           i.SDF_C_IMPORT_SOURCE_PATH,
           t
         ),
@@ -7216,7 +7216,7 @@ class SDF {
       //   - 1 == a.indexOf(i.SDF_C_TASKPANEL) ||
       //   SDF.WriteString(
       //     e,
-      //     T3Gv.optManager.theContentHeader.smartpanelname,
+      //     T3Gv.optManager.contentHeader.smartpanelname,
       //     i.SDF_C_TASKPANEL,
       //     t
       //   )
@@ -7225,7 +7225,7 @@ class SDF {
       - 1 == a.indexOf(i.SDF_C_BUSINESSMODULE) ||
       SDF.WriteString(
         e,
-        T3Gv.optManager.theContentHeader.BusinessModule,
+        T3Gv.optManager.contentHeader.BusinessModule,
         i.SDF_C_BUSINESSMODULE,
         t
       ),
@@ -7233,7 +7233,7 @@ class SDF {
       - 1 == a.indexOf(i.SDF_C_SYMBOLSEARCHSTRING) ||
       SDF.WriteString(
         e,
-        T3Gv.optManager.theContentHeader.SymbolSearchString,
+        T3Gv.optManager.contentHeader.SymbolSearchString,
         FileParser.SDROpCodesByName.SDF_C_SYMBOLSEARCHSTRING,
         t
       ),
@@ -7242,17 +7242,17 @@ class SDF {
       // SDF.WriteUIInfo(e, t),
       null != a &&
       - 1 == a.indexOf(i.SDF_C_ORGCHARTTABLE) ||
-      T3Gv.optManager.theContentHeader.orgcharttable.length &&
+      T3Gv.optManager.contentHeader.orgcharttable.length &&
       (
         (
-          r = ListManager.OrgChartTables.indexOf(T3Gv.optManager.theContentHeader.orgcharttable)
+          r = ListManager.OrgChartTables.indexOf(T3Gv.optManager.contentHeader.orgcharttable)
         ) >= 0 ? SDF.WriteString(
           e,
           ListManager.WinOrgChartTables[r],
           i.SDF_C_ORGCHARTTABLE,
           t
         ) : (
-          r = ListManager.MindMapTables.indexOf(T3Gv.optManager.theContentHeader.orgcharttable)
+          r = ListManager.MindMapTables.indexOf(T3Gv.optManager.contentHeader.orgcharttable)
         ) >= 0 &&
         SDF.WriteString(
           e,
@@ -7263,7 +7263,7 @@ class SDF {
         r < 0 &&
         SDF.WriteString(
           e,
-          T3Gv.optManager.theContentHeader.orgcharttable,
+          T3Gv.optManager.contentHeader.orgcharttable,
           i.SDF_C_ORGCHARTTABLE,
           t
         )
@@ -7274,15 +7274,15 @@ class SDF {
       null == a &&
       SDF.WriteString(
         e,
-        T3Gv.optManager.theContentHeader.smarthelpname,
+        T3Gv.optManager.contentHeader.smarthelpname,
         FileParser.SDROpCodesByName.SDF_C_GUIDE,
         t
       ),
       null == a &&
-      T3Gv.optManager.theContentHeader.ParentPageID.length &&
+      T3Gv.optManager.contentHeader.ParentPageID.length &&
       SDF.WriteString(
         e,
-        T3Gv.optManager.theContentHeader.ParentPageID,
+        T3Gv.optManager.contentHeader.ParentPageID,
         FileParser.SDROpCodesByName.SDF_C_PARENTPAGEID,
         t
       ),
@@ -7453,10 +7453,10 @@ class SDF {
       linetoolindex: SDF.JStoWinLineTool(ConstantData.DocumentContext.LineTool),
       shapetoolindex: ConstantData.DocumentContext.ShapeTool,
       datetime2007: 0,
-      holidaymask: T3Gv.optManager.theContentHeader.holidaymask,
+      holidaymask: T3Gv.optManager.contentHeader.holidaymask,
       datetime1: 0,
       datetime2: 0,
-      nonworkingdays: T3Gv.optManager.theContentHeader.nonworkingdays,
+      nonworkingdays: T3Gv.optManager.contentHeader.nonworkingdays,
       swimlaneformat: ConstantData.DocumentContext.SwimlaneFormat,
       autocontainer: r,
       actascontainer: i,
@@ -7513,7 +7513,7 @@ class SDF {
   //     r,
   //     i,
   //     n,
-  //     o = T3Gv.optManager.theContentHeader.lp_list;
+  //     o = T3Gv.optManager.contentHeader.lp_list;
   //   r = o.lib.length,
   //     o.selected;
   //   var s = {
@@ -8680,7 +8680,7 @@ class SDF {
           SDF.Write_LENGTH(e, o);
         break;
       case ConstantData.FillTypes.SDFILL_RICHGRADIENT:
-        if (i = r.RichGradients[t.GradientFlags]) {
+        if (i = r.richGradients[t.GradientFlags]) {
           n = i.stops.length;
           var u,
             p = {
@@ -9451,7 +9451,7 @@ class SDF {
   //   var a;
   //   a = SDF.Write_CODE(e, FileParser.SDROpCodesByName.SDF_C_SDDATA64C);
   //   var r = '';
-  //   r = T3Gv.optManager.theContentHeader.SDDataID >= 0 ? ListManager.SDData.SaveDataSets(!0, !0) : '<SDDATA></SDDATA>',
+  //   r = T3Gv.optManager.contentHeader.SDDataID >= 0 ? ListManager.SDData.SaveDataSets(!0, !0) : '<SDDATA></SDDATA>',
   //     e.writeUCS2String(r, T3DataStream.LITTLE_ENDIAN, r.length + 1),
   //     SDF.Write_LENGTH(e, a)
   // }
@@ -10136,9 +10136,9 @@ class SDF {
   //       l = new T3DataStream(s),
   //       S = 6;
   //     l.endianness = T3DataStream.LITTLE_ENDIAN,
-  //       o.sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
-  //       o.ctp = T3Gv.optManager.theContentHeader,
-  //       o.tLMB = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1),
+  //       o.sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1),
+  //       o.ctp = T3Gv.optManager.contentHeader,
+  //       o.tLMB = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.layersManagerBlockId, !1),
   //       SDUI.Commands.MainController.SymbolLibraryBrowser.CurrentLibraryPath ? o.LibraryPathTarget = SDUI.Commands.MainController.SymbolLibraryBrowser.CurrentLibraryPath : o.LibraryPathTarget = SDUI.Commands.MainController.SymbolLibraryBrowser.LibraryPathTarget,
   //       o.WriteBlocks = !0;
   //     var c = T3Gv.docUtil.svgDoc.GetWorkArea();
@@ -10149,40 +10149,40 @@ class SDF {
   //       T3Gv.docUtil.scaleToFit ? o.WindowSettings.wflags = ListManager.WFlags.W_Stf : T3Gv.docUtil.scaleToPage &&
   //         (o.WindowSettings.wflags = ListManager.WFlags.W_Page),
   //       o.docDpi = T3Gv.docUtil.svgDoc.docInfo.docDpi,
-  //       T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
-  //         T3Gv.optManager.theContentHeader.flags,
+  //       T3Gv.optManager.contentHeader.flags = Utils2.SetFlag(
+  //         T3Gv.optManager.contentHeader.flags,
   //         ConstantData.ContentHeaderFlags.CT_ShowGrid,
   //         T3Gv.docUtil.docConfig.showGrid
   //       ),
-  //       T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
-  //         T3Gv.optManager.theContentHeader.flags,
+  //       T3Gv.optManager.contentHeader.flags = Utils2.SetFlag(
+  //         T3Gv.optManager.contentHeader.flags,
   //         ConstantData.ContentHeaderFlags.CT_ShowRulers,
   //         T3Gv.docUtil.docConfig.showRulers
   //       ),
-  //       T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
-  //         T3Gv.optManager.theContentHeader.flags,
+  //       T3Gv.optManager.contentHeader.flags = Utils2.SetFlag(
+  //         T3Gv.optManager.contentHeader.flags,
   //         ConstantData.ContentHeaderFlags.CT_SnapToGridC,
   //         T3Gv.docUtil.docConfig.centerSnap &&
   //         T3Gv.docUtil.docConfig.enableSnap
   //       ),
-  //       T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
-  //         T3Gv.optManager.theContentHeader.flags,
+  //       T3Gv.optManager.contentHeader.flags = Utils2.SetFlag(
+  //         T3Gv.optManager.contentHeader.flags,
   //         ConstantData.ContentHeaderFlags.CT_SnapToGridTL,
   //         !T3Gv.docUtil.docConfig.centerSnap &&
   //         T3Gv.docUtil.docConfig.enableSnap
   //       ),
-  //       T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
-  //         T3Gv.optManager.theContentHeader.flags,
+  //       T3Gv.optManager.contentHeader.flags = Utils2.SetFlag(
+  //         T3Gv.optManager.contentHeader.flags,
   //         ConstantData.ContentHeaderFlags.CT_ShowPageDividers,
   //         T3Gv.docUtil.docConfig.showPageDivider
   //       ),
-  //       T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
-  //         T3Gv.optManager.theContentHeader.flags,
+  //       T3Gv.optManager.contentHeader.flags = Utils2.SetFlag(
+  //         T3Gv.optManager.contentHeader.flags,
   //         ConstantData.ContentHeaderFlags.CT_SnapToShapes_Off,
   //         0 == T3Gv.docUtil.docConfig.snapToShapes
   //       ),
-  //       T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
-  //         T3Gv.optManager.theContentHeader.flags,
+  //       T3Gv.optManager.contentHeader.flags = Utils2.SetFlag(
+  //         T3Gv.optManager.contentHeader.flags,
   //         ConstantData.ContentHeaderFlags.CT_ShowRulers,
   //         T3Gv.docUtil.docConfig.showRulers
   //       ),
@@ -10190,8 +10190,8 @@ class SDF {
   //       o.ctp.smartpanelname = SDF.ToSDWinPanelName(ConstantData.DocumentContext.CurrentSmartPanel),
   //       o.rulerConfig = T3Gv.docUtil.rulerConfig,
   //       o.rulerConfig.show = T3Gv.docUtil.docConfig.showRulers,
-  //       o.fontlist = T3Gv.optManager.theContentHeader.FontList,
-  //       o.RichGradients = T3Gv.optManager.RichGradients,
+  //       o.fontlist = T3Gv.optManager.contentHeader.FontList,
+  //       o.richGradients = T3Gv.optManager.richGradients,
   //       l.endianness = T3DataStream.LITTLE_ENDIAN;
   //     var u = T3Gv.objectStore.GetObjects(ConstantData.StoredObjectType.BLOBBYTES_OBJECT),
   //       p = T3Gv.objectStore.GetObjects(ConstantData.StoredObjectType.LM_TEXT_OBJECT),
@@ -10229,11 +10229,11 @@ class SDF {
   //       a = SDF.WriteHeaderBlock(o, 1, null),
   //       a = SDF.WriteSDPBlock(o, 2),
   //       a = SDF.WriteSDDataBlock(o, 3);
-  //     var T = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1);
+  //     var T = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.layersManagerBlockId, !1);
   //     for (
   //       a = SDF.WriteLayersBlock(T, o, 4),
 
-  //       e = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, !1),
+  //       e = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, !1),
   //       a = SDF.WriteLinksBlock(e, o, 5),
 
   //       r = u.length,
@@ -10469,7 +10469,7 @@ class SDF {
         break;
       case o.SDDATA_OBJECT:
         if (a) return !0;
-        T3Gv.optManager.theContentHeader.SDDataID >= 0 &&
+        T3Gv.optManager.contentHeader.SDDataID >= 0 &&
           (n = SDF.WriteSDDataBlock(t, r));
         break;
       case o.LAYERS_MANAGER_OBJECT:
@@ -10508,11 +10508,11 @@ class SDF {
       null == a &&
         (a = e),
         p = (d = T3Gv.stateManager.States[e].StoredObjects).length,
-        D.sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
-        D.ctp = T3Gv.optManager.theContentHeader,
-        D.tLMB = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1),
-        D.fontlist = T3Gv.optManager.theContentHeader.FontList,
-        D.RichGradients = T3Gv.optManager.RichGradients,
+        D.sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1),
+        D.ctp = T3Gv.optManager.contentHeader,
+        D.tLMB = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.layersManagerBlockId, !1),
+        D.fontlist = T3Gv.optManager.contentHeader.FontList,
+        D.richGradients = T3Gv.optManager.richGradients,
 
 
         D.WriteBlocks = !0;
@@ -10526,40 +10526,40 @@ class SDF {
           (D.WindowSettings.wflags = ListManager.WFlags.W_Page),
         D.docDpi = T3Gv.docUtil.svgDoc.docInfo.docDpi,
         1 === D.WindowSettings.wscale ? D.WindowSettings.wscale = 0 : D.WindowSettings.wscale *= 1000,
-        T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
-          T3Gv.optManager.theContentHeader.flags,
+        T3Gv.optManager.contentHeader.flags = Utils2.SetFlag(
+          T3Gv.optManager.contentHeader.flags,
           ConstantData.ContentHeaderFlags.CT_ShowGrid,
           T3Gv.docUtil.docConfig.showGrid
         ),
-        T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
-          T3Gv.optManager.theContentHeader.flags,
+        T3Gv.optManager.contentHeader.flags = Utils2.SetFlag(
+          T3Gv.optManager.contentHeader.flags,
           ConstantData.ContentHeaderFlags.CT_ShowRulers,
           T3Gv.docUtil.docConfig.showRulers
         ),
-        T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
-          T3Gv.optManager.theContentHeader.flags,
+        T3Gv.optManager.contentHeader.flags = Utils2.SetFlag(
+          T3Gv.optManager.contentHeader.flags,
           ConstantData.ContentHeaderFlags.CT_SnapToGridC,
           T3Gv.docUtil.docConfig.centerSnap &&
           T3Gv.docUtil.docConfig.enableSnap
         ),
-        T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
-          T3Gv.optManager.theContentHeader.flags,
+        T3Gv.optManager.contentHeader.flags = Utils2.SetFlag(
+          T3Gv.optManager.contentHeader.flags,
           ConstantData.ContentHeaderFlags.CT_SnapToGridTL,
           !T3Gv.docUtil.docConfig.centerSnap &&
           T3Gv.docUtil.docConfig.enableSnap
         ),
-        T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
-          T3Gv.optManager.theContentHeader.flags,
+        T3Gv.optManager.contentHeader.flags = Utils2.SetFlag(
+          T3Gv.optManager.contentHeader.flags,
           ConstantData.ContentHeaderFlags.CT_ShowPageDividers,
           T3Gv.docUtil.docConfig.showPageDivider
         ),
-        T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
-          T3Gv.optManager.theContentHeader.flags,
+        T3Gv.optManager.contentHeader.flags = Utils2.SetFlag(
+          T3Gv.optManager.contentHeader.flags,
           ConstantData.ContentHeaderFlags.CT_SnapToShapes_Off,
           0 == T3Gv.docUtil.docConfig.snapToShapes
         ),
-        T3Gv.optManager.theContentHeader.flags = Utils2.SetFlag(
-          T3Gv.optManager.theContentHeader.flags,
+        T3Gv.optManager.contentHeader.flags = Utils2.SetFlag(
+          T3Gv.optManager.contentHeader.flags,
           ConstantData.ContentHeaderFlags.CT_ShowRulers,
           T3Gv.docUtil.docConfig.showRulers
         ),
@@ -10693,9 +10693,9 @@ class SDF {
       ),
       e.sdp.background.Paint.FillType !== ConstantData.FillTypes.SDFILL_TRANSPARENT &&
       SDF.WriteSDFill(n, e.sdp.background, e),
-      (r = T3Gv.optManager.TextureList.Textures.length) > T3Gv.optManager.NStdTextures
+      (r = T3Gv.optManager.TextureList.Textures.length) > T3Gv.optManager.nStdTextures
     ) {
-      for (a = T3Gv.optManager.NStdTextures; a < r; a++) e.TextureList.push(a);
+      for (a = T3Gv.optManager.nStdTextures; a < r; a++) e.TextureList.push(a);
       SDF.WriteTextureList(n, T3Gv.optManager.TextureList, e)
     }
     return SDF.WriteRulers(n, e),

@@ -62,14 +62,14 @@ class DocHandler1 {
   public rulerGuideWinPos: any;
   public rulerGuideScrollTimer: any;
   public rulerInDrag: boolean;
-  public theContentHeader: ContentHeader;
+  public contentHeader: ContentHeader;
   public optHandler: any;
 
   //#endregion
 
   constructor() {
     this.InitDocumentConfig();
-    this.theContentHeader = new ContentHeader();
+    this.contentHeader = new ContentHeader();
   }
 
   InitializeWorkArea = (workArea) => {
@@ -209,8 +209,8 @@ class DocHandler1 {
         this.ResetRulers())) : t = {
           width: (a = this.svgDoc.GetWorkArea()).docScreenWidth,
           height: a.docScreenHeight
-        } : this.scaleToPage && e.width > 0 && e.height > 0 ? (r = this.theContentHeader.Page.papersize.x - (this.theContentHeader.Page.margins.left + this.theContentHeader.Page.margins.right),
-          i = this.theContentHeader.Page.papersize.y - (this.theContentHeader.Page.margins.top + this.theContentHeader.Page.margins.bottom),
+        } : this.scaleToPage && e.width > 0 && e.height > 0 ? (r = this.contentHeader.Page.papersize.x - (this.contentHeader.Page.margins.left + this.contentHeader.Page.margins.right),
+          i = this.contentHeader.Page.papersize.y - (this.contentHeader.Page.margins.top + this.contentHeader.Page.margins.bottom),
           t = {
             width: (a = this.svgDoc.CalcScaleToFit(e.width - 20, e.height - 20, r, i)).width,
             height: a.height
@@ -669,8 +669,8 @@ class DocHandler1 {
     const majorUnit = this.rulerSettings.major / unitConversion;
     const gridSpacing = this.rulerSettings.nGrid * scaledRuler;
 
-    const pageWidth = this.theContentHeader.Page.papersize.x - (this.theContentHeader.Page.margins.left + this.theContentHeader.Page.margins.right) / 2;
-    const pageHeight = this.theContentHeader.Page.papersize.y - (this.theContentHeader.Page.margins.top + this.theContentHeader.Page.margins.bottom) / 2;
+    const pageWidth = this.contentHeader.Page.papersize.x - (this.contentHeader.Page.margins.left + this.contentHeader.Page.margins.right) / 2;
+    const pageHeight = this.contentHeader.Page.papersize.y - (this.contentHeader.Page.margins.top + this.contentHeader.Page.margins.bottom) / 2;
 
     const docWidth = Utils.RoundCoordLP(workArea.docScreenWidth + 2 * pageWidth * workArea.docToScreenScale);
     const docHeight = Utils.RoundCoordLP(workArea.docScreenHeight + 2 * pageHeight * workArea.docToScreenScale);
@@ -751,8 +751,8 @@ class DocHandler1 {
       const path = this.svgDoc.CreateShape(Models.CreateShapeType.PATH);
       let pathData = '';
 
-      const pageSize = this.theContentHeader.Page.papersize;
-      const margins = this.theContentHeader.Page.margins;
+      const pageSize = this.contentHeader.Page.papersize;
+      const margins = this.contentHeader.Page.margins;
 
       if (pageSize.x - (margins.left + margins.right) <= 0) {
         margins.left = 50;

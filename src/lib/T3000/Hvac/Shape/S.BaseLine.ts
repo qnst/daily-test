@@ -1197,8 +1197,8 @@ class BaseLine extends BaseDrawingObject {
     const docCoords = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(T3Gv.optManager.autoScrollXPos, T3Gv.optManager.autoScrollYPos);
     console.log("= S.BaseLine: Converted document coordinates:", docCoords);
 
-    // Track the pin point if PinRect is defined
-    if (T3Gv.optManager.PinRect) {
+    // Track the pin point if pinRect is defined
+    if (T3Gv.optManager.pinRect) {
       T3Gv.optManager.PinTrackPoint(docCoords);
     }
 
@@ -1297,14 +1297,14 @@ class BaseLine extends BaseDrawingObject {
     const n = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(event.gesture.center.clientX, event.gesture.center.clientY);
     const o = event.gesture.srcEvent.altKey;
 
-    if (T3Gv.optManager.PinRect) {
+    if (T3Gv.optManager.pinRect) {
       T3Gv.optManager.PinTrackPoint(n);
     }
 
     const adjustedCoords = T3Gv.optManager.DoAutoGrowDrag(n);
     let trackCoords = this.LM_ActionDuringTrack(adjustedCoords);
 
-    t = T3Gv.optManager.LinkParams && T3Gv.optManager.LinkParams.ConnectIndex >= 0;
+    t = T3Gv.optManager.linkParams && T3Gv.optManager.linkParams.ConnectIndex >= 0;
 
     if (T3Gv.optManager.OverrideSnaps(event)) {
       t = true;
@@ -1368,8 +1368,8 @@ class BaseLine extends BaseDrawingObject {
       //     };
       //   }
 
-      //   if (T3Gv.optManager.LinkParams) {
-      //     actionData.LinkParams = Utils1.DeepCopy(T3Gv.optManager.LinkParams);
+      //   if (T3Gv.optManager.linkParams) {
+      //     actionData.linkParams = Utils1.DeepCopy(T3Gv.optManager.linkParams);
       //   }
 
       //   if (this.segl) {
@@ -1486,10 +1486,10 @@ class BaseLine extends BaseDrawingObject {
 
     // Initialize LinkParameters
     linkParams = new LinkParameters();
-    T3Gv.optManager.LinkParams = linkParams;
+    T3Gv.optManager.linkParams = linkParams;
 
     // Retrieve the session pointer
-    sessionPtr = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+    sessionPtr = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
 
     // Set ArraysOnly flag if linking is not allowed
     if (!this.AllowLink()) {
@@ -1513,7 +1513,7 @@ class BaseLine extends BaseDrawingObject {
     }
 
     // Retrieve the links block object pointer
-    const linksBlockPtr = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, false);
+    const linksBlockPtr = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, false);
 
     // Get the hook list for circular targets
     linkParams.lpCircList = T3Gv.optManager.GetHookList(
@@ -1530,7 +1530,7 @@ class BaseLine extends BaseDrawingObject {
       linkParams.lpCircList.push(objectPtr.hooks[0].objid);
     }
 
-    console.log("= S.BaseLine: LM_ActionPreTrack completed with LinkParams:", linkParams);
+    console.log("= S.BaseLine: LM_ActionPreTrack completed with linkParams:", linkParams);
     return true;
   }
 
@@ -1540,7 +1540,7 @@ class BaseLine extends BaseDrawingObject {
 
     const points = [{ x: 0, y: 0 }];
 
-    if (T3Gv.optManager.LinkParams) {
+    if (T3Gv.optManager.linkParams) {
       points[0].x = event.x;
       points[0].y = event.y;
 
@@ -1558,7 +1558,7 @@ class BaseLine extends BaseDrawingObject {
           points,
           true,
           false,
-          T3Gv.optManager.LinkParams.AllowJoin,
+          T3Gv.optManager.linkParams.AllowJoin,
           event
         )) {
           event.x += T3Gv.optManager.dragDeltaX;
@@ -1639,52 +1639,52 @@ class BaseLine extends BaseDrawingObject {
     // Set edit mode to default
     T3Gv.optManager.SetEditMode(ConstantData.EditState.DEFAULT);
 
-    // Check if LinkParams is not null
-    if (T3Gv.optManager.LinkParams) {
+    // Check if linkParams is not null
+    if (T3Gv.optManager.linkParams) {
       // Handle HiliteConnect
-      if (T3Gv.optManager.LinkParams.HiliteConnect >= 0) {
+      if (T3Gv.optManager.linkParams.HiliteConnect >= 0) {
         T3Gv.optManager.HiliteConnect(
-          T3Gv.optManager.LinkParams.HiliteConnect,
-          T3Gv.optManager.LinkParams.ConnectPt,
+          T3Gv.optManager.linkParams.HiliteConnect,
+          T3Gv.optManager.linkParams.ConnectPt,
           false,
           false,
           this.BlockID,
-          T3Gv.optManager.LinkParams.HiliteInside
+          T3Gv.optManager.linkParams.HiliteInside
         );
-        T3Gv.optManager.LinkParams.HiliteConnect = -1;
-        T3Gv.optManager.LinkParams.HiliteInside = null;
+        T3Gv.optManager.linkParams.HiliteConnect = -1;
+        T3Gv.optManager.linkParams.HiliteInside = null;
       }
 
       // Handle HiliteJoin
-      if (T3Gv.optManager.LinkParams.HiliteJoin >= 0) {
+      if (T3Gv.optManager.linkParams.HiliteJoin >= 0) {
         T3Gv.optManager.HiliteConnect(
-          T3Gv.optManager.LinkParams.HiliteJoin,
-          T3Gv.optManager.LinkParams.ConnectPt,
+          T3Gv.optManager.linkParams.HiliteJoin,
+          T3Gv.optManager.linkParams.ConnectPt,
           false,
           true,
           this.BlockID,
           null
         );
-        T3Gv.optManager.LinkParams.HiliteJoin = -1;
+        T3Gv.optManager.linkParams.HiliteJoin = -1;
       }
 
       // Handle JoinIndex
-      if (T3Gv.optManager.LinkParams.JoinIndex >= 0) {
+      if (T3Gv.optManager.linkParams.JoinIndex >= 0) {
         T3Gv.optManager.PolyLJoin(
-          T3Gv.optManager.LinkParams.JoinIndex,
-          T3Gv.optManager.LinkParams.JoinData,
+          T3Gv.optManager.linkParams.JoinIndex,
+          T3Gv.optManager.linkParams.JoinData,
           blockID,
-          T3Gv.optManager.LinkParams.JoinSourceData,
+          T3Gv.optManager.linkParams.JoinSourceData,
           false
         );
-      } else if (T3Gv.optManager.LinkParams.ConnectIndex >= 0 || T3Gv.optManager.LinkParams.InitialHook >= 0) {
+      } else if (T3Gv.optManager.linkParams.ConnectIndex >= 0 || T3Gv.optManager.linkParams.InitialHook >= 0) {
         T3Gv.optManager.UpdateHook(
           blockID,
-          T3Gv.optManager.LinkParams.InitialHook,
-          T3Gv.optManager.LinkParams.ConnectIndex,
-          T3Gv.optManager.LinkParams.HookIndex,
-          T3Gv.optManager.LinkParams.ConnectPt,
-          T3Gv.optManager.LinkParams.ConnectInside
+          T3Gv.optManager.linkParams.InitialHook,
+          T3Gv.optManager.linkParams.ConnectIndex,
+          T3Gv.optManager.linkParams.HookIndex,
+          T3Gv.optManager.linkParams.ConnectPt,
+          T3Gv.optManager.linkParams.ConnectInside
         );
       }
 
@@ -1692,8 +1692,8 @@ class BaseLine extends BaseDrawingObject {
       T3Gv.optManager.SetLinkFlag(blockID, ShapeContant.LinkFlags.SED_L_MOVE);
       T3Gv.optManager.UpdateLinks();
 
-      // Clear LinkParams
-      T3Gv.optManager.LinkParams = null;
+      // Clear linkParams
+      T3Gv.optManager.linkParams = null;
     }
 
     console.log("= S.BaseLine: LM_ActionPostRelease completed for blockID:", blockID);
@@ -1707,11 +1707,11 @@ class BaseLine extends BaseDrawingObject {
     if (isSecondary) {
       actionStoredObjectID = T3Gv.optManager.actionStoredObjectId;
       actionTriggerID = T3Gv.optManager.actionTriggerId;
-      T3Gv.optManager.PinRect = null;
+      T3Gv.optManager.pinRect = null;
       preservedBlock = T3Gv.objectStore.PreserveBlock(actionStoredObjectID);
     } else {
       T3Gv.optManager.SetUIAdaptation(event);
-      T3Gv.optManager.theEventTimestamp = Date.now();
+      T3Gv.optManager.eventTimestamp = Date.now();
       event.stopPropagation();
 
       const overlayElement = T3Gv.optManager.svgOverlayLayer.FindElementByDOMElement(event.currentTarget);
@@ -1728,7 +1728,7 @@ class BaseLine extends BaseDrawingObject {
       actionTriggerID = targetElement.GetID();
       T3Gv.optManager.actionTriggerId = actionTriggerID;
       T3Gv.optManager.actionTriggerData = targetElement.GetUserData();
-      T3Gv.optManager.PinRect = null;
+      T3Gv.optManager.pinRect = null;
     }
 
     if (!isSecondary) {
@@ -1743,7 +1743,7 @@ class BaseLine extends BaseDrawingObject {
     }
 
     let coords = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(event.gesture.center.clientX, event.gesture.center.clientY);
-    let shouldSnap = T3Gv.optManager.LinkParams && T3Gv.optManager.LinkParams.ConnectIndex >= 0;
+    let shouldSnap = T3Gv.optManager.linkParams && T3Gv.optManager.linkParams.ConnectIndex >= 0;
 
     if (T3Gv.optManager.OverrideSnaps(event)) {
       shouldSnap = true;
@@ -1829,7 +1829,7 @@ class BaseLine extends BaseDrawingObject {
 
     // Clear global data properties
     T3Gv.optManager.ob = {};
-    T3Gv.optManager.LinkParams = null;
+    T3Gv.optManager.linkParams = null;
     T3Gv.optManager.actionTriggerId = -1;
     T3Gv.optManager.actionTriggerData = null;
     T3Gv.optManager.actionStoredObjectId = -1;
@@ -1894,8 +1894,8 @@ class BaseLine extends BaseDrawingObject {
       return false;
     }
 
-    if (T3Gv.optManager.theContentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto) {
-      const sessionObject = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+    if (T3Gv.optManager.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto) {
+      const sessionObject = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
       if (rotatedStartPoint.x > sessionObject.dim.x || rotatedStartPoint.y > sessionObject.dim.y || rotatedEndPoint.x > sessionObject.dim.x || rotatedEndPoint.y > sessionObject.dim.y) {
         console.log("= S.BaseLine: Rotation resulted in coordinates outside session dimensions, returning false");
         return false;
@@ -1934,8 +1934,8 @@ class BaseLine extends BaseDrawingObject {
 
   AllowLink() {
 
-    const layersManager = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, false);
-    const session = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+    const layersManager = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.layersManagerBlockId, false);
+    const session = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
 
     const useEdges = layersManager && layersManager.activelayer >= 0 && (layersManager.layers[layersManager.activelayer].flags & ConstantData.LayerFlags.SDLF_UseEdges);
     const fromOverlayLayer = T3Gv.optManager.fromOverlayLayer;
@@ -2923,8 +2923,8 @@ class BaseLine extends BaseDrawingObject {
 
     // Determine if link parameters indicate an active connection
     let hasLinkParams =
-      T3Gv.optManager.LinkParams &&
-      T3Gv.optManager.LinkParams.ConnectIndex >= 0;
+      T3Gv.optManager.linkParams &&
+      T3Gv.optManager.linkParams.ConnectIndex >= 0;
 
     // If override snaps is enabled, force snap behavior
     if (T3Gv.optManager.OverrideSnaps(event)) {
@@ -3068,9 +3068,9 @@ class BaseLine extends BaseDrawingObject {
         return SDUI.Commands.MainController.Shapes.CancelModalOperation();
       }
 
-      // Preserve current LinkParams for messaging output
+      // Preserve current linkParams for messaging output
       const localLinkParams = {
-        LinkParams: Utils1.DeepCopy(T3Gv.optManager.LinkParams)
+        linkParams: Utils1.DeepCopy(T3Gv.optManager.linkParams)
       };
 
       // Complete the drawing by calling LM_DrawPostRelease
@@ -3115,18 +3115,18 @@ class BaseLine extends BaseDrawingObject {
 
     // Initialize variables with readable names
     let hookFlags = this.GetHookFlags();
-    let sessionObj = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+    let sessionObj = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
     let linksBlockObj: any;
     let hookList: Array<{ x: number; y: number; id?: number }> = [{ x: 0, y: 0 }];
     let extraData: any = {}; // for GetHookList
     const allowLink: boolean = this.AllowLink();
 
     if (allowLink) {
-      T3Gv.optManager.LinkParams = new LinkParameters();
+      T3Gv.optManager.linkParams = new LinkParameters();
 
       if (sessionObj) {
         if (!T3Gv.optManager.fromOverlayLayer) {
-          T3Gv.optManager.LinkParams.AllowJoin = sessionObj.flags & ConstantData.SessionFlags.SEDS_FreeHand;
+          T3Gv.optManager.linkParams.AllowJoin = sessionObj.flags & ConstantData.SessionFlags.SEDS_FreeHand;
         }
       }
 
@@ -3140,7 +3140,7 @@ class BaseLine extends BaseDrawingObject {
         T3Gv.optManager.dragDeltaX = 0;
         T3Gv.optManager.dragDeltaY = 0;
 
-        linksBlockObj = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLinksBlockID, false);
+        linksBlockObj = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linksBlockId, false);
 
         // Try to find a connection using the hook list
         if (
@@ -3150,22 +3150,22 @@ class BaseLine extends BaseDrawingObject {
             hookList,
             false,
             false,
-            T3Gv.optManager.LinkParams.AllowJoin,
+            T3Gv.optManager.linkParams.AllowJoin,
             event
           )
         ) {
           // Save connection hook parameters into temporary SConnect* properties
-          T3Gv.optManager.LinkParams.SConnectIndex = T3Gv.optManager.LinkParams.ConnectIndex;
-          T3Gv.optManager.LinkParams.SConnectHookFlag = T3Gv.optManager.LinkParams.ConnectHookFlag;
-          T3Gv.optManager.LinkParams.SConnectInside = T3Gv.optManager.LinkParams.ConnectInside;
-          T3Gv.optManager.LinkParams.SConnectPt.x = T3Gv.optManager.LinkParams.ConnectPt.x;
-          T3Gv.optManager.LinkParams.SConnectPt.y = T3Gv.optManager.LinkParams.ConnectPt.y;
+          T3Gv.optManager.linkParams.SConnectIndex = T3Gv.optManager.linkParams.ConnectIndex;
+          T3Gv.optManager.linkParams.SConnectHookFlag = T3Gv.optManager.linkParams.ConnectHookFlag;
+          T3Gv.optManager.linkParams.SConnectInside = T3Gv.optManager.linkParams.ConnectInside;
+          T3Gv.optManager.linkParams.SConnectPt.x = T3Gv.optManager.linkParams.ConnectPt.x;
+          T3Gv.optManager.linkParams.SConnectPt.y = T3Gv.optManager.linkParams.ConnectPt.y;
 
           // Reset connection parameters
-          T3Gv.optManager.LinkParams.ConnectIndex = -1;
-          T3Gv.optManager.LinkParams.Hookindex = -1;
-          T3Gv.optManager.LinkParams.ConnectInside = 0;
-          T3Gv.optManager.LinkParams.ConnectHookFlag = 0;
+          T3Gv.optManager.linkParams.ConnectIndex = -1;
+          T3Gv.optManager.linkParams.Hookindex = -1;
+          T3Gv.optManager.linkParams.ConnectInside = 0;
+          T3Gv.optManager.linkParams.ConnectHookFlag = 0;
 
           // Adjust event and line start coordinates using the drag delta
           event.x += T3Gv.optManager.dragDeltaX;
@@ -3176,28 +3176,28 @@ class BaseLine extends BaseDrawingObject {
           this.EndPoint.y = this.StartPoint.y;
 
           // Get circular target hook list
-          T3Gv.optManager.LinkParams.lpCircList = T3Gv.optManager.GetHookList(
+          T3Gv.optManager.linkParams.lpCircList = T3Gv.optManager.GetHookList(
             linksBlockObj,
-            T3Gv.optManager.LinkParams.lpCircList,
-            T3Gv.optManager.LinkParams.SConnectIndex,
+            T3Gv.optManager.linkParams.lpCircList,
+            T3Gv.optManager.linkParams.SConnectIndex,
             this,
             ConstantData.ListCodes.SED_LC_TARGONLY,
             extraData
           );
-        } else if (T3Gv.optManager.LinkParams.JoinIndex >= 0) {
+        } else if (T3Gv.optManager.linkParams.JoinIndex >= 0) {
           // Process join parameters if a join exists
-          T3Gv.optManager.LinkParams.SJoinIndex = T3Gv.optManager.LinkParams.JoinIndex;
-          T3Gv.optManager.LinkParams.SJoinData = T3Gv.optManager.LinkParams.JoinData;
-          T3Gv.optManager.LinkParams.SJoinSourceData = T3Gv.optManager.LinkParams.JoinSourceData;
-          T3Gv.optManager.LinkParams.SConnectPt.x = T3Gv.optManager.LinkParams.ConnectPt.x;
-          T3Gv.optManager.LinkParams.SConnectPt.y = T3Gv.optManager.LinkParams.ConnectPt.y;
-          T3Gv.optManager.LinkParams.JoinIndex = -1;
-          T3Gv.optManager.LinkParams.JoinData = 0;
-          T3Gv.optManager.LinkParams.JoinSourceData = 0;
-          T3Gv.optManager.LinkParams.lpCircList = T3Gv.optManager.GetHookList(
+          T3Gv.optManager.linkParams.SJoinIndex = T3Gv.optManager.linkParams.JoinIndex;
+          T3Gv.optManager.linkParams.SJoinData = T3Gv.optManager.linkParams.JoinData;
+          T3Gv.optManager.linkParams.SJoinSourceData = T3Gv.optManager.linkParams.JoinSourceData;
+          T3Gv.optManager.linkParams.SConnectPt.x = T3Gv.optManager.linkParams.ConnectPt.x;
+          T3Gv.optManager.linkParams.SConnectPt.y = T3Gv.optManager.linkParams.ConnectPt.y;
+          T3Gv.optManager.linkParams.JoinIndex = -1;
+          T3Gv.optManager.linkParams.JoinData = 0;
+          T3Gv.optManager.linkParams.JoinSourceData = 0;
+          T3Gv.optManager.linkParams.lpCircList = T3Gv.optManager.GetHookList(
             linksBlockObj,
-            T3Gv.optManager.LinkParams.lpCircList,
-            T3Gv.optManager.LinkParams.SJoinIndex,
+            T3Gv.optManager.linkParams.lpCircList,
+            T3Gv.optManager.linkParams.SJoinIndex,
             this,
             ConstantData.ListCodes.SED_LC_CIRCTARG,
             extraData
@@ -3207,9 +3207,9 @@ class BaseLine extends BaseDrawingObject {
     } else if (sessionObj) {
       // If linking is not allowed, check if object is a PolyLine or freehand allowed
       if (this instanceof Instance.Shape.PolyLine || sessionObj.flags & ConstantData.SessionFlags.SEDS_FreeHand) {
-        T3Gv.optManager.LinkParams = new LinkParameters();
-        T3Gv.optManager.LinkParams.ArraysOnly = true;
-        T3Gv.optManager.LinkParams.AllowJoin = sessionObj.flags & ConstantData.SessionFlags.SEDS_FreeHand;
+        T3Gv.optManager.linkParams = new LinkParameters();
+        T3Gv.optManager.linkParams.ArraysOnly = true;
+        T3Gv.optManager.linkParams.AllowJoin = sessionObj.flags & ConstantData.SessionFlags.SEDS_FreeHand;
       }
     }
 
@@ -3229,9 +3229,9 @@ class BaseLine extends BaseDrawingObject {
     ];
     let joinChanged: boolean = false;
 
-    // If no LinkParams then skip connection logic
-    if (T3Gv.optManager.LinkParams == null) {
-      console.log("= S.BaseLine: LM_DrawDuringTrack output (no LinkParams):", event);
+    // If no linkParams then skip connection logic
+    if (T3Gv.optManager.linkParams == null) {
+      console.log("= S.BaseLine: LM_DrawDuringTrack output (no linkParams):", event);
       return event;
     }
 
@@ -3251,7 +3251,7 @@ class BaseLine extends BaseDrawingObject {
       hookPoints,
       true,
       false,
-      T3Gv.optManager.LinkParams.AllowJoin,
+      T3Gv.optManager.linkParams.AllowJoin,
       event
     )) {
       event.x += T3Gv.optManager.dragDeltaX;
@@ -3260,11 +3260,11 @@ class BaseLine extends BaseDrawingObject {
 
     // Check for join conditions when SJoinIndex is set and JoinIndex is not yet set
     if (
-      T3Gv.optManager.LinkParams.SJoinIndex >= 0 &&
-      T3Gv.optManager.LinkParams.JoinIndex < 0
+      T3Gv.optManager.linkParams.SJoinIndex >= 0 &&
+      T3Gv.optManager.linkParams.JoinIndex < 0
     ) {
       // Get the candidate join object
-      let joinObject = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.LinkParams.SJoinIndex);
+      let joinObject = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linkParams.SJoinIndex);
       // Check if the join candidate is a PolyLine
       if (this.checkIfPolyLine(joinObject)) {
         hitResult = new HitResult(-1, 0, null);
@@ -3273,16 +3273,16 @@ class BaseLine extends BaseDrawingObject {
         if (
           hitResult &&
           hitResult.hitcode === ConstantData.HitCodes.SED_PLApp &&
-          T3Gv.optManager.LinkParams.SJoinData != hitResult.segment
+          T3Gv.optManager.linkParams.SJoinData != hitResult.segment
         ) {
           joinChanged = true;
         }
 
         if (joinChanged) {
-          T3Gv.optManager.LinkParams.JoinIndex = joinObject.BlockID;
-          T3Gv.optManager.LinkParams.JoinData = hitResult.segment;
-          if (T3Gv.optManager.LinkParams.HiliteJoin < 0) {
-            T3Gv.optManager.LinkParams.hiliteJoin = joinObject.BlockID;
+          T3Gv.optManager.linkParams.JoinIndex = joinObject.BlockID;
+          T3Gv.optManager.linkParams.JoinData = hitResult.segment;
+          if (T3Gv.optManager.linkParams.HiliteJoin < 0) {
+            T3Gv.optManager.linkParams.hiliteJoin = joinObject.BlockID;
             if (T3Gv.optManager.GetEditMode() != ConstantData.EditState.LINKJOIN) {
               T3Gv.optManager.SetEditMode(ConstantData.EditState.LINKJOIN, null, false);
               joinObject.SetCursors();
@@ -3290,16 +3290,16 @@ class BaseLine extends BaseDrawingObject {
             }
           }
         } else {
-          if (T3Gv.optManager.LinkParams.HiliteJoin >= 0) {
+          if (T3Gv.optManager.linkParams.HiliteJoin >= 0) {
             T3Gv.optManager.HiliteConnect(
-              T3Gv.optManager.LinkParams.HiliteJoin,
-              T3Gv.optManager.LinkParams.ConnectPt,
+              T3Gv.optManager.linkParams.HiliteJoin,
+              T3Gv.optManager.linkParams.ConnectPt,
               false,
               true,
               this.BlockID,
               null
             );
-            T3Gv.optManager.LinkParams.HiliteJoin = -1;
+            T3Gv.optManager.linkParams.HiliteJoin = -1;
           }
           T3Gv.optManager.SetEditMode(ConstantData.EditState.DEFAULT);
         }
@@ -3313,9 +3313,9 @@ class BaseLine extends BaseDrawingObject {
   LM_DrawPostRelease(actionTarget: number): number {
     console.log("= S.BaseLine: LM_DrawPostRelease input:", actionTarget);
 
-    // Check if LinkParams exist
-    if (T3Gv.optManager.LinkParams != null) {
-      const lp = T3Gv.optManager.LinkParams;
+    // Check if linkParams exist
+    if (T3Gv.optManager.linkParams != null) {
+      const lp = T3Gv.optManager.linkParams;
 
       // Process SHiliteConnect: if set, clear after hiliting using SConnectPt
       if (lp.SHiliteConnect >= 0) {
@@ -3428,14 +3428,14 @@ class BaseLine extends BaseDrawingObject {
       // Clear the NoContinuous flag from hookflags
       this.hookflags = Utils2.SetFlag(this.hookflags, ConstantData.HookFlags.SED_LC_NoContinuous, false);
 
-      // Update links and clear the LinkParams
+      // Update links and clear the linkParams
       T3Gv.optManager.UpdateLinks();
-      T3Gv.optManager.LinkParams = null;
+      T3Gv.optManager.linkParams = null;
 
       console.log("= S.BaseLine: LM_DrawPostRelease output:", result);
       return result;
     }
-    // If no LinkParams, do nothing and return default (0)
+    // If no linkParams, do nothing and return default (0)
     return 0;
   }
 
@@ -3453,7 +3453,7 @@ class BaseLine extends BaseDrawingObject {
 
     T3Gv.optManager.WorkAreaHammer.on('tap', EvtUtil.Evt_WorkAreaHammerClick);
     this.ResetAutoScrollTimer();
-    T3Gv.optManager.LinkParams = null;
+    T3Gv.optManager.linkParams = null;
     T3Gv.optManager.actionStoredObjectId = -1;
     T3Gv.optManager.actionSvgObject = null;
     T3Gv.optManager.lineStamp = false;
@@ -3664,7 +3664,7 @@ class BaseLine extends BaseDrawingObject {
 
     // Get text alignment settings and session object
     const textAlignWin = ShapeDataUtil.TextAlignToWin(this.TextAlign);
-    const sessionObj = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+    const sessionObj = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
 
     // Update the fill color based on the session background
     this.StyleRecord.Fill.Paint.Color = sessionObj.background.Paint.Color;
@@ -3993,7 +3993,7 @@ class BaseLine extends BaseDrawingObject {
 
     // Set constraints if the text is not growing vertically.
     if (this.TextGrow !== ConstantData.TextGrowBehavior.VERTICAL) {
-      textShape.SetConstraints(T3Gv.optManager.theContentHeader.MaxWorkDim.x, 0, trect.height);
+      textShape.SetConstraints(T3Gv.optManager.contentHeader.MaxWorkDim.x, 0, trect.height);
     }
 
     // Disable hyperlinks if the text object is in a group.
@@ -4628,7 +4628,7 @@ class BaseLine extends BaseDrawingObject {
     let aggregate: boolean = false;
 
     // Get the session object using the SEDSessionBlockID
-    const session = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, false);
+    const session = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
 
     // Process only if the session allows hops
     if ((session.flags & ConstantData.SessionFlags.SEDS_AllowHops) !== 0) {
@@ -4840,12 +4840,12 @@ class BaseLine extends BaseDrawingObject {
     }
 
     // Prepare right-click parameters.
-    T3Gv.optManager.RightClickParams = new RightClickData();
-    T3Gv.optManager.RightClickParams.TargetID = targetElement.GetID();
-    T3Gv.optManager.RightClickParams.HitPt.x = docPt.x;
-    T3Gv.optManager.RightClickParams.HitPt.y = docPt.y;
-    T3Gv.optManager.RightClickParams.Locked = ((this.flags & ConstantData.ObjFlags.SEDO_Lock) > 0);
-    console.log("= S.BaseLine: Set RightClickParams:", T3Gv.optManager.RightClickParams);
+    T3Gv.optManager.rightClickParams = new RightClickData();
+    T3Gv.optManager.rightClickParams.TargetID = targetElement.GetID();
+    T3Gv.optManager.rightClickParams.HitPt.x = docPt.x;
+    T3Gv.optManager.rightClickParams.HitPt.y = docPt.y;
+    T3Gv.optManager.rightClickParams.Locked = ((this.flags & ConstantData.ObjFlags.SEDO_Lock) > 0);
+    console.log("= S.BaseLine: Set RightClickParams:", T3Gv.optManager.rightClickParams);
 
     // If there is an active text edit, show the spell menu or the text contextual menu.
     if (T3Gv.optManager.GetActiveTextEdit() != null) {

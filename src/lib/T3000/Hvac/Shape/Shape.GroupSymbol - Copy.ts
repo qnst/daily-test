@@ -232,7 +232,7 @@ class GroupSymbol extends BaseSymbol {
               this.UpdateFrame(f)
           }
         }
-        this.ConvertToNative(T3Gv.optManager.RichGradients, !1)
+        this.ConvertToNative(T3Gv.optManager.richGradients, !1)
       }
     }
   }
@@ -575,18 +575,18 @@ class GroupSymbol extends BaseSymbol {
       s,
       l = null,
       S = new WResult();
-    if (S.RichGradients = e, i = this.ShapesInGroup.length) {
+    if (S.richGradients = e, i = this.ShapesInGroup.length) {
       for (n = 0; n < i; n++) s = this.ShapesInGroup[n],
         S.zList.push(this.ShapesInGroup[n]),
         (o = T3Gv.optManager.GetObjectPtr(s, !1)).layer = this.Layer,
         o.GetTextures(S.TextureList);
-      S.sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
-        S.tLMB = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1),
-        S.ctp = T3Gv.optManager.theContentHeader,
+      S.sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1),
+        S.tLMB = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.layersManagerBlockId, !1),
+        S.ctp = T3Gv.optManager.contentHeader,
         S.GroupOffset.x = 0,
         S.GroupOffset.y = 0,
         S.WriteGroupBlock = !0,
-        S.fontlist = T3Gv.optManager.theContentHeader.FontList,
+        S.fontlist = T3Gv.optManager.contentHeader.FontList,
         t &&
         (S.WriteVisio = !0);
       T3Gv.docHandler.svgDoc.GetWorkArea();
@@ -619,7 +619,7 @@ class GroupSymbol extends BaseSymbol {
         this.TextFlags & ConstantData.TextFlags.SED_TF_AttachA
       ) &&
       (t.WriteBlocks || (l = - 1)),
-      s.RichGradients = T3Gv.optManager.RichGradients,
+      s.richGradients = T3Gv.optManager.richGradients,
       SDF.WriteTextParams(e, this, l, t),
       t.WriteBlocks
     ) SDF.WriteNativeID(e, this.NativeID, t);
@@ -628,9 +628,9 @@ class GroupSymbol extends BaseSymbol {
         s.zList.push(this.ShapesInGroup[r]),
         (n = T3Gv.optManager.GetObjectPtr(o, !1)).layer = this.Layer,
         n.GetTextures(s.TextureList);
-      s.sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1),
-        s.tLMB = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theLayersManagerBlockID, !1),
-        s.ctp = T3Gv.optManager.theContentHeader,
+      s.sdp = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1),
+        s.tLMB = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.layersManagerBlockId, !1),
+        s.ctp = T3Gv.optManager.contentHeader,
         this.InitialGroupBounds.x > 0 ||
           this.InitialGroupBounds.y > 0 ? (
           s.GroupOffset.x = this.Frame.x + t.GroupOffset.x,

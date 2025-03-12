@@ -1078,7 +1078,7 @@ class SegmentedLine extends BaseLine {
         y: 0
       },
       R = ConstantData.Defines.SED_CDim;
-    T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSEDSessionBlockID, !1);
+    T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1);
     if (
       T3Gv.optManager.AllowAutoInsert() &&
       (b = !0),
@@ -1358,16 +1358,16 @@ class SegmentedLine extends BaseLine {
 
     let connectObject;
     if (
-      T3Gv.optManager.LinkParams &&
-      T3Gv.optManager.LinkParams.SConnectIndex >= 0
+      T3Gv.optManager.linkParams &&
+      T3Gv.optManager.linkParams.SConnectIndex >= 0
     ) {
       connectObject = T3Gv.optManager.GetObjectPtr(
-        T3Gv.optManager.LinkParams.SConnectIndex,
+        T3Gv.optManager.linkParams.SConnectIndex,
         false
       );
       if (connectObject) {
         this.segl.firstdir = connectObject.GetSegLFace(
-          T3Gv.optManager.LinkParams.ConnectPt,
+          T3Gv.optManager.linkParams.ConnectPt,
           this.EndPoint,
           svgDoc
         );
@@ -1449,10 +1449,10 @@ class SegmentedLine extends BaseLine {
     const adjustedEndPoint = { x: newX, y: newY };
 
     // Update directional properties based on connected object if applicable
-    if (T3Gv.optManager.LinkParams && T3Gv.optManager.LinkParams.ConnectIndex >= 0) {
-      const connectedObj = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.LinkParams.ConnectIndex, false);
+    if (T3Gv.optManager.linkParams && T3Gv.optManager.linkParams.ConnectIndex >= 0) {
+      const connectedObj = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linkParams.ConnectIndex, false);
       if (connectedObj) {
-        this.segl.lastdir = connectedObj.GetSegLFace(T3Gv.optManager.LinkParams.ConnectPt, this.StartPoint, adjustedEndPoint);
+        this.segl.lastdir = connectedObj.GetSegLFace(T3Gv.optManager.linkParams.ConnectPt, this.StartPoint, adjustedEndPoint);
       }
     } else if (T3Gv.optManager.ob && T3Gv.optManager.ob.BlockID === this.BlockID) {
       this.segl.firstdir = T3Gv.optManager.ob.segl.firstdir;
@@ -1509,10 +1509,10 @@ class SegmentedLine extends BaseLine {
     const connectionPoint = { x: adjustedX, y: adjustedY };
 
     // Update segl.firstdir based on a connected object if available
-    if (T3Gv.optManager.LinkParams && T3Gv.optManager.LinkParams.ConnectIndex >= 0) {
-      const connectedObj = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.LinkParams.ConnectIndex, false);
+    if (T3Gv.optManager.linkParams && T3Gv.optManager.linkParams.ConnectIndex >= 0) {
+      const connectedObj = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.linkParams.ConnectIndex, false);
       if (connectedObj) {
-        this.segl.firstdir = connectedObj.GetSegLFace(T3Gv.optManager.LinkParams.ConnectPt, this.EndPoint, connectionPoint);
+        this.segl.firstdir = connectedObj.GetSegLFace(T3Gv.optManager.linkParams.ConnectPt, this.EndPoint, connectionPoint);
       }
     } else if (T3Gv.optManager.ob && T3Gv.optManager.ob.BlockID === this.BlockID) {
       // Fallback to using the current object's directional values
@@ -2331,14 +2331,14 @@ class SegmentedLine extends BaseLine {
     switch (hookPoint) {
       case ConstantData.HookPts.SED_KTL:
         // Update first directional face based on connection point at the end of the line
-        this.segl.firstdir = connectObj.GetSegLFace(T3Gv.optManager.LinkParams.ConnectPt, this.EndPoint, connectionCoord);
+        this.segl.firstdir = connectObj.GetSegLFace(T3Gv.optManager.linkParams.ConnectPt, this.EndPoint, connectionCoord);
         actionTrigger = ConstantData.ActionTriggerType.LINEEND;
         xCoord = this.EndPoint.x;
         yCoord = this.EndPoint.y;
         break;
       case ConstantData.HookPts.SED_KTR:
         // Update last directional face based on connection point at the start of the line
-        this.segl.lastdir = connectObj.GetSegLFace(T3Gv.optManager.LinkParams.ConnectPt, this.StartPoint, connectionCoord);
+        this.segl.lastdir = connectObj.GetSegLFace(T3Gv.optManager.linkParams.ConnectPt, this.StartPoint, connectionCoord);
         actionTrigger = ConstantData.ActionTriggerType.LINESTART;
         xCoord = this.StartPoint.x;
         yCoord = this.StartPoint.y;
