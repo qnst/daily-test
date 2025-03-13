@@ -3,7 +3,7 @@ import { Type } from 'class-transformer'
 import 'reflect-metadata'
 
 import TextureScale from './TextureScale'
-import ConstantData from '../Data/ConstantData'
+import ConstantData from '../Data/Constant/ConstantData'
 
 class PaintData {
 

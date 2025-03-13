@@ -4,7 +4,7 @@ import 'reflect-metadata'
 
 import PaintData from './PaintData'
 import OutsideEffectData from './OutsideEffectData'
-import ConstantData from '../Data/ConstantData'
+import ConstantData from '../Data/Constant/ConstantData'
 
 class TextFormatData {
 

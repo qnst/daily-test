@@ -9,21 +9,21 @@ class BitmapImporter {
 
     let fileReader: FileReader;
     if (file && callback && dpi > 0) {
-      T3Gv.optManager.bitmapImportDestWidth = destWidth;
-      T3Gv.optManager.bitmapImportDestHeight = destHeight;
-      T3Gv.optManager.bitmapImportDPI = dpi;
+      T3Gv.opt.bitmapImportDestWidth = destWidth;
+      T3Gv.opt.bitmapImportDestHeight = destHeight;
+      T3Gv.opt.bitmapImportDPI = dpi;
       const mimeType = file.type;
-      T3Gv.optManager.bitmapImportMimeType = mimeType;
+      T3Gv.opt.bitmapImportMimeType = mimeType;
 
       if (file instanceof File) {
         if (mimeType === 'image/jpeg' || mimeType === 'image/png') {
-          T3Gv.optManager.bitmapImportOriginalSize = file.size;
-          T3Gv.optManager.scaledBitmapCallback = callback;
+          T3Gv.opt.bitmapImportOriginalSize = file.size;
+          T3Gv.opt.scaledBitmapCallback = callback;
           fileReader = new FileReader();
           fileReader.onload = function (event) {
-            T3Gv.optManager.bitmapImportEXIFdata = null;
-            T3Gv.optManager.bitmapImportFile = file;
-            T3Gv.optManager.bitmapImportResult = event.target.result;
+            T3Gv.opt.bitmapImportEXIFdata = null;
+            T3Gv.opt.bitmapImportFile = file;
+            T3Gv.opt.bitmapImportResult = event.target.result;
             console.log("S.BitmapImporter - Output (JPEG/PNG):", { result: event.target.result });
             EXIF.getData(file, GotEXIF);
           };

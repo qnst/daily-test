@@ -4,7 +4,7 @@ import { Type } from 'class-transformer'
 import 'reflect-metadata'
 import RulerConfig from "./RulerConfig"
 import PageRecord from "./PageRecord"
-import ConstantData from "../Data/ConstantData"
+import ConstantData from "../Data/Constant/ConstantData"
 import RecentSymbol from "./RecentSymbol"
 import FillData from "./FillData"
 import SEDDefault from './SEDDefault'

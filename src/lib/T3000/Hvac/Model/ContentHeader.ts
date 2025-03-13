@@ -4,7 +4,7 @@ import 'reflect-metadata'
 
 import PageRecord from './PageRecord'
 import Point from './Point';
-import ConstantData from '../Data/ConstantData'
+import ConstantData from '../Data/Constant/ConstantData'
 import DefaultStyle from './DefaultStyle'
 import FontRecord from './FontRecord'
 import LibList from './LibList'

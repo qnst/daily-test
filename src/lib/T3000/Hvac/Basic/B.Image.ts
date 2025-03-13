@@ -5,7 +5,7 @@ import T3Svg from "../Helper/T3Svg"
 import Utils1 from "../Helper/Utils1"
 import Utils2 from "../Helper/Utils2"
 import Utils3 from "../Helper/Utils3"
-import ConstantData from "../Data/ConstantData"
+import ConstantData from "../Data/Constant/ConstantData"
 import Element from "./B.Element";
 
 class Image extends Element {

@@ -5,14 +5,14 @@ import Utils1 from '../Helper/Utils1'
 import Utils2 from "../Helper/Utils2"
 import Utils3 from "../Helper/Utils3"
 import T3Gv from '../Data/T3Gv'
-import ConstantData from '../Data/ConstantData'
+import ConstantData from '../Data/Constant/ConstantData'
 import SelectionAttributes from '../Model/SelectionAttributes'
-import ConstantData1 from "../Data/ConstantData1"
+import ConstantData1 from "../Data/Constant/ConstantData1"
 import Point from '../Model/Point'
 import $ from 'jquery'
 import Instance from '../Data/Instance/Instance'
-import ConstantData2 from '../Data/ConstantData2'
-import ShapeConstant from '../Data/ShapeConstant'
+import ConstantData2 from '../Data/Constant/ConstantData2'
+import ShapeConstant from '../Util/ShapeConstant'
 
 class ArcLine extends BaseLine {
   public CurveAdjust: any;
@@ -209,7 +209,7 @@ class ArcLine extends BaseLine {
 
     // Generate polyline points and adjust for hops
     let polyPoints = this.GetPolyPoints(ConstantData.Defines.NPOLYPTS, true);
-    const hopsInfo = T3Gv.optManager.InsertHops(this, polyPoints, polyPoints.length);
+    const hopsInfo = T3Gv.opt.InsertHops(this, polyPoints, polyPoints.length);
     polyPoints = polyPoints.slice(0, hopsInfo.npts);
 
     // Configure the primary polyline shape
@@ -361,7 +361,7 @@ class ArcLine extends BaseLine {
     let height = rect.height + adjustedKnobSize;
 
     // Get target object to check for hook overrides.
-    let targetObject = T3Gv.optManager.GetObjectPtr(targetId, false);
+    let targetObject = T3Gv.opt.GetObjectPtr(targetId, false);
 
     // Adjust the rectangle boundaries.
     let adjustedRect = $.extend(true, {}, rect);
@@ -469,7 +469,7 @@ class ArcLine extends BaseLine {
     group.AddElement(knob);
 
     // Add ROTATE knob if allowed.
-    if (T3Gv.optManager.touchInitiated) {
+    if (T3Gv.opt.touchInitiated) {
       allowKnob = false;
     }
     if (allowKnob && !knobConfig.locked && !this.NoGrow()) {
@@ -499,7 +499,7 @@ class ArcLine extends BaseLine {
 
     // Create dimension adjustment knobs if standoff dimensions are enabled.
     if (this.Dimensions & ConstantData.DimensionFlags.SED_DF_Standoff && this.CanUseStandOffDimensionLines()) {
-      let svgElement = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID);
+      let svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
       this.CreateDimensionAdjustmentKnobs(group, svgElement, knobConfig);
     }
 
@@ -533,7 +533,7 @@ class ArcLine extends BaseLine {
       case ConstantData.TextAlign.TOPCENTER:
       case ConstantData.TextAlign.CENTER:
       case ConstantData.TextAlign.BOTTOMCENTER: {
-        const angle = T3Gv.optManager.SD_GetClockwiseAngleBetween2PointsInRadians(
+        const angle = T3Gv.opt.SD_GetClockwiseAngleBetween2PointsInRadians(
           result.StartPoint,
           result.EndPoint
         );
@@ -668,7 +668,7 @@ class ArcLine extends BaseLine {
 
     // Generate polyline points and adjust for hops
     let polyPoints = this.GetPolyPoints(ConstantData.Defines.NPOLYPTS, true);
-    const hopsInfo = T3Gv.optManager.InsertHops(this, polyPoints, polyPoints.length);
+    const hopsInfo = T3Gv.opt.InsertHops(this, polyPoints, polyPoints.length);
     polyPoints = polyPoints.slice(0, hopsInfo.npts);
     const numPoints = polyPoints.length;
 
@@ -750,7 +750,7 @@ class ArcLine extends BaseLine {
 
     // Update dimension lines and display coordinates
     this.UpdateDimensionLines(svgDoc);
-    T3Gv.optManager.UpdateDisplayCoordinates(
+    T3Gv.opt.UpdateDisplayCoordinates(
       this.Frame,
       this.StartPoint,
       ConstantData.CursorTypes.Grow
@@ -800,7 +800,7 @@ class ArcLine extends BaseLine {
       Utils2.sqrt(deltaX * deltaX + deltaY * deltaY);
 
       this.UpdateDimensionLines(svgDoc);
-      T3Gv.optManager.UpdateDisplayCoordinates(
+      T3Gv.opt.UpdateDisplayCoordinates(
         this.Frame,
         this.EndPoint,
         ConstantData.CursorTypes.Grow,
@@ -821,7 +821,7 @@ class ArcLine extends BaseLine {
     const temp: any = {};
 
     // Save a deep copy of the current object for backup
-    T3Gv.optManager.ob = Utils1.DeepCopy(this);
+    T3Gv.opt.ob = Utils1.DeepCopy(this);
 
     // Flip vertically if flag is set
     if (flipFlag & ConstantData.ExtraFlags.SEDE_FlipVert) {
@@ -845,7 +845,7 @@ class ArcLine extends BaseLine {
       this.IsReversed = !this.IsReversed;
       console.log("= S.ArcLine Flip: Toggled IsReversed to", this.IsReversed);
 
-      const svgElement = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID);
+      const svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
       if (svgElement) {
         this.UpdateDimensionLines(svgElement);
         if (this.DataID !== -1) {
@@ -853,19 +853,19 @@ class ArcLine extends BaseLine {
         }
       }
 
-      if (T3Gv.optManager.ob.Frame) {
-        T3Gv.optManager.MaintainLink(
+      if (T3Gv.opt.ob.Frame) {
+        T3Gv.opt.MaintainLink(
           this.BlockID,
           this,
-          T3Gv.optManager.ob,
+          T3Gv.opt.ob,
           ConstantData.ActionTriggerType.ROTATE
         );
       }
-      T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
+      T3Gv.opt.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
     }
 
     // Reset the backup object
-    T3Gv.optManager.ob = {};
+    T3Gv.opt.ob = {};
 
     console.log("= S.ArcLine Flip output:", {
       StartPoint: this.StartPoint,
@@ -938,7 +938,7 @@ class ArcLine extends BaseLine {
     // If selection dimensions demand, mark the object as dirty.
     if ((this.Dimensions & ConstantData.DimensionFlags.SED_DF_Select) ||
       (this.Dimensions & ConstantData.DimensionFlags.SED_DF_Always)) {
-      T3Gv.optManager.AddToDirtyList(this.BlockID);
+      T3Gv.opt.AddToDirtyList(this.BlockID);
     }
 
     // Regenerate the arc shape and resize the SVG text object if applicable.
@@ -1054,15 +1054,15 @@ class ArcLine extends BaseLine {
   StartNewObjectDrawTrackCommon(drawX: number, drawY: number, extra: any) {
     console.log("= S.ArcLine StartNewObjectDrawTrackCommon input:", { drawX, drawY, extra });
 
-    const startX = T3Gv.optManager.actionStartX;
-    const startY = T3Gv.optManager.actionStartY;
+    const startX = T3Gv.opt.actionStartX;
+    const startY = T3Gv.opt.actionStartY;
 
     const deltaX = drawX - startX;
     const deltaY = drawY - startY;
     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
     // Extend the action bounding box (side effect, if required)
-    $.extend(true, {}, T3Gv.optManager.actionBBox);
+    $.extend(true, {}, T3Gv.opt.actionBBox);
 
     let newCurveAdjust = distance / 10;
     if (newCurveAdjust < 1) {
@@ -1077,7 +1077,7 @@ class ArcLine extends BaseLine {
 
     // Update the end point of the line using the new parameters
     this.AdjustLineEnd(
-      T3Gv.optManager.actionSvgObject,
+      T3Gv.opt.actionSvgObject,
       drawX,
       drawY,
       ConstantData.ActionTriggerType.LINEEND
@@ -1166,7 +1166,7 @@ class ArcLine extends BaseLine {
     }
 
     // Generate arc polyline points.
-    polyPoints = T3Gv.optManager.ArcToPoly(
+    polyPoints = T3Gv.opt.ArcToPoly(
       numPoints - 1,
       center,
       arcInfo.radius,
@@ -1320,7 +1320,7 @@ class ArcLine extends BaseLine {
     if (
       targetId != null &&
       targetId >= 0 &&
-      T3Gv.optManager.GetObjectPtr(targetId, false).DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.SHAPE
+      T3Gv.opt.GetObjectPtr(targetId, false).DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.SHAPE
     ) {
       switch (hookElement.id) {
         case hookPts.SED_KTC:
@@ -1355,11 +1355,11 @@ class ArcLine extends BaseLine {
     // Choose chord calculation based on slope or specific hook flag.
     if (Math.abs(slope) > 1 || (hookFlags & ConstantData.HookFlags.SED_LC_HOnly)) {
       // Calculate chord and determine offsets.
-      chordResult = T3Gv.optManager.ArcToChord(startPt, endPt, hookElement, connectLine, this);
+      chordResult = T3Gv.opt.ArcToChord(startPt, endPt, hookElement, connectLine, this);
       offsetY = chordResult.y - startPt.y;
       offsetX = chordResult.x - startPt.x;
     } else {
-      chordResult = T3Gv.optManager.ArcToChord(startPt, endPt, hookElement, connectLine, this);
+      chordResult = T3Gv.opt.ArcToChord(startPt, endPt, hookElement, connectLine, this);
       offsetX = chordResult.x - startPt.x;
       offsetY = chordResult.y - startPt.y;
     }
@@ -1432,7 +1432,7 @@ class ArcLine extends BaseLine {
     }
 
     // Retrieve the target object, then delegate if it is of a specific type.
-    const refObject = T3Gv.optManager.GetObjectPtr(targetId, false);
+    const refObject = T3Gv.opt.GetObjectPtr(targetId, false);
     if (refObject && refObject.objecttype === ConstantData.ObjectTypes.SD_OBJT_MULTIPLICITY) {
       resultPoints = super.GetPerimPts(event, hooks, param3, param4, param5, targetId);
       console.log("= S.ArcLine GetPerimPts output (Multiplicity):", resultPoints);
@@ -1469,7 +1469,7 @@ class ArcLine extends BaseLine {
 
     // Convert each base perimeter point (chord point) to an arc point.
     for (let i = 0; i < basePerimPts.length; i++) {
-      resultPoints[i] = T3Gv.optManager.ChordToArc(
+      resultPoints[i] = T3Gv.opt.ChordToArc(
         chordStart,
         chordEnd,
         arcCenter,
@@ -1521,19 +1521,19 @@ class ArcLine extends BaseLine {
             console.log("= S.ArcLine MaintainPoint output:", newDrawingObject);
             return newDrawingObject;
         }
-        if (T3Gv.optManager.ArcCheckPoint(this, event)) {
+        if (T3Gv.opt.ArcCheckPoint(this, event)) {
           console.log("= S.ArcLine MaintainPoint output:", true);
           return true;
         }
-        if (T3Gv.optManager.Arc_Intersect(this, drawingObject, event)) {
+        if (T3Gv.opt.Arc_Intersect(this, drawingObject, event)) {
           console.log("= S.ArcLine MaintainPoint output:", true);
           return true;
         }
-        T3Gv.optManager.Lines_MaintainDist(this, maintainDistParam, extraParam, event);
+        T3Gv.opt.Lines_MaintainDist(this, maintainDistParam, extraParam, event);
         break;
 
       case ConstantData.DrawingObjectBaseClass.SHAPE:
-        T3Gv.optManager.Lines_MaintainDist(this, maintainDistParam, extraParam, event);
+        T3Gv.opt.Lines_MaintainDist(this, maintainDistParam, extraParam, event);
         break;
     }
 

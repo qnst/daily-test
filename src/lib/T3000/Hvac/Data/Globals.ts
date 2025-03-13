@@ -41,11 +41,11 @@ Globals.StoredObjectType = {
 }
 */
 
-Globals.StateOperationType = {
-  CREATE: 1,
-  UPDATE: 2,
-  DELETE: 3
-}
+// Globals.StateOperationType = {
+//   CREATE: 1,
+//   UPDATE: 2,
+//   DELETE: 3
+// }
 
 Globals.DocumentToolbarOptions = [
   {

@@ -5,10 +5,10 @@ import Utils2 from '../Helper/Utils2';
 import $ from 'jquery';
 import BaseDrawingObject from '../Shape/S.BaseDrawingObject'
 import Instance from '../Data/Instance/Instance'
-import ConstantData from '../Data/ConstantData'
-import ConstantData2 from '../Data/ConstantData2'
+import ConstantData from '../Data/Constant/ConstantData'
+import ConstantData2 from '../Data/Constant/ConstantData2'
 import RightClickData from '../Model/RightClickData'
-import T3Constant from '../Data/T3Constant';
+import T3Constant from '../Data/Constant/T3Constant';
 import DocUtil from '../Doc/DocUtil';
 
 class EvtUtil {
@@ -21,7 +21,7 @@ class EvtUtil {
   static Evt_MouseMove(mouseEvent) {
     console.log("E.Evt MouseMove input:", mouseEvent);
 
-    const svgDoc = T3Gv.optManager.svgDoc;
+    const svgDoc = T3Gv.opt.svgDoc;
     const docInfo = svgDoc.docInfo;
 
     // Check if mouse is within the document bounds
@@ -39,8 +39,8 @@ class EvtUtil {
       );
 
       // Show and update coordinates display
-      T3Gv.optManager.ShowXY(true);
-      T3Gv.optManager.UpdateDisplayCoordinates(
+      T3Gv.opt.ShowXY(true);
+      T3Gv.opt.UpdateDisplayCoordinates(
         null,
         documentCoordinates,
         null,
@@ -50,7 +50,7 @@ class EvtUtil {
       console.log("E.Evt MouseMove output: coordinates shown", documentCoordinates);
     } else {
       // Hide coordinates display when outside document bounds
-      T3Gv.optManager.ShowXY(false);
+      T3Gv.opt.ShowXY(false);
       console.log("E.Evt MouseMove output: coordinates hidden");
     }
   }
@@ -68,14 +68,14 @@ class EvtUtil {
     Utils2.StopPropagationAndDefaults(event);
 
     // Set UI adaptation based on event
-    T3Gv.optManager.SetUIAdaptation(event);
+    T3Gv.opt.SetUIAdaptation(event);
 
     // Check if this is a right-click
-    const isRightClick = T3Gv.optManager.IsRightClick(event);
+    const isRightClick = T3Gv.opt.IsRightClick(event);
 
     // For left-clicks, clear selection
     if (!isRightClick) {
-      T3Gv.optManager.ClearSelectionClick();
+      T3Gv.opt.ClearSelectionClick();
     }
 
     // Allow typing in work area
@@ -83,10 +83,10 @@ class EvtUtil {
 
     // Handle right-click contextual menu
     if (isRightClick) {
-      T3Gv.optManager.rightClickParams = new RightClickData();
+      T3Gv.opt.rightClickParams = new RightClickData();
 
       // Convert window coordinates to document coordinates
-      T3Gv.optManager.rightClickParams.HitPt = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(
+      T3Gv.opt.rightClickParams.HitPt = T3Gv.opt.svgDoc.ConvertWindowToDocCoords(
         event.gesture.center.clientX,
         event.gesture.center.clientY
       );
@@ -113,7 +113,7 @@ class EvtUtil {
       const clientY = event.clientY;
 
       // Convert window coordinates to document coordinates
-      const docCoordinates = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(clientX, clientY);
+      const docCoordinates = T3Gv.opt.svgDoc.ConvertWindowToDocCoords(clientX, clientY);
 
       // Determine zoom direction based on wheel direction
       if (event.deltaY > 0) {
@@ -128,7 +128,7 @@ class EvtUtil {
       Utils2.StopPropagationAndDefaults(event);
 
       // Calculate new position to maintain focus point
-      const windowCoordinates = T3Gv.optManager.svgDoc.ConvertDocToWindowCoords(docCoordinates.x, docCoordinates.y);
+      const windowCoordinates = T3Gv.opt.svgDoc.ConvertDocToWindowCoords(docCoordinates.x, docCoordinates.y);
       const xOffset = clientX - windowCoordinates.x;
       const yOffset = clientY - windowCoordinates.y;
 
@@ -153,14 +153,14 @@ class EvtUtil {
     console.log("E.Evt WorkAreaHammerPanEnd input:", event);
 
     // Reset touch pan state
-    T3Gv.optManager.touchPanStarted = false;
+    T3Gv.opt.touchPanStarted = false;
 
     // Remove pan-related event handlers
-    T3Gv.optManager.WorkAreaHammer.off("drag");
-    T3Gv.optManager.WorkAreaHammer.off("dragend");
+    T3Gv.opt.WorkAreaHammer.off("drag");
+    T3Gv.opt.WorkAreaHammer.off("dragend");
 
     // Restore default edit mode
-    T3Gv.optManager.SetEditMode(ConstantData.EditState.DEFAULT);
+    T3Gv.opt.SetEditMode(ConstantData.EditState.DEFAULT);
 
     console.log("E.Evt WorkAreaHammerPanEnd output: pan state reset, edit mode restored to default");
     return false;
@@ -188,20 +188,20 @@ class EvtUtil {
     }
 
     // Check if we should start panning instead of selection
-    const shouldPan = T3Gv.optManager.isMobilePlatform ||
-      T3Gv.optManager.IsWheelClick(event) ||
+    const shouldPan = T3Gv.opt.isMobilePlatform ||
+      T3Gv.opt.IsWheelClick(event) ||
       T3Constant.DocContext.SpacebarDown;
 
     if (shouldPan) {
       // Initialize or continue panning
-      if (!T3Gv.optManager.touchPanStarted) {
-        T3Gv.optManager.touchPanStarted = true;
-        T3Gv.optManager.touchPanX = event.gesture.center.clientX;
-        T3Gv.optManager.touchPanY = event.gesture.center.clientY;
+      if (!T3Gv.opt.touchPanStarted) {
+        T3Gv.opt.touchPanStarted = true;
+        T3Gv.opt.touchPanX = event.gesture.center.clientX;
+        T3Gv.opt.touchPanY = event.gesture.center.clientY;
 
         // Bind pan-related event handlers
-        T3Gv.optManager.WorkAreaHammer.on('mousemove', EvtUtil.Evt_WorkAreaHammerPan);
-        T3Gv.optManager.WorkAreaHammer.on('dragend', EvtUtil.Evt_WorkAreaHammerPanEnd);
+        T3Gv.opt.WorkAreaHammer.on('mousemove', EvtUtil.Evt_WorkAreaHammerPan);
+        T3Gv.opt.WorkAreaHammer.on('dragend', EvtUtil.Evt_WorkAreaHammerPanEnd);
 
         Utils2.StopPropagationAndDefaults(event);
       }
@@ -210,15 +210,15 @@ class EvtUtil {
       return false;
     } else {
       // End any existing pan operation
-      if (T3Gv.optManager.touchPanStarted) {
+      if (T3Gv.opt.touchPanStarted) {
         EvtUtil.Evt_WorkAreaHammerPanEnd();
       }
 
       Utils2.StopPropagationAndDefaults(event);
-      T3Gv.optManager.SetUIAdaptation(event);
+      T3Gv.opt.SetUIAdaptation(event);
 
       // Handle right clicks separately
-      if (T3Gv.optManager.IsRightClick(event)) {
+      if (T3Gv.opt.IsRightClick(event)) {
         event.preventDefault();
         event.stopPropagation();
 
@@ -227,7 +227,7 @@ class EvtUtil {
       }
 
       // Start rubber band selection
-      T3Gv.optManager.StartRubberBandSelect(event);
+      T3Gv.opt.StartRubberBandSelect(event);
 
       console.log("E.Evt WorkAreaHammerDragStart output: rubber band selection started");
       return false;
@@ -249,7 +249,7 @@ class EvtUtil {
 
     try {
       // Cancel any special mode operations if active
-      switch (T3Gv.optManager.currentModalOperation) {
+      switch (T3Gv.opt.currentModalOperation) {
         case modalOperations.ADDCORNER:
         case modalOperations.SPLITWALL:
           T3Gv.gFloorplanManager.AddCornerCancel();
@@ -257,7 +257,7 @@ class EvtUtil {
       }
 
       // If auto-scrolling is in progress and returns false, exit early
-      if (!T3Gv.optManager.AutoScrollCommon(
+      if (!T3Gv.opt.AutoScrollCommon(
         event,
         false,
         'RubberBandSelectDoAutoScroll'
@@ -266,7 +266,7 @@ class EvtUtil {
       }
 
       // Convert screen coordinates to document coordinates
-      const documentCoordinates = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(
+      const documentCoordinates = T3Gv.opt.svgDoc.ConvertWindowToDocCoords(
         event.gesture.center.clientX,
         event.gesture.center.clientY
       );
@@ -274,7 +274,7 @@ class EvtUtil {
       console.log("E.Evt RubberBandDrag processing: coordinates", documentCoordinates);
 
       // Update the rubber band selection shape
-      T3Gv.optManager.RubberBandSelectMoveCommon(
+      T3Gv.opt.RubberBandSelectMoveCommon(
         documentCoordinates.x,
         documentCoordinates.y
       );
@@ -282,8 +282,8 @@ class EvtUtil {
       console.log("E.Evt RubberBandDrag output: rubber band updated");
     } catch (error) {
       // Handle exceptions during rubber band selection
-      T3Gv.optManager.RubberBandSelectExceptionCleanup(error);
-      T3Gv.optManager.ExceptionCleanup(error);
+      T3Gv.opt.RubberBandSelectExceptionCleanup(error);
+      T3Gv.opt.ExceptionCleanup(error);
       console.log("E.Evt RubberBandDrag error:", error);
       throw error;
     }
@@ -302,35 +302,35 @@ class EvtUtil {
 
     try {
       // Clean up event handlers used for rubber band selection
-      T3Gv.optManager.UnbindRubberBandHammerEvents();
-      T3Gv.optManager.ResetAutoScrollTimer();
+      T3Gv.opt.UnbindRubberBandHammerEvents();
+      T3Gv.opt.ResetAutoScrollTimer();
 
       // Get the final rubber band selection area
-      const rubberBandFrame = T3Gv.optManager.rubberBandFrame;
+      const rubberBandFrame = T3Gv.opt.rubberBandFrame;
 
       // Select all objects within the selection rectangle
       // If shift key is pressed, add to existing selection instead of replacing
-      T3Gv.optManager.SelectAllInRect(
+      T3Gv.opt.SelectAllInRect(
         rubberBandFrame,
         event.gesture.srcEvent.shiftKey
       );
 
       // Remove the visual rubber band selection indicator
-      T3Gv.optManager.svgOverlayLayer.RemoveElement(T3Gv.optManager.rubberBand);
+      T3Gv.opt.svgOverlayLayer.RemoveElement(T3Gv.opt.rubberBand);
 
       // Reset rubber band selection state
       console.log("E.Evt RubberBandDragEnd processing: resetting rubber band state");
-      T3Gv.optManager.rubberBand = null;
-      T3Gv.optManager.rubberBandStartX = 0;
-      T3Gv.optManager.rubberBandStartY = 0;
-      T3Gv.optManager.rubberBandFrame = { x: 0, y: 0, width: 0, height: 0 };
+      T3Gv.opt.rubberBand = null;
+      T3Gv.opt.rubberBandStartX = 0;
+      T3Gv.opt.rubberBandStartY = 0;
+      T3Gv.opt.rubberBandFrame = { x: 0, y: 0, width: 0, height: 0 };
 
       console.log("E.Evt RubberBandDragEnd output: selection completed");
 
     } catch (error) {
       // Clean up if an error occurs during selection
-      T3Gv.optManager.RubberBandSelectExceptionCleanup(error);
-      T3Gv.optManager.ExceptionCleanup(error);
+      T3Gv.opt.RubberBandSelectExceptionCleanup(error);
+      T3Gv.opt.ExceptionCleanup(error);
       console.log("E.Evt RubberBandDragEnd error:", error);
       throw error;
     }
@@ -351,14 +351,14 @@ class EvtUtil {
     hammerEvent.preventDefault();
 
     // Check if this is a right-click event
-    const isRightClick = T3Gv.optManager.IsRightClick(hammerEvent);
+    const isRightClick = T3Gv.opt.IsRightClick(hammerEvent);
 
     if (!isRightClick) {
       // Set UI adaptation based on event
-      T3Gv.optManager.SetUIAdaptation(hammerEvent);
+      T3Gv.opt.SetUIAdaptation(hammerEvent);
 
       // Start the drawing operation
-      T3Gv.optManager.StartNewObjectDraw(hammerEvent);
+      T3Gv.opt.StartNewObjectDraw(hammerEvent);
 
       console.log("E.Evt WorkAreaHammerDrawStart output: drawing started");
     } else {
@@ -389,7 +389,7 @@ class EvtUtil {
       } catch (error) {
         // Clean up in case of errors during draw tracking
         drawableObject.LM_DrawClick_ExceptionCleanup(error);
-        T3Gv.optManager.ExceptionCleanup(error);
+        T3Gv.opt.ExceptionCleanup(error);
 
         console.log("E.Evt DrawTrack error:", error);
         throw error;
@@ -417,9 +417,9 @@ class EvtUtil {
         console.log("E.Evt DrawRelease output: drawing completed");
       } catch (error) {
         // Clean up in case of errors during draw completion
-        T3Gv.optManager.CancelModalOperation();
+        T3Gv.opt.CancelModalOperation();
         drawableObject.LM_DrawClick_ExceptionCleanup(error);
-        T3Gv.optManager.ExceptionCleanup(error);
+        T3Gv.opt.ExceptionCleanup(error);
 
         console.log("E.Evt DrawRelease error:", error);
         throw error;
@@ -444,10 +444,10 @@ class EvtUtil {
 
       // Prevent default browser behavior
       Utils2.StopPropagationAndDefaults(tapEvent);
-      T3Gv.optManager.SetUIAdaptation(tapEvent);
+      T3Gv.opt.SetUIAdaptation(tapEvent);
 
       // Check if this is a right-click
-      const isRightClick = T3Gv.optManager.IsRightClick(tapEvent);
+      const isRightClick = T3Gv.opt.IsRightClick(tapEvent);
 
       // Handle read-only document case
       if (T3Gv.docUtil.IsReadOnly()) {
@@ -463,16 +463,16 @@ class EvtUtil {
       }
 
       // Handle tap based on current modal operation
-      switch (T3Gv.optManager.currentModalOperation) {
+      switch (T3Gv.opt.currentModalOperation) {
         case ConstantData2.ModalOperations.NONE:
           // Check for hyperlink hits or process normal tap
-          if (!T3Gv.optManager.CheckTextHyperlinkHit(shape, tapEvent)) {
-            T3Gv.optManager.LM_TestIconClick(tapEvent);
+          if (!T3Gv.opt.CheckTextHyperlinkHit(shape, tapEvent)) {
+            T3Gv.opt.LM_TestIconClick(tapEvent);
 
             // Handle rollover actions if not in read-only mode
-            if (T3Gv.optManager.GetUIAdaptation(tapEvent) && !T3Gv.docUtil.IsReadOnly()) {
-              shapeElement = T3Gv.optManager.svgObjectLayer.GetElementByID(shape.tag);
-              shape.SetRolloverActions(T3Gv.optManager.svgDoc, shapeElement);
+            if (T3Gv.opt.GetUIAdaptation(tapEvent) && !T3Gv.docUtil.IsReadOnly()) {
+              shapeElement = T3Gv.opt.svgObjectLayer.GetElementByID(shape.tag);
+              shape.SetRolloverActions(T3Gv.opt.svgDoc, shapeElement);
             }
           }
 
@@ -486,13 +486,13 @@ class EvtUtil {
 
         case ConstantData2.ModalOperations.STAMPTEXTONTAP:
           // Handle text editing in stamp text mode
-          if (!T3Gv.optManager.stampSticky) {
-            T3Gv.optManager.CancelObjectStampTextOnTap(true);
+          if (!T3Gv.opt.stampSticky) {
+            T3Gv.opt.CancelObjectStampTextOnTap(true);
           }
 
           if (shape.AllowTextEdit()) {
-            shapeElement = T3Gv.optManager.svgObjectLayer.GetElementByID(shape.tag);
-            T3Gv.optManager.ActivateTextEdit(shapeElement.svgObj.SDGObj, tapEvent, false);
+            shapeElement = T3Gv.opt.svgObjectLayer.GetElementByID(shape.tag);
+            T3Gv.opt.ActivateTextEdit(shapeElement.svgObj.SDGObj, tapEvent, false);
           }
 
           console.log("E.Evt ShapeTap output: text edit activated in stamp mode");
@@ -515,13 +515,13 @@ class EvtUtil {
       console.log("E.Evt ShapeDragStart input:", event);
 
       // Check if we're in drawing mode - prevent drag start
-      if (T3Gv.optManager.currentModalOperation === ConstantData2.ModalOperations.DRAW) {
+      if (T3Gv.opt.currentModalOperation === ConstantData2.ModalOperations.DRAW) {
         console.log("E.Evt ShapeDragStart output: prevented in draw mode");
         return false;
       }
 
       // Check if we're in stamp mode - prevent drag start and stop propagation
-      if (T3Gv.optManager.currentModalOperation === ConstantData2.ModalOperations.STAMP) {
+      if (T3Gv.opt.currentModalOperation === ConstantData2.ModalOperations.STAMP) {
         event.stopPropagation();
         event.gesture.stopPropagation();
         console.log("E.Evt ShapeDragStart output: prevented in stamp mode");
@@ -529,10 +529,10 @@ class EvtUtil {
       }
 
       // Set UI adaptation for current platform/device
-      T3Gv.optManager.SetUIAdaptation(event);
+      T3Gv.opt.SetUIAdaptation(event);
 
       // Handle right-click differently
-      if (T3Gv.optManager.IsRightClick(event)) {
+      if (T3Gv.opt.IsRightClick(event)) {
         event.preventDefault();
         event.stopPropagation();
         event.gesture.preventDefault();
@@ -542,12 +542,12 @@ class EvtUtil {
       }
 
       // Process based on current modal operation state
-      switch (T3Gv.optManager.currentModalOperation) {
+      switch (T3Gv.opt.currentModalOperation) {
         case ConstantData2.ModalOperations.NONE:
         case ConstantData2.ModalOperations.FORMATPAINTER:
           // Normal drag operation - start movement
           Utils2.StopPropagationAndDefaults(event);
-          T3Gv.optManager.LM_MoveClick(event);
+          T3Gv.opt.LM_MoveClick(event);
           console.log("E.Evt ShapeDragStart output: move operation started");
           return false;
 
@@ -578,7 +578,7 @@ class EvtUtil {
     return function (event) {
       console.log("E.Evt ShapeHold input:", event);
 
-      switch (T3Gv.optManager.currentModalOperation) {
+      switch (T3Gv.opt.currentModalOperation) {
         case ConstantData2.ModalOperations.NONE:
           // Stop the gesture detection and prevent default behavior
           event.gesture.stopDetect();
@@ -589,11 +589,11 @@ class EvtUtil {
 
           try {
             // Clean up any active move operation
-            T3Gv.optManager.LM_MoveRelease(event);
+            T3Gv.opt.LM_MoveRelease(event);
           } catch (error) {
             // Handle exceptions during move release
-            T3Gv.optManager.LM_Move_ExceptionCleanup(error);
-            T3Gv.optManager.ExceptionCleanup(error);
+            T3Gv.opt.LM_Move_ExceptionCleanup(error);
+            T3Gv.opt.ExceptionCleanup(error);
             console.log("E.Evt ShapeHold error:", error);
             throw error;
           }
@@ -626,7 +626,7 @@ class EvtUtil {
 
       // Get the object using its ID
       const shapeBlockId = shape.BlockID;
-      const objectPtr = T3Gv.optManager.GetObjectPtr(shapeBlockId, false);
+      const objectPtr = T3Gv.opt.GetObjectPtr(shapeBlockId, false);
 
       // Validate that we have a valid drawing object
       if (!(objectPtr && objectPtr instanceof BaseDrawingObject)) {
@@ -635,13 +635,13 @@ class EvtUtil {
       }
 
       // Set UI adaptation for current device/platform
-      T3Gv.optManager.SetUIAdaptation(event);
+      T3Gv.opt.SetUIAdaptation(event);
 
       // Process based on current modal operation state
-      switch (T3Gv.optManager.currentModalOperation) {
+      switch (T3Gv.opt.currentModalOperation) {
         case ConstantData2.ModalOperations.NONE:
           // Don't process if already editing a note
-          if (T3Gv.optManager.bInNoteEdit) {
+          if (T3Gv.opt.bInNoteEdit) {
             console.log("E.Evt ShapeDoubleTap output: prevented during note edit");
             return false;
           }
@@ -655,7 +655,7 @@ class EvtUtil {
             switch (shape.codeLibID) {
               case 'RadialGauge':
               case 'LinearGauge':
-                T3Gv.optManager.EditGauge();
+                T3Gv.opt.EditGauge();
                 console.log("E.Evt ShapeDoubleTap output: gauge editor opened");
                 return false;
 
@@ -663,7 +663,7 @@ class EvtUtil {
               case 'PieChart':
               case 'LineChart':
               case 'SankeyChart':
-                T3Gv.optManager.EditGraph();
+                T3Gv.opt.EditGraph();
                 console.log("E.Evt ShapeDoubleTap output: graph editor opened");
                 return false;
             }
@@ -677,7 +677,7 @@ class EvtUtil {
 
           // Handle tables
           if (isTable) {
-            T3Gv.optManager.Table_SetupAction(
+            T3Gv.opt.Table_SetupAction(
               event,
               shape.BlockID,
               ConstantData.Defines.TableCellHit,
@@ -689,7 +689,7 @@ class EvtUtil {
 
           // Handle graphs
           if (isGraph) {
-            T3Gv.optManager.Graph_SetupAction(
+            T3Gv.opt.Graph_SetupAction(
               event,
               shape.BlockID,
               ConstantData.Defines.GraphTextHit,
@@ -700,8 +700,8 @@ class EvtUtil {
           }
 
           // Default behavior: activate text editing
-          const shapeElement = T3Gv.optManager.svgObjectLayer.GetElementByID(shape.tag);
-          T3Gv.optManager.ActivateTextEdit(shapeElement.svgObj.SDGObj, event);
+          const shapeElement = T3Gv.opt.svgObjectLayer.GetElementByID(shape.tag);
+          T3Gv.opt.ActivateTextEdit(shapeElement.svgObj.SDGObj, event);
           console.log("E.Evt ShapeDoubleTap output: text editor activated");
           return false;
 
@@ -729,16 +729,16 @@ class EvtUtil {
 
     try {
       // Check if dragging over custom library
-      let isOverCustomLibrary = T3Gv.optManager.CheckDragIsOverCustomLibrary(event);
+      let isOverCustomLibrary = T3Gv.opt.CheckDragIsOverCustomLibrary(event);
 
       // Track the movement of the shape
-      T3Gv.optManager.LM_MoveTrack(event, isOverCustomLibrary);
+      T3Gv.opt.LM_MoveTrack(event, isOverCustomLibrary);
 
       console.log("E.Evt ShapeDrag output: shape position updated");
     } catch (error) {
       // Clean up in case of errors during movement
-      T3Gv.optManager.LM_Move_ExceptionCleanup(error);
-      T3Gv.optManager.ExceptionCleanup(error);
+      T3Gv.opt.LM_Move_ExceptionCleanup(error);
+      T3Gv.opt.ExceptionCleanup(error);
 
       console.log("E.Evt ShapeDrag error:", error);
       throw error;
@@ -759,13 +759,13 @@ class EvtUtil {
 
     try {
       // Complete the movement operation
-      T3Gv.optManager.LM_MoveRelease(event);
+      T3Gv.opt.LM_MoveRelease(event);
 
       console.log("E.Evt ShapeDragEnd output: shape movement completed");
     } catch (error) {
       // Clean up in case of errors during move completion
-      T3Gv.optManager.LM_Move_ExceptionCleanup(error);
-      T3Gv.optManager.ExceptionCleanup(error);
+      T3Gv.opt.LM_Move_ExceptionCleanup(error);
+      T3Gv.opt.ExceptionCleanup(error);
 
       console.log("E.Evt ShapeDragEnd error:", error);
       throw error;
@@ -827,7 +827,7 @@ class EvtUtil {
       console.log("E.Evt StampObjectDragEnd input:", event);
 
       // Process the drag completion and place the stamp object
-      T3Gv.optManager.DragDropObjectDone(event, stampObject);
+      T3Gv.opt.DragDropObjectDone(event, stampObject);
 
       console.log("E.Evt StampObjectDragEnd output: object placement completed");
       return true;
@@ -844,7 +844,7 @@ class EvtUtil {
     console.log("E.Evt StampObjectDrag input:", event);
 
     // Move the stamp object to follow the drag position
-    T3Gv.optManager.StampObjectMove(event);
+    T3Gv.opt.StampObjectMove(event);
 
     console.log("E.Evt StampObjectDrag output: stamp object position updated");
     return true;
@@ -859,7 +859,7 @@ class EvtUtil {
     console.log("E.Evt MouseStampObjectMove input:", mouseEvent);
 
     // Move the stamp object to follow the mouse position
-    T3Gv.optManager.MouseStampObjectMove(mouseEvent);
+    T3Gv.opt.MouseStampObjectMove(mouseEvent);
 
     console.log("E.Evt MouseStampObjectMove output: stamp object position updated");
   };
@@ -877,7 +877,7 @@ class EvtUtil {
       console.log("E.Evt MouseStampObjectDone input:", mouseEvent);
 
       // Process the stamp completion and place the object
-      T3Gv.optManager.MouseStampObjectDone(mouseEvent, stampObject);
+      T3Gv.opt.MouseStampObjectDone(mouseEvent, stampObject);
 
       console.log("E.Evt MouseStampObjectDone output: object placement completed");
       return true;
@@ -915,29 +915,29 @@ class EvtUtil {
 
     // If scale is greater than threshold, handle as pan instead of pinch
     if (event.gesture.scale > 0.666) {
-      if (T3Gv.optManager.touchPanStarted) {
+      if (T3Gv.opt.touchPanStarted) {
         return EvtUtil.Evt_WorkAreaHammerPan(event);
       } else {
-        T3Gv.optManager.touchPanStarted = true;
-        T3Gv.optManager.touchPanX = event.gesture.center.clientX;
-        T3Gv.optManager.touchPanY = event.gesture.center.clientY;
+        T3Gv.opt.touchPanStarted = true;
+        T3Gv.opt.touchPanX = event.gesture.center.clientX;
+        T3Gv.opt.touchPanY = event.gesture.center.clientY;
       }
       return false;
     }
 
     // Reset touch state for pinch gesture
-    T3Gv.optManager.touchPanStarted = false;
-    T3Gv.optManager.touchPanX = event.gesture.center.clientX;
-    T3Gv.optManager.touchPanY = event.gesture.center.clientY;
+    T3Gv.opt.touchPanStarted = false;
+    T3Gv.opt.touchPanX = event.gesture.center.clientX;
+    T3Gv.opt.touchPanY = event.gesture.center.clientY;
 
     // Prevent default behavior and stop gesture detection
     Utils2.StopPropagationAndDefaults(event);
     event.gesture.stopDetect();
 
     // Cancel any active selections or moves
-    T3Gv.optManager.RubberBandSelect_Cancel();
-    if (T3Gv.optManager.moveList && T3Gv.optManager.moveList.length) {
-      T3Gv.optManager.LM_MoveRelease(event);
+    T3Gv.opt.RubberBandSelect_Cancel();
+    if (T3Gv.opt.moveList && T3Gv.opt.moveList.length) {
+      T3Gv.opt.LM_MoveRelease(event);
     }
 
     // Get work area and cursor position
@@ -946,7 +946,7 @@ class EvtUtil {
     const clientY = event.gesture.center.clientY;
 
     // Convert screen coordinates to document coordinates
-    const documentCoordinates = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(clientX, clientY);
+    const documentCoordinates = T3Gv.opt.svgDoc.ConvertWindowToDocCoords(clientX, clientY);
 
     // Calculate new zoom factor (zoom out)
     let zoomFactorPercent = Math.round(100 * T3Gv.docUtil.GetZoomFactor());
@@ -957,7 +957,7 @@ class EvtUtil {
       T3Gv.docUtil.SetZoomFactor(zoomFactorPercent / 100);
 
       // Calculate new position to maintain focus point
-      const windowCoordinates = T3Gv.optManager.svgDoc.ConvertDocToWindowCoords(
+      const windowCoordinates = T3Gv.opt.svgDoc.ConvertDocToWindowCoords(
         documentCoordinates.x,
         documentCoordinates.y
       );
@@ -990,15 +990,15 @@ class EvtUtil {
     console.log("E.Evt WorkAreaHammerPan input:", event);
 
     // Cancel any active rubber band selection
-    T3Gv.optManager.RubberBandSelect_Cancel();
+    T3Gv.opt.RubberBandSelect_Cancel();
 
     // Release any active move operation
-    if (T3Gv.optManager.moveList && T3Gv.optManager.moveList.length) {
-      T3Gv.optManager.LM_MoveRelease(event);
+    if (T3Gv.opt.moveList && T3Gv.opt.moveList.length) {
+      T3Gv.opt.LM_MoveRelease(event);
     }
 
     // Set edit mode to indicate grabbing/panning
-    T3Gv.optManager.SetEditMode(ConstantData.EditState.GRAB);
+    T3Gv.opt.SetEditMode(ConstantData.EditState.GRAB);
 
     // Prevent default browser behavior
     Utils2.StopPropagationAndDefaults(event);
@@ -1011,8 +1011,8 @@ class EvtUtil {
     const clientY = event.gesture.center.clientY;
 
     // Calculate distance moved since last event
-    const deltaX = clientX - T3Gv.optManager.touchPanX;
-    const deltaY = clientY - T3Gv.optManager.touchPanY;
+    const deltaX = clientX - T3Gv.opt.touchPanX;
+    const deltaY = clientY - T3Gv.opt.touchPanY;
 
     // Get current scroll position
     const svgArea = $("#svgarea");
@@ -1023,8 +1023,8 @@ class EvtUtil {
     T3Gv.docUtil.SetScroll(scrollLeft - deltaX, scrollTop - deltaY);
 
     // Save current touch position for next event
-    T3Gv.optManager.touchPanX = event.gesture.center.clientX;
-    T3Gv.optManager.touchPanY = event.gesture.center.clientY;
+    T3Gv.opt.touchPanX = event.gesture.center.clientX;
+    T3Gv.opt.touchPanY = event.gesture.center.clientY;
 
     console.log("E.Evt WorkAreaHammerPan output: scroll updated", {
       deltaX: deltaX,
@@ -1048,30 +1048,30 @@ class EvtUtil {
 
     // If scale is less than threshold, handle as pan instead of pinch
     if (event.gesture.scale < 1.333) {
-      if (T3Gv.optManager.touchPanStarted) {
+      if (T3Gv.opt.touchPanStarted) {
         return EvtUtil.Evt_WorkAreaHammerPan(event);
       } else {
-        T3Gv.optManager.touchPanStarted = true;
-        T3Gv.optManager.touchPanX = event.gesture.center.clientX;
-        T3Gv.optManager.touchPanY = event.gesture.center.clientY;
+        T3Gv.opt.touchPanStarted = true;
+        T3Gv.opt.touchPanX = event.gesture.center.clientX;
+        T3Gv.opt.touchPanY = event.gesture.center.clientY;
       }
       return false;
     }
 
     // Reset touch state for pinch gesture
-    T3Gv.optManager.touchPanStarted = false;
-    T3Gv.optManager.touchPanX = event.gesture.center.clientX;
-    T3Gv.optManager.touchPanY = event.gesture.center.clientY;
+    T3Gv.opt.touchPanStarted = false;
+    T3Gv.opt.touchPanX = event.gesture.center.clientX;
+    T3Gv.opt.touchPanY = event.gesture.center.clientY;
 
     // Prevent default behavior and stop gesture detection
     Utils2.StopPropagationAndDefaults(event);
     event.gesture.stopDetect();
 
     // Cancel any active selections or moves
-    T3Gv.optManager.RubberBandSelect_Cancel();
-    if (T3Gv.optManager.moveList &&
-      T3Gv.optManager.moveList.length) {
-      T3Gv.optManager.LM_MoveRelease(event);
+    T3Gv.opt.RubberBandSelect_Cancel();
+    if (T3Gv.opt.moveList &&
+      T3Gv.opt.moveList.length) {
+      T3Gv.opt.LM_MoveRelease(event);
     }
 
     // Get work area and cursor position
@@ -1080,7 +1080,7 @@ class EvtUtil {
     const clientY = event.gesture.center.clientY;
 
     // Convert screen coordinates to document coordinates
-    const documentCoordinates = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(
+    const documentCoordinates = T3Gv.opt.svgDoc.ConvertWindowToDocCoords(
       clientX,
       clientY
     );
@@ -1094,7 +1094,7 @@ class EvtUtil {
       T3Gv.docUtil.SetZoomFactor(zoomFactorPercent / 100);
 
       // Calculate new position to maintain focus point
-      const windowCoordinates = T3Gv.optManager.svgDoc.ConvertDocToWindowCoords(
+      const windowCoordinates = T3Gv.opt.svgDoc.ConvertDocToWindowCoords(
         documentCoordinates.x,
         documentCoordinates.y
       );
@@ -1125,7 +1125,7 @@ class EvtUtil {
     console.log("E.Evt WorkAreaHammerPinchEnd input:", event);
 
     // Reset touch pan state
-    T3Gv.optManager.touchPanStarted = false;
+    T3Gv.opt.touchPanStarted = false;
 
     console.log("E.Evt WorkAreaHammerPinchEnd output: touch pan state reset");
   }
@@ -1140,7 +1140,7 @@ class EvtUtil {
     console.log("E.Evt DimensionTextKeyboardLifter input:", { element, keyboardEvent });
 
     // Adjust UI for virtual keyboard
-    T3Gv.optManager.VirtualKeyboardLifter(element, keyboardEvent);
+    T3Gv.opt.VirtualKeyboardLifter(element, keyboardEvent);
 
     console.log("E.Evt DimensionTextKeyboardLifter output: UI adjusted for virtual keyboard");
   }
@@ -1161,8 +1161,8 @@ class EvtUtil {
 
       let textElement, elementCount;
 
-      if (T3Gv.optManager.currentModalOperation == ConstantData.ModalOperations.NONE) {
-        const shapeElement = T3Gv.optManager.svgObjectLayer.GetElementByID(shape.BlockID);
+      if (T3Gv.opt.currentModalOperation == ConstantData.ModalOperations.NONE) {
+        const shapeElement = T3Gv.opt.svgObjectLayer.GetElementByID(shape.BlockID);
 
         if (shapeElement != null) {
           elementCount = shapeElement.ElementCount();
@@ -1173,13 +1173,13 @@ class EvtUtil {
             if (textElement.GetID() == ConstantData.SVGElementClass.DIMENSIONTEXT &&
               textElement.GetUserData() == textId) {
 
-              T3Gv.optManager.bInDimensionEdit = true;
-              T3Gv.optManager.UpdateSelectionAttributes(null);
+              T3Gv.opt.bInDimensionEdit = true;
+              T3Gv.opt.UpdateSelectionAttributes(null);
 
               if (event.gesture) {
-                T3Gv.optManager.TERegisterEvents(textElement.svgObj.SDGObj, event.gesture.srcEvent);
+                T3Gv.opt.TERegisterEvents(textElement.svgObj.SDGObj, event.gesture.srcEvent);
               } else {
-                T3Gv.optManager.TERegisterEvents(textElement.svgObj.SDGObj, event);
+                T3Gv.opt.TERegisterEvents(textElement.svgObj.SDGObj, event);
               }
 
               event.stopPropagation();
@@ -1215,9 +1215,9 @@ class EvtUtil {
       console.log("E.Evt DimensionTextTap input:", event);
 
       // Only process in default mode (no modal operations active)
-      if (T3Gv.optManager.currentModalOperation == ConstantData.ModalOperations.NONE) {
+      if (T3Gv.opt.currentModalOperation == ConstantData.ModalOperations.NONE) {
         // Find the shape element
-        const shapeElement = T3Gv.optManager.svgObjectLayer.GetElementByID(shape.BlockID);
+        const shapeElement = T3Gv.opt.svgObjectLayer.GetElementByID(shape.BlockID);
 
         if (shapeElement != null) {
           // Look through all child elements to find the specific dimension text
@@ -1229,8 +1229,8 @@ class EvtUtil {
               textElement.GetUserData() == textId) {
 
               // If already editing this dimension text, just stop propagation
-              if (T3Gv.optManager.bInDimensionEdit &&
-                T3Gv.optManager.svgDoc.GetActiveEdit() == textElement) {
+              if (T3Gv.opt.bInDimensionEdit &&
+                T3Gv.opt.svgDoc.GetActiveEdit() == textElement) {
                 if (preventPropagation) {
                   event.stopPropagation();
                 }
@@ -1239,17 +1239,17 @@ class EvtUtil {
               }
 
               // Close any existing edit session
-              T3Gv.optManager.CloseEdit(false, true);
+              T3Gv.opt.CloseEdit(false, true);
 
               // Enable dimension edit mode
-              T3Gv.optManager.bInDimensionEdit = true;
-              T3Gv.optManager.UpdateSelectionAttributes(null);
+              T3Gv.opt.bInDimensionEdit = true;
+              T3Gv.opt.UpdateSelectionAttributes(null);
 
               // Register text editing event handlers
               if (event.gesture) {
-                T3Gv.optManager.TERegisterEvents(textElement, event.gesture.srcEvent);
+                T3Gv.opt.TERegisterEvents(textElement, event.gesture.srcEvent);
               } else {
-                T3Gv.optManager.TERegisterEvents(textElement, event);
+                T3Gv.opt.TERegisterEvents(textElement, event);
               }
 
               event.stopPropagation();
@@ -1288,9 +1288,9 @@ class EvtUtil {
         console.log("E.Evt PolyLineDrawExtend output: polyline extended");
       } catch (error) {
         // Clean up in case of errors
-        T3Gv.optManager.CancelModalOperation();
+        T3Gv.opt.CancelModalOperation();
         polyLineObject.LM_DrawClick_ExceptionCleanup(error);
-        T3Gv.optManager.ExceptionCleanup(error);
+        T3Gv.opt.ExceptionCleanup(error);
 
         console.log("E.Evt PolyLineDrawExtend error:", error);
       }

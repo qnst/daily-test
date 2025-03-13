@@ -4,10 +4,11 @@ import BaseLine from './S.BaseLine'
 import Utils1 from '../Helper/Utils1';
 import Utils2 from "../Helper/Utils2";
 import T3Gv from '../Data/T3Gv'
-import ConstantData from '../Data/ConstantData'
-import ConstantData2 from '../Data/ConstantData2';
-import ShapeDataUtil from '../Data/ShapeDataUtil';
-import ShapeConstant from '../Data/ShapeConstant';
+import ConstantData from '../Data/Constant/ConstantData'
+import ConstantData2 from '../Data/Constant/ConstantData2';
+import ShapeDataUtil from '../Util/ShapeDataUtil';
+import ShapeConstant from '../Util/ShapeConstant';
+import Point from '../Model/Point';
 
 class FreehandLine extends BaseLine {
 
@@ -130,7 +131,7 @@ class FreehandLine extends BaseLine {
     let o = this.Frame,
       s = this.StyleRecord;
     if (s = this.SVGTokenizerHook(s), null == s) {
-      let e = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, !1);
+      let e = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, !1);
       e &&
         (s = e.def.style)
     }
@@ -179,7 +180,7 @@ class FreehandLine extends BaseLine {
       l = this.Frame,
       S = l.width,
       c = l.height;
-    T3Gv.optManager.GetObjectPtr(t, !1);
+    T3Gv.opt.GetObjectPtr(t, !1);
     S += s,
       c += s;
     let u = $.extend(!0, {
@@ -236,19 +237,19 @@ class FreehandLine extends BaseLine {
   }
 
   ModifyShape(e, t, a, r, i) {
-    T3Gv.optManager.actionStartX,
-      T3Gv.optManager.actionStartY;
+    T3Gv.opt.actionStartX,
+      T3Gv.opt.actionStartY;
     var n = {
       x: t,
       y: a
     },
       o = (
         $.extend(!0, {
-        }, T3Gv.optManager.actionBBox),
+        }, T3Gv.opt.actionBBox),
         $.extend(!0, {
-        }, T3Gv.optManager.actionBBox)
+        }, T3Gv.opt.actionBBox)
       );
-    switch (T3Gv.optManager.actionTriggerId) {
+    switch (T3Gv.opt.actionTriggerId) {
       case ConstantData.ActionTriggerType.TOPLEFT:
         delx = o.x - t,
           dely = o.y - a,
@@ -258,17 +259,17 @@ class FreehandLine extends BaseLine {
           o.height += dely,
           o.width < 0 &&
           (
-            o.x = T3Gv.optManager.actionBBox.x + T3Gv.optManager.actionBBox.width,
+            o.x = T3Gv.opt.actionBBox.x + T3Gv.opt.actionBBox.width,
             o.width = - o.width
           ),
           o.height < 0 &&
           (
-            o.y = T3Gv.optManager.actionBBox.y + T3Gv.optManager.actionBBox.height,
+            o.y = T3Gv.opt.actionBBox.y + T3Gv.opt.actionBBox.height,
             o.height = - o.height
           ),
-          T3Gv.optManager.actionNewBBox = $.extend(!0, {
+          T3Gv.opt.actionNewBBox = $.extend(!0, {
           }, o),
-          this.HandleActionTriggerCallResize(T3Gv.optManager.actionNewBBox, !0, n);
+          this.HandleActionTriggerCallResize(T3Gv.opt.actionNewBBox, !0, n);
         break;
       case ConstantData.ActionTriggerType.TOPRIGHT:
         dely = o.y - a,
@@ -279,12 +280,12 @@ class FreehandLine extends BaseLine {
           (o.x = t, o.width = - o.width),
           o.height < 0 &&
           (
-            o.y = T3Gv.optManager.actionBBox.y + T3Gv.optManager.actionBBox.height,
+            o.y = T3Gv.opt.actionBBox.y + T3Gv.opt.actionBBox.height,
             o.height = - o.height
           ),
-          T3Gv.optManager.actionNewBBox = $.extend(!0, {
+          T3Gv.opt.actionNewBBox = $.extend(!0, {
           }, o),
-          this.HandleActionTriggerCallResize(T3Gv.optManager.actionNewBBox, !0, n);
+          this.HandleActionTriggerCallResize(T3Gv.opt.actionNewBBox, !0, n);
         break;
       case ConstantData.ActionTriggerType.BOTTOMRIGHT:
         o.width = t - o.x,
@@ -293,9 +294,9 @@ class FreehandLine extends BaseLine {
           (o.x = t, o.width = - o.width),
           o.height < 0 &&
           (o.y = a, o.height = - o.height),
-          T3Gv.optManager.actionNewBBox = $.extend(!0, {
+          T3Gv.opt.actionNewBBox = $.extend(!0, {
           }, o),
-          this.HandleActionTriggerCallResize(T3Gv.optManager.actionNewBBox, !0, n);
+          this.HandleActionTriggerCallResize(T3Gv.opt.actionNewBBox, !0, n);
         break;
       case ConstantData.ActionTriggerType.BOTTOMLEFT:
         o.height = a - o.y,
@@ -304,14 +305,14 @@ class FreehandLine extends BaseLine {
           o.width += delx,
           o.width < 0 &&
           (
-            o.x = T3Gv.optManager.actionBBox.x + T3Gv.optManager.actionBBox.width,
+            o.x = T3Gv.opt.actionBBox.x + T3Gv.opt.actionBBox.width,
             o.width = - o.width
           ),
           o.height < 0 &&
           (o.y = a, o.height = - o.height),
-          T3Gv.optManager.actionNewBBox = $.extend(!0, {
+          T3Gv.opt.actionNewBBox = $.extend(!0, {
           }, o),
-          this.HandleActionTriggerCallResize(T3Gv.optManager.actionNewBBox, !0, n)
+          this.HandleActionTriggerCallResize(T3Gv.opt.actionNewBBox, !0, n)
     }
   }
 
@@ -329,14 +330,14 @@ class FreehandLine extends BaseLine {
       (n.height = t),
       (t || e) &&
       (
-        r = T3Gv.optManager.actionBBox,
-        i = T3Gv.optManager.actionNewBBox,
-        T3Gv.optManager.actionBBox = Utils1.DeepCopy(this.Frame),
-        T3Gv.optManager.actionNewBBox = Utils1.DeepCopy(this.Frame),
+        r = T3Gv.opt.actionBBox,
+        i = T3Gv.opt.actionNewBBox,
+        T3Gv.opt.actionBBox = Utils1.DeepCopy(this.Frame),
+        T3Gv.opt.actionNewBBox = Utils1.DeepCopy(this.Frame),
         this.HandleActionTriggerCallResize(n, a, null),
-        T3Gv.optManager.actionBBox = r,
-        T3Gv.optManager.actionNewBBox = i,
-        T3Gv.optManager.AddToDirtyList(this.BlockID),
+        T3Gv.opt.actionBBox = r,
+        T3Gv.opt.actionNewBBox = i,
+        T3Gv.opt.AddToDirtyList(this.BlockID),
         this.rflags &&
         (
           e &&
@@ -387,14 +388,14 @@ class FreehandLine extends BaseLine {
       this.CalcFrame(),
       t === ConstantData.ActionTriggerType.LINELENGTH &&
       (t = 0, noMin = !0),
-      T3Gv.optManager.actionStoredObjectId === this.BlockID &&
+      T3Gv.opt.actionStoredObjectId === this.BlockID &&
       a &&
-      T3Gv.optManager.UpdateDisplayCoordinates(e, a, ConstantData.CursorTypes.Grow, this),
+      T3Gv.opt.UpdateDisplayCoordinates(e, a, ConstantData.CursorTypes.Grow, this),
       t &&
-      T3Gv.optManager.actionSvgObject &&
-      T3Gv.optManager.actionStoredObjectId === this.BlockID
+      T3Gv.opt.actionSvgObject &&
+      T3Gv.opt.actionStoredObjectId === this.BlockID
     ) {
-      if (null == T3Gv.optManager.actionSvgObject) return;
+      if (null == T3Gv.opt.actionSvgObject) return;
       let e = {
         action: t,
         prevBBox: this.prevBBox,
@@ -402,7 +403,7 @@ class FreehandLine extends BaseLine {
         }, this.trect)
       };
 
-      this.UpdateDrawing(T3Gv.optManager.actionSvgObject)
+      this.UpdateDrawing(T3Gv.opt.actionSvgObject)
     }
   }
 
@@ -458,11 +459,11 @@ class FreehandLine extends BaseLine {
         Utils2.StopPropagationAndDefaults(e),
         e.gesture.stopDetect()
       ),
-      T3Gv.optManager.UnbindActionClickHammerEvents(),
-      T3Gv.optManager.isMobilePlatform ||
+      T3Gv.opt.UnbindActionClickHammerEvents(),
+      T3Gv.opt.isMobilePlatform ||
       (
         $(window).unbind('mousemove'),
-        T3Gv.optManager.WorkAreaHammer.on('tap', Evt_WorkAreaHammerClick)
+        T3Gv.opt.WorkAreaHammer.on('tap', Evt_WorkAreaHammerClick)
       ),
       this.ResetAutoScrollTimer()
       // ,
@@ -472,30 +473,30 @@ class FreehandLine extends BaseLine {
         attributes: {
         }
       };
-      t.attributes.StyleRecord = Utils1.DeepCopy(T3Gv.optManager.drawShape.StyleRecord),
-        t.attributes.StartArrowID = T3Gv.optManager.drawShape.StartArrowID,
-        t.attributes.EndArrowID = T3Gv.optManager.drawShape.EndArrowID,
-        t.attributes.StartArrowDisp = T3Gv.optManager.drawShape.StartArrowDisp,
-        t.attributes.ArrowSizeIndex = T3Gv.optManager.drawShape.ArrowSizeIndex,
-        t.attributes.TextGrow = T3Gv.optManager.drawShape.TextGrow,
-        t.attributes.TextAlign = T3Gv.optManager.drawShape.TextAlign,
-        t.attributes.TextDirection = T3Gv.optManager.drawShape.TextDirection,
-        t.attributes.Dimensions = T3Gv.optManager.drawShape.Dimensions,
-        t.attributes.StartPoint = Utils1.DeepCopy(T3Gv.optManager.drawShape.StartPoint),
-        t.attributes.EndPoint = Utils1.DeepCopy(T3Gv.optManager.drawShape.EndPoint),
-        t.attributes.Frame = Utils1.DeepCopy(T3Gv.optManager.drawShape.Frame),
+      t.attributes.StyleRecord = Utils1.DeepCopy(T3Gv.opt.drawShape.StyleRecord),
+        t.attributes.StartArrowID = T3Gv.opt.drawShape.StartArrowID,
+        t.attributes.EndArrowID = T3Gv.opt.drawShape.EndArrowID,
+        t.attributes.StartArrowDisp = T3Gv.opt.drawShape.StartArrowDisp,
+        t.attributes.ArrowSizeIndex = T3Gv.opt.drawShape.ArrowSizeIndex,
+        t.attributes.TextGrow = T3Gv.opt.drawShape.TextGrow,
+        t.attributes.TextAlign = T3Gv.opt.drawShape.TextAlign,
+        t.attributes.TextDirection = T3Gv.opt.drawShape.TextDirection,
+        t.attributes.Dimensions = T3Gv.opt.drawShape.Dimensions,
+        t.attributes.StartPoint = Utils1.DeepCopy(T3Gv.opt.drawShape.StartPoint),
+        t.attributes.EndPoint = Utils1.DeepCopy(T3Gv.opt.drawShape.EndPoint),
+        t.attributes.Frame = Utils1.DeepCopy(T3Gv.opt.drawShape.Frame),
         t.attributes.extraflags = ConstantData.ExtraFlags.SEDE_SideKnobs,
         this.pointlist &&
         (t.attributes.pointlist = Utils1.DeepCopy(this.pointlist)),
         t.LineTool = ShapeConstant.LineToolTypes.FreehandLine, false &&
         (t.CreateList = [
-          T3Gv.optManager.drawShape.BlockID
+          T3Gv.opt.drawShape.BlockID
         ]),
-        t.linkParams = Utils1.DeepCopy(T3Gv.optManager.linkParams),
+        t.linkParams = Utils1.DeepCopy(T3Gv.opt.linkParams),
         t.Actions = [];
     }
-    this.LM_DrawPostRelease(T3Gv.optManager.actionStoredObjectId),
-      T3Gv.optManager.PostObjectDraw()
+    this.LM_DrawPostRelease(T3Gv.opt.actionStoredObjectId),
+      T3Gv.opt.PostObjectDraw()
   }
 
   LM_DrawClick(e, t) {
@@ -514,15 +515,15 @@ class FreehandLine extends BaseLine {
           x: e,
           y: t
         },
-        T3Gv.optManager.WorkAreaHammer.off('dragstart'),
-        T3Gv.optManager.isMobilePlatform ||
+        T3Gv.opt.WorkAreaHammer.off('dragstart'),
+        T3Gv.opt.isMobilePlatform ||
         (
-          T3Gv.optManager.WorkAreaHammer.on('drag', Evt_DrawTrackHandlerFactory(this)),
-          T3Gv.optManager.WorkAreaHammer.on('dragend', Evt_DrawReleaseHandlerFactory(this))
+          T3Gv.opt.WorkAreaHammer.on('drag', Evt_DrawTrackHandlerFactory(this)),
+          T3Gv.opt.WorkAreaHammer.on('dragend', Evt_DrawReleaseHandlerFactory(this))
         )
     } catch (e) {
       this.LM_DrawClick_ExceptionCleanup(e);
-      T3Gv.optManager.ExceptionCleanup(e);
+      T3Gv.opt.ExceptionCleanup(e);
       throw e;
     }
   }
@@ -532,14 +533,14 @@ class FreehandLine extends BaseLine {
    * @param writer - The file writer object
    * @param options - Options for writing
    */
-  WriteSDFAttributes(writer, options) {
-    console.log('S.FreehandLine.WriteSDFAttributes - Input:', { writer, options });
+  WriteShapeData(outputStream, options) {
+    console.log('S.FreehandLine.WriteShapeData - Input:', { outputStream, options });
 
     // Get a copy of freehand points (true means relative to frame)
     let freehandPoints = Utils1.DeepCopy(this).GetFreehandPoints(true);
 
     // Write the freehand line opcode
-    let codePosition = ShapeDataUtil.Write_CODE(writer, ShapeConstant.OpCodeName.SDF_C_FREEHANDLINE);
+    let codePosition = ShapeDataUtil.WriteCode(outputStream, ShapeConstant.OpNameCode.cFreeHandLine);
 
     // Prepare the data structure
     let pointData,
@@ -557,10 +558,10 @@ class FreehandLine extends BaseLine {
     }
 
     // Write the structure to the file
-    writer.writeStruct(ShapeConstant.FreehandLineStruct, lineData);
-    ShapeDataUtil.Write_LENGTH(writer, codePosition);
+    outputStream.writeStruct(ShapeConstant.FreehandLineStruct, lineData);
+    ShapeDataUtil.WriteLength(outputStream, codePosition);
 
-    console.log('S.FreehandLine.WriteSDFAttributes - Output:', { freehandPoints });
+    console.log('S.FreehandLine.WriteShapeData - Output:', { freehandPoints });
   }
 }
 

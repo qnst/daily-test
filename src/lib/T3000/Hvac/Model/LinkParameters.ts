@@ -1,6 +1,6 @@
 
 
-import ConstantData from "../Data/ConstantData"
+import ConstantData from "../Data/Constant/ConstantData"
 
 class LinkParameters {
 

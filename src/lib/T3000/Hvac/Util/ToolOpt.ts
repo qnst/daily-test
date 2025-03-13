@@ -1,7 +1,7 @@
 
 
 import T3Gv from '../Data/T3Gv'
-import ConstantData from '../Data/ConstantData'
+import ConstantData from '../Data/Constant/ConstantData'
 import ToolUtil from './ToolUtil';
 
 class ToolOpt {
@@ -25,7 +25,7 @@ class ToolOpt {
     this.tul.CancelModalOperation();
 
     if (selectionToolSticky) {
-      T3Gv.optManager.ResetObjectDraw();
+      T3Gv.opt.ResetObjectDraw();
     }
 
     let selectionModeAttr = "";// event.currentTarget.attributes.getNamedItem(ConstantData.Constants.Attr_SelectionMode);
@@ -37,18 +37,18 @@ class ToolOpt {
           isMultipleSelection = true;
           break;
         case 'all':
-          T3Gv.optManager.SelectAllObjects();
+          T3Gv.opt.SelectAllObjects();
           console.log('O.ToolOpt.SelectAct - Output: Selected all objects');
           return;
         case 'lines':
-          T3Gv.optManager.SelectAllObjects([
+          T3Gv.opt.SelectAllObjects([
             ConstantData.DrawingObjectBaseClass.LINE,
             ConstantData.DrawingObjectBaseClass.CONNECTOR
           ]);
           console.log('O.ToolOpt.SelectAct - Output: Selected all line objects');
           break;
         case 'shapes':
-          T3Gv.optManager.SelectAllObjects([ConstantData.DrawingObjectBaseClass.SHAPE]);
+          T3Gv.opt.SelectAllObjects([ConstantData.DrawingObjectBaseClass.SHAPE]);
           console.log('O.ToolOpt.SelectAct - Output: Selected all shape objects');
           break;
       }
@@ -360,7 +360,7 @@ class ToolOpt {
   MeasureDistanceAct(event) {
     console.log('O.ToolOpt.MeasureDistanceAct - Input:', { event });
 
-    T3Gv.gBusinessManager.AddMeasureLine(event);
+    T3Gv.wallOpt.AddMeasureLine(event);
 
     console.log('O.ToolOpt.MeasureDistanceAct - Output: Added measurement line');
   }
@@ -373,7 +373,7 @@ class ToolOpt {
   MeasureAreaAct(event) {
     console.log('O.ToolOpt.MeasureAreaAct - Input:', { event });
 
-    T3Gv.gBusinessManager.AddMeasureArea(event);
+    T3Gv.wallOpt.AddMeasureArea(event);
 
     console.log('O.ToolOpt.MeasureAreaAct - Output: Added measurement area');
   }

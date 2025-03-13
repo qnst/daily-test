@@ -9,9 +9,9 @@ import Utils2 from "../Helper/Utils2"
 import Utils3 from "../Helper/Utils3"
 import T3Gv from '../Data/T3Gv'
 import Instance from "../Data/Instance/Instance";
-import ConstantData from "../Data/ConstantData"
+import ConstantData from "../Data/Constant/ConstantData"
 import BasicConstants from "./B.Constants";
-import ConstantData2 from "../Data/ConstantData2";
+import ConstantData2 from "../Data/Constant/ConstantData2";
 
 class Element {
 

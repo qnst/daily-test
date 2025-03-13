@@ -6,12 +6,12 @@ import Utils1 from "../Helper/Utils1"
 import Utils2 from "../Helper/Utils2"
 import Utils3 from "../Helper/Utils3"
 import Spell from './B.Text.Spell'
-import ConstantData from "../Data/ConstantData"
+import ConstantData from "../Data/Constant/ConstantData"
 import DefaultFmtText from '../Model/DefaultFmtText'
 import DefaultRuntimeText from '../Model/DefaultRuntimeText'
 import DefaultStyle from "../Model/DefaultStyle";
 import Instance from "../Data/Instance/Instance";
-import ConstantData2 from "../Data/ConstantData2";
+import ConstantData2 from "../Data/Constant/ConstantData2";
 
 class Formatter {
 

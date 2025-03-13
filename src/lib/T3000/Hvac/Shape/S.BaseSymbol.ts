@@ -3,9 +3,9 @@
 import BaseShape from './S.BaseShape'
 import Utils2 from "../Helper/Utils2";
 import T3Gv from '../Data/T3Gv'
-import ConstantData from '../Data/ConstantData'
+import ConstantData from '../Data/Constant/ConstantData'
 import $ from 'jquery';
-import ConstantData2 from '../Data/ConstantData2';
+import ConstantData2 from '../Data/Constant/ConstantData2';
 
 class BaseSymbol extends BaseShape {
 
@@ -153,7 +153,7 @@ class BaseSymbol extends BaseShape {
     knobGroup.AddElement(knobElement);
 
     // Conditionally create the rotate knob if allowed
-    if (!T3Gv.optManager.touchInitiated && !knobConfig.locked && !this.NoGrow()) {
+    if (!T3Gv.opt.touchInitiated && !knobConfig.locked && !this.NoGrow()) {
       knobConfig.shapeType = ConstantData.CreateShapeType.OVAL;
       knobConfig.x = frameWidth - 3 * scaleRotatedKnobSize;
       knobConfig.y = frameHeight / 2 - scaleRotatedKnobSize / 2;
@@ -188,7 +188,7 @@ class BaseSymbol extends BaseShape {
     console.log("S.BaseSymbol - Flip input:", flipFlags);
 
     // Retrieve the element by block ID (for potential further operations)
-    T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID);
+    T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
 
     // Process horizontal flip if the corresponding flag is set in the input parameter
     if (flipFlags & ConstantData.ExtraFlags.SEDE_FlipHoriz) {
@@ -219,7 +219,7 @@ class BaseSymbol extends BaseShape {
     if (this.DataID !== -1) {
       if (this.TextFlags & ConstantData.TextFlags.SED_TF_AttachA ||
         this.TextFlags & ConstantData.TextFlags.SED_TF_AttachB) {
-        T3Gv.optManager.actionSvgObject.textElem.SetVisible(false);
+        T3Gv.opt.actionSvgObject.textElem.SetVisible(false);
       }
     }
 
@@ -239,13 +239,13 @@ class BaseSymbol extends BaseShape {
         (this.TextFlags & ConstantData.TextFlags.SED_TF_AttachA) ||
         (this.TextFlags & ConstantData.TextFlags.SED_TF_AttachB)
       ) {
-        T3Gv.optManager.actionSvgObject.textElem.SetVisible(true);
+        T3Gv.opt.actionSvgObject.textElem.SetVisible(true);
       }
     }
 
-    T3Gv.optManager.SetEditMode(ConstantData.EditState.DEFAULT);
-    T3Gv.optManager.UpdateLinks();
-    T3Gv.optManager.linkParams = null;
+    T3Gv.opt.SetEditMode(ConstantData.EditState.DEFAULT);
+    T3Gv.opt.UpdateLinks();
+    T3Gv.opt.linkParams = null;
 
     this.sizedim.width = this.Frame.width;
     this.sizedim.height = this.Frame.height;

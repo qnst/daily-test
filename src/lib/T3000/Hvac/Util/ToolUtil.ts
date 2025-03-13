@@ -11,16 +11,16 @@ import Polygon from '../Shape/S.Polygon'
 import RRect from '../Shape/S.RRect'
 import Oval from '../Shape/S.Oval'
 import Clipboard from './Clipboard'
-import ConstantData from '../Data/ConstantData'
+import ConstantData from '../Data/Constant/ConstantData'
 import PolySeg from '../Model/PolySeg'
-import ConstantData2 from '../Data/ConstantData2'
+import ConstantData2 from '../Data/Constant/ConstantData2'
 import SVGFragmentSymbol from '../Shape/S.SVGFragmentSymbol'
 import QuickStyle from '../Model/QuickStyle'
 import Instance from '../Data/Instance/Instance'
 import PolyList from '../Model/PolyList'
 import ToolConstant from './ToolConstant'
-import DataOpt from '../Data/DataOpt'
-import T3Constant from '../Data/T3Constant'
+import DataOpt from './DataOpt'
+import T3Constant from '../Data/Constant/T3Constant'
 import PolygonConstant from './PolygonConstant'
 
 class ToolUtil {
@@ -34,7 +34,7 @@ class ToolUtil {
     console.log('O.ActiveSelection.SetSelectionTool - Input:', { toolType, isSticky });
 
     // Initial render of all SVG selection states
-    T3Gv.optManager.RenderAllSVGSelectionStates();
+    T3Gv.opt.RenderAllSVGSelectionStates();
 
     // Check if we're currently using the wall tool
     const isCurrentlyWallTool = T3Constant.DocContext.SelectionTool === ToolConstant.Tools.Tool_Wall;
@@ -50,7 +50,7 @@ class ToolUtil {
 
       // If we were previously using the wall tool, re-render all states
       if (isCurrentlyWallTool) {
-        T3Gv.optManager.RenderAllSVGSelectionStates();
+        T3Gv.opt.RenderAllSVGSelectionStates();
       }
     }
 
@@ -70,7 +70,7 @@ class ToolUtil {
     console.log("O.ToolOpt CancelModalOperation input:", skipMessageHandling);
 
     this.SetSelectionTool(ToolConstant.Tools.Tool_Select, false);
-    T3Gv.optManager.CancelModalOperation();
+    T3Gv.opt.CancelModalOperation();
 
     if (!skipMessageHandling) {
       // Collab.UnLockMessages();
@@ -102,18 +102,18 @@ class ToolUtil {
     var wallThickness = thickness * T3Gv.docUtil.rulerConfig.major /
       (T3Gv.docUtil.rulerConfig.majorScale * conversionFactor);
 
-    var sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
+    var sessionBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
 
     if (!Utils2.IsEqual(sessionBlock.def.wallThickness, wallThickness, 0.01) || wallObj) {
-      T3Gv.optManager.CloseEdit(true, true);
-      sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, true);
+      T3Gv.opt.CloseEdit(true, true);
+      sessionBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, true);
 
       if (!wallObj) {
         sessionBlock.def.wallThickness = wallThickness;
       }
 
-      var sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
-      T3Gv.optManager.CompleteOperation(null);
+      var sessionBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+      T3Gv.opt.CompleteOperation(null);
     }
 
     console.log("O.ToolOpt SetDefaultWallThickness output: void");
@@ -133,11 +133,11 @@ class ToolUtil {
     var businessManager = null;
 
     if (businessManager == null) {
-      businessManager = T3Gv.gBusinessManager;
+      businessManager = T3Gv.wallOpt;
     }
 
     if (businessManager && businessManager.AddWall) {
-      T3Gv.optManager.CloseEdit();
+      T3Gv.opt.CloseEdit();
       businessManager.ToggleAddingWalls(true);
       wallObject = businessManager.AddWall(isTargetValid, target);
       // ConstantData.DocumentContext.UsingWallTool = true;
@@ -161,20 +161,20 @@ class ToolUtil {
     let context;
     let callbackFunction;
 
-    T3Gv.optManager.SetUIAdaptation(event);
+    T3Gv.opt.SetUIAdaptation(event);
 
     // Initialize cancel flag
     let cancelOperation = false;
 
     // Prepare for drag-drop or stamp operation
-    T3Gv.optManager.PreDragDropOrStamp();
+    T3Gv.opt.PreDragDropOrStamp();
 
     // Set up the context and callback
     context = this;
     callbackFunction = this.StampOrDragDropCallback;
 
     // Set a timeout to execute the callback after a short delay
-    T3Gv.optManager.stampTimeout = window.setTimeout(callbackFunction, 200, context, shapeType);
+    T3Gv.opt.stampTimeout = window.setTimeout(callbackFunction, 200, context, shapeType);
 
     console.log('U.ToolUtil.StampOrDragDropNewShape - Output: stampTimeout set');
   }
@@ -225,8 +225,8 @@ class ToolUtil {
         newShape = this.DrawNewFreehandLine(isDrawing, eventObject, referenceObject);
         break;
       case 'moveWall':
-        if (T3Gv.gBusinessManager && T3Gv.gBusinessManager.AddWall) {
-          newShape = T3Gv.gBusinessManager.AddWall(isDrawing, referenceObject);
+        if (T3Gv.wallOpt && T3Gv.wallOpt.AddWall) {
+          newShape = T3Gv.wallOpt.AddWall(isDrawing, referenceObject);
         } else {
           newShape = this.DrawNewLine(eventObject, 0, isDrawing, referenceObject);
         }
@@ -251,7 +251,7 @@ class ToolUtil {
   DrawNewLine(event, lineType, isDrawing, referenceObject) {
     console.log("O.ToolOpt DrawNewLine input:", event, lineType, isDrawing, referenceObject);
 
-    const sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data;
+    const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
     const isVerticalText = 0 == (sessionData.def.textflags & ConstantData.TextFlags.SED_TF_HorizText);
     let startArrowID = sessionData.d_sarrow;
     let endArrowID = sessionData.d_earrow;
@@ -338,7 +338,7 @@ class ToolUtil {
       return lineShape;
     }
 
-    T3Gv.optManager.DrawNewObject(lineShape, event);
+    T3Gv.opt.DrawNewObject(lineShape, event);
     console.log("O.ToolOpt DrawNewLine output: void");
   }
 
@@ -354,7 +354,7 @@ class ToolUtil {
     var result;
     var shapeTypes = PolygonConstant.ShapeTypes;
 
-    T3Gv.optManager.stampTimeout = null;
+    T3Gv.opt.stampTimeout = null;
 
     if (shapeType !== 'textLabel') {
       // ConstantData.DocumentContext.ShapeTool = shapeType;
@@ -364,7 +364,7 @@ class ToolUtil {
 
     if (isDragDropMode) {
       result = false;
-      T3Gv.optManager.UnbindDragDropOrStamp();
+      T3Gv.opt.UnbindDragDropOrStamp();
     } else {
       result = true;
     }
@@ -402,7 +402,7 @@ class ToolUtil {
     console.log("O.ToolOpt StampRectangle input:", isDragDropMode, isSquare);
 
     let width, height;
-    const sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
+    const sessionBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
 
     // Set dimensions based on whether we want a square or rectangle
     if (isSquare) {
@@ -436,7 +436,7 @@ class ToolUtil {
     const rectangleShape = new Rect(shapeAttributes);
 
     // Use mouse stamp method to place the shape
-    T3Gv.optManager.MouseStampNewShape(rectangleShape, true, true, true, null, null);
+    T3Gv.opt.MouseStampNewShape(rectangleShape, true, true, true, null, null);
 
     console.log("O.ToolOpt StampRectangle output: void");
   }
@@ -451,7 +451,7 @@ class ToolUtil {
     console.log("O.ToolOpt StampRoundRect input:", isDragDropMode, isSquare);
 
     let width, height;
-    const sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
+    const sessionBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
 
     // Set dimensions based on whether we want a square or rectangle
     if (isSquare) {
@@ -485,7 +485,7 @@ class ToolUtil {
     const roundRectShape = new RRect(shapeAttributes);
 
     // Use mouse stamp method to place the shape
-    T3Gv.optManager.MouseStampNewShape(roundRectShape, true, true, true, null, null);
+    T3Gv.opt.MouseStampNewShape(roundRectShape, true, true, true, null, null);
 
     console.log("O.ToolOpt StampRoundRect output: void");
   }
@@ -543,7 +543,7 @@ class ToolUtil {
     const ovalShape = new Oval(shapeAttributes);
 
     // Use mouse stamp method to place the shape
-    T3Gv.optManager.MouseStampNewShape(ovalShape, true, true, true, null, null);
+    T3Gv.opt.MouseStampNewShape(ovalShape, true, true, true, null, null);
 
     console.log("O.ToolOpt StampCircle output: void");
   }
@@ -558,29 +558,29 @@ class ToolUtil {
     console.log("O.ToolOpt StampTextLabel input:", isDragDropMode, skipTargetCheck);
 
     // Get the text edit session block
-    var textEditSession = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.tedSessionBlockId, false);
+    var textEditSession = T3Gv.opt.GetObjectPtr(T3Gv.opt.tedSessionBlockId, false);
 
     // Check if we need to handle existing active text editing
     if (skipTargetCheck || textEditSession.theActiveTextEditObjectID == -1) {
       // If not skipping target check, try to activate text edit on selected object
       if (!skipTargetCheck) {
-        var targetID = T3Gv.optManager.GetTargetSelect();
+        var targetID = T3Gv.opt.GetTargetSelect();
         if (targetID >= 0) {
-          var targetObject = T3Gv.optManager.GetObjectPtr(targetID, false);
+          var targetObject = T3Gv.opt.GetObjectPtr(targetID, false);
           if (targetObject && targetObject.AllowTextEdit()) {
-            var svgElement = T3Gv.optManager.svgObjectLayer.GetElementByID(targetID);
-            T3Gv.optManager.ActivateTextEdit(svgElement);
+            var svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(targetID);
+            T3Gv.opt.ActivateTextEdit(svgElement);
             console.log("O.ToolOpt StampTextLabel output: void - activated edit on existing text");
             return;
           }
         }
       }
     } else {
-      T3Gv.optManager.DeactivateTextEdit();
+      T3Gv.opt.DeactivateTextEdit();
     }
 
     // Get session data and default text style
-    var sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data;
+    var sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
     var defaultTextStyle = Utils3.FindStyle(ConstantData.Defines.TextBlockStyle);
 
     if (defaultTextStyle == null) {
@@ -620,21 +620,21 @@ class ToolUtil {
     textShape.StyleRecord.Text = textStyle.Text;
 
     // Calculate text metrics for proper sizing
-    var initialTextStyle = T3Gv.optManager.CalcDefaultInitialTextStyle(textShape.StyleRecord.Text);
-    var textMetrics = T3Gv.optManager.svgDoc.CalcStyleMetrics(initialTextStyle);
+    var initialTextStyle = T3Gv.opt.CalcDefaultInitialTextStyle(textShape.StyleRecord.Text);
+    var textMetrics = T3Gv.opt.svgDoc.CalcStyleMetrics(initialTextStyle);
 
     // Set shape offset and height
-    T3Gv.optManager.stampShapeOffsetX = 0;
-    T3Gv.optManager.stampShapeOffsetY = textMetrics.ascent;
+    T3Gv.opt.stampShapeOffsetX = 0;
+    T3Gv.opt.stampShapeOffsetY = textMetrics.ascent;
     textShape.Frame.height = textMetrics.height;
 
     // Deactivate text edit if not in drag-drop mode
     if (!isDragDropMode) {
-      T3Gv.optManager.DeactivateTextEdit(false);
+      T3Gv.opt.DeactivateTextEdit(false);
     }
 
     // Stamp the text shape and activate text editing
-    T3Gv.optManager.StampNewTextShapeOnTap(
+    T3Gv.opt.StampNewTextShapeOnTap(
       textShape,
       false,
       false,
@@ -666,7 +666,7 @@ class ToolUtil {
     };
 
     // Get shape parameters for the specified shape type
-    const shapeParams = T3Gv.optManager.GetShapeParams(shapeType, defaultFrame);
+    const shapeParams = T3Gv.opt.GetShapeParams(shapeType, defaultFrame);
 
     // Configure shape attributes
     const shapeAttributes = {
@@ -704,7 +704,7 @@ class ToolUtil {
     }
 
     // Stamp the shape onto the canvas
-    T3Gv.optManager.MouseStampNewShape(newShape, true, true, true, null, null);
+    T3Gv.opt.MouseStampNewShape(newShape, true, true, true, null, null);
 
     console.log("U.ToolUtil.StampShape - Output: Shape stamped successfully");
   }
@@ -718,10 +718,10 @@ class ToolUtil {
     console.log("O.ToolOpt RotateShapes input:", rotationAngle);
 
     try {
-      T3Gv.optManager.CloseEdit();
-      T3Gv.optManager.RotateShapes(parseInt(rotationAngle, 10));
+      T3Gv.opt.CloseEdit();
+      T3Gv.opt.RotateShapes(parseInt(rotationAngle, 10));
     } catch (error) {
-      T3Gv.optManager.ExceptionCleanup(error);
+      T3Gv.opt.ExceptionCleanup(error);
       throw error;
     }
 
@@ -737,10 +737,10 @@ class ToolUtil {
     console.log("O.ToolOpt AlignShapes input:", alignmentType);
 
     try {
-      T3Gv.optManager.CloseEdit();
-      T3Gv.optManager.AlignShapes(alignmentType);
+      T3Gv.opt.CloseEdit();
+      T3Gv.opt.AlignShapes(alignmentType);
     } catch (error) {
-      T3Gv.optManager.ExceptionCleanup(error);
+      T3Gv.opt.ExceptionCleanup(error);
       throw error;
     }
 
@@ -755,10 +755,10 @@ class ToolUtil {
     console.log("O.ToolOpt DeleteSelectedObjects input: no parameters");
 
     try {
-      T3Gv.optManager.CloseEdit();
-      T3Gv.optManager.DeleteSelectedObjects();
+      T3Gv.opt.CloseEdit();
+      T3Gv.opt.DeleteSelectedObjects();
     } catch (error) {
-      T3Gv.optManager.ExceptionCleanup(error);
+      T3Gv.opt.ExceptionCleanup(error);
       throw error;
     }
 
@@ -773,10 +773,10 @@ class ToolUtil {
     console.log("O.ToolOpt Undo input: no parameters");
 
     try {
-      T3Gv.optManager.Undo();
+      T3Gv.opt.Undo();
     } catch (error) {
       throw error;
-      T3Gv.optManager.ExceptionCleanup(error);
+      T3Gv.opt.ExceptionCleanup(error);
       throw error;
     }
 
@@ -791,9 +791,9 @@ class ToolUtil {
     console.log("O.ToolOpt Redo input: no parameters");
 
     try {
-      T3Gv.optManager.Redo();
+      T3Gv.opt.Redo();
     } catch (error) {
-      T3Gv.optManager.ExceptionCleanup(error);
+      T3Gv.opt.ExceptionCleanup(error);
       throw error;
     }
 
@@ -817,11 +817,11 @@ class ToolUtil {
       }
 
       if (!clipboardSuccess) {
-        T3Gv.optManager.CopyObjects();
+        T3Gv.opt.CopyObjects();
       }
     } catch (error) {
-      T3Gv.optManager.RestorePrimaryStateManager();
-      T3Gv.optManager.ExceptionCleanup(error);
+      T3Gv.opt.RestorePrimaryStateManager();
+      T3Gv.opt.ExceptionCleanup(error);
       throw error;
     }
 
@@ -845,11 +845,11 @@ class ToolUtil {
       }
 
       if (!clipboardSuccess) {
-        T3Gv.optManager.CutObjects();
+        T3Gv.opt.CutObjects();
       }
     } catch (error) {
-      T3Gv.optManager.RestorePrimaryStateManager();
-      T3Gv.optManager.ExceptionCleanup(error);
+      T3Gv.opt.RestorePrimaryStateManager();
+      T3Gv.opt.ExceptionCleanup(error);
       throw error;
     }
 
@@ -865,15 +865,15 @@ class ToolUtil {
     console.log("O.ToolOpt Paste input:", eventData);
 
     try {
-      T3Gv.optManager.PastePoint = null;
+      T3Gv.opt.PastePoint = null;
 
-      if (eventData && T3Gv.optManager.rightClickParams) {
-        T3Gv.optManager.PastePoint = T3Gv.optManager.rightClickParams.HitPt;
+      if (eventData && T3Gv.opt.rightClickParams) {
+        T3Gv.opt.PastePoint = T3Gv.opt.rightClickParams.HitPt;
       }
 
       Clipboard.PasteFromUIaction();
     } catch (error) {
-      T3Gv.optManager.ExceptionCleanup(error);
+      T3Gv.opt.ExceptionCleanup(error);
       throw error;
     }
 
@@ -888,10 +888,10 @@ class ToolUtil {
     console.log("O.ToolOpt SendToBackOf input: no parameters");
 
     try {
-      T3Gv.optManager.CloseEdit();
-      T3Gv.optManager.SendToBackOf();
+      T3Gv.opt.CloseEdit();
+      T3Gv.opt.SendToBackOf();
     } catch (error) {
-      T3Gv.optManager.ExceptionCleanup(error);
+      T3Gv.opt.ExceptionCleanup(error);
       throw error;
     }
 
@@ -906,10 +906,10 @@ class ToolUtil {
     console.log("O.ToolOpt BringToFrontOf input: no parameters");
 
     try {
-      T3Gv.optManager.CloseEdit();
-      T3Gv.optManager.BringToFrontOf();
+      T3Gv.opt.CloseEdit();
+      T3Gv.opt.BringToFrontOf();
     } catch (error) {
-      T3Gv.optManager.ExceptionCleanup(error);
+      T3Gv.opt.ExceptionCleanup(error);
       throw error;
     }
 
@@ -924,11 +924,11 @@ class ToolUtil {
     console.log("O.ToolOpt GroupSelectedShapes input: no parameters");
 
     try {
-      T3Gv.optManager.CloseEdit();
+      T3Gv.opt.CloseEdit();
       // Parameters: autoAddShapes, additionalObjects, createOuterFrame, preserveOriginals, createVisualGroup
-      T3Gv.optManager.GroupSelectedShapes(false, null, false, false, true);
+      T3Gv.opt.GroupSelectedShapes(false, null, false, false, true);
     } catch (error) {
-      T3Gv.optManager.ExceptionCleanup(error);
+      T3Gv.opt.ExceptionCleanup(error);
       throw error;
     }
 
@@ -943,10 +943,10 @@ class ToolUtil {
     console.log("O.ToolOpt UngroupSelectedShapes input: no parameters");
 
     try {
-      T3Gv.optManager.CloseEdit();
-      T3Gv.optManager.UngroupSelectedShapes();
+      T3Gv.opt.CloseEdit();
+      T3Gv.opt.UngroupSelectedShapes();
     } catch (error) {
-      T3Gv.optManager.ExceptionCleanup(error);
+      T3Gv.opt.ExceptionCleanup(error);
       throw error;
     }
 
@@ -961,10 +961,10 @@ class ToolUtil {
     console.log("O.ToolOpt FlipHorizontal input: no parameters");
 
     try {
-      T3Gv.optManager.CloseEdit();
-      T3Gv.optManager.FlipShapes(ConstantData.ExtraFlags.SEDE_FlipHoriz);
+      T3Gv.opt.CloseEdit();
+      T3Gv.opt.FlipShapes(ConstantData.ExtraFlags.SEDE_FlipHoriz);
     } catch (error) {
-      T3Gv.optManager.ExceptionCleanup(error);
+      T3Gv.opt.ExceptionCleanup(error);
       throw error;
     }
 
@@ -979,10 +979,10 @@ class ToolUtil {
     console.log("O.ToolOpt FlipVertical input: no parameters");
 
     try {
-      T3Gv.optManager.CloseEdit();
-      T3Gv.optManager.FlipShapes(ConstantData.ExtraFlags.SEDE_FlipVert);
+      T3Gv.opt.CloseEdit();
+      T3Gv.opt.FlipShapes(ConstantData.ExtraFlags.SEDE_FlipVert);
     } catch (error) {
-      T3Gv.optManager.ExceptionCleanup(error);
+      T3Gv.opt.ExceptionCleanup(error);
       throw error;
     }
 
@@ -998,10 +998,10 @@ class ToolUtil {
     console.log("O.ToolOpt MakeSameSize input:", dimensionType);
 
     try {
-      T3Gv.optManager.CloseEdit();
-      T3Gv.optManager.MakeSameSize(parseInt(dimensionType, 10));
+      T3Gv.opt.CloseEdit();
+      T3Gv.opt.MakeSameSize(parseInt(dimensionType, 10));
     } catch (error) {
-      T3Gv.optManager.ExceptionCleanup(error);
+      T3Gv.opt.ExceptionCleanup(error);
     }
 
     console.log("O.ToolOpt MakeSameSize output: void");
@@ -1015,11 +1015,11 @@ class ToolUtil {
     console.log("O.ToolOpt GetSelectionContext input: no parameters");
 
     try {
-      const context = T3Gv.optManager.GetSelectionContext();
+      const context = T3Gv.opt.GetSelectionContext();
       console.log("O.ToolOpt GetSelectionContext output:", context);
       return context;
     } catch (error) {
-      T3Gv.optManager.ExceptionCleanup(error);
+      T3Gv.opt.ExceptionCleanup(error);
     }
   }
 
@@ -1031,13 +1031,13 @@ class ToolUtil {
     console.log("O.ToolOpt IsActiveTextEdit input: no parameters");
 
     try {
-      const textEditSession = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.tedSessionBlockId, false);
+      const textEditSession = T3Gv.opt.GetObjectPtr(T3Gv.opt.tedSessionBlockId, false);
       const isActive = textEditSession.theActiveTextEditObjectID !== -1;
 
       console.log("O.ToolOpt IsActiveTextEdit output:", isActive);
       return isActive;
     } catch (error) {
-      T3Gv.optManager.ExceptionCleanup(error);
+      T3Gv.opt.ExceptionCleanup(error);
       console.log("O.ToolOpt IsActiveTextEdit output: undefined (error)");
     }
   }
@@ -1053,11 +1053,11 @@ class ToolUtil {
     console.log("O.ToolOpt HandleKeyDown input:", keyEvent, targetElement, eventModifier);
 
     try {
-      const result = T3Gv.optManager.HandleKeyDown(keyEvent, targetElement, eventModifier);
+      const result = T3Gv.opt.HandleKeyDown(keyEvent, targetElement, eventModifier);
       console.log("O.ToolOpt HandleKeyDown output:", result);
       return result;
     } catch (error) {
-      T3Gv.optManager.ExceptionCleanup(error);
+      T3Gv.opt.ExceptionCleanup(error);
       console.log("O.ToolOpt HandleKeyDown output: undefined (error)");
     }
   }
@@ -1070,11 +1070,11 @@ class ToolUtil {
     console.log("O.ToolOpt Duplicate input: no parameters");
 
     try {
-      T3Gv.optManager.DuplicateObjects();
+      T3Gv.opt.DuplicateObjects();
       console.log("O.ToolOpt Duplicate output: void");
     } catch (error) {
-      T3Gv.optManager.RestorePrimaryStateManager();
-      T3Gv.optManager.ExceptionCleanup(error);
+      T3Gv.opt.RestorePrimaryStateManager();
+      T3Gv.opt.ExceptionCleanup(error);
       console.log("O.ToolOpt Duplicate output: void (error)");
     }
   }
@@ -1089,11 +1089,11 @@ class ToolUtil {
     console.log("O.ToolOpt HandleKeyPress input:", keyEvent, targetElement);
 
     try {
-      const result = T3Gv.optManager.HandleKeyPress(keyEvent, targetElement);
+      const result = T3Gv.opt.HandleKeyPress(keyEvent, targetElement);
       console.log("O.ToolOpt HandleKeyPress output:", result);
       return result;
     } catch (error) {
-      T3Gv.optManager.ExceptionCleanup(error);
+      T3Gv.opt.ExceptionCleanup(error);
       console.log("O.ToolOpt HandleKeyPress output: undefined (error)");
     }
   }
@@ -1122,7 +1122,7 @@ class ToolUtil {
     console.log("O.ToolOpt StampOrDragDropNewSymbol input:", symbolData, useDragDrop);
 
     // Clear any previous replace symbol ID
-    T3Gv.optManager.ReplaceSymbolID = null;
+    T3Gv.opt.ReplaceSymbolID = null;
 
     // SVG fragment definitions
     const pumpSymbolSVG = '<g><g fill="##FILLCOLOR=#7F7F7F##" transform="translate(0,0)"><g class="pump"> <circle stroke="##LINECOLOR=#000000##" cy="16" cx="15.955" r="9.9609003" class="pump-background" /> <g transform="translate(16,16)"> <path d="M -5,8.1369 V -8.1191 L 9.078,0.0091 Z" class="rotating-middle" stroke="##LINECOLOR=#000000##" stroke-width="##LINETHICK=1##"/></g></g></g></g>';
@@ -1137,7 +1137,7 @@ class ToolUtil {
 
     // Add the symbol to the drawing using drag-drop mode
     if (symbolObject) {
-      T3Gv.optManager.DragDropNewShape(symbolObject, true, true, false, null, null);
+      T3Gv.opt.DragDropNewShape(symbolObject, true, true, false, null, null);
     }
 
     console.log("O.ToolOpt StampOrDragDropNewSymbol output: void");
@@ -1154,7 +1154,7 @@ class ToolUtil {
     console.log("O.ToolOpt DrawNewSegLine input:", isDrawing, eventObject, referenceObject);
 
     let attributes;
-    const sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data;
+    const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
     const isVerticalText = 0 == (sessionData.def.textflags & ConstantData.TextFlags.SED_TF_HorizText);
     let startArrowID = sessionData.d_sarrow;
     let endArrowID = sessionData.d_earrow;
@@ -1231,7 +1231,7 @@ class ToolUtil {
       return segmentedLineShape;
     }
 
-    T3Gv.optManager.DrawNewObject(segmentedLineShape, eventObject);
+    T3Gv.opt.DrawNewObject(segmentedLineShape, eventObject);
     console.log("O.ToolOpt DrawNewSegLine output: void");
   }
 
@@ -1246,7 +1246,7 @@ class ToolUtil {
     console.log("O.ToolOpt DrawNewArcSegLine input:", isDrawing, eventObject, referenceObject);
 
     let attributes;
-    const sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data;
+    const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
     const isVerticalText = 0 == (sessionData.def.textflags & ConstantData.TextFlags.SED_TF_HorizText);
     let startArrowID = sessionData.d_sarrow;
     let endArrowID = sessionData.d_earrow;
@@ -1322,7 +1322,7 @@ class ToolUtil {
       return arcSegmentedLineShape;
     }
 
-    T3Gv.optManager.DrawNewObject(arcSegmentedLineShape, eventObject);
+    T3Gv.opt.DrawNewObject(arcSegmentedLineShape, eventObject);
     console.log("O.ToolOpt DrawNewArcSegLine output: void");
   }
 
@@ -1337,7 +1337,7 @@ class ToolUtil {
     console.log("O.ToolOpt DrawNewPolyLine input:", isDrawing, eventObject, referenceObject);
 
     let attributes;
-    const sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data;
+    const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
     const isVerticalText = 0 == (sessionData.def.textflags & ConstantData.TextFlags.SED_TF_HorizText);
     let startArrowID = sessionData.d_sarrow;
     let endArrowID = sessionData.d_earrow;
@@ -1418,7 +1418,7 @@ class ToolUtil {
       return polyLineShape;
     }
 
-    T3Gv.optManager.DrawNewObject(polyLineShape, eventObject);
+    T3Gv.opt.DrawNewObject(polyLineShape, eventObject);
     console.log("O.ToolOpt DrawNewPolyLine output: void");
   }
 
@@ -1433,8 +1433,8 @@ class ToolUtil {
     console.log("O.ToolOpt DrawNewPolyLineContainer input:", isDrawing, eventObject, referenceObject);
 
     let attributes;
-    const sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data;
-    const sessionBlock = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, false);
+    const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
+    const sessionBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
     const isVerticalText = 0 == (sessionData.def.textflags & ConstantData.TextFlags.SED_TF_HorizText);
 
     // Create attributes from reference or defaults
@@ -1487,7 +1487,7 @@ class ToolUtil {
       return polyLineContainerShape;
     }
 
-    T3Gv.optManager.DrawNewObject(polyLineContainerShape, eventObject);
+    T3Gv.opt.DrawNewObject(polyLineContainerShape, eventObject);
     console.log("O.ToolOpt DrawNewPolyLineContainer output: void");
   }
 
@@ -1502,7 +1502,7 @@ class ToolUtil {
     console.log("O.ToolOpt DrawNewFreehandLine input:", isDrawing, eventObject, referenceObject);
 
     let attributes;
-    const sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data;
+    const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
 
     if (referenceObject) {
       attributes = Utils1.DeepCopy(referenceObject.Data.attributes);
@@ -1550,7 +1550,7 @@ class ToolUtil {
       return freehandLineShape;
     }
 
-    T3Gv.optManager.DrawNewObject(freehandLineShape, eventObject);
+    T3Gv.opt.DrawNewObject(freehandLineShape, eventObject);
     console.log("O.ToolOpt DrawNewFreehandLine output: void");
   }
 
@@ -1565,7 +1565,7 @@ class ToolUtil {
     console.log("O.ToolOpt DrawNewArcLine input:", isDrawing, eventObject, referenceObject);
 
     let attributes;
-    const sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data;
+    const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
     const isVerticalText = 0 == (sessionData.def.textflags & ConstantData.TextFlags.SED_TF_HorizText);
     let startArrowID = sessionData.d_sarrow;
     let endArrowID = sessionData.d_earrow;
@@ -1641,7 +1641,7 @@ class ToolUtil {
       return arcLineShape;
     }
 
-    T3Gv.optManager.DrawNewObject(arcLineShape, eventObject);
+    T3Gv.opt.DrawNewObject(arcLineShape, eventObject);
     console.log("O.ToolOpt DrawNewArcLine output: void");
   }
 
@@ -1653,9 +1653,9 @@ class ToolUtil {
     console.log("O.ToolOpt SelectAllObjects input: no parameters");
 
     try {
-      T3Gv.optManager.SelectAllObjects();
+      T3Gv.opt.SelectAllObjects();
     } catch (error) {
-      T3Gv.optManager.ExceptionCleanup(error);
+      T3Gv.opt.ExceptionCleanup(error);
     }
 
     console.log("O.ToolOpt SelectAllObjects output: void");
@@ -1668,10 +1668,10 @@ class ToolUtil {
   SaveAs() {
     console.log("U.ToolUtil SaveAs input: no parameters");
 
-    T3Gv.optManager.CloseEdit();
+    T3Gv.opt.CloseEdit();
 
     // save data to local storage
-    DataOpt.SaveToLocal();
+    DataOpt.SaveToLocalStorage();
 
     console.log("U.ToolUtil SaveAs output: void");
   }

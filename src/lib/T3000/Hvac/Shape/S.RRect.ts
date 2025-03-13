@@ -7,8 +7,8 @@ import T3Gv from '../Data/T3Gv'
 import Point from '../Model/Point'
 import BaseDrawingObject from './S.BaseDrawingObject'
 import $ from 'jquery'
-import ConstantData from '../Data/ConstantData'
-import ConstantData2 from '../Data/ConstantData2';
+import ConstantData from '../Data/Constant/ConstantData'
+import ConstantData2 from '../Data/Constant/ConstantData2';
 import PolygonConstant from '../Util/PolygonConstant';
 
 class RRect extends BaseShape {
@@ -124,7 +124,7 @@ class RRect extends BaseShape {
     shapeContainer.isShape = true;
     const tableData = this.GetTable(false);
     if (tableData) {
-      T3Gv.optManager.LM_AddSVGTableObject(this, svgDoc, shapeContainer, tableData);
+      T3Gv.opt.LM_AddSVGTableObject(this, svgDoc, shapeContainer, tableData);
     }
 
     if (this.DataID >= 0) {
@@ -152,7 +152,7 @@ class RRect extends BaseShape {
     const previousBBox = $.extend(true, {}, this.prevBBox);
     const dimensionClone = $.extend(true, {}, newDimensions);
     const inflatedDimensions = $.extend(true, {}, newDimensions);
-    const offset = T3Gv.optManager.svgDoc.CalculateRotatedOffsetForResize(
+    const offset = T3Gv.opt.svgDoc.CalculateRotatedOffsetForResize(
       previousBBox,
       dimensionClone,
       rotation
@@ -212,7 +212,7 @@ class RRect extends BaseShape {
     }
 
     if (this.GetTable(false)) {
-      T3Gv.optManager.Table_ResizeSVGTableObject(
+      T3Gv.opt.Table_ResizeSVGTableObject(
         svgElement,
         drawingContainer,
         newDimensions
@@ -227,7 +227,7 @@ class RRect extends BaseShape {
 
     svgElement.SetRotation(rotation);
     this.UpdateDimensionLines(svgElement);
-    T3Gv.optManager.UpdateDisplayCoordinates(
+    T3Gv.opt.UpdateDisplayCoordinates(
       newDimensions,
       null,
       null,
@@ -248,7 +248,7 @@ class RRect extends BaseShape {
     const dimensionClone = $.extend(true, {}, newDimensions);
     const inflatedDimensions = $.extend(true, {}, newDimensions);
 
-    const offset = T3Gv.optManager.svgDoc.CalculateRotatedOffsetForResize(
+    const offset = T3Gv.opt.svgDoc.CalculateRotatedOffsetForResize(
       oldFrame,
       dimensionClone,
       rotation
@@ -279,7 +279,7 @@ class RRect extends BaseShape {
     }
 
     if (this.GetTable(false)) {
-      T3Gv.optManager.Table_ResizeSVGTableObject(
+      T3Gv.opt.Table_ResizeSVGTableObject(
         svgElement,
         this,
         newDimensions,
@@ -331,7 +331,7 @@ class RRect extends BaseShape {
 
     svgElement.SetRotation(rotation);
     this.UpdateDimensionLines(svgElement);
-    T3Gv.optManager.UpdateDisplayCoordinates(newDimensions, null, null, this);
+    T3Gv.opt.UpdateDisplayCoordinates(newDimensions, null, null, this);
 
     console.log("= S.RRect: ResizeInTextEdit output:", offset);
     return offset;
@@ -375,7 +375,7 @@ class RRect extends BaseShape {
     tempRect.height = 2 * cornerSize;
 
     // Top-left corner
-    T3Gv.optManager.PolyYCurve(
+    T3Gv.opt.PolyYCurve(
       pointsArray,
       tempRect,
       divisionCount / 2,
@@ -391,7 +391,7 @@ class RRect extends BaseShape {
     tempRect.y = rectCopy.height - 2 * cornerSize;
     tempRect.width = cornerSize;
     tempRect.height = 2 * cornerSize;
-    T3Gv.optManager.PolyYCurve(
+    T3Gv.opt.PolyYCurve(
       pointsArray,
       tempRect,
       divisionCount / 2,
@@ -407,7 +407,7 @@ class RRect extends BaseShape {
     tempRect.y = rectCopy.height;
     tempRect.width = cornerSize;
     tempRect.height = -2 * cornerSize;
-    T3Gv.optManager.PolyYCurve(
+    T3Gv.opt.PolyYCurve(
       pointsArray,
       tempRect,
       divisionCount / 2,
@@ -423,7 +423,7 @@ class RRect extends BaseShape {
     tempRect.y = 2 * cornerSize;
     tempRect.width = cornerSize;
     tempRect.height = -2 * cornerSize;
-    T3Gv.optManager.PolyYCurve(
+    T3Gv.opt.PolyYCurve(
       pointsArray,
       tempRect,
       divisionCount / 2,
@@ -454,7 +454,7 @@ class RRect extends BaseShape {
 
     const tableData = this.GetTable(false);
     if (tableData) {
-      T3Gv.optManager.Table_ExtendLines(this, tableData);
+      T3Gv.opt.Table_ExtendLines(this, tableData);
     }
 
     console.log("= S.RRect: ExtendLines output:", { tableDataFound: !!tableData });
@@ -469,7 +469,7 @@ class RRect extends BaseShape {
       return null;
     }
 
-    const extendedCells = T3Gv.optManager.Table_ExtendCell(
+    const extendedCells = T3Gv.opt.Table_ExtendCell(
       this,
       table,
       cellIndex,
@@ -552,7 +552,7 @@ class RRect extends BaseShape {
 
     const tableData = this.GetTable(false);
     if (optionalParam != null && tableData) {
-      const tablePoints = T3Gv.optManager.Table_GetPerimPts(
+      const tablePoints = T3Gv.opt.Table_GetPerimPts(
         this,
         tableData,
         optionalParam,
@@ -623,7 +623,7 @@ class RRect extends BaseShape {
           outputPoints[idx].x -= cornerFactor;
           outputPoints[idx].y -= cornerFactor;
         } else if (hookPoints[idx].x < baseDim / 4) {
-          const count = T3Gv.optManager.PolyGetIntersect(
+          const count = T3Gv.opt.PolyGetIntersect(
             polyPoints,
             outputPoints[idx].y,
             tmpIntersect,
@@ -637,7 +637,7 @@ class RRect extends BaseShape {
             }
           }
         } else if (hookPoints[idx].x > (3 * baseDim) / 4) {
-          const count = T3Gv.optManager.PolyGetIntersect(
+          const count = T3Gv.opt.PolyGetIntersect(
             polyPoints,
             outputPoints[idx].y,
             tmpIntersect,
@@ -651,7 +651,7 @@ class RRect extends BaseShape {
             }
           }
         } else if (hookPoints[idx].y < baseDim / 4) {
-          const count = T3Gv.optManager.PolyGetIntersect(
+          const count = T3Gv.opt.PolyGetIntersect(
             polyPoints,
             outputPoints[idx].x,
             tmpIntersect,
@@ -665,7 +665,7 @@ class RRect extends BaseShape {
             }
           }
         } else if (hookPoints[idx].y > (3 * baseDim) / 4) {
-          const count = T3Gv.optManager.PolyGetIntersect(
+          const count = T3Gv.opt.PolyGetIntersect(
             polyPoints,
             outputPoints[idx].x,
             tmpIntersect,

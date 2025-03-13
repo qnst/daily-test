@@ -6,7 +6,7 @@ import ToolUtil from "./ToolUtil"
 import Utils3 from "../Helper/Utils3"
 import T3Gv from "../Data/T3Gv"
 import $ from "jquery"
-import T3Constant from "../Data/T3Constant"
+import T3Constant from "../Data/Constant/T3Constant"
 import DocUtil from "../Doc/DocUtil"
 
 class KeyboardOpt {
@@ -152,28 +152,10 @@ class KeyboardOpt {
     }
 
     try {
-      // Check for dropdown text attribute
-      let isDropdownText = false;
-      if (targetElement && targetElement[0].attributes) {
-        isDropdownText = targetElement[0].attributes.getNamedItem("dropDownText");
-      }
-
-      // Handle dropdowns and key commands
-      if (!(isDropdownText != null && isDropdownText.value === "1") &&
-        keyCode !== KeyboardConstant.Keys.Alt &&
-        keyCode !== KeyboardConstant.Keys.Ctrl) {
-        // Note: The following line was commented out in the original code
-        // Commands.MainController.Dropdowns.HideAllDropdowns();
-      }
-
-      console.log('U.KeyboardUtil: Delegating key handling to MainController', {
-        keyCode: keyCode,
-        modifierKeys: modifierKeys
-      });
       KeyboardOpt.HandleKeyDown(event, keyCode, modifierKeys);
     } catch (error) {
       console.error('U.KeyboardUtil: Error in key down handler', error);
-      T3Gv.optManager.ExceptionCleanup(error);
+      T3Gv.opt.ExceptionCleanup(error);
       throw error;
     }
   }
@@ -188,7 +170,7 @@ class KeyboardOpt {
     console.log('U.KeyboardUtil: Processing key down event', { keyCode, modifierKey });
 
     // Handle touch pan with space key
-    if (T3Gv.optManager.touchPanStarted && keyCode == KeyboardConstant.Keys.Space) {
+    if (T3Gv.opt.touchPanStarted && keyCode == KeyboardConstant.Keys.Space) {
       event.stopPropagation();
       event.preventDefault();
       console.log('U.KeyboardUtil: Prevented default for space during touch pan');
@@ -210,7 +192,7 @@ class KeyboardOpt {
         keyCode == KeyboardConstant.Keys.Right_Arrow ||
         keyCode == KeyboardConstant.Keys.Up_Arrow ||
         keyCode == KeyboardConstant.Keys.Down_Arrow) &&
-      T3Gv.userSettings.DisableCtrlArrowShapeInsert
+      T3Gv.userSetting.DisableCtrlArrowShapeInsert
     );
 
     // Handle clipboard operations in Firefox
@@ -286,7 +268,7 @@ class KeyboardOpt {
         // Check if typing in work area is disabled
         if (T3Constant.DocContext.CanTypeInWorkArea === false) {
           if (keyCode === KeyboardConstant.Keys.Escape) {
-            T3Gv.optManager.Comment_Cancel();
+            T3Gv.opt.Comment_Cancel();
             console.log('U.KeyboardUtil: Comment cancelled');
           }
           return;
@@ -325,11 +307,11 @@ class KeyboardOpt {
       // Handle text context key events
       if (isTextContext) {
         if (keyCode === KeyboardConstant.Keys.Escape) {
-          T3Gv.optManager.DeactivateAllTextEdit(false);
-          if (T3Gv.optManager.bInNoteEdit) {
-            T3Gv.optManager.Note_CloseEdit();
+          T3Gv.opt.DeactivateAllTextEdit(false);
+          if (T3Gv.opt.bInNoteEdit) {
+            T3Gv.opt.Note_CloseEdit();
           }
-          T3Gv.optManager.RenderAllSVGSelectionStates();
+          T3Gv.opt.RenderAllSVGSelectionStates();
           event.stopPropagation();
           event.preventDefault();
           console.log('U.KeyboardUtil: Text edit closed with Escape key');
@@ -374,7 +356,7 @@ class KeyboardOpt {
     let toolUtil = new ToolUtil();
 
     // Handle touch pan with space key
-    if (T3Gv.optManager.touchPanStarted && charCode == KeyboardConstant.Keys.Space) {
+    if (T3Gv.opt.touchPanStarted && charCode == KeyboardConstant.Keys.Space) {
       console.log('U.KeyboardUtil: Preventing default for space during touch pan');
       event.stopPropagation();
       event.preventDefault();

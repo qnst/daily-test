@@ -6,8 +6,8 @@ import T3Gv from '../Data/T3Gv'
 import $ from 'jquery';
 import Point from '../Model/Point'
 import Instance from '../Data/Instance/Instance';
-import ConstantData from '../Data/ConstantData'
-import ConstantData2 from '../Data/ConstantData2';
+import ConstantData from '../Data/Constant/ConstantData'
+import ConstantData2 from '../Data/Constant/ConstantData2';
 import PolygonConstant from '../Util/PolygonConstant';
 
 class Rect extends BaseShape {
@@ -114,10 +114,10 @@ class Rect extends BaseShape {
     a.isShape = !0;
     var I = this.GetTable(!1);
     I &&
-      T3Gv.optManager.LM_AddSVGTableObject(this, e, a, I);
+      T3Gv.opt.LM_AddSVGTableObject(this, e, a, I);
     var T = this.GetGraph(!1);
     return T &&
-      T3Gv.optManager.LM_AddSVGGraphObject(this, e, a, T),
+      T3Gv.opt.LM_AddSVGGraphObject(this, e, a, T),
       this.DataID >= 0 &&
       this.LM_AddSVGTextObject(e, a),
       a
@@ -188,25 +188,25 @@ class Rect extends BaseShape {
     cornerRect.y = 0;
     cornerRect.width = cornerSize;
     cornerRect.height = 2 * cornerSize;
-    T3Gv.optManager.PolyYCurve(points, cornerRect, event / 2, 0, 0, 0, cornerSize, true);
+    T3Gv.opt.PolyYCurve(points, cornerRect, event / 2, 0, 0, 0, cornerSize, true);
 
     cornerRect.x = 0;
     cornerRect.y = frameCopy.height - 2 * cornerSize;
     cornerRect.width = cornerSize;
     cornerRect.height = 2 * cornerSize;
-    T3Gv.optManager.PolyYCurve(points, cornerRect, event / 2, 0, 0, cornerSize, 0, true);
+    T3Gv.opt.PolyYCurve(points, cornerRect, event / 2, 0, 0, cornerSize, 0, true);
 
     cornerRect.x = frameCopy.width - cornerSize;
     cornerRect.y = frameCopy.height;
     cornerRect.width = cornerSize;
     cornerRect.height = -2 * cornerSize;
-    T3Gv.optManager.PolyYCurve(points, cornerRect, event / 2, 0, 0, 0, -cornerSize, false);
+    T3Gv.opt.PolyYCurve(points, cornerRect, event / 2, 0, 0, 0, -cornerSize, false);
 
     cornerRect.x = frameCopy.width - cornerSize;
     cornerRect.y = 2 * cornerSize;
     cornerRect.width = cornerSize;
     cornerRect.height = -2 * cornerSize;
-    T3Gv.optManager.PolyYCurve(points, cornerRect, event / 2, 0, 0, -cornerSize, 0, false);
+    T3Gv.opt.PolyYCurve(points, cornerRect, event / 2, 0, 0, -cornerSize, 0, false);
 
     points.push(new Point(points[0].x, points[0].y));
 
@@ -265,7 +265,7 @@ class Rect extends BaseShape {
 
     var table = this.GetTable(false);
     if (table) {
-      T3Gv.optManager.Table_ExtendLines(this, table);
+      T3Gv.opt.Table_ExtendLines(this, table);
     }
 
     console.log("= S.Rect RRect_ExtendLines Output");
@@ -289,7 +289,7 @@ class Rect extends BaseShape {
     let result = null;
 
     if (table) {
-      result = T3Gv.optManager.Table_ExtendCell(this, table, event, type, arg);
+      result = T3Gv.opt.Table_ExtendCell(this, table, event, type, arg);
 
       if (result) {
         var offsetX = this.inside.x - this.Frame.x;

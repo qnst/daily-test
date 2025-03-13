@@ -7,8 +7,8 @@ import Utils2 from "../Helper/Utils2"
 import Utils3 from "../Helper/Utils3"
 import Creator from './B.Path.Creator'
 import T3Gv from '../Data/T3Gv'
-import ConstantData from "../Data/ConstantData"
-import ConstantData2 from "../Data/ConstantData2";
+import ConstantData from "../Data/Constant/ConstantData"
+import ConstantData2 from "../Data/Constant/ConstantData2";
 
 class Edit {
 
@@ -271,7 +271,7 @@ class Edit {
   HandleMouseDown(event) {
     console.log('B.Text.Edit: HandleMouseDown called with event:', event);
     const isShiftKey = event && (event.shiftKey || (event.gesture && event.gesture.srcEvent && event.gesture.srcEvent.shiftKey));
-    const isRightClick = T3Gv.optManager.IsRightClick(event);
+    const isRightClick = T3Gv.opt.IsRightClick(event);
     const currentTime = Date.now();
     this.activateInit = false;
 

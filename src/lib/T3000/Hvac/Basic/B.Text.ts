@@ -8,8 +8,8 @@ import Edit from "./B.Text.Edit";
 import Utils1 from "../Helper/Utils1"
 import Utils2 from "../Helper/Utils2"
 import Utils3 from "../Helper/Utils3"
-import ConstantData from "../Data/ConstantData"
-import ConstantData2 from "../Data/ConstantData2";
+import ConstantData from "../Data/Constant/ConstantData"
+import ConstantData2 from "../Data/Constant/ConstantData2";
 import T3Gv from "../Data/T3Gv";
 
 class Text extends Element {
@@ -1197,7 +1197,7 @@ class Text extends Element {
     } else {
       result = TODO.SDData.FieldedDataGetFieldValue(this.dataTableID, this.dataRecordID, formattedFieldId);
       const fieldType = TODO.SDData.FieldedDataGetFieldType(this.dataTableID, formattedFieldId);
-      result = T3Gv.optManager.ModifyFieldDataForDisplay(result, fieldType);
+      result = T3Gv.opt.ModifyFieldDataForDisplay(result, fieldType);
     }
 
     if (!result || result === "") {

@@ -9,7 +9,7 @@ import '../Helper/T3Hammer'
 import '../Helper/pathseg'
 import Utils1 from '../Helper/Utils1'
 import Utils2 from '../Helper/Utils2'
-import ConstantData from '../Data/ConstantData'
+import ConstantData from '../Data/Constant/ConstantData'
 import DocConfig from '../Model/DocConfig'
 
 class DocUtil {
@@ -140,7 +140,7 @@ class DocUtil {
 
     // Initialize ruler configuration
     this.rulerConfig = new RulerConfig();
-    this.rulerConfig.fractionaldenominator = T3Gv.optManager.GetFractionDenominator();
+    this.rulerConfig.fractionaldenominator = T3Gv.opt.GetFractionDenominator();
     this.UpdateRulerVisibility();
 
     // Bind mouse move event handler
@@ -325,7 +325,7 @@ class DocUtil {
 
     if (this.svgDoc) {
       if (this.scaleToFit) {
-        if (T3Gv.optManager.inAutoScroll) {
+        if (T3Gv.opt.inAutoScroll) {
           calculationResult = this.svgDoc.GetWorkArea();
           targetDimensions = {
             width: calculationResult.docScreenWidth,
@@ -353,10 +353,10 @@ class DocUtil {
           };
         }
       } else if (this.scaleToPage && availableRect.width > 0 && availableRect.height > 0) {
-        const pageWidth = T3Gv.optManager.contentHeader.Page.papersize.x -
-          (T3Gv.optManager.contentHeader.Page.margins.left + T3Gv.optManager.contentHeader.Page.margins.right);
-        const pageHeight = T3Gv.optManager.contentHeader.Page.papersize.y -
-          (T3Gv.optManager.contentHeader.Page.margins.top + T3Gv.optManager.contentHeader.Page.margins.bottom);
+        const pageWidth = T3Gv.opt.contentHeader.Page.papersize.x -
+          (T3Gv.opt.contentHeader.Page.margins.left + T3Gv.opt.contentHeader.Page.margins.right);
+        const pageHeight = T3Gv.opt.contentHeader.Page.papersize.y -
+          (T3Gv.opt.contentHeader.Page.margins.top + T3Gv.opt.contentHeader.Page.margins.bottom);
 
         calculationResult = this.svgDoc.CalcScaleToFit(availableRect.width - 20, availableRect.height - 20, pageWidth, pageHeight);
         targetDimensions = {
@@ -364,7 +364,7 @@ class DocUtil {
           height: calculationResult.height
         };
 
-        if (!T3Gv.optManager.inAutoScroll && this.svgDoc.docInfo.docScale !== calculationResult.scale) {
+        if (!T3Gv.opt.inAutoScroll && this.svgDoc.docInfo.docScale !== calculationResult.scale) {
           this.svgDoc.SetDocumentScale(calculationResult.scale);
           this.IdleZoomUI();
           this.UpdateGrid();
@@ -689,12 +689,12 @@ class DocUtil {
     const workArea = this.svgDoc.GetWorkArea();
 
     // Get selected objects
-    const selectedObjects = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSelectedListBlockID, false);
+    const selectedObjects = T3Gv.opt.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
 
     // Calculate bounding rectangle for view centering
     let boundingRect = selectedObjects.length
-      ? T3Gv.optManager.GetListSRect(selectedObjects)
-      : T3Gv.optManager.CalcAllObjectEnclosingRect(false);
+      ? T3Gv.opt.GetListSRect(selectedObjects)
+      : T3Gv.opt.CalcAllObjectEnclosingRect(false);
 
     // If bounding rect has no dimensions, use document dimensions
     if (!boundingRect.width || !boundingRect.height) {
@@ -756,12 +756,12 @@ class DocUtil {
     // Center view on content unless skipCentering is true
     if (!skipCentering) {
       const workArea = this.svgDoc.GetWorkArea();
-      const selectedObjects = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSelectedListBlockID, false);
+      const selectedObjects = T3Gv.opt.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
 
       // Get bounding rectangle of selection or entire document
       let boundingRect = selectedObjects.length
-        ? T3Gv.optManager.GetListSRect(selectedObjects)
-        : T3Gv.optManager.CalcAllObjectEnclosingRect(false);
+        ? T3Gv.opt.GetListSRect(selectedObjects)
+        : T3Gv.opt.CalcAllObjectEnclosingRect(false);
 
       // If bounding rect has no dimensions, use document dimensions
       if (!boundingRect.width || !boundingRect.height) {
@@ -894,7 +894,7 @@ class DocUtil {
   IdleZoomUI(): void {
     console.log("= U.DocUtil: IdleZoomUI - Input: Updating zoom UI");
 
-    T3Gv.optManager.UpdateDocumentScale();
+    T3Gv.opt.UpdateDocumentScale();
 
     console.log("= U.DocUtil: IdleZoomUI - Output: Zoom UI updated");
   }
@@ -1074,7 +1074,7 @@ class DocUtil {
 
       // Store settings in session data if not propagating
       if (!shouldPropagate) {
-        sessionDataPointer = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.sedSessionBlockId, true);
+        sessionDataPointer = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, true);
         sessionDataPointer.rulerConfig = Utils1.DeepCopy(this.rulerConfig);
       }
 
@@ -1501,8 +1501,8 @@ class DocUtil {
       let minorPathCommands = "";
 
       // Calculate margins and document boundaries
-      const paperSize = T3Gv.optManager.contentHeader.Page.papersize;
-      const margins = T3Gv.optManager.contentHeader.Page.margins;
+      const paperSize = T3Gv.opt.contentHeader.Page.papersize;
+      const margins = T3Gv.opt.contentHeader.Page.margins;
       const paperMarginWidth =
         paperSize.x - (margins.left + margins.right) / 2;
       const paperMarginHeight =
@@ -1623,7 +1623,7 @@ class DocUtil {
   // UpdatePageDividerVisibility(): boolean {
   //   console.log("= U.DocUtil: UpdatePageDividerVisibility - Input:", {
   //     showPageDivider: this.docConfig.showPageDivider,
-  //     printFlags: T3Gv.optManager.contentHeader.Page.printflags,
+  //     printFlags: T3Gv.opt.contentHeader.Page.printflags,
   //     layerExists: !!(this.svgDoc && this.svgDoc.GetLayer(this.pageDividerLayer))
   //   });
 
@@ -1631,7 +1631,7 @@ class DocUtil {
   //   const pageDividerLayer = this.svgDoc ? this.svgDoc.GetLayer(this.pageDividerLayer) : null;
 
   //   // Get print flags from the document configuration
-  //   const documentPrintFlags = T3Gv.optManager.contentHeader.Page.printflags;
+  //   const documentPrintFlags = T3Gv.opt.contentHeader.Page.printflags;
 
   //   // Determine if page dividers should be shown based on print flags and config
   //   const shouldShowDividers =
@@ -1686,7 +1686,7 @@ class DocUtil {
       let pathCommands = '';
 
       // Get document page settings
-      const pageSettings = T3Gv.optManager.contentHeader.Page;
+      const pageSettings = T3Gv.opt.contentHeader.Page;
       const paperSize = pageSettings.papersize;
       const margins = pageSettings.margins;
 
@@ -1848,7 +1848,7 @@ class DocUtil {
     console.log("= U.DocUtil: RulerDragStart - Input:", { dragEvent });
 
     if (!T3Gv.docUtil.IsReadOnly()) {
-      if (T3Gv.optManager.IsRightClick(dragEvent)) {
+      if (T3Gv.opt.IsRightClick(dragEvent)) {
         Utils2.StopPropagationAndDefaults(dragEvent);
         console.log("= U.DocUtil: RulerDragStart - Output: Right click detected, operation canceled");
         return;
@@ -1871,7 +1871,7 @@ class DocUtil {
 
     Utils2.StopPropagationAndDefaults(dragEvent);
 
-    if (T3Gv.optManager.IsCtrlClick(dragEvent)) {
+    if (T3Gv.opt.IsCtrlClick(dragEvent)) {
       Utils2.StopPropagationAndDefaults(dragEvent);
       T3Gv.docUtil.RulerHandleDoubleClick(dragEvent, false, true);
       console.log("= U.DocUtil: RulerTopDrag - Output: Handled as double click");
@@ -1895,7 +1895,7 @@ class DocUtil {
     // Stop event propagation and defaults
     Utils2.StopPropagationAndDefaults(dragEvent);
 
-    if (T3Gv.optManager.IsCtrlClick(dragEvent)) {
+    if (T3Gv.opt.IsCtrlClick(dragEvent)) {
       console.log("= U.DocUtil: RulerLeftDrag - Ctrl click detected");
       Utils2.StopPropagationAndDefaults(dragEvent);
       T3Gv.docUtil.RulerHandleDoubleClick(dragEvent, true, false);
@@ -1921,7 +1921,7 @@ class DocUtil {
     Utils2.StopPropagationAndDefaults(event);
 
     // Check if Ctrl-click is detected
-    if (T3Gv.optManager.IsCtrlClick(event)) {
+    if (T3Gv.opt.IsCtrlClick(event)) {
       console.log("= U.DocUtil: RulerCenterDrag - Ctrl click detected, invoking double click handler");
       Utils2.StopPropagationAndDefaults(event);
       T3Gv.docUtil.RulerHandleDoubleClick(event, true, true);
@@ -1963,7 +1963,7 @@ class DocUtil {
     console.log("= U.DocUtil: RulerHandleDoubleClick - Input:", { clickEvent, isVerticalRuler, isIntersectionPoint });
 
     // Check if the event is not a right-click
-    if (!T3Gv.optManager.IsRightClick(clickEvent)) {
+    if (!T3Gv.opt.IsRightClick(clickEvent)) {
       // Initialize new origin values using current ruler settings
       let originUpdates = {
         originx: this.rulerConfig.originx,
@@ -2007,8 +2007,8 @@ class DocUtil {
         this.ShowCoordinates(true);
 
         // Update selection attributes for the currently selected object(s)
-        const selectedObjects = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSelectedListBlockID, false);
-        T3Gv.optManager.UpdateSelectionAttributes(selectedObjects);
+        const selectedObjects = T3Gv.opt.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
+        T3Gv.opt.UpdateSelectionAttributes(selectedObjects);
 
         console.log("= U.DocUtil: RulerHandleDoubleClick - Output:", { updatedOrigins: originUpdates, selectedObjects });
       }
@@ -2050,7 +2050,7 @@ class DocUtil {
         this.hRulerGuide.SetStrokeColor('black');
         this.hRulerGuide.SetStrokeWidth(scaleFactor);
         this.hRulerGuide.SetStrokePattern(dashPattern);
-        T3Gv.optManager.svgOverlayLayer.AddElement(this.hRulerGuide);
+        T3Gv.opt.svgOverlayLayer.AddElement(this.hRulerGuide);
       }
 
       // Create vertical guide line if needed
@@ -2060,7 +2060,7 @@ class DocUtil {
         this.vRulerGuide.SetStrokeColor('black');
         this.vRulerGuide.SetStrokeWidth(scaleFactor);
         this.vRulerGuide.SetStrokePattern(dashPattern);
-        T3Gv.optManager.svgOverlayLayer.AddElement(this.vRulerGuide);
+        T3Gv.opt.svgOverlayLayer.AddElement(this.vRulerGuide);
       }
 
       // Update guide position from cursor coordinates
@@ -2230,13 +2230,13 @@ class DocUtil {
 
     // Remove horizontal ruler guide if it exists
     if (this.hRulerGuide) {
-      T3Gv.optManager.svgOverlayLayer.RemoveElement(this.hRulerGuide);
+      T3Gv.opt.svgOverlayLayer.RemoveElement(this.hRulerGuide);
       this.hRulerGuide = null;
     }
 
     // Remove vertical ruler guide if it exists
     if (this.vRulerGuide) {
-      T3Gv.optManager.svgOverlayLayer.RemoveElement(this.vRulerGuide);
+      T3Gv.opt.svgOverlayLayer.RemoveElement(this.vRulerGuide);
       this.vRulerGuide = null;
     }
 
@@ -2402,15 +2402,15 @@ class DocUtil {
     console.log("O.DocOpt - SetZoomLevel - Input:", { zoomPercentage, eventSource });
 
     // Only proceed if zoom percentage is positive and we're not in idle state
-    if (zoomPercentage > 0 && !this.inZoomIdle && T3Gv.optManager) {
+    if (zoomPercentage > 0 && !this.inZoomIdle && T3Gv.opt) {
       // Convert percentage to factor (e.g., 100% -> 1.0)
-      T3Gv.optManager.SetDocumentScale(zoomPercentage / 100, eventSource);
+      T3Gv.opt.SetDocumentScale(zoomPercentage / 100, eventSource);
       console.log("O.DocOpt - SetZoomLevel - Applied zoom factor:", zoomPercentage / 100);
     } else {
       console.log("O.DocOpt - SetZoomLevel - Zoom not applied. Conditions not met:", {
         validZoom: zoomPercentage > 0,
         notIdle: !this.inZoomIdle,
-        optManagerExists: !!T3Gv.optManager
+        optManagerExists: !!T3Gv.opt
       });
     }
   }
@@ -2432,11 +2432,11 @@ class DocUtil {
     // Set the current zoom index
     this.docConfig.zoom = zoomIndex;
 
-    // Apply zoom if optManager is available
-    if (T3Gv.optManager) {
+    // Apply zoom if opt is available
+    if (T3Gv.opt) {
       const zoomFactor = this.docConfig.zoomLevels[zoomIndex] / 100;
       console.log("O.DocOpt - SetZoomLevelByIndex - Setting zoom factor:", zoomFactor);
-      T3Gv.optManager.SetDocumentScale(zoomFactor);
+      T3Gv.opt.SetDocumentScale(zoomFactor);
     } else {
       console.log("O.DocOpt - SetZoomLevelByIndex - OptManager not available, zoom not applied");
     }

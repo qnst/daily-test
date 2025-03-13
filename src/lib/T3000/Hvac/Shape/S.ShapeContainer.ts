@@ -4,13 +4,13 @@ import Rect from './S.Rect'
 import Utils1 from '../Helper/Utils1';
 import Utils2 from "../Helper/Utils2";
 import T3Gv from '../Data/T3Gv'
-import ConstantData from '../Data/ConstantData'
+import ConstantData from '../Data/Constant/ConstantData'
 import ContainerListShape from '../Model/ContainerListShape'
-import ConstantData2 from '../Data/ConstantData2';
+import ConstantData2 from '../Data/Constant/ConstantData2';
 import Instance from '../Data/Instance/Instance';
 import Point from '../Model/Point';
 import PolygonConstant from '../Util/PolygonConstant';
-import ShapeConstant from '../Data/ShapeConstant';
+import ShapeConstant from '../Util/ShapeConstant';
 
 class ShapeContainer extends Rect {
 
@@ -73,7 +73,7 @@ class ShapeContainer extends Rect {
     // Reject shapes that already have a parent frame
     if (
       shapeToCheck.ParentFrameID >= 0 &&
-      T3Gv.optManager.GetObjectPtr(shapeToCheck.ParentFrameID, false)
+      T3Gv.opt.GetObjectPtr(shapeToCheck.ParentFrameID, false)
     ) {
       console.log("= S.ShapeContainer IsShapeContainer - Output:", false);
       return false;
@@ -219,7 +219,7 @@ class ShapeContainer extends Rect {
     let defaultPoint = { x: standardDimension / 2, y: 0 };
     const isSparse = containerList.flags & ConstantData.ContainerListFlags.Sparse;
     const containerFrame = this.Pr_GetContainerFrame().frame;
-    const isContainerInCell = T3Gv.optManager.ContainerIsInCell(this);
+    const isContainerInCell = T3Gv.opt.ContainerIsInCell(this);
     const frameWidth = containerFrame.width;
     let numDown = containerList.ndown;
     let numAcross = containerList.nacross;
@@ -364,7 +364,7 @@ class ShapeContainer extends Rect {
         const index = row * containerList.nacross + col;
         let widthValue: number;
         if (list[index].id >= 0) {
-          const obj = T3Gv.optManager.GetObjectPtr(list[index].id, false);
+          const obj = T3Gv.opt.GetObjectPtr(list[index].id, false);
           if (!obj) continue;
           widthValue = obj.Frame.width;
         } else {
@@ -380,10 +380,10 @@ class ShapeContainer extends Rect {
     if (!target) {
       const ctrlKey = event.gesture.srcEvent.ctrlKey;
       const shiftKey = event.gesture.srcEvent.shiftKey;
-      const containerInCell = T3Gv.optManager.ContainerIsInCell(this);
+      const containerInCell = T3Gv.opt.ContainerIsInCell(this);
       if (containerInCell && (shiftKey || ctrlKey)) {
         console.log("= S.ShapeContainer DoubleClick - Detected container in cell with modifier keys.");
-        T3Gv.optManager.Table_SetupAction(event, containerInCell.obj.BlockID, ConstantData.Defines.TableCellHit, null);
+        T3Gv.opt.Table_SetupAction(event, containerInCell.obj.BlockID, ConstantData.Defines.TableCellHit, null);
         console.log("= S.ShapeContainer DoubleClick - Output: action triggered via Table_SetupAction");
         return;
       }
@@ -397,7 +397,7 @@ class ShapeContainer extends Rect {
         newPoint = Utils1.DeepCopy(target.Data.theNewPoint);
       } else {
         foundSlot = false;
-        newPoint = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(
+        newPoint = T3Gv.opt.svgDoc.ConvertWindowToDocCoords(
           event.gesture.center.clientX,
           event.gesture.center.clientY
         );
@@ -412,9 +412,9 @@ class ShapeContainer extends Rect {
             this.TextFlags & ConstantData.TextFlags.SED_TF_AttachB) &&
           (newPoint.y < 10 || newPoint.y > this.Frame.height - 10)
         ) {
-          const svgElement = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID);
+          const svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
           console.log("= S.ShapeContainer DoubleClick - Output: activating text edit.");
-          T3Gv.optManager.ActivateTextEdit(svgElement.svgObj.SDGObj, event);
+          T3Gv.opt.ActivateTextEdit(svgElement.svgObj.SDGObj, event);
           return;
         }
 
@@ -514,8 +514,8 @@ class ShapeContainer extends Rect {
 
         if (closest < 0) {
           someVariable = target ? target.Data.SymbolID : "currentSymbolId";
-          const newId = T3Gv.gBaseManager.AddSymbol(someVariable);
-          const newObj = T3Gv.optManager.GetObjectPtr(newId, true);
+          const newId = T3Gv.baseOpt.AddSymbol(someVariable);
+          const newObj = T3Gv.opt.GetObjectPtr(newId, true);
           const childWidth = containerList.childwidth;
           const childHeight = containerList.childheight;
           const newFrame = {
@@ -527,19 +527,19 @@ class ShapeContainer extends Rect {
           newObj.UpdateFrame(newFrame);
           newObj.sizedim.width = childWidth;
           newObj.sizedim.height = childHeight;
-          T3Gv.optManager.AddToDirtyList(newId);
+          T3Gv.opt.AddToDirtyList(newId);
         } else {
-          const duplicatedId = T3Gv.gBaseManager.DuplicateShape(closest, true, false);
-          T3Gv.optManager.AddToDirtyList(duplicatedId);
+          const duplicatedId = T3Gv.baseOpt.DuplicateShape(closest, true, false);
+          T3Gv.opt.AddToDirtyList(duplicatedId);
         }
 
         const hookLocation = { x: colIndex, y: rowIndex };
         const hookPointID = ConstantData.HookPts.SED_KCT;
         const createdIds: any[] = [];
-        T3Gv.optManager.UpdateHook(closest < 0 ? someVariable : closest, -1, this.BlockID, hookPointID, hookLocation, null);
+        T3Gv.opt.UpdateHook(closest < 0 ? someVariable : closest, -1, this.BlockID, hookPointID, hookLocation, null);
         createdIds.push(closest < 0 ? someVariable : closest);
-        T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
-        T3Gv.optManager.CompleteOperation(createdIds);
+        T3Gv.opt.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
+        T3Gv.opt.CompleteOperation(createdIds);
       }
     }
 
@@ -569,7 +569,7 @@ class ShapeContainer extends Rect {
    */
   FieldDataAllowed(): boolean {
     console.log("= S.ShapeContainer FieldDataAllowed - Input:", { thisContext: this });
-    const isFieldDataAllowed = !T3Gv.optManager.ContainerIsInCell(this);
+    const isFieldDataAllowed = !T3Gv.opt.ContainerIsInCell(this);
     console.log("= S.ShapeContainer FieldDataAllowed - Output:", isFieldDataAllowed);
     return isFieldDataAllowed;
   }
@@ -621,7 +621,7 @@ class ShapeContainer extends Rect {
     const containerFrameData = this.Pr_GetContainerFrame();
     const containerFrame = containerFrameData.frame;
     let verticalOffset = containerList.VerticalSpacing + containerFrameData.StartY;
-    const isInCell = T3Gv.optManager.ContainerIsInCell(this);
+    const isInCell = T3Gv.opt.ContainerIsInCell(this);
 
     // Case 1: Single point and negative index - handle simplified perimeter point
     if (targetPoints.length === 1 && pointIndex < 0) {
@@ -749,7 +749,7 @@ class ShapeContainer extends Rect {
       } else {
         // Point is beyond existing items, calculate extension position
         itemIndex = containerItemCount - 1;
-        const childObject = T3Gv.optManager.GetObjectPtr(containerItems[itemIndex].id, false);
+        const childObject = T3Gv.opt.GetObjectPtr(containerItems[itemIndex].id, false);
 
         if (containerList.Arrangement === containerArrangement.Row) {
           // Row arrangement - extend horizontally
@@ -848,12 +848,12 @@ class ShapeContainer extends Rect {
       for (; currentIndex < totalItems; currentIndex++) {
         runningY += listItems[currentIndex].extra;
         listItems[currentIndex].pt = { x: startX, y: runningY };
-        const childObject = T3Gv.optManager.GetObjectPtr(listItems[currentIndex].id, false);
+        const childObject = T3Gv.opt.GetObjectPtr(listItems[currentIndex].id, false);
 
         if (childObject) {
           // Update position if needed
           if (childObject.Frame.y !== runningY) {
-            T3Gv.optManager.SetLinkFlag(childObject.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
+            T3Gv.opt.SetLinkFlag(childObject.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
           }
 
           // Track maximum width for the column
@@ -888,18 +888,18 @@ class ShapeContainer extends Rect {
       let needsUpdate = false;
       for (let j = startIndex; j < currentIndex; j++) {
         listItems[j].pt.x += finalColumnWidth / 2;
-        const currentObject = T3Gv.optManager.GetObjectPtr(listItems[j].id, false);
+        const currentObject = T3Gv.opt.GetObjectPtr(listItems[j].id, false);
         if (
           currentObject &&
           (currentObject.Frame.x + currentObject.Frame.width / 2) !== (containerInstance.Frame.x + listItems[j].pt.x)
         ) {
-          T3Gv.optManager.SetLinkFlag(currentObject.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
+          T3Gv.opt.SetLinkFlag(currentObject.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
           needsUpdate = true;
         }
       }
 
       if (needsUpdate) {
-        T3Gv.optManager.SetLinkFlag(containerInstance.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
+        T3Gv.opt.SetLinkFlag(containerInstance.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
       }
 
       return { start: currentIndex, colwidth: finalColumnWidth, top: runningY };
@@ -925,13 +925,13 @@ class ShapeContainer extends Rect {
       for (; currentIndex < totalItems; currentIndex++) {
         runningX += listItems[currentIndex].extra;
         listItems[currentIndex].pt = { x: runningX, y: currentBaseY };
-        const childObject = T3Gv.optManager.GetObjectPtr(listItems[currentIndex].id, false);
+        const childObject = T3Gv.opt.GetObjectPtr(listItems[currentIndex].id, false);
         let objectWidth: number, objectHeight: number;
 
         if (childObject) {
           // Update position if needed
           if (childObject.Frame.y / 2 !== currentBaseY) {
-            T3Gv.optManager.SetLinkFlag(childObject.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
+            T3Gv.opt.SetLinkFlag(childObject.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
           }
           objectWidth = childObject.Frame.width;
           objectHeight = childObject.Frame.height;
@@ -972,25 +972,25 @@ class ShapeContainer extends Rect {
       let needsUpdate = false;
       for (let j = startIndex; j < currentIndex; j++) {
         listItems[j].pt.y += finalRowHeight / 2;
-        const currentObject = T3Gv.optManager.GetObjectPtr(listItems[j].id, false);
+        const currentObject = T3Gv.opt.GetObjectPtr(listItems[j].id, false);
         if (
           currentObject &&
           (currentObject.Frame.y + currentObject.Frame.height / 2) !== (basePoint.y + listItems[j].pt.y)
         ) {
-          T3Gv.optManager.SetLinkFlag(currentObject.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
+          T3Gv.opt.SetLinkFlag(currentObject.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
           needsUpdate = true;
         }
       }
 
       if (needsUpdate) {
-        T3Gv.optManager.SetLinkFlag(containerInstance.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
+        T3Gv.opt.SetLinkFlag(containerInstance.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
       }
 
       return { start: currentIndex, rowht: finalRowHeight, left: runningX };
     };
 
     // Check if container is in a table cell
-    const containerInCell = T3Gv.optManager.ContainerIsInCell(this);
+    const containerInCell = T3Gv.opt.ContainerIsInCell(this);
     if (containerInCell) {
       parentCellDimensions = { width: this.trect.width, height: this.trect.height };
     }
@@ -1025,7 +1025,7 @@ class ShapeContainer extends Rect {
             if (item.id == null) {
               item.id = -1;
             }
-            const childObject = T3Gv.optManager.GetObjectPtr(item.id, false);
+            const childObject = T3Gv.opt.GetObjectPtr(item.id, false);
             const widthValue = childObject ? childObject.Frame.width : containerList.childwidth;
             const heightValue = childObject ? childObject.Frame.height : containerList.childheight;
 
@@ -1136,13 +1136,13 @@ class ShapeContainer extends Rect {
         }
 
         this.TRectToFrame(containerFrame, true);
-        T3Gv.optManager.AddToDirtyList(this.BlockID);
+        T3Gv.opt.AddToDirtyList(this.BlockID);
 
         // Update connected container if present
-        const connectedObject = this.hooks.length ? T3Gv.optManager.GetObjectPtr(this.hooks[0].objid, false) : null;
+        const connectedObject = this.hooks.length ? T3Gv.opt.GetObjectPtr(this.hooks[0].objid, false) : null;
         if (connectedObject && connectedObject instanceof ShapeContainer) {
           connectedObject.flags = Utils2.SetFlag(connectedObject.flags, ConstantData.ObjFlags.SEDO_Obj1, true);
-          T3Gv.optManager.SetLinkFlag(connectedObject.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
+          T3Gv.opt.SetLinkFlag(connectedObject.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
         }
 
         // Apply offsets if needed
@@ -1180,11 +1180,11 @@ class ShapeContainer extends Rect {
 
     // When connecting to another container, ensure proper z-index ordering
     if (targetObject instanceof ShapeContainer && (this.zListIndex == null || this.zListIndex < 0)) {
-      const svgElement = T3Gv.optManager.svgObjectLayer.GetElementByID(connectionId);
+      const svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(connectionId);
       if (svgElement) {
         // Store current index and move this container to front
-        this.zListIndex = T3Gv.optManager.svgObjectLayer.GetElementIndex(svgElement);
-        T3Gv.optManager.svgObjectLayer.MoveElementToFront(svgElement);
+        this.zListIndex = T3Gv.opt.svgObjectLayer.GetElementIndex(svgElement);
+        T3Gv.opt.svgObjectLayer.MoveElementToFront(svgElement);
       }
     }
 
@@ -1286,7 +1286,7 @@ class ShapeContainer extends Rect {
     });
 
     const containerFlags = ConstantData.ContainerListFlags;
-    const isContainerInCell = T3Gv.optManager.ContainerIsInCell(this);
+    const isContainerInCell = T3Gv.opt.ContainerIsInCell(this);
 
     /**
      * Inserts a new shape into the container list at a specified index
@@ -1464,7 +1464,7 @@ class ShapeContainer extends Rect {
     }
 
     if (targetShapeId != null) {
-      const targetObject = T3Gv.optManager.GetObjectPtr(targetShapeId, false);
+      const targetObject = T3Gv.opt.GetObjectPtr(targetShapeId, false);
       targetObject.OnDisconnect(targetShapeId, this);
 
       let targetPosition, rowIndex, dummyData;
@@ -1644,7 +1644,7 @@ class ShapeContainer extends Rect {
           placeTargetInGrid(targetShapeId, gridPosition.x, gridPosition.y);
 
           // Put target shape visually in front of container
-          T3Gv.optManager.PutInFrontofObject(containerObj.BlockID, targetShapeId);
+          T3Gv.opt.PutInFrontofObject(containerObj.BlockID, targetShapeId);
 
           // Mark the target as a container child
           targetObject.moreflags = Utils2.SetFlag(
@@ -1664,7 +1664,7 @@ class ShapeContainer extends Rect {
           );
 
           // Mark container for layout update
-          T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
+          T3Gv.opt.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
         }
 
         let offsetX = 0,
@@ -1683,7 +1683,7 @@ class ShapeContainer extends Rect {
               insertContainerShape(targetShapeId, rowIndex);
             } else {
               insertContainerShape(targetShapeId, gridPosition.y);
-              T3Gv.optManager.PutInFrontofObject(containerObj.BlockID, targetShapeId);
+              T3Gv.opt.PutInFrontofObject(containerObj.BlockID, targetShapeId);
               targetObject.moreflags = Utils2.SetFlag(
                 targetObject.moreflags,
                 ConstantData.ObjMoreFlags.SED_MF_ContainerChild,
@@ -1698,7 +1698,7 @@ class ShapeContainer extends Rect {
               ConstantData.ObjMoreFlags.SED_MF_ContainerChild,
               false
             );
-            T3Gv.optManager.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
+            T3Gv.opt.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
           }
         }
 
@@ -1714,12 +1714,12 @@ class ShapeContainer extends Rect {
             for (let row = 0; row < container.ndown; row++) {
               for (let col = 0; col < container.nacross; col++) {
                 const idx = row * container.nacross + col;
-                const obj = T3Gv.optManager.GetObjectPtr(listRef[idx].id, false);
+                const obj = T3Gv.opt.GetObjectPtr(listRef[idx].id, false);
 
                 if (obj && obj.hooks.length) {
                   const hook = obj.hooks[0].connect;
                   if (hook.x !== col || hook.y !== row) {
-                    const objFront = T3Gv.optManager.GetObjectPtr(listRef[idx].id, true);
+                    const objFront = T3Gv.opt.GetObjectPtr(listRef[idx].id, true);
                     objFront.hooks[0].connect.x = col;
                     objFront.hooks[0].connect.y = row;
                   }
@@ -1738,7 +1738,7 @@ class ShapeContainer extends Rect {
             const listRef = currentContainerList.List;
 
             for (let j = 0, len = listRef.length; j < len; j++) {
-              const obj = T3Gv.optManager.GetObjectPtr(listRef[j].id, true);
+              const obj = T3Gv.opt.GetObjectPtr(listRef[j].id, true);
               if (obj && obj.hooks.length) {
                 obj.hooks[0].connect.y = j;
               }

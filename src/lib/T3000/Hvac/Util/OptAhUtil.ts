@@ -2,18 +2,18 @@
 
 import T3Gv from "../Data/T3Gv";
 import Instance from "../Data/Instance/Instance";
-import ConstantData from '../Data/ConstantData'
+import ConstantData from '../Data/Constant/ConstantData'
 
-class BisUtil {
+class OptAhUtil {
 
   /**
-   * Retrieves the global business manager instance
+   * Retrieves the global service operation instance
    * @param selectionObject - The selection object (unused in current implementation)
    * @param options - Additional options (unused in current implementation)
-   * @returns The global business manager instance
+   * @returns The global service operation instance
    */
-  static GetSelectionBusinessManager(selectionObject, options) {
-    return T3Gv.gBusinessManager;
+  static GetGvSviOpt(selectionObject, options?) {
+    return T3Gv.wallOpt;
   }
 
   /**
@@ -39,7 +39,7 @@ class BisUtil {
       result.foundtree = true;
 
       if (setLinkFlag) {
-        T3Gv.optManager.SetLinkFlag(drawingObject.BlockID, setLinkFlag);
+        T3Gv.opt.SetLinkFlag(drawingObject.BlockID, setLinkFlag);
       }
     } else {
       result.topshape = drawingObject.BlockID;
@@ -49,7 +49,7 @@ class BisUtil {
       }
 
       if (setLinkFlag) {
-        T3Gv.optManager.SetLinkFlag(drawingObject.BlockID, setLinkFlag);
+        T3Gv.opt.SetLinkFlag(drawingObject.BlockID, setLinkFlag);
       }
     }
 
@@ -59,7 +59,7 @@ class BisUtil {
       if (drawingObject.hooks[0].objid === drawingObject.BlockID) {
         drawingObject.hooks.splice(0, 1);
       } else {
-        const childObject = T3Gv.optManager.GetObjectPtr(drawingObject.hooks[0].objid, false);
+        const childObject = T3Gv.opt.GetObjectPtr(drawingObject.hooks[0].objid, false);
         if (childObject) {
           this.FindTreeTop(childObject, setLinkFlag, result);
         }
@@ -67,20 +67,20 @@ class BisUtil {
     } else if (result.foundtree) {
       // Handle connector objects after tree is found
       if (drawingObject.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.CONNECTOR) {
-        const childArrayId = T3Gv.optManager.FindChildArray(result.topshape, -1);
+        const childArrayId = T3Gv.opt.FindChildArray(result.topshape, -1);
         if (childArrayId >= 0) {
           result.secondconnector = childArrayId;
         }
       }
     } else {
       // Find child arrays if tree not yet found
-      const childArrayId = T3Gv.optManager.FindChildArray(drawingObject.BlockID, -1);
+      const childArrayId = T3Gv.opt.FindChildArray(drawingObject.BlockID, -1);
       if (childArrayId >= 0) {
         result.topconnector = childArrayId;
         result.foundtree = true;
 
         if (setLinkFlag) {
-          T3Gv.optManager.SetLinkFlag(childArrayId, setLinkFlag);
+          T3Gv.opt.SetLinkFlag(childArrayId, setLinkFlag);
         }
       }
     }
@@ -94,7 +94,7 @@ class BisUtil {
    * @returns The ID of the parent container if available, otherwise returns the original object ID
    */
   static SelectContainerParent(objectId) {
-    const object = T3Gv.optManager.GetObjectPtr(objectId, false);
+    const object = T3Gv.opt.GetObjectPtr(objectId, false);
 
     return object &&
       object instanceof Instance.Shape.ShapeContainer &&
@@ -117,16 +117,16 @@ class BisUtil {
    * @returns The ID of the next object to select, or -1 if no suitable next selection is found
    */
   static GetNextSelect() {
-    const currentSelectedId = T3Gv.optManager.GetTargetSelect();
-    const currentListSelection = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSelectedListBlockID, false);
+    const currentSelectedId = T3Gv.opt.GetTargetSelect();
+    const currentListSelection = T3Gv.opt.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
     let nextSelection = -1;
 
     if (currentSelectedId >= 0) {
-      const currentObject = T3Gv.optManager.GetObjectPtr(currentSelectedId, false);
+      const currentObject = T3Gv.opt.GetObjectPtr(currentSelectedId, false);
 
       if (currentObject && currentObject.hooks.length) {
         const childId = currentObject.hooks[0].objid;
-        const childObject = T3Gv.optManager.GetObjectPtr(childId, false);
+        const childObject = T3Gv.opt.GetObjectPtr(childId, false);
 
         if (childObject && childObject.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.CONNECTOR) {
           // Handle flow chart connectors
@@ -139,9 +139,9 @@ class BisUtil {
             childObject.objecttype === ConstantData.ObjectTypes.SD_OBJT_CAUSEEFFECT_BRANCH) {
 
             if (childObject.hooks.length) {
-              const grandChildObject = T3Gv.optManager.GetObjectPtr(childObject.hooks[0].objid, false);
+              const grandChildObject = T3Gv.opt.GetObjectPtr(childObject.hooks[0].objid, false);
               if (grandChildObject && grandChildObject.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.CONNECTOR) {
-                nextSelection = BisnUtil.GetConnectorNextSelect(grandChildObject, childObject.BlockID, currentListSelection);
+                nextSelection = OptAhUtil.GetConnectorNextSelect(grandChildObject, childObject.BlockID, currentListSelection);
               }
             }
           }
@@ -149,7 +149,7 @@ class BisUtil {
           else if (childObject.objecttype === ConstantData.ObjectTypes.SD_OBJT_GENOGRAM_BRANCH) {
             // return gGenogramManager.GetNextSelect();
           } else {
-            nextSelection = BisnUtil.GetConnectorNextSelect(childObject, currentSelectedId, currentListSelection);
+            nextSelection = OptAhUtil.GetConnectorNextSelect(childObject, currentSelectedId, currentListSelection);
           }
         }
         // Handle container shapes
@@ -211,9 +211,9 @@ class BisUtil {
       }
 
       // Handle child arrays
-      const childArrayId = T3Gv.optManager.FindChildArray(currentSelectedId, -1);
+      const childArrayId = T3Gv.opt.FindChildArray(currentSelectedId, -1);
       if (childArrayId >= 0) {
-        const childArray = T3Gv.optManager.GetObjectPtr(childArrayId, false);
+        const childArray = T3Gv.opt.GetObjectPtr(childArrayId, false);
         // if (childArray.objecttype === ConstantData.ObjectTypes.SD_OBJT_GENOGRAM_BRANCH) {
         //   return gGenogramManager.GetNextSelect();
         // }
@@ -230,13 +230,13 @@ class BisUtil {
    */
   static GetParentConnector(objectId, positionOut) {
     let connectorId = -1;
-    const object = T3Gv.optManager.GetObjectPtr(objectId, false);
+    const object = T3Gv.opt.GetObjectPtr(objectId, false);
 
     if (object && object.hooks.length) {
       const parentId = object.hooks[0].objid;
 
       if (parentId >= 0) {
-        const parentObject = T3Gv.optManager.GetObjectPtr(parentId, false);
+        const parentObject = T3Gv.opt.GetObjectPtr(parentId, false);
 
         if (parentObject &&
           parentObject.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.CONNECTOR) {
@@ -261,7 +261,7 @@ class BisUtil {
   static HasContainerParent(object) {
     if (object && object.hooks.length) {
       const parentId = object.hooks[0].objid;
-      const parentObject = T3Gv.optManager.GetObjectPtr(parentId, false);
+      const parentObject = T3Gv.opt.GetObjectPtr(parentId, false);
 
       if (parentObject && parentObject instanceof Instance.Shape.ShapeContainer) {
         return parentId;
@@ -271,4 +271,4 @@ class BisUtil {
   }
 }
 
-export default BisUtil
+export default OptAhUtil

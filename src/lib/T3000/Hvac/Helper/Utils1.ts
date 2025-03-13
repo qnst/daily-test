@@ -1,11 +1,11 @@
 
 
-import HvacModels from '../Data/Constant';
+import HvacModels from '../Data/Constant/Constant';
 import StoredObject from '../Data/State/StoredObject';
 import T3Gv from '../Data/T3Gv';
 import SegmentData from '../Model/SegmentData'
 import $ from 'jquery'
-import ConstantData from '../Data/ConstantData'
+import ConstantData from '../Data/Constant/ConstantData'
 
 class Utils1 {
 
@@ -115,9 +115,9 @@ class Utils1 {
    */
   static GenerateObjectID() {
     console.log('U.Util1 GenerateObjectID called');
-    T3Gv.CURRENT_SEQ_OBJECT_ID += 1;
-    console.log('U.Util1 GenerateObjectID output:', { id: T3Gv.CURRENT_SEQ_OBJECT_ID });
-    return T3Gv.CURRENT_SEQ_OBJECT_ID;
+    T3Gv.currentObjSeqId += 1;
+    console.log('U.Util1 GenerateObjectID output:', { id: T3Gv.currentObjSeqId });
+    return T3Gv.currentObjSeqId;
   }
 
   /**
@@ -157,8 +157,8 @@ class Utils1 {
   static IsStateOpen() {
     console.log('U.Util1 IsStateOpen called');
 
-    const result = T3Gv.stateManager.CurrentStateID > 0 &&
-      T3Gv.stateManager.States[T3Gv.stateManager.CurrentStateID].IsOpen;
+    const result = T3Gv.state.CurrentStateID > 0 &&
+      T3Gv.state.States[T3Gv.state.CurrentStateID].IsOpen;
 
     console.log('U.Util1 IsStateOpen output:', { result });
     return result;

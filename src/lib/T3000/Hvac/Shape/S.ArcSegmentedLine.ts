@@ -4,9 +4,9 @@ import SegmentedLine from './S.SegmentedLine'
 import Utils2 from "../Helper/Utils2";
 import Utils3 from "../Helper/Utils3";
 import T3Gv from '../Data/T3Gv'
-import ConstantData from '../Data/ConstantData'
+import ConstantData from '../Data/Constant/ConstantData'
 import Instance from '../Data/Instance/Instance';
-import ConstantData2 from '../Data/ConstantData2'
+import ConstantData2 from '../Data/Constant/ConstantData2'
 
 class ArcSegmentedLine extends SegmentedLine {
 
@@ -72,7 +72,7 @@ class ArcSegmentedLine extends SegmentedLine {
     } else {
       pointsArray = this.GetPolyPoints(ConstantData.Defines.NPOLYPTS, true);
       if (this.hoplist.nhops !== 0) {
-        const hopsResult = T3Gv.optManager.InsertHops(this, pointsArray, pointsArray.length);
+        const hopsResult = T3Gv.opt.InsertHops(this, pointsArray, pointsArray.length);
         pointsArray = pointsArray.slice(0, hopsResult.npts);
       }
       shapePath.SetPoints(pointsArray);
@@ -253,7 +253,7 @@ class ArcSegmentedLine extends SegmentedLine {
           resultPoints.push(new Point(currentX, currentY));
           resultPoints[resultPoints.length - 1].notclockwise = !isClockwise;
         } else {
-          T3Gv.optManager.EllipseToPoints(resultPoints, numPoints / 2, prevX, currentX, prevY, currentY, isClockwise);
+          T3Gv.opt.EllipseToPoints(resultPoints, numPoints / 2, prevX, currentX, prevY, currentY, isClockwise);
         }
       }
       if (!useRelativeCoordinates) {
@@ -292,7 +292,7 @@ class ArcSegmentedLine extends SegmentedLine {
         };
 
         textParams.Frame = Utils2.Pt2Rect(polyPoints[0], polyPoints[9]);
-        const angle = T3Gv.optManager.SD_GetClockwiseAngleBetween2PointsInRadians(polyPoints[0], polyPoints[9]);
+        const angle = T3Gv.opt.SD_GetClockwiseAngleBetween2PointsInRadians(polyPoints[0], polyPoints[9]);
 
         rotatedPoints.push(new Point(polyPoints[0].x, polyPoints[0].y));
         rotatedPoints.push(new Point(polyPoints[9].x, polyPoints[9].y));

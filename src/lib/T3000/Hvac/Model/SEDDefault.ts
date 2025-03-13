@@ -2,7 +2,7 @@
 import { Type } from 'class-transformer'
 import 'reflect-metadata'
 
-import ConstantData from "../Data/ConstantData"
+import ConstantData from "../Data/Constant/ConstantData"
 import FontRecord from "./FontRecord"
 import QuickStyle from './QuickStyle'
 

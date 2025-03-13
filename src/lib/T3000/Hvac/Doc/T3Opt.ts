@@ -1,14 +1,14 @@
 
 import T3Gv from '../Data/T3Gv';
 import DocUtil from './DocUtil';
-import OptHandler from '../Opt/Opt.OptHandler';
+import OptUtil from '../Opt/OptUtil';
 import Base from '../Util/Base';
 import WallOpt from "../Util/WallOpt";
 import Clipboard from '../Util/Clipboard'
 import Instance from '../Data/Instance/Instance';
 import Shape from '../Data/Instance/Shape';
 import Basic from '../Data/Instance/Basic';
-import DataOpt from '../Data/DataOpt';
+import DataOpt from '../Util/DataOpt';
 import EvtOpt from '../Event/EvtOpt';
 import KeyboardOpt from '../Util/KeyboardOpt';
 import UserOpt from '../Util/UserOpt';
@@ -19,7 +19,7 @@ import UserOpt from '../Util/UserOpt';
 declare global {
   interface Window {
     docUtil: any;
-    gBusinessManager: any;
+    wallOpt: any;
   }
 }
 
@@ -62,12 +62,12 @@ class T3Opt {
 
     // Set up document handler and option manager
     T3Gv.docUtil = new DocUtil();
-    T3Gv.optManager = new OptHandler();
-    T3Gv.optManager.Initialize();
+    T3Gv.opt = new OptUtil();
+    T3Gv.opt.Initialize();
 
-    // Initialize business managers
-    T3Gv.gBaseManager = new Base();
-    T3Gv.gBusinessManager = new WallOpt();
+    // Initialize wall operations
+    T3Gv.baseOpt = null;
+    T3Gv.wallOpt = new WallOpt();
 
     // Prevent default context menu
     window.oncontextmenu = function (event) {
@@ -84,7 +84,7 @@ class T3Opt {
 
     // Expose handlers to window for external access
     window.docUtil = T3Gv.docUtil;
-    window.gBusinessManager = T3Gv.gBusinessManager;
+    window.wallOpt = T3Gv.wallOpt;
 
     // Bind element control events
     this.evtOpt.BindElemCtlEvent();
@@ -99,7 +99,7 @@ class T3Opt {
     DataOpt.InitStoredData();
 
     // Render all SVG objects
-    T3Gv.optManager.RenderAllSVGObjects();
+    T3Gv.opt.RenderAllSVGObjects();
 
     this.userOpt.Initialize();
   }

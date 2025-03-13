@@ -1250,7 +1250,7 @@ class Utils2 {
     length = points.length;
 
     for (let i = 0; i < length - 1; i++) {
-      angle = T3Gv.optManager.SD_GetCounterClockwiseAngleBetween2Points(points[i], points[i + 1]);
+      angle = T3Gv.opt.SD_GetCounterClockwiseAngleBetween2Points(points[i], points[i + 1]);
 
       if (i > 0) {
         angleDifference = angle - previousAngle;

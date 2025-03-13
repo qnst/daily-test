@@ -3,7 +3,7 @@
 import $ from 'jquery'
 import T3Gv from '../Data/T3Gv'
 import base64js from 'base64-js'
-import ConstantData from '../Data/ConstantData'
+import ConstantData from '../Data/Constant/ConstantData'
 
 class Clipboard {
 
@@ -72,7 +72,7 @@ class Clipboard {
    * and setting up appropriate event handlers for clipboard operations
    * @param options - Optional configuration settings for clipboard initialization
    */
-  static Init(options) {
+  static Init(options?) {
     // Detect device and browser capabilities
     this.isMobileDevice = /mobile|ip(ad|hone|od)|android|silk/i.test(navigator.userAgent);
     this.isGestureCapable = "ontouchstart" in window ||
@@ -128,17 +128,17 @@ class Clipboard {
           return;
         }
 
-        if (!T3Gv.optManager.isMobilePlatform) {
+        if (!T3Gv.opt.isMobilePlatform) {
           // Skip if focus is not on clipboard elements for cut/copy
           if ((clipboardAction === "cut" || clipboardAction === "copy") &&
-            $("#_clipboardInput:focus,#_IEclipboardDiv:focus,#SDTS_TouchProxy:focus").length <= 0) {
+            $("#_clipboardInput:focus,#_IEclipboardDiv:focus,#T3TouchProxy:focus").length <= 0) {
             return;
           }
 
           // Skip if paste and focus is on other input elements
           if (clipboardAction === "paste" &&
             ($("input:focus").length > 0 || $("textarea:focus").length > 0) &&
-            $("#_clipboardInput:focus,#_IEclipboardDiv:focus,#SDTS_TouchProxy:focus").length <= 0) {
+            $("#_clipboardInput:focus,#_IEclipboardDiv:focus,#T3TouchProxy:focus").length <= 0) {
             return;
           }
         }
@@ -153,7 +153,7 @@ class Clipboard {
           clipboardData = window.clipboardData;
         }
 
-        const isTouchProxyFocused = $("#SDTS_TouchProxy:focus").length > 0;
+        const isTouchProxyFocused = $("#T3TouchProxy:focus").length > 0;
 
         // Handle cut/copy operations
         if (clipboardAction === "cut" || clipboardAction === "copy") {
@@ -217,13 +217,13 @@ class Clipboard {
    */
   static DoCutCopy(clipboardEvent, clipboardAction, canUseAsyncClipboard, systemClipboardData, imageInfo) {
     // Set the HTML clipboard content
-    T3Gv.optManager.htmlClipboard = this.GetCutCopyHTML();
+    T3Gv.opt.htmlClipboard = this.GetCutCopyHTML();
 
     // Process the appropriate clipboard action
     if (clipboardAction === "cut") {
-      T3Gv.optManager.CutObjects(true);
+      T3Gv.opt.CutObjects(true);
     } else if (clipboardAction === "copy") {
-      T3Gv.optManager.CopyObjects(true);
+      T3Gv.opt.CopyObjects(true);
     }
 
     // Update the timestamp to track clipboard operations
@@ -298,7 +298,7 @@ class Clipboard {
    */
   static GenerateImageInfo() {
     const imageInfo = {};
-    const selectedObjects = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSelectedListBlockID, false);
+    const selectedObjects = T3Gv.opt.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
 
     if (!selectedObjects || selectedObjects.length === 0) {
       return Promise.resolve(null);
@@ -320,7 +320,7 @@ class Clipboard {
     // Helper function to generate a preview of the selected objects
     function generatePreview(objectsList) {
       return new Promise(resolve =>
-        T3Gv.optManager.GeneratePreviewPNG(objectsList, Infinity, Infinity, {
+        T3Gv.opt.GeneratePreviewPNG(objectsList, Infinity, Infinity, {
           zList: objectsList,
           fillBackground: true
         })
@@ -403,12 +403,12 @@ class Clipboard {
    */
   static PasteFF(clipboardEvent) {
     // Extract plain text
-    T3Gv.optManager.textClipboard = Clipboard.PlainTextToSDObj(clipboardEvent.getData("Text"));
+    T3Gv.opt.textClipboard = Clipboard.PlainTextToSDObj(clipboardEvent.getData("Text"));
 
     // Extract HTML content if available
     const htmlData = clipboardEvent.getData("text/html");
     if (htmlData !== undefined && htmlData !== null && htmlData.length > 0) {
-      T3Gv.optManager.htmlClipboard = htmlData;
+      T3Gv.opt.htmlClipboard = htmlData;
     }
 
     // Move focus to the IE clipboard div (used for Firefox too)
@@ -437,7 +437,7 @@ class Clipboard {
         }
 
         // Create a Blob from the binary data with the correct MIME type
-        T3Gv.optManager.imageClipboard = new Blob([uintArray], { type: mimeType });
+        T3Gv.opt.imageClipboard = new Blob([uintArray], { type: mimeType });
       }
 
       // Complete the paste operation
@@ -468,13 +468,13 @@ class Clipboard {
    */
   static PasteIE(clipboardEvent) {
     // Extract plain text from clipboard
-    T3Gv.optManager.textClipboard = Clipboard.PlainTextToSDObj(clipboardEvent.getData("Text"));
+    T3Gv.opt.textClipboard = Clipboard.PlainTextToSDObj(clipboardEvent.getData("Text"));
 
     // Process any image files in the clipboard
     const files = clipboardEvent.files;
     for (let i = 0; i < files.length; i++) {
       if (files[i].type.indexOf("image") === 0) {
-        T3Gv.optManager.imageClipboard = files[i].slice(0, files[i].size - 1);
+        T3Gv.opt.imageClipboard = files[i].slice(0, files[i].size - 1);
       }
     }
 
@@ -483,7 +483,7 @@ class Clipboard {
 
     // Process HTML content after a small delay to ensure it's fully loaded
     setTimeout(() => {
-      T3Gv.optManager.htmlClipboard = this.IEclipboardDiv.html();
+      T3Gv.opt.htmlClipboard = this.IEclipboardDiv.html();
       this.Paste();
       this.IEclipboardDiv.empty();
       this.FocusOnClipboardInput();
@@ -503,19 +503,19 @@ class Clipboard {
         // Handle image content
         if (type.match(/image.*/) || (clipboardEvent.items !== undefined &&
           clipboardEvent.items[index].type.match(/image.*/))) {
-          T3Gv.optManager.imageClipboard = clipboardEvent.items[index].getAsFile();
+          T3Gv.opt.imageClipboard = clipboardEvent.items[index].getAsFile();
         }
         // Handle plain text content
         else if (type.match(/text\/plain/) || (clipboardEvent.items !== undefined &&
           clipboardEvent.items[index].type.match(/text\/plain/))) {
           clipboardEvent.items[index].getAsString((text) => {
-            T3Gv.optManager.textClipboard = Clipboard.PlainTextToSDObj(text);
+            T3Gv.opt.textClipboard = Clipboard.PlainTextToSDObj(text);
           });
         }
         // Handle HTML content
         else if (type.match(/text\/html/) || clipboardEvent.items[index].type.match(/text\/html/)) {
           clipboardEvent.items[index].getAsString((htmlContent) => {
-            T3Gv.optManager.htmlClipboard = htmlContent;
+            T3Gv.opt.htmlClipboard = htmlContent;
           });
         }
       });
@@ -523,7 +523,7 @@ class Clipboard {
 
     // Trigger paste operation after a short delay
     // macOS requires a longer delay (500ms) compared to other platforms (10ms)
-    setTimeout(Clipboard.Paste, T3Gv.optManager.isMac ? 500 : 10);
+    setTimeout(Clipboard.Paste, T3Gv.opt.isMac ? 500 : 10);
   }
 
   /**
@@ -531,9 +531,9 @@ class Clipboard {
    * Resets text, HTML and image clipboard variables to null
    */
   static ClearInteralClipboard() {
-    T3Gv.optManager.textClipboard = null;
-    T3Gv.optManager.htmlClipboard = null;
-    T3Gv.optManager.imageClipboard = null;
+    T3Gv.opt.textClipboard = null;
+    T3Gv.opt.htmlClipboard = null;
+    T3Gv.opt.imageClipboard = null;
   }
 
   /**
@@ -543,13 +543,13 @@ class Clipboard {
   static PasteFromUIaction() {
     // On mobile devices, execute paste directly
     if (this.isMobileDevice) {
-      T3Gv.optManager.PasteObjects();
+      T3Gv.opt.PasteObjects();
       return;
     }
 
     // If this is a paste from the same system, use direct paste
     if (this.IsSameSystemPaste()) {
-      T3Gv.optManager.PasteObjects();
+      T3Gv.opt.PasteObjects();
       return;
     }
 
@@ -572,7 +572,7 @@ class Clipboard {
   static PasteUsingAsynchClipboardAPI(successCallback, errorCallback) {
     // Firefox and Safari don't support the async clipboard API
     if (this.isFirefox || this.isSafariBrowser) {
-      const message = T3Gv.optManager.isMac
+      const message = T3Gv.opt.isMac
         ? "Use Command-V to paste this information"
         : "Use ctrl+v to paste this information";
       console.log(message);
@@ -598,21 +598,21 @@ class Clipboard {
       {
         typeRegex: /text\/html/,
         handler: (clipboardItem) => clipboardItem.text().then((htmlContent) => {
-          T3Gv.optManager.htmlClipboard = htmlContent;
+          T3Gv.opt.htmlClipboard = htmlContent;
           return true;
         })
       },
       {
         typeRegex: /text\/plain/,
         handler: (clipboardItem) => clipboardItem.text().then((textContent) => {
-          T3Gv.optManager.textClipboard = Clipboard.PlainTextToSDObj(textContent);
+          T3Gv.opt.textClipboard = Clipboard.PlainTextToSDObj(textContent);
           return true;
         })
       },
       {
         typeRegex: /image.*/,
         handler: (clipboardItem) => {
-          T3Gv.optManager.imageClipboard = clipboardItem;
+          T3Gv.opt.imageClipboard = clipboardItem;
           return true;
         }
       }
@@ -665,7 +665,7 @@ class Clipboard {
     const isAnyInputFocused = $("input:focus").length > 0;
     const isAnySelectFocused = $("select:focus").length > 0;
     const isAnyTextareaFocused = $("textarea:focus").length > 0;
-    const isMobilePlatform = T3Gv.optManager.isMobilePlatform;
+    const isMobilePlatform = T3Gv.opt.isMobilePlatform;
 
     // Focus on clipboard input only if no other input elements are focused
     // or if we're on a mobile platform
@@ -731,7 +731,7 @@ class Clipboard {
       // Process pasted data after a short delay to ensure content is available
       setTimeout(() => {
         const htmlData = this.IEclipboardDiv.html();
-        this.Paste(textData, htmlData, T3Gv.optManager.imageClipboard);
+        this.Paste(textData, htmlData, T3Gv.opt.imageClipboard);
         this.IEclipboardDiv.empty();
         this.FocusOnClipboardInput();
       }, 0);
@@ -772,7 +772,7 @@ class Clipboard {
     const isMobileDevice = /mobile|ip(ad|hone|od)|android|silk/i.test(navigator.userAgent);
 
     // Process HTML content if available
-    const htmlObject = Clipboard.GetHTMLAsObject(T3Gv.optManager.htmlClipboard);
+    const htmlObject = Clipboard.GetHTMLAsObject(T3Gv.opt.htmlClipboard);
     let clipboardHeader = null;
 
     if (htmlObject !== null) {
@@ -780,20 +780,20 @@ class Clipboard {
     }
 
     // Handle case where HTML content exists but couldn't be parsed
-    if (htmlObject === null && T3Gv.optManager.htmlClipboard) {
+    if (htmlObject === null && T3Gv.opt.htmlClipboard) {
       // Reset cut/copy timestamp
       Clipboard.lastCutCopyTimestamp = -1;
 
       // Determine clipboard content type
-      if (T3Gv.optManager.imageClipboard && T3Gv.optManager.imageClipboard.size > 0) {
-        T3Gv.optManager.contentHeader.ClipboardType = ConstantData.ClipboardType.Image;
+      if (T3Gv.opt.imageClipboard && T3Gv.opt.imageClipboard.size > 0) {
+        T3Gv.opt.contentHeader.ClipboardType = ConstantData.ClipboardType.Image;
       } else {
-        T3Gv.optManager.contentHeader.ClipboardType = ConstantData.ClipboardType.Text;
+        T3Gv.opt.contentHeader.ClipboardType = ConstantData.ClipboardType.Text;
       }
 
       // Clear clipboard buffer and execute paste
-      T3Gv.optManager.contentHeader.ClipboardBuffer = null;
-      T3Gv.optManager.PasteObjects();
+      T3Gv.opt.contentHeader.ClipboardBuffer = null;
+      T3Gv.opt.PasteObjects();
       return;
     }
 
@@ -803,7 +803,7 @@ class Clipboard {
     }
 
     // Execute paste operation
-    T3Gv.optManager.PasteObjects();
+    T3Gv.opt.PasteObjects();
   }
 
   /**
@@ -814,8 +814,8 @@ class Clipboard {
    */
   static GetCutCopyText() {
     const isMobile = /mobile|ip(ad|hone|od)|android|silk/i.test(navigator.userAgent);
-    const isTextClipboard = T3Gv.optManager.contentHeader.ClipboardType === ConstantData.ClipboardType.Text;
-    const textClipboard = T3Gv.optManager.textClipboard;
+    const isTextClipboard = T3Gv.opt.contentHeader.ClipboardType === ConstantData.ClipboardType.Text;
+    const textClipboard = T3Gv.opt.textClipboard;
 
     if (!isTextClipboard || textClipboard == null) {
       return "";
@@ -835,12 +835,12 @@ class Clipboard {
     const isMobile = /mobile|ip(ad|hone|od)|android|silk/i.test(navigator.userAgent);
     let clipboardContent = "";
 
-    if (T3Gv.optManager.contentHeader.ClipboardType === ConstantData.ClipboardType.Text && T3Gv.optManager.textClipboard) {
-      clipboardContent += T3Gv.optManager.textClipboard ? T3Gv.optManager.textClipboard.text : "";
+    if (T3Gv.opt.contentHeader.ClipboardType === ConstantData.ClipboardType.Text && T3Gv.opt.textClipboard) {
+      clipboardContent += T3Gv.opt.textClipboard ? T3Gv.opt.textClipboard.text : "";
     }
 
     const clipboardHeader = {
-      clipboardType: T3Gv.optManager.contentHeader.ClipboardType,
+      clipboardType: T3Gv.opt.contentHeader.ClipboardType,
       timestamp: this.lastCutCopyTimestamp
     };
 
@@ -848,8 +848,8 @@ class Clipboard {
       clipboardContent += `<div>${additionalHtmlContent}</div>`;
     }
 
-    if (T3Gv.optManager.contentHeader.ClipboardType === ConstantData.ClipboardType.Text) {
-      const textData = JSON.stringify(T3Gv.optManager.textClipboard);
+    if (T3Gv.opt.contentHeader.ClipboardType === ConstantData.ClipboardType.Text) {
+      const textData = JSON.stringify(T3Gv.opt.textClipboard);
       const textBytes = new Uint8Array(textData.length);
       for (let i = 0; i < textData.length; i++) {
         textBytes[i] = textData.charCodeAt(i);
@@ -857,13 +857,13 @@ class Clipboard {
       clipboardContent += base64js.fromByteArray(textBytes);
     }
 
-    if (T3Gv.optManager.contentHeader.ClipboardType === ConstantData.ClipboardType.LM) {
-      const lmBytes = new Uint8Array(T3Gv.optManager.contentHeader.ClipboardBuffer);
+    if (T3Gv.opt.contentHeader.ClipboardType === ConstantData.ClipboardType.LM) {
+      const lmBytes = new Uint8Array(T3Gv.opt.contentHeader.ClipboardBuffer);
       clipboardContent += base64js.fromByteArray(lmBytes);
     }
 
-    if (T3Gv.optManager.contentHeader.ClipboardType === ConstantData.ClipboardType.Table) {
-      const tableData = JSON.stringify(T3Gv.optManager.contentHeader.ClipboardBuffer);
+    if (T3Gv.opt.contentHeader.ClipboardType === ConstantData.ClipboardType.Table) {
+      const tableData = JSON.stringify(T3Gv.opt.contentHeader.ClipboardBuffer);
       const tableBytes = new Uint8Array(tableData.length);
       for (let i = 0; i < tableData.length; i++) {
         tableBytes[i] = tableData.charCodeAt(i);

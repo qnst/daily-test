@@ -1,7 +1,7 @@
 
 
 import BaseSymbol from './S.BaseSymbol'
-import ConstantData from '../Data/ConstantData'
+import ConstantData from '../Data/Constant/ConstantData'
 
 class BitmapSymbol extends BaseSymbol {
 

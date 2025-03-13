@@ -1,8 +1,8 @@
 
 
-import T3Constant from "../Data/T3Constant";
+import T3Constant from "../Data/Constant/T3Constant";
 
-class UserSettings {
+class UserSetting {
 
   public UserID: number;
   public DateChanged: Date;
@@ -25,4 +25,4 @@ class UserSettings {
   }
 }
 
-export default UserSettings
+export default UserSetting

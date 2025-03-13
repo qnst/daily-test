@@ -6,8 +6,8 @@ import Utils3 from "../Helper/Utils3";
 import T3Gv from '../Data/T3Gv'
 import $ from 'jquery'
 import Point from '../Model/Point'
-import ConstantData from '../Data/ConstantData'
-import ConstantData2 from '../Data/ConstantData2';
+import ConstantData from '../Data/Constant/ConstantData'
+import ConstantData2 from '../Data/Constant/ConstantData2';
 import PolygonConstant from '../Util/PolygonConstant';
 
 class Oval extends BaseShape {
@@ -96,7 +96,7 @@ class Oval extends BaseShape {
 
     const table = this.GetTable(false);
     if (table) {
-      T3Gv.optManager.LM_AddSVGTableObject(this, renderer, shapeContainer, table);
+      T3Gv.opt.LM_AddSVGTableObject(this, renderer, shapeContainer, table);
     }
 
     if (this.DataID >= 0) {
@@ -128,7 +128,7 @@ class Oval extends BaseShape {
       height: frameCopy.height
     };
 
-    T3Gv.optManager.PolyYCurve(points, topHalf, curveType, 0, 0, 0, 0, false);
+    T3Gv.opt.PolyYCurve(points, topHalf, curveType, 0, 0, 0, 0, false);
     points.pop();
 
     let bottomHalf = {
@@ -138,7 +138,7 @@ class Oval extends BaseShape {
       height: -frameCopy.height
     };
 
-    T3Gv.optManager.PolyYCurve(points, bottomHalf, curveType, 0, 0, 0, 0, true);
+    T3Gv.opt.PolyYCurve(points, bottomHalf, curveType, 0, 0, 0, 0, true);
     points.pop();
 
     if (!frame) {
@@ -158,7 +158,7 @@ class Oval extends BaseShape {
     const table = this.GetTable(false);
     if (table) {
       console.log('S.Oval: Input table:', table);
-      T3Gv.optManager.Table_ExtendLines(this, table);
+      T3Gv.opt.Table_ExtendLines(this, table);
       console.log('S.Oval: Table lines extended');
     }
   }
@@ -168,7 +168,7 @@ class Oval extends BaseShape {
 
     const table = this.GetTable(false);
     if (table) {
-      const extendedCells = T3Gv.optManager.Table_ExtendCell(this, table, cellIndex, rowIndex, columnIndex);
+      const extendedCells = T3Gv.opt.Table_ExtendCell(this, table, cellIndex, rowIndex, columnIndex);
       if (extendedCells) {
         const svgFrame = this.GetSVGFrame(this.Frame);
         const offsetX = this.inside.x - svgFrame.x;
@@ -217,7 +217,7 @@ class Oval extends BaseShape {
 
     let table = this.GetTable(false);
     if (tableIndex != null && table) {
-      let tablePerimeterPoints = T3Gv.optManager.Table_GetPerimPts(this, table, tableIndex, points);
+      let tablePerimeterPoints = T3Gv.opt.Table_GetPerimPts(this, table, tableIndex, points);
       if (tablePerimeterPoints) {
         perimeterPoints = tablePerimeterPoints;
         if (!isClosed) {

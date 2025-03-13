@@ -4,10 +4,10 @@ import BaseSymbol from './S.BaseSymbol'
 import Utils1 from '../Helper/Utils1';
 import Utils2 from "../Helper/Utils2";
 import T3Gv from '../Data/T3Gv'
-import ConstantData from '../Data/ConstantData'
+import ConstantData from '../Data/Constant/ConstantData'
 import $ from 'jquery';
-import ConstantData2 from '../Data/ConstantData2';
-import ShapeDataUtil from '../Data/ShapeDataUtil';
+import ConstantData2 from '../Data/Constant/ConstantData2';
+import ShapeDataUtil from '../Util/ShapeDataUtil';
 import PolygonConstant from '../Util/PolygonConstant';
 
 class SVGFragmentSymbol extends BaseSymbol {
@@ -143,11 +143,11 @@ class SVGFragmentSymbol extends BaseSymbol {
         e.fillPaintType = fillType;
       } else if (fillType === ConstantData.FillTypes.SDFILL_TEXTURE) {
         const texture = styleRecord.Fill.Paint.Texture;
-        const textureData = T3Gv.optManager.TextureList.Textures[texture];
+        const textureData = T3Gv.opt.TextureList.Textures[texture];
         if (textureData) {
           const textureFill = {
             url: textureData.ImageURL || (Constants.FilePath_CMSRoot + Constants.FilePath_Textures + textureData.filename),
-            scale: T3Gv.optManager.CalcTextureScale(styleRecord.Fill.Paint.TextureScale, textureData.dim.x),
+            scale: T3Gv.opt.CalcTextureScale(styleRecord.Fill.Paint.TextureScale, textureData.dim.x),
             alignment: styleRecord.Fill.Paint.TextureScale.AlignmentScalar,
             dim: textureData.dim
           };
@@ -177,7 +177,7 @@ class SVGFragmentSymbol extends BaseSymbol {
     const rotation = shapeElement.GetRotation();
     const prevBBox = $.extend(true, {}, this.prevBBox);
     const updatedBBox = $.extend(true, {}, newBBox);
-    const offset = T3Gv.optManager.svgDoc.CalculateRotatedOffsetForResize(prevBBox, updatedBBox, rotation);
+    const offset = T3Gv.opt.svgDoc.CalculateRotatedOffsetForResize(prevBBox, updatedBBox, rotation);
 
     // Update the main shape size and position.
     shapeElement.SetSize(updatedBBox.width, updatedBBox.height);
@@ -217,7 +217,7 @@ class SVGFragmentSymbol extends BaseSymbol {
     if (shapeElement) {
       const shapeID = shapeElement.GetID();
       if (shapeID >= 0) {
-        const shapeObject = T3Gv.optManager.GetObjectPtr(shapeID, false);
+        const shapeObject = T3Gv.opt.GetObjectPtr(shapeID, false);
         this.prevBBox = $.extend(true, {}, this.Frame);
         const offset = this.Resize(shapeElement, newBBox, shapeObject);
         console.log("= S.SVGFragmentSymbol | ResizeInTextEdit Output:", { offset });
@@ -251,7 +251,7 @@ class SVGFragmentSymbol extends BaseSymbol {
       ConstantData2.CursorType.RESIZE_L,
     ];
 
-    if (T3Gv.optManager.Table_GetActiveID() === this.BlockID) {
+    if (T3Gv.opt.Table_GetActiveID() === this.BlockID) {
       console.log("= S.SVGFragmentSymbol | BaseShape_CreateActionTriggers Output:", null);
       return null;
     }
@@ -416,7 +416,7 @@ class SVGFragmentSymbol extends BaseSymbol {
     connectorData = (function (obj: any) {
       let hook, result = null;
       if (obj.hooks.length) {
-        hook = T3Gv.optManager.GetObjectPtr(obj.hooks[0].objid, false);
+        hook = T3Gv.opt.GetObjectPtr(obj.hooks[0].objid, false);
         if (hook && hook.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.CONNECTOR) {
           result = hook.Pr_GetShapeConnectorInfo(obj.hooks[0]);
         } else if (hook && hook instanceof Instance.Shape.ShapeContainer) {
@@ -463,7 +463,7 @@ class SVGFragmentSymbol extends BaseSymbol {
     if (sideKnobs) {
       const sideObj = Utils1.DeepCopy(this);
       sideObj.inside = $.extend(true, {}, sideObj.Frame);
-      const polyPoints = T3Gv.optManager
+      const polyPoints = T3Gv.opt
         .ShapeToPolyLine(this.BlockID, false, true, sideObj)
         .GetPolyPoints(ConstantData.Defines.NPOLYPTS, true, true, false, []);
 
@@ -486,14 +486,14 @@ class SVGFragmentSymbol extends BaseSymbol {
     // Check conditions for rotation knob
     const smallWidth = this.Frame.width < 44,
       hasHooks = this.hooks.length > 0 &&
-        (T3Gv.optManager.GetObjectPtr(this.hooks[0].objid, false) ?
-          T3Gv.optManager.GetObjectPtr(this.hooks[0].objid, false).DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.CONNECTOR
+        (T3Gv.opt.GetObjectPtr(this.hooks[0].objid, false) ?
+          T3Gv.opt.GetObjectPtr(this.hooks[0].objid, false).DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.CONNECTOR
           : false);
     if (
       !(
         this.NoRotate() ||
         this.NoGrow() ||
-        T3Gv.optManager.touchInitiated ||
+        T3Gv.opt.touchInitiated ||
         knobConfig.locked ||
         smallWidth ||
         hasHooks
@@ -517,7 +517,7 @@ class SVGFragmentSymbol extends BaseSymbol {
 
     // Create dimension adjustment knobs if applicable
     if ((this.Dimensions & ConstantData.DimensionFlags.SED_DF_Standoff) && this.CanUseStandOffDimensionLines()) {
-      const svgObj = T3Gv.optManager.svgObjectLayer.GetElementByID(this.BlockID);
+      const svgObj = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
       this.CreateDimensionAdjustmentKnobs(groupShape, svgObj, knobConfig);
     }
 

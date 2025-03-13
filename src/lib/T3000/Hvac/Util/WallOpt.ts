@@ -6,14 +6,14 @@ import Utils1 from "../Helper/Utils1"
 import Utils2 from '../Helper/Utils2'
 import Line from "../Shape/S.Line"
 import BaseLine from '../Shape/S.BaseLine'
-import ConstantData from '../Data/ConstantData'
+import ConstantData from '../Data/Constant/ConstantData'
 import HitResult from '../Model/HitResult'
-import ConstantData2 from '../Data/ConstantData2'
+import ConstantData2 from '../Data/Constant/ConstantData2'
 import Instance from "../Data/Instance/Instance"
-import T3Constant from "../Data/T3Constant"
+import T3Constant from "../Data/Constant/T3Constant"
 import KeyboardConstant from "./KeyboardConstant"
 import PolygonConstant from './PolygonConstant'
-import ShapeConstant from '../Data/ShapeConstant'
+import ShapeConstant from './ShapeConstant'
 
 class WallOpt {
 
@@ -62,14 +62,14 @@ class WallOpt {
     let scaleFactor;
 
     // Get session data from object store
-    const sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data;
+    const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
 
     // Set default wall thickness
     sessionData.def.wallThickness = 8.33325;
 
     // Create a deep copy of the style
     const wallStyle = Utils1.DeepCopy(sessionData.def.style);
-    const drawingScale = T3Gv.optManager.GetDrawingScale(T3Gv.docUtil.rulerConfig);
+    const drawingScale = T3Gv.opt.GetDrawingScale(T3Gv.docUtil.rulerConfig);
 
     // Calculate wall thickness based on measurement system (inches or metric)
     if (T3Gv.docUtil.rulerConfig.useInches) {
@@ -114,16 +114,16 @@ class WallOpt {
     };
 
     // Get current selection and create a copy to restore after adding the wall
-    const selectionList = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSelectedListBlockID, false);
+    const selectionList = T3Gv.opt.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
     const currentSelection = Utils1.DeepCopy(selectionList);
 
     // Create a new wall line
     const wallLine = new Line(wallParameters);
 
     // Draw the new wall and update UI state
-    T3Gv.optManager.DrawNewObject(wallLine, true);
-    T3Gv.optManager.SetEditMode(ConstantData.EditState.EDIT);
-    T3Gv.optManager.SelectObjects(currentSelection, false, false);
+    T3Gv.opt.DrawNewObject(wallLine, true);
+    T3Gv.opt.SetEditMode(ConstantData.EditState.EDIT);
+    T3Gv.opt.SelectObjects(currentSelection, false, false);
 
     console.log('U.WallUtil AddWall output:', { wallLine });
   }
@@ -136,7 +136,7 @@ class WallOpt {
     console.log('U.WallUtil StartAddingWalls input: none');
 
     if (!this.IsAddingWalls()) {
-      T3Gv.optManager.CloseEdit();
+      T3Gv.opt.CloseEdit();
       this.ToggleAddingWalls();
       this.AddWall();
     }
@@ -158,38 +158,38 @@ class WallOpt {
       this.ToggleAddingWalls();
 
       // Get currently selected objects
-      let selectedObjects = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSelectedListBlockID, false);
+      let selectedObjects = T3Gv.opt.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
 
       if (selectedObjects && selectedObjects.length > 0) {
         // Reset object draw state and selection properties
-        T3Gv.optManager.ResetObjectDraw();
+        T3Gv.opt.ResetObjectDraw();
         T3Constant.DocContext.SelectionToolSticky = false;
-        T3Gv.gBusinessManager.PostObjectDrawHook();
+        T3Gv.wallOpt.PostObjectDrawHook();
       } else {
         // Cancel current modal operation
-        T3Gv.optManager.CancelModalOperation();
+        T3Gv.opt.CancelModalOperation();
       }
 
       // Set edit mode to default
-      T3Gv.optManager.SetEditMode(ConstantData.EditState.DEFAULT);
+      T3Gv.opt.SetEditMode(ConstantData.EditState.DEFAULT);
 
       // Re-select any previously selected objects
       let objectsToSelect = [];
-      selectedObjects = T3Gv.optManager.GetObjectPtr(T3Gv.optManager.theSelectedListBlockID, false);
+      selectedObjects = T3Gv.opt.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
 
       if (selectedObjects && selectedObjects.length > 0) {
         objectsToSelect = Utils1.DeepCopy(selectedObjects);
-        T3Gv.optManager.SelectObjects(objectsToSelect);
+        T3Gv.opt.SelectObjects(objectsToSelect);
       }
     } else {
       // Handle different modal operations if not adding walls
-      switch (T3Gv.optManager.currentModalOperation) {
+      switch (T3Gv.opt.currentModalOperation) {
         case modalOperations.ADDCORNER:
         case modalOperations.SPLITWALL:
           T3Gv.gFloorplanManager.AddCornerCancel();
           break;
         default:
-          T3Gv.optManager.CancelModalOperation();
+          T3Gv.opt.CancelModalOperation();
       }
     }
 
@@ -253,11 +253,11 @@ class WallOpt {
   AddCornerCancel() {
     console.log('U.WallUtil AddCornerCancel input: none');
 
-    T3Gv.optManager.SetEditMode(ConstantData.EditState.DEFAULT);
-    T3Gv.optManager.CancelModalOperation();
-    T3Gv.optManager.ResetObjectDraw();
+    T3Gv.opt.SetEditMode(ConstantData.EditState.DEFAULT);
+    T3Gv.opt.CancelModalOperation();
+    T3Gv.opt.ResetObjectDraw();
     T3Gv.gFloorplanManager.PostObjectDrawHook();
-    T3Gv.optManager.SetEditMode(ConstantData.EditState.DEFAULT);
+    T3Gv.opt.SetEditMode(ConstantData.EditState.DEFAULT);
 
     console.log('U.WallUtil AddCornerCancel output: completed');
   }
@@ -282,37 +282,37 @@ class WallOpt {
       // Extract coordinates and target element based on event type
       if (event.gesture) {
         // For gesture events like touch/drag
-        hitPoint = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(
+        hitPoint = T3Gv.opt.svgDoc.ConvertWindowToDocCoords(
           event.gesture.center.clientX,
           event.gesture.center.clientY
         );
-        targetElement = T3Gv.optManager.svgObjectLayer.FindElementByDOMElement(event.currentTarget);
+        targetElement = T3Gv.opt.svgObjectLayer.FindElementByDOMElement(event.currentTarget);
         targetId = targetElement.GetID();
       } else {
         // For right-click events
-        hitPoint = Utils1.DeepCopy(T3Gv.optManager.rightClickParams.HitPt);
-        targetId = T3Gv.optManager.rightClickParams.TargetID;
-        targetElement = T3Gv.optManager.svgObjectLayer.GetElementByID(targetId);
+        hitPoint = Utils1.DeepCopy(T3Gv.opt.rightClickParams.HitPt);
+        targetId = T3Gv.opt.rightClickParams.TargetID;
+        targetElement = T3Gv.opt.svgObjectLayer.GetElementByID(targetId);
       }
 
       // Get the target object and add corner if it's valid
-      const targetObject = T3Gv.optManager.GetObjectPtr(targetId, true);
+      const targetObject = T3Gv.opt.GetObjectPtr(targetId, true);
 
       if (targetObject && typeof targetObject.AddCorner === 'function') {
         targetObject.AddCorner(targetElement, hitPoint);
       }
 
       // Reset application state
-      T3Gv.optManager.SetEditMode(ConstantData.EditState.DEFAULT);
-      T3Gv.optManager.CancelModalOperation();
-      T3Gv.optManager.ResetObjectDraw();
-      T3Gv.gBusinessManager.PostObjectDrawHook();
-      T3Gv.optManager.SetEditMode(ConstantData.EditState.DEFAULT);
+      T3Gv.opt.SetEditMode(ConstantData.EditState.DEFAULT);
+      T3Gv.opt.CancelModalOperation();
+      T3Gv.opt.ResetObjectDraw();
+      T3Gv.wallOpt.PostObjectDrawHook();
+      T3Gv.opt.SetEditMode(ConstantData.EditState.DEFAULT);
 
       console.log('U.WallUtil AddCorner output: false');
       return false;
     } catch (error) {
-      T3Gv.optManager.ExceptionCleanup(error);
+      T3Gv.opt.ExceptionCleanup(error);
       throw error;
     }
   }
@@ -329,14 +329,14 @@ class WallOpt {
     this.StopAddingWalls();
 
     // Reset editor state
-    T3Gv.optManager.SetEditMode(ConstantData.EditState.DEFAULT);
-    T3Gv.optManager.CancelModalOperation();
+    T3Gv.opt.SetEditMode(ConstantData.EditState.DEFAULT);
+    T3Gv.opt.CancelModalOperation();
 
     // Enable polyline container movement mode
     T3Constant.DocContext.PolyLineContainerMoveMode = true;
 
     // Clear any active modal operations
-    T3Gv.optManager.SetModalOperation(ConstantData2.ModalOperations.NONE);
+    T3Gv.opt.SetModalOperation(ConstantData2.ModalOperations.NONE);
 
     console.log('U.WallUtil MoveOutline output: completed');
   }
@@ -349,24 +349,24 @@ class WallOpt {
     console.log('U.WallUtil AddCornerStart input:', event);
 
     this.StopAddingWalls();
-    T3Gv.optManager.CloseEdit();
-    T3Gv.optManager.CancelModalOperation();
-    T3Gv.optManager.SetEditMode(ConstantData.EditState.EDIT);
+    T3Gv.opt.CloseEdit();
+    T3Gv.opt.CancelModalOperation();
+    T3Gv.opt.SetEditMode(ConstantData.EditState.EDIT);
 
-    const visibleObjectIds = T3Gv.optManager.ActiveVisibleZList();
+    const visibleObjectIds = T3Gv.opt.ActiveVisibleZList();
 
     for (let i = 0; i < visibleObjectIds.length; i++) {
       const objectId = visibleObjectIds[i];
-      const object = T3Gv.optManager.GetObjectPtr(objectId, false);
+      const object = T3Gv.opt.GetObjectPtr(objectId, false);
 
       if (!(object.flags & ConstantData.ObjFlags.SEDO_Lock)) {
         if (object.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
-          T3Gv.optManager.svgObjectLayer.GetElementByID(objectId).svgObj.SDGObj.GetEventProxy().on('dragstart', this.AddCorner);
+          T3Gv.opt.svgObjectLayer.GetElementByID(objectId).svgObj.SDGObj.GetEventProxy().on('dragstart', this.AddCorner);
         }
       }
     }
 
-    T3Gv.optManager.SetModalOperation(ConstantData2.ModalOperations.ADDCORNER);
+    T3Gv.opt.SetModalOperation(ConstantData2.ModalOperations.ADDCORNER);
 
     console.log('U.WallUtil AddCornerStart output: completed');
   }
@@ -420,7 +420,7 @@ class WallOpt {
   AddMeasureLine() {
     console.log('U.WallUtil AddMeasureLine input: none');
 
-    const sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data;
+    const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
     const isTextVertical = (sessionData.def.textflags & ConstantData.TextFlags.SED_TF_HorizText) === 0;
     let dimensions = ConstantData.DimensionFlags.SED_DF_Always | sessionData.dimensions;
     dimensions = Utils2.SetFlag(dimensions, ConstantData.DimensionFlags.SED_DF_Standoff, false);
@@ -454,7 +454,7 @@ class WallOpt {
     };
 
     const measureLine = new Line(measureLineParams);
-    T3Gv.optManager.DrawNewObject(measureLine, false);
+    T3Gv.opt.DrawNewObject(measureLine, false);
 
     console.log('U.WallUtil AddMeasureLine output: completed');
   }
@@ -467,7 +467,7 @@ class WallOpt {
     console.log('U.WallUtil AddMeasureArea input: none');
 
     // Get session data
-    const sessionData = T3Gv.objectStore.GetObject(T3Gv.optManager.sedSessionBlockId).Data;
+    const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
 
     // Determine text orientation
     const isTextVertical = (sessionData.def.textflags & ConstantData.TextFlags.SED_TF_HorizText) === 0;
@@ -525,7 +525,7 @@ class WallOpt {
     const measureAreaRect = new Instance.Shape.Rect(measureAreaParams);
 
     // Add the area measurement to the document
-    T3Gv.optManager.DrawNewObject(measureAreaRect, false);
+    T3Gv.opt.DrawNewObject(measureAreaRect, false);
 
     console.log('U.WallUtil AddMeasureArea output: completed');
   }
@@ -551,7 +551,7 @@ class WallOpt {
     if (event.type === 'click') {
       // Stop any active wall creation process
       this.StopAddingWalls();
-      T3Gv.optManager.CloseEdit();
+      T3Gv.opt.CloseEdit();
 
       // Prevent default event behavior
       if (event.preventDefault) {
@@ -586,12 +586,12 @@ class WallOpt {
       event.preventDefault();
 
       // Get coordinates and target element
-      const hitPoint = T3Gv.optManager.svgDoc.ConvertWindowToDocCoords(
+      const hitPoint = T3Gv.opt.svgDoc.ConvertWindowToDocCoords(
         event.gesture.center.clientX,
         event.gesture.center.clientY
       );
-      const targetElement = T3Gv.optManager.svgObjectLayer.FindElementByDOMElement(event.currentTarget);
-      const targetObject = T3Gv.optManager.GetObjectPtr(targetElement.GetID(), false);
+      const targetElement = T3Gv.opt.svgObjectLayer.FindElementByDOMElement(event.currentTarget);
+      const targetObject = T3Gv.opt.GetObjectPtr(targetElement.GetID(), false);
 
       // Perform hit testing
       if (targetObject) {
@@ -603,23 +603,23 @@ class WallOpt {
         // If the polyline is closed, prepare it for splitting
         if (targetObject.polylist.closed) {
           // Collab.BeginSecondaryEdit();
-          T3Gv.optManager.GetObjectPtr(targetObject.BlockID, true);
+          T3Gv.opt.GetObjectPtr(targetObject.BlockID, true);
           targetObject.MaintainDimensionThroughPolygonOpennessChange(false);
         }
 
         // Split the polyline at the hit segment
-        T3Gv.optManager.PolyLSplit(targetObject.BlockID, hitInfo.segment);
-        T3Gv.optManager.SetEditMode(ConstantData.EditState.DEFAULT);
+        T3Gv.opt.PolyLSplit(targetObject.BlockID, hitInfo.segment);
+        T3Gv.opt.SetEditMode(ConstantData.EditState.DEFAULT);
       }
 
       // Clean up and reset state
-      T3Gv.optManager.CancelModalOperation();
-      T3Gv.optManager.PostObjectDraw();
+      T3Gv.opt.CancelModalOperation();
+      T3Gv.opt.PostObjectDraw();
 
       console.log('U.WallUtil SplitWall output: false');
       return false;
     } catch (error) {
-      T3Gv.optManager.ExceptionCleanup(error);
+      T3Gv.opt.ExceptionCleanup(error);
       throw error;
     }
   }
@@ -633,27 +633,27 @@ class WallOpt {
     console.log('U.WallUtil SplitWallStart input:', event);
 
     this.StopAddingWalls();
-    T3Gv.optManager.CloseEdit();
-    T3Gv.optManager.CancelModalOperation();
-    T3Gv.optManager.SetEditMode(
+    T3Gv.opt.CloseEdit();
+    T3Gv.opt.CancelModalOperation();
+    T3Gv.opt.SetEditMode(
       ConstantData.EditState.EDIT,
       ConstantData.CursorType.ALIAS
     );
 
-    const visibleObjectIds = T3Gv.optManager.ActiveVisibleZList();
+    const visibleObjectIds = T3Gv.opt.ActiveVisibleZList();
 
     for (let i = 0; i < visibleObjectIds.length; i++) {
       const objectId = visibleObjectIds[i];
-      const object = T3Gv.optManager.GetObjectPtr(objectId, false);
+      const object = T3Gv.opt.GetObjectPtr(objectId, false);
 
       if (!(object.flags & ConstantData.ObjFlags.SEDO_Lock)) {
         if (object.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
-          T3Gv.optManager.svgObjectLayer.GetElementByID(objectId).svgObj.SDGObj.GetEventProxy().on('dragstart', this.SplitWall);
+          T3Gv.opt.svgObjectLayer.GetElementByID(objectId).svgObj.SDGObj.GetEventProxy().on('dragstart', this.SplitWall);
         }
       }
     }
 
-    T3Gv.optManager.SetModalOperation(ConstantData2.ModalOperations.SPLITWALL);
+    T3Gv.opt.SetModalOperation(ConstantData2.ModalOperations.SPLITWALL);
 
     console.log('U.WallUtil SplitWallStart output: completed');
   }
@@ -666,9 +666,9 @@ class WallOpt {
   EnsureCubicleBehindOutline(objectId) {
     console.log('U.WallUtil EnsureCubicleBehindOutline input:', objectId);
 
-    const visibleObjectIds = T3Gv.optManager.ActiveVisibleZList();
+    const visibleObjectIds = T3Gv.opt.ActiveVisibleZList();
     let compareObject = null;
-    const targetObject = T3Gv.optManager.GetObjectPtr(objectId, false);
+    const targetObject = T3Gv.opt.GetObjectPtr(objectId, false);
 
     // Helper function to check if one object is contained within another
     function isObjectContained(containerObject, contentObject) {
@@ -712,7 +712,7 @@ class WallOpt {
         const currentObjectId = visibleObjectIds[i];
 
         if (objectId !== currentObjectId) {
-          compareObject = T3Gv.optManager.GetObjectPtr(currentObjectId, false);
+          compareObject = T3Gv.opt.GetObjectPtr(currentObjectId, false);
 
           if (compareObject instanceof PolyLineContainer && isObjectContained(compareObject, targetObject)) {
             const targetIndex = visibleObjectIds.indexOf(targetObject.BlockID);
@@ -725,7 +725,7 @@ class WallOpt {
               return;
             }
 
-            T3Gv.optManager.PutBehindObject(compareObject.BlockID, targetObject.BlockID);
+            T3Gv.opt.PutBehindObject(compareObject.BlockID, targetObject.BlockID);
             return;
           }
         }

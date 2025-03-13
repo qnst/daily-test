@@ -3,7 +3,7 @@ import { Type } from 'class-transformer'
 import 'reflect-metadata'
 
 import PaintData from './PaintData'
-import ConstantData from '../Data/ConstantData'
+import ConstantData from '../Data/Constant/ConstantData'
 
 class LineData {
 

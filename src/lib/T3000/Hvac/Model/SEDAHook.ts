@@ -3,7 +3,7 @@ import { Type } from 'class-transformer'
 import 'reflect-metadata'
 
 import CRect from './CRect'
-import ConstantData from '../Data/ConstantData'
+import ConstantData from '../Data/Constant/ConstantData'
 
 class SEDAHook {
 
