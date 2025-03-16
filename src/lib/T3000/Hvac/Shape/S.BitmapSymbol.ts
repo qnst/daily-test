@@ -1,35 +1,39 @@
 
 
 import BaseSymbol from './S.BaseSymbol'
-import ConstantData from '../Data/Constant/ConstantData'
+import NvConstant from '../Data/Constant/NvConstant'
+import OptConstant from '../Data/Constant/OptConstant';
 
 class BitmapSymbol extends BaseSymbol {
 
-  constructor(options) {
-    options = options || {};
-    options.ShapeType = ConstantData.ShapeType.BITMAPSYMBOL;
+  /**
+   * Creates a new bitmap symbol instance
+   * @param options - Configuration options for the bitmap symbol
+   */
+  constructor(options = {}) {
+    options.ShapeType = OptConstant.ShapeType.BITMAPSYMBOL;
 
-    console.log('S.BitmapSymbol: Constructor input options:', options);
     super(options);
-    console.log('S.BitmapSymbol: Constructor output instance:', this);
   }
 
+  /**
+   * Creates the visual representation of the bitmap symbol
+   * @param drawingContext - The context used to create and manipulate shapes
+   * @returns The container shape with the bitmap symbol or null if not visible
+   */
   CreateShape(drawingContext) {
-    console.log('S.BitmapSymbol: CreateShape - Input drawingContext:', drawingContext);
-
-    if (this.flags & ConstantData.ObjFlags.SEDO_NotVisible) {
-      console.log('S.BitmapSymbol: CreateShape - Not visible, returning null.');
+    if (this.flags & NvConstant.ObjFlags.SEDO_NotVisible) {
       return null;
     }
 
-    const containerShape = drawingContext.CreateShape(ConstantData.CreateShapeType.SHAPECONTAINER);
-    const imageShape = drawingContext.CreateShape(ConstantData.CreateShapeType.IMAGE);
+    const containerShape = drawingContext.CreateShape(OptConstant.CSType.SHAPECONTAINER);
+    const imageShape = drawingContext.CreateShape(OptConstant.CSType.IMAGE);
 
-    imageShape.SetID(ConstantData.SVGElementClass.SHAPE);
+    imageShape.SetID(OptConstant.SVGElementClass.SHAPE);
     imageShape.SetURL(this.SymbolURL);
 
-    const isFlippedHorizontally = (this.extraflags & ConstantData.ExtraFlags.SEDE_FlipHoriz) > 0;
-    const isFlippedVertically = (this.extraflags & ConstantData.ExtraFlags.SEDE_FlipVert) > 0;
+    const isFlippedHorizontally = (this.extraflags & OptConstant.ExtraFlags.SEDE_FlipHoriz) > 0;
+    const isFlippedVertically = (this.extraflags & OptConstant.ExtraFlags.SEDE_FlipVert) > 0;
 
     if (isFlippedHorizontally) {
       imageShape.SetMirror(isFlippedHorizontally);
@@ -54,7 +58,6 @@ class BitmapSymbol extends BaseSymbol {
       this.LM_AddSVGTextObject(drawingContext, containerShape);
     }
 
-    console.log('S.BitmapSymbol: CreateShape - Output containerShape:', containerShape);
     return containerShape;
   }
 }

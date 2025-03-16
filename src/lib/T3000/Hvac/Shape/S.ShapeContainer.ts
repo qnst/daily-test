@@ -1,16 +1,19 @@
 
 
 import Rect from './S.Rect'
-import Utils1 from '../Helper/Utils1';
-import Utils2 from "../Helper/Utils2";
+import Utils1 from '../Util/Utils1';
+import Utils2 from "../Util/Utils2";
 import T3Gv from '../Data/T3Gv'
-import ConstantData from '../Data/Constant/ConstantData'
+import NvConstant from '../Data/Constant/NvConstant'
 import ContainerListShape from '../Model/ContainerListShape'
-import ConstantData2 from '../Data/Constant/ConstantData2';
+import T3Constant from '../Data/Constant/T3Constant';
 import Instance from '../Data/Instance/Instance';
 import Point from '../Model/Point';
-import PolygonConstant from '../Util/PolygonConstant';
-import ShapeConstant from '../Util/ShapeConstant';
+import PolygonConstant from '../Opt/Polygon/PolygonConstant';
+import ShapeConstant from '../Opt/DS/DSConstant';
+import OptConstant from '../Data/Constant/OptConstant';
+import CursorConstant from '../Data/Constant/CursorConstant';
+import T3Util from '../Util/T3Util';
 
 class ShapeContainer extends Rect {
 
@@ -24,11 +27,11 @@ class ShapeContainer extends Rect {
    * @param containerOptions - Configuration options for the shape container
    */
   constructor(containerOptions: any) {
-    console.log("= S.ShapeContainer constructor - Input:", containerOptions);
+    T3Util.Log("= S.ShapeContainer constructor - Input:", containerOptions);
 
     // Initialize base container options
     containerOptions = containerOptions || {};
-    containerOptions.ShapeType = ConstantData.ShapeType.RECT;
+    containerOptions.ShapeType = OptConstant.ShapeType.RECT;
 
     // Call parent constructor
     super(containerOptions);
@@ -36,11 +39,11 @@ class ShapeContainer extends Rect {
     // Set container-specific properties
     this.dataclass = containerOptions.dataclass || PolygonConstant.ShapeTypes.RECTANGLE;
     this.ContainerList = containerOptions.ContainerList || new Instance.Shape.ContainerList();
-    this.objecttype = ConstantData.ObjectTypes.SD_OBJT_SHAPECONTAINER;
+    this.objecttype = NvConstant.ObjectTypes.SD_OBJT_SHAPECONTAINER;
     this.nativeDataArrayBuffer = containerOptions.nativeDataArrayBuffer || null;
     this.SymbolData = containerOptions.SymbolData || null;
 
-    console.log("= S.ShapeContainer constructor - Output:", {
+    T3Util.Log("= S.ShapeContainer constructor - Output:", {
       ShapeType: containerOptions.ShapeType,
       dataclass: this.dataclass,
       ContainerList: this.ContainerList,
@@ -60,13 +63,13 @@ class ShapeContainer extends Rect {
    * @returns Boolean indicating whether the shape can be added to this container
    */
   IsShapeContainer(shapeToCheck: any, hookPoint?: any): boolean {
-    console.log("= S.ShapeContainer IsShapeContainer - Input:", { shapeToCheck, hookPoint });
+    T3Util.Log("= S.ShapeContainer IsShapeContainer - Input:", { shapeToCheck, hookPoint });
 
-    const containerFlags = ConstantData.ContainerListFlags;
+    const containerFlags = NvConstant.ContainerListFlags;
 
     // Reject null shapes
     if (shapeToCheck == null) {
-      console.log("= S.ShapeContainer IsShapeContainer - Output:", false);
+      T3Util.Log("= S.ShapeContainer IsShapeContainer - Output:", false);
       return false;
     }
 
@@ -75,35 +78,35 @@ class ShapeContainer extends Rect {
       shapeToCheck.ParentFrameID >= 0 &&
       T3Gv.opt.GetObjectPtr(shapeToCheck.ParentFrameID, false)
     ) {
-      console.log("= S.ShapeContainer IsShapeContainer - Output:", false);
+      T3Util.Log("= S.ShapeContainer IsShapeContainer - Output:", false);
       return false;
     }
 
     // // Reject swimlanes
     // if (shapeToCheck.IsSwimlane()) {
-    //   console.log("= S.ShapeContainer IsShapeContainer - Output:", false);
+    //   T3Util.Log("= S.ShapeContainer IsShapeContainer - Output:", false);
     //   return false;
     // }
 
     // Reject text-only objects
-    if (shapeToCheck.flags & ConstantData.ObjFlags.SEDO_TextOnly) {
-      console.log("= S.ShapeContainer IsShapeContainer - Output:", false);
+    if (shapeToCheck.flags & NvConstant.ObjFlags.SEDO_TextOnly) {
+      T3Util.Log("= S.ShapeContainer IsShapeContainer - Output:", false);
       return false;
     }
 
     // Process shapes that are of SHAPE drawing object type
-    if (shapeToCheck.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.SHAPE) {
+    if (shapeToCheck.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.SHAPE) {
       const containerList = this.ContainerList;
       const isSparse = containerList.flags & containerFlags.Sparse;
 
       // Adjust hook point if provided
       if (hookPoint) {
-        if (isSparse || containerList.Arrangement !== ConstantData.ContainerListArrangements.Row) {
-          hookPoint.id = ConstantData.HookPts.SED_KCT;
+        if (isSparse || containerList.Arrangement !== NvConstant.ContainerListArrangements.Row) {
+          hookPoint.id = OptConstant.HookPts.SED_KCT;
         } else {
           hookPoint.x -= shapeToCheck.Frame.width / 2;
           hookPoint.y += shapeToCheck.Frame.height / 2;
-          hookPoint.id = ConstantData.HookPts.SED_KCL;
+          hookPoint.id = OptConstant.HookPts.SED_KCL;
         }
       }
 
@@ -114,24 +117,24 @@ class ShapeContainer extends Rect {
         // Only allow other containers or tables with shape containers
         isCompatible = (
           shapeToCheck instanceof ShapeContainer ||
-          shapeToCheck.objecttype === ConstantData.ObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER
+          shapeToCheck.objecttype === NvConstant.ObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER
         );
       } else if (containerList.flags & containerFlags.AllowOnlyNonContainers) {
         // Only allow non-container shapes
         isCompatible = (
           !(shapeToCheck instanceof ShapeContainer) &&
-          shapeToCheck.objecttype !== ConstantData.ObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER
+          shapeToCheck.objecttype !== NvConstant.ObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER
         );
       } else {
         // Allow all shape types
         isCompatible = true;
       }
 
-      console.log("= S.ShapeContainer IsShapeContainer - Output:", isCompatible);
+      T3Util.Log("= S.ShapeContainer IsShapeContainer - Output:", isCompatible);
       return isCompatible;
     }
 
-    console.log("= S.ShapeContainer IsShapeContainer - Output:", false);
+    T3Util.Log("= S.ShapeContainer IsShapeContainer - Output:", false);
     return false;
   }
 
@@ -156,7 +159,7 @@ class ShapeContainer extends Rect {
     connectionType: any,
     additionalContext: any
   ) {
-    console.log("= S.ShapeContainer CreateConnectHilites - Input:", {
+    T3Util.Log("= S.ShapeContainer CreateConnectHilites - Input:", {
       connectEvent,
       targetObject,
       highlightOptions,
@@ -177,7 +180,7 @@ class ShapeContainer extends Rect {
       }
     };
 
-    console.log("= S.ShapeContainer CreateConnectHilites - Output:", hiliteInfo);
+    T3Util.Log("= S.ShapeContainer CreateConnectHilites - Output:", hiliteInfo);
     return hiliteInfo;
   }
 
@@ -192,9 +195,9 @@ class ShapeContainer extends Rect {
    * @returns The best hook point for connection
    */
   GetBestHook(connectionEvent: any, proposedHook: any, contextData: any): any {
-    console.log("= S.ShapeContainer GetBestHook - Input:", { connectionEvent, proposedHook, contextData });
+    T3Util.Log("= S.ShapeContainer GetBestHook - Input:", { connectionEvent, proposedHook, contextData });
     const bestHook = proposedHook;
-    console.log("= S.ShapeContainer GetBestHook - Output:", bestHook);
+    T3Util.Log("= S.ShapeContainer GetBestHook - Output:", bestHook);
     return bestHook;
   }
 
@@ -209,15 +212,15 @@ class ShapeContainer extends Rect {
    * @returns Array of connection point coordinates
    */
   GetTargetPoints(options?: any, filterCriteria?: any, renderContext?: any): Point[] {
-    console.log("= S.ShapeContainer GetTargetPoints - Input:", { options, filterCriteria, renderContext });
+    T3Util.Log("= S.ShapeContainer GetTargetPoints - Input:", { options, filterCriteria, renderContext });
 
     const resultPoints: Point[] = [];
     const containerList = this.ContainerList;
     const list = containerList.List;
     const listLength = list.length;
-    const standardDimension = ConstantData.Defines.SED_CDim;
+    const standardDimension = OptConstant.Defines.SED_CDim;
     let defaultPoint = { x: standardDimension / 2, y: 0 };
-    const isSparse = containerList.flags & ConstantData.ContainerListFlags.Sparse;
+    const isSparse = containerList.flags & NvConstant.ContainerListFlags.Sparse;
     const containerFrame = this.Pr_GetContainerFrame().frame;
     const isContainerInCell = T3Gv.opt.ContainerIsInCell(this);
     const frameWidth = containerFrame.width;
@@ -249,12 +252,12 @@ class ShapeContainer extends Rect {
           resultPoints.push(defaultPoint);
         }
       }
-      console.log("= S.ShapeContainer GetTargetPoints - Output:", resultPoints);
+      T3Util.Log("= S.ShapeContainer GetTargetPoints - Output:", resultPoints);
       return resultPoints;
     }
 
     // Process for non-sparse container list
-    if (containerList.Arrangement === ConstantData.ContainerListArrangements.Column) {
+    if (containerList.Arrangement === NvConstant.ContainerListArrangements.Column) {
       if (listLength > 0) {
         defaultPoint.x = (list[0].pt.x / frameWidth) * standardDimension;
       }
@@ -278,7 +281,7 @@ class ShapeContainer extends Rect {
       }
     }
 
-    console.log("= S.ShapeContainer GetTargetPoints - Output:", resultPoints);
+    T3Util.Log("= S.ShapeContainer GetTargetPoints - Output:", resultPoints);
     return resultPoints;
   }
 
@@ -290,11 +293,11 @@ class ShapeContainer extends Rect {
    * @returns Object containing the frame rectangle and starting Y position
    */
   Pr_GetContainerFrame(): { frame: any; StartY: number } {
-    console.log("= S.ShapeContainer Pr_GetContainerFrame - Input:", { trect: this.trect });
+    T3Util.Log("= S.ShapeContainer Pr_GetContainerFrame - Input:", { trect: this.trect });
     const frameRectangle = Utils1.DeepCopy(this.trect);
     const verticalStartPosition = 0;
     const result = { frame: frameRectangle, StartY: verticalStartPosition };
-    console.log("= S.ShapeContainer Pr_GetContainerFrame - Output:", result);
+    T3Util.Log("= S.ShapeContainer Pr_GetContainerFrame - Output:", result);
     return result;
   }
 
@@ -308,15 +311,15 @@ class ShapeContainer extends Rect {
    * @returns Rectangle defining the hit test area
    */
   GetHitTestFrame(targetShape: any) {
-    console.log("= S.ShapeContainer GetHitTestFrame - Input:", { target: targetShape });
+    T3Util.Log("= S.ShapeContainer GetHitTestFrame - Input:", { target: targetShape });
     const hitTestFrame: any = {};
     const containerList = this.ContainerList;
-    const isSparseLayout = containerList.flags & ConstantData.ContainerListFlags.Sparse;
+    const isSparseLayout = containerList.flags & NvConstant.ContainerListFlags.Sparse;
 
     // Copy base rectangle
     Utils2.CopyRect(hitTestFrame, this.r);
 
-    if (targetShape && targetShape.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.SHAPE) {
+    if (targetShape && targetShape.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.SHAPE) {
       if (isSparseLayout) {
         hitTestFrame.width += containerList.HorizontalSpacing + containerList.childwidth;
         hitTestFrame.x -= containerList.HorizontalSpacing + containerList.childwidth / 2;
@@ -326,7 +329,7 @@ class ShapeContainer extends Rect {
       hitTestFrame.height += 2 * containerList.VerticalSpacing;
     }
 
-    console.log("= S.ShapeContainer GetHitTestFrame - Output:", hitTestFrame);
+    T3Util.Log("= S.ShapeContainer GetHitTestFrame - Output:", hitTestFrame);
     return hitTestFrame;
   }
 
@@ -338,20 +341,20 @@ class ShapeContainer extends Rect {
    * @returns Boolean indicating whether double-click is permitted
    */
   AllowDoubleClick(): boolean {
-    console.log("= S.ShapeContainer AllowDoubleClick - Input:", {});
+    T3Util.Log("= S.ShapeContainer AllowDoubleClick - Input:", {});
     const containerListFlags = this.ContainerList.flags;
-    const isDoubleClickAllowed = !!(containerListFlags & ConstantData.ContainerListFlags.Sparse);
-    console.log("= S.ShapeContainer AllowDoubleClick - Output:", isDoubleClickAllowed);
+    const isDoubleClickAllowed = !!(containerListFlags & NvConstant.ContainerListFlags.Sparse);
+    T3Util.Log("= S.ShapeContainer AllowDoubleClick - Output:", isDoubleClickAllowed);
     return isDoubleClickAllowed;
   }
 
   DoubleClick(event: any, target: any) {
-    console.log("= S.ShapeContainer DoubleClick - Input:", { event, target });
+    T3Util.Log("= S.ShapeContainer DoubleClick - Input:", { event, target });
 
     const containerList = this.ContainerList;
     const list = containerList.List;
     const listLength = list.length;
-    const isSparse = containerList.flags & ConstantData.ContainerListFlags.Sparse;
+    const isSparse = containerList.flags & NvConstant.ContainerListFlags.Sparse;
     let rowIndex = 0;
     let colIndex = 0;
     let someVariable: any = null;
@@ -382,9 +385,9 @@ class ShapeContainer extends Rect {
       const shiftKey = event.gesture.srcEvent.shiftKey;
       const containerInCell = T3Gv.opt.ContainerIsInCell(this);
       if (containerInCell && (shiftKey || ctrlKey)) {
-        console.log("= S.ShapeContainer DoubleClick - Detected container in cell with modifier keys.");
-        T3Gv.opt.Table_SetupAction(event, containerInCell.obj.BlockID, ConstantData.Defines.TableCellHit, null);
-        console.log("= S.ShapeContainer DoubleClick - Output: action triggered via Table_SetupAction");
+        T3Util.Log("= S.ShapeContainer DoubleClick - Detected container in cell with modifier keys.");
+        T3Gv.opt.Table_SetupAction(event, containerInCell.obj.BlockID, OptConstant.Defines.TableCellHit, null);
+        T3Util.Log("= S.ShapeContainer DoubleClick - Output: action triggered via Table_SetupAction");
         return;
       }
     }
@@ -408,12 +411,12 @@ class ShapeContainer extends Rect {
         newPoint.y -= this.Frame.y;
 
         if (
-          (this.TextFlags & ConstantData.TextFlags.SED_TF_AttachA ||
-            this.TextFlags & ConstantData.TextFlags.SED_TF_AttachB) &&
+          (this.TextFlags & NvConstant.TextFlags.SED_TF_AttachA ||
+            this.TextFlags & NvConstant.TextFlags.SED_TF_AttachB) &&
           (newPoint.y < 10 || newPoint.y > this.Frame.height - 10)
         ) {
           const svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
-          console.log("= S.ShapeContainer DoubleClick - Output: activating text edit.");
+          T3Util.Log("= S.ShapeContainer DoubleClick - Output: activating text edit.");
           T3Gv.opt.ActivateTextEdit(svgElement.svgObj.SDGObj, event);
           return;
         }
@@ -476,7 +479,7 @@ class ShapeContainer extends Rect {
         } else {
           const computeClosest = (row: number, col: number): number => {
             let closestId = -1;
-            if (containerList.Arrangement === ConstantData.ContainerListArrangements.Column) {
+            if (containerList.Arrangement === NvConstant.ContainerListArrangements.Column) {
               if (col <= containerList.nacross && (col = containerList.nacross - 1) < 0) return -1;
               for (let r = 0; r < containerList.ndown; r++) {
                 const idx = r * containerList.nacross + col;
@@ -534,7 +537,7 @@ class ShapeContainer extends Rect {
         }
 
         const hookLocation = { x: colIndex, y: rowIndex };
-        const hookPointID = ConstantData.HookPts.SED_KCT;
+        const hookPointID = OptConstant.HookPts.SED_KCT;
         const createdIds: any[] = [];
         T3Gv.opt.UpdateHook(closest < 0 ? someVariable : closest, -1, this.BlockID, hookPointID, hookLocation, null);
         createdIds.push(closest < 0 ? someVariable : closest);
@@ -543,7 +546,7 @@ class ShapeContainer extends Rect {
       }
     }
 
-    console.log("= S.ShapeContainer DoubleClick - Output:", { event, target });
+    T3Util.Log("= S.ShapeContainer DoubleClick - Output:", { event, target });
   }
 
   /**
@@ -554,9 +557,9 @@ class ShapeContainer extends Rect {
    * @returns Boolean value that is always true, indicating rotation is not allowed
    */
   NoRotate(): boolean {
-    console.log("= S.ShapeContainer NoRotate - Input:", {});
+    T3Util.Log("= S.ShapeContainer NoRotate - Input:", {});
     const isRotationDisabled = true;
-    console.log("= S.ShapeContainer NoRotate - Output:", isRotationDisabled);
+    T3Util.Log("= S.ShapeContainer NoRotate - Output:", isRotationDisabled);
     return isRotationDisabled;
   }
 
@@ -568,9 +571,9 @@ class ShapeContainer extends Rect {
    * @returns Boolean indicating whether field data can be attached to this container
    */
   FieldDataAllowed(): boolean {
-    console.log("= S.ShapeContainer FieldDataAllowed - Input:", { thisContext: this });
-    const isFieldDataAllowed = !T3Gv.opt.ContainerIsInCell(this);
-    console.log("= S.ShapeContainer FieldDataAllowed - Output:", isFieldDataAllowed);
+    T3Util.Log("= S.ShapeContainer FieldDataAllowed - Input:", { thisContext: this });
+    const isFieldDataAllowed = true;// !T3Gv.opt.ContainerIsInCell(this);
+    T3Util.Log("= S.ShapeContainer FieldDataAllowed - Output:", isFieldDataAllowed);
     return isFieldDataAllowed;
   }
 
@@ -582,7 +585,7 @@ class ShapeContainer extends Rect {
    *
    * @param hookPoint - The hook point for connection
    * @param targetPoints - Array of target points to compute perimeter points for
-   * @param hookType - Type of hook as defined in ConstantData.HookPts
+   * @param hookType - Type of hook as defined in OptConstant.HookPts
    * @param considerLayout - Whether to consider container's layout when calculating points
    * @param additionalContext - Additional contextual data for computation
    * @param pointIndex - Index used for specific point calculations
@@ -596,7 +599,7 @@ class ShapeContainer extends Rect {
     additionalContext: any,
     pointIndex: number
   ): Point[] {
-    console.log("= S.ShapeContainer GetPerimPts - Input:", {
+    T3Util.Log("= S.ShapeContainer GetPerimPts - Input:", {
       hookPoint,
       targetPoints,
       hookType,
@@ -609,12 +612,12 @@ class ShapeContainer extends Rect {
     const containerList = this.ContainerList;
     const containerItems = containerList.List;
     const containerItemCount = containerItems.length;
-    const standardDimension = ConstantData.Defines.SED_CDim;
-    const containerArrangement = ConstantData.ContainerListArrangements;
-    const isSparse = !!(containerList.flags & ConstantData.ContainerListFlags.Sparse);
+    const standardDimension = OptConstant.Defines.SED_CDim;
+    const containerArrangement = NvConstant.ContainerListArrangements;
+    const isSparse = !!(containerList.flags & NvConstant.ContainerListFlags.Sparse);
 
     // Ensure formatting if a single point and specific flag is set
-    if (targetPoints.length === 1 && (this.flags & ConstantData.ObjFlags.SEDO_Obj1)) {
+    if (targetPoints.length === 1 && (this.flags & NvConstant.ObjFlags.SEDO_Obj1)) {
       this.Pr_Format();
     }
 
@@ -626,10 +629,10 @@ class ShapeContainer extends Rect {
     // Case 1: Single point and negative index - handle simplified perimeter point
     if (targetPoints.length === 1 && pointIndex < 0) {
       let xCoordinate: number, yCoordinate: number;
-      if (hookType === ConstantData.HookPts.SED_KCTL) {
+      if (hookType === OptConstant.HookPts.SED_KCTL) {
         xCoordinate = containerFrame.x;
         yCoordinate = containerFrame.y;
-      } else if (hookType === ConstantData.HookPts.SED_KCL) {
+      } else if (hookType === OptConstant.HookPts.SED_KCL) {
         xCoordinate = containerFrame.x;
         yCoordinate = containerFrame.y + containerFrame.height / 2;
       } else {
@@ -641,7 +644,7 @@ class ShapeContainer extends Rect {
         computedPoint.id = targetPoints[0].id;
       }
       resultPoints.push(computedPoint);
-      console.log("= S.ShapeContainer GetPerimPts - Output (single point):", resultPoints);
+      T3Util.Log("= S.ShapeContainer GetPerimPts - Output (single point):", resultPoints);
       return resultPoints;
     }
 
@@ -716,7 +719,7 @@ class ShapeContainer extends Rect {
         resultPoints.push(computedPoint);
       }
 
-      console.log("= S.ShapeContainer GetPerimPts - Output (sparse):", resultPoints);
+      T3Util.Log("= S.ShapeContainer GetPerimPts - Output (sparse):", resultPoints);
       return resultPoints;
     }
 
@@ -774,7 +777,7 @@ class ShapeContainer extends Rect {
       }
 
       // Special adjustment for SED_KAT hook type
-      if (hookType === ConstantData.HookPts.SED_KAT) {
+      if (hookType === OptConstant.HookPts.SED_KAT) {
         yCoordinate = 0;
       }
 
@@ -797,7 +800,7 @@ class ShapeContainer extends Rect {
       resultPoints.push(computedPoint);
     }
 
-    console.log("= S.ShapeContainer GetPerimPts - Output:", resultPoints);
+    T3Util.Log("= S.ShapeContainer GetPerimPts - Output:", resultPoints);
     return resultPoints;
   }
 
@@ -808,7 +811,7 @@ class ShapeContainer extends Rect {
    * @param skipSizeUpdate - If true, only calculates positions without updating container size
    */
   Pr_Format(skipSizeUpdate?: any) {
-    console.log("= S.ShapeContainer Pr_Format - Input:", { skipSizeUpdate });
+    T3Util.Log("= S.ShapeContainer Pr_Format - Input:", { skipSizeUpdate });
 
     // Get references to container properties
     const containerList = this.ContainerList;
@@ -818,17 +821,17 @@ class ShapeContainer extends Rect {
     const verticalSpacing = containerList.VerticalSpacing;
     let currentX = 0;
     let currentY = verticalSpacing;
-    const arrangementTypes = ConstantData.ContainerListArrangements;
+    const arrangementTypes = NvConstant.ContainerListArrangements;
     const containerInstance = this;
     let headerSpacing = 0;
-    const isSparseLayout = Boolean(containerList.flags & ConstantData.ContainerListFlags.Sparse);
-    const isLeftAligned = Boolean(containerList.flags & ConstantData.ContainerListFlags.LeftChanged);
-    const isTopAligned = Boolean(containerList.flags & ConstantData.ContainerListFlags.TopChanged);
+    const isSparseLayout = Boolean(containerList.flags & NvConstant.ContainerListFlags.Sparse);
+    const isLeftAligned = Boolean(containerList.flags & NvConstant.ContainerListFlags.LeftChanged);
+    const isTopAligned = Boolean(containerList.flags & NvConstant.ContainerListFlags.TopChanged);
     let parentCellDimensions = null;
 
     // Clear change flags
-    containerList.flags = Utils2.SetFlag(containerList.flags, ConstantData.ContainerListFlags.LeftChanged, false);
-    containerList.flags = Utils2.SetFlag(containerList.flags, ConstantData.ContainerListFlags.TopChanged, false);
+    containerList.flags = Utils2.SetFlag(containerList.flags, NvConstant.ContainerListFlags.LeftChanged, false);
+    containerList.flags = Utils2.SetFlag(containerList.flags, NvConstant.ContainerListFlags.TopChanged, false);
 
     /**
      * Formats objects in a vertical column arrangement
@@ -989,11 +992,11 @@ class ShapeContainer extends Rect {
       return { start: currentIndex, rowht: finalRowHeight, left: runningX };
     };
 
-    // Check if container is in a table cell
-    const containerInCell = T3Gv.opt.ContainerIsInCell(this);
-    if (containerInCell) {
-      parentCellDimensions = { width: this.trect.width, height: this.trect.height };
-    }
+    // // Check if container is in a table cell
+    // const containerInCell = T3Gv.opt.ContainerIsInCell(this);
+    // if (containerInCell) {
+    //   parentCellDimensions = { width: this.trect.width, height: this.trect.height };
+    // }
 
     // Get container frame information
     const containerFrameData = this.Pr_GetContainerFrame();
@@ -1141,7 +1144,7 @@ class ShapeContainer extends Rect {
         // Update connected container if present
         const connectedObject = this.hooks.length ? T3Gv.opt.GetObjectPtr(this.hooks[0].objid, false) : null;
         if (connectedObject && connectedObject instanceof ShapeContainer) {
-          connectedObject.flags = Utils2.SetFlag(connectedObject.flags, ConstantData.ObjFlags.SEDO_Obj1, true);
+          connectedObject.flags = Utils2.SetFlag(connectedObject.flags, NvConstant.ObjFlags.SEDO_Obj1, true);
           T3Gv.opt.SetLinkFlag(connectedObject.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
         }
 
@@ -1152,10 +1155,10 @@ class ShapeContainer extends Rect {
       }
 
       // Clear formatting flag
-      this.flags = Utils2.SetFlag(this.flags, ConstantData.ObjFlags.SEDO_Obj1, false);
+      this.flags = Utils2.SetFlag(this.flags, NvConstant.ObjFlags.SEDO_Obj1, false);
     }
 
-    console.log("= S.ShapeContainer Pr_Format - Output:", { ContainerList: containerList });
+    T3Util.Log("= S.ShapeContainer Pr_Format - Output:", { ContainerList: containerList });
   }
 
   /**
@@ -1170,7 +1173,7 @@ class ShapeContainer extends Rect {
    * @param additionalInfo - Additional connection information
    */
   OnConnect(connectionId: string, targetObject: any, connectionAnchor: any, connectionReference: any, additionalInfo: any): void {
-    console.log("= S.ShapeContainer OnConnect - Input:", {
+    T3Util.Log("= S.ShapeContainer OnConnect - Input:", {
       connectionId,
       targetObject,
       connectionAnchor,
@@ -1188,7 +1191,7 @@ class ShapeContainer extends Rect {
       }
     }
 
-    console.log("= S.ShapeContainer OnConnect - Output:", { zListIndex: this.zListIndex });
+    T3Util.Log("= S.ShapeContainer OnConnect - Output:", { zListIndex: this.zListIndex });
   }
 
   /**
@@ -1200,39 +1203,39 @@ class ShapeContainer extends Rect {
    * @returns Array of connector information objects or null if not applicable
    */
   Pr_GetShapeConnectorInfo(eventData: any) {
-    console.log("= S.ShapeContainer Pr_GetShapeConnectorInfo - Input:", { eventData });
+    T3Util.Log("= S.ShapeContainer Pr_GetShapeConnectorInfo - Input:", { eventData });
 
     const containerList = this.ContainerList;
-    const isSparse = containerList.flags & ConstantData.ContainerListFlags.Sparse;
-    const isAdjust = containerList.flags & ConstantData.ContainerListFlags.Adjust;
+    const isSparse = containerList.flags & NvConstant.ContainerListFlags.Sparse;
+    const isAdjust = containerList.flags & NvConstant.ContainerListFlags.Adjust;
     const result: any[] = [];
-    const actionTriggerType = ConstantData.ActionTriggerType;
+    const actionTriggerType = OptConstant.ActionTriggerType;
 
     // Only provide connectors for non-sparse containers with the Adjust flag
     if (isSparse || !isAdjust) {
-      console.log("= S.ShapeContainer Pr_GetShapeConnectorInfo - Output:", null);
+      T3Util.Log("= S.ShapeContainer Pr_GetShapeConnectorInfo - Output:", null);
       return null;
     }
 
     // Create appropriate connector based on container arrangement (row or column)
-    const connectorInfo = containerList.Arrangement === ConstantData.ContainerListArrangements.Row
+    const connectorInfo = containerList.Arrangement === NvConstant.ContainerListArrangements.Row
       ? {
         knobID: actionTriggerType.CONTAINER_ADJ,
-        cursorType: ConstantData2.CursorType.RESIZE_R,
+        cursorType: CursorConstant.CursorType.RESIZE_R,
         knobData: 0,
         hook: eventData.hookpt,
         polyType: "horizontal"
       }
       : {
         knobID: actionTriggerType.CONTAINER_ADJ,
-        cursorType: ConstantData2.CursorType.RESIZE_B,
+        cursorType: CursorConstant.CursorType.RESIZE_B,
         knobData: 0,
         hook: eventData.hookpt,
         polyType: "vertical"
       };
 
     result.push(connectorInfo);
-    console.log("= S.ShapeContainer Pr_GetShapeConnectorInfo - Output:", result);
+    T3Util.Log("= S.ShapeContainer Pr_GetShapeConnectorInfo - Output:", result);
     return result;
   }
 
@@ -1245,13 +1248,13 @@ class ShapeContainer extends Rect {
    * @returns Array of enclosed object references
    */
   GetListOfEnclosedObjects(searchOptions: any): any[] {
-    console.log("= S.ShapeContainer GetListOfEnclosedObjects - Input:", searchOptions);
+    T3Util.Log("= S.ShapeContainer GetListOfEnclosedObjects - Input:", searchOptions);
 
     const enclosedObjects: any[] = [];
     // Implementation would typically populate this array with enclosed objects
     // based on container layout and child elements
 
-    console.log("= S.ShapeContainer GetListOfEnclosedObjects - Output:", enclosedObjects);
+    T3Util.Log("= S.ShapeContainer GetListOfEnclosedObjects - Output:", enclosedObjects);
     return enclosedObjects;
   }
 
@@ -1276,7 +1279,7 @@ class ShapeContainer extends Rect {
     gridPosition: { x: number; y: number },
     shouldAttach: boolean
   ) {
-    console.log("= S.ShapeContainer ChangeTarget - Input:", {
+    T3Util.Log("= S.ShapeContainer ChangeTarget - Input:", {
       changeEvent,
       targetShapeId,
       connectionAnchor,
@@ -1285,7 +1288,7 @@ class ShapeContainer extends Rect {
       shouldAttach,
     });
 
-    const containerFlags = ConstantData.ContainerListFlags;
+    const containerFlags = NvConstant.ContainerListFlags;
     const isContainerInCell = T3Gv.opt.ContainerIsInCell(this);
 
     /**
@@ -1452,7 +1455,7 @@ class ShapeContainer extends Rect {
     const currentContainerList = this.ContainerList;
     let list = currentContainerList.List;
     const containerObj = this;
-    const isSparse = currentContainerList.flags & ConstantData.ContainerListFlags.Sparse;
+    const isSparse = currentContainerList.flags & NvConstant.ContainerListFlags.Sparse;
 
     // Find the current index of the target shape in the list
     let targetIndex = -1;
@@ -1492,7 +1495,7 @@ class ShapeContainer extends Rect {
             let deltaCols = 0;
             let deltaRows = 0;
             let tempCounter = 0;
-            const arrangements = ConstantData.ContainerListArrangements;
+            const arrangements = NvConstant.ContainerListArrangements;
 
             /**
              * Inserts additional grid items to accommodate the new shape position
@@ -1649,7 +1652,7 @@ class ShapeContainer extends Rect {
           // Mark the target as a container child
           targetObject.moreflags = Utils2.SetFlag(
             targetObject.moreflags,
-            ConstantData.ObjMoreFlags.SED_MF_ContainerChild,
+            OptConstant.ObjMoreFlags.SED_MF_ContainerChild,
             true
           );
         } else {
@@ -1659,7 +1662,7 @@ class ShapeContainer extends Rect {
           // Remove container child flag
           targetObject.moreflags = Utils2.SetFlag(
             targetObject.moreflags,
-            ConstantData.ObjMoreFlags.SED_MF_ContainerChild,
+            OptConstant.ObjMoreFlags.SED_MF_ContainerChild,
             false
           );
 
@@ -1686,7 +1689,7 @@ class ShapeContainer extends Rect {
               T3Gv.opt.PutInFrontofObject(containerObj.BlockID, targetShapeId);
               targetObject.moreflags = Utils2.SetFlag(
                 targetObject.moreflags,
-                ConstantData.ObjMoreFlags.SED_MF_ContainerChild,
+                OptConstant.ObjMoreFlags.SED_MF_ContainerChild,
                 true
               );
             }
@@ -1695,7 +1698,7 @@ class ShapeContainer extends Rect {
             removeContainerShape(targetShapeId);
             targetObject.moreflags = Utils2.SetFlag(
               targetObject.moreflags,
-              ConstantData.ObjMoreFlags.SED_MF_ContainerChild,
+              OptConstant.ObjMoreFlags.SED_MF_ContainerChild,
               false
             );
             T3Gv.opt.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
@@ -1752,10 +1755,10 @@ class ShapeContainer extends Rect {
         this.Pr_Format();
       } else {
         // For non-sparse layout, just mark for update
-        this.flags = Utils2.SetFlag(this.flags, ConstantData.ObjFlags.SEDO_Obj1, true);
+        this.flags = Utils2.SetFlag(this.flags, NvConstant.ObjFlags.SEDO_Obj1, true);
       }
 
-      console.log("= S.ShapeContainer ChangeTarget - Output:", {
+      T3Util.Log("= S.ShapeContainer ChangeTarget - Output:", {
         containerList: this.ContainerList,
         targetShapeId,
         gridPosition,

@@ -1,5 +1,5 @@
 
-import ConstantData from "../Data/Constant/ConstantData"
+import NvConstant from "../Data/Constant/NvConstant"
 
 class Layer {
 
@@ -12,10 +12,10 @@ class Layer {
 
   constructor() {
     this.name = '';
-    this.flags = ConstantData.LayerFlags.SDLF_Visible;
+    this.flags = NvConstant.LayerFlags.SDLF_Visible;
     this.n = 0;
     this.index = 0;
-    this.layertype = ConstantData.LayerTypes.SD_LAYERT_NONE;
+    this.layertype = NvConstant.LayerTypes.SD_LAYERT_NONE;
     this.zList = [];
   }
 }

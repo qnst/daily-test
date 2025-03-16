@@ -1,15 +1,16 @@
 
 
 import T3Gv from '../Data/T3Gv';
-import Utils2 from '../Helper/Utils2';
+import Utils2 from '../Util/Utils2';
 import $ from 'jquery';
 import BaseDrawingObject from '../Shape/S.BaseDrawingObject'
 import Instance from '../Data/Instance/Instance'
-import ConstantData from '../Data/Constant/ConstantData'
-import ConstantData2 from '../Data/Constant/ConstantData2'
+import NvConstant from '../Data/Constant/NvConstant'
 import RightClickData from '../Model/RightClickData'
 import T3Constant from '../Data/Constant/T3Constant';
 import DocUtil from '../Doc/DocUtil';
+import OptConstant from '../Data/Constant/OptConstant';
+import T3Util from '../Util/T3Util';
 
 class EvtUtil {
 
@@ -19,7 +20,6 @@ class EvtUtil {
    * @param mouseEvent - The mouse movement event
    */
   static Evt_MouseMove(mouseEvent) {
-    console.log("E.Evt MouseMove input:", mouseEvent);
 
     const svgDoc = T3Gv.opt.svgDoc;
     const docInfo = svgDoc.docInfo;
@@ -47,11 +47,9 @@ class EvtUtil {
         null
       );
 
-      console.log("E.Evt MouseMove output: coordinates shown", documentCoordinates);
     } else {
       // Hide coordinates display when outside document bounds
       T3Gv.opt.ShowXY(false);
-      console.log("E.Evt MouseMove output: coordinates hidden");
     }
   }
 
@@ -62,7 +60,7 @@ class EvtUtil {
    * @returns false to prevent default browser behavior
    */
   static Evt_WorkAreaHammerClick(event) {
-    console.log("E.Evt WorkAreaHammerClick input:", event);
+    T3Util.Log("E.Evt WorkAreaHammerClick input:", event);
 
     // Stop propagation of the event to parent elements
     Utils2.StopPropagationAndDefaults(event);
@@ -92,7 +90,7 @@ class EvtUtil {
       );
     }
 
-    console.log("E.Evt WorkAreaHammerClick output:", isRightClick ? "right-click menu shown" : "selection cleared");
+    T3Util.Log("E.Evt WorkAreaHammerClick output:", isRightClick ? "right-click menu shown" : "selection cleared");
     return false;
   }
 
@@ -103,7 +101,7 @@ class EvtUtil {
    * @param event - The mouse wheel event
    */
   static Evt_WorkAreaMouseWheel(event) {
-    console.log("E.Evt WorkAreaMouseWheel input:", event);
+    T3Util.Log("E.Evt WorkAreaMouseWheel input:", event);
 
     let docUtil = new DocUtil();
 
@@ -139,7 +137,7 @@ class EvtUtil {
 
       T3Gv.docUtil.SetScroll(scrollLeft - xOffset, scrollTop - yOffset);
 
-      console.log("E.Evt WorkAreaMouseWheel output: zoom adjusted, focus maintained");
+      T3Util.Log("E.Evt WorkAreaMouseWheel output: zoom adjusted, focus maintained");
     }
   }
 
@@ -150,7 +148,7 @@ class EvtUtil {
    * @returns false to prevent default browser behavior
    */
   static Evt_WorkAreaHammerPanEnd(event?) {
-    console.log("E.Evt WorkAreaHammerPanEnd input:", event);
+    T3Util.Log("E.Evt WorkAreaHammerPanEnd input:", event);
 
     // Reset touch pan state
     T3Gv.opt.touchPanStarted = false;
@@ -160,9 +158,9 @@ class EvtUtil {
     T3Gv.opt.WorkAreaHammer.off("dragend");
 
     // Restore default edit mode
-    T3Gv.opt.SetEditMode(ConstantData.EditState.DEFAULT);
+    T3Gv.opt.SetEditMode(NvConstant.EditState.DEFAULT);
 
-    console.log("E.Evt WorkAreaHammerPanEnd output: pan state reset, edit mode restored to default");
+    T3Util.Log("E.Evt WorkAreaHammerPanEnd output: pan state reset, edit mode restored to default");
     return false;
   };
 
@@ -173,7 +171,7 @@ class EvtUtil {
    * @returns false to prevent default browser behavior
    */
   static Evt_WorkAreaHammerDragStart(event) {
-    console.log("E.Evt WorkAreaHammerDragStart input:", event);
+    T3Util.Log("E.Evt WorkAreaHammerDragStart input:", event);
 
     const svgArea = $('#svg-area');
     const svgOffset = svgArea.offset();
@@ -188,7 +186,7 @@ class EvtUtil {
     }
 
     // Check if we should start panning instead of selection
-    const shouldPan = T3Gv.opt.isMobilePlatform ||
+    const shouldPan = /*T3Gv.opt.isMobilePlatform ||*/
       T3Gv.opt.IsWheelClick(event) ||
       T3Constant.DocContext.SpacebarDown;
 
@@ -206,7 +204,7 @@ class EvtUtil {
         Utils2.StopPropagationAndDefaults(event);
       }
 
-      console.log("E.Evt WorkAreaHammerDragStart output: pan mode started");
+      T3Util.Log("E.Evt WorkAreaHammerDragStart output: pan mode started");
       return false;
     } else {
       // End any existing pan operation
@@ -222,14 +220,14 @@ class EvtUtil {
         event.preventDefault();
         event.stopPropagation();
 
-        console.log("E.Evt WorkAreaHammerDragStart output: right-click handled");
+        T3Util.Log("E.Evt WorkAreaHammerDragStart output: right-click handled");
         return false;
       }
 
       // Start rubber band selection
       T3Gv.opt.StartRubberBandSelect(event);
 
-      console.log("E.Evt WorkAreaHammerDragStart output: rubber band selection started");
+      T3Util.Log("E.Evt WorkAreaHammerDragStart output: rubber band selection started");
       return false;
     }
   }
@@ -241,20 +239,20 @@ class EvtUtil {
    * @param event - The drag event from the hammer.js gesture system
    */
   static Evt_RubberBandDrag(event) {
-    console.log("E.Evt RubberBandDrag input:", event);
+    T3Util.Log("E.Evt RubberBandDrag input:", event);
 
     // Prevent default browser behavior
     Utils2.StopPropagationAndDefaults(event);
-    const modalOperations = ConstantData2.ModalOperations;
+    const modalOperations = OptConstant.ModalOperations;
 
     try {
-      // Cancel any special mode operations if active
-      switch (T3Gv.opt.currentModalOperation) {
-        case modalOperations.ADDCORNER:
-        case modalOperations.SPLITWALL:
-          T3Gv.gFloorplanManager.AddCornerCancel();
-          break;
-      }
+      // // Cancel any special mode operations if active
+      // switch (T3Gv.opt.currentModalOperation) {
+      //   case modalOperations.ADDCORNER:
+      //   case modalOperations.SPLITWALL:
+      //     T3Gv.gFloorplanManager.AddCornerCancel();
+      //     break;
+      // }
 
       // If auto-scrolling is in progress and returns false, exit early
       if (!T3Gv.opt.AutoScrollCommon(
@@ -271,7 +269,7 @@ class EvtUtil {
         event.gesture.center.clientY
       );
 
-      console.log("E.Evt RubberBandDrag processing: coordinates", documentCoordinates);
+      T3Util.Log("E.Evt RubberBandDrag processing: coordinates", documentCoordinates);
 
       // Update the rubber band selection shape
       T3Gv.opt.RubberBandSelectMoveCommon(
@@ -279,12 +277,12 @@ class EvtUtil {
         documentCoordinates.y
       );
 
-      console.log("E.Evt RubberBandDrag output: rubber band updated");
+      T3Util.Log("E.Evt RubberBandDrag output: rubber band updated");
     } catch (error) {
       // Handle exceptions during rubber band selection
       T3Gv.opt.RubberBandSelectExceptionCleanup(error);
       T3Gv.opt.ExceptionCleanup(error);
-      console.log("E.Evt RubberBandDrag error:", error);
+      T3Util.Log("E.Evt RubberBandDrag error:", error);
       throw error;
     }
   }
@@ -295,7 +293,7 @@ class EvtUtil {
    * @param event - The drag end event from the hammer.js gesture system
    */
   static Evt_RubberBandDragEnd(event) {
-    console.log("E.Evt RubberBandDragEnd input:", event);
+    T3Util.Log("E.Evt RubberBandDragEnd input:", event);
 
     // Prevent default browser behavior
     Utils2.StopPropagationAndDefaults(event);
@@ -319,19 +317,19 @@ class EvtUtil {
       T3Gv.opt.svgOverlayLayer.RemoveElement(T3Gv.opt.rubberBand);
 
       // Reset rubber band selection state
-      console.log("E.Evt RubberBandDragEnd processing: resetting rubber band state");
+      T3Util.Log("E.Evt RubberBandDragEnd processing: resetting rubber band state");
       T3Gv.opt.rubberBand = null;
       T3Gv.opt.rubberBandStartX = 0;
       T3Gv.opt.rubberBandStartY = 0;
       T3Gv.opt.rubberBandFrame = { x: 0, y: 0, width: 0, height: 0 };
 
-      console.log("E.Evt RubberBandDragEnd output: selection completed");
+      T3Util.Log("E.Evt RubberBandDragEnd output: selection completed");
 
     } catch (error) {
       // Clean up if an error occurs during selection
       T3Gv.opt.RubberBandSelectExceptionCleanup(error);
       T3Gv.opt.ExceptionCleanup(error);
-      console.log("E.Evt RubberBandDragEnd error:", error);
+      T3Util.Log("E.Evt RubberBandDragEnd error:", error);
       throw error;
     }
   }
@@ -344,7 +342,7 @@ class EvtUtil {
    * @returns false to prevent default browser behavior
    */
   static Evt_WorkAreaHammerDrawStart(hammerEvent) {
-    console.log("E.Evt WorkAreaHammerDrawStart input:", hammerEvent);
+    T3Util.Log("E.Evt WorkAreaHammerDrawStart input:", hammerEvent);
 
     // Prevent event propagation and default behavior
     hammerEvent.stopPropagation();
@@ -360,9 +358,9 @@ class EvtUtil {
       // Start the drawing operation
       T3Gv.opt.StartNewObjectDraw(hammerEvent);
 
-      console.log("E.Evt WorkAreaHammerDrawStart output: drawing started");
+      T3Util.Log("E.Evt WorkAreaHammerDrawStart output: drawing started");
     } else {
-      console.log("E.Evt WorkAreaHammerDrawStart output: right-click ignored");
+      T3Util.Log("E.Evt WorkAreaHammerDrawStart output: right-click ignored");
     }
 
     return false;
@@ -376,22 +374,22 @@ class EvtUtil {
    * @returns A function that handles draw tracking events
    */
   static Evt_DrawTrackHandlerFactory(drawableObject) {
-    console.log("E.Evt DrawTrackHandlerFactory input:", drawableObject);
+    T3Util.Log("E.Evt DrawTrackHandlerFactory input:", drawableObject);
 
     return function (event) {
-      console.log("E.Evt DrawTrack input:", event);
+      T3Util.Log("E.Evt DrawTrack input:", event);
 
       try {
         // Track the drawing movement for the current object
         drawableObject.LM_DrawTrack(event);
 
-        console.log("E.Evt DrawTrack output: drawing tracked");
+        T3Util.Log("E.Evt DrawTrack output: drawing tracked");
       } catch (error) {
         // Clean up in case of errors during draw tracking
         drawableObject.LM_DrawClick_ExceptionCleanup(error);
         T3Gv.opt.ExceptionCleanup(error);
 
-        console.log("E.Evt DrawTrack error:", error);
+        T3Util.Log("E.Evt DrawTrack error:", error);
         throw error;
       }
     };
@@ -405,23 +403,23 @@ class EvtUtil {
    * @returns A function that handles draw release events
    */
   static Evt_DrawReleaseHandlerFactory(drawableObject) {
-    console.log("E.Evt DrawReleaseHandlerFactory input:", drawableObject);
+    T3Util.Log("E.Evt DrawReleaseHandlerFactory input:", drawableObject);
 
     return function (event) {
-      console.log("E.Evt DrawRelease input:", event);
+      T3Util.Log("E.Evt DrawRelease input:", event);
 
       try {
         // Complete the drawing operation when the user releases
         drawableObject.LM_DrawRelease(event);
 
-        console.log("E.Evt DrawRelease output: drawing completed");
+        T3Util.Log("E.Evt DrawRelease output: drawing completed");
       } catch (error) {
         // Clean up in case of errors during draw completion
         T3Gv.opt.CancelModalOperation();
         drawableObject.LM_DrawClick_ExceptionCleanup(error);
         T3Gv.opt.ExceptionCleanup(error);
 
-        console.log("E.Evt DrawRelease error:", error);
+        T3Util.Log("E.Evt DrawRelease error:", error);
         throw error;
       }
     };
@@ -435,12 +433,12 @@ class EvtUtil {
    * @returns A function that handles tap/click events on the shape
    */
   static Evt_ShapeTapFactory(shape) {
-    console.log("E.Evt ShapeTapFactory input:", shape);
+    T3Util.Log("E.Evt ShapeTapFactory input:", shape);
 
     let shapeElement;
 
     return function (tapEvent) {
-      console.log("E.Evt ShapeTap input:", tapEvent);
+      T3Util.Log("E.Evt ShapeTap input:", tapEvent);
 
       // Prevent default browser behavior
       Utils2.StopPropagationAndDefaults(tapEvent);
@@ -453,18 +451,18 @@ class EvtUtil {
       if (T3Gv.docUtil.IsReadOnly()) {
         if (isRightClick) {
           shape.RightClick(tapEvent);
-          console.log("E.Evt ShapeTap output: right-click menu in read-only mode");
+          T3Util.Log("E.Evt ShapeTap output: right-click menu in read-only mode");
           return false;
         }
       } else if (isRightClick) {
         shape.RightClick(tapEvent);
-        console.log("E.Evt ShapeTap output: right-click menu shown");
+        T3Util.Log("E.Evt ShapeTap output: right-click menu shown");
         return false;
       }
 
       // Handle tap based on current modal operation
       switch (T3Gv.opt.currentModalOperation) {
-        case ConstantData2.ModalOperations.NONE:
+        case OptConstant.ModalOperations.NONE:
           // Check for hyperlink hits or process normal tap
           if (!T3Gv.opt.CheckTextHyperlinkHit(shape, tapEvent)) {
             T3Gv.opt.LM_TestIconClick(tapEvent);
@@ -476,15 +474,15 @@ class EvtUtil {
             }
           }
 
-          console.log("E.Evt ShapeTap output: normal tap processed");
+          T3Util.Log("E.Evt ShapeTap output: normal tap processed");
           return false;
 
-        case ConstantData2.ModalOperations.DRAW:
-        case ConstantData2.ModalOperations.DRAWPOLYLINE:
-          console.log("E.Evt ShapeTap output: ignored in draw mode");
+        case OptConstant.ModalOperations.DRAW:
+        case OptConstant.ModalOperations.DRAWPOLYLINE:
+          T3Util.Log("E.Evt ShapeTap output: ignored in draw mode");
           return false;
 
-        case ConstantData2.ModalOperations.STAMPTEXTONTAP:
+        case OptConstant.ModalOperations.STAMPTEXTONTAP:
           // Handle text editing in stamp text mode
           if (!T3Gv.opt.stampSticky) {
             T3Gv.opt.CancelObjectStampTextOnTap(true);
@@ -495,7 +493,7 @@ class EvtUtil {
             T3Gv.opt.ActivateTextEdit(shapeElement.svgObj.SDGObj, tapEvent, false);
           }
 
-          console.log("E.Evt ShapeTap output: text edit activated in stamp mode");
+          T3Util.Log("E.Evt ShapeTap output: text edit activated in stamp mode");
           return false;
       }
     };
@@ -509,22 +507,22 @@ class EvtUtil {
    * @returns A function that handles drag start events on the shape
    */
   static Evt_ShapeDragStartFactory(shape) {
-    console.log("E.Evt ShapeDragStartFactory input:", shape);
+    T3Util.Log("E.Evt ShapeDragStartFactory input:", shape);
 
     return function (event) {
-      console.log("E.Evt ShapeDragStart input:", event);
+      T3Util.Log("E.Evt ShapeDragStart input:", event);
 
       // Check if we're in drawing mode - prevent drag start
-      if (T3Gv.opt.currentModalOperation === ConstantData2.ModalOperations.DRAW) {
-        console.log("E.Evt ShapeDragStart output: prevented in draw mode");
+      if (T3Gv.opt.currentModalOperation === OptConstant.ModalOperations.DRAW) {
+        T3Util.Log("E.Evt ShapeDragStart output: prevented in draw mode");
         return false;
       }
 
       // Check if we're in stamp mode - prevent drag start and stop propagation
-      if (T3Gv.opt.currentModalOperation === ConstantData2.ModalOperations.STAMP) {
+      if (T3Gv.opt.currentModalOperation === OptConstant.ModalOperations.STAMP) {
         event.stopPropagation();
         event.gesture.stopPropagation();
-        console.log("E.Evt ShapeDragStart output: prevented in stamp mode");
+        T3Util.Log("E.Evt ShapeDragStart output: prevented in stamp mode");
         return false;
       }
 
@@ -537,29 +535,29 @@ class EvtUtil {
         event.stopPropagation();
         event.gesture.preventDefault();
         event.gesture.stopPropagation();
-        console.log("E.Evt ShapeDragStart output: right-click prevented");
+        T3Util.Log("E.Evt ShapeDragStart output: right-click prevented");
         return false;
       }
 
       // Process based on current modal operation state
       switch (T3Gv.opt.currentModalOperation) {
-        case ConstantData2.ModalOperations.NONE:
-        case ConstantData2.ModalOperations.FORMATPAINTER:
+        case OptConstant.ModalOperations.NONE:
+        case OptConstant.ModalOperations.FORMATPAINTER:
           // Normal drag operation - start movement
           Utils2.StopPropagationAndDefaults(event);
           T3Gv.opt.LM_MoveClick(event);
-          console.log("E.Evt ShapeDragStart output: move operation started");
+          T3Util.Log("E.Evt ShapeDragStart output: move operation started");
           return false;
 
-        case ConstantData2.ModalOperations.DRAW:
+        case OptConstant.ModalOperations.DRAW:
           // Forward to draw handler if in draw mode
-          console.log("E.Evt ShapeDragStart output: forwarded to draw handler");
+          T3Util.Log("E.Evt ShapeDragStart output: forwarded to draw handler");
           return EvtUtil.Evt_WorkAreaHammerDrawStart(event);
 
-        case ConstantData2.ModalOperations.DRAWPOLYLINE:
-        case ConstantData2.ModalOperations.STAMPTEXTONTAP:
+        case OptConstant.ModalOperations.DRAWPOLYLINE:
+        case OptConstant.ModalOperations.STAMPTEXTONTAP:
           // Prevent drag in these modes
-          console.log("E.Evt ShapeDragStart output: prevented in special mode");
+          T3Util.Log("E.Evt ShapeDragStart output: prevented in special mode");
           return false;
       }
     };
@@ -573,13 +571,13 @@ class EvtUtil {
    * @returns A function that handles hold events on the shape
    */
   static Evt_ShapeHoldFactory(shape) {
-    console.log("E.Evt ShapeHoldFactory input:", shape);
+    T3Util.Log("E.Evt ShapeHoldFactory input:", shape);
 
     return function (event) {
-      console.log("E.Evt ShapeHold input:", event);
+      T3Util.Log("E.Evt ShapeHold input:", event);
 
       switch (T3Gv.opt.currentModalOperation) {
-        case ConstantData2.ModalOperations.NONE:
+        case OptConstant.ModalOperations.NONE:
           // Stop the gesture detection and prevent default behavior
           event.gesture.stopDetect();
           Utils2.StopPropagationAndDefaults(event);
@@ -594,18 +592,18 @@ class EvtUtil {
             // Handle exceptions during move release
             T3Gv.opt.LM_Move_ExceptionCleanup(error);
             T3Gv.opt.ExceptionCleanup(error);
-            console.log("E.Evt ShapeHold error:", error);
+            T3Util.Log("E.Evt ShapeHold error:", error);
             throw error;
           }
 
-          console.log("E.Evt ShapeHold output: context menu displayed");
+          T3Util.Log("E.Evt ShapeHold output: context menu displayed");
           return false;
 
-        case ConstantData2.ModalOperations.DRAW:
-        case ConstantData2.ModalOperations.DRAWPOLYLINE:
-        case ConstantData2.ModalOperations.STAMPTEXTONTAP:
+        case OptConstant.ModalOperations.DRAW:
+        case OptConstant.ModalOperations.DRAWPOLYLINE:
+        case OptConstant.ModalOperations.STAMPTEXTONTAP:
           // Prevent hold actions in these modes
-          console.log("E.Evt ShapeHold output: prevented in special mode");
+          T3Util.Log("E.Evt ShapeHold output: prevented in special mode");
           return false;
       }
     };
@@ -619,10 +617,10 @@ class EvtUtil {
    * @returns A function that handles double-tap/double-click events on the shape
    */
   static Evt_ShapeDoubleTapFactory(shape) {
-    console.log("E.Evt ShapeDoubleTapFactory input:", shape);
+    T3Util.Log("E.Evt ShapeDoubleTapFactory input:", shape);
 
     return function (event) {
-      console.log("E.Evt ShapeDoubleTap input:", event);
+      T3Util.Log("E.Evt ShapeDoubleTap input:", event);
 
       // Get the object using its ID
       const shapeBlockId = shape.BlockID;
@@ -630,7 +628,7 @@ class EvtUtil {
 
       // Validate that we have a valid drawing object
       if (!(objectPtr && objectPtr instanceof BaseDrawingObject)) {
-        console.log("E.Evt ShapeDoubleTap output: invalid object");
+        T3Util.Log("E.Evt ShapeDoubleTap output: invalid object");
         return false;
       }
 
@@ -639,77 +637,78 @@ class EvtUtil {
 
       // Process based on current modal operation state
       switch (T3Gv.opt.currentModalOperation) {
-        case ConstantData2.ModalOperations.NONE:
+        case OptConstant.ModalOperations.NONE:
           // Don't process if already editing a note
           if (T3Gv.opt.bInNoteEdit) {
-            console.log("E.Evt ShapeDoubleTap output: prevented during note edit");
+            T3Util.Log("E.Evt ShapeDoubleTap output: prevented during note edit");
             return false;
           }
 
           // Check if this is a table or graph object
-          const isTable = shape.GetTable(false);
+          // const isTable = shape.GetTable(false);
           const isGraph = shape.GetGraph(false);
 
-          // Handle special D3 symbol types (gauges and charts)
-          if (shape.objecttype === ConstantData.ObjectTypes.SD_OBJT_D3SYMBOL) {
-            switch (shape.codeLibID) {
-              case 'RadialGauge':
-              case 'LinearGauge':
-                T3Gv.opt.EditGauge();
-                console.log("E.Evt ShapeDoubleTap output: gauge editor opened");
-                return false;
+          // // Handle special D3 symbol types (gauges and charts)
+          // if (shape.objecttype === NvConstant.ObjectTypes.SD_OBJT_D3SYMBOL) {
+          //   switch (shape.codeLibID) {
+          //     case 'RadialGauge':
+          //     case 'LinearGauge':
+          //       T3Gv.opt.EditGauge();
+          //       T3Util.Log("E.Evt ShapeDoubleTap output: gauge editor opened");
+          //       return false;
 
-              case 'BarChart':
-              case 'PieChart':
-              case 'LineChart':
-              case 'SankeyChart':
-                T3Gv.opt.EditGraph();
-                console.log("E.Evt ShapeDoubleTap output: graph editor opened");
-                return false;
-            }
-          }
+          //     case 'BarChart':
+          //     case 'PieChart':
+          //     case 'LineChart':
+          //     case 'SankeyChart':
+          //       T3Gv.opt.EditGraph();
+          //       T3Util.Log("E.Evt ShapeDoubleTap output: graph editor opened");
+          //       return false;
+          //   }
+          // }
           // Handle container shapes
-          else if (shape instanceof Instance.Shape.ShapeContainer) {
+          // else
+          if (shape instanceof Instance.Shape.ShapeContainer) {
             shape.DoubleClick(event);
-            console.log("E.Evt ShapeDoubleTap output: container double-click handled");
+            T3Util.Log("E.Evt ShapeDoubleTap output: container double-click handled");
             return false;
           }
 
-          // Handle tables
-          if (isTable) {
-            T3Gv.opt.Table_SetupAction(
-              event,
-              shape.BlockID,
-              ConstantData.Defines.TableCellHit,
-              -1
-            );
-            console.log("E.Evt ShapeDoubleTap output: table action setup");
-            return false;
-          }
+          // // Handle tables
+          // if (isTable) {
+          //   T3Gv.opt.Table_SetupAction(
+          //     event,
+          //     shape.BlockID,
+          //     OptConstant.Defines.TableCellHit,
+          //     -1
+          //   );
+          //   T3Util.Log("E.Evt ShapeDoubleTap output: table action setup");
+          //   return false;
+          // }
 
-          // Handle graphs
-          if (isGraph) {
-            T3Gv.opt.Graph_SetupAction(
-              event,
-              shape.BlockID,
-              ConstantData.Defines.GraphTextHit,
-              -1
-            );
-            console.log("E.Evt ShapeDoubleTap output: graph action setup");
-            return false;
-          }
+          // // Handle graphs
+          // if (isGraph) {
+          //   T3Gv.opt.Graph_SetupAction(
+          //     event,
+          //     shape.BlockID,
+          //     OptConstant.Defines.GraphTextHit,
+          //     -1
+          //   );
+          //   T3Util.Log("E.Evt ShapeDoubleTap output: graph action setup");
+          //   return false;
+          // }
 
           // Default behavior: activate text editing
           const shapeElement = T3Gv.opt.svgObjectLayer.GetElementByID(shape.tag);
           T3Gv.opt.ActivateTextEdit(shapeElement.svgObj.SDGObj, event);
-          console.log("E.Evt ShapeDoubleTap output: text editor activated");
+          T3Util.Log("E.Evt ShapeDoubleTap output: text editor activated");
           return false;
 
-        case ConstantData2.ModalOperations.DRAW:
-        case ConstantData2.ModalOperations.DRAWPOLYLINE:
-        case ConstantData2.ModalOperations.STAMPTEXTONTAP:
+        case OptConstant.ModalOperations.DRAW:
+        case OptConstant.ModalOperations.DRAWPOLYLINE:
+        case OptConstant.ModalOperations.STAMPTEXTONTAP:
           // Prevent double-tap actions in these modes
-          console.log("E.Evt ShapeDoubleTap output: prevented in special mode");
+          T3Util.Log("E.Evt ShapeDoubleTap output: prevented in special mode");
           return false;
       }
     };
@@ -722,7 +721,7 @@ class EvtUtil {
    * @param event - The drag event from the hammer.js gesture system
    */
   static Evt_ShapeDrag(event) {
-    console.log("E.Evt ShapeDrag input:", event);
+    T3Util.Log("E.Evt ShapeDrag input:", event);
 
     // Prevent default browser behavior
     Utils2.StopPropagationAndDefaults(event);
@@ -734,13 +733,13 @@ class EvtUtil {
       // Track the movement of the shape
       T3Gv.opt.LM_MoveTrack(event, isOverCustomLibrary);
 
-      console.log("E.Evt ShapeDrag output: shape position updated");
+      T3Util.Log("E.Evt ShapeDrag output: shape position updated");
     } catch (error) {
       // Clean up in case of errors during movement
       T3Gv.opt.LM_Move_ExceptionCleanup(error);
       T3Gv.opt.ExceptionCleanup(error);
 
-      console.log("E.Evt ShapeDrag error:", error);
+      T3Util.Log("E.Evt ShapeDrag error:", error);
       throw error;
     }
   }
@@ -752,7 +751,7 @@ class EvtUtil {
    * @param event - The drag end event from the hammer.js gesture system
    */
   static Evt_ShapeDragEnd(event) {
-    console.log("E.Evt ShapeDragEnd input:", event);
+    T3Util.Log("E.Evt ShapeDragEnd input:", event);
 
     // Prevent default browser behavior
     Utils2.StopPropagationAndDefaults(event);
@@ -761,13 +760,13 @@ class EvtUtil {
       // Complete the movement operation
       T3Gv.opt.LM_MoveRelease(event);
 
-      console.log("E.Evt ShapeDragEnd output: shape movement completed");
+      T3Util.Log("E.Evt ShapeDragEnd output: shape movement completed");
     } catch (error) {
       // Clean up in case of errors during move completion
       T3Gv.opt.LM_Move_ExceptionCleanup(error);
       T3Gv.opt.ExceptionCleanup(error);
 
-      console.log("E.Evt ShapeDragEnd error:", error);
+      T3Util.Log("E.Evt ShapeDragEnd error:", error);
       throw error;
     }
   }
@@ -780,15 +779,15 @@ class EvtUtil {
    * @returns A function that handles action tracking events
    */
   static Evt_ActionTrackHandlerFactory(actionObject) {
-    console.log("E.Evt ActionTrackHandlerFactory input:", actionObject);
+    T3Util.Log("E.Evt ActionTrackHandlerFactory input:", actionObject);
 
     return function (event) {
-      console.log("E.Evt ActionTrack input:", event);
+      T3Util.Log("E.Evt ActionTrack input:", event);
 
       // Track the action movement through the action object
       actionObject.LM_ActionTrack(event);
 
-      console.log("E.Evt ActionTrack output: action tracked");
+      T3Util.Log("E.Evt ActionTrack output: action tracked");
       return false;
     }
   }
@@ -801,38 +800,18 @@ class EvtUtil {
    * @returns A function that handles action release events
    */
   static Evt_ActionReleaseHandlerFactory(actionObject) {
-    console.log("E.Evt ActionReleaseHandlerFactory input:", actionObject);
+    T3Util.Log("E.Evt ActionReleaseHandlerFactory input:", actionObject);
 
     return function (event) {
-      console.log("E.Evt ActionRelease input:", event);
+      T3Util.Log("E.Evt ActionRelease input:", event);
 
       // Complete the action through the action object
       actionObject.LM_ActionRelease(event);
 
-      console.log("E.Evt ActionRelease output: action completed");
+      T3Util.Log("E.Evt ActionRelease output: action completed");
       return false;
     }
   }
-
-  /**
-   * Creates a handler for completing stamp object drag operations
-   * Returns a function that processes the end of a stamp object drag and finalizes placement
-   * @param stampObject - The object being stamped/placed in the document
-   * @returns A function that handles drag end events for the stamp object
-   */
-  static Evt_StampObjectDragEndFactory(stampObject) {
-    console.log("E.Evt StampObjectDragEndFactory input:", stampObject);
-
-    return function (event) {
-      console.log("E.Evt StampObjectDragEnd input:", event);
-
-      // Process the drag completion and place the stamp object
-      T3Gv.opt.DragDropObjectDone(event, stampObject);
-
-      console.log("E.Evt StampObjectDragEnd output: object placement completed");
-      return true;
-    };
-  };
 
   /**
    * Handles drag movements for stamp objects
@@ -841,12 +820,12 @@ class EvtUtil {
    * @returns true to indicate event was handled
    */
   static Evt_StampObjectDrag(event) {
-    console.log("E.Evt StampObjectDrag input:", event);
+    T3Util.Log("E.Evt StampObjectDrag input:", event);
 
     // Move the stamp object to follow the drag position
     T3Gv.opt.StampObjectMove(event);
 
-    console.log("E.Evt StampObjectDrag output: stamp object position updated");
+    T3Util.Log("E.Evt StampObjectDrag output: stamp object position updated");
     return true;
   };
 
@@ -856,12 +835,12 @@ class EvtUtil {
    * @param mouseEvent - The mouse move event
    */
   static Evt_MouseStampObjectMove(mouseEvent) {
-    console.log("E.Evt MouseStampObjectMove input:", mouseEvent);
+    T3Util.Log("E.Evt MouseStampObjectMove input:", mouseEvent);
 
     // Move the stamp object to follow the mouse position
     T3Gv.opt.MouseStampObjectMove(mouseEvent);
 
-    console.log("E.Evt MouseStampObjectMove output: stamp object position updated");
+    T3Util.Log("E.Evt MouseStampObjectMove output: stamp object position updated");
   };
 
   /**
@@ -871,15 +850,36 @@ class EvtUtil {
    * @returns A function that handles stamp completion events
    */
   static Evt_MouseStampObjectDoneFactory(stampObject) {
-    console.log("E.Evt MouseStampObjectDoneFactory input:", stampObject);
+    T3Util.Log("E.Evt MouseStampObjectDoneFactory input:", stampObject);
 
     return function (mouseEvent) {
-      console.log("E.Evt MouseStampObjectDone input:", mouseEvent);
+      T3Util.Log("E.Evt MouseStampObjectDone input:", mouseEvent);
 
       // Process the stamp completion and place the object
       T3Gv.opt.MouseStampObjectDone(mouseEvent, stampObject);
 
-      console.log("E.Evt MouseStampObjectDone output: object placement completed");
+      T3Util.Log("E.Evt MouseStampObjectDone output: object placement completed");
+      return true;
+    };
+  };
+
+  /**
+   * Creates a handler for completing stamp object drag operations
+   * Returns a function that processes the end of a stamp object drag and finalizes placement
+   * @param stampObject - The object being stamped/placed in the document
+   * @returns A function that handles drag end events for the stamp object
+   */
+  static Evt_StampObjectDragEndFactory(stampObject) {
+    T3Util.Log("E.Evt StampObjectDragEndFactory input:", stampObject);
+
+    return function (event) {
+      T3Util.Log("E.Evt StampObjectDragEnd input:", event);
+
+      // Process the drag completion and place the stamp object
+      T3Gv.opt.DragDropObjectDone(event, stampObject);
+      // T3Gv.opt.MouseStampObjectDone(event, stampObject);
+
+      T3Util.Log("E.Evt StampObjectDragEnd output: object placement completed");
       return true;
     };
   };
@@ -892,14 +892,14 @@ class EvtUtil {
    * @returns false to prevent default browser behavior
    */
   static Evt_ActionTriggerTap(event) {
-    console.log("E.Evt ActionTriggerTap input:", event);
+    T3Util.Log("E.Evt ActionTriggerTap input:", event);
 
     // Prevent default behavior and stop propagation
     event.preventDefault();
     event.gesture.stopPropagation();
     event.stopPropagation();
 
-    console.log("E.Evt ActionTriggerTap output: propagation stopped");
+    T3Util.Log("E.Evt ActionTriggerTap output: propagation stopped");
     return false;
   };
 
@@ -911,7 +911,7 @@ class EvtUtil {
    * @returns false to prevent default browser behavior
    */
   static Evt_WorkAreaHammerPinchIn(event) {
-    console.log("E.Evt WorkAreaHammerPinchIn input:", event);
+    T3Util.Log("E.Evt WorkAreaHammerPinchIn input:", event);
 
     // If scale is greater than threshold, handle as pan instead of pinch
     if (event.gesture.scale > 0.666) {
@@ -973,7 +973,7 @@ class EvtUtil {
       T3Gv.docUtil.SetScroll(scrollLeft - xOffset, scrollTop - yOffset);
     }
 
-    console.log("E.Evt WorkAreaHammerPinchIn output: zoom out completed", {
+    T3Util.Log("E.Evt WorkAreaHammerPinchIn output: zoom out completed", {
       newZoomFactor: zoomFactorPercent / 100
     });
     return false;
@@ -987,7 +987,7 @@ class EvtUtil {
    * @returns false to prevent default browser behavior
    */
   static Evt_WorkAreaHammerPan(event) {
-    console.log("E.Evt WorkAreaHammerPan input:", event);
+    T3Util.Log("E.Evt WorkAreaHammerPan input:", event);
 
     // Cancel any active rubber band selection
     T3Gv.opt.RubberBandSelect_Cancel();
@@ -998,7 +998,7 @@ class EvtUtil {
     }
 
     // Set edit mode to indicate grabbing/panning
-    T3Gv.opt.SetEditMode(ConstantData.EditState.GRAB);
+    T3Gv.opt.SetEditMode(NvConstant.EditState.GRAB);
 
     // Prevent default browser behavior
     Utils2.StopPropagationAndDefaults(event);
@@ -1026,7 +1026,7 @@ class EvtUtil {
     T3Gv.opt.touchPanX = event.gesture.center.clientX;
     T3Gv.opt.touchPanY = event.gesture.center.clientY;
 
-    console.log("E.Evt WorkAreaHammerPan output: scroll updated", {
+    T3Util.Log("E.Evt WorkAreaHammerPan output: scroll updated", {
       deltaX: deltaX,
       deltaY: deltaY,
       newScrollLeft: scrollLeft - deltaX,
@@ -1044,7 +1044,7 @@ class EvtUtil {
    * @returns false to prevent default browser behavior
    */
   static Evt_WorkAreaHammerPinchOut(event) {
-    console.log("E.Evt WorkAreaHammerPinchOut input:", event);
+    T3Util.Log("E.Evt WorkAreaHammerPinchOut input:", event);
 
     // If scale is less than threshold, handle as pan instead of pinch
     if (event.gesture.scale < 1.333) {
@@ -1110,7 +1110,7 @@ class EvtUtil {
       T3Gv.docUtil.SetScroll(scrollLeft - xOffset, scrollTop - yOffset);
     }
 
-    console.log("E.Evt WorkAreaHammerPinchOut output: zoom in completed", {
+    T3Util.Log("E.Evt WorkAreaHammerPinchOut output: zoom in completed", {
       newZoomFactor: zoomFactorPercent / 100
     });
     return false;
@@ -1122,12 +1122,12 @@ class EvtUtil {
    * @param event - The hammer pinch end event
    */
   static Evt_WorkAreaHammerPinchEnd(event) {
-    console.log("E.Evt WorkAreaHammerPinchEnd input:", event);
+    T3Util.Log("E.Evt WorkAreaHammerPinchEnd input:", event);
 
     // Reset touch pan state
     T3Gv.opt.touchPanStarted = false;
 
-    console.log("E.Evt WorkAreaHammerPinchEnd output: touch pan state reset");
+    T3Util.Log("E.Evt WorkAreaHammerPinchEnd output: touch pan state reset");
   }
 
   /**
@@ -1137,12 +1137,12 @@ class EvtUtil {
    * @param keyboardEvent - The keyboard event that triggered the adjustment
    */
   static Evt_DimensionTextKeyboardLifter(element, keyboardEvent) {
-    console.log("E.Evt DimensionTextKeyboardLifter input:", { element, keyboardEvent });
+    T3Util.Log("E.Evt DimensionTextKeyboardLifter input:", { element, keyboardEvent });
 
     // Adjust UI for virtual keyboard
     T3Gv.opt.VirtualKeyboardLifter(element, keyboardEvent);
 
-    console.log("E.Evt DimensionTextKeyboardLifter output: UI adjusted for virtual keyboard");
+    T3Util.Log("E.Evt DimensionTextKeyboardLifter output: UI adjusted for virtual keyboard");
   }
 
   /**
@@ -1154,14 +1154,14 @@ class EvtUtil {
    * @returns A function that handles double-tap events on the dimension text
    */
   static Evt_DimensionTextDoubleTapFactory(shape, textId) {
-    console.log("E.Evt DimensionTextDoubleTapFactory input:", { shape, textId });
+    T3Util.Log("E.Evt DimensionTextDoubleTapFactory input:", { shape, textId });
 
     return function (event) {
-      console.log("E.Evt DimensionTextDoubleTap input:", event);
+      T3Util.Log("E.Evt DimensionTextDoubleTap input:", event);
 
       let textElement, elementCount;
 
-      if (T3Gv.opt.currentModalOperation == ConstantData.ModalOperations.NONE) {
+      if (T3Gv.opt.currentModalOperation == OptConstant.ModalOperations.NONE) {
         const shapeElement = T3Gv.opt.svgObjectLayer.GetElementByID(shape.BlockID);
 
         if (shapeElement != null) {
@@ -1170,7 +1170,7 @@ class EvtUtil {
           for (let i = 0; i < elementCount; ++i) {
             textElement = shapeElement.GetElementByIndex(i);
 
-            if (textElement.GetID() == ConstantData.SVGElementClass.DIMENSIONTEXT &&
+            if (textElement.GetID() == OptConstant.SVGElementClass.DIMENSIONTEXT &&
               textElement.GetUserData() == textId) {
 
               T3Gv.opt.bInDimensionEdit = true;
@@ -1184,17 +1184,17 @@ class EvtUtil {
 
               event.stopPropagation();
 
-              console.log("E.Evt DimensionTextDoubleTap output: dimension text editing activated");
+              T3Util.Log("E.Evt DimensionTextDoubleTap output: dimension text editing activated");
               return false;
             }
           }
         }
 
-        console.log("E.Evt DimensionTextDoubleTap output: dimension text element not found");
+        T3Util.Log("E.Evt DimensionTextDoubleTap output: dimension text element not found");
         return false;
       }
 
-      console.log("E.Evt DimensionTextDoubleTap output: prevented in modal operation");
+      T3Util.Log("E.Evt DimensionTextDoubleTap output: prevented in modal operation");
       return false;
     };
   }
@@ -1209,13 +1209,13 @@ class EvtUtil {
    * @returns A function that handles tap events on the dimension text
    */
   static Evt_DimensionTextTapFactory(shape, textId, preventPropagation) {
-    console.log("E.Evt DimensionTextTapFactory input:", { shape, textId, preventPropagation });
+    T3Util.Log("E.Evt DimensionTextTapFactory input:", { shape, textId, preventPropagation });
 
     return function (event) {
-      console.log("E.Evt DimensionTextTap input:", event);
+      T3Util.Log("E.Evt DimensionTextTap input:", event);
 
       // Only process in default mode (no modal operations active)
-      if (T3Gv.opt.currentModalOperation == ConstantData.ModalOperations.NONE) {
+      if (T3Gv.opt.currentModalOperation == OptConstant.ModalOperations.NONE) {
         // Find the shape element
         const shapeElement = T3Gv.opt.svgObjectLayer.GetElementByID(shape.BlockID);
 
@@ -1225,7 +1225,7 @@ class EvtUtil {
             const textElement = shapeElement.GetElementByIndex(i);
 
             // Check if this is the dimension text we're looking for
-            if (textElement.GetID() == ConstantData.SVGElementClass.DIMENSIONTEXT &&
+            if (textElement.GetID() == OptConstant.SVGElementClass.DIMENSIONTEXT &&
               textElement.GetUserData() == textId) {
 
               // If already editing this dimension text, just stop propagation
@@ -1234,7 +1234,7 @@ class EvtUtil {
                 if (preventPropagation) {
                   event.stopPropagation();
                 }
-                console.log("E.Evt DimensionTextTap output: already editing this dimension");
+                T3Util.Log("E.Evt DimensionTextTap output: already editing this dimension");
                 return false;
               }
 
@@ -1253,17 +1253,17 @@ class EvtUtil {
               }
 
               event.stopPropagation();
-              console.log("E.Evt DimensionTextTap output: dimension text editing activated");
+              T3Util.Log("E.Evt DimensionTextTap output: dimension text editing activated");
               return false;
             }
           }
         }
 
-        console.log("E.Evt DimensionTextTap output: dimension text element not found");
+        T3Util.Log("E.Evt DimensionTextTap output: dimension text element not found");
         return false;
       }
 
-      console.log("E.Evt DimensionTextTap output: prevented in modal operation");
+      T3Util.Log("E.Evt DimensionTextTap output: prevented in modal operation");
       return false;
     };
   }
@@ -1276,23 +1276,23 @@ class EvtUtil {
    * @returns A function that handles polyline extension events
    */
   static Evt_PolyLineDrawExtendHandlerFactory(polyLineObject) {
-    console.log("E.Evt PolyLineDrawExtendHandlerFactory input:", polyLineObject);
+    T3Util.Log("E.Evt PolyLineDrawExtendHandlerFactory input:", polyLineObject);
 
     return function (event) {
-      console.log("E.Evt PolyLineDrawExtend input:", event);
+      T3Util.Log("E.Evt PolyLineDrawExtend input:", event);
 
       try {
         // Extend the polyline drawing
         polyLineObject.LM_DrawExtend(event);
 
-        console.log("E.Evt PolyLineDrawExtend output: polyline extended");
+        T3Util.Log("E.Evt PolyLineDrawExtend output: polyline extended");
       } catch (error) {
         // Clean up in case of errors
         T3Gv.opt.CancelModalOperation();
         polyLineObject.LM_DrawClick_ExceptionCleanup(error);
         T3Gv.opt.ExceptionCleanup(error);
 
-        console.log("E.Evt PolyLineDrawExtend error:", error);
+        T3Util.Log("E.Evt PolyLineDrawExtend error:", error);
       }
     };
   }
@@ -1310,8 +1310,8 @@ class EvtUtil {
    * @returns false to prevent default browser behavior
    */
   static Evt_PolyLineDrawDragStart(event) {
-    console.log("E.Evt PolyLineDrawDragStart input:", event);
-    console.log("E.Evt PolyLineDrawDragStart output: drag prevented during polyline drawing");
+    T3Util.Log("E.Evt PolyLineDrawDragStart input:", event);
+    T3Util.Log("E.Evt PolyLineDrawDragStart output: drag prevented during polyline drawing");
     return false;
   }
 }

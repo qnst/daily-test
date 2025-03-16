@@ -13,58 +13,28 @@ class ArrowDefs {
       {
         id: 0,
         desc: 'No arrow',
-        defArea: {
-          width: 1,
-          height: 1
-        },
-        endPt: {
-          x: 0,
-          y: 0
-        },
-        attachPt: {
-          x: 0,
-          y: 0
-        },
+        defArea: { width: 1, height: 1 },
+        endPt: { x: 0, y: 0 },
+        attachPt: { x: 0, y: 0 },
         centered: !1,
         geometry: []
       },
       {
         id: 1,
         desc: 'Filled arrow',
-        defArea: {
-          width: 10,
-          height: 10
-        },
-        endPt: {
-          x: 10,
-          y: 5
-        },
-        attachPt: {
-          x: 0,
-          y: 5
-        },
+        defArea: { width: 10, height: 10 },
+        endPt: { x: 10, y: 5 },
+        attachPt: { x: 0, y: 5 },
         centered: !1,
         geometry: [
           {
             type: 'PATH',
             filled: !0,
             pathData: [
-              ['M',
-                0,
-                0],
-              [
-                'L',
-                10,
-                5
-              ],
-              [
-                'L',
-                0,
-                10
-              ],
-              [
-                'z'
-              ]
+              ['M', 0, 0],
+              ['L', 10, 5],
+              ['L', 0, 10],
+              ['z']
             ]
           }
         ]
@@ -72,18 +42,9 @@ class ArrowDefs {
       {
         id: 2,
         desc: 'Line arrow',
-        defArea: {
-          width: 10,
-          height: 10
-        },
-        endPt: {
-          x: 10,
-          y: 5
-        },
-        attachPt: {
-          x: 10,
-          y: 5
-        },
+        defArea: { width: 10, height: 10 },
+        endPt: { x: 10, y: 5 },
+        attachPt: { x: 10, y: 5 },
         centered: !1,
         geometry: [
           {
@@ -91,19 +52,9 @@ class ArrowDefs {
             filled: !1,
             stroke: 0.5,
             pathData: [
-              ['M',
-                0,
-                0],
-              [
-                'L',
-                10,
-                5
-              ],
-              [
-                'L',
-                0,
-                10
-              ]
+              ['M', 0, 0],
+              ['L', 10, 5],
+              ['L', 0, 10]
             ]
           }
         ]
@@ -111,45 +62,20 @@ class ArrowDefs {
       {
         id: 3,
         desc: 'Fancy arrow',
-        defArea: {
-          width: 10,
-          height: 10
-        },
-        endPt: {
-          x: 10,
-          y: 5
-        },
-        attachPt: {
-          x: 5,
-          y: 5
-        },
+        defArea: { width: 10, height: 10 },
+        endPt: { x: 10, y: 5 },
+        attachPt: { x: 5, y: 5 },
         centered: !1,
         geometry: [
           {
             type: 'PATH',
             filled: !0,
             pathData: [
-              ['M',
-                0,
-                0],
-              [
-                'L',
-                10,
-                5
-              ],
-              [
-                'L',
-                0,
-                10
-              ],
-              [
-                'L',
-                5,
-                5
-              ],
-              [
-                'z'
-              ]
+              ['M', 0, 0],
+              ['L', 10, 5],
+              ['L', 0, 10],
+              ['L', 5, 5],
+              ['z']
             ]
           }
         ]
@@ -157,18 +83,9 @@ class ArrowDefs {
       {
         id: 4,
         desc: 'Filled circle',
-        defArea: {
-          width: 10,
-          height: 10
-        },
-        endPt: {
-          x: 5,
-          y: 5
-        },
-        attachPt: {
-          x: 0,
-          y: 5
-        },
+        defArea: { width: 10, height: 10 },
+        endPt: { x: 5, y: 5 },
+        attachPt: { x: 0, y: 5 },
         centered: !1,
         geometry: [
           {
@@ -186,18 +103,9 @@ class ArrowDefs {
       {
         id: 5,
         desc: 'Unfilled circle',
-        defArea: {
-          width: 10,
-          height: 10
-        },
-        endPt: {
-          x: 5,
-          y: 5
-        },
-        attachPt: {
-          x: 0,
-          y: 5
-        },
+        defArea: { width: 10, height: 10 },
+        endPt: { x: 5, y: 5 },
+        attachPt: { x: 0, y: 5 },
         centered: !1,
         geometry: [
           {
@@ -216,18 +124,9 @@ class ArrowDefs {
       {
         id: 6,
         desc: 'Filled square',
-        defArea: {
-          width: 10,
-          height: 10
-        },
-        endPt: {
-          x: 5,
-          y: 5
-        },
-        attachPt: {
-          x: 0,
-          y: 5
-        },
+        defArea: { width: 10, height: 10 },
+        endPt: { x: 5, y: 5 },
+        attachPt: { x: 0, y: 5 },
         centered: !1,
         geometry: [
           {
@@ -245,18 +144,9 @@ class ArrowDefs {
       {
         id: 7,
         desc: 'Unfilled square',
-        defArea: {
-          width: 10,
-          height: 10
-        },
-        endPt: {
-          x: 5,
-          y: 5
-        },
-        attachPt: {
-          x: 0,
-          y: 5
-        },
+        defArea: { width: 10, height: 10 },
+        endPt: { x: 5, y: 5 },
+        attachPt: { x: 0, y: 5 },
         centered: !1,
         geometry: [
           {
@@ -275,18 +165,9 @@ class ArrowDefs {
       {
         id: 8,
         desc: 'Crows foot',
-        defArea: {
-          width: 10,
-          height: 10
-        },
-        endPt: {
-          x: 10,
-          y: 5
-        },
-        attachPt: {
-          x: 0,
-          y: 5
-        },
+        defArea: { width: 10, height: 10 },
+        endPt: { x: 10, y: 5 },
+        attachPt: { x: 0, y: 5 },
         centered: !1,
         geometry: [
           {
@@ -294,34 +175,12 @@ class ArrowDefs {
             filled: !1,
             stroke: 0.5,
             pathData: [
-              ['M',
-                0,
-                5],
-              [
-                'L',
-                10,
-                0
-              ],
-              [
-                'M',
-                0,
-                5
-              ],
-              [
-                'L',
-                10,
-                5
-              ],
-              [
-                'M',
-                0,
-                5
-              ],
-              [
-                'L',
-                10,
-                10
-              ]
+              ['M', 0, 5],
+              ['L', 10, 0],
+              ['M', 0, 5],
+              ['L', 10, 5],
+              ['M', 0, 5],
+              ['L', 10, 10]
             ]
           }
         ]
@@ -329,18 +188,9 @@ class ArrowDefs {
       {
         id: 9,
         desc: 'Back slash',
-        defArea: {
-          width: 10,
-          height: 10
-        },
-        endPt: {
-          x: 5,
-          y: 5
-        },
-        attachPt: {
-          x: 5,
-          y: 5
-        },
+        defArea: { width: 10, height: 10 },
+        endPt: { x: 5, y: 5 },
+        attachPt: { x: 5, y: 5 },
         centered: !1,
         geometry: [
           {
@@ -348,14 +198,8 @@ class ArrowDefs {
             filled: !1,
             stroke: 0.5,
             pathData: [
-              ['M',
-                0,
-                0],
-              [
-                'L',
-                10,
-                10
-              ]
+              ['M', 0, 0],
+              ['L', 10, 10]
             ]
           }
         ]
@@ -363,40 +207,19 @@ class ArrowDefs {
       {
         id: 10,
         desc: 'Filled crows foot',
-        defArea: {
-          width: 10,
-          height: 10
-        },
-        endPt: {
-          x: 10,
-          y: 5
-        },
-        attachPt: {
-          x: 5,
-          y: 5
-        },
+        defArea: { width: 10, height: 10 },
+        endPt: { x: 10, y: 5 },
+        attachPt: { x: 5, y: 5 },
         centered: !1,
         geometry: [
           {
             type: 'PATH',
             filled: !0,
             pathData: [
-              ['M',
-                0,
-                5],
-              [
-                'L',
-                10,
-                0
-              ],
-              [
-                'L',
-                10,
-                10
-              ],
-              [
-                'z'
-              ]
+              ['M', 0, 5],
+              ['L', 10, 0],
+              ['L', 10, 10],
+              ['z']
             ]
           }
         ]
@@ -404,45 +227,20 @@ class ArrowDefs {
       {
         id: 11,
         desc: 'Filled diamond',
-        defArea: {
-          width: 20,
-          height: 10
-        },
-        endPt: {
-          x: 20,
-          y: 5
-        },
-        attachPt: {
-          x: 5,
-          y: 5
-        },
+        defArea: { width: 20, height: 10 },
+        endPt: { x: 20, y: 5 },
+        attachPt: { x: 5, y: 5 },
         centered: !1,
         geometry: [
           {
             type: 'PATH',
             filled: !0,
             pathData: [
-              ['M',
-                0,
-                5],
-              [
-                'L',
-                10,
-                0
-              ],
-              [
-                'L',
-                20,
-                5
-              ],
-              [
-                'L',
-                10,
-                10
-              ],
-              [
-                'z'
-              ]
+              ['M', 0, 5],
+              ['L', 10, 0],
+              ['L', 20, 5],
+              ['L', 10, 10],
+              ['z']
             ]
           }
         ]
@@ -450,18 +248,9 @@ class ArrowDefs {
       {
         id: 12,
         desc: 'Zero to many',
-        defArea: {
-          width: 20,
-          height: 10
-        },
-        endPt: {
-          x: 20,
-          y: 5
-        },
-        attachPt: {
-          x: 0,
-          y: 5
-        },
+        defArea: { width: 20, height: 10 },
+        endPt: { x: 20, y: 5 },
+        attachPt: { x: 0, y: 5 },
         centered: !1,
         geometry: [
           {
@@ -480,34 +269,12 @@ class ArrowDefs {
             filled: !1,
             stroke: 0.5,
             pathData: [
-              ['M',
-                10,
-                5],
-              [
-                'L',
-                20,
-                0
-              ],
-              [
-                'M',
-                10,
-                5
-              ],
-              [
-                'L',
-                20,
-                5
-              ],
-              [
-                'M',
-                10,
-                5
-              ],
-              [
-                'L',
-                20,
-                10
-              ]
+              ['M', 10, 5],
+              ['L', 20, 0],
+              ['M', 10, 5],
+              ['L', 20, 5],
+              ['M', 10, 5],
+              ['L', 20, 10]
             ]
           }
         ]
@@ -515,18 +282,9 @@ class ArrowDefs {
       {
         id: 13,
         desc: 'One to many',
-        defArea: {
-          width: 20,
-          height: 10
-        },
-        endPt: {
-          x: 20,
-          y: 5
-        },
-        attachPt: {
-          x: 10,
-          y: 5
-        },
+        defArea: { width: 20, height: 10 },
+        endPt: { x: 20, y: 5 },
+        attachPt: { x: 10, y: 5 },
         centered: !1,
         geometry: [
           {
@@ -534,14 +292,8 @@ class ArrowDefs {
             filled: !1,
             stroke: 0.5,
             pathData: [
-              ['M',
-                5,
-                0],
-              [
-                'L',
-                5,
-                10
-              ]
+              ['M', 5, 0],
+              ['L', 5, 10]
             ]
           },
           {
@@ -549,34 +301,12 @@ class ArrowDefs {
             filled: !1,
             stroke: 0.5,
             pathData: [
-              ['M',
-                10,
-                5],
-              [
-                'L',
-                20,
-                0
-              ],
-              [
-                'M',
-                10,
-                5
-              ],
-              [
-                'L',
-                20,
-                5
-              ],
-              [
-                'M',
-                10,
-                5
-              ],
-              [
-                'L',
-                20,
-                10
-              ]
+              ['M', 10, 5],
+              ['L', 20, 0],
+              ['M', 10, 5],
+              ['L', 20, 5],
+              ['M', 10, 5],
+              ['L', 20, 10]
             ]
           }
         ]
@@ -584,18 +314,9 @@ class ArrowDefs {
       {
         id: 14,
         desc: 'Zero to one',
-        defArea: {
-          width: 20,
-          height: 10
-        },
-        endPt: {
-          x: 20,
-          y: 5
-        },
-        attachPt: {
-          x: 0,
-          y: 5
-        },
+        defArea: { width: 20, height: 10 },
+        endPt: { x: 20, y: 5 },
+        attachPt: { x: 0, y: 5 },
         centered: !1,
         geometry: [
           {
@@ -614,24 +335,10 @@ class ArrowDefs {
             filled: !1,
             stroke: 0.5,
             pathData: [
-              ['M',
-                10,
-                5],
-              [
-                'L',
-                20,
-                5
-              ],
-              [
-                'M',
-                15,
-                0
-              ],
-              [
-                'L',
-                15,
-                10
-              ]
+              ['M', 10, 5],
+              ['L', 20, 5],
+              ['M', 15, 0],
+              ['L', 15, 10]
             ]
           }
         ]
@@ -639,18 +346,9 @@ class ArrowDefs {
       {
         id: 15,
         desc: 'One to one',
-        defArea: {
-          width: 20,
-          height: 10
-        },
-        endPt: {
-          x: 20,
-          y: 5
-        },
-        attachPt: {
-          x: 20,
-          y: 5
-        },
+        defArea: { width: 20, height: 10 },
+        endPt: { x: 20, y: 5 },
+        attachPt: { x: 20, y: 5 },
         centered: !1,
         geometry: [
           {
@@ -658,24 +356,10 @@ class ArrowDefs {
             filled: !1,
             stroke: 0.5,
             pathData: [
-              ['M',
-                5,
-                0],
-              [
-                'L',
-                5,
-                10
-              ],
-              [
-                'M',
-                10,
-                0
-              ],
-              [
-                'L',
-                10,
-                10
-              ]
+              ['M', 5, 0],
+              ['L', 5, 10],
+              ['M', 10, 0],
+              ['L', 10, 10]
             ]
           }
         ]
@@ -683,18 +367,9 @@ class ArrowDefs {
       {
         id: 16,
         desc: 'One to zero',
-        defArea: {
-          width: 20,
-          height: 10
-        },
-        endPt: {
-          x: 15,
-          y: 5
-        },
-        attachPt: {
-          x: 10,
-          y: 5
-        },
+        defArea: { width: 20, height: 10 },
+        endPt: { x: 15, y: 5 },
+        attachPt: { x: 10, y: 5 },
         centered: !1,
         geometry: [
           {
@@ -702,14 +377,8 @@ class ArrowDefs {
             filled: !1,
             stroke: 0.5,
             pathData: [
-              ['M',
-                5,
-                0],
-              [
-                'L',
-                5,
-                10
-              ]
+              ['M', 5, 0],
+              ['L', 5, 10]
             ]
           },
           {
@@ -728,40 +397,19 @@ class ArrowDefs {
       {
         id: 17,
         desc: 'Center filled arrow',
-        defArea: {
-          width: 10,
-          height: 10
-        },
-        endPt: {
-          x: 5,
-          y: 5
-        },
-        attachPt: {
-          x: 5,
-          y: 5
-        },
+        defArea: { width: 10, height: 10 },
+        endPt: { x: 5, y: 5 },
+        attachPt: { x: 5, y: 5 },
         centered: !0,
         geometry: [
           {
             type: 'PATH',
             filled: !0,
             pathData: [
-              ['M',
-                0,
-                0],
-              [
-                'L',
-                10,
-                5
-              ],
-              [
-                'L',
-                0,
-                10
-              ],
-              [
-                'z'
-              ]
+              ['M', 0, 0],
+              ['L', 10, 5],
+              ['L', 0, 10],
+              ['z']
             ]
           }
         ]
@@ -769,18 +417,9 @@ class ArrowDefs {
       {
         id: 18,
         desc: 'Center line arrow',
-        defArea: {
-          width: 10,
-          height: 10
-        },
-        endPt: {
-          x: 5,
-          y: 5
-        },
-        attachPt: {
-          x: 5,
-          y: 5
-        },
+        defArea: { width: 10, height: 10 },
+        endPt: { x: 5, y: 5 },
+        attachPt: { x: 5, y: 5 },
         centered: !0,
         geometry: [
           {
@@ -788,19 +427,9 @@ class ArrowDefs {
             filled: !1,
             stroke: 0.5,
             pathData: [
-              ['M',
-                0,
-                0],
-              [
-                'L',
-                10,
-                5
-              ],
-              [
-                'L',
-                0,
-                10
-              ]
+              ['M', 0, 0],
+              ['L', 10, 5],
+              ['L', 0, 10]
             ]
           }
         ]
@@ -808,45 +437,20 @@ class ArrowDefs {
       {
         id: 19,
         desc: 'Center fancy arrow',
-        defArea: {
-          width: 10,
-          height: 10
-        },
-        endPt: {
-          x: 5,
-          y: 5
-        },
-        attachPt: {
-          x: 5,
-          y: 5
-        },
+        defArea: { width: 10, height: 10 },
+        endPt: { x: 5, y: 5 },
+        attachPt: { x: 5, y: 5 },
         centered: !0,
         geometry: [
           {
             type: 'PATH',
             filled: !0,
             pathData: [
-              ['M',
-                0,
-                0],
-              [
-                'L',
-                10,
-                5
-              ],
-              [
-                'L',
-                0,
-                10
-              ],
-              [
-                'L',
-                5,
-                5
-              ],
-              [
-                'z'
-              ]
+              ['M', 0, 0],
+              ['L', 10, 5],
+              ['L', 0, 10],
+              ['L', 5, 5],
+              ['z']
             ]
           }
         ]
@@ -854,62 +458,29 @@ class ArrowDefs {
       {
         id: 20,
         desc: 'Double arrow',
-        defArea: {
-          width: 20,
-          height: 10
-        },
-        endPt: {
-          x: 20,
-          y: 5
-        },
-        attachPt: {
-          x: 0,
-          y: 5
-        },
+        defArea: { width: 20, height: 10 },
+        endPt: { x: 20, y: 5 },
+        attachPt: { x: 0, y: 5 },
         centered: !1,
         geometry: [
           {
             type: 'PATH',
             filled: !0,
             pathData: [
-              ['M',
-                0,
-                0],
-              [
-                'L',
-                10,
-                5
-              ],
-              [
-                'L',
-                0,
-                10
-              ],
-              [
-                'z'
-              ]
+              ['M', 0, 0],
+              ['L', 10, 5],
+              ['L', 0, 10],
+              ['z']
             ]
           },
           {
             type: 'PATH',
             filled: !0,
             pathData: [
-              ['M',
-                10,
-                0],
-              [
-                'L',
-                20,
-                5
-              ],
-              [
-                'L',
-                10,
-                10
-              ],
-              [
-                'z'
-              ]
+              ['M', 10, 0],
+              ['L', 20, 5],
+              ['L', 10, 10],
+              ['z']
             ]
           }
         ]
@@ -917,40 +488,19 @@ class ArrowDefs {
       {
         id: 21,
         desc: 'Filled dimension arrow',
-        defArea: {
-          width: 10,
-          height: 10
-        },
-        endPt: {
-          x: 10,
-          y: 5
-        },
-        attachPt: {
-          x: 0,
-          y: 5
-        },
+        defArea: { width: 10, height: 10 },
+        endPt: { x: 10, y: 5 },
+        attachPt: { x: 0, y: 5 },
         centered: !1,
         geometry: [
           {
             type: 'PATH',
             filled: !0,
             pathData: [
-              ['M',
-                0,
-                0],
-              [
-                'L',
-                10,
-                5
-              ],
-              [
-                'L',
-                0,
-                10
-              ],
-              [
-                'z'
-              ]
+              ['M', 0, 0],
+              ['L', 10, 5],
+              ['L', 0, 10],
+              ['z']
             ]
           },
           {
@@ -958,14 +508,8 @@ class ArrowDefs {
             filled: !1,
             stroke: 0.5,
             pathData: [
-              ['M',
-                10,
-                0],
-              [
-                'L',
-                10,
-                10
-              ]
+              ['M', 10, 0],
+              ['L', 10, 10]
             ]
           }
         ]
@@ -973,18 +517,9 @@ class ArrowDefs {
       {
         id: 22,
         desc: 'Line dimension arrow',
-        defArea: {
-          width: 10,
-          height: 10
-        },
-        endPt: {
-          x: 10,
-          y: 5
-        },
-        attachPt: {
-          x: 10,
-          y: 5
-        },
+        defArea: { width: 10, height: 10 },
+        endPt: { x: 10, y: 5 },
+        attachPt: { x: 10, y: 5 },
         centered: !1,
         geometry: [
           {
@@ -992,19 +527,9 @@ class ArrowDefs {
             filled: !1,
             stroke: 0.5,
             pathData: [
-              ['M',
-                0,
-                0],
-              [
-                'L',
-                10,
-                5
-              ],
-              [
-                'L',
-                0,
-                10
-              ]
+              ['M', 0, 0],
+              ['L', 10, 5],
+              ['L', 0, 10]
             ]
           },
           {
@@ -1012,14 +537,8 @@ class ArrowDefs {
             filled: !1,
             stroke: 0.5,
             pathData: [
-              ['M',
-                10,
-                0],
-              [
-                'L',
-                10,
-                10
-              ]
+              ['M', 10, 0],
+              ['L', 10, 10]
             ]
           }
         ]
@@ -1027,18 +546,9 @@ class ArrowDefs {
       {
         id: 23,
         desc: 'Dimension line',
-        defArea: {
-          width: 10,
-          height: 10
-        },
-        endPt: {
-          x: 10,
-          y: 5
-        },
-        attachPt: {
-          x: 10,
-          y: 5
-        },
+        defArea: { width: 10, height: 10 },
+        endPt: { x: 10, y: 5 },
+        attachPt: { x: 10, y: 5 },
         centered: !1,
         geometry: [
           {
@@ -1046,14 +556,8 @@ class ArrowDefs {
             filled: !1,
             stroke: 0.5,
             pathData: [
-              ['M',
-                10,
-                0],
-              [
-                'L',
-                10,
-                10
-              ]
+              ['M', 10, 0],
+              ['L', 10, 10]
             ]
           }
         ]
@@ -1061,18 +565,9 @@ class ArrowDefs {
       {
         id: 25,
         desc: 'Arc down',
-        defArea: {
-          width: 10,
-          height: 10
-        },
-        endPt: {
-          x: 10,
-          y: 5
-        },
-        attachPt: {
-          x: 5,
-          y: 5
-        },
+        defArea: { width: 10, height: 10 },
+        endPt: { x: 10, y: 5 },
+        attachPt: { x: 5, y: 5 },
         centered: !1,
         geometry: [
           {
@@ -1080,19 +575,8 @@ class ArrowDefs {
             filled: !1,
             stroke: 1,
             pathData: [
-              ['M',
-                5,
-                5],
-              [
-                'A',
-                5,
-                5,
-                0,
-                0,
-                1,
-                10,
-                10
-              ]
+              ['M', 5, 5],
+              ['A', 5, 5, 0, 0, 1, 10, 10]
             ]
           }
         ],
@@ -1102,19 +586,8 @@ class ArrowDefs {
             filled: !1,
             stroke: 1,
             pathData: [
-              ['M',
-                5,
-                5],
-              [
-                'A',
-                5,
-                5,
-                0,
-                0,
-                0,
-                10,
-                0
-              ]
+              ['M', 5, 5],
+              ['A', 5, 5, 0, 0, 0, 10, 0]
             ]
           }
         ]
@@ -1122,18 +595,9 @@ class ArrowDefs {
       {
         id: 26,
         desc: 'Arc up',
-        defArea: {
-          width: 10,
-          height: 10
-        },
-        endPt: {
-          x: 10,
-          y: 5
-        },
-        attachPt: {
-          x: 5,
-          y: 5
-        },
+        defArea: { width: 10, height: 10 },
+        endPt: { x: 10, y: 5 },
+        attachPt: { x: 5, y: 5 },
         centered: !1,
         geometry: [
           {
@@ -1141,19 +605,8 @@ class ArrowDefs {
             filled: !1,
             stroke: 1,
             pathData: [
-              ['M',
-                5,
-                5],
-              [
-                'A',
-                5,
-                5,
-                0,
-                0,
-                0,
-                10,
-                0
-              ]
+              ['M', 5, 5],
+              ['A', 5, 5, 0, 0, 0, 10, 0]
             ]
           }
         ],
@@ -1163,19 +616,8 @@ class ArrowDefs {
             filled: !1,
             stroke: 1,
             pathData: [
-              ['M',
-                5,
-                5],
-              [
-                'A',
-                5,
-                5,
-                0,
-                0,
-                1,
-                10,
-                10
-              ]
+              ['M', 5, 5],
+              ['A', 5, 5, 0, 0, 1, 10, 10]
             ]
           }
         ]
@@ -1183,18 +625,9 @@ class ArrowDefs {
       {
         id: 27,
         desc: 'Half arrow up',
-        defArea: {
-          width: 10,
-          height: 10
-        },
-        endPt: {
-          x: 10,
-          y: 5
-        },
-        attachPt: {
-          x: 10,
-          y: 5
-        },
+        defArea: { width: 10, height: 10 },
+        endPt: { x: 10, y: 5 },
+        attachPt: { x: 10, y: 5 },
         centered: !1,
         geometry: [
           {
@@ -1202,14 +635,8 @@ class ArrowDefs {
             filled: !1,
             stroke: 0.5,
             pathData: [
-              ['M',
-                0,
-                0],
-              [
-                'L',
-                10,
-                5
-              ]
+              ['M', 0, 0],
+              ['L', 10, 5]
             ]
           }
         ],
@@ -1219,14 +646,8 @@ class ArrowDefs {
             filled: !1,
             stroke: 0.5,
             pathData: [
-              ['M',
-                0,
-                10],
-              [
-                'L',
-                10,
-                5
-              ]
+              ['M', 0, 10],
+              ['L', 10, 5]
             ]
           }
         ]
@@ -1234,18 +655,9 @@ class ArrowDefs {
       {
         id: 28,
         desc: 'Half arrow down',
-        defArea: {
-          width: 10,
-          height: 10
-        },
-        endPt: {
-          x: 10,
-          y: 5
-        },
-        attachPt: {
-          x: 10,
-          y: 5
-        },
+        defArea: { width: 10, height: 10 },
+        endPt: { x: 10, y: 5 },
+        attachPt: { x: 10, y: 5 },
         centered: !1,
         geometry: [
           {
@@ -1253,14 +665,8 @@ class ArrowDefs {
             filled: !1,
             stroke: 0.5,
             pathData: [
-              ['M',
-                0,
-                10],
-              [
-                'L',
-                10,
-                5
-              ]
+              ['M', 0, 10],
+              ['L', 10, 5]
             ]
           }
         ],
@@ -1270,14 +676,8 @@ class ArrowDefs {
             filled: !1,
             stroke: 0.5,
             pathData: [
-              ['M',
-                0,
-                0],
-              [
-                'L',
-                10,
-                5
-              ]
+              ['M', 0, 0],
+              ['L', 10, 5]
             ]
           }
         ]
@@ -1285,18 +685,9 @@ class ArrowDefs {
       {
         id: 29,
         desc: 'Center cross',
-        defArea: {
-          width: 10,
-          height: 10
-        },
-        endPt: {
-          x: 5,
-          y: 5
-        },
-        attachPt: {
-          x: 5,
-          y: 5
-        },
+        defArea: { width: 10, height: 10 },
+        endPt: { x: 5, y: 5 },
+        attachPt: { x: 5, y: 5 },
         centered: !0,
         geometry: [
           {
@@ -1304,24 +695,10 @@ class ArrowDefs {
             filled: !1,
             stroke: 0.5,
             pathData: [
-              ['M',
-                0,
-                0],
-              [
-                'L',
-                10,
-                10
-              ],
-              [
-                'M',
-                0,
-                10
-              ],
-              [
-                'L',
-                10,
-                0
-              ]
+              ['M', 0, 0],
+              ['L', 10, 10],
+              ['M', 0, 10],
+              ['L', 10, 0]
             ]
           }
         ]
@@ -1329,18 +706,9 @@ class ArrowDefs {
       {
         id: 30,
         desc: 'Half line up',
-        defArea: {
-          width: 10,
-          height: 10
-        },
-        endPt: {
-          x: 10,
-          y: 5
-        },
-        attachPt: {
-          x: 10,
-          y: 5
-        },
+        defArea: { width: 10, height: 10 },
+        endPt: { x: 10, y: 5 },
+        attachPt: { x: 10, y: 5 },
         centered: !1,
         geometry: [
           {
@@ -1348,14 +716,8 @@ class ArrowDefs {
             filled: !1,
             stroke: 0.5,
             pathData: [
-              ['M',
-                10,
-                5],
-              [
-                'L',
-                10,
-                0
-              ]
+              ['M', 10, 5],
+              ['L', 10, 0]
             ]
           }
         ],
@@ -1365,14 +727,8 @@ class ArrowDefs {
             filled: !1,
             stroke: 0.5,
             pathData: [
-              ['M',
-                10,
-                5],
-              [
-                'L',
-                10,
-                10
-              ]
+              ['M', 10, 5],
+              ['L', 10, 10]
             ]
           }
         ]
@@ -1380,18 +736,9 @@ class ArrowDefs {
       {
         id: 31,
         desc: 'Half line down',
-        defArea: {
-          width: 10,
-          height: 10
-        },
-        endPt: {
-          x: 10,
-          y: 5
-        },
-        attachPt: {
-          x: 10,
-          y: 5
-        },
+        defArea: { width: 10, height: 10 },
+        endPt: { x: 10, y: 5 },
+        attachPt: { x: 10, y: 5 },
         centered: !1,
         geometry: [
           {
@@ -1399,14 +746,8 @@ class ArrowDefs {
             filled: !1,
             stroke: 0.5,
             pathData: [
-              ['M',
-                10,
-                5],
-              [
-                'L',
-                10,
-                10
-              ]
+              ['M', 10, 5],
+              ['L', 10, 10]
             ]
           }
         ],
@@ -1416,14 +757,8 @@ class ArrowDefs {
             filled: !1,
             stroke: 0.5,
             pathData: [
-              ['M',
-                10,
-                5],
-              [
-                'L',
-                10,
-                0
-              ]
+              ['M', 10, 5],
+              ['L', 10, 0]
             ]
           }
         ]
@@ -1431,18 +766,9 @@ class ArrowDefs {
       {
         id: 32,
         desc: 'Slash',
-        defArea: {
-          width: 10,
-          height: 10
-        },
-        endPt: {
-          x: 5,
-          y: 5
-        },
-        attachPt: {
-          x: 5,
-          y: 5
-        },
+        defArea: { width: 10, height: 10 },
+        endPt: { x: 5, y: 5 },
+        attachPt: { x: 5, y: 5 },
         centered: !1,
         geometry: [
           {
@@ -1450,14 +776,8 @@ class ArrowDefs {
             filled: !1,
             stroke: 0.5,
             pathData: [
-              ['M',
-                0,
-                10],
-              [
-                'L',
-                10,
-                0
-              ]
+              ['M', 0, 10],
+              ['L', 10, 0]
             ]
           }
         ]
@@ -1465,18 +785,9 @@ class ArrowDefs {
       {
         id: 33,
         desc: 'Unfilled arrow',
-        defArea: {
-          width: 10,
-          height: 10
-        },
-        endPt: {
-          x: 10,
-          y: 5
-        },
-        attachPt: {
-          x: 0,
-          y: 5
-        },
+        defArea: { width: 10, height: 10 },
+        endPt: { x: 10, y: 5 },
+        attachPt: { x: 0, y: 5 },
         centered: !1,
         geometry: [
           {
@@ -1484,22 +795,10 @@ class ArrowDefs {
             filled: !1,
             stroke: 0.5,
             pathData: [
-              ['M',
-                0,
-                0],
-              [
-                'L',
-                10,
-                5
-              ],
-              [
-                'L',
-                0,
-                10
-              ],
-              [
-                'z'
-              ]
+              ['M', 0, 0],
+              ['L', 10, 5],
+              ['L', 0, 10],
+              ['z']
             ]
           }
         ]
@@ -1507,18 +806,9 @@ class ArrowDefs {
       {
         id: 34,
         desc: 'Unfilled crows foot',
-        defArea: {
-          width: 10,
-          height: 10
-        },
-        endPt: {
-          x: 10,
-          y: 5
-        },
-        attachPt: {
-          x: 0,
-          y: 5
-        },
+        defArea: { width: 10, height: 10 },
+        endPt: { x: 10, y: 5 },
+        attachPt: { x: 0, y: 5 },
         centered: !1,
         geometry: [
           {
@@ -1526,22 +816,10 @@ class ArrowDefs {
             filled: !1,
             stroke: 0.5,
             pathData: [
-              ['M',
-                0,
-                5],
-              [
-                'L',
-                10,
-                0
-              ],
-              [
-                'L',
-                10,
-                10
-              ],
-              [
-                'z'
-              ]
+              ['M', 0, 5],
+              ['L', 10, 0],
+              ['L', 10, 10],
+              ['z']
             ]
           }
         ]
@@ -1549,18 +827,9 @@ class ArrowDefs {
       {
         id: 35,
         desc: 'Unfilled diamond',
-        defArea: {
-          width: 20,
-          height: 10
-        },
-        endPt: {
-          x: 20,
-          y: 5
-        },
-        attachPt: {
-          x: 0,
-          y: 5
-        },
+        defArea: { width: 20, height: 10 },
+        endPt: { x: 20, y: 5 },
+        attachPt: { x: 0, y: 5 },
         centered: !1,
         geometry: [
           {
@@ -1568,27 +837,11 @@ class ArrowDefs {
             filled: !1,
             stroke: 0.5,
             pathData: [
-              ['M',
-                0,
-                5],
-              [
-                'L',
-                10,
-                0
-              ],
-              [
-                'L',
-                20,
-                5
-              ],
-              [
-                'L',
-                10,
-                10
-              ],
-              [
-                'z'
-              ]
+              ['M', 0, 5],
+              ['L', 10, 0],
+              ['L', 20, 5],
+              ['L', 10, 10],
+              ['z']
             ]
           }
         ]
@@ -1596,18 +849,9 @@ class ArrowDefs {
       {
         id: 36,
         desc: 'Single line cross',
-        defArea: {
-          width: 10,
-          height: 10
-        },
-        endPt: {
-          x: 10,
-          y: 5
-        },
-        attachPt: {
-          x: 10,
-          y: 5
-        },
+        defArea: { width: 10, height: 10 },
+        endPt: { x: 10, y: 5 },
+        attachPt: { x: 10, y: 5 },
         centered: !1,
         geometry: [
           {
@@ -1615,14 +859,8 @@ class ArrowDefs {
             filled: !1,
             stroke: 0.5,
             pathData: [
-              ['M',
-                0,
-                0],
-              [
-                'L',
-                0,
-                10
-              ]
+              ['M', 0, 0],
+              ['L', 0, 10]
             ]
           }
         ]
@@ -1630,40 +868,19 @@ class ArrowDefs {
       {
         id: 37,
         desc: 'down indicator',
-        defArea: {
-          width: 10,
-          height: 10
-        },
-        endPt: {
-          x: 10,
-          y: 5
-        },
-        attachPt: {
-          x: 10,
-          y: 5
-        },
+        defArea: { width: 10, height: 10 },
+        endPt: { x: 10, y: 5 },
+        attachPt: { x: 10, y: 5 },
         centered: !1,
         geometry: [
           {
             type: 'PATH',
             filled: !0,
             pathData: [
-              ['M',
-                10,
-                5],
-              [
-                'L',
-                10,
-                10
-              ],
-              [
-                'L',
-                5,
-                5
-              ],
-              [
-                'z'
-              ]
+              ['M', 10, 5],
+              ['L', 10, 10],
+              ['L', 5, 5],
+              ['z']
             ]
           }
         ],
@@ -1672,22 +889,10 @@ class ArrowDefs {
             type: 'PATH',
             filled: !0,
             pathData: [
-              ['M',
-                10,
-                5],
-              [
-                'L',
-                10,
-                0
-              ],
-              [
-                'L',
-                5,
-                5
-              ],
-              [
-                'z'
-              ]
+              ['M', 10, 5],
+              ['L', 10, 0],
+              ['L', 5, 5],
+              ['z']
             ]
           }
         ]
@@ -1695,40 +900,19 @@ class ArrowDefs {
       {
         id: 38,
         desc: 'up indicator',
-        defArea: {
-          width: 10,
-          height: 10
-        },
-        endPt: {
-          x: 10,
-          y: 5
-        },
-        attachPt: {
-          x: 10,
-          y: 5
-        },
+        defArea: { width: 10, height: 10 },
+        endPt: { x: 10, y: 5 },
+        attachPt: { x: 10, y: 5 },
         centered: !1,
         geometry: [
           {
             type: 'PATH',
             filled: !0,
             pathData: [
-              ['M',
-                10,
-                5],
-              [
-                'L',
-                10,
-                0
-              ],
-              [
-                'L',
-                5,
-                5
-              ],
-              [
-                'z'
-              ]
+              ['M', 10, 5],
+              ['L', 10, 0],
+              ['L', 5, 5],
+              ['z']
             ]
           }
         ],
@@ -1737,22 +921,10 @@ class ArrowDefs {
             type: 'PATH',
             filled: !0,
             pathData: [
-              ['M',
-                10,
-                5],
-              [
-                'L',
-                10,
-                10
-              ],
-              [
-                'L',
-                5,
-                5
-              ],
-              [
-                'z'
-              ]
+              ['M', 10, 5],
+              ['L', 10, 10],
+              ['L', 5, 5],
+              ['z']
             ]
           }
         ]
@@ -1760,18 +932,9 @@ class ArrowDefs {
       {
         id: 39,
         desc: 'round end',
-        defArea: {
-          width: 10,
-          height: 10
-        },
-        endPt: {
-          x: 10,
-          y: 5
-        },
-        attachPt: {
-          x: 5,
-          y: 5
-        },
+        defArea: { width: 10, height: 10 },
+        endPt: { x: 10, y: 5 },
+        attachPt: { x: 5, y: 5 },
         centered: !1,
         fixedSizeScale: 1,
         geometry: [

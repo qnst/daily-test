@@ -21,17 +21,4 @@ class DefaultRuntimeText {
 
 export default DefaultRuntimeText
 
-// static DefaultRuntimeText = () => {
-//
-//   return {
-//     text: '',
-//     charStyles: [],
-//     styleRuns: [],
-//     styles: [
-//       Formatter.DefaultStyle()
-//     ],
-//     hyperlinks: []
-//   }
-// }
-
 

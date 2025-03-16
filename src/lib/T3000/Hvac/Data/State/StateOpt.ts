@@ -2,9 +2,10 @@
 import BaseStateOpt from './BaseStateOpt'
 import T3Gv from '../T3Gv'
 import Globals from '../Globals'
-import Utils1 from '../../Helper/Utils1'
+import Utils1 from '../../Util/Utils1'
 import State from './State'
 import $ from 'jquery'
+import StateConstant from './StateConstant'
 
 class StateOpt extends BaseStateOpt {
 
@@ -35,7 +36,7 @@ class StateOpt extends BaseStateOpt {
    * // Operation Types: CREATE: 1, UPDATE: 2, DELETE: 3
    */
   SyncObjectsWithCreateStates() {
-    const globalStateOperation = Globals.StateOperationType;
+    const globalStateOperation = StateConstant.StateOperationType;
     const cloneBlock = Utils1.CloneBlock;
     const currentState = this.States[this.CurrentStateID];
     const totalStoredObjects = currentState.StoredObjects.length;
@@ -105,7 +106,7 @@ class StateOpt extends BaseStateOpt {
    * Handles different operation types (CREATE, UPDATE, DELETE) appropriately
    */
   RestoreObjectStoreFromState() {
-    const operationTypes = Globals.StateOperationType;
+    const operationTypes = StateConstant.StateOperationType;
     const cloneBlock = Utils1.CloneBlock;
 
     try {
@@ -168,7 +169,7 @@ class StateOpt extends BaseStateOpt {
    */
   AddToCurrentState(newObject) {
     const StateClass = State;
-    const operationTypes = Globals.StateOperationType;
+    const operationTypes = StateConstant.StateOperationType;
     let createNewState = true;
     const currentState = this.GetCurrentState();
     let newState = null;

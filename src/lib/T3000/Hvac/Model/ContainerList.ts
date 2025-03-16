@@ -1,5 +1,5 @@
 
-import ConstantData from "../Data/Constant/ConstantData"
+import NvConstant from "../Data/Constant/NvConstant"
 
 class ContainerList {
 
@@ -21,7 +21,7 @@ class ContainerList {
   public List: any[];
 
   constructor() {
-    this.Arrangement = ConstantData.ContainerListArrangements.Column;
+    this.Arrangement = NvConstant.ContainerListArrangements.Column;
     this.HorizontalSpacing = 10;
     this.VerticalSpacing = 10;
     this.AlignH = 'center';

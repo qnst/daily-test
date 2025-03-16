@@ -19,9 +19,3 @@ class ArrowheadRecord {
 }
 
 export default ArrowheadRecord
-
-//   this.StartArrowID = 0,
-//     this.StartArrowDisp = !1,
-//     this.EndArrowID = 0,
-//     this.EndArrowDisp = !1,
-//     this.ArrowSizeIndex = 1

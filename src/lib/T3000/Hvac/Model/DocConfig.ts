@@ -6,7 +6,7 @@ class DocConfig {
   public enableSnap: boolean = true;
   public centerSnap: boolean = true;
   public zoom: boolean = true;
-  public zoomLevels: boolean = true;
+  public zoomLevels: any;
   public scale: boolean = true;
   public showPageDivider: boolean = true;
   public spellCheck: boolean = true;

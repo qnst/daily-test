@@ -1,8 +1,7 @@
 
 import { Type } from 'class-transformer'
 import 'reflect-metadata'
-
-import ConstantData from "../Data/Constant/ConstantData"
+import NvConstant from "../Data/Constant/NvConstant"
 import QuickStyle from "./QuickStyle"
 
 class SEDGraphDefault {
@@ -54,12 +53,12 @@ class SEDGraphDefault {
   public pointLabelStyle: QuickStyle;
 
   constructor() {
-    this.type = ConstantData.GraphType.SDGRAPH_TYPE_BAR;
-    this.flags = ConstantData.GraphFlags.SDAX_SEQUENCE_BY_CATEGORY;
+    this.type = NvConstant.GraphType.SDGRAPH_TYPE_BAR;
+    this.flags = NvConstant.GraphFlags.SDAX_SEQUENCE_BY_CATEGORY;
     this.pointflags = 0;
-    this.catAxisflags = ConstantData.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | ConstantData.AxisFlags.SDAX_HIDE_MINOR_TICKS;
-    this.magAxisflags = ConstantData.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR;
-    this.legendType = ConstantData.LegendType.SDAX_LEGEND_FULL;
+    this.catAxisflags = NvConstant.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | NvConstant.AxisFlags.SDAX_HIDE_MINOR_TICKS;
+    this.magAxisflags = NvConstant.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR;
+    this.legendType = NvConstant.LegendType.SDAX_LEGEND_FULL;
     this.legendlayoutflags = 0;
     this.imagevaluerep = - 1;
     this.quadrant = 0;

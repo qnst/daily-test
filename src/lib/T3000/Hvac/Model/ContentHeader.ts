@@ -1,13 +1,14 @@
 
 import { Type } from 'class-transformer'
 import 'reflect-metadata'
-
 import PageRecord from './PageRecord'
 import Point from './Point';
-import ConstantData from '../Data/Constant/ConstantData'
+import NvConstant from '../Data/Constant/NvConstant'
 import DefaultStyle from './DefaultStyle'
 import FontRecord from './FontRecord'
 import LibList from './LibList'
+import T3Constant from '../Data/Constant/T3Constant'
+import OptConstant from '../Data/Constant/OptConstant';
 
 class ContentHeader {
 
@@ -39,7 +40,7 @@ class ContentHeader {
 
   public ClipboardBuffer: any;
   public ClipboardType: any;
-  public nonworkingdays: number;
+  // public nonworkingdays: number;
   public holidaymask: number;
   public DocIsDirty: boolean;
   public AllowReplace: boolean;
@@ -56,11 +57,11 @@ class ContentHeader {
     this.Page = new PageRecord();
 
     // 320000
-    this.MaxWorkDim = new Point(ConstantData.Defines.MaxWorkDimX, ConstantData.Defines.MaxWorkDimY);
+    this.MaxWorkDim = new Point(OptConstant.Defines.MaxWorkDimX, OptConstant.Defines.MaxWorkDimY);
 
     this.DimensionFont = new FontRecord();
     this.DimensionFontStyle = new DefaultStyle();
-    this.flags = ConstantData.ContentHeaderFlags.CT_DA_Pages;
+    this.flags = OptConstant.ContentHeaderFlags.CT_DA_Pages;
     this.BusinessModule = '';
     this.dateformat = - 1;
     this.originaltemplate = '';
@@ -72,8 +73,7 @@ class ContentHeader {
     this.defaultlibs = '';
     this.lp_list = new LibList();
     this.ClipboardBuffer = null;
-    this.ClipboardType = ConstantData.ClipboardType.None;
-    this.nonworkingdays = ConstantData.Defines.DEFAULT_NONWORKINGDAYS;
+    this.ClipboardType = T3Constant.ClipboardType.None;
     this.holidaymask = 0;
     this.DocIsDirty = !1;
     this.AllowReplace = !0;

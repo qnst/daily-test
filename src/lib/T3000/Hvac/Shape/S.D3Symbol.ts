@@ -2,31 +2,32 @@
 
 import BaseSymbol from '../Basic/B.Symbol';
 import T3Gv from '../Data/T3Gv'
-import ConstantData from '../Data/Constant/ConstantData'
-import ConstantData2 from '../Data/Constant/ConstantData2';
+import NvConstant from '../Data/Constant/NvConstant'
 import Instance from '../Data/Instance/Instance';
-import ShapeDataUtil from '../Util/ShapeDataUtil';
-import ShapeConstant from '../Util/ShapeConstant';
+import ShapeUtil from '../Opt/Shape/ShapeUtil';
+import ShapeConstant from '../Opt/DS/DSConstant';
+import OptConstant from '../Data/Constant/OptConstant';
+import T3Util from '../Util/T3Util';
 
 class D3Symbol extends BaseSymbol {
 
   constructor(options) {
     options = options || {};
-    console.log("S.D3Symbol: Input options:", options);
+    T3Util.Log("S.D3Symbol: Input options:", options);
 
-    options.ShapeType = ConstantData.ShapeType.D3SYMBOL;
-    options.objecttype = ConstantData.ObjectTypes.SD_OBJT_D3SYMBOL;
-    options.TextFlags = options.TextFlags || ConstantData.TextFlags.SED_TF_AttachB;
+    options.ShapeType = OptConstant.ShapeType.D3SYMBOL;
+    options.objecttype = NvConstant.ObjectTypes.SD_OBJT_D3SYMBOL;
+    options.TextFlags = options.TextFlags || NvConstant.TextFlags.SED_TF_AttachB;
 
     super();
 
     this.SetD3Settings(options.d3Settings);
 
-    console.log("S.D3Symbol: Output options after initialization:", options);
+    T3Util.Log("S.D3Symbol: Output options after initialization:", options);
   }
 
   static DefaultD3Settings(inputSettings) {
-    console.log("S.D3Symbol: Input settings:", inputSettings);
+    T3Util.Log("S.D3Symbol: Input settings:", inputSettings);
 
     let defaultSettings = {
       moduleID: null,
@@ -38,7 +39,7 @@ class D3Symbol extends BaseSymbol {
       defaultSettings = $.extend(true, defaultSettings, inputSettings);
     }
 
-    console.log("S.D3Symbol: Output settings:", defaultSettings);
+    T3Util.Log("S.D3Symbol: Output settings:", defaultSettings);
     return defaultSettings;
   }
 
@@ -50,38 +51,38 @@ class D3Symbol extends BaseSymbol {
   ]
 
   CreateShape(svgDocument, applyHiddenEventBehavior) {
-    console.log("S.D3Symbol: Enter CreateShape with parameters:", { svgDocument, applyHiddenEventBehavior });
+    T3Util.Log("S.D3Symbol: Enter CreateShape with parameters:", { svgDocument, applyHiddenEventBehavior });
 
-    if (this.flags & ConstantData.ObjFlags.SEDO_NotVisible) {
-      console.log("S.D3Symbol: Object not visible, exiting CreateShape.");
+    if (this.flags & NvConstant.ObjFlags.SEDO_NotVisible) {
+      T3Util.Log("S.D3Symbol: Object not visible, exiting CreateShape.");
       return null;
     }
 
-    const shapeContainer = svgDocument.CreateShape(ConstantData.CreateShapeType.SHAPECONTAINER);
+    const shapeContainer = svgDocument.CreateShape(OptConstant.CSType.SHAPECONTAINER);
     const frame = this.Frame;
 
-    this.TextFlags = ConstantData.TextFlags.SED_TF_AttachB;
+    this.TextFlags = NvConstant.TextFlags.SED_TF_AttachB;
     shapeContainer.SetSize(frame.width, frame.height);
     shapeContainer.SetPos(frame.x, frame.y);
     shapeContainer.isShape = true;
 
-    const groupShape = svgDocument.CreateShape(ConstantData.CreateShapeType.GROUP);
+    const groupShape = svgDocument.CreateShape(OptConstant.CSType.GROUP);
     groupShape.SetSize(frame.width, frame.height);
-    groupShape.SetID(ConstantData.SVGElementClass.SHAPE);
+    groupShape.SetID(OptConstant.SVGElementClass.SHAPE);
 
-    const transparentRect = svgDocument.CreateShape(ConstantData.CreateShapeType.RECT);
+    const transparentRect = svgDocument.CreateShape(OptConstant.CSType.RECT);
     transparentRect.SetStrokeColor('white');
     transparentRect.SetFillColor('none');
     transparentRect.SetOpacity(0);
     transparentRect.SetStrokeWidth(0);
 
     if (applyHiddenEventBehavior) {
-      transparentRect.SetEventBehavior(ConstantData2.EventBehavior.HIDDEN_ALL);
+      transparentRect.SetEventBehavior(OptConstant.EventBehavior.HIDDEN_ALL);
     } else {
-      transparentRect.SetEventBehavior(ConstantData2.EventBehavior.NONE);
+      transparentRect.SetEventBehavior(OptConstant.EventBehavior.NONE);
     }
 
-    transparentRect.SetID(ConstantData.SVGElementClass.SLOP);
+    transparentRect.SetID(OptConstant.SVGElementClass.SLOP);
     transparentRect.ExcludeFromExport(true);
     transparentRect.SetSize(frame.width, frame.height);
 
@@ -94,8 +95,8 @@ class D3Symbol extends BaseSymbol {
       this.LM_AddSVGTextObject(svgDocument, shapeContainer);
     }
 
-    const flipHorizontally = (this.extraflags & ConstantData.ExtraFlags.SEDE_FlipHoriz) > 0;
-    const flipVertically = (this.extraflags & ConstantData.ExtraFlags.SEDE_FlipVert) > 0;
+    const flipHorizontally = (this.extraflags & OptConstant.ExtraFlags.SEDE_FlipHoriz) > 0;
+    const flipVertically = (this.extraflags & OptConstant.ExtraFlags.SEDE_FlipVert) > 0;
 
     if (flipHorizontally) {
       groupShape.SetMirror(flipHorizontally);
@@ -109,17 +110,17 @@ class D3Symbol extends BaseSymbol {
       this.SetEffects(groupShape, false, false);
     }
 
-    console.log("S.D3Symbol: Exit CreateShape with shapeContainer:", shapeContainer);
+    T3Util.Log("S.D3Symbol: Exit CreateShape with shapeContainer:", shapeContainer);
     return shapeContainer;
   }
 
   RenderControl(svgDocument, shapeContainer) {
-    console.log("S.D3Symbol: RenderControl start. Input parameters:", { svgDocument, shapeContainer });
+    T3Util.Log("S.D3Symbol: RenderControl start. Input parameters:", { svgDocument, shapeContainer });
 
     const frame = this.Frame;
     const renderParams = this.GetRenderParams();
-    const shapeElement = shapeContainer.GetElementByID(ConstantData.SVGElementClass.SHAPE);
-    const slopElement = shapeContainer.GetElementByID(ConstantData.SVGElementClass.SLOP);
+    const shapeElement = shapeContainer.GetElementByID(OptConstant.SVGElementClass.SHAPE);
+    const slopElement = shapeContainer.GetElementByID(OptConstant.SVGElementClass.SLOP);
     const codeLibrary = this.LoadCodeLibrary();
 
     if (slopElement) {
@@ -133,18 +134,18 @@ class D3Symbol extends BaseSymbol {
       }
     }
 
-    console.log("S.D3Symbol: RenderControl completed.");
+    T3Util.Log("S.D3Symbol: RenderControl completed.");
   }
 
   LoadCodeLibrary() {
-    console.log("S.D3Symbol: LoadCodeLibrary called with d3Settings:", this.d3Settings);
+    T3Util.Log("S.D3Symbol: LoadCodeLibrary called with d3Settings:", this.d3Settings);
 
     // Retrieve d3Settings and moduleID
     const d3Settings = this.d3Settings;
     const moduleID = d3Settings ? d3Settings.moduleID : null;
 
     if (!moduleID) {
-      console.log("S.D3Symbol: LoadCodeLibrary output - moduleID is null. Returning null.");
+      T3Util.Log("S.D3Symbol: LoadCodeLibrary output - moduleID is null. Returning null.");
       return null;
     }
 
@@ -169,19 +170,19 @@ class D3Symbol extends BaseSymbol {
       : false;
 
     this.bMultiDataRecsAllowed = allowsFullDataTable;
-    this.ObjGrow = proportionalResize ? ConstantData.GrowBehavior.PROPORTIONAL : ConstantData.GrowBehavior.ALL;
+    this.ObjGrow = proportionalResize ? OptConstant.GrowBehavior.PROPORTIONAL : OptConstant.GrowBehavior.ALL;
     this.ResizeAspectConstrain = proportionalResize === true;
 
-    console.log("S.D3Symbol: LoadCodeLibrary output - Loaded codeLibrary:", codeLibrary);
+    T3Util.Log("S.D3Symbol: LoadCodeLibrary output - Loaded codeLibrary:", codeLibrary);
     return codeLibrary;
   }
 
   MapData(mappedData: any): void {
-    console.log("S.D3Symbol: MapData - Input:", mappedData);
+    T3Util.Log("S.D3Symbol: MapData - Input:", mappedData);
 
     const publicParams = this.GetPublicParams();
     if (!mappedData || publicParams.length === 0 || !this.HasFieldData()) {
-      console.log("S.D3Symbol: MapData - No mapping performed (missing data, public params or field data).");
+      T3Util.Log("S.D3Symbol: MapData - No mapping performed (missing data, public params or field data).");
       return;
     }
 
@@ -248,18 +249,18 @@ class D3Symbol extends BaseSymbol {
       return foundIndex;
     };
 
-    // Retrieve the field data table
-    const fieldDataTable = TODO.SDData.GetFieldedDataTable(this.fieldDataTableID);
-    if (!fieldDataTable) {
-      console.log("S.D3Symbol: MapData - No field data table found.");
-      return;
-    }
+    // // Retrieve the field data table
+    // const fieldDataTable = TODO.SDData.GetFieldedDataTable(this.fieldDataTableID);
+    // if (!fieldDataTable) {
+    //   T3Util.Log("S.D3Symbol: MapData - No field data table found.");
+    //   return;
+    // }
 
     // Collect element IDs from fieldDataTable rows (starting from index 3)
     const elementIDs: any[] = [];
-    for (let row = 3; row < fieldDataTable.Rows.length; row++) {
-      elementIDs.push(fieldDataTable.Rows[row].ID);
-    }
+    // for (let row = 3; row < fieldDataTable.Rows.length; row++) {
+    //   elementIDs.push(fieldDataTable.Rows[row].ID);
+    // }
 
     // Loop through each public parameter and map data if possible.
     publicParams.forEach((paramName: string) => {
@@ -330,11 +331,11 @@ class D3Symbol extends BaseSymbol {
       }
     });
 
-    console.log("S.D3Symbol: MapData - Output (mapped data updated in object).");
+    T3Util.Log("S.D3Symbol: MapData - Output (mapped data updated in object).");
   }
 
   SetParamValue(paramName, paramValue) {
-    console.log("S.D3Symbol: SetParamValue - Input:", { paramName, paramValue });
+    T3Util.Log("S.D3Symbol: SetParamValue - Input:", { paramName, paramValue });
 
     const renderSettings = this.d3Settings ? this.d3Settings.renderSettings : null;
     if (renderSettings && renderSettings[paramName]) {
@@ -345,11 +346,11 @@ class D3Symbol extends BaseSymbol {
       T3Gv.opt.AddToDirtyList(this.BlockID);
     }
 
-    console.log("S.D3Symbol: SetParamValue - Updated renderSettings:", renderSettings);
+    T3Util.Log("S.D3Symbol: SetParamValue - Updated renderSettings:", renderSettings);
   }
 
   UpdateSizeFromSettings() {
-    console.log("S.D3Symbol: UpdateSizeFromSettings - Start");
+    T3Util.Log("S.D3Symbol: UpdateSizeFromSettings - Start");
 
     const renderParams = this.GetRenderParams();
     const codeLibrary = this.LoadCodeLibrary();
@@ -370,14 +371,14 @@ class D3Symbol extends BaseSymbol {
         T3Gv.opt.AddToDirtyList(this.BlockID);
       }
 
-      console.log("S.D3Symbol: UpdateSizeFromSettings - New size:", newSize);
+      T3Util.Log("S.D3Symbol: UpdateSizeFromSettings - New size:", newSize);
     }
 
-    console.log("S.D3Symbol: UpdateSizeFromSettings - End");
+    T3Util.Log("S.D3Symbol: UpdateSizeFromSettings - End");
   }
 
   GetRenderParams() {
-    console.log("S.D3Symbol: GetRenderParams - Start");
+    T3Util.Log("S.D3Symbol: GetRenderParams - Start");
 
     const frame = this.Frame;
     const renderSettings = this.d3Settings ? this.d3Settings.renderSettings : null;
@@ -399,17 +400,17 @@ class D3Symbol extends BaseSymbol {
         let linePaintColor = this.StyleRecord.Line.Paint.Color;
         let textPaintColor = this.StyleRecord.Text.Paint.Color;
 
-        if (this.StyleRecord.Fill.Paint.FillType === ConstantData.FillTypes.SDFILL_TRANSPARENT) {
+        if (this.StyleRecord.Fill.Paint.FillType === NvConstant.FillTypes.SDFILL_TRANSPARENT) {
           fillPaintColor = 'none';
-        } else if (this.StyleRecord.Fill.Paint.FillType !== ConstantData.FillTypes.SDFILL_SOLID &&
-          this.StyleRecord.Fill.Paint.FillType !== ConstantData.FillTypes.SDFILL_GRADIENT) {
+        } else if (this.StyleRecord.Fill.Paint.FillType !== NvConstant.FillTypes.SDFILL_SOLID &&
+          this.StyleRecord.Fill.Paint.FillType !== NvConstant.FillTypes.SDFILL_GRADIENT) {
           fillPaintColor = null;
         }
 
-        if (this.StyleRecord.Line.Paint.FillType === ConstantData.FillTypes.SDFILL_TRANSPARENT) {
+        if (this.StyleRecord.Line.Paint.FillType === NvConstant.FillTypes.SDFILL_TRANSPARENT) {
           linePaintColor = 'none';
-        } else if (this.StyleRecord.Line.Paint.FillType !== ConstantData.FillTypes.SDFILL_SOLID &&
-          this.StyleRecord.Line.Paint.FillType !== ConstantData.FillTypes.SDFILL_GRADIENT) {
+        } else if (this.StyleRecord.Line.Paint.FillType !== NvConstant.FillTypes.SDFILL_SOLID &&
+          this.StyleRecord.Line.Paint.FillType !== NvConstant.FillTypes.SDFILL_GRADIENT) {
           linePaintColor = null;
         }
 
@@ -448,16 +449,16 @@ class D3Symbol extends BaseSymbol {
       applyFieldDataStyleOverride(params);
       this.MapData(params);
 
-      console.log("S.D3Symbol: GetRenderParams - Output:", params);
+      T3Util.Log("S.D3Symbol: GetRenderParams - Output:", params);
       return params;
     }
 
-    console.log("S.D3Symbol: GetRenderParams - No renderSettings found.");
+    T3Util.Log("S.D3Symbol: GetRenderParams - No renderSettings found.");
     return null;
   }
 
   SetDataMap(paramName, dataMap) {
-    console.log("S.D3Symbol: SetDataMap - Input:", { paramName, dataMap });
+    T3Util.Log("S.D3Symbol: SetDataMap - Input:", { paramName, dataMap });
 
     const renderSettings = this.d3Settings ? this.d3Settings.renderSettings : null;
     if (renderSettings && renderSettings[paramName]) {
@@ -467,17 +468,17 @@ class D3Symbol extends BaseSymbol {
       T3Gv.opt.AddToDirtyList(this.BlockID);
     }
 
-    console.log("S.D3Symbol: SetDataMap - Updated renderSettings:", renderSettings);
+    T3Util.Log("S.D3Symbol: SetDataMap - Updated renderSettings:", renderSettings);
   }
 
   GetPublicParams() {
-    console.log("S.D3Symbol: GetPublicParams - Start");
+    T3Util.Log("S.D3Symbol: GetPublicParams - Start");
 
     const publicAttributes = this.d3Settings ? this.d3Settings.publicAttributes : null;
     const result = [];
 
     if (!publicAttributes) {
-      console.log("S.D3Symbol: GetPublicParams - No public attributes found.");
+      T3Util.Log("S.D3Symbol: GetPublicParams - No public attributes found.");
       return result;
     }
 
@@ -487,24 +488,24 @@ class D3Symbol extends BaseSymbol {
       }
     });
 
-    console.log("S.D3Symbol: GetPublicParams - Output:", result);
+    T3Util.Log("S.D3Symbol: GetPublicParams - Output:", result);
     return result;
   }
 
   ExportD3Settings() {
-    console.log("S.D3Symbol: ExportD3Settings - Start");
+    T3Util.Log("S.D3Symbol: ExportD3Settings - Start");
 
     let settingsString = '';
     if (this.d3Settings) {
       settingsString = JSON.stringify(this.d3Settings);
     }
 
-    console.log("S.D3Symbol: ExportD3Settings - Output:", settingsString);
+    T3Util.Log("S.D3Symbol: ExportD3Settings - Output:", settingsString);
     return settingsString;
   }
 
   ImportD3Settings(settingsString) {
-    console.log("S.D3Symbol: ImportD3Settings - Input:", settingsString);
+    T3Util.Log("S.D3Symbol: ImportD3Settings - Input:", settingsString);
 
     let parsedSettings = null;
     try {
@@ -518,11 +519,11 @@ class D3Symbol extends BaseSymbol {
       this.SetD3Settings(parsedSettings);
     }
 
-    console.log("S.D3Symbol: ImportD3Settings - Output settings applied.");
+    T3Util.Log("S.D3Symbol: ImportD3Settings - Output settings applied.");
   }
 
   SetD3Settings(settings) {
-    console.log("S.D3Symbol: SetD3Settings - Input settings:", settings);
+    T3Util.Log("S.D3Symbol: SetD3Settings - Input settings:", settings);
 
     this.d3Settings = D3Symbol.DefaultD3Settings(settings);
     const codeLibrary = this.LoadCodeLibrary();
@@ -532,26 +533,26 @@ class D3Symbol extends BaseSymbol {
       this.d3Settings = $.extend(true, this.d3Settings, renderParams);
     }
 
-    console.log("S.D3Symbol: SetD3Settings - Output d3Settings:", this.d3Settings);
+    T3Util.Log("S.D3Symbol: SetD3Settings - Output d3Settings:", this.d3Settings);
   }
 
   WriteShapeData(outputStream, options) {
-    console.log("S.D3Symbol: WriteShapeData - Input:", { outputStream, options });
+    T3Util.Log("S.D3Symbol: WriteShapeData - Input:", { outputStream, options });
 
     Instance.Shape.BaseSymbol.prototype.WriteShapeData.call(this, outputStream, options);
 
     if (this.d3Settings) {
       const d3SettingsString = this.ExportD3Settings();
       if (d3SettingsString) {
-        ShapeDataUtil.WriteString(outputStream, d3SettingsString, ShapeConstant.OpNameCode.cD3Settings, options);
+        ShapeUtil.WriteString(outputStream, d3SettingsString, ShapeConstant.OpNameCode.cD3Settings, options);
       }
     }
 
-    console.log("S.D3Symbol: WriteShapeData - Completed");
+    T3Util.Log("S.D3Symbol: WriteShapeData - Completed");
   }
 
   Resize(svgElement, newSize, additionalParams) {
-    console.log("S.D3Symbol: Resize - Input parameters:", { svgElement, newSize, additionalParams });
+    T3Util.Log("S.D3Symbol: Resize - Input parameters:", { svgElement, newSize, additionalParams });
 
     if (svgElement == null) {
       return null;
@@ -586,12 +587,12 @@ class D3Symbol extends BaseSymbol {
     const result = Instance.Shape.BaseShape.prototype.Resize.call(this, svgElement, newSize, additionalParams);
     this.RenderControl(T3Gv.opt.svgDoc, svgElement);
 
-    console.log("S.D3Symbol: Resize - Output result:", result);
+    T3Util.Log("S.D3Symbol: Resize - Output result:", result);
     return result;
   }
 
   ChangeTextAttributes(newText, newFont, newSize, newColor, newAlignment, newWeight, newStyle, newDecoration) {
-    console.log("S.D3Symbol: ChangeTextAttributes - Input:", { newText, newFont, newSize, newColor, newAlignment, newWeight, newStyle, newDecoration });
+    T3Util.Log("S.D3Symbol: ChangeTextAttributes - Input:", { newText, newFont, newSize, newColor, newAlignment, newWeight, newStyle, newDecoration });
 
     if (T3Gv.opt.GetActiveTextEdit() === this.BlockID) {
       newFont = null;
@@ -602,11 +603,11 @@ class D3Symbol extends BaseSymbol {
     Instance.Shape.BaseDrawingObject.prototype.ChangeTextAttributes.call(this, newText, newFont, newSize, newColor, newAlignment, newWeight, newStyle, newDecoration);
     T3Gv.opt.AddToDirtyList(this.BlockID);
 
-    console.log("S.D3Symbol: ChangeTextAttributes - Completed");
+    T3Util.Log("S.D3Symbol: ChangeTextAttributes - Completed");
   }
 
   CreateActionTriggers(event, triggerType, action, response) {
-    console.log("S.D3Symbol: CreateActionTriggers - Input parameters:", { event, triggerType, action, response });
+    T3Util.Log("S.D3Symbol: CreateActionTriggers - Input parameters:", { event, triggerType, action, response });
 
     const result = Instance.Shape.BaseShape.prototype.CreateActionTriggers.apply(this, [
       event,
@@ -615,23 +616,23 @@ class D3Symbol extends BaseSymbol {
       response
     ]);
 
-    console.log("S.D3Symbol: CreateActionTriggers - Output result:", result);
+    T3Util.Log("S.D3Symbol: CreateActionTriggers - Output result:", result);
     return result;
   }
 
   RefreshFromFieldData(fieldDataTableID) {
-    console.log("S.D3Symbol: RefreshFromFieldData - Input:", fieldDataTableID);
+    T3Util.Log("S.D3Symbol: RefreshFromFieldData - Input:", fieldDataTableID);
 
     if (!fieldDataTableID || this.fieldDataTableID === fieldDataTableID) {
       Instance.Shape.BaseDrawingObject.prototype.RefreshFromFieldData.call(this, fieldDataTableID);
       this.UpdateSizeFromSettings();
       T3Gv.opt.AddToDirtyList(this.BlockID);
 
-      console.log("S.D3Symbol: RefreshFromFieldData - Output: true");
+      T3Util.Log("S.D3Symbol: RefreshFromFieldData - Output: true");
       return true;
     }
 
-    console.log("S.D3Symbol: RefreshFromFieldData - Output: false");
+    T3Util.Log("S.D3Symbol: RefreshFromFieldData - Output: false");
     return false;
   }
 

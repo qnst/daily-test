@@ -17,8 +17,6 @@ class RecentSymbol {
     this.NoMenu = !!noMenu;
 
     if (title) {
-
-      // Double ===
       this.ContentTitle = title;
       this.ContentImageUrl = 'symbols/BTN/' + this.ItemId + '.png';
       this.ContentTT = this.ContentTitle.replace(/"/g, '&quot;');

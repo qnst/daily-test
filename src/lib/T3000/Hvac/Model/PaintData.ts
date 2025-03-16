@@ -1,9 +1,8 @@
 
 import { Type } from 'class-transformer'
 import 'reflect-metadata'
-
 import TextureScale from './TextureScale'
-import ConstantData from '../Data/Constant/ConstantData'
+import NvConstant from '../Data/Constant/NvConstant'
 
 class PaintData {
 
@@ -21,9 +20,9 @@ class PaintData {
 
   constructor(color: string) {
 
-    this.FillType = ConstantData.FillTypes.SDFILL_SOLID;
+    this.FillType = NvConstant.FillTypes.SDFILL_SOLID;
     this.Color = color;
-    this.EndColor = ConstantData.Colors.Color_White;
+    this.EndColor = NvConstant.Colors.Color_White;
     this.GradientFlags = 0;
     this.Texture = 0;
     this.TextureScale = new TextureScale();

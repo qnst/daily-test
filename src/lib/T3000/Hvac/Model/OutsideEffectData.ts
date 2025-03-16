@@ -1,5 +1,5 @@
 
-import ConstantData from '../Data/Constant/ConstantData'
+import NvConstant from '../Data/Constant/NvConstant'
 
 class OutsideEffectData {
 
@@ -18,7 +18,7 @@ class OutsideEffectData {
     this.OutsideExtent_Left = 0;
     this.OutsideExtent_Top = 0;
     this.OutsideExtent_Bottom = 0;
-    this.Color = ConstantData.Colors.Color_Black;
+    this.Color = NvConstant.Colors.Color_Black;
     this.LParam = 0;
     this.WParam = 0;
   }

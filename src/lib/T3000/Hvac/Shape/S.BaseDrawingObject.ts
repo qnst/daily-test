@@ -2,9 +2,9 @@
 
 import { Type } from 'class-transformer'
 import 'reflect-metadata'
-import Utils1 from '../Helper/Utils1'
-import Utils2 from "../Helper/Utils2"
-import Utils3 from "../Helper/Utils3"
+import Utils1 from '../Util/Utils1'
+import Utils2 from "../Util/Utils2"
+import Utils3 from "../Util/Utils3"
 import T3Gv from '../Data/T3Gv'
 import EvtUtil from "../Event/EvtUtil"
 import DefaultStyle from '../Model/DefaultStyle'
@@ -14,18 +14,24 @@ import Element from '../Basic/B.Element';
 import Effects from "../Basic/B.Element.Effects";
 import ParagraphFormat from '../Model/ParagraphFormat'
 import Instance from "../Data/Instance/Instance"
-import ConstantData from "../Data/Constant/ConstantData"
+import NvConstant from "../Data/Constant/NvConstant"
 import TextFormatData from "../Model/TextFormatData"
 import QuickStyle from "../Model/QuickStyle"
 import RightClickData from '../Model/RightClickData'
 import TextObject from '../Model/TextObject'
 import Rectangle from '../Model/Rectangle'
 import CRect from '../Model/CRect'
-import ConstantData2 from '../Data/Constant/ConstantData2'
 import PolyList from '../Model/PolyList'
-import BasicConstants from '../Basic/B.Constants'
-import PolygonConstant from '../Util/PolygonConstant'
-import ShapeConstant from '../Util/ShapeConstant'
+import BConstant from '../Basic/B.Constant'
+import PolygonConstant from '../Opt/Polygon/PolygonConstant'
+import ShapeConstant from '../Opt/DS/DSConstant'
+import OptConstant from '../Data/Constant/OptConstant'
+import T3Constant from '../Data/Constant/T3Constant'
+import StateConstant from '../Data/State/StateConstant'
+import CursorConstant from '../Data/Constant/CursorConstant'
+import TextConstant from '../Data/Constant/TextConstant'
+import StyleConstant from '../Data/Constant/StyleConstant'
+import T3Util from '../Util/T3Util'
 
 class BaseDrawingObject {
   public Type: string;
@@ -114,7 +120,7 @@ class BaseDrawingObject {
   public SymbolID: any;
   public SVGFragment: any;
   public ShapesInGroup: any[];
-  public InitialGroupBounds: Point;
+  public InitialGroupBounds: any;
   public ImageHeader: any;
   public OleHeader: any;
   public nIcons: number;
@@ -154,7 +160,7 @@ class BaseDrawingObject {
 
   constructor(config: any) {
     config = config || {};
-    this.Type = ConstantData.StoredObjectType.BASE_LM_DRAWING_OBJECT;
+    this.Type = StateConstant.StoredObjectType.BaseDrawingObject;
     this.Frame = config.Frame || { x: 0, y: 0, width: 0, height: 0 };
     this.r = config.r || { x: 0, y: 0, width: 0, height: 0 };
     this.inside = config.inside || { x: 0, y: 0, width: 0, height: 0 };
@@ -179,10 +185,10 @@ class BaseDrawingObject {
     this.hooks = config.hooks || [];
     this.maxhooks = config.maxhooks || 1;
     this.associd = config.associd || -1;
-    this.attachpoint = config.attachpoint || { x: ConstantData.Defines.SED_CDim / 2, y: ConstantData.Defines.SED_CDim / 2 };
+    this.attachpoint = config.attachpoint || { x: OptConstant.Defines.SED_CDim / 2, y: OptConstant.Defines.SED_CDim / 2 };
     this.hookdisp = { x: 0, y: 0 };
     this.TextFlags = config.TextFlags || 0;
-    this.DrawingObjectBaseClass = config.DrawingObjectBaseClass || ConstantData.DrawingObjectBaseClass.SHAPE;
+    this.DrawingObjectBaseClass = config.DrawingObjectBaseClass || OptConstant.DrawingObjectBaseClass.SHAPE;
     this.objecttype = config.objecttype || 0;
     this.subtype = config.subtype || 0;
     this.dataclass = config.dataclass || 0;
@@ -201,19 +207,19 @@ class BaseDrawingObject {
     this.TableID = config.TableID || -1;
     this.GraphID = config.GraphID || -1;
     this.ImageID = config.ImageID || -1;
-    this.ContentType = config.ContentType || ConstantData.ContentType.NONE;
+    this.ContentType = config.ContentType || OptConstant.ContentType.NONE;
     this.ContentID = config.ContentID || -1;
     this.CommentID = config.CommentID || -1;
     this.TextParams = config.TextParams || null;
-    this.TextGrow = config.TextGrow || ConstantData.TextGrowBehavior.PROPORTIONAL;
-    this.TextAlign = config.TextAlign || ConstantData.TextAlign.CENTER;
+    this.TextGrow = config.TextGrow || NvConstant.TextGrowBehavior.PROPORTIONAL;
+    this.TextAlign = config.TextAlign || TextConstant.TextAlign.CENTER;
     this.colorfilter = config.colorfilter || 0;
     this.colorchanges = config.colorchanges || 0;
     this.moreflags = config.moreflags || 0;
     this.sizedim = config.sizedim || { width: 0, height: 0 };
     this.ConnectPoints = config.ConnectPoints || [];
-    this.ObjGrow = config.ObjGrow || ConstantData.GrowBehavior.ALL;
-    config.ResizeAspectConstrain = this.ObjGrow === ConstantData.GrowBehavior.PROPORTIONAL ? true : false;
+    this.ObjGrow = config.ObjGrow || OptConstant.GrowBehavior.ALL;
+    config.ResizeAspectConstrain = this.ObjGrow === OptConstant.GrowBehavior.PROPORTIONAL ? true : false;
     this.datasetType = config.datasetType || -1;
     this.datasetID = config.datasetID || -1;
     this.datasetTableID = config.datasetTableID || -1;
@@ -242,8 +248,8 @@ class BaseDrawingObject {
     this.OleHeader = config.OleHeader || null;
     this.nIcons = config.nIcons || 0;
     this.iconSize = config.iconSize || 18;
-    this.iconShapeBottomOffset = config.iconShapeBottomOffset || ConstantData.Defines.IconShapeBottomOffset;
-    this.iconShapeRightOffset = config.iconShapeRightOffset || ConstantData.Defines.iconShapeRightOffset;
+    this.iconShapeBottomOffset = config.iconShapeBottomOffset || OptConstant.Defines.IconShapeBottomOffset;
+    this.iconShapeRightOffset = config.iconShapeRightOffset || OptConstant.Defines.iconShapeRightOffset;
     this.HyperlinkText = config.HyperlinkText || '';
     this.AttachmentInfo = config.AttachmentInfo || '';
     this.ResizeAspectConstrain = config.ResizeAspectConstrain || false;
@@ -258,11 +264,11 @@ class BaseDrawingObject {
   }
 
   GenericKnob(params: any) {
-    console.log('= S.BaseDrawingObject: GenericKnob input:', params);
+    T3Util.Log('= S.BaseDrawingObject: GenericKnob input:', params);
 
     let knobShape = params.svgDoc.CreateShape(params.shapeType);
 
-    if (params.shapeType === ConstantData.CreateShapeType.POLYGON) {
+    if (params.shapeType === OptConstant.CSType.POLYGON) {
       if (params.polyPoints) {
         knobShape.SetPoints(params.polyPoints);
         params.polyPoints = null;
@@ -291,7 +297,7 @@ class BaseDrawingObject {
         ];
         knobShape.SetPoints(defaultPoints);
       }
-      knobShape.SetEventBehavior(ConstantData2.EventBehavior.ALL);
+      knobShape.SetEventBehavior(OptConstant.EventBehavior.ALL);
     }
 
     if (params.locked) {
@@ -309,7 +315,7 @@ class BaseDrawingObject {
     knobShape.SetStrokeWidth(params.strokeSize);
     knobShape.SetStrokeColor(params.strokeColor);
 
-    console.log('= S.BaseDrawingObject: GenericKnob output:', knobShape);
+    T3Util.Log('= S.BaseDrawingObject: GenericKnob output:', knobShape);
     return knobShape;
   }
 
@@ -319,7 +325,7 @@ class BaseDrawingObject {
     additionalInfo: any,
     options: any
   ): any {
-    console.log('= S.BaseDrawingObject: CreateActionTriggers input:', {
+    T3Util.Log('= S.BaseDrawingObject: CreateActionTriggers input:', {
       inputElement,
       triggerType,
       additionalInfo,
@@ -328,12 +334,12 @@ class BaseDrawingObject {
 
     const result = null;
 
-    console.log('= S.BaseDrawingObject: CreateActionTriggers output:', result);
+    T3Util.Log('= S.BaseDrawingObject: CreateActionTriggers output:', result);
     return result;
   }
 
   CreateShape(shapeType: string, options?: any): any {
-    console.log("= S.BaseDrawingObject: CreateShape input:", { shapeType, options });
+    T3Util.Log("= S.BaseDrawingObject: CreateShape input:", { shapeType, options });
 
     // Create a dummy shape object with the provided type and options.
     const shape = {
@@ -341,25 +347,25 @@ class BaseDrawingObject {
       options: options || {}
     };
 
-    console.log("= S.BaseDrawingObject: CreateShape output:", shape);
+    T3Util.Log("= S.BaseDrawingObject: CreateShape output:", shape);
     return shape;
   }
 
   MoveSVG(): void {
-    console.log('= S.BaseDrawingObject: MoveSVG input, BlockID:', this.BlockID);
+    T3Util.Log('= S.BaseDrawingObject: MoveSVG input, BlockID:', this.BlockID);
 
     // Retrieve the SVG element using the current BlockID
     const svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
     if (svgElement) {
       // Get the current SVG frame
       const svgFrame = this.GetSVGFrame();
-      console.log('= S.BaseDrawingObject: MoveSVG retrieved frame:', svgFrame);
+      T3Util.Log('= S.BaseDrawingObject: MoveSVG retrieved frame:', svgFrame);
 
       // Move the SVG element to the new position specified by the frame
       svgElement.SetPos(svgFrame.x, svgFrame.y);
-      console.log(`= S.BaseDrawingObject: MoveSVG output, SVG element position set to x: ${svgFrame.x}, y: ${svgFrame.y}`);
+      T3Util.Log(`= S.BaseDrawingObject: MoveSVG output, SVG element position set to x: ${svgFrame.x}, y: ${svgFrame.y}`);
     } else {
-      console.log('= S.BaseDrawingObject: MoveSVG output, no SVG element found for BlockID:', this.BlockID);
+      T3Util.Log('= S.BaseDrawingObject: MoveSVG output, no SVG element found for BlockID:', this.BlockID);
     }
   }
 
@@ -371,7 +377,7 @@ class BaseDrawingObject {
     extraParam1: any,
     extraParam2: any
   ): any {
-    console.log("= S.BaseDrawingObject: CreateConnectHilites input:", {
+    T3Util.Log("= S.BaseDrawingObject: CreateConnectHilites input:", {
       hiliteElements,
       triggerType,
       additionalInfo,
@@ -380,25 +386,25 @@ class BaseDrawingObject {
       extraParam2
     });
     const result = null;
-    console.log("= S.BaseDrawingObject: CreateConnectHilites output:", result);
+    T3Util.Log("= S.BaseDrawingObject: CreateConnectHilites output:", result);
     return result;
   }
 
   CreateDimensionAdjustmentKnobs(container: any, triggerElement: any, knobParams: any) {
-    console.log("= S.BaseDrawingObject: CreateDimensionAdjustmentKnobs input:", container, triggerElement, knobParams);
+    T3Util.Log("= S.BaseDrawingObject: CreateDimensionAdjustmentKnobs input:", container, triggerElement, knobParams);
 
     // Create a deep copy of the knob parameters and calculate half knob size
     let baseParams: any = $.extend(true, {}, knobParams);
     const knobSizeHalf = baseParams.knobSize / 2;
 
     // Set additional parameters for the knob
-    baseParams.knobID = ConstantData.ActionTriggerType.DIMENSION_LINE_ADJ;
+    baseParams.knobID = OptConstant.ActionTriggerType.DIMENSION_LINE_ADJ;
     let docToScreenScale: number = T3Gv.opt.svgDoc.docInfo.docToScreenScale;
     if (T3Gv.opt.svgDoc.docInfo.docScale <= 0.5) {
       docToScreenScale *= 2;
     }
-    baseParams.knobSize = ConstantData.Defines.SED_KnobSize / docToScreenScale;
-    baseParams.shapeType = ConstantData.CreateShapeType.POLYGON;
+    baseParams.knobSize = OptConstant.Defines.SED_KnobSize / docToScreenScale;
+    baseParams.shapeType = OptConstant.CSType.POLYGON;
     baseParams.fillColor = 'black';
     baseParams.fillOpacity = 1;
 
@@ -429,7 +435,7 @@ class BaseDrawingObject {
         if (angleBetween !== 0) {
           let polyRect: Rectangle = { x: 0, y: 0, width: 0, height: 0 };
           Utils2.GetPolyRect(polyRect, baseParams.polyPoints);
-          Utils3.RotatePointsAboutCenter(polyRect, -angleBetween / (180 / ConstantData.Geometry.PI), baseParams.polyPoints);
+          Utils3.RotatePointsAboutCenter(polyRect, -angleBetween / (180 / NvConstant.Geometry.PI), baseParams.polyPoints);
         }
 
         // Adjust the cursor angle taking into account the object's rotation
@@ -449,16 +455,16 @@ class BaseDrawingObject {
       }
     }
 
-    console.log("= S.BaseDrawingObject: CreateDimensionAdjustmentKnobs output: created knobs for", numPoints - 1, "segments");
+    T3Util.Log("= S.BaseDrawingObject: CreateDimensionAdjustmentKnobs output: created knobs for", numPoints - 1, "segments");
   }
 
   HitAreaClick(event: any): void {
-    console.log("= S.BaseDrawingObject: HitAreaClick input:", event);
+    T3Util.Log("= S.BaseDrawingObject: HitAreaClick input:", event);
 
     // TODO: Implement the hit area click functionality here.
     // Currently, no action is performed.
 
-    console.log("= S.BaseDrawingObject: HitAreaClick output: no action taken");
+    T3Util.Log("= S.BaseDrawingObject: HitAreaClick output: no action taken");
   }
 
   ChangeTarget(
@@ -469,7 +475,7 @@ class BaseDrawingObject {
     extra1: any,
     extra2: any
   ): void {
-    console.log("= S.BaseDrawingObject: ChangeTarget input:", {
+    T3Util.Log("= S.BaseDrawingObject: ChangeTarget input:", {
       currentTarget,
       newTarget,
       action,
@@ -480,11 +486,11 @@ class BaseDrawingObject {
 
     // TODO: Add the implementation logic here
 
-    console.log("= S.BaseDrawingObject: ChangeTarget output: completed");
+    T3Util.Log("= S.BaseDrawingObject: ChangeTarget output: completed");
   }
 
   OnConnect(connectionPoint: Point, targetObject: any, connectionData: any, options: any, context: any): void {
-    console.log("= S.BaseDrawingObject: OnConnect input:", {
+    T3Util.Log("= S.BaseDrawingObject: OnConnect input:", {
       connectionPoint,
       targetObject,
       connectionData,
@@ -494,7 +500,7 @@ class BaseDrawingObject {
 
     // TODO: Implement connection handling logic
 
-    console.log("= S.BaseDrawingObject: OnConnect output: completed");
+    T3Util.Log("= S.BaseDrawingObject: OnConnect output: completed");
   }
 
   OnDisconnect(
@@ -503,7 +509,7 @@ class BaseDrawingObject {
     disconnectData: any,
     options: any
   ): void {
-    console.log('= S.BaseDrawingObject: OnDisconnect input:', {
+    T3Util.Log('= S.BaseDrawingObject: OnDisconnect input:', {
       connectionPoint,
       targetObject,
       disconnectData,
@@ -512,11 +518,11 @@ class BaseDrawingObject {
 
     // TODO: Implement disconnect logic here
 
-    console.log('= S.BaseDrawingObject: OnDisconnect output: completed');
+    T3Util.Log('= S.BaseDrawingObject: OnDisconnect output: completed');
   }
 
   GetDimensionsRect() {
-    console.log("= S.BaseDrawingObject: GetDimensionsRect input, Dimensions:", this.Dimensions, "Frame:", this.Frame);
+    T3Util.Log("= S.BaseDrawingObject: GetDimensionsRect input, Dimensions:", this.Dimensions, "Frame:", this.Frame);
 
     let resultRect: Rectangle = new Rectangle();
     let accumulatedRect: Rectangle = resultRect; // alias for clarity
@@ -525,17 +531,17 @@ class BaseDrawingObject {
     // Check if the dimension flags allow dimensions to be shown
     if (
       !(
-        this.Dimensions & ConstantData.DimensionFlags.SED_DF_Always ||
-        this.Dimensions & ConstantData.DimensionFlags.SED_DF_Select
+        this.Dimensions & NvConstant.DimensionFlags.SED_DF_Always ||
+        this.Dimensions & NvConstant.DimensionFlags.SED_DF_Select
       )
     ) {
-      console.log("= S.BaseDrawingObject: GetDimensionsRect output, dimension flags not set. Result:", resultRect);
+      T3Util.Log("= S.BaseDrawingObject: GetDimensionsRect output, dimension flags not set. Result:", resultRect);
       return resultRect;
     }
 
     const dimensionPoints: Point[] = this.GetDimensionPoints();
     if (dimensionPoints.length < 2) {
-      console.log("= S.BaseDrawingObject: GetDimensionsRect output, not enough dimension points. Result:", resultRect);
+      T3Util.Log("= S.BaseDrawingObject: GetDimensionsRect output, not enough dimension points. Result:", resultRect);
       return resultRect;
     }
 
@@ -572,44 +578,44 @@ class BaseDrawingObject {
     resultRect.x += this.Frame.x;
     resultRect.y += this.Frame.y;
 
-    console.log("= S.BaseDrawingObject: GetDimensionsRect output, result:", resultRect);
+    T3Util.Log("= S.BaseDrawingObject: GetDimensionsRect output, result:", resultRect);
     return resultRect;
   }
 
   GetBoundingBoxesForSecondaryDimensions(): Rectangle[] {
-    console.log('= S.BaseDrawingObject: GetBoundingBoxesForSecondaryDimensions input');
+    T3Util.Log('= S.BaseDrawingObject: GetBoundingBoxesForSecondaryDimensions input');
     const result: Rectangle[] = [];
-    console.log('= S.BaseDrawingObject: GetBoundingBoxesForSecondaryDimensions output:', result);
+    T3Util.Log('= S.BaseDrawingObject: GetBoundingBoxesForSecondaryDimensions output:', result);
     return result;
   }
 
   AddDimensionsToR(): void {
-    console.log("= S.BaseDrawingObject: AddDimensionsToR input");
+    T3Util.Log("= S.BaseDrawingObject: AddDimensionsToR input");
 
     // Retrieve the dimensions rectangle
     let dimensionsRect: Rectangle = this.GetDimensionsRect();
-    console.log("= S.BaseDrawingObject: AddDimensionsToR - dimensionsRect:", dimensionsRect);
+    T3Util.Log("= S.BaseDrawingObject: AddDimensionsToR - dimensionsRect:", dimensionsRect);
 
     // If the dimensions rectangle has a non-zero width, update the union of the current rectangle (r) with it
     if (dimensionsRect.width !== 0) {
       this.r = Utils2.UnionRect(this.r, dimensionsRect, this.r);
-      console.log("= S.BaseDrawingObject: AddDimensionsToR - updated r:", this.r);
+      T3Util.Log("= S.BaseDrawingObject: AddDimensionsToR - updated r:", this.r);
     } else {
-      console.log("= S.BaseDrawingObject: AddDimensionsToR - dimensionsRect.width is 0, no updates made");
+      T3Util.Log("= S.BaseDrawingObject: AddDimensionsToR - dimensionsRect.width is 0, no updates made");
     }
 
-    console.log("= S.BaseDrawingObject: AddDimensionsToR output", this.r);
+    T3Util.Log("= S.BaseDrawingObject: AddDimensionsToR output", this.r);
   }
 
   UpdateFrame(newRect: Rectangle): void {
-    console.log("= S.BaseDrawingObject: UpdateFrame input:", newRect);
+    T3Util.Log("= S.BaseDrawingObject: UpdateFrame input:", newRect);
     if (newRect) {
       Utils2.CopyRect(this.Frame, newRect);
       Utils2.CopyRect(this.r, newRect);
       Utils2.CopyRect(this.inside, newRect);
       Utils2.CopyRect(this.trect, newRect);
     }
-    console.log("= S.BaseDrawingObject: UpdateFrame output:", {
+    T3Util.Log("= S.BaseDrawingObject: UpdateFrame output:", {
       Frame: this.Frame,
       r: this.r,
       inside: this.inside,
@@ -618,16 +624,16 @@ class BaseDrawingObject {
   }
 
   SetSize(width: number, height: number): void {
-    console.log("= S.BaseDrawingObject: SetSize input:", { width, height });
+    T3Util.Log("= S.BaseDrawingObject: SetSize input:", { width, height });
     if (this.rflags) {
-      this.rflags = Utils2.SetFlag(this.rflags, ConstantData.FloatingPointDim.SD_FP_Width, false);
-      this.rflags = Utils2.SetFlag(this.rflags, ConstantData.FloatingPointDim.SD_FP_Height, false);
+      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Width, false);
+      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Height, false);
     }
-    console.log("= S.BaseDrawingObject: SetSize output:", { rflags: this.rflags });
+    T3Util.Log("= S.BaseDrawingObject: SetSize output:", { rflags: this.rflags });
   }
 
   OffsetShape(dx: number, dy: number): void {
-    console.log("= S.BaseDrawingObject: OffsetShape input:", { dx, dy });
+    T3Util.Log("= S.BaseDrawingObject: OffsetShape input:", { dx, dy });
     this.Frame.x += dx;
     this.Frame.y += dy;
     this.r.x += dx;
@@ -636,7 +642,7 @@ class BaseDrawingObject {
     this.inside.y += dy;
     this.trect.x += dx;
     this.trect.y += dy;
-    console.log("= S.BaseDrawingObject: OffsetShape output:", {
+    T3Util.Log("= S.BaseDrawingObject: OffsetShape output:", {
       Frame: this.Frame,
       r: this.r,
       inside: this.inside,
@@ -645,18 +651,18 @@ class BaseDrawingObject {
   }
 
   SetShapeOrigin(newX: number, newY: number, origin?: any): void {
-    console.log("= S.BaseDrawingObject: SetShapeOrigin input:", { newX, newY, origin });
+    T3Util.Log("= S.BaseDrawingObject: SetShapeOrigin input:", { newX, newY, origin });
 
     const deltaX = newX != null ? newX - this.Frame.x : 0;
     const deltaY = newY != null ? newY - this.Frame.y : 0;
 
     this.OffsetShape(deltaX, deltaY);
 
-    console.log("= S.BaseDrawingObject: SetShapeOrigin output: new Frame:", this.Frame);
+    T3Util.Log("= S.BaseDrawingObject: SetShapeOrigin output: new Frame:", this.Frame);
   }
 
-  ApplyCurvature(e: any): void {
-    console.log('= S.BaseDrawingObject: ApplyCurvature input:', e);
+  ApplyCurvature(param: any): void {
+    T3Util.Log('= S.BaseDrawingObject: ApplyCurvature input:', param);
 
     // Insert curvature application logic here.
     // For example, if e represents curvature data, process it accordingly.
@@ -669,7 +675,7 @@ class BaseDrawingObject {
     //
     // End of curvature logic.
 
-    console.log('= S.BaseDrawingObject: ApplyCurvature output: completed');
+    T3Util.Log('= S.BaseDrawingObject: ApplyCurvature output: completed');
   }
 
   ScaleObject(
@@ -681,7 +687,7 @@ class BaseDrawingObject {
     scaleY: number,
     updateContainerStyle: boolean
   ): void {
-    console.log("= S.BaseDrawingObject: ScaleObject input:", {
+    T3Util.Log("= S.BaseDrawingObject: ScaleObject input:", {
       posOffsetX,
       posOffsetY,
       rotateCenter,
@@ -699,8 +705,8 @@ class BaseDrawingObject {
     frame.height *= scaleY;
 
     if (this.rflags) {
-      this.rflags = Utils2.SetFlag(this.rflags, ConstantData.FloatingPointDim.SD_FP_Width, false);
-      this.rflags = Utils2.SetFlag(this.rflags, ConstantData.FloatingPointDim.SD_FP_Height, false);
+      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Width, false);
+      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Height, false);
     }
 
     // Apply rotation if needed
@@ -745,7 +751,7 @@ class BaseDrawingObject {
     this.sizedim.width = this.Frame.width;
     this.sizedim.height = this.Frame.height;
 
-    console.log("= S.BaseDrawingObject: ScaleObject output:", {
+    T3Util.Log("= S.BaseDrawingObject: ScaleObject output:", {
       Frame: this.Frame,
       RotationAngle: this.RotationAngle,
       sizedim: this.sizedim
@@ -753,42 +759,42 @@ class BaseDrawingObject {
   }
 
   GetDragR(): Rectangle {
-    console.log("= S.BaseDrawingObject: GetDragR input");
+    T3Util.Log("= S.BaseDrawingObject: GetDragR input");
     const dragRect: Rectangle = {} as Rectangle;
     Utils2.CopyRect(dragRect, this.r);
-    console.log("= S.BaseDrawingObject: GetDragR output:", dragRect);
+    T3Util.Log("= S.BaseDrawingObject: GetDragR output:", dragRect);
     return dragRect;
   }
 
   GetHitTestFrame(): Rectangle {
-    console.log("= S.BaseDrawingObject: GetHitTestFrame input");
+    T3Util.Log("= S.BaseDrawingObject: GetHitTestFrame input");
     let hitTestFrame: Rectangle = new Rectangle();
     Utils2.CopyRect(hitTestFrame, this.r);
-    console.log("= S.BaseDrawingObject: GetHitTestFrame output:", hitTestFrame);
+    T3Util.Log("= S.BaseDrawingObject: GetHitTestFrame output:", hitTestFrame);
     return hitTestFrame;
   }
 
   GetSVGFrame(frame?: Rectangle): Rectangle {
-    console.log('= S.BaseDrawingObject: GetSVGFrame - input:', frame);
+    T3Util.Log('= S.BaseDrawingObject: GetSVGFrame - input:', frame);
     const newFrame: Rectangle = new Rectangle();
     if (frame == null) {
       frame = this.Frame;
     }
     Utils2.CopyRect(newFrame, frame);
-    console.log('= S.BaseDrawingObject: GetSVGFrame - output:', newFrame);
+    T3Util.Log('= S.BaseDrawingObject: GetSVGFrame - output:', newFrame);
     return newFrame;
   }
 
   LinkGrow(inputElement: any, growthFactor: number): void {
-    console.log("= S.BaseDrawingObject: LinkGrow input:", { inputElement, growthFactor });
+    T3Util.Log("= S.BaseDrawingObject: LinkGrow input:", { inputElement, growthFactor });
 
     // TODO: Implement the link growth logic here.
 
-    console.log("= S.BaseDrawingObject: LinkGrow output: completed");
+    T3Util.Log("= S.BaseDrawingObject: LinkGrow output: completed");
   }
 
   GetMoveRect(useRelative: boolean): Rectangle {
-    console.log("= S.BaseDrawingObject: GetMoveRect input:", { useRelative });
+    T3Util.Log("= S.BaseDrawingObject: GetMoveRect input:", { useRelative });
     let resultRect: Rectangle = {} as Rectangle;
 
     if (useRelative) {
@@ -799,27 +805,27 @@ class BaseDrawingObject {
       Utils2.CopyRect(resultRect, this.Frame);
     }
 
-    console.log("= S.BaseDrawingObject: GetMoveRect output:", resultRect);
+    T3Util.Log("= S.BaseDrawingObject: GetMoveRect output:", resultRect);
     return resultRect;
   }
 
   GetPositionRect(): Rectangle {
-    console.log("= S.BaseDrawingObject: GetPositionRect input");
+    T3Util.Log("= S.BaseDrawingObject: GetPositionRect input");
     const rect: Rectangle = {} as Rectangle;
     Utils2.CopyRect(rect, this.Frame);
-    console.log("= S.BaseDrawingObject: GetPositionRect output:", rect);
+    T3Util.Log("= S.BaseDrawingObject: GetPositionRect output:", rect);
     return rect;
   }
 
   AdjustPinRect(inputRect: Rectangle, adjustment: any): any {
-    console.log("= S.BaseDrawingObject: AdjustPinRect input:", { inputRect, adjustment });
+    T3Util.Log("= S.BaseDrawingObject: AdjustPinRect input:", { inputRect, adjustment });
     const resultRect = inputRect; // No adjustment applied, returning as is
-    console.log("= S.BaseDrawingObject: AdjustPinRect output:", resultRect);
+    T3Util.Log("= S.BaseDrawingObject: AdjustPinRect output:", resultRect);
     return resultRect;
   }
 
   public GetArrayRect(useAlternateMapping: boolean): CRect {
-    console.log("= S.BaseDrawingObject: GetArrayRect input:", { useAlternateMapping });
+    T3Util.Log("= S.BaseDrawingObject: GetArrayRect input:", { useAlternateMapping });
 
     // Calculate the border thickness based on the line style record
     const borderThickness: number = this.StyleRecord.Line.BThick
@@ -846,12 +852,12 @@ class BaseDrawingObject {
       rect.vdist = frameCopy.height;
     }
 
-    console.log("= S.BaseDrawingObject: GetArrayRect output:", rect);
+    T3Util.Log("= S.BaseDrawingObject: GetArrayRect output:", rect);
     return rect;
   }
 
   GetTargetRect(input: any, options: any): Rectangle {
-    console.log("= S.BaseDrawingObject: GetTargetRect input:", { input, options });
+    T3Util.Log("= S.BaseDrawingObject: GetTargetRect input:", { input, options });
 
     const targetRect: Rectangle = {
       x: 0,
@@ -860,7 +866,7 @@ class BaseDrawingObject {
       height: 0
     };
 
-    console.log("= S.BaseDrawingObject: GetTargetRect output:", targetRect);
+    T3Util.Log("= S.BaseDrawingObject: GetTargetRect output:", targetRect);
     return targetRect;
   }
 
@@ -877,124 +883,124 @@ class BaseDrawingObject {
   // }
 
   GetHookFlags(): number {
-    console.log("= S.BaseDrawingObject: GetHookFlags input");
+    T3Util.Log("= S.BaseDrawingObject: GetHookFlags input");
     const result = 0;
-    console.log("= S.BaseDrawingObject: GetHookFlags output:", result);
+    T3Util.Log("= S.BaseDrawingObject: GetHookFlags output:", result);
     return result;
   }
 
   AllowLink(): number {
-    console.log("= S.BaseDrawingObject: AllowLink input: none");
+    T3Util.Log("= S.BaseDrawingObject: AllowLink input: none");
     const result: number = 0;
-    console.log("= S.BaseDrawingObject: AllowLink output:", result);
+    T3Util.Log("= S.BaseDrawingObject: AllowLink output:", result);
     return result;
   }
 
   // IsSwimlane(): boolean {
-  //   console.log("= S.BaseDrawingObject: IsSwimlane input:");
+  //   T3Util.Log("= S.BaseDrawingObject: IsSwimlane input:");
   //   const result = false;
-  //   console.log("= S.BaseDrawingObject: IsSwimlane output:", result);
+  //   T3Util.Log("= S.BaseDrawingObject: IsSwimlane output:", result);
   //   return result;
   // }
 
   AllowSpell(): boolean {
-    console.log("= S.BaseDrawingObject: AllowSpell input, bInGroup:", this.bInGroup, "TextFlags:", this.TextFlags);
-    const result = !this.bInGroup && ((this.TextFlags & ConstantData.TextFlags.SED_TF_NoSpell) === 0);
-    console.log("= S.BaseDrawingObject: AllowSpell output:", result);
+    T3Util.Log("= S.BaseDrawingObject: AllowSpell input, bInGroup:", this.bInGroup, "TextFlags:", this.TextFlags);
+    const result = !this.bInGroup && ((this.TextFlags & NvConstant.TextFlags.SED_TF_NoSpell) === 0);
+    T3Util.Log("= S.BaseDrawingObject: AllowSpell output:", result);
     return result;
   }
 
   PreventLink(): boolean {
-    console.log("= S.BaseDrawingObject: PreventLink input");
+    T3Util.Log("= S.BaseDrawingObject: PreventLink input");
     const result = false;
-    console.log("= S.BaseDrawingObject: PreventLink output:", result);
+    T3Util.Log("= S.BaseDrawingObject: PreventLink output:", result);
     return result;
   }
 
   AllowHeal(): boolean {
-    console.log("= S.BaseDrawingObject: AllowHeal input: none");
+    T3Util.Log("= S.BaseDrawingObject: AllowHeal input: none");
     const result = false;
-    console.log("= S.BaseDrawingObject: AllowHeal output:", result);
+    T3Util.Log("= S.BaseDrawingObject: AllowHeal output:", result);
     return result;
   }
 
   AllowMaintainLink(): boolean {
-    console.log("= S.BaseDrawingObject: AllowMaintainLink input, no parameters");
+    T3Util.Log("= S.BaseDrawingObject: AllowMaintainLink input, no parameters");
     const result = true;
-    console.log("= S.BaseDrawingObject: AllowMaintainLink output:", result);
+    T3Util.Log("= S.BaseDrawingObject: AllowMaintainLink output:", result);
     return result;
   }
 
   GetHookPoints(): any {
-    console.log("= S.BaseDrawingObject: GetHookPoints input");
+    T3Util.Log("= S.BaseDrawingObject: GetHookPoints input");
     const hookPoints = null;
-    console.log("= S.BaseDrawingObject: GetHookPoints output:", hookPoints);
+    T3Util.Log("= S.BaseDrawingObject: GetHookPoints output:", hookPoints);
     return hookPoints;
   }
 
   GetBestHook(inputHook: any, targetHook: any, attachmentData: any): any {
-    console.log("= S.BaseDrawingObject: GetBestHook - input:", { inputHook, targetHook, attachmentData });
+    T3Util.Log("= S.BaseDrawingObject: GetBestHook - input:", { inputHook, targetHook, attachmentData });
 
     const bestHook = targetHook;
 
-    console.log("= S.BaseDrawingObject: GetBestHook - output:", bestHook);
+    T3Util.Log("= S.BaseDrawingObject: GetBestHook - output:", bestHook);
     return bestHook;
   }
 
   SetHookAlign(hook: any, alignment: any): void {
-    console.log("= S.BaseDrawingObject: SetHookAlign input:", { hook, alignment });
+    T3Util.Log("= S.BaseDrawingObject: SetHookAlign input:", { hook, alignment });
 
     // TODO: Add implementation logic for setting hook alignment here.
 
-    console.log("= S.BaseDrawingObject: SetHookAlign output: completed");
+    T3Util.Log("= S.BaseDrawingObject: SetHookAlign output: completed");
   }
 
   GetTargetPoints(targetPoint: Point, hookFlags: number, extraParam: any): any {
-    console.log("= S.BaseDrawingObject: GetTargetPoints input:", { targetPoint, hookFlags, extraParam });
+    T3Util.Log("= S.BaseDrawingObject: GetTargetPoints input:", { targetPoint, hookFlags, extraParam });
     const result = null;
-    console.log("= S.BaseDrawingObject: GetTargetPoints output:", result);
+    T3Util.Log("= S.BaseDrawingObject: GetTargetPoints output:", result);
     return result;
   }
 
   AllowHook(hookData: any, target: any, attachment: any): boolean {
-    console.log("= S.BaseDrawingObject: AllowHook input:", { hookData, target, attachment });
+    T3Util.Log("= S.BaseDrawingObject: AllowHook input:", { hookData, target, attachment });
     const result = true;
-    console.log("= S.BaseDrawingObject: AllowHook output:", result);
+    T3Util.Log("= S.BaseDrawingObject: AllowHook output:", result);
     return result;
   }
 
   ConnectToHook(sourceHook: any, targetHook: any): any {
-    console.log("= S.BaseDrawingObject: ConnectToHook input:", { sourceHook, targetHook });
+    T3Util.Log("= S.BaseDrawingObject: ConnectToHook input:", { sourceHook, targetHook });
     const result = targetHook;
-    console.log("= S.BaseDrawingObject: ConnectToHook output:", result);
+    T3Util.Log("= S.BaseDrawingObject: ConnectToHook output:", result);
     return result;
   }
 
   HookToPoint(point: Point, target: Point): Point {
-    console.log("= S.BaseDrawingObject: HookToPoint input:", { point, target });
+    T3Util.Log("= S.BaseDrawingObject: HookToPoint input:", { point, target });
     const result: Point = { x: 0, y: 0 };
-    console.log("= S.BaseDrawingObject: HookToPoint output:", result);
+    T3Util.Log("= S.BaseDrawingObject: HookToPoint output:", result);
     return result;
   }
 
   public IsCoManager(manager: any): boolean {
-    console.log("= S.BaseDrawingObject: IsCoManager input:", manager);
+    T3Util.Log("= S.BaseDrawingObject: IsCoManager input:", manager);
     const result = false;
-    console.log("= S.BaseDrawingObject: IsCoManager output:", result);
+    T3Util.Log("= S.BaseDrawingObject: IsCoManager output:", result);
     return result;
   }
 
   LinkNotVisible(): boolean {
-    console.log("= S.BaseDrawingObject: LinkNotVisible input: no parameters");
-    const isNotVisible = (this.flags & ConstantData.ObjFlags.SEDO_NotVisible) > 0;
-    console.log("= S.BaseDrawingObject: LinkNotVisible output:", isNotVisible);
+    T3Util.Log("= S.BaseDrawingObject: LinkNotVisible input: no parameters");
+    const isNotVisible = (this.flags & NvConstant.ObjFlags.SEDO_NotVisible) > 0;
+    T3Util.Log("= S.BaseDrawingObject: LinkNotVisible output:", isNotVisible);
     return isNotVisible;
   }
 
   IsAsstConnector(): boolean {
-    console.log("= S.BaseDrawingObject: IsAsstConnector input:");
+    T3Util.Log("= S.BaseDrawingObject: IsAsstConnector input:");
     const result = false;
-    console.log("= S.BaseDrawingObject: IsAsstConnector output:", result);
+    T3Util.Log("= S.BaseDrawingObject: IsAsstConnector output:", result);
     return result;
   }
 
@@ -1006,7 +1012,7 @@ class BaseDrawingObject {
     optionalParam?: any,
     anotherOptionalParam?: any
   ): Point[] {
-    console.log("= S.BaseDrawingObject: GetPerimPts input:", {
+    T3Util.Log("= S.BaseDrawingObject: GetPerimPts input:", {
       unusedId,
       points,
       unusedParam,
@@ -1018,7 +1024,7 @@ class BaseDrawingObject {
     const numPoints = points.length;
     const computedPoints: Point[] = [];
     const shapeTriType = PolygonConstant.ShapeTypes.TRIANGLE;
-    const cellDimension = ConstantData.Defines.SED_CDim;
+    const cellDimension = OptConstant.Defines.SED_CDim;
 
     for (let index = 0; index < numPoints; index++) {
       computedPoints[index] = { x: 0, y: 0, id: 0 };
@@ -1037,42 +1043,42 @@ class BaseDrawingObject {
     }
 
     if (!skipRotation) {
-      const rotatedAngle = -this.RotationAngle / (180 / ConstantData.Geometry.PI);
+      const rotatedAngle = -this.RotationAngle / (180 / NvConstant.Geometry.PI);
       Utils3.RotatePointsAboutCenter(this.Frame, rotatedAngle, computedPoints);
     }
 
-    console.log("= S.BaseDrawingObject: GetPerimPts output:", computedPoints);
+    T3Util.Log("= S.BaseDrawingObject: GetPerimPts output:", computedPoints);
     return computedPoints;
   }
 
   ChangeHook(sourceHook: any, targetHook: any, additionalData: any): void {
-    console.log("= S.BaseDrawingObject: ChangeHook input:", { sourceHook, targetHook, additionalData });
+    T3Util.Log("= S.BaseDrawingObject: ChangeHook input:", { sourceHook, targetHook, additionalData });
     T3Gv.opt.CN_ChangeHook(this, sourceHook, targetHook, additionalData);
-    console.log("= S.BaseDrawingObject: ChangeHook output:", "Hook change applied");
+    T3Util.Log("= S.BaseDrawingObject: ChangeHook output:", "Hook change applied");
   }
 
   ChangeShape(e: any, t: any, a: any, r: any, i: any): boolean {
-    console.log("= S.BaseDrawingObject: ChangeShape input:", { e, t, a, r, i });
+    T3Util.Log("= S.BaseDrawingObject: ChangeShape input:", { e, t, a, r, i });
     const result = false;
-    console.log("= S.BaseDrawingObject: ChangeShape output:", result);
+    T3Util.Log("= S.BaseDrawingObject: ChangeShape output:", result);
     return result;
   }
 
   GetLineChangeFrame() {
-    console.log("= S.BaseDrawingObject: GetLineChangeFrame input:", this.Frame);
+    T3Util.Log("= S.BaseDrawingObject: GetLineChangeFrame input:", this.Frame);
     let frame = $.extend(true, {}, this.Frame);
-    if (frame.width < ConstantData.Defines.SED_SegDefLen) {
-      frame.width = ConstantData.Defines.SED_SegDefLen;
+    if (frame.width < OptConstant.Defines.SED_SegDefLen) {
+      frame.width = OptConstant.Defines.SED_SegDefLen;
     }
-    if (frame.height < ConstantData.Defines.SED_SegDefLen) {
-      frame.height = ConstantData.Defines.SED_SegDefLen;
+    if (frame.height < OptConstant.Defines.SED_SegDefLen) {
+      frame.height = OptConstant.Defines.SED_SegDefLen;
     }
-    console.log("= S.BaseDrawingObject: GetLineChangeFrame output:", frame);
+    T3Util.Log("= S.BaseDrawingObject: GetLineChangeFrame output:", frame);
     return frame;
   }
 
   public DeleteObject(): void {
-    console.log("= S.BaseDrawingObject: DeleteObject input:", {
+    T3Util.Log("= S.BaseDrawingObject: DeleteObject input:", {
       TableID: this.TableID,
       DataID: this.DataID,
       NoteID: this.NoteID,
@@ -1087,16 +1093,16 @@ class BaseDrawingObject {
     let hooksBackup: any[] = [];
 
     // Delete table object if exists
-    if (this.TableID !== -1) {
-      const tablePtr = T3Gv.opt.GetObjectPtr(this.TableID, true);
-      if (tablePtr) {
-        T3Gv.opt.Table_DeleteObject(tablePtr);
-      }
-      tempObj = T3Gv.stdObj.GetObject(this.TableID);
-      if (tempObj) {
-        tempObj.Delete();
-      }
-    }
+    // if (this.TableID !== -1) {
+    //   const tablePtr = T3Gv.opt.GetObjectPtr(this.TableID, true);
+    //   if (tablePtr) {
+    //     T3Gv.opt.Table_DeleteObject(tablePtr);
+    //   }
+    //   tempObj = T3Gv.stdObj.GetObject(this.TableID);
+    //   if (tempObj) {
+    //     tempObj.Delete();
+    //   }
+    // }
 
     // Delete data object if exists
     if (this.DataID !== -1) {
@@ -1157,8 +1163,8 @@ class BaseDrawingObject {
       const hookedObj = T3Gv.opt.GetObjectPtr(this.hooks[0].objid, false);
       if (
         hookedObj &&
-        hookedObj.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL &&
-        !(hookedObj.Dimensions & ConstantData.DimensionFlags.SED_DF_HideHookedObjDimensions)
+        hookedObj.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL &&
+        !(hookedObj.Dimensions & NvConstant.DimensionFlags.SED_DF_HideHookedObjDimensions)
       ) {
         hooksBackup = Utils1.DeepCopy(this.hooks);
         this.hooks = [];
@@ -1173,92 +1179,92 @@ class BaseDrawingObject {
       T3Gv.opt.CommentObjectDelete(this);
     }
 
-    console.log("= S.BaseDrawingObject: DeleteObject output: object deleted");
+    T3Util.Log("= S.BaseDrawingObject: DeleteObject output: object deleted");
   }
 
   GetTextIDs(): number[] {
-    console.log("= S.BaseDrawingObject: GetTextIDs input");
+    T3Util.Log("= S.BaseDrawingObject: GetTextIDs input");
     const textIDs: number[] = [];
-    console.log("= S.BaseDrawingObject: GetTextIDs output:", textIDs);
+    T3Util.Log("= S.BaseDrawingObject: GetTextIDs output:", textIDs);
     return textIDs;
   }
 
   GetSegLFace(segmentIndex: number, someParam: any, anotherParam: any): number {
-    console.log("= S.BaseDrawingObject: GetSegLFace input:", { segmentIndex, someParam, anotherParam });
+    T3Util.Log("= S.BaseDrawingObject: GetSegLFace input:", { segmentIndex, someParam, anotherParam });
     const result = 0;
-    console.log("= S.BaseDrawingObject: GetSegLFace output:", result);
+    T3Util.Log("= S.BaseDrawingObject: GetSegLFace output:", result);
     return result;
   }
 
   GetSpacing(): { width: number | null; height: number | null } {
-    console.log("= S.BaseDrawingObject: GetSpacing input");
+    T3Util.Log("= S.BaseDrawingObject: GetSpacing input");
     const spacing = {
       width: null,
       height: null
     };
-    console.log("= S.BaseDrawingObject: GetSpacing output:", spacing);
+    T3Util.Log("= S.BaseDrawingObject: GetSpacing output:", spacing);
     return spacing;
   }
 
   GetShapeConnectPoint(): { x: number; y: number } {
-    console.log("= S.BaseDrawingObject: GetShapeConnectPoint input:");
+    T3Util.Log("= S.BaseDrawingObject: GetShapeConnectPoint input:");
     const connectPoint = { x: 0, y: 0 };
-    console.log("= S.BaseDrawingObject: GetShapeConnectPoint output:", connectPoint);
+    T3Util.Log("= S.BaseDrawingObject: GetShapeConnectPoint output:", connectPoint);
     return connectPoint;
   }
 
   ClosePolygon(e: any, t: any, a: any): boolean {
-    console.log("= S.BaseDrawingObject: ClosePolygon input:", { e, t, a });
+    T3Util.Log("= S.BaseDrawingObject: ClosePolygon input:", { e, t, a });
     const result: boolean = false;
-    console.log("= S.BaseDrawingObject: ClosePolygon output:", result);
+    T3Util.Log("= S.BaseDrawingObject: ClosePolygon output:", result);
     return result;
   }
 
   Hit(point: Point, param2: any, param3: any, param4: any): number {
-    console.log("= S.BaseDrawingObject: Hit input:", { point, param2, param3, param4 });
+    T3Util.Log("= S.BaseDrawingObject: Hit input:", { point, param2, param3, param4 });
     const hitCode = Utils2.pointInRect(this.Frame, point)
-      ? ConstantData.HitCodes.SED_Border
+      ? NvConstant.HitCodes.SED_Border
       : 0;
-    console.log("= S.BaseDrawingObject: Hit output:", hitCode);
+    T3Util.Log("= S.BaseDrawingObject: Hit output:", hitCode);
     return hitCode;
   }
 
   AfterModifyShape(shape: any, additionalData: any): void {
-    console.log("= S.BaseDrawingObject: AfterModifyShape input:", { shape, additionalData });
+    T3Util.Log("= S.BaseDrawingObject: AfterModifyShape input:", { shape, additionalData });
 
     T3Gv.opt.SetLinkFlag(shape, ShapeConstant.LinkFlags.SED_L_MOVE);
     T3Gv.opt.UpdateLinks();
 
-    console.log("= S.BaseDrawingObject: AfterModifyShape output: links updated");
+    T3Util.Log("= S.BaseDrawingObject: AfterModifyShape output: links updated");
   }
 
   AfterRotateShape(shape: any): void {
-    console.log("= S.BaseDrawingObject: AfterRotateShape input:", shape);
+    T3Util.Log("= S.BaseDrawingObject: AfterRotateShape input:", shape);
 
     T3Gv.opt.SetLinkFlag(shape, ShapeConstant.LinkFlags.SED_L_MOVE);
     T3Gv.opt.UpdateLinks();
 
-    console.log("= S.BaseDrawingObject: AfterRotateShape output: links updated");
+    T3Util.Log("= S.BaseDrawingObject: AfterRotateShape output: links updated");
   }
 
   PolyGetTargetPointList(inputParam: any): Point[] {
-    console.log("= S.BaseDrawingObject: PolyGetTargetPointList input:", inputParam);
+    T3Util.Log("= S.BaseDrawingObject: PolyGetTargetPointList input:", inputParam);
 
     // Get the list of polygon points
-    let targetPoints: Point[] = this.GetPolyPoints(ConstantData.Defines.NPOLYPTS, false, false, true, null);
+    let targetPoints: Point[] = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, false, true, null);
 
     // If there is a rotation applied, convert it to radians and rotate the points about the frame center
     if (this.RotationAngle !== 0) {
-      const rotationInRadians: number = -this.RotationAngle / (180 / ConstantData.Geometry.PI);
+      const rotationInRadians: number = -this.RotationAngle / (180 / NvConstant.Geometry.PI);
       Utils3.RotatePointsAboutCenter(this.Frame, rotationInRadians, targetPoints);
     }
 
-    console.log("= S.BaseDrawingObject: PolyGetTargetPointList output:", targetPoints);
+    T3Util.Log("= S.BaseDrawingObject: PolyGetTargetPointList output:", targetPoints);
     return targetPoints;
   }
 
   GetPolyPoints(dummy: number, applyAbsoluteOffset: boolean, unused: any, inflateRect: boolean, unused2: any): Point[] {
-    console.log("= S.BaseDrawingObject: GetPolyPoints input:", { dummy, applyAbsoluteOffset, unused, inflateRect, unused2 });
+    T3Util.Log("= S.BaseDrawingObject: GetPolyPoints input:", { dummy, applyAbsoluteOffset, unused, inflateRect, unused2 });
 
     let points: Point[] = [];
     let frameCopy: Rectangle = new Rectangle();
@@ -1287,63 +1293,63 @@ class BaseDrawingObject {
       }
     }
 
-    console.log("= S.BaseDrawingObject: GetPolyPoints output:", points);
+    T3Util.Log("= S.BaseDrawingObject: GetPolyPoints output:", points);
     return points;
   }
 
   RightClick(event: any): any {
-    console.log("= S.BaseDrawingObject: RightClick input:", event);
+    // T3Util.Log("= S.BaseDrawingObject: RightClick input:", event);
 
-    // Convert the window coordinates to document coordinates
-    const docCoords = T3Gv.opt.svgDoc.ConvertWindowToDocCoords(
-      event.gesture.center.clientX,
-      event.gesture.center.clientY
-    );
-    console.log("= S.BaseDrawingObject: Converted window to doc coords:", docCoords);
+    // // Convert the window coordinates to document coordinates
+    // const docCoords = T3Gv.opt.svgDoc.ConvertWindowToDocCoords(
+    //   event.gesture.center.clientX,
+    //   event.gesture.center.clientY
+    // );
+    // T3Util.Log("= S.BaseDrawingObject: Converted window to doc coords:", docCoords);
 
-    // Find the SVG element corresponding to the current target
-    const element = T3Gv.opt.svgObjectLayer.FindElementByDOMElement(event.currentTarget);
-    console.log("= S.BaseDrawingObject: Found SVG element:", element);
+    // // Find the SVG element corresponding to the current target
+    // const element = T3Gv.opt.svgObjectLayer.FindElementByDOMElement(event.currentTarget);
+    // T3Util.Log("= S.BaseDrawingObject: Found SVG element:", element);
 
-    // Select the object from the click event; exit if not selected
-    if (!T3Gv.opt.SelectObjectFromClick(event, element)) {
-      console.log("= S.BaseDrawingObject: RightClick output: Object selection failed");
-      return false;
-    }
+    // // Select the object from the click event; exit if not selected
+    // if (!T3Gv.opt.SelectObjectFromClick(event, element)) {
+    //   T3Util.Log("= S.BaseDrawingObject: RightClick output: Object selection failed");
+    //   return false;
+    // }
 
-    // Set up right click parameters
-    T3Gv.opt.rightClickParams = new RightClickData();
-    T3Gv.opt.rightClickParams.TargetID = element.GetID();
-    T3Gv.opt.rightClickParams.HitPt.x = docCoords.x;
-    T3Gv.opt.rightClickParams.HitPt.y = docCoords.y;
-    T3Gv.opt.rightClickParams.Locked = (this.flags & ConstantData.ObjFlags.SEDO_Lock) > 0;
-    console.log("= S.BaseDrawingObject: RightClickParams set to:", T3Gv.opt.rightClickParams);
+    // // Set up right click parameters
+    // T3Gv.opt.rightClickParams = new RightClickData();
+    // T3Gv.opt.rightClickParams.TargetID = element.GetID();
+    // T3Gv.opt.rightClickParams.HitPt.x = docCoords.x;
+    // T3Gv.opt.rightClickParams.HitPt.y = docCoords.y;
+    // T3Gv.opt.rightClickParams.Locked = (this.flags & NvConstant.ObjFlags.SEDO_Lock) > 0;
+    // T3Util.Log("= S.BaseDrawingObject: RightClickParams set to:", T3Gv.opt.rightClickParams);
 
-    // Show the appropriate contextual menu based on read-only status
-    if (T3Gv.docUtil.IsReadOnly()) {
-      // TODO
-    } else {
-      // TODO
-    }
+    // // Show the appropriate contextual menu based on read-only status
+    // if (T3Gv.docUtil.IsReadOnly()) {
+    //   // TODO
+    // } else {
+    //   // TODO
+    // }
 
-    console.log("= S.BaseDrawingObject: RightClick output: Contextual menu shown");
+    // T3Util.Log("= S.BaseDrawingObject: RightClick output: Contextual menu shown");
   }
 
   AdjustTextEditBackground(e: any, t: any): void {
-    console.log("= S.BaseDrawingObject: AdjustTextEditBackground input:", { e, t });
+    T3Util.Log("= S.BaseDrawingObject: AdjustTextEditBackground input:", { e, t });
 
     // TODO: Implement the logic to adjust the text edit background as needed.
 
-    console.log("= S.BaseDrawingObject: AdjustTextEditBackground output: completed");
+    T3Util.Log("= S.BaseDrawingObject: AdjustTextEditBackground output: completed");
   }
 
   SetTextContent(text: string): void {
-    console.log("= S.BaseDrawingObject: SetTextContent input:", text);
+    T3Util.Log("= S.BaseDrawingObject: SetTextContent input:", text);
     if (text) {
       const textConfig = { runtimeText: text };
       const textObject = new TextObject(textConfig);
       const newBlock = T3Gv.stdObj.CreateBlock(
-        ConstantData.StoredObjectType.LM_TEXT_OBJECT,
+        StateConstant.StoredObjectType.TextObject,
         textObject
       );
       if (newBlock === null) {
@@ -1351,16 +1357,16 @@ class BaseDrawingObject {
       }
       this.DataID = newBlock.ID;
     }
-    console.log("= S.BaseDrawingObject: SetTextContent output, DataID:", this.DataID);
+    T3Util.Log("= S.BaseDrawingObject: SetTextContent output, DataID:", this.DataID);
   }
 
   SetNoteContent(noteText: string): void {
-    console.log("= S.BaseDrawingObject: SetNoteContent input:", noteText);
+    T3Util.Log("= S.BaseDrawingObject: SetNoteContent input:", noteText);
 
     if (noteText) {
       const textConfig = { runtimeText: noteText };
       const textObj = new TextObject(textConfig);
-      const newBlock = T3Gv.stdObj.CreateBlock(ConstantData.StoredObjectType.LM_NOTES_OBJECT, textObj);
+      const newBlock = T3Gv.stdObj.CreateBlock(StateConstant.StoredObjectType.NotesObject, textObj);
 
       if (newBlock === null) {
         console.error("= S.BaseDrawingObject: SetNoteContent error: null new text block allocation");
@@ -1368,21 +1374,21 @@ class BaseDrawingObject {
       }
 
       this.NoteID = newBlock.ID;
-      console.log("= S.BaseDrawingObject: SetNoteContent output: NoteID set to", this.NoteID);
+      T3Util.Log("= S.BaseDrawingObject: SetNoteContent output: NoteID set to", this.NoteID);
     } else {
-      console.log("= S.BaseDrawingObject: SetNoteContent output: no note content provided");
+      T3Util.Log("= S.BaseDrawingObject: SetNoteContent output: no note content provided");
     }
   }
 
   GetArrowheadFormat(): any {
-    console.log("= S.BaseDrawingObject: GetArrowheadFormat input:");
+    T3Util.Log("= S.BaseDrawingObject: GetArrowheadFormat input:");
     const result = null;
-    console.log("= S.BaseDrawingObject: GetArrowheadFormat output:", result);
+    T3Util.Log("= S.BaseDrawingObject: GetArrowheadFormat output:", result);
     return result;
   }
 
   GetTextParaFormat(e: any): ParagraphFormat {
-    console.log("= S.BaseDrawingObject: GetTextParaFormat input:", e);
+    T3Util.Log("= S.BaseDrawingObject: GetTextParaFormat input:", e);
 
     let paraFormat: ParagraphFormat = {} as ParagraphFormat;
     // Set default values
@@ -1391,12 +1397,14 @@ class BaseDrawingObject {
     paraFormat.spacing = 0;
 
     const svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
-    const activeTableID = T3Gv.opt.Table_GetActiveID();
+    // const activeTableID = T3Gv.opt.Table_GetActiveID();
 
-    const table = this.GetTable(false);
-    if (table) {
-      T3Gv.opt.Table_GetTextParaFormat(table, paraFormat, svgElement, this.BlockID !== activeTableID, e, null);
-    } else if (this.DataID && this.DataID >= 0) {
+    // const table = this.GetTable(false);
+    // if (table) {
+    //   T3Gv.opt.Table_GetTextParaFormat(table, paraFormat, svgElement, this.BlockID !== activeTableID, e, null);
+    // } else
+
+    if (this.DataID && this.DataID >= 0) {
       const textElement = svgElement.textElem;
       if (textElement) {
         const verticalAlign = textElement.GetVerticalAlignment();
@@ -1427,20 +1435,20 @@ class BaseDrawingObject {
       }
     }
 
-    console.log("= S.BaseDrawingObject: GetTextParaFormat output:", paraFormat);
+    T3Util.Log("= S.BaseDrawingObject: GetTextParaFormat output:", paraFormat);
     return paraFormat;
   }
 
   GetTextFormat(returnTextFormat: boolean, textOptions: any): any {
-    console.log("= S.BaseDrawingObject: GetTextFormat input:", { returnTextFormat, textOptions });
+    T3Util.Log("= S.BaseDrawingObject: GetTextFormat input:", { returnTextFormat, textOptions });
 
     // Initialize variables with readable names
     let isBold: boolean, isItalic: boolean, isUnderline: boolean, isSuperscript: boolean, isSubscript: boolean;
     let textElement: any = null;
-    const textFace = ConstantData.TextFace;
+    const textFace = TextConstant.TextFace;
     let textFormatData = new TextFormatData();
     let defaultStyle = new DefaultStyle();
-    const activeTableID = T3Gv.opt.Table_GetActiveID();
+    // const activeTableID = T3Gv.opt.Table_GetActiveID();
     const sessionBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
 
     // Deep copy the StyleRecord's Text settings and update font information from session block
@@ -1449,10 +1457,12 @@ class BaseDrawingObject {
     textFormatData.FontName = sessionBlock.def.lf.fontName;
 
     // Try to get the table for text formatting
-    const table = this.GetTable(false);
-    if (table) {
-      T3Gv.opt.Table_GetTextFormat(table, textFormatData, null, activeTableID !== this.BlockID, textOptions);
-    } else if (this.DataID !== null && this.DataID >= 0) {
+    // const table = this.GetTable(false);
+    // if (table) {
+    //   T3Gv.opt.Table_GetTextFormat(table, textFormatData, null, activeTableID !== this.BlockID, textOptions);
+    // } else
+
+    if (this.DataID !== null && this.DataID >= 0) {
       const svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
       if (svgElement) {
         textElement = svgElement.textElem;
@@ -1482,7 +1492,7 @@ class BaseDrawingObject {
             if (selectedFormat.colorTrans) {
               textFormatData.Paint.Opacity = selectedFormat.colorTrans;
             }
-            console.log("= S.BaseDrawingObject: GetTextFormat output (TextFormatData):", textFormatData);
+            T3Util.Log("= S.BaseDrawingObject: GetTextFormat output (TextFormatData):", textFormatData);
             return textFormatData;
           } else {
             defaultStyle.font = selectedFormat.font;
@@ -1493,44 +1503,44 @@ class BaseDrawingObject {
             defaultStyle.baseOffset = selectedFormat.baseOffset;
             defaultStyle.color = selectedFormat.color;
             defaultStyle.colorTrans = selectedFormat.colorTrans;
-            console.log("= S.BaseDrawingObject: GetTextFormat output (DefaultStyle):", defaultStyle);
+            T3Util.Log("= S.BaseDrawingObject: GetTextFormat output (DefaultStyle):", defaultStyle);
             return defaultStyle;
           }
         }
       }
     }
-    console.log("= S.BaseDrawingObject: GetTextFormat output:", returnTextFormat ? textFormatData : null);
+    T3Util.Log("= S.BaseDrawingObject: GetTextFormat output:", returnTextFormat ? textFormatData : null);
     return returnTextFormat ? textFormatData : null;
   }
 
   UseTextBlockColor(): boolean {
-    console.log("= S.BaseDrawingObject: UseTextBlockColor input: none");
+    T3Util.Log("= S.BaseDrawingObject: UseTextBlockColor input: none");
     const result = false;
-    console.log("= S.BaseDrawingObject: UseTextBlockColor output:", result);
+    T3Util.Log("= S.BaseDrawingObject: UseTextBlockColor output:", result);
     return result;
   }
 
-  SetTextObject(e: any): boolean {
-    console.log("= S.BaseDrawingObject: SetTextObject input:", e);
-    this.DataID = e;
-    console.log("= S.BaseDrawingObject: SetTextObject output: DataID set to", this.DataID);
+  SetTextObject(dataId: any): boolean {
+    T3Util.Log("= S.BaseDrawingObject: SetTextObject input:", dataId);
+    this.DataID = dataId;
+    T3Util.Log("= S.BaseDrawingObject: SetTextObject output: DataID set to", this.DataID);
     return true;
   }
 
   GetTextObject(input: any, options?: any): number {
-    console.log("= S.BaseDrawingObject: GetTextObject input:", { input, options });
+    T3Util.Log("= S.BaseDrawingObject: GetTextObject input:", { input, options });
     const dataId = this.DataID;
-    console.log("= S.BaseDrawingObject: GetTextObject output:", dataId);
+    T3Util.Log("= S.BaseDrawingObject: GetTextObject output:", dataId);
     return dataId;
   }
 
   SetTextFormat(textFormat: TextFormatData, options: any): void {
-    console.log("= S.BaseDrawingObject: SetTextFormat input:", { textFormat, options });
+    T3Util.Log("= S.BaseDrawingObject: SetTextFormat input:", { textFormat, options });
 
     // TODO: Implement text formatting logic here.
     // For example, you might update the style record or modify properties based on the provided text format.
 
-    console.log("= S.BaseDrawingObject: SetTextFormat output: completed");
+    T3Util.Log("= S.BaseDrawingObject: SetTextFormat output: completed");
   }
 
 
@@ -1544,20 +1554,20 @@ class BaseDrawingObject {
 
 
   ExtendLines(): void {
-    console.log("= S.BaseDrawingObject: ExtendLines input:");
+    T3Util.Log("= S.BaseDrawingObject: ExtendLines input:");
 
     // TODO: Implement the logic for extending lines here.
 
-    console.log("= S.BaseDrawingObject: ExtendLines output: complete");
+    T3Util.Log("= S.BaseDrawingObject: ExtendLines output: complete");
   }
 
   ExtendCell(inputCell: any, additionalParam: any, anotherParam: any): any {
-    console.log("= S.BaseDrawingObject: ExtendCell input:", { inputCell, additionalParam, anotherParam });
+    T3Util.Log("= S.BaseDrawingObject: ExtendCell input:", { inputCell, additionalParam, anotherParam });
 
     // TODO: Add your implementation logic here.
     const result = null;
 
-    console.log("= S.BaseDrawingObject: ExtendCell output:", result);
+    T3Util.Log("= S.BaseDrawingObject: ExtendCell output:", result);
     return result;
   }
 
@@ -1567,38 +1577,38 @@ class BaseDrawingObject {
     CRFlag?: boolean;
     AllowSpell?: boolean;
   }): boolean {
-    console.log("= S.BaseDrawingObject: SetShapeProperties input:", options);
+    T3Util.Log("= S.BaseDrawingObject: SetShapeProperties input:", options);
 
     let changed = false;
 
     // Process ClickFlag
     switch (options.ClickFlag) {
-      case ConstantData.TextFlags.SED_TF_OneClick:
-        if ((this.TextFlags & ConstantData.TextFlags.SED_TF_OneClick) === 0) {
+      case NvConstant.TextFlags.SED_TF_OneClick:
+        if ((this.TextFlags & NvConstant.TextFlags.SED_TF_OneClick) === 0) {
           this.TextFlags = Utils2.SetFlag(
             this.TextFlags,
-            ConstantData.TextFlags.SED_TF_OneClick,
+            NvConstant.TextFlags.SED_TF_OneClick,
             true
           );
           this.TextFlags = Utils2.SetFlag(
             this.TextFlags,
-            ConstantData.TextFlags.SED_TF_None,
+            NvConstant.TextFlags.SED_TF_None,
             false
           );
           changed = true;
         }
         break;
 
-      case ConstantData.TextFlags.SED_TF_None:
-        if ((this.TextFlags & ConstantData.TextFlags.SED_TF_None) === 0) {
+      case NvConstant.TextFlags.SED_TF_None:
+        if ((this.TextFlags & NvConstant.TextFlags.SED_TF_None) === 0) {
           this.TextFlags = Utils2.SetFlag(
             this.TextFlags,
-            ConstantData.TextFlags.SED_TF_OneClick,
+            NvConstant.TextFlags.SED_TF_OneClick,
             false
           );
           this.TextFlags = Utils2.SetFlag(
             this.TextFlags,
-            ConstantData.TextFlags.SED_TF_None,
+            NvConstant.TextFlags.SED_TF_None,
             true
           );
           changed = true;
@@ -1607,17 +1617,17 @@ class BaseDrawingObject {
 
       case 0:
         if (
-          (this.TextFlags & ConstantData.TextFlags.SED_TF_None) ||
-          (this.TextFlags & ConstantData.TextFlags.SED_TF_OneClick)
+          (this.TextFlags & NvConstant.TextFlags.SED_TF_None) ||
+          (this.TextFlags & NvConstant.TextFlags.SED_TF_OneClick)
         ) {
           this.TextFlags = Utils2.SetFlag(
             this.TextFlags,
-            ConstantData.TextFlags.SED_TF_OneClick,
+            NvConstant.TextFlags.SED_TF_OneClick,
             false
           );
           this.TextFlags = Utils2.SetFlag(
             this.TextFlags,
-            ConstantData.TextFlags.SED_TF_None,
+            NvConstant.TextFlags.SED_TF_None,
             false
           );
           changed = true;
@@ -1627,32 +1637,32 @@ class BaseDrawingObject {
 
     // Process PositionFlag
     switch (options.PositionFlag) {
-      case ConstantData.TextFlags.SED_TF_AttachA:
-        if ((this.TextFlags & ConstantData.TextFlags.SED_TF_AttachA) === 0) {
+      case NvConstant.TextFlags.SED_TF_AttachA:
+        if ((this.TextFlags & NvConstant.TextFlags.SED_TF_AttachA) === 0) {
           this.TextFlags = Utils2.SetFlag(
             this.TextFlags,
-            ConstantData.TextFlags.SED_TF_AttachA,
+            NvConstant.TextFlags.SED_TF_AttachA,
             true
           );
           this.TextFlags = Utils2.SetFlag(
             this.TextFlags,
-            ConstantData.TextFlags.SED_TF_AttachB,
+            NvConstant.TextFlags.SED_TF_AttachB,
             false
           );
           changed = true;
         }
         break;
 
-      case ConstantData.TextFlags.SED_TF_AttachB:
-        if ((this.TextFlags & ConstantData.TextFlags.SED_TF_AttachB) === 0) {
+      case NvConstant.TextFlags.SED_TF_AttachB:
+        if ((this.TextFlags & NvConstant.TextFlags.SED_TF_AttachB) === 0) {
           this.TextFlags = Utils2.SetFlag(
             this.TextFlags,
-            ConstantData.TextFlags.SED_TF_AttachB,
+            NvConstant.TextFlags.SED_TF_AttachB,
             true
           );
           this.TextFlags = Utils2.SetFlag(
             this.TextFlags,
-            ConstantData.TextFlags.SED_TF_AttachA,
+            NvConstant.TextFlags.SED_TF_AttachA,
             false
           );
           changed = true;
@@ -1661,17 +1671,17 @@ class BaseDrawingObject {
 
       case 0:
         if (
-          (this.TextFlags & ConstantData.TextFlags.SED_TF_AttachB) !== 0 ||
-          (this.TextFlags & ConstantData.TextFlags.SED_TF_AttachA) !== 0
+          (this.TextFlags & NvConstant.TextFlags.SED_TF_AttachB) !== 0 ||
+          (this.TextFlags & NvConstant.TextFlags.SED_TF_AttachA) !== 0
         ) {
           this.TextFlags = Utils2.SetFlag(
             this.TextFlags,
-            ConstantData.TextFlags.SED_TF_AttachB,
+            NvConstant.TextFlags.SED_TF_AttachB,
             false
           );
           this.TextFlags = Utils2.SetFlag(
             this.TextFlags,
-            ConstantData.TextFlags.SED_TF_AttachA,
+            NvConstant.TextFlags.SED_TF_AttachA,
             false
           );
           changed = true;
@@ -1681,19 +1691,19 @@ class BaseDrawingObject {
 
     // Process CRFlag
     if (options.CRFlag === true) {
-      if ((this.TextFlags & ConstantData.TextFlags.SED_TF_FormCR) === 0) {
+      if ((this.TextFlags & NvConstant.TextFlags.SED_TF_FormCR) === 0) {
         this.TextFlags = Utils2.SetFlag(
           this.TextFlags,
-          ConstantData.TextFlags.SED_TF_FormCR,
+          NvConstant.TextFlags.SED_TF_FormCR,
           true
         );
         changed = true;
       }
     } else if (options.CRFlag === false) {
-      if ((this.TextFlags & ConstantData.TextFlags.SED_TF_FormCR) !== 0) {
+      if ((this.TextFlags & NvConstant.TextFlags.SED_TF_FormCR) !== 0) {
         this.TextFlags = Utils2.SetFlag(
           this.TextFlags,
-          ConstantData.TextFlags.SED_TF_FormCR,
+          NvConstant.TextFlags.SED_TF_FormCR,
           false
         );
         changed = true;
@@ -1702,45 +1712,45 @@ class BaseDrawingObject {
 
     // Process AllowSpell
     if (options.AllowSpell === false) {
-      if ((this.TextFlags & ConstantData.TextFlags.SED_TF_NoSpell) === 0) {
+      if ((this.TextFlags & NvConstant.TextFlags.SED_TF_NoSpell) === 0) {
         this.TextFlags = Utils2.SetFlag(
           this.TextFlags,
-          ConstantData.TextFlags.SED_TF_NoSpell,
+          NvConstant.TextFlags.SED_TF_NoSpell,
           true
         );
         changed = true;
       }
     } else if (options.AllowSpell === true) {
-      if ((this.TextFlags & ConstantData.TextFlags.SED_TF_NoSpell) !== 0) {
+      if ((this.TextFlags & NvConstant.TextFlags.SED_TF_NoSpell) !== 0) {
         this.TextFlags = Utils2.SetFlag(
           this.TextFlags,
-          ConstantData.TextFlags.SED_TF_NoSpell,
+          NvConstant.TextFlags.SED_TF_NoSpell,
           false
         );
         changed = true;
       }
     }
 
-    console.log("= S.BaseDrawingObject: SetShapeProperties output:", changed);
+    T3Util.Log("= S.BaseDrawingObject: SetShapeProperties output:", changed);
     return changed;
   }
 
   SetShapeConnectionPoints(shape: any, connectionPoint: any, additionalInfo: any): boolean {
-    console.log("= S.BaseDrawingObject: SetShapeConnectionPoints input:", { shape, connectionPoint, additionalInfo });
+    T3Util.Log("= S.BaseDrawingObject: SetShapeConnectionPoints input:", { shape, connectionPoint, additionalInfo });
     const result = false;
-    console.log("= S.BaseDrawingObject: SetShapeConnectionPoints output:", result);
+    T3Util.Log("= S.BaseDrawingObject: SetShapeConnectionPoints output:", result);
     return result;
   }
 
   GetClosestConnectPoint(e: any): boolean {
-    console.log("= S.BaseDrawingObject: GetClosestConnectPoint input:", e);
+    T3Util.Log("= S.BaseDrawingObject: GetClosestConnectPoint input:", e);
     const result = false;
-    console.log("= S.BaseDrawingObject: GetClosestConnectPoint output:", result);
+    T3Util.Log("= S.BaseDrawingObject: GetClosestConnectPoint output:", result);
     return result;
   }
 
   ScaleEndPoints(): void {
-    console.log("= S.BaseDrawingObject: ScaleEndPoints input:", {
+    T3Util.Log("= S.BaseDrawingObject: ScaleEndPoints input:", {
       polylist: this.polylist,
       startPoint: this.StartPoint,
       endPoint: this.EndPoint
@@ -1750,11 +1760,11 @@ class BaseDrawingObject {
       this.PolyLine_ScaleEndPoints();
     }
 
-    console.log("= S.BaseDrawingObject: ScaleEndPoints output: completed");
+    T3Util.Log("= S.BaseDrawingObject: ScaleEndPoints output: completed");
   }
 
   PolyLine_ScaleEndPoints(): void {
-    console.log("= S.BaseDrawingObject: PolyLine_ScaleEndPoints input:", {
+    T3Util.Log("= S.BaseDrawingObject: PolyLine_ScaleEndPoints input:", {
       polylist: this.polylist,
       Frame: this.Frame,
       StartPoint: this.StartPoint,
@@ -1768,7 +1778,7 @@ class BaseDrawingObject {
     const center = { x: this.Frame.x + this.Frame.width / 2, y: this.Frame.y + this.Frame.height / 2 };
 
     if (scaleX === 1 && scaleY === 1) {
-      console.log("= S.BaseDrawingObject: PolyLine_ScaleEndPoints output: no scaling required");
+      T3Util.Log("= S.BaseDrawingObject: PolyLine_ScaleEndPoints output: no scaling required");
       return;
     }
 
@@ -1784,22 +1794,22 @@ class BaseDrawingObject {
     deltaY = center.y - this.EndPoint.y;
     this.EndPoint.y = center.y - deltaY * scaleY;
 
-    console.log("= S.BaseDrawingObject: PolyLine_ScaleEndPoints output:", {
+    T3Util.Log("= S.BaseDrawingObject: PolyLine_ScaleEndPoints output:", {
       StartPoint: this.StartPoint,
       EndPoint: this.EndPoint
     });
   }
 
   ChangeLineThickness(thickness: number): void {
-    console.log("= S.BaseDrawingObject: ChangeLineThickness input:", thickness);
+    T3Util.Log("= S.BaseDrawingObject: ChangeLineThickness input:", thickness);
     this.UpdateFrame(null);
-    console.log("= S.BaseDrawingObject: ChangeLineThickness output: thickness changed");
+    T3Util.Log("= S.BaseDrawingObject: ChangeLineThickness output: thickness changed");
   }
 
   ChangeEffect(): void {
-    console.log("= S.BaseDrawingObject: ChangeEffect input: no parameters");
+    T3Util.Log("= S.BaseDrawingObject: ChangeEffect input: no parameters");
     this.UpdateFrame(null);
-    console.log("= S.BaseDrawingObject: ChangeEffect output: effect changed");
+    T3Util.Log("= S.BaseDrawingObject: ChangeEffect output: effect changed");
   }
 
   ChangeTextAttributes(
@@ -1812,7 +1822,7 @@ class BaseDrawingObject {
     paramO: any,
     paramS: any
   ): void {
-    console.log("= S.BaseDrawingObject: ChangeTextAttributes input:", {
+    T3Util.Log("= S.BaseDrawingObject: ChangeTextAttributes input:", {
       fillColor,
       strokeColor,
       isBold,
@@ -1825,20 +1835,22 @@ class BaseDrawingObject {
 
     // Only process if any of these parameters are provided
     if (fillColor || strokeColor || isBold || isItalic || paramS) {
-      if (this.GetTable(true)) {
-        T3Gv.opt.Table_ChangeTextAttributes(
-          this,
-          fillColor,
-          strokeColor,
-          paramI,
-          isItalic,
-          paramN,
-          null,
-          false,
-          paramO,
-          paramS
-        );
-      } else {
+      // if (this.GetTable(true)) {
+      //   T3Gv.opt.Table_ChangeTextAttributes(
+      //     this,
+      //     fillColor,
+      //     strokeColor,
+      //     paramI,
+      //     isItalic,
+      //     paramN,
+      //     null,
+      //     false,
+      //     paramO,
+      //     paramS
+      //   );
+      // } else
+
+      {
         T3Gv.opt.ChangeObjectTextAttributes(
           this.BlockID,
           fillColor,
@@ -1852,11 +1864,11 @@ class BaseDrawingObject {
       }
     }
 
-    console.log("= S.BaseDrawingObject: ChangeTextAttributes output: text attributes changed");
+    T3Util.Log("= S.BaseDrawingObject: ChangeTextAttributes output: text attributes changed");
   }
 
   SetObjectStyle(styleInput: any): any {
-    console.log("= S.BaseDrawingObject: SetObjectStyle input:", styleInput);
+    T3Util.Log("= S.BaseDrawingObject: SetObjectStyle input:", styleInput);
 
     const filteredStyle = T3Gv.opt.ApplyColorFilter(
       styleInput,
@@ -1866,9 +1878,11 @@ class BaseDrawingObject {
     );
     const initialThickness = this.StyleRecord.Line.Thickness;
 
-    if (this.GetTable(false)) {
-      T3Gv.opt.Table_ApplyProperties(this, filteredStyle, styleInput, false);
-    } else if (
+    // if (this.GetTable(false)) {
+    //   T3Gv.opt.Table_ApplyProperties(this, filteredStyle, styleInput, false);
+    // } else
+
+    if (
       filteredStyle.StyleRecord &&
       filteredStyle.StyleRecord.Fill &&
       filteredStyle.StyleRecord.Fill.Paint &&
@@ -1876,15 +1890,15 @@ class BaseDrawingObject {
       filteredStyle.StyleRecord.Name === undefined &&
       filteredStyle.StyleRecord.Fill.Paint.FillType === undefined
     ) {
-      if (this.StyleRecord.Fill.Paint.FillType === ConstantData.FillTypes.SDFILL_GRADIENT) {
+      if (this.StyleRecord.Fill.Paint.FillType === NvConstant.FillTypes.SDFILL_GRADIENT) {
         if (
           this.StyleRecord.Fill.Paint.Color.toUpperCase() ===
           filteredStyle.StyleRecord.Fill.Paint.Color.toUpperCase()
         ) {
-          filteredStyle.StyleRecord.Fill.Paint.FillType = ConstantData.FillTypes.SDFILL_SOLID;
+          filteredStyle.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.SDFILL_SOLID;
         }
       } else {
-        filteredStyle.StyleRecord.Fill.Paint.FillType = ConstantData.FillTypes.SDFILL_SOLID;
+        filteredStyle.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.SDFILL_SOLID;
       }
     }
 
@@ -1899,35 +1913,57 @@ class BaseDrawingObject {
       }
     }
 
-    console.log("= S.BaseDrawingObject: SetObjectStyle output:", filteredStyle);
+    T3Util.Log("= S.BaseDrawingObject: SetObjectStyle output:", filteredStyle);
     return filteredStyle;
   }
 
-  // GetTextDefault(e) {
-  //   if (
-  //     e &&
-  //     (
-  //       $.extend(!0, e, new ParagraphFormat()/*Basic.Text.ParagraphFormat*/),
-  //       e.bullet = 'none',
-  //       e.spacing = 0,
-  //       e.just = 'center',
-  //       e.vjust = 'middle',
-  //       this.TextAlign
-  //     )
-  //   ) {
-  //     var t = this.TextAlign.indexOf('-');
-  //     t >= 0 ? (
-  //       e.vjust = this.TextAlign.slice(0, t),
-  //       e.just = this.TextAlign.slice(t + 1, this.TextAlign.length)
-  //     ) : e.just = this.TextAlign
-  //   }
-  //   var a = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, !1),
-  //     r = $.extend(!0, {
-  //     }, this.StyleRecord.Text);
-  //   return r.FontId = T3Gv.opt.GetFontIdByName(a.def.lf.fontName),
-  //     r.FontName = a.def.lf.fontName,
-  //     r
-  // }
+  /**
+   * Gets the default text formatting settings for the drawing object
+   * This combines the shape's text alignment settings with default paragraph formatting
+   * and retrieves font information from the session block.
+   *
+   * @param paraFormat - The paragraph format object to be populated with default settings
+   * @returns TextFormatData object containing default text formatting
+   */
+  GetTextDefault(paraFormat) {
+    // Initialize paragraph format if provided
+    if (paraFormat) {
+      // Extend the input object with a new ParagraphFormat instance
+      $.extend(true, paraFormat, new ParagraphFormat());
+
+      // Set default paragraph properties
+      paraFormat.bullet = 'none';
+      paraFormat.spacing = 0;
+      paraFormat.just = 'center';
+      paraFormat.vjust = 'middle';
+
+      // Process text alignment if available
+      if (this.TextAlign) {
+        const alignSeparatorIndex = this.TextAlign.indexOf('-');
+
+        // If alignment contains both vertical and horizontal components
+        if (alignSeparatorIndex >= 0) {
+          paraFormat.vjust = this.TextAlign.slice(0, alignSeparatorIndex);
+          paraFormat.just = this.TextAlign.slice(alignSeparatorIndex + 1, this.TextAlign.length);
+        } else {
+          // Only horizontal alignment specified
+          paraFormat.just = this.TextAlign;
+        }
+      }
+    }
+
+    // Get the session block to retrieve font information
+    const sessionBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+
+    // Create a deep copy of this object's text style record
+    const textFormat = $.extend(true, {}, this.StyleRecord.Text);
+
+    // Update font information from session block
+    textFormat.FontId = -1;// T3Gv.opt.GetFontIdByName(sessionBlock.def.lf.fontName);
+    textFormat.FontName = sessionBlock.def.lf.fontName;
+
+    return textFormat;
+  }
 
   // GetTextParams(e) {
   //   var t = {};
@@ -1940,46 +1976,46 @@ class BaseDrawingObject {
   // }
 
   GetListOfEnclosedObjects(enclosedItems: any): any[] {
-    console.log("= S.BaseDrawingObject: GetListOfEnclosedObjects input:", enclosedItems);
+    T3Util.Log("= S.BaseDrawingObject: GetListOfEnclosedObjects input:", enclosedItems);
     const result: any[] = [];
-    console.log("= S.BaseDrawingObject: GetListOfEnclosedObjects output:", result);
+    T3Util.Log("= S.BaseDrawingObject: GetListOfEnclosedObjects output:", result);
     return result;
   }
 
   InterceptMoveOperation(event: any): boolean {
-    console.log('= S.BaseDrawingObject: InterceptMoveOperation input:', event);
+    T3Util.Log('= S.BaseDrawingObject: InterceptMoveOperation input:', event);
     const result = false;
-    console.log('= S.BaseDrawingObject: InterceptMoveOperation output:', result);
+    T3Util.Log('= S.BaseDrawingObject: InterceptMoveOperation output:', result);
     return result;
   }
 
   SetupInterceptMove(event: any): boolean {
-    console.log("= S.BaseDrawingObject: SetupInterceptMove input:", event);
+    T3Util.Log("= S.BaseDrawingObject: SetupInterceptMove input:", event);
     const result = false;
-    console.log("= S.BaseDrawingObject: SetupInterceptMove output:", result);
+    T3Util.Log("= S.BaseDrawingObject: SetupInterceptMove output:", result);
     return result;
   }
 
   IsSelected(): boolean {
-    console.log("= S.BaseDrawingObject: IsSelected input: none");
+    T3Util.Log("= S.BaseDrawingObject: IsSelected input: none");
 
     const blockID = this.BlockID;
     const selectedList = T3Gv.opt.theSelectedListBlockID.Data;
     const isSelected = $.inArray(blockID, selectedList) >= 0;
 
-    console.log("= S.BaseDrawingObject: IsSelected output:", isSelected);
+    T3Util.Log("= S.BaseDrawingObject: IsSelected output:", isSelected);
     return isSelected;
   }
 
   RemoveDimensionLines(svgDoc: any): void {
-    console.log('= S.BaseDrawingObject: RemoveDimensionLines input:', svgDoc);
+    T3Util.Log('= S.BaseDrawingObject: RemoveDimensionLines input:', svgDoc);
 
     if (svgDoc != null) {
       const elementClasses = [
-        ConstantData.SVGElementClass.DIMENSIONLINE,
-        ConstantData.SVGElementClass.DIMENSIONTEXT,
-        ConstantData.SVGElementClass.AREADIMENSIONLINE,
-        ConstantData.SVGElementClass.DIMENSIONTEXTNOEDIT
+        OptConstant.SVGElementClass.DIMENSIONLINE,
+        OptConstant.SVGElementClass.DIMENSIONTEXT,
+        OptConstant.SVGElementClass.AREADIMENSIONLINE,
+        OptConstant.SVGElementClass.DIMENSIONTEXTNOEDIT
       ];
 
       for (let i = 0; i < elementClasses.length; i++) {
@@ -1990,16 +2026,16 @@ class BaseDrawingObject {
       }
     }
 
-    console.log('= S.BaseDrawingObject: RemoveDimensionLines output: completed');
+    T3Util.Log('= S.BaseDrawingObject: RemoveDimensionLines output: completed');
   }
 
   // Remove coordinate lines when adjusting the line
   RemoveCoordinateLines(svgDoc: any): void {
-    console.log('= S.BaseDrawingObject: RemoveCoordinateLines input:', svgDoc);
+    T3Util.Log('= S.BaseDrawingObject: RemoveCoordinateLines input:', svgDoc);
 
     if (svgDoc != null) {
       const elementClasses = [
-        ConstantData.SVGElementClass.CoordinateLine,
+        OptConstant.SVGElementClass.CoordinateLine,
       ];
 
       for (let i = 0; i < elementClasses.length; i++) {
@@ -2010,11 +2046,11 @@ class BaseDrawingObject {
       }
     }
 
-    console.log('= S.BaseDrawingObject: RemoveCoordinateLines output: completed');
+    T3Util.Log('= S.BaseDrawingObject: RemoveCoordinateLines output: completed');
   }
 
   SetDimensionLinesVisibility(svgDoc: any, isVisible: boolean) {
-    console.log('= S.BaseDrawingObject: SetDimensionLinesVisibility input:', { svgDoc, isVisible });
+    T3Util.Log('= S.BaseDrawingObject: SetDimensionLinesVisibility input:', { svgDoc, isVisible });
 
     function setVisibility(svgDoc: any, elementClass: string, isVisible: boolean) {
       const elements = svgDoc.GetElementListWithID(elementClass);
@@ -2023,29 +2059,29 @@ class BaseDrawingObject {
       }
     }
 
-    const shouldSetVisibility = this.Dimensions === ConstantData.DimensionFlags.SED_DF_Always || this.Dimensions === ConstantData.DimensionFlags.SED_DF_Select;
+    const shouldSetVisibility = this.Dimensions === NvConstant.DimensionFlags.SED_DF_Always || this.Dimensions === NvConstant.DimensionFlags.SED_DF_Select;
 
     if (svgDoc && shouldSetVisibility) {
-      setVisibility(svgDoc, ConstantData.SVGElementClass.DIMENSIONLINE, isVisible);
-      setVisibility(svgDoc, ConstantData.SVGElementClass.DIMENSIONTEXT, isVisible);
-      setVisibility(svgDoc, ConstantData.SVGElementClass.DIMENSIONTEXTNOEDIT, isVisible);
+      setVisibility(svgDoc, OptConstant.SVGElementClass.DIMENSIONLINE, isVisible);
+      setVisibility(svgDoc, OptConstant.SVGElementClass.DIMENSIONTEXT, isVisible);
+      setVisibility(svgDoc, OptConstant.SVGElementClass.DIMENSIONTEXTNOEDIT, isVisible);
     }
 
-    console.log('= S.BaseDrawingObject: SetDimensionLinesVisibility output: visibility set to', isVisible);
+    T3Util.Log('= S.BaseDrawingObject: SetDimensionLinesVisibility output: visibility set to', isVisible);
   }
 
   NeedsAddLineThicknessToDimension(dimension: any): boolean {
-    console.log("= S.BaseDrawingObject: NeedsAddLineThicknessToDimension input:", dimension);
+    T3Util.Log("= S.BaseDrawingObject: NeedsAddLineThicknessToDimension input:", dimension);
 
     // Currently, the function always returns false.
     const result = false;
 
-    console.log("= S.BaseDrawingObject: NeedsAddLineThicknessToDimension output:", result);
+    T3Util.Log("= S.BaseDrawingObject: NeedsAddLineThicknessToDimension output:", result);
     return result;
   }
 
   GetLengthInRulerUnits(length: number, offset?: number): string {
-    console.log("= S.BaseDrawingObject: GetLengthInRulerUnits input:", { length, offset });
+    T3Util.Log("= S.BaseDrawingObject: GetLengthInRulerUnits input:", { length, offset });
 
     const sessionBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
     let result = '';
@@ -2061,18 +2097,18 @@ class BaseDrawingObject {
     if (offset) {
       offset *= 100;
       if (!T3Gv.docUtil.rulerConfig.useInches) {
-        offset /= ConstantData.Defines.MetricConv;
+        offset /= OptConstant.Defines.MetricConv;
       }
       length -= offset;
     }
 
     if (T3Gv.docUtil.rulerConfig.showpixels) {
       result = Math.round(length).toString();
-      console.log("= S.BaseDrawingObject: GetLengthInRulerUnits output:", result);
+      T3Util.Log("= S.BaseDrawingObject: GetLengthInRulerUnits output:", result);
       return result;
     }
 
-    if (T3Gv.docUtil.rulerConfig.useInches && T3Gv.docUtil.rulerConfig.units === ConstantData.RulerUnits.SED_Feet) {
+    if (T3Gv.docUtil.rulerConfig.useInches && T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnits.SED_Feet) {
       let totalInches = this.GetLengthInUnits(length, true);
       if (totalInches < 0) {
         sign = -1;
@@ -2082,7 +2118,7 @@ class BaseDrawingObject {
       inches = Math.floor(totalInches % 12);
       fractionalInches = totalInches - (feet * 12 + inches);
 
-      if (this.Dimensions & ConstantData.DimensionFlags.SED_DF_ShowFeetAsInches) {
+      if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_ShowFeetAsInches) {
         inches += feet * 12;
         feet = 0;
       }
@@ -2116,24 +2152,24 @@ class BaseDrawingObject {
         result += `${feet !== 0 || inches !== 0 ? ' ' : ''}${fraction}`;
       }
       result += '"';
-    } else if (T3Gv.docUtil.rulerConfig.units === ConstantData.RulerUnits.SED_Inches) {
+    } else if (T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnits.SED_Inches) {
       const inches = this.GetLengthInUnits(length);
       result = (Math.round(inches * decimalPlaces) / decimalPlaces).toString();
     } else {
       const units = this.GetLengthInUnits(length);
-      if (T3Gv.docUtil.rulerConfig.units === ConstantData.RulerUnits.SED_M || T3Gv.docUtil.rulerConfig.units === ConstantData.RulerUnits.SED_Cm) {
+      if (T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnits.SED_M || T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnits.SED_Cm) {
         result = (Math.round(units * decimalPlaces) / decimalPlaces).toString();
-      } else if (T3Gv.docUtil.rulerConfig.units === ConstantData.RulerUnits.SED_Mm) {
+      } else if (T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnits.SED_Mm) {
         result = Math.round(units).toString();
       }
     }
 
-    console.log("= S.BaseDrawingObject: GetLengthInRulerUnits output:", result);
+    T3Util.Log("= S.BaseDrawingObject: GetLengthInRulerUnits output:", result);
     return result;
   }
 
   GetDimensionTextForPoints(startPoint: Point, endPoint: Point): string {
-    console.log("= S.BaseDrawingObject: GetDimensionTextForPoints input:", { startPoint, endPoint });
+    T3Util.Log("= S.BaseDrawingObject: GetDimensionTextForPoints input:", { startPoint, endPoint });
 
     // Calculate the angle between the start and end points
     const startAngle = 360 - Utils1.CalcAngleFromPoints(startPoint, endPoint);
@@ -2148,12 +2184,12 @@ class BaseDrawingObject {
 
     // Convert the distance to ruler units
     const result = this.GetLengthInRulerUnits(distance);
-    console.log("= S.BaseDrawingObject: GetDimensionTextForPoints output:", result);
+    T3Util.Log("= S.BaseDrawingObject: GetDimensionTextForPoints output:", result);
     return result;
   }
 
   UpdateDimensionFromTextObj(textObject: any): void {
-    console.log("= S.BaseDrawingObject: UpdateDimensionFromTextObj input:", textObject);
+    T3Util.Log("= S.BaseDrawingObject: UpdateDimensionFromTextObj input:", textObject);
 
     if (textObject && textObject.userData) {
       const { segment, hookedObjectInfo } = textObject.userData;
@@ -2168,37 +2204,37 @@ class BaseDrawingObject {
       }
     }
 
-    console.log("= S.BaseDrawingObject: UpdateDimensionFromTextObj output: completed");
+    T3Util.Log("= S.BaseDrawingObject: UpdateDimensionFromTextObj output: completed");
   }
 
   UpdateDimensionFromText(textObject: any, text: string, segment: any): void {
-    console.log("= S.BaseDrawingObject: UpdateDimensionFromText input:", { textObject, text, segment });
+    T3Util.Log("= S.BaseDrawingObject: UpdateDimensionFromText input:", { textObject, text, segment });
 
     // TODO: Implement the logic to update dimensions from text.
     // This is a placeholder for the actual implementation.
 
-    console.log("= S.BaseDrawingObject: UpdateDimensionFromText output: completed");
+    T3Util.Log("= S.BaseDrawingObject: UpdateDimensionFromText output: completed");
   }
 
   MaintainProportions(width: number, height: number): { width: number; height: number } | null {
-    console.log("= S.BaseDrawingObject: MaintainProportions input:", { width, height });
+    T3Util.Log("= S.BaseDrawingObject: MaintainProportions input:", { width, height });
 
     // Placeholder logic for maintaining proportions
     const result = null;
 
-    console.log("= S.BaseDrawingObject: MaintainProportions output:", result);
+    T3Util.Log("= S.BaseDrawingObject: MaintainProportions output:", result);
     return result;
   }
 
   CanUseRFlags(): boolean {
-    console.log("= S.BaseDrawingObject: CanUseRFlags input: none");
+    T3Util.Log("= S.BaseDrawingObject: CanUseRFlags input: none");
     const result = true;
-    console.log("= S.BaseDrawingObject: CanUseRFlags output:", result);
+    T3Util.Log("= S.BaseDrawingObject: CanUseRFlags output:", result);
     return result;
   }
 
   UpdateDimensionsFromTextForHookedObject(textObject: any, text: string, hookedObjectInfo: any): void {
-    console.log("= S.BaseDrawingObject: UpdateDimensionsFromTextForHookedObject input:", { textObject, text, hookedObjectInfo });
+    T3Util.Log("= S.BaseDrawingObject: UpdateDimensionsFromTextForHookedObject input:", { textObject, text, hookedObjectInfo });
 
     const segmentIndex = hookedObjectInfo.segment;
     T3Gv.opt.ShowSVGSelectionState(this.BlockID, false);
@@ -2212,7 +2248,7 @@ class BaseDrawingObject {
 
     const hookedObject = T3Gv.opt.GetObjectPtr(hookedObjectInfo.hookedObjectID, true);
     if (!hookedObject) {
-      console.log("= S.BaseDrawingObject: UpdateDimensionsFromTextForHookedObject output: hooked object not found");
+      T3Util.Log("= S.BaseDrawingObject: UpdateDimensionsFromTextForHookedObject output: hooked object not found");
       return;
     }
 
@@ -2256,7 +2292,7 @@ class BaseDrawingObject {
 
     const targetPoints = this.GetTargetPoints(
       perimeterPoints[0],
-      ConstantData.HookFlags.SED_LC_NoSnaps | ConstantData.HookFlags.SED_LC_HookNoExtra | ConstantData.HookFlags.SED_LC_ShapeOnLine,
+      NvConstant.HookFlags.SED_LC_NoSnaps | NvConstant.HookFlags.SED_LC_HookNoExtra | NvConstant.HookFlags.SED_LC_ShapeOnLine,
       null
     );
 
@@ -2272,32 +2308,32 @@ class BaseDrawingObject {
       }, 250);
     }
 
-    console.log("= S.BaseDrawingObject: UpdateDimensionsFromTextForHookedObject output: completed");
+    T3Util.Log("= S.BaseDrawingObject: UpdateDimensionsFromTextForHookedObject output: completed");
   }
 
   UpdateDimensions(inputElement: any, triggerType: any, additionalInfo: any): void {
-    console.log("= S.BaseDrawingObject: UpdateDimensions input:", { inputElement, triggerType, additionalInfo });
+    T3Util.Log("= S.BaseDrawingObject: UpdateDimensions input:", { inputElement, triggerType, additionalInfo });
 
     // TODO: Implement the logic to update dimensions here.
     // This is a placeholder for the actual implementation.
 
-    console.log("= S.BaseDrawingObject: UpdateDimensions output: completed");
+    T3Util.Log("= S.BaseDrawingObject: UpdateDimensions output: completed");
   }
 
   GetDimensions(): { width: number; height: number } {
-    console.log("= S.BaseDrawingObject: GetDimensions input: none");
+    T3Util.Log("= S.BaseDrawingObject: GetDimensions input: none");
 
     const dimensions = {
       width: this.Frame.width,
       height: this.Frame.height
     };
 
-    console.log("= S.BaseDrawingObject: GetDimensions output:", dimensions);
+    T3Util.Log("= S.BaseDrawingObject: GetDimensions output:", dimensions);
     return dimensions;
   }
 
   GetDimensionsForDisplay(): { x: number; y: number; width: number; height: number } {
-    console.log("= S.BaseDrawingObject: GetDimensionsForDisplay input: none");
+    T3Util.Log("= S.BaseDrawingObject: GetDimensionsForDisplay input: none");
 
     const dimensions = {
       x: this.Frame.x,
@@ -2306,7 +2342,7 @@ class BaseDrawingObject {
       height: this.Frame.height
     };
 
-    console.log("= S.BaseDrawingObject: GetDimensionsForDisplay output:", dimensions);
+    T3Util.Log("= S.BaseDrawingObject: GetDimensionsForDisplay output:", dimensions);
     return dimensions;
   }
 
@@ -2314,7 +2350,7 @@ class BaseDrawingObject {
 
     let textShape, textFramePoints = [], leftArrowPoints = [], rightArrowPoints = [], topArrowPoints = [], bottomArrowPoints = [];
     let boundingBox = new Rectangle(), textFrameRect = new Rectangle(), dimensionBounds = { left: -1, top: -1, right: -1, bottom: -1 };
-    let isLocked = this.flags & ConstantData.ObjFlags.SEDO_Lock;
+    let isLocked = this.flags & NvConstant.ObjFlags.SEDO_Lock;
     let rotationAngle = this.RotationAngle + angle;
     let textFrameData = { segment: segmentIndex, hookedObjectInfo: null, textFramePts: [] };
 
@@ -2323,19 +2359,19 @@ class BaseDrawingObject {
     }
 
     if (container) {
-      textShape = T3Gv.opt.svgDoc.CreateShape(ConstantData.CreateShapeType.TEXT);
+      textShape = T3Gv.opt.svgDoc.CreateShape(OptConstant.CSType.TEXT);
       container.AddElement(textShape);
       textShape.SetRenderingEnabled(false);
       textShape.SetText(text);
-      if (Utils2.HasFlag(this.Dimensions, ConstantData.DimensionFlags.SED_DF_Select)) {
+      if (Utils2.HasFlag(this.Dimensions, NvConstant.DimensionFlags.SED_DF_Select)) {
         textShape.ExcludeFromExport(true);
       }
       textShape.SetUserData(textFrameData);
 
-      if (this.LineType !== ConstantData.LineType.LINE && (isAreaDimension || this.Dimensions & ConstantData.DimensionFlags.SED_DF_Total || this.Dimensions & ConstantData.DimensionFlags.SED_DF_EndPts || this.NoGrow())) {
-        textShape.SetID(ConstantData.SVGElementClass.DIMENSIONTEXTNOEDIT);
+      if (this.LineType !== OptConstant.LineType.LINE && (isAreaDimension || this.Dimensions & NvConstant.DimensionFlags.SED_DF_Total || this.Dimensions & NvConstant.DimensionFlags.SED_DF_EndPts || this.NoGrow())) {
+        textShape.SetID(OptConstant.SVGElementClass.DIMENSIONTEXTNOEDIT);
       } else {
-        textShape.SetID(ConstantData.SVGElementClass.DIMENSIONTEXT);
+        textShape.SetID(OptConstant.SVGElementClass.DIMENSIONTEXT);
         textShape.SetEditCallback(this.DimensionEditCallback, this);
       }
 
@@ -2361,7 +2397,7 @@ class BaseDrawingObject {
           container.RemoveElement(textShape);
           return;
         }
-        if (this.Dimensions & ConstantData.DimensionFlags.SED_DF_Standoff && this.CanUseStandOffDimensionLines() && !isStandoff) {
+        if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Standoff && this.CanUseStandOffDimensionLines() && !isStandoff) {
           this.CreateDimensionLineSegment(pathCreator, isAreaDimension, leftArrowPoints, dimensionBounds);
           this.CreateDimensionLineSegment(pathCreator, isAreaDimension, rightArrowPoints, dimensionBounds);
         } else {
@@ -2409,7 +2445,7 @@ class BaseDrawingObject {
 
     let textShape, textFramePoints = [], leftArrowPoints = [], rightArrowPoints = [], topArrowPoints = [], bottomArrowPoints = [];
     let boundingBox = new Rectangle(), textFrameRect = new Rectangle(), dimensionBounds = { left: -1, top: -1, right: -1, bottom: -1 };
-    let isLocked = this.flags & ConstantData.ObjFlags.SEDO_Lock;
+    let isLocked = this.flags & NvConstant.ObjFlags.SEDO_Lock;
     let rotationAngle = this.RotationAngle + angle;
     let textFrameData = { segment: segmentIndex, hookedObjectInfo: null, textFramePts: [] };
 
@@ -2421,12 +2457,12 @@ class BaseDrawingObject {
       return;
     }
 
-    textShape = T3Gv.opt.svgDoc.CreateShape(ConstantData.CreateShapeType.TEXT);
+    textShape = T3Gv.opt.svgDoc.CreateShape(OptConstant.CSType.TEXT);
     container.AddElement(textShape);
     textShape.SetRenderingEnabled(false);
     textShape.SetText(angle);
 
-    const hasSelectFlag = Utils2.HasFlag(this.Dimensions, ConstantData.DimensionFlags.SED_DF_Select);
+    const hasSelectFlag = Utils2.HasFlag(this.Dimensions, NvConstant.DimensionFlags.SED_DF_Select);
 
     if (hasSelectFlag) {
       textShape.ExcludeFromExport(true);
@@ -2434,13 +2470,13 @@ class BaseDrawingObject {
 
     textShape.SetUserData(textFrameData);
 
-    const isNotLine = this.LineType !== ConstantData.LineType.LINE;
-    const isTotalEndPtsFlag = this.Dimensions & ConstantData.DimensionFlags.SED_DF_Total || this.Dimensions & ConstantData.DimensionFlags.SED_DF_EndPts;
+    const isNotLine = this.LineType !== OptConstant.LineType.LINE;
+    const isTotalEndPtsFlag = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Total || this.Dimensions & NvConstant.DimensionFlags.SED_DF_EndPts;
 
     if (isNotLine && (isAreaDimension || isTotalEndPtsFlag || this.NoGrow())) {
-      textShape.SetID(ConstantData.SVGElementClass.DIMENSIONTEXTNOEDIT);
+      textShape.SetID(OptConstant.SVGElementClass.DIMENSIONTEXTNOEDIT);
     } else {
-      textShape.SetID(ConstantData.SVGElementClass.DIMENSIONTEXT);
+      textShape.SetID(OptConstant.SVGElementClass.DIMENSIONTEXT);
       textShape.SetEditCallback(this.DimensionEditCallback, this);
     }
 
@@ -2474,13 +2510,13 @@ class BaseDrawingObject {
         return;
       }
 
-      const isStdOff = this.Dimensions & ConstantData.DimensionFlags.SED_DF_Standoff;
+      const isStdOff = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Standoff;
       const check3 = isStdOff && this.CanUseStandOffDimensionLines() && !isStandoff;
 
       if (check3) {
 
-        console.log('=== wall CreateCoordinateLine.leftArrowPoints=', leftArrowPoints);
-        console.log('=== wall CreateCoordinateLine.rightArrowPoints=', rightArrowPoints);
+        T3Util.Log('=== wall CreateCoordinateLine.leftArrowPoints=', leftArrowPoints);
+        T3Util.Log('=== wall CreateCoordinateLine.rightArrowPoints=', rightArrowPoints);
 
         this.CreateCoordinateLineSegment(pathCreator, isAreaDimension, leftArrowPoints, dimensionBounds);
         this.CreateCoordinateLineSegment(pathCreator, isAreaDimension, rightArrowPoints, dimensionBounds);
@@ -2533,7 +2569,7 @@ class BaseDrawingObject {
   }
 
   DrawDimensionAngle(container: any, pathCreator: any, segmentIndex: number, dimensionPoints: Point[]): void {
-    console.log("= S.BaseDrawingObject: DrawDimensionAngle input:", { container, pathCreator, segmentIndex, dimensionPoints });
+    T3Util.Log("= S.BaseDrawingObject: DrawDimensionAngle input:", { container, pathCreator, segmentIndex, dimensionPoints });
 
     let dimensionInfo, textMinDimensions, distanceBetweenPoints;
     const angleChangeData = { angleChange: 1, segment: segmentIndex };
@@ -2543,7 +2579,7 @@ class BaseDrawingObject {
       container.AddElement(dimensionInfo.text);
       dimensionInfo.text.SetRenderingEnabled(false);
       dimensionInfo.text.SetUserData(angleChangeData);
-      dimensionInfo.text.SetID(ConstantData.SVGElementClass.DIMENSIONTEXT);
+      dimensionInfo.text.SetID(OptConstant.SVGElementClass.DIMENSIONTEXT);
       dimensionInfo.text.SetEditCallback(this.DimensionEditCallback, this);
       dimensionInfo.text.SetConstraints(T3Gv.opt.contentHeader.MaxWorkDim.x, 0, 0);
       dimensionInfo.text.SetRenderingEnabled(true);
@@ -2566,23 +2602,23 @@ class BaseDrawingObject {
         container.RemoveElement(dimensionInfo.text);
       }
 
-      if (distanceBetweenPoints > textMinDimensions.width + 2 * ConstantData.LineAngleDimensionDefs.ANGLEDIMENSION_ARROWHEAD_SIZE) {
+      if (distanceBetweenPoints > textMinDimensions.width + 2 * OptConstant.LineAngleDimensionDefs.ANGLEDIMENSION_ARROWHEAD_SIZE) {
         Utils2.InflateRect(dimensionInfo.textRect, 2, 2);
         this.DrawDimensionAngleArc(container, pathCreator, dimensionInfo.targetLinePts[0], dimensionInfo.targetLinePts[1], dimensionInfo.textRect, dimensionInfo.baseLinePts[1]);
         this.DrawDimensionAngleArc(container, pathCreator, dimensionInfo.targetLinePts[0], dimensionInfo.targetLinePts[1], dimensionInfo.textRect, dimensionInfo.targetLinePts[1]);
       }
 
-      if (!(this.Dimensions & ConstantData.DimensionFlags.SED_DF_InteriorAngles)) {
+      if (!(this.Dimensions & NvConstant.DimensionFlags.SED_DF_InteriorAngles)) {
         pathCreator.MoveTo(dimensionInfo.baseLinePts[0].x, dimensionInfo.baseLinePts[0].y);
         pathCreator.LineTo(dimensionInfo.baseLinePts[1].x, dimensionInfo.baseLinePts[1].y);
       }
     }
 
-    console.log("= S.BaseDrawingObject: DrawDimensionAngle output: completed");
+    T3Util.Log("= S.BaseDrawingObject: DrawDimensionAngle output: completed");
   }
 
   UpdateLineAngleDimensionFromText(textObject: any, text: string, segment: any): void {
-    console.log("= S.BaseDrawingObject: UpdateLineAngleDimensionFromText input:", { textObject, text, segment });
+    T3Util.Log("= S.BaseDrawingObject: UpdateLineAngleDimensionFromText input:", { textObject, text, segment });
 
     let angle = parseFloat(text);
 
@@ -2595,20 +2631,20 @@ class BaseDrawingObject {
       this.SetSegmentAngle(textObject, segment.segment, angle);
     }
 
-    console.log("= S.BaseDrawingObject: UpdateLineAngleDimensionFromText output: completed");
+    T3Util.Log("= S.BaseDrawingObject: UpdateLineAngleDimensionFromText output: completed");
   }
 
   SetSegmentAngle(segment: any, angle: number, additionalData: any): void {
-    console.log("= S.BaseDrawingObject: SetSegmentAngle input:", { segment, angle, additionalData });
+    T3Util.Log("= S.BaseDrawingObject: SetSegmentAngle input:", { segment, angle, additionalData });
 
     // TODO: Implement the logic to set the segment angle here.
     // This is a placeholder for the actual implementation.
 
-    console.log("= S.BaseDrawingObject: SetSegmentAngle output: completed");
+    T3Util.Log("= S.BaseDrawingObject: SetSegmentAngle output: completed");
   }
 
   DrawDimensionAngleArrowhead(container: any, angle: number, point: Point): void {
-    console.log("= S.BaseDrawingObject: DrawDimensionAngleArrowhead input:", { container, angle, point });
+    T3Util.Log("= S.BaseDrawingObject: DrawDimensionAngleArrowhead input:", { container, angle, point });
 
     const arrowheadPoints: Point[] = [];
     const boundingRect: Rectangle = new Rectangle();
@@ -2617,14 +2653,14 @@ class BaseDrawingObject {
     arrowheadPoints.push(new Point(point.x, point.y));
     arrowheadPoints.push(
       new Point(
-        point.x - ConstantData.LineAngleDimensionDefs.ANGLEDIMENSION_ARROWHEAD_SIZE,
-        point.y + ConstantData.LineAngleDimensionDefs.ANGLEDIMENSION_ARROWHEAD_WIDTH
+        point.x - OptConstant.LineAngleDimensionDefs.ANGLEDIMENSION_ARROWHEAD_SIZE,
+        point.y + OptConstant.LineAngleDimensionDefs.ANGLEDIMENSION_ARROWHEAD_WIDTH
       )
     );
     arrowheadPoints.push(
       new Point(
-        point.x - ConstantData.LineAngleDimensionDefs.ANGLEDIMENSION_ARROWHEAD_SIZE,
-        point.y - ConstantData.LineAngleDimensionDefs.ANGLEDIMENSION_ARROWHEAD_WIDTH
+        point.x - OptConstant.LineAngleDimensionDefs.ANGLEDIMENSION_ARROWHEAD_SIZE,
+        point.y - OptConstant.LineAngleDimensionDefs.ANGLEDIMENSION_ARROWHEAD_WIDTH
       )
     );
 
@@ -2635,22 +2671,22 @@ class BaseDrawingObject {
     Utils2.GetPolyRect(boundingRect, arrowheadPoints);
 
     // Create the arrowhead shape and set its properties
-    const arrowheadShape = T3Gv.opt.svgDoc.CreateShape(ConstantData.CreateShapeType.POLYGON);
+    const arrowheadShape = T3Gv.opt.svgDoc.CreateShape(OptConstant.CSType.POLYGON);
     arrowheadShape.SetPoints(arrowheadPoints);
-    arrowheadShape.SetEventBehavior(ConstantData2.EventBehavior.ALL);
-    arrowheadShape.SetID(ConstantData.SVGElementClass.DIMENSIONLINE);
+    arrowheadShape.SetEventBehavior(OptConstant.EventBehavior.ALL);
+    arrowheadShape.SetID(OptConstant.SVGElementClass.DIMENSIONLINE);
     arrowheadShape.SetPos(0, 0);
     arrowheadShape.SetSize(boundingRect.width, boundingRect.height);
-    arrowheadShape.SetFillColor(ConstantData.Defines.DimensionLineColor);
+    arrowheadShape.SetFillColor(OptConstant.Defines.DimensionLineColor);
 
     // Add the arrowhead shape to the container
     container.AddElement(arrowheadShape);
 
-    console.log("= S.BaseDrawingObject: DrawDimensionAngleArrowhead output: arrowhead drawn");
+    T3Util.Log("= S.BaseDrawingObject: DrawDimensionAngleArrowhead output: arrowhead drawn");
   }
 
   GetPerpendicularAngle(point1: Point, point2: Point, isClockwise: boolean): number {
-    console.log("= S.BaseDrawingObject: GetPerpendicularAngle input:", { point1, point2, isClockwise });
+    T3Util.Log("= S.BaseDrawingObject: GetPerpendicularAngle input:", { point1, point2, isClockwise });
 
     let angle = T3Gv.opt.SD_GetCounterClockwiseAngleBetween2Points(point1, point2);
     angle += isClockwise ? Math.PI / 2 : -Math.PI / 2;
@@ -2663,7 +2699,7 @@ class BaseDrawingObject {
       angle -= 2 * Math.PI;
     }
 
-    console.log("= S.BaseDrawingObject: GetPerpendicularAngle output:", angle);
+    T3Util.Log("= S.BaseDrawingObject: GetPerpendicularAngle output:", angle);
     return angle;
   }
 
@@ -2675,7 +2711,7 @@ class BaseDrawingObject {
     textRect: Rectangle,
     centerPoint: Point
   ): void {
-    console.log("= S.BaseDrawingObject: DrawDimensionAngleArc input:", {
+    T3Util.Log("= S.BaseDrawingObject: DrawDimensionAngleArc input:", {
       container,
       pathCreator,
       startPoint,
@@ -2713,7 +2749,7 @@ class BaseDrawingObject {
     let arcStartAngle = T3Gv.opt.SD_GetCounterClockwiseAngleBetween2Points(startPoint, arcStartPoint);
 
     let arcPoints = T3Gv.opt.ArcToPoly(
-      ConstantData.Defines.NPOLYPTS,
+      OptConstant.Defines.NPOLYPTS,
       startPoint,
       distance,
       arcStartPoint.y,
@@ -2732,7 +2768,7 @@ class BaseDrawingObject {
     let arrowheadPoint = isClockwise ? arcPoints[0] : arcPoints[arcPoints.length - 1];
     for (let i = 0; i < arcPoints.length; i++) {
       let index = isClockwise ? i : arcPoints.length - 1 - i;
-      if (Utils2.GetDistanceBetween2Points(arrowheadPoint, arcPoints[index]) > ConstantData.LineAngleDimensionDefs.ANGLEDIMENSION_ARROWHEAD_SIZE) {
+      if (Utils2.GetDistanceBetween2Points(arrowheadPoint, arcPoints[index]) > OptConstant.LineAngleDimensionDefs.ANGLEDIMENSION_ARROWHEAD_SIZE) {
         arrowheadPoint = arcPoints[index];
         break;
       }
@@ -2741,11 +2777,11 @@ class BaseDrawingObject {
     let arrowheadAngle = T3Gv.opt.SD_GetCounterClockwiseAngleBetween2Points(arrowheadPoint, arcPoints[0]);
     this.DrawDimensionAngleArrowhead(container, arrowheadAngle, arcPoints[0]);
 
-    console.log("= S.BaseDrawingObject: DrawDimensionAngleArc output: completed");
+    T3Util.Log("= S.BaseDrawingObject: DrawDimensionAngleArc output: completed");
   }
 
   GetDimensionAngleInfo(segmentIndex: number, points: Point[]): any {
-    console.log("= S.BaseDrawingObject: GetDimensionAngleInfo input:", { segmentIndex, points });
+    T3Util.Log("= S.BaseDrawingObject: GetDimensionAngleInfo input:", { segmentIndex, points });
 
     let angle, baseAngle, bisectorAngle, minDistance, preferredBisectorLength, textDimensions;
     let isInteriorAngle = false;
@@ -2768,21 +2804,21 @@ class BaseDrawingObject {
     const isClosedShape = this.polylist ? this.polylist.closed : points.length > 2 && points[0].x === points[points.length - 1].x && points[0].y === points[points.length - 1].y;
 
     // Skip if it's an interior angle and the first segment of an open shape
-    if (this.Dimensions & ConstantData.DimensionFlags.SED_DF_InteriorAngles && segmentIndex === 1 && !isClosedShape) {
+    if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_InteriorAngles && segmentIndex === 1 && !isClosedShape) {
       return null;
     }
 
     // Skip if the segment is not a line
     if (this.polylist && segmentIndex >= 1 && segmentIndex < this.polylist.segs.length) {
       const prevSegmentIndex = segmentIndex > 1 ? segmentIndex - 1 : this.polylist.segs.length - 1;
-      if (this.polylist.segs[segmentIndex].LineType !== ConstantData.LineType.LINE || this.polylist.segs[prevSegmentIndex].LineType !== ConstantData.LineType.LINE) {
+      if (this.polylist.segs[segmentIndex].LineType !== OptConstant.LineType.LINE || this.polylist.segs[prevSegmentIndex].LineType !== OptConstant.LineType.LINE) {
         return null;
       }
     }
 
     // Initialize base line points
     baseLinePoints.push(new Point(targetLinePoints[0].x, targetLinePoints[0].y));
-    if (this.Dimensions & ConstantData.DimensionFlags.SED_DF_InteriorAngles) {
+    if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_InteriorAngles) {
       if (segmentIndex === 1) {
         baseLinePoints.push(new Point(points[points.length - 2].x, points[points.length - 2].y));
       } else {
@@ -2825,7 +2861,7 @@ class BaseDrawingObject {
 
     // Calculate preferred bisector length
     minDistance = Math.min(Utils2.GetDistanceBetween2Points(targetLinePoints[0], targetLinePoints[1]), Utils2.GetDistanceBetween2Points(baseLinePoints[0], baseLinePoints[1]));
-    preferredBisectorLength = ConstantData.LineAngleDimensionDefs.ANGLEDIMENSION_PREFERRED_BISECTOR_LEN < minDistance ? ConstantData.LineAngleDimensionDefs.ANGLEDIMENSION_PREFERRED_BISECTOR_LEN : minDistance;
+    preferredBisectorLength = OptConstant.LineAngleDimensionDefs.ANGLEDIMENSION_PREFERRED_BISECTOR_LEN < minDistance ? OptConstant.LineAngleDimensionDefs.ANGLEDIMENSION_PREFERRED_BISECTOR_LEN : minDistance;
     bisectorPoints[1].x = bisectorPoints[0].x + preferredBisectorLength;
     Utils3.RotatePointsAboutPoint(targetLinePoints[0], halfAngle, bisectorPoints);
 
@@ -2835,14 +2871,14 @@ class BaseDrawingObject {
     text = angleInDegrees.toString() + '°';
 
     // Create text shape
-    textShape = T3Gv.opt.svgDoc.CreateShape(ConstantData.CreateShapeType.TEXT);
+    textShape = T3Gv.opt.svgDoc.CreateShape(OptConstant.CSType.TEXT);
     textShape.SetFormat(T3Gv.opt.contentHeader.DimensionFontStyle);
     textShape.SetText(text);
     textDimensions = textShape.GetTextMinDimensions();
 
     // Adjust bisector length if necessary
-    while (preferredBisectorLength < minDistance && Math.tan(angle / 2) * preferredBisectorLength < textDimensions.width / 2 + ConstantData.LineAngleDimensionDefs.ANGLEDIMENSION_PREFERRED_ARROWSTEM_MINIMUM + ConstantData.LineAngleDimensionDefs.ANGLEDIMENSION_ARROWHEAD_SIZE) {
-      preferredBisectorLength += ConstantData.LineAngleDimensionDefs.ANGLEDIMENSION_PREFERRED_BISECTOR_LEN;
+    while (preferredBisectorLength < minDistance && Math.tan(angle / 2) * preferredBisectorLength < textDimensions.width / 2 + OptConstant.LineAngleDimensionDefs.ANGLEDIMENSION_PREFERRED_ARROWSTEM_MINIMUM + OptConstant.LineAngleDimensionDefs.ANGLEDIMENSION_ARROWHEAD_SIZE) {
+      preferredBisectorLength += OptConstant.LineAngleDimensionDefs.ANGLEDIMENSION_PREFERRED_BISECTOR_LEN;
       if (preferredBisectorLength >= minDistance) {
         preferredBisectorLength = minDistance;
       }
@@ -2865,7 +2901,7 @@ class BaseDrawingObject {
       targetLinePts: targetLinePoints
     };
 
-    console.log("= S.BaseDrawingObject: GetDimensionAngleInfo output:", result);
+    T3Util.Log("= S.BaseDrawingObject: GetDimensionAngleInfo output:", result);
     return result;
   }
 
@@ -2877,7 +2913,7 @@ class BaseDrawingObject {
     segmentIndex: number,
     isStandoff: boolean
   ): { left: Rectangle; textFrame: Rectangle; right: Rectangle } {
-    console.log("= S.BaseDrawingObject: GetPointsForDimension input:", {
+    T3Util.Log("= S.BaseDrawingObject: GetPointsForDimension input:", {
       angle,
       text,
       startPoint,
@@ -2894,7 +2930,7 @@ class BaseDrawingObject {
     const rightRect = new Rectangle();
     const textFrameRect = new Rectangle();
 
-    textShape = T3Gv.opt.svgDoc.CreateShape(ConstantData.CreateShapeType.TEXT);
+    textShape = T3Gv.opt.svgDoc.CreateShape(OptConstant.CSType.TEXT);
     textShape.SetText(text);
     textShape.SetFormat(T3Gv.opt.contentHeader.DimensionFontStyle);
     textShape.SetConstraints(T3Gv.opt.contentHeader.MaxWorkDim.x, 0, 0);
@@ -2913,27 +2949,27 @@ class BaseDrawingObject {
       right: rightRect
     };
 
-    console.log("= S.BaseDrawingObject: GetPointsForDimension output:", result);
+    T3Util.Log("= S.BaseDrawingObject: GetPointsForDimension output:", result);
     return result;
   }
 
   GetAreaDimension(points: Point[]): string | void {
-    console.log("= S.BaseDrawingObject: GetAreaDimension input:", points);
+    T3Util.Log("= S.BaseDrawingObject: GetAreaDimension input:", points);
 
     let result: string | void;
 
-    if (this.Dimensions & ConstantData.DimensionFlags.SED_DF_Area) {
+    if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Area) {
       result = this.GetAreaDimensionText(points);
-    } else if (this.Dimensions & ConstantData.DimensionFlags.SED_DF_RectWithAndHeight) {
+    } else if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_RectWithAndHeight) {
       result = this.GetAreaWidthAndHeightText(points);
     }
 
-    console.log("= S.BaseDrawingObject: GetAreaDimension output:", result);
+    T3Util.Log("= S.BaseDrawingObject: GetAreaDimension output:", result);
     return result;
   }
 
   GetAreaDimensionText(points: Point[]): string {
-    console.log("= S.BaseDrawingObject: GetAreaDimensionText input:", points);
+    T3Util.Log("= S.BaseDrawingObject: GetAreaDimensionText input:", points);
 
     let area = 0;
     let result = '';
@@ -2947,7 +2983,7 @@ class BaseDrawingObject {
     const lengthInUnits = T3Gv.docUtil.rulerConfig.showpixels ? area : this.GetLengthInUnits(area);
     result = this.GetLengthInRulerUnits(lengthInUnits);
 
-    console.log("= S.BaseDrawingObject: GetAreaDimensionText output:", result);
+    T3Util.Log("= S.BaseDrawingObject: GetAreaDimensionText output:", result);
     return result;
   }
 
@@ -2964,45 +3000,45 @@ class BaseDrawingObject {
   }
 
   GetAreaWidthAndHeightText(points: Point[]): string | null {
-    console.log("= S.BaseDrawingObject: GetAreaWidthAndHeightText input:", points);
+    T3Util.Log("= S.BaseDrawingObject: GetAreaWidthAndHeightText input:", points);
 
     // Placeholder logic for calculating width and height text
     const result = null;
 
-    console.log("= S.BaseDrawingObject: GetAreaWidthAndHeightText output:", result);
+    T3Util.Log("= S.BaseDrawingObject: GetAreaWidthAndHeightText output:", result);
     return result;
   }
 
   GetDimensionPoints(): Point[] {
-    console.log("= S.BaseDrawingObject: GetDimensionPoints input");
+    T3Util.Log("= S.BaseDrawingObject: GetDimensionPoints input");
 
-    let points = this.GetPolyPoints(ConstantData.Defines.NPOLYPTS, true, false, false, null);
+    let points = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true, false, false, null);
     if (this.RotationAngle) {
-      const angleInRadians = -this.RotationAngle / (180 / ConstantData.Geometry.PI);
+      const angleInRadians = -this.RotationAngle / (180 / NvConstant.Geometry.PI);
       Utils3.RotatePointsAboutCenter(this.Frame, angleInRadians, points);
     }
 
-    console.log("= S.BaseDrawingObject: GetDimensionPoints output:", points);
+    T3Util.Log("= S.BaseDrawingObject: GetDimensionPoints output:", points);
     return points;
   }
 
   // Horizon and vertial points 0,0 -> horizon x,0 | 0,0 -> vertial y,0
 
   GetCoordinateLinePoints(): Point[] {
-    console.log("= S.BaseDrawingObject: GetCoordinateLinePoints input");
+    T3Util.Log("= S.BaseDrawingObject: GetCoordinateLinePoints input");
 
-    let points = this.GetPolyPoints(ConstantData.Defines.NPOLYPTS, true, false, false, null);
+    let points = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true, false, false, null);
     if (this.RotationAngle) {
-      const angleInRadians = -this.RotationAngle / (180 / ConstantData.Geometry.PI);
+      const angleInRadians = -this.RotationAngle / (180 / NvConstant.Geometry.PI);
       Utils3.RotatePointsAboutCenter(this.Frame, angleInRadians, points);
     }
 
-    console.log("= S.BaseDrawingObject: GetCoordinateLinePoints output:", points);
+    T3Util.Log("= S.BaseDrawingObject: GetCoordinateLinePoints output:", points);
     return points;
   }
 
   GetHookedObjectDescList(dimensionPoints: Point[], context: any): any[] {
-    console.log("= S.BaseDrawingObject: GetHookedObjectDescList input:", { dimensionPoints, context });
+    T3Util.Log("= S.BaseDrawingObject: GetHookedObjectDescList input:", { dimensionPoints, context });
 
     let result: any[] = [];
     let linkManager = T3Gv.opt.GetObjectPtr(T3Gv.opt.linksBlockId, false);
@@ -3085,9 +3121,9 @@ class BaseDrawingObject {
 
         let hookObjectPoints = context && context.movingShapeID === hookObject.BlockID ?
           Utils2.PolyFromRect(context.movingShapeBBox) :
-          hookObject.GetPolyPoints(ConstantData.Defines.NPOLYPTS, false, false, false, null);
+          hookObject.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, false, false, null);
 
-        let rotationAngle = context && context.movingShapeID === hookObject.BlockID ? angle : -hookObject.RotationAngle / (180 / ConstantData.Geometry.PI);
+        let rotationAngle = context && context.movingShapeID === hookObject.BlockID ? angle : -hookObject.RotationAngle / (180 / NvConstant.Geometry.PI);
         let hookObjectRect = Utils2.GetPolyRect({}, hookObjectPoints);
         let rotatedConnectPoint = Utils1.DeepCopy(perimeterPoints[0]);
 
@@ -3128,12 +3164,12 @@ class BaseDrawingObject {
       return a.segmentSortValue < b.segmentSortValue ? -1 : 1;
     });
 
-    console.log("= S.BaseDrawingObject: GetHookedObjectDescList output:", result);
+    T3Util.Log("= S.BaseDrawingObject: GetHookedObjectDescList output:", result);
     return result;
   }
 
   GetHookedObjectDimensionInfo(context: any): any[] {
-    console.log("= S.BaseDrawingObject: GetHookedObjectDimensionInfo input:", context);
+    T3Util.Log("= S.BaseDrawingObject: GetHookedObjectDimensionInfo input:", context);
 
     let maxSegmentIndex = -1;
     let currentPoint = new Point(0, 0);
@@ -3169,7 +3205,7 @@ class BaseDrawingObject {
       currentPoint = hookedObjectDesc.end;
     }
 
-    console.log("= S.BaseDrawingObject: GetHookedObjectDimensionInfo output:", hookedObjectInfoList);
+    T3Util.Log("= S.BaseDrawingObject: GetHookedObjectDimensionInfo output:", hookedObjectInfoList);
     return hookedObjectInfoList;
   }
 
@@ -3180,7 +3216,7 @@ class BaseDrawingObject {
     ccAngleRadians: number,
     adjustForKnob: number
   ): any {
-    console.log("= S.BaseDrawingObject: DimensionLineDeflectionAdjust input:", {
+    T3Util.Log("= S.BaseDrawingObject: DimensionLineDeflectionAdjust input:", {
       element,
       segmentIndex,
       knobPoint,
@@ -3221,12 +3257,12 @@ class BaseDrawingObject {
       deflectionValue += deflection;
     }
 
-    console.log("= S.BaseDrawingObject: DimensionLineDeflectionAdjust output:", deflectionValue);
+    T3Util.Log("= S.BaseDrawingObject: DimensionLineDeflectionAdjust output:", deflectionValue);
     return deflectionValue;
   }
 
   GetDimensionLineDeflectionKnobUserData(element, segmentIndex, dimensionPoints, knobRadius, knobOffset) {
-    console.log("= S.BaseDrawingObject: GetDimensionLineDeflectionKnobUserData input:", {
+    T3Util.Log("= S.BaseDrawingObject: GetDimensionLineDeflectionKnobUserData input:", {
       element,
       segmentIndex,
       dimensionPoints,
@@ -3237,7 +3273,7 @@ class BaseDrawingObject {
     let textElement = null;
     let bbox, rotationAngle, angleInRadians, midPoint, deflectionAngle, isReverseWinding = false;
     const points = [];
-    const textElements = element.GetElementListWithID(ConstantData.SVGElementClass.DIMENSIONTEXT);
+    const textElements = element.GetElementListWithID(OptConstant.SVGElementClass.DIMENSIONTEXT);
 
     for (let i = 0; i < textElements.length; i++) {
       if (textElements[i].userData.segment === segmentIndex && textElements[i].userData.side === undefined) {
@@ -3247,7 +3283,7 @@ class BaseDrawingObject {
     }
 
     if (!textElement) {
-      console.log("= S.BaseDrawingObject: GetDimensionLineDeflectionKnobUserData output: null");
+      T3Util.Log("= S.BaseDrawingObject: GetDimensionLineDeflectionKnobUserData output: null");
       return null;
     }
 
@@ -3317,12 +3353,12 @@ class BaseDrawingObject {
       adjustForKnob: knobRadius - knobOffset
     };
 
-    console.log("= S.BaseDrawingObject: GetDimensionLineDeflectionKnobUserData output:", result);
+    T3Util.Log("= S.BaseDrawingObject: GetDimensionLineDeflectionKnobUserData output:", result);
     return result;
   }
 
   GetDimensionDeflectionValue(segmentIndex: number): number {
-    console.log("= S.BaseDrawingObject: GetDimensionDeflectionValue input:", segmentIndex);
+    T3Util.Log("= S.BaseDrawingObject: GetDimensionDeflectionValue input:", segmentIndex);
 
     let deflectionValue = 0;
     if (segmentIndex === 1) {
@@ -3331,12 +3367,12 @@ class BaseDrawingObject {
       deflectionValue = this.dimensionDeflectionV ? this.dimensionDeflectionV : 0;
     }
 
-    console.log("= S.BaseDrawingObject: GetDimensionDeflectionValue output:", deflectionValue);
+    T3Util.Log("= S.BaseDrawingObject: GetDimensionDeflectionValue output:", deflectionValue);
     return deflectionValue;
   }
 
   GetDimensionLineDeflection(knobPoint: Point, x: number, y: number, deflectionData: any): number {
-    console.log("= S.BaseDrawingObject: GetDimensionLineDeflection input:", { knobPoint, x, y, deflectionData });
+    T3Util.Log("= S.BaseDrawingObject: GetDimensionLineDeflection input:", { knobPoint, x, y, deflectionData });
 
     let segmentPoints: Point[] = [];
     let adjustedKnobPoint = new Point(0, 0);
@@ -3372,12 +3408,12 @@ class BaseDrawingObject {
       ? deflectionData.originalDeflection - deflection
       : deflectionData.originalDeflection + deflection;
 
-    console.log("= S.BaseDrawingObject: GetDimensionLineDeflection output:", result);
+    T3Util.Log("= S.BaseDrawingObject: GetDimensionLineDeflection output:", result);
     return result;
   }
 
   UpdateDimensionLines(container: any, triggerType: any): any {
-    console.log("= S.BaseDrawingObject: UpdateDimensionLines input:", { container, triggerType });
+    T3Util.Log("= S.BaseDrawingObject: UpdateDimensionLines input:", { container, triggerType });
 
     if (T3Gv.opt.bBuildingSymbols) {
       return container;
@@ -3386,30 +3422,30 @@ class BaseDrawingObject {
     if (container != null) {
       this.RemoveDimensionLines(container);
 
-      const hasAreaOrRectDimensions = this.Dimensions & ConstantData.DimensionFlags.SED_DF_Area ||
-        this.Dimensions & ConstantData.DimensionFlags.SED_DF_RectWithAndHeight;
+      const hasAreaOrRectDimensions = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Area ||
+        this.Dimensions & NvConstant.DimensionFlags.SED_DF_RectWithAndHeight;
 
       if (hasAreaOrRectDimensions) {
         this.UpdateAreaDimensionLines(container);
       }
 
-      const hasAlwaysOrSelectDimensions = this.Dimensions & ConstantData.DimensionFlags.SED_DF_Always ||
-        this.Dimensions & ConstantData.DimensionFlags.SED_DF_Select || triggerType;
+      const hasAlwaysOrSelectDimensions = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Always ||
+        this.Dimensions & NvConstant.DimensionFlags.SED_DF_Select || triggerType;
 
       if (hasAlwaysOrSelectDimensions) {
         this.UpdateEdgeDimensionLines(container, triggerType);
       }
 
-      console.log("= S.BaseDrawingObject: UpdateDimensionLines output:", container);
+      T3Util.Log("= S.BaseDrawingObject: UpdateDimensionLines output:", container);
       return container;
     }
 
-    console.log("= S.BaseDrawingObject: UpdateDimensionLines output: null");
+    T3Util.Log("= S.BaseDrawingObject: UpdateDimensionLines output: null");
     return null;
   }
 
   UpdateCoordinateLines(container: any, triggerType: any): any {
-    console.log("= S.BaseDrawingObject: UpdateCoordinateLines input:", { container, triggerType });
+    T3Util.Log("= S.BaseDrawingObject: UpdateCoordinateLines input:", { container, triggerType });
 
     if (T3Gv.opt.bBuildingSymbols) {
       return container;
@@ -3418,32 +3454,32 @@ class BaseDrawingObject {
     if (container != null) {
       this.RemoveCoordinateLines(container);
 
-      const hasAreaOrRectDimensions = this.Dimensions & ConstantData.DimensionFlags.SED_DF_Area ||
-        this.Dimensions & ConstantData.DimensionFlags.SED_DF_RectWithAndHeight;
+      const hasAreaOrRectDimensions = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Area ||
+        this.Dimensions & NvConstant.DimensionFlags.SED_DF_RectWithAndHeight;
 
       if (hasAreaOrRectDimensions) {
         this.UpdateAreaDimensionLines(container);
       }
 
-      const hasAlwaysOrSelectDimensions = this.Dimensions & ConstantData.DimensionFlags.SED_DF_Always ||
-        this.Dimensions & ConstantData.DimensionFlags.SED_DF_Select || triggerType;
+      const hasAlwaysOrSelectDimensions = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Always ||
+        this.Dimensions & NvConstant.DimensionFlags.SED_DF_Select || triggerType;
 
       if (hasAlwaysOrSelectDimensions) {
         this.UpdateEdgeCoordinateLines(container, triggerType);
       }
 
-      console.log("= S.BaseDrawingObject: UpdateCoordinateLines output:", container);
+      T3Util.Log("= S.BaseDrawingObject: UpdateCoordinateLines output:", container);
       return container;
     }
 
-    console.log("= S.BaseDrawingObject: UpdateCoordinateLines output: null");
+    T3Util.Log("= S.BaseDrawingObject: UpdateCoordinateLines output: null");
     return null;
   }
 
   UpdateHookedObjectDimensionLines(container: any, pathCreator: any, dimensionInfo: any): void {
-    console.log("= S.BaseDrawingObject: UpdateHookedObjectDimensionLines input:", { container, pathCreator, dimensionInfo });
+    T3Util.Log("= S.BaseDrawingObject: UpdateHookedObjectDimensionLines input:", { container, pathCreator, dimensionInfo });
 
-    if (this.Dimensions & ConstantData.DimensionFlags.SED_DF_AllSeg) {
+    if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_AllSeg) {
       const hookedObjectInfo = this.GetHookedObjectDimensionInfo(dimensionInfo);
       for (let i = 0; i < hookedObjectInfo.length; i++) {
         if (!Utils2.EqualPt(hookedObjectInfo[i].start, hookedObjectInfo[i].end)) {
@@ -3466,34 +3502,34 @@ class BaseDrawingObject {
       }
     }
 
-    console.log("= S.BaseDrawingObject: UpdateHookedObjectDimensionLines output: completed");
+    T3Util.Log("= S.BaseDrawingObject: UpdateHookedObjectDimensionLines output: completed");
   }
 
   UpdateEdgeDimensionLines(element, triggerType) {
-    console.log("= S.BaseDrawingObject: UpdateEdgeDimensionLines input:", { element, triggerType });
+    T3Util.Log("= S.BaseDrawingObject: UpdateEdgeDimensionLines input:", { element, triggerType });
 
     let pathShape, pathCreator, dimensionPoints, isPolygon;
     let angle = 0, segmentIndex = 0, dimensionText = '', dimensionLineShape = null, path = null;
 
     if (!element) {
-      console.log("= S.BaseDrawingObject: UpdateEdgeDimensionLines output: element is null");
+      T3Util.Log("= S.BaseDrawingObject: UpdateEdgeDimensionLines output: element is null");
       return;
     }
 
-    pathShape = T3Gv.opt.svgDoc.CreateShape(ConstantData.CreateShapeType.PATH);
+    pathShape = T3Gv.opt.svgDoc.CreateShape(OptConstant.CSType.PATH);
     element.AddElement(pathShape);
     pathCreator = pathShape.PathCreator();
-    pathShape.SetID(ConstantData.SVGElementClass.DIMENSIONLINE);
+    pathShape.SetID(OptConstant.SVGElementClass.DIMENSIONLINE);
     pathShape.SetFillColor('none');
-    pathShape.SetStrokeColor(ConstantData.Defines.DimensionLineColor);
+    pathShape.SetStrokeColor(OptConstant.Defines.DimensionLineColor);
     pathShape.SetStrokeOpacity(1);
     pathShape.SetStrokeWidth(1);
     pathCreator.BeginPath();
 
-    const alwaysOrSelectDimension = this.Dimensions & ConstantData.DimensionFlags.SED_DF_Always || this.Dimensions & ConstantData.DimensionFlags.SED_DF_Select;
+    const alwaysOrSelectDimension = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Always || this.Dimensions & NvConstant.DimensionFlags.SED_DF_Select;
     dimensionPoints = this.GetDimensionPoints();
 
-    console.log('= S.BaseDrawingObject: dimensionPoints:', dimensionPoints);
+    T3Util.Log('= S.BaseDrawingObject: dimensionPoints:', dimensionPoints);
 
     const pointsLength = dimensionPoints.length;
     isPolygon = this instanceof Instance.Shape.Polygon;
@@ -3504,8 +3540,8 @@ class BaseDrawingObject {
           angle = Utils1.CalcAngleFromPoints(dimensionPoints[segmentIndex - 1], dimensionPoints[segmentIndex]);
           dimensionText = this.GetDimensionFloatingPointValue(segmentIndex) || this.GetDimensionTextForPoints(dimensionPoints[segmentIndex - 1], dimensionPoints[segmentIndex]);
 
-          console.log('= S.BaseDrawingObject: angle:', angle);
-          console.log('= S.BaseDrawingObject: dimensionText:', dimensionText);
+          T3Util.Log('= S.BaseDrawingObject: angle:', angle);
+          T3Util.Log('= S.BaseDrawingObject: dimensionText:', dimensionText);
 
           this.CreateDimension(element, pathCreator, false, angle, dimensionText, dimensionPoints[segmentIndex - 1], dimensionPoints[segmentIndex], segmentIndex, false, isPolygon);
         }
@@ -3516,11 +3552,11 @@ class BaseDrawingObject {
     this.ShowOrHideDimensions(false, triggerType);
     pathCreator.Apply();
 
-    console.log("= S.BaseDrawingObject: UpdateEdgeDimensionLines output: completed");
+    T3Util.Log("= S.BaseDrawingObject: UpdateEdgeDimensionLines output: completed");
   }
 
   UpdateEdgeCoordinateLines(shapeContainer, triggerType) {
-    console.log("= S.BaseDrawingObject: UpdateEdgeCoordinateLines input:", { shapeContainer, triggerType });
+    T3Util.Log("= S.BaseDrawingObject: UpdateEdgeCoordinateLines input:", { shapeContainer, triggerType });
 
     let pathShape, pathCreator;
     let coordinateLinePoints;
@@ -3528,16 +3564,16 @@ class BaseDrawingObject {
     let angle = 0, segmentIndex = 0, dimensionText = '', dimensionLineShape = null, path = null;
 
     if (!shapeContainer) {
-      console.log("= S.BaseDrawingObject: UpdateEdgeCoordinateLines output: shapeContainer is null");
+      T3Util.Log("= S.BaseDrawingObject: UpdateEdgeCoordinateLines output: shapeContainer is null");
       return;
     }
 
-    pathShape = T3Gv.opt.svgDoc.CreateShape(ConstantData.CreateShapeType.PATH);
+    pathShape = T3Gv.opt.svgDoc.CreateShape(OptConstant.CSType.PATH);
     shapeContainer.AddElement(pathShape);
     pathCreator = pathShape.PathCreator();
-    pathShape.SetID(ConstantData.SVGElementClass.CoordinateLine);
+    pathShape.SetID(OptConstant.SVGElementClass.CoordinateLine);
     pathShape.SetFillColor('none');
-    pathShape.SetStrokeColor(ConstantData.Defines.CoordinateLineColor);
+    pathShape.SetStrokeColor(OptConstant.Defines.CoordinateLineColor);
     pathShape.SetStrokeOpacity(1);
     pathShape.SetStrokeWidth(1);
     pathShape.SetStrokePattern("5,5");
@@ -3546,7 +3582,7 @@ class BaseDrawingObject {
     const showCoordinateLine = true;
     coordinateLinePoints = this.GetCoordinateLinePoints();
 
-    console.log('= S.BaseDrawingObject: coordinateLinePoints:', coordinateLinePoints);
+    T3Util.Log('= S.BaseDrawingObject: coordinateLinePoints:', coordinateLinePoints);
 
     const pointsLength = coordinateLinePoints.length;
     isPolygon = this instanceof Instance.Shape.Polygon;
@@ -3560,10 +3596,10 @@ class BaseDrawingObject {
           const startPoint = coordinateLinePoints[segmentIndex - 1];
           const endPoint = coordinateLinePoints[segmentIndex];
 
-          console.log('= S.BaseDrawingObject: angle:', angle);
-          console.log('= S.BaseDrawingObject: dimensionText:', dimensionText);
-          console.log('= S.BaseDrawingObject: startPoint:', startPoint);
-          console.log('= S.BaseDrawingObject: endPoint:', endPoint);
+          T3Util.Log('= S.BaseDrawingObject: angle:', angle);
+          T3Util.Log('= S.BaseDrawingObject: dimensionText:', dimensionText);
+          T3Util.Log('= S.BaseDrawingObject: startPoint:', startPoint);
+          T3Util.Log('= S.BaseDrawingObject: endPoint:', endPoint);
 
           this.CreateCoordinateLine(shapeContainer, pathCreator, false, angle, dimensionText, startPoint, endPoint, segmentIndex, false, isPolygon);
         }
@@ -3574,20 +3610,20 @@ class BaseDrawingObject {
     this.ShowOrHideDimensions(false, triggerType);
     pathCreator.Apply();
 
-    console.log("= S.BaseDrawingObject: UpdateEdgeCoordinateLines output: completed");
+    T3Util.Log("= S.BaseDrawingObject: UpdateEdgeCoordinateLines output: completed");
   }
 
   UpdateSecondaryDimensions(container: any, pathCreator: any, triggerType: any): void {
-    console.log("= S.BaseDrawingObject: UpdateSecondaryDimensions input:", { container, pathCreator, triggerType });
+    T3Util.Log("= S.BaseDrawingObject: UpdateSecondaryDimensions input:", { container, pathCreator, triggerType });
 
     // TODO: Implement the logic to update secondary dimensions here.
     // This is a placeholder for the actual implementation.
 
-    console.log("= S.BaseDrawingObject: UpdateSecondaryDimensions output: completed");
+    T3Util.Log("= S.BaseDrawingObject: UpdateSecondaryDimensions output: completed");
   }
 
   HideOrShowSelectOnlyDimensions(show: boolean, context: any): void {
-    console.log("= S.BaseDrawingObject: HideOrShowSelectOnlyDimensions input:", { show, context });
+    T3Util.Log("= S.BaseDrawingObject: HideOrShowSelectOnlyDimensions input:", { show, context });
 
     let elementID: string;
     let elementIndex = 0;
@@ -3599,10 +3635,10 @@ class BaseDrawingObject {
 
     if (svgLayer !== null) {
       const dimensionClasses = [
-        ConstantData.SVGElementClass.DIMENSIONLINE,
-        ConstantData.SVGElementClass.DIMENSIONTEXT,
-        ConstantData.SVGElementClass.AREADIMENSIONLINE,
-        ConstantData.SVGElementClass.DIMENSIONTEXTNOEDIT
+        OptConstant.SVGElementClass.DIMENSIONLINE,
+        OptConstant.SVGElementClass.DIMENSIONTEXT,
+        OptConstant.SVGElementClass.AREADIMENSIONLINE,
+        OptConstant.SVGElementClass.DIMENSIONTEXTNOEDIT
       ];
 
       for (elementIndex = svgLayer.ElementCount() - 1; elementIndex >= 1; elementIndex--) {
@@ -3617,18 +3653,18 @@ class BaseDrawingObject {
           }
 
           shouldShow = show;
-          shouldShow = !!isHookedObject || !!(this.Dimensions & ConstantData.DimensionFlags.SED_DF_Always) || !!(this.Dimensions & ConstantData.DimensionFlags.SED_DF_Select) && show;
+          shouldShow = !!isHookedObject || !!(this.Dimensions & NvConstant.DimensionFlags.SED_DF_Always) || !!(this.Dimensions & NvConstant.DimensionFlags.SED_DF_Select) && show;
 
           element.SetOpacity(shouldShow ? 1 : 0);
         }
       }
     }
 
-    console.log("= S.BaseDrawingObject: HideOrShowSelectOnlyDimensions output: completed");
+    T3Util.Log("= S.BaseDrawingObject: HideOrShowSelectOnlyDimensions output: completed");
   }
 
   ShowOrHideDimensions(show: boolean, context: any): void {
-    console.log("= S.BaseDrawingObject: ShowOrHideDimensions input:", { show, context });
+    T3Util.Log("= S.BaseDrawingObject: ShowOrHideDimensions input:", { show, context });
 
     let hookedObject = null;
     this.HideOrShowSelectOnlyDimensions(show, context);
@@ -3638,35 +3674,35 @@ class BaseDrawingObject {
 
       if (
         !hookedObject ||
-        hookedObject.objecttype !== ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL ||
-        hookedObject.Dimensions & ConstantData.DimensionFlags.SED_DF_HideHookedObjDimensions
+        hookedObject.objecttype !== NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL ||
+        hookedObject.Dimensions & NvConstant.DimensionFlags.SED_DF_HideHookedObjDimensions
       ) {
         hookedObject.HideOrShowSelectOnlyDimensions(show, context);
       }
     }
 
-    console.log("= S.BaseDrawingObject: ShowOrHideDimensions output: completed");
+    T3Util.Log("= S.BaseDrawingObject: ShowOrHideDimensions output: completed");
   }
 
   GetPointsForAreaDimension(): Point[] {
-    console.log("= S.BaseDrawingObject: GetPointsForAreaDimension input: none");
+    T3Util.Log("= S.BaseDrawingObject: GetPointsForAreaDimension input: none");
 
-    const points = this.GetPolyPoints(ConstantData.Defines.NPOLYPTS, false, false, false, null);
+    const points = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, false, false, null);
 
-    console.log("= S.BaseDrawingObject: GetPointsForAreaDimension output:", points);
+    T3Util.Log("= S.BaseDrawingObject: GetPointsForAreaDimension output:", points);
     return points;
   }
 
   UpdateAreaDimensionLines(container: any): void {
-    console.log("= S.BaseDrawingObject: UpdateAreaDimensionLines input:", container);
+    T3Util.Log("= S.BaseDrawingObject: UpdateAreaDimensionLines input:", container);
 
-    const pathShape = T3Gv.opt.svgDoc.CreateShape(ConstantData.CreateShapeType.PATH);
+    const pathShape = T3Gv.opt.svgDoc.CreateShape(OptConstant.CSType.PATH);
     if (container != null) {
       container.AddElement(pathShape);
       const pathCreator = pathShape.PathCreator();
-      pathShape.SetID(ConstantData.SVGElementClass.AREADIMENSIONLINE);
+      pathShape.SetID(OptConstant.SVGElementClass.AREADIMENSIONLINE);
       pathShape.SetFillColor('none');
-      pathShape.SetStrokeColor(ConstantData.Defines.DimensionLineColor);
+      pathShape.SetStrokeColor(OptConstant.Defines.DimensionLineColor);
       pathShape.SetStrokeOpacity(1);
       pathShape.SetStrokeWidth(1);
       pathCreator.BeginPath();
@@ -3683,115 +3719,115 @@ class BaseDrawingObject {
       pathCreator.Apply();
     }
 
-    console.log("= S.BaseDrawingObject: UpdateAreaDimensionLines output: completed");
+    T3Util.Log("= S.BaseDrawingObject: UpdateAreaDimensionLines output: completed");
   }
 
   GetDimensionFloatingPointValue(segmentIndex: number): string | null {
-    console.log("= S.BaseDrawingObject: GetDimensionFloatingPointValue input:", segmentIndex);
+    T3Util.Log("= S.BaseDrawingObject: GetDimensionFloatingPointValue input:", segmentIndex);
 
     let dimensionValue = 0;
 
-    const hasWidthFlag = this.rflags & ConstantData.FloatingPointDim.SD_FP_Width;
-    const hasHeightFlag = this.rflags & ConstantData.FloatingPointDim.SD_FP_Height;
+    const hasWidthFlag = this.rflags & NvConstant.FloatingPointDim.SD_FP_Width;
+    const hasHeightFlag = this.rflags & NvConstant.FloatingPointDim.SD_FP_Height;
 
     if (hasWidthFlag || hasHeightFlag) {
       if (segmentIndex === 1 && hasWidthFlag) {
         dimensionValue = this.GetDimensionLengthFromValue(this.rwd);
         const result = this.GetLengthInRulerUnits(dimensionValue);
-        console.log("= S.BaseDrawingObject: GetDimensionFloatingPointValue output:", result);
+        T3Util.Log("= S.BaseDrawingObject: GetDimensionFloatingPointValue output:", result);
         return result;
       } else if (segmentIndex === 2 && hasHeightFlag) {
         dimensionValue = this.GetDimensionLengthFromValue(this.rht);
         const result = this.GetLengthInRulerUnits(dimensionValue);
-        console.log("= S.BaseDrawingObject: GetDimensionFloatingPointValue output:", result);
+        T3Util.Log("= S.BaseDrawingObject: GetDimensionFloatingPointValue output:", result);
         return result;
       }
     }
 
-    console.log("= S.BaseDrawingObject: GetDimensionFloatingPointValue output: null");
+    T3Util.Log("= S.BaseDrawingObject: GetDimensionFloatingPointValue output: null");
     return null;
   }
 
   IsTextFrameOverlap(textFrame: Rectangle, angle: number): boolean {
-    console.log("= S.BaseDrawingObject: IsTextFrameOverlap input:", { textFrame, angle });
+    T3Util.Log("= S.BaseDrawingObject: IsTextFrameOverlap input:", { textFrame, angle });
 
     // Placeholder logic for checking text frame overlap
     const result = false;
 
-    console.log("= S.BaseDrawingObject: IsTextFrameOverlap output:", result);
+    T3Util.Log("= S.BaseDrawingObject: IsTextFrameOverlap output:", result);
     return result;
   }
 
   GetExteriorDimensionMeasurementLineThicknessAdjustment(thickness: number): number {
-    console.log("= S.BaseDrawingObject: GetExteriorDimensionMeasurementLineThicknessAdjustment input:", thickness);
+    T3Util.Log("= S.BaseDrawingObject: GetExteriorDimensionMeasurementLineThicknessAdjustment input:", thickness);
 
     // Placeholder logic for thickness adjustment
     const result = 0;
 
-    console.log("= S.BaseDrawingObject: GetExteriorDimensionMeasurementLineThicknessAdjustment output:", result);
+    T3Util.Log("= S.BaseDrawingObject: GetExteriorDimensionMeasurementLineThicknessAdjustment output:", result);
     return result;
   }
 
   CanUseStandOffDimensionLines(): boolean {
-    console.log("= S.BaseDrawingObject: CanUseStandOffDimensionLines input: none");
+    T3Util.Log("= S.BaseDrawingObject: CanUseStandOffDimensionLines input: none");
 
     const result = true;
 
-    console.log("= S.BaseDrawingObject: CanUseStandOffDimensionLines output:", result);
+    T3Util.Log("= S.BaseDrawingObject: CanUseStandOffDimensionLines output:", result);
     return result;
   }
 
   GetDimensionLengthFromString(input: string, someParam: any): number {
-    console.log("= S.BaseDrawingObject: GetDimensionLengthFromString input:", { input, someParam });
+    T3Util.Log("= S.BaseDrawingObject: GetDimensionLengthFromString input:", { input, someParam });
 
     let dimensionValue = this.GetDimensionValueFromString(input, someParam);
     let result = dimensionValue < 0 ? dimensionValue : this.GetDimensionLengthFromValue(dimensionValue);
 
-    console.log("= S.BaseDrawingObject: GetDimensionLengthFromString output:", result);
+    T3Util.Log("= S.BaseDrawingObject: GetDimensionLengthFromString output:", result);
     return result;
   }
 
   GetDimensionValueFromString(input: string, someParam: any): number {
-    console.log("= S.BaseDrawingObject: GetDimensionValueFromString input:", { input, someParam });
+    T3Util.Log("= S.BaseDrawingObject: GetDimensionValueFromString input:", { input, someParam });
 
     let value = 0;
     input = input.trim();
 
     if (input.length === 0) {
-      console.log("= S.BaseDrawingObject: GetDimensionValueFromString output:", -1);
+      T3Util.Log("= S.BaseDrawingObject: GetDimensionValueFromString output:", -1);
       return -1;
     }
 
     if (!input.match(/^[0-9. \/\'\"]+$/)) {
-      console.log("= S.BaseDrawingObject: GetDimensionValueFromString output:", -1);
+      T3Util.Log("= S.BaseDrawingObject: GetDimensionValueFromString output:", -1);
       return -1;
     }
 
     if (
       T3Gv.docUtil.rulerConfig.useInches &&
-      T3Gv.docUtil.rulerConfig.units === ConstantData.RulerUnits.SED_Feet &&
+      T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnits.SED_Feet &&
       !T3Gv.docUtil.rulerConfig.showpixels
     ) {
       value = this.ConvertToFeet(input);
       if (value < 0 || isNaN(value)) {
-        console.log("= S.BaseDrawingObject: GetDimensionValueFromString output:", -1);
+        T3Util.Log("= S.BaseDrawingObject: GetDimensionValueFromString output:", -1);
         return -1;
       }
     } else {
       if (!this.NumberIsFloat(input)) {
-        console.log("= S.BaseDrawingObject: GetDimensionValueFromString output:", -1);
+        T3Util.Log("= S.BaseDrawingObject: GetDimensionValueFromString output:", -1);
         return -1;
       }
       value = parseFloat(input);
     }
 
     const result = isNaN(value) ? -1 : value;
-    console.log("= S.BaseDrawingObject: GetDimensionValueFromString output:", result);
+    T3Util.Log("= S.BaseDrawingObject: GetDimensionValueFromString output:", result);
     return result;
   }
 
   GetDimensionLengthFromValue(value: number): number {
-    console.log("= S.BaseDrawingObject: GetDimensionLengthFromValue input:", value);
+    T3Util.Log("= S.BaseDrawingObject: GetDimensionLengthFromValue input:", value);
 
     let length = 0;
     if (T3Gv.docUtil.rulerConfig.showpixels) {
@@ -3804,19 +3840,19 @@ class BaseDrawingObject {
       length = -1;
     }
 
-    console.log("= S.BaseDrawingObject: GetDimensionLengthFromValue output:", length);
+    T3Util.Log("= S.BaseDrawingObject: GetDimensionLengthFromValue output:", length);
     return length;
   }
 
   AdjustDimensionLength(length: number): number {
-    console.log("= S.BaseDrawingObject: AdjustDimensionLength input:", length);
+    T3Util.Log("= S.BaseDrawingObject: AdjustDimensionLength input:", length);
     const result = length;
-    console.log("= S.BaseDrawingObject: AdjustDimensionLength output:", result);
+    T3Util.Log("= S.BaseDrawingObject: AdjustDimensionLength output:", result);
     return result;
   }
 
   GetDimensionAreaTextInfo(textShape, textFramePoints, leftArrowPoints, rightArrowPoints, topArrowPoints, bottomArrowPoints) {
-    console.log("= S.BaseDrawingObject: GetDimensionAreaTextInfo input:", {
+    T3Util.Log("= S.BaseDrawingObject: GetDimensionAreaTextInfo input:", {
       textShape,
       textFramePoints,
       leftArrowPoints,
@@ -3883,7 +3919,7 @@ class BaseDrawingObject {
     bottomArrowPoints.push(new Point(arrowPoint.x, arrowPoint.y));
     bottomArrowPoints.push(new Point(bottomArrowPoints[0].x, bottomArrowPoints[0].y));
 
-    console.log("= S.BaseDrawingObject: GetDimensionAreaTextInfo output:", {
+    T3Util.Log("= S.BaseDrawingObject: GetDimensionAreaTextInfo output:", {
       textFramePoints,
       leftArrowPoints,
       rightArrowPoints,
@@ -3893,21 +3929,21 @@ class BaseDrawingObject {
   }
 
   GetFrameIntersects(frame: any, point: Point, tolerance: number): boolean {
-    console.log("= S.BaseDrawingObject: GetFrameIntersects input:", { frame, point, tolerance });
+    T3Util.Log("= S.BaseDrawingObject: GetFrameIntersects input:", { frame, point, tolerance });
 
     // Placeholder logic for frame intersection
     const result = false;
 
-    console.log("= S.BaseDrawingObject: GetFrameIntersects output:", result);
+    T3Util.Log("= S.BaseDrawingObject: GetFrameIntersects output:", result);
     return result;
   }
 
   AdjustAutoInsertShape(shapeData: any): boolean {
-    console.log("= S.BaseDrawingObject: AdjustAutoInsertShape input:", shapeData);
+    T3Util.Log("= S.BaseDrawingObject: AdjustAutoInsertShape input:", shapeData);
 
     const result = false;
 
-    console.log("= S.BaseDrawingObject: AdjustAutoInsertShape output:", result);
+    T3Util.Log("= S.BaseDrawingObject: AdjustAutoInsertShape output:", result);
     return result;
   }
 
@@ -3922,7 +3958,7 @@ class BaseDrawingObject {
     rightArrowPoints: Point[],
     isStandoff: boolean
   ): void {
-    console.log("= S.BaseDrawingObject: GetDimensionTextInfo1 input:", {
+    T3Util.Log("= S.BaseDrawingObject: GetDimensionTextInfo1 input:", {
       startPoint,
       endPoint,
       angle,
@@ -3980,7 +4016,7 @@ class BaseDrawingObject {
 
     // If using exterior dimensions, adjust the text frame vertically by line thickness
     const exteriorCheck =
-      (this.Dimensions & ConstantData.DimensionFlags.SED_DF_Exterior) ||
+      (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Exterior) ||
       (this.StyleRecord && this.StyleRecord.Line && this.StyleRecord.Line.Thickness);
     if (exteriorCheck) {
       textDim.y -= this.StyleRecord.Line.Thickness;
@@ -3988,15 +4024,15 @@ class BaseDrawingObject {
 
     // Determine if standoff should be used
     useStandOff =
-      (this.Dimensions & ConstantData.DimensionFlags.SED_DF_Standoff) != 0 &&
+      (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Standoff) != 0 &&
       this.CanUseStandOffDimensionLines();
 
     if (
       !isStandoff &&
-      !(this.Dimensions & ConstantData.DimensionFlags.SED_DF_HideHookedObjDimensions) &&
+      !(this.Dimensions & NvConstant.DimensionFlags.SED_DF_HideHookedObjDimensions) &&
       this instanceof Instance.Shape.BaseLine &&
-      this.ShortRef != ConstantData2.LineTypes.SED_LS_MeasuringTape &&
-      this.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL
+      this.ShortRef != OptConstant.LineTypes.SedLsMeasuringTape &&
+      this.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL
     ) {
       const linkObj = T3Gv.opt.GetObjectPtr(T3Gv.opt.linksBlockId, false);
       if (linkObj && T3Gv.opt.FindLink(linkObj, this.BlockID, true) >= 0) {
@@ -4009,14 +4045,14 @@ class BaseDrawingObject {
 
     // Choose default offset based on standoff usage
     const defaultOffset = useStandOff
-      ? ConstantData.Defines.DimensionDefaultStandoff
-      : ConstantData.Defines.DimensionDefaultNonStandoff;
+      ? OptConstant.Defines.DimensionDefaultStandoff
+      : OptConstant.Defines.DimensionDefaultNonStandoff;
 
     // Adjust textDim vertically with the default offset
     textDim.y -= defaultOffset;
-    textGap = ConstantData.Defines.DimensionDefaultTextGap;
+    textGap = OptConstant.Defines.DimensionDefaultTextGap;
     if (
-      (this.Dimensions & ConstantData.DimensionFlags.SED_DF_Exterior) ||
+      (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Exterior) ||
       (this.StyleRecord && this.StyleRecord.Line && this.StyleRecord.Line.Thickness)
     ) {
       textGap += this.StyleRecord.Line.Thickness;
@@ -4030,7 +4066,7 @@ class BaseDrawingObject {
       const T = Math.floor((arcLength - 0.01) / (Math.PI / 2));
       isTextAltPositioning = T === 1 || T === 2;
     } else if (this.polylist && !this.polylist.closed && isStandoff) {
-      const polyPts = this.GetPolyPoints(ConstantData.Defines.NPOLYPTS, true, true, false, null);
+      const polyPts = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true, true, false, null);
       const segmentPoints = [polyPts[segmentIndex - 1], polyPts[segmentIndex]];
       Utils3.RotatePointsAboutCenter(this.Frame, -arcLength, segmentPoints);
       segmentPoints.push({
@@ -4055,7 +4091,7 @@ class BaseDrawingObject {
     }
 
     // Handle standoff flag for further adjustment
-    let standOffFlag = this.Dimensions & ConstantData.DimensionFlags.SED_DF_Standoff;
+    let standOffFlag = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Standoff;
     if (standOffFlag && !this.CanUseStandOffDimensionLines()) {
       standOffFlag = false;
     }
@@ -4091,9 +4127,9 @@ class BaseDrawingObject {
       leftArrowPoints.push(new Point(tempPoint.x, tempPoint.y));
       tempPoint.y = textDim.y + textDim.height / 2;
       leftArrowPoints.push(new Point(tempPoint.x, tempPoint.y));
-      tempPoint.x = textDim.x - ConstantData.Defines.DimensionDefaultTextGap;
+      tempPoint.x = textDim.x - OptConstant.Defines.DimensionDefaultTextGap;
       leftArrowPoints.push(new Point(tempPoint.x, tempPoint.y));
-      tempPoint.x = textDim.x + textDim.width + ConstantData.Defines.DimensionDefaultTextGap;
+      tempPoint.x = textDim.x + textDim.width + OptConstant.Defines.DimensionDefaultTextGap;
       rightArrowPoints.push(new Point(tempPoint.x, tempPoint.y));
       tempPoint.x = pointEndRef.x;
       rightArrowPoints.push(new Point(tempPoint.x, tempPoint.y));
@@ -4129,7 +4165,7 @@ class BaseDrawingObject {
     Utils3.RotatePointsAboutCenter(this.Frame, arcLength, leftArrowPoints);
     Utils3.RotatePointsAboutCenter(this.Frame, arcLength, rightArrowPoints);
 
-    console.log("= S.BaseDrawingObject: GetDimensionTextInfo1 output:", {
+    T3Util.Log("= S.BaseDrawingObject: GetDimensionTextInfo1 output:", {
       textDim,
       textFramePoints,
       leftArrowPoints,
@@ -4186,21 +4222,21 @@ class BaseDrawingObject {
     textDim.y -= textDim.height / 2;
     textDim.y -= textDim.height / 2;
 
-    const check1 = this.Dimensions & ConstantData.DimensionFlags.SED_DF_Exterior || this.StyleRecord &&
+    const check1 = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Exterior || this.StyleRecord &&
       this.StyleRecord.Line && this.StyleRecord.Line.Thickness;
 
     if (check1) {
       (textDim.y -= this.StyleRecord.Line.Thickness);
     }
 
-    const stdOffFlag = this.Dimensions & ConstantData.DimensionFlags.SED_DF_Standoff;
+    const stdOffFlag = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Standoff;
     isStdOff = stdOffFlag != 0 && this.CanUseStandOffDimensionLines();
 
-    const isHideHookedObjDimensions = this.Dimensions & ConstantData.DimensionFlags.SED_DF_HideHookedObjDimensions;
+    const isHideHookedObjDimensions = this.Dimensions & NvConstant.DimensionFlags.SED_DF_HideHookedObjDimensions;
 
     const check3 = !isStandoff && !isHideHookedObjDimensions && this instanceof Instance.Shape.BaseLine &&
-      this.ShortRef != ConstantData2.LineTypes.SED_LS_MeasuringTape &&
-      this.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL;
+      this.ShortRef != OptConstant.LineTypes.SedLsMeasuringTape &&
+      this.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL;
 
 
     if (check3) {
@@ -4218,11 +4254,11 @@ class BaseDrawingObject {
       isStdOff = false;
     }
 
-    const stdOffNum = isStdOff ? ConstantData.Defines.DimensionDefaultStandoff : ConstantData.Defines.DimensionDefaultNonStandoff;
+    const stdOffNum = isStdOff ? OptConstant.Defines.DimensionDefaultStandoff : OptConstant.Defines.DimensionDefaultNonStandoff;
 
     if (textDim.y -= stdOffNum,
-      m = ConstantData.Defines.DimensionDefaultTextGap,
-      this.Dimensions & ConstantData.DimensionFlags.SED_DF_Exterior ||
+      m = OptConstant.Defines.DimensionDefaultTextGap,
+      this.Dimensions & NvConstant.DimensionFlags.SED_DF_Exterior ||
       this.StyleRecord &&
       this.StyleRecord.Line &&
       this.StyleRecord.Line.Thickness &&
@@ -4233,7 +4269,7 @@ class BaseDrawingObject {
       C = 1 == T || 2 == T;
     } else if (this.polylist && !this.polylist.closed && isStandoff) {
       var b = [
-        (polyPoints = this.GetPolyPoints(ConstantData.Defines.NPOLYPTS, !0, !0, !1, null))[segmentIndex - 1],
+        (polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, !0, !0, !1, null))[segmentIndex - 1],
         polyPoints[segmentIndex]
       ];
       Utils3.RotatePointsAboutCenter(this.Frame, -arcLength, b);
@@ -4257,7 +4293,7 @@ class BaseDrawingObject {
     }
 
     let isStdOff2 = false;
-    var stdOffFlag2 = this.Dimensions & ConstantData.DimensionFlags.SED_DF_Standoff;
+    var stdOffFlag2 = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Standoff;
 
     if (stdOffFlag2 && !this.CanUseStandOffDimensionLines()) {
       isStdOff2 = false;
@@ -4300,9 +4336,9 @@ class BaseDrawingObject {
       leftArrowPoints.push(new Point(g.x, g.y));
       g.y = textDim.y + textDim.height / 2;
       leftArrowPoints.push(new Point(g.x, g.y));
-      g.x = textDim.x - ConstantData.Defines.DimensionDefaultTextGap;
+      g.x = textDim.x - OptConstant.Defines.DimensionDefaultTextGap;
       leftArrowPoints.push(new Point(g.x, g.y));
-      g.x = textDim.x + textDim.width + ConstantData.Defines.DimensionDefaultTextGap;
+      g.x = textDim.x + textDim.width + OptConstant.Defines.DimensionDefaultTextGap;
       rightArrowPoints.push(new Point(g.x, g.y));
       g.x = pointEnd.x;
       rightArrowPoints.push(new Point(g.x, g.y));
@@ -4385,20 +4421,20 @@ class BaseDrawingObject {
     textDim.y -= textDim.height / 2;
     textDim.y -= textDim.height / 2;
 
-    const check1 = this.Dimensions & ConstantData.DimensionFlags.SED_DF_Exterior || this.StyleRecord &&
+    const check1 = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Exterior || this.StyleRecord &&
       this.StyleRecord.Line && this.StyleRecord.Line.Thickness;
 
     if (check1) {
       (textDim.y -= this.StyleRecord.Line.Thickness);
     }
 
-    const stdOffFlag = this.Dimensions & ConstantData.DimensionFlags.SED_DF_Standoff;
+    const stdOffFlag = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Standoff;
     isStdOff = stdOffFlag != 0 && this.CanUseStandOffDimensionLines();
-    const isHideHookedObjDimensions = this.Dimensions & ConstantData.DimensionFlags.SED_DF_HideHookedObjDimensions;
+    const isHideHookedObjDimensions = this.Dimensions & NvConstant.DimensionFlags.SED_DF_HideHookedObjDimensions;
 
     const check3 = !isStandoff && !isHideHookedObjDimensions && this instanceof Instance.Shape.BaseLine &&
-      this.ShortRef != ConstantData2.LineTypes.SED_LS_MeasuringTape &&
-      this.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL;
+      this.ShortRef != OptConstant.LineTypes.SedLsMeasuringTape &&
+      this.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL;
 
     if (
       check3
@@ -4417,12 +4453,12 @@ class BaseDrawingObject {
       isStdOff = false;
     }
 
-    const stdOffNum = isStdOff ? ConstantData.Defines.CoordinateLineDefaultStandoff : ConstantData.Defines.CoordinateLineDefaultNonStandoff;
+    const stdOffNum = isStdOff ? OptConstant.Defines.CoordinateLineDefaultStandoff : OptConstant.Defines.CoordinateLineDefaultNonStandoff;
 
     textDim.y -= stdOffNum;
-    textGap = ConstantData.Defines.CoordinateLineDefaultTextGap;
+    textGap = OptConstant.Defines.CoordinateLineDefaultTextGap;
 
-    const check4 = this.Dimensions & ConstantData.DimensionFlags.SED_DF_Exterior || this.StyleRecord &&
+    const check4 = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Exterior || this.StyleRecord &&
       this.StyleRecord.Line && this.StyleRecord.Line.Thickness;
 
     if (check4) {
@@ -4441,7 +4477,7 @@ class BaseDrawingObject {
       isFitArc = 1 == fitArcSegments || 2 == fitArcSegments;
     } else if (this.polylist && !this.polylist.closed && isStandoff) {
       var b = [
-        (polyPoints = this.GetPolyPoints(ConstantData.Defines.NPOLYPTS, !0, !0, !1, null))[segmentIndex - 1],
+        (polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, !0, !0, !1, null))[segmentIndex - 1],
         polyPoints[segmentIndex]
       ];
       Utils3.RotatePointsAboutCenter(this.Frame, -arcLength, b);
@@ -4465,7 +4501,7 @@ class BaseDrawingObject {
     }
 
     let isStdOff2 = false;
-    var stdOffFlag2 = this.Dimensions & ConstantData.DimensionFlags.SED_DF_Standoff;
+    var stdOffFlag2 = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Standoff;
 
     if (stdOffFlag2 && !this.CanUseStandOffDimensionLines()) {
       isStdOff2 = false;
@@ -4521,11 +4557,11 @@ class BaseDrawingObject {
       //leftArrowPoints.push(new Point(arrowPoint.x, arrowPoint.y));
 
       // left arrow's 3rd point
-      arrowPoint.x = textDim.x - ConstantData.Defines.CoordinateLineDefaultTextGap;
+      arrowPoint.x = textDim.x - OptConstant.Defines.CoordinateLineDefaultTextGap;
       leftArrowPoints.push(new Point(arrowPoint.x, arrowPoint.y));
 
       // right arrow's 1st point
-      arrowPoint.x = textDim.x + textDim.width + ConstantData.Defines.CoordinateLineDefaultTextGap;
+      arrowPoint.x = textDim.x + textDim.width + OptConstant.Defines.CoordinateLineDefaultTextGap;
       rightArrowPoints.push(new Point(arrowPoint.x, arrowPoint.y));
 
       // right arrow's 2nd point
@@ -4569,9 +4605,9 @@ class BaseDrawingObject {
 
   CreateDimensionLineSegment(pathCreator, path, points, bounds) {
 
-    // console.log('=== wall CreateDimensionLineSegment pathCreator', pathCreator);
-    console.log('=== wall ========================================================');
-    console.log('=== wall CreateDimensionLineSegment path,points,bounds', path, points, bounds);
+    // T3Util.Log('=== wall CreateDimensionLineSegment pathCreator', pathCreator);
+    T3Util.Log('=== wall ========================================================');
+    T3Util.Log('=== wall CreateDimensionLineSegment path,points,bounds', path, points, bounds);
 
     for (let i = 0; i < points.length; i++) {
       if (i === 0) {
@@ -4597,9 +4633,9 @@ class BaseDrawingObject {
 
   CreateCoordinateLineSegment(pathCreator, path, points, bounds) {
 
-    // console.log('=== wall CreateDimensionLineSegment pathCreator', pathCreator);
-    // console.log('=== wall ========================================================');
-    console.log('=== wall CreateCoordinateLineSegment points/bounds', points, bounds);
+    // T3Util.Log('=== wall CreateDimensionLineSegment pathCreator', pathCreator);
+    // T3Util.Log('=== wall ========================================================');
+    T3Util.Log('=== wall CreateCoordinateLineSegment points/bounds', points, bounds);
 
     for (let i = 0; i < points.length; i++) {
       if (i === 0) {
@@ -4630,7 +4666,7 @@ class BaseDrawingObject {
     bounds: Rectangle,
     userData: any
   ): void {
-    console.log("= S.BaseDrawingObject: CreateDimensionLineArrowHead - Input:", {
+    T3Util.Log("= S.BaseDrawingObject: CreateDimensionLineArrowHead - Input:", {
       container,
       polygonCreator,
       arrowPoints,
@@ -4661,17 +4697,17 @@ class BaseDrawingObject {
 
     // Create a polygon shape using the SVG document
     const polygonShape = T3Gv.opt.svgDoc.CreateShape(
-      ConstantData.CreateShapeType.POLYGON
+      OptConstant.CSType.POLYGON
     );
     polygonShape.SetPoints(arrowPoints);
-    polygonShape.SetEventBehavior(ConstantData2.EventBehavior.ALL);
-    polygonShape.SetID(ConstantData.SVGElementClass.DIMENSIONLINE);
+    polygonShape.SetEventBehavior(OptConstant.EventBehavior.ALL);
+    polygonShape.SetID(OptConstant.SVGElementClass.DIMENSIONLINE);
     polygonShape.SetPos(0, 0);
     polygonShape.SetSize(polyRect.width, polyRect.height);
     polygonShape.SetFillColor("black");
 
     // Exclude from export if the SED_DF_Select flag is set in Dimensions
-    if (Utils2.HasFlag(this.Dimensions, ConstantData.DimensionFlags.SED_DF_Select)) {
+    if (Utils2.HasFlag(this.Dimensions, NvConstant.DimensionFlags.SED_DF_Select)) {
       polygonShape.ExcludeFromExport(true);
     }
 
@@ -4683,25 +4719,25 @@ class BaseDrawingObject {
     // Add the polygon shape to the container
     container.AddElement(polygonShape);
 
-    console.log("= S.BaseDrawingObject: CreateDimensionLineArrowHead - Output: Polygon shape created", polygonShape);
+    T3Util.Log("= S.BaseDrawingObject: CreateDimensionLineArrowHead - Output: Polygon shape created", polygonShape);
   }
 
   ConvertToNative(inputData: any, conversionOptions: any): any {
-    console.log("= S.BaseDrawingObject: ConvertToNative - Input:", { inputData, conversionOptions });
+    T3Util.Log("= S.BaseDrawingObject: ConvertToNative - Input:", { inputData, conversionOptions });
     const nativeResult = null;
-    console.log("= S.BaseDrawingObject: ConvertToNative - Output:", nativeResult);
+    T3Util.Log("= S.BaseDrawingObject: ConvertToNative - Output:", nativeResult);
     return nativeResult;
   }
 
   ContainsText(): boolean {
-    console.log("= S.BaseDrawingObject: ContainsText - Input: none");
+    T3Util.Log("= S.BaseDrawingObject: ContainsText - Input: none");
     const hasText = this.DataID >= 0;
-    console.log("= S.BaseDrawingObject: ContainsText - Output:", hasText);
+    T3Util.Log("= S.BaseDrawingObject: ContainsText - Output:", hasText);
     return hasText;
   }
 
   GetToUnits(): number {
-    console.log("= S.BaseDrawingObject: GetToUnits - Input: none");
+    T3Util.Log("= S.BaseDrawingObject: GetToUnits - Input: none");
 
     // Retrieve major value and majorScale from ruler settings
     const major: number = T3Gv.docUtil.rulerConfig.major;
@@ -4715,23 +4751,23 @@ class BaseDrawingObject {
       conversionFactor *= T3Gv.docUtil.rulerConfig.metricConv;
     }
 
-    console.log("= S.BaseDrawingObject: GetToUnits - Output:", conversionFactor);
+    T3Util.Log("= S.BaseDrawingObject: GetToUnits - Output:", conversionFactor);
     return conversionFactor;
   }
 
   GetLengthInUnits(value: number, round: boolean = false): number {
-    console.log("= S.BaseDrawingObject: GetLengthInUnits input:", { value, round });
+    T3Util.Log("= S.BaseDrawingObject: GetLengthInUnits input:", { value, round });
     let result = value * this.GetToUnits();
     if (!round) {
       const factor = Math.pow(10, T3Gv.docUtil.rulerConfig.dp);
       result = Math.round(result * factor) / factor;
     }
-    console.log("= S.BaseDrawingObject: GetLengthInUnits output:", result);
+    T3Util.Log("= S.BaseDrawingObject: GetLengthInUnits output:", result);
     return result;
   }
 
   GetFractionStringGranularity(input: any): number {
-    console.log("= S.BaseDrawingObject: GetFractionStringGranularity input:", { input });
+    T3Util.Log("= S.BaseDrawingObject: GetFractionStringGranularity input:", { input });
 
     const rulerSettings = T3Gv.docUtil.rulerConfig;
     let granularity: number;
@@ -4750,12 +4786,12 @@ class BaseDrawingObject {
       granularity = 1;
     }
 
-    console.log("= S.BaseDrawingObject: GetFractionStringGranularity output:", granularity);
+    T3Util.Log("= S.BaseDrawingObject: GetFractionStringGranularity output:", granularity);
     return granularity;
   }
 
   NumberIsFloat(input: string): boolean {
-    console.log("= S.BaseDrawingObject: NumberIsFloat input:", input);
+    T3Util.Log("= S.BaseDrawingObject: NumberIsFloat input:", input);
 
     const nineCharCode = '9'.charCodeAt(0);
     const zeroCharCode = '0'.charCodeAt(0);
@@ -4764,17 +4800,17 @@ class BaseDrawingObject {
     for (let index = 0; index < input.length; index++) {
       const charCode = input.charCodeAt(index);
       if (!((charCode >= zeroCharCode && charCode <= nineCharCode) || charCode === dotCharCode)) {
-        console.log("= S.BaseDrawingObject: NumberIsFloat output:", false);
+        T3Util.Log("= S.BaseDrawingObject: NumberIsFloat output:", false);
         return false;
       }
     }
 
-    console.log("= S.BaseDrawingObject: NumberIsFloat output:", true);
+    T3Util.Log("= S.BaseDrawingObject: NumberIsFloat output:", true);
     return true;
   }
 
   ParseInchesString(input: string): number {
-    console.log("= S.BaseDrawingObject: ParseInchesString input:", input);
+    T3Util.Log("= S.BaseDrawingObject: ParseInchesString input:", input);
 
     // Trim the input string
     input = input.trim();
@@ -4812,12 +4848,12 @@ class BaseDrawingObject {
       result = parseFloat(input);
     }
 
-    console.log("= S.BaseDrawingObject: ParseInchesString output:", result);
+    T3Util.Log("= S.BaseDrawingObject: ParseInchesString output:", result);
     return result;
   }
 
   ConvertToFeet(input: string): number {
-    console.log("= S.BaseDrawingObject: ConvertToFeet - Input:", input);
+    T3Util.Log("= S.BaseDrawingObject: ConvertToFeet - Input:", input);
 
     // Trim the input and insert a space after the foot symbol if missing
     let processedInput = input.trim();
@@ -4887,13 +4923,13 @@ class BaseDrawingObject {
     if (inches >= 12 && feet === 0) {
       this.Dimensions = Utils2.SetFlag(
         this.Dimensions,
-        ConstantData.DimensionFlags.SED_DF_ShowFeetAsInches,
+        NvConstant.DimensionFlags.SED_DF_ShowFeetAsInches,
         true
       );
     } else if (feet > 0) {
       this.Dimensions = Utils2.SetFlag(
         this.Dimensions,
-        ConstantData.DimensionFlags.SED_DF_ShowFeetAsInches,
+        NvConstant.DimensionFlags.SED_DF_ShowFeetAsInches,
         false
       );
     }
@@ -4901,12 +4937,12 @@ class BaseDrawingObject {
     // Convert the total inches into feet
     feet += inches / 12;
 
-    console.log("= S.BaseDrawingObject: ConvertToFeet - Output:", feet);
+    T3Util.Log("= S.BaseDrawingObject: ConvertToFeet - Output:", feet);
     return feet;
   }
 
   UnitsToCoord(value: number, offset: number): number {
-    console.log("= S.BaseDrawingObject: UnitsToCoord - Input:", { value, offset });
+    T3Util.Log("= S.BaseDrawingObject: UnitsToCoord - Input:", { value, offset });
 
     // Ensure the SED session block is retrieved (result unused here)
     T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
@@ -4915,12 +4951,12 @@ class BaseDrawingObject {
     value += offset * T3Gv.docUtil.rulerConfig.majorScale;
     const result = value / toUnits;
 
-    console.log("= S.BaseDrawingObject: UnitsToCoord - Output:", result);
+    T3Util.Log("= S.BaseDrawingObject: UnitsToCoord - Output:", result);
     return result;
   }
 
   ConvToUnits(value: number, offset: number): number {
-    console.log("= S.BaseDrawingObject: ConvToUnits input:", { value, offset });
+    T3Util.Log("= S.BaseDrawingObject: ConvToUnits input:", { value, offset });
 
     // Ensure the SED session block is retrieved (though result is unused here)
     T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
@@ -4929,7 +4965,7 @@ class BaseDrawingObject {
     const majorScale = T3Gv.docUtil.rulerConfig.majorScale;
     const result = value * toUnits - offset * majorScale;
 
-    console.log("= S.BaseDrawingObject: ConvToUnits output:", result);
+    T3Util.Log("= S.BaseDrawingObject: ConvToUnits output:", result);
     return result;
   }
 
@@ -4949,114 +4985,114 @@ class BaseDrawingObject {
   }
 
   SetBackgroundImageURL(imageURL: string): void {
-    console.log("= S.BaseDrawingObject: SetBackgroundImageURL - Input:", { imageURL });
+    T3Util.Log("= S.BaseDrawingObject: SetBackgroundImageURL - Input:", { imageURL });
 
     // TODO: Add implementation to set the background image URL.
     // For example:
     // this.backgroundImageURL = imageURL;
 
-    console.log("= S.BaseDrawingObject: SetBackgroundImageURL - Output: Completed");
+    T3Util.Log("= S.BaseDrawingObject: SetBackgroundImageURL - Output: Completed");
   }
 
   WriteShapeData(outputStream: any, options: any) {
-    console.log("= S.BaseDrawingObject: WriteShapeData - Input:", { outputStream, options });
+    T3Util.Log("= S.BaseDrawingObject: WriteShapeData - Input:", { outputStream, options });
 
     // TODO: Add your implementation logic here
 
-    console.log("= S.BaseDrawingObject: WriteShapeData - Output: Completed");
+    T3Util.Log("= S.BaseDrawingObject: WriteShapeData - Output: Completed");
   }
 
   CalcTextPosition(inputPosition: any): any {
-    console.log("= S.BaseDrawingObject: CalcTextPosition - Input:", inputPosition);
+    T3Util.Log("= S.BaseDrawingObject: CalcTextPosition - Input:", inputPosition);
 
     // TODO: Add the logic to calculate the text position.
     // For now, we return a placeholder position.
     const calculatedPosition = { x: 0, y: 0 };
 
-    console.log("= S.BaseDrawingObject: CalcTextPosition - Output:", calculatedPosition);
+    T3Util.Log("= S.BaseDrawingObject: CalcTextPosition - Output:", calculatedPosition);
     return calculatedPosition;
   }
 
   GetBlobBytes(): any {
-    console.log("= S.BaseDrawingObject: GetBlobBytes input: none");
+    T3Util.Log("= S.BaseDrawingObject: GetBlobBytes input: none");
     let blob: any = null;
     if (this.BlobBytesID >= 0) {
       blob = T3Gv.opt.GetObjectPtr(this.BlobBytesID, false);
     }
-    console.log("= S.BaseDrawingObject: GetBlobBytes output:", blob);
+    T3Util.Log("= S.BaseDrawingObject: GetBlobBytes output:", blob);
     return blob;
   }
 
   GetEMFBlobBytes(): any {
-    console.log("= S.BaseDrawingObject: GetEMFBlobBytes input: EMFBlobBytesID =", this.EMFBlobBytesID);
+    T3Util.Log("= S.BaseDrawingObject: GetEMFBlobBytes input: EMFBlobBytesID =", this.EMFBlobBytesID);
     let emfBlob: any = null;
     if (this.EMFBlobBytesID >= 0) {
       emfBlob = T3Gv.opt.GetObjectPtr(this.EMFBlobBytesID, false);
     }
-    console.log("= S.BaseDrawingObject: GetEMFBlobBytes output:", emfBlob);
+    T3Util.Log("= S.BaseDrawingObject: GetEMFBlobBytes output:", emfBlob);
     return emfBlob;
   }
 
   GetOleBlobBytes(): any {
-    console.log("= S.BaseDrawingObject: GetOleBlobBytes input:", { OleBlobBytesID: this.OleBlobBytesID });
+    T3Util.Log("= S.BaseDrawingObject: GetOleBlobBytes input:", { OleBlobBytesID: this.OleBlobBytesID });
     let oleBlob: any = null;
     if (this.OleBlobBytesID >= 0) {
       oleBlob = T3Gv.opt.GetObjectPtr(this.OleBlobBytesID, false);
     }
-    console.log("= S.BaseDrawingObject: GetOleBlobBytes output:", oleBlob);
+    T3Util.Log("= S.BaseDrawingObject: GetOleBlobBytes output:", oleBlob);
     return oleBlob;
   }
 
-  GetTable(preserve: boolean = false): any {
-    console.log("= S.BaseDrawingObject: GetTable - Input:", { preserve });
-    let table = null;
-    if (this.TableID >= 0) {
-      table = T3Gv.opt.GetObjectPtr(this.TableID, preserve);
-    }
-    console.log("= S.BaseDrawingObject: GetTable - Output:", table);
-    return table;
-  }
+  // GetTable(preserve: boolean = false): any {
+  //   T3Util.Log("= S.BaseDrawingObject: GetTable - Input:", { preserve });
+  //   let table = null;
+  //   if (this.TableID >= 0) {
+  //     table = T3Gv.opt.GetObjectPtr(this.TableID, preserve);
+  //   }
+  //   T3Util.Log("= S.BaseDrawingObject: GetTable - Output:", table);
+  //   return table;
+  // }
 
-  SetTable(table: any) {
-    console.log("= S.BaseDrawingObject: SetTable input:", { table });
-    if (this.TableID >= 0) {
-      if (table == null) {
-        const existingTable = T3Gv.stdObj.GetObject(this.TableID);
-        if (existingTable) {
-          existingTable.Delete();
-          console.log("= S.BaseDrawingObject: SetTable output: deleted existing table");
-        }
-        this.TableID = -1;
-      } else {
-        const preservedTable = T3Gv.stdObj.PreserveBlock(this.TableID);
-        if (preservedTable) {
-          preservedTable.Data = table;
-          console.log("= S.BaseDrawingObject: SetTable output: updated existing table");
-        }
-      }
-    } else {
-      const newTable = T3Gv.stdObj.CreateBlock(ConstantData.StoredObjectType.TABLE_OBJECT, table);
-      if (newTable) {
-        this.TableID = newTable.ID;
-        console.log("= S.BaseDrawingObject: SetTable output: created new table with ID", this.TableID);
-      }
-    }
-  }
+  // SetTable(table: any) {
+  //   T3Util.Log("= S.BaseDrawingObject: SetTable input:", { table });
+  //   if (this.TableID >= 0) {
+  //     if (table == null) {
+  //       const existingTable = T3Gv.stdObj.GetObject(this.TableID);
+  //       if (existingTable) {
+  //         existingTable.Delete();
+  //         T3Util.Log("= S.BaseDrawingObject: SetTable output: deleted existing table");
+  //       }
+  //       this.TableID = -1;
+  //     } else {
+  //       const preservedTable = T3Gv.stdObj.PreserveBlock(this.TableID);
+  //       if (preservedTable) {
+  //         preservedTable.Data = table;
+  //         T3Util.Log("= S.BaseDrawingObject: SetTable output: updated existing table");
+  //       }
+  //     }
+  //   } else {
+  //     // const newTable = T3Gv.stdObj.CreateBlock(StateConstant.StoredObjectType.TABLE_OBJECT, table);
+  //     // if (newTable) {
+  //     //   this.TableID = newTable.ID;
+  //     //   T3Util.Log("= S.BaseDrawingObject: SetTable output: created new table with ID", this.TableID);
+  //     // }
+  //   }
+  // }
 
   GetGraph(preserve: boolean = false): any {
-    console.log("= S.BaseDrawingObject: GetGraph input:", { preserve });
+    T3Util.Log("= S.BaseDrawingObject: GetGraph input:", { preserve });
     let graph = null;
 
     if (this.GraphID >= 0) {
       graph = T3Gv.opt.GetObjectPtr(this.GraphID, preserve);
     }
 
-    console.log("= S.BaseDrawingObject: GetGraph output:", graph);
+    T3Util.Log("= S.BaseDrawingObject: GetGraph output:", graph);
     return graph;
   }
 
   SetGraph(graph: any): void {
-    console.log("= S.BaseDrawingObject: SetGraph input:", graph);
+    T3Util.Log("= S.BaseDrawingObject: SetGraph input:", graph);
 
     if (this.GraphID >= 0) {
       if (graph == null) {
@@ -5072,46 +5108,46 @@ class BaseDrawingObject {
         }
       }
     } else {
-      const newBlock = T3Gv.stdObj.CreateBlock(ConstantData.StoredObjectType.GRAPH_OBJECT, graph);
+      const newBlock = T3Gv.stdObj.CreateBlock(StateConstant.StoredObjectType.GraphObject, graph);
       if (newBlock) {
         this.GraphID = newBlock.ID;
       }
     }
 
-    console.log("= S.BaseDrawingObject: SetGraph output:", this.GraphID);
+    T3Util.Log("= S.BaseDrawingObject: SetGraph output:", this.GraphID);
   }
 
   Flip(isHorizontalFlip: boolean): void {
-    console.log("= S.BaseDrawingObject: Flip - Input:", { isHorizontalFlip });
+    T3Util.Log("= S.BaseDrawingObject: Flip - Input:", { isHorizontalFlip });
 
     // TODO: Implement the flip logic here.
 
-    console.log("= S.BaseDrawingObject: Flip - Output: Completed");
+    T3Util.Log("= S.BaseDrawingObject: Flip - Output: Completed");
   }
 
   NoFlip(): boolean {
-    console.log("= S.BaseDrawingObject: NoFlip - Input: {}");
+    T3Util.Log("= S.BaseDrawingObject: NoFlip - Input: {}");
     const shouldNotFlip = this.hooks.length > 0;
-    console.log("= S.BaseDrawingObject: NoFlip - Output:", shouldNotFlip);
+    T3Util.Log("= S.BaseDrawingObject: NoFlip - Output:", shouldNotFlip);
     return shouldNotFlip;
   }
 
   NoRotate(): boolean {
-    console.log("= S.BaseDrawingObject: NoRotate - Input: none");
+    T3Util.Log("= S.BaseDrawingObject: NoRotate - Input: none");
     const result = false;
-    console.log("= S.BaseDrawingObject: NoRotate - Output:", result);
+    T3Util.Log("= S.BaseDrawingObject: NoRotate - Output:", result);
     return result;
   }
 
   NoGrow(): boolean {
-    console.log("= S.BaseDrawingObject: NoGrow input: none");
-    const result = (this.colorfilter & ConstantData2.SDRColorFilters.SD_NOCOLOR_RESIZE) > 0;
-    console.log("= S.BaseDrawingObject: NoGrow output:", result);
+    T3Util.Log("= S.BaseDrawingObject: NoGrow input: none");
+    const result = (this.colorfilter & StyleConstant.SDRColorFilters.SD_NOCOLOR_RESIZE) > 0;
+    T3Util.Log("= S.BaseDrawingObject: NoGrow output:", result);
     return result;
   }
 
   MaintainPoint(currentPoint: any, targetPoint: any, adjustmentX: number, adjustmentY: number, shouldApply: boolean): boolean {
-    console.log("= S.BaseDrawingObject: MaintainPoint - Input:", {
+    T3Util.Log("= S.BaseDrawingObject: MaintainPoint - Input:", {
       currentPoint,
       targetPoint,
       adjustmentX,
@@ -5119,57 +5155,57 @@ class BaseDrawingObject {
       shouldApply
     });
     const result = false;
-    console.log("= S.BaseDrawingObject: MaintainPoint - Output:", result);
+    T3Util.Log("= S.BaseDrawingObject: MaintainPoint - Output:", result);
     return result;
   }
 
   AllowTextEdit() {
-    console.log("= S.BaseDrawingObject: AllowTextEdit - Input:", {
+    T3Util.Log("= S.BaseDrawingObject: AllowTextEdit - Input:", {
       TextFlags: this.TextFlags,
       objecttype: this.objecttype,
       flags: this.flags,
       FromEditShapeOutline: this.FromEditShapeOutline
     });
 
-    if ((this.TextFlags & ConstantData.TextFlags.SED_TF_None) > 0) {
-      console.log("= S.BaseDrawingObject: AllowTextEdit - Output: false (SED_TF_None flag is set)");
+    if ((this.TextFlags & NvConstant.TextFlags.SED_TF_None) > 0) {
+      T3Util.Log("= S.BaseDrawingObject: AllowTextEdit - Output: false (SED_TF_None flag is set)");
       return false;
     }
 
     if (
-      this.objecttype === ConstantData.ObjectTypes.SD_OBJT_SHAPECONTAINER &&
-      (this.TextFlags & ConstantData.TextFlags.SED_TF_AttachA) === 0 &&
-      (this.TextFlags & ConstantData.TextFlags.SED_TF_AttachB) === 0
+      this.objecttype === NvConstant.ObjectTypes.SD_OBJT_SHAPECONTAINER &&
+      (this.TextFlags & NvConstant.TextFlags.SED_TF_AttachA) === 0 &&
+      (this.TextFlags & NvConstant.TextFlags.SED_TF_AttachB) === 0
     ) {
-      console.log("= S.BaseDrawingObject: AllowTextEdit - Output: false (Shape container without attach flags)");
+      T3Util.Log("= S.BaseDrawingObject: AllowTextEdit - Output: false (Shape container without attach flags)");
       return false;
     }
 
-    if (this.flags & ConstantData.ObjFlags.SEDO_Lock) {
-      console.log("= S.BaseDrawingObject: AllowTextEdit - Output: false (Object is locked)");
+    if (this.flags & NvConstant.ObjFlags.SEDO_Lock) {
+      T3Util.Log("= S.BaseDrawingObject: AllowTextEdit - Output: false (Object is locked)");
       return false;
     }
 
     if (this.FromEditShapeOutline) {
-      console.log("= S.BaseDrawingObject: AllowTextEdit - Output: false (FromEditShapeOutline is true)");
+      T3Util.Log("= S.BaseDrawingObject: AllowTextEdit - Output: false (FromEditShapeOutline is true)");
       return false;
     }
 
-    const table = this.GetTable(false);
-    if (table) {
-      let cellIndex = -1;
-      if (T3Gv.opt.Table_GetActiveID() === table.BlockID) {
-        cellIndex = table.select;
-      }
-      if (cellIndex < 0) {
-        cellIndex = T3Gv.opt.Table_GetFirstTextCell(table);
-      }
-      const allowCellEdit = T3Gv.opt.Table_AllowCellTextEdit(table, cellIndex);
-      console.log("= S.BaseDrawingObject: AllowTextEdit - Output:", allowCellEdit, "(Table cell text edit check)");
-      return allowCellEdit;
-    }
+    // const table = this.GetTable(false);
+    // if (table) {
+    //   let cellIndex = -1;
+    //   if (T3Gv.opt.Table_GetActiveID() === table.BlockID) {
+    //     cellIndex = table.select;
+    //   }
+    //   if (cellIndex < 0) {
+    //     cellIndex = T3Gv.opt.Table_GetFirstTextCell(table);
+    //   }
+    //   const allowCellEdit = T3Gv.opt.Table_AllowCellTextEdit(table, cellIndex);
+    //   T3Util.Log("= S.BaseDrawingObject: AllowTextEdit - Output:", allowCellEdit, "(Table cell text edit check)");
+    //   return allowCellEdit;
+    // }
 
-    console.log("= S.BaseDrawingObject: AllowTextEdit - Output: true (No table present)");
+    T3Util.Log("= S.BaseDrawingObject: AllowTextEdit - Output: true (No table present)");
     return true;
   }
 
@@ -5178,37 +5214,37 @@ class BaseDrawingObject {
   }
 
   ChangeBackgroundColor(desiredColor: string, applyImmediately: boolean) {
-    console.log("= S.BaseDrawingObject: ChangeBackgroundColor - Input:", { desiredColor, applyImmediately });
+    T3Util.Log("= S.BaseDrawingObject: ChangeBackgroundColor - Input:", { desiredColor, applyImmediately });
     const result = false;
-    console.log("= S.BaseDrawingObject: ChangeBackgroundColor - Output:", result);
+    T3Util.Log("= S.BaseDrawingObject: ChangeBackgroundColor - Output:", result);
     return result;
   }
 
   UseEdges(edgeData: any, threshold: number, isActive: boolean, radius: number, importance: number, extraParam: any): boolean {
-    console.log("= S.BaseDrawingObject: UseEdges - Input:", { edgeData, threshold, isActive, radius, importance, extraParam });
+    T3Util.Log("= S.BaseDrawingObject: UseEdges - Input:", { edgeData, threshold, isActive, radius, importance, extraParam });
 
     // Placeholder logic: return false.
     const result = false;
 
-    console.log("= S.BaseDrawingObject: UseEdges - Output:", result);
+    T3Util.Log("= S.BaseDrawingObject: UseEdges - Output:", result);
     return result;
   }
 
   ApplyStyle(style: any, applyTextStyle: any) {
-    console.log("= S.BaseDrawingObject: ApplyStyle - Input:", { style, applyTextStyle });
+    T3Util.Log("= S.BaseDrawingObject: ApplyStyle - Input:", { style, applyTextStyle });
 
     let copiedStyle = Utils1.DeepCopy(style);
-    let defaultTextStyle = Utils3.FindStyle(ConstantData.Defines.TextBlockStyle);
+    let defaultTextStyle = Utils3.FindStyle(OptConstant.Defines.TextBlockStyle);
 
     if (
-      !(this.colorfilter & ConstantData2.SDRColorFilters.SD_NOCOLOR_STYLE)
+      !(this.colorfilter & StyleConstant.SDRColorFilters.SD_NOCOLOR_STYLE)
     ) {
       let textColorObj = { Color: copiedStyle.Text.Paint.Color };
       let textCSS = { color: copiedStyle.Text.Paint.Color };
 
       if (applyTextStyle) {
         if (
-          this.DrawingObjectBaseClass !== ConstantData.DrawingObjectBaseClass.SHAPE
+          this.DrawingObjectBaseClass !== OptConstant.DrawingObjectBaseClass.SHAPE
         ) {
           copiedStyle.Fill = Utils1.DeepCopy(this.StyleRecord.Fill);
           copiedStyle.Text = Utils1.DeepCopy(defaultTextStyle.Text);
@@ -5221,8 +5257,8 @@ class BaseDrawingObject {
         }
       }
 
-      if (this.StyleRecord.Fill.Paint.FillType === ConstantData.FillTypes.SDFILL_TRANSPARENT) {
-        copiedStyle.Fill.Paint.FillType = ConstantData.FillTypes.SDFILL_TRANSPARENT;
+      if (this.StyleRecord.Fill.Paint.FillType === NvConstant.FillTypes.SDFILL_TRANSPARENT) {
+        copiedStyle.Fill.Paint.FillType = NvConstant.FillTypes.SDFILL_TRANSPARENT;
         copiedStyle.Fill.Hatch = 0;
       }
 
@@ -5245,20 +5281,20 @@ class BaseDrawingObject {
       this.StyleRecord = copiedStyle;
     }
 
-    console.log("= S.BaseDrawingObject: ApplyStyle - Output:", { StyleRecord: this.StyleRecord });
+    T3Util.Log("= S.BaseDrawingObject: ApplyStyle - Output:", { StyleRecord: this.StyleRecord });
   }
 
   GenericIcon(iconParams: any): any {
-    console.log("= S.BaseDrawingObject: GenericIcon - Input:", iconParams);
+    T3Util.Log("= S.BaseDrawingObject: GenericIcon - Input:", iconParams);
 
     // Create an IMAGE shape from the SVG document
-    const iconShape = iconParams.svgDoc.CreateShape(ConstantData.CreateShapeType.IMAGE);
+    const iconShape = iconParams.svgDoc.CreateShape(OptConstant.CSType.IMAGE);
 
     // Set the user data
     if (iconParams.userData != null) {
       iconShape.SetUserData(iconParams.userData);
     } else {
-      iconShape.SetUserData(ConstantData.SVGElementClass.ICON);
+      iconShape.SetUserData(OptConstant.SVGElementClass.ICON);
     }
 
     // Set size and position
@@ -5273,12 +5309,12 @@ class BaseDrawingObject {
     iconShape.SetCursor(iconParams.cursorType);
     iconShape.ExcludeFromExport(true);
 
-    console.log("= S.BaseDrawingObject: GenericIcon - Output:", iconShape);
+    T3Util.Log("= S.BaseDrawingObject: GenericIcon - Output:", iconShape);
     return iconShape;
   }
 
   AddIcon(svgDoc: any, container: any, iconParams: any): any {
-    console.log("= S.BaseDrawingObject: AddIcon - Input:", { svgDoc, container, iconParams });
+    T3Util.Log("= S.BaseDrawingObject: AddIcon - Input:", { svgDoc, container, iconParams });
 
     if (container) {
       const frame = this.Frame;
@@ -5292,11 +5328,11 @@ class BaseDrawingObject {
       this.nIcons++;
       container.AddElement(iconShape);
 
-      console.log("= S.BaseDrawingObject: AddIcon - Output:", iconShape);
+      T3Util.Log("= S.BaseDrawingObject: AddIcon - Output:", iconShape);
       return iconShape;
     }
 
-    console.log("= S.BaseDrawingObject: AddIcon - Output: container not provided");
+    T3Util.Log("= S.BaseDrawingObject: AddIcon - Output: container not provided");
     return null;
   }
 
@@ -5309,14 +5345,14 @@ class BaseDrawingObject {
   }
 
   AddIcons(svgDoc: any, container: any): void {
-    console.log("= S.BaseDrawingObject: AddIcons - Input:", { svgDoc, container });
+    T3Util.Log("= S.BaseDrawingObject: AddIcons - Input:", { svgDoc, container });
 
     if (container) {
       this.nIcons = 0;
       let iconParams = {
         svgDoc: svgDoc,
         iconSize: this.iconSize,
-        cursorType: ConstantData2.CursorType.POINTER
+        cursorType: CursorConstant.CursorType.POINTER
       };
 
       // Data action icon if available
@@ -5325,16 +5361,16 @@ class BaseDrawingObject {
       if (!this.bInGroup) {
         // Comment icon
         if (this.CommentID >= 0) {
-          iconParams.iconID = ConstantData.ShapeIconType.COMMENT;
+          iconParams.iconID = OptConstant.ShapeIconType.COMMENT;
           iconParams.imageURL = Constants.FilePath_Icons + Constants.Icon_Comment;
           const commentIcon = this.AddIcon(svgDoc, container, iconParams);
-          const commentUserData = ConstantData.SVGElementClass.ICON + '.' + this.BlockID;
+          const commentUserData = OptConstant.SVGElementClass.ICON + '.' + this.BlockID;
           commentIcon.SetUserData(commentUserData);
         }
 
         // Hyperlink icon
         if (this.HyperlinkText && Utils1.ResolveHyperlink(this.HyperlinkText)) {
-          iconParams.iconID = ConstantData.ShapeIconType.HYPERLINK;
+          iconParams.iconID = OptConstant.ShapeIconType.HYPERLINK;
           iconParams.imageURL = Constants.FilePath_Icons + Constants.Icon_Hyperlink;
           const hyperlinkIcon = this.AddIcon(svgDoc, container, iconParams);
           hyperlinkIcon.SetHyperlinkAttribute(this.HyperlinkText);
@@ -5342,13 +5378,13 @@ class BaseDrawingObject {
         }
         // Attachment icon
         if (this.AttachmentInfo) {
-          iconParams.iconID = ConstantData.ShapeIconType.ATTACHMENT;
+          iconParams.iconID = OptConstant.ShapeIconType.ATTACHMENT;
           iconParams.imageURL = '../../../Styles/Img/Icons/attachment_icon.png';
           this.AddIcon(svgDoc, container, iconParams);
         }
         // Expanded view icon
         if (this.ExpandedViewID >= 0) {
-          iconParams.iconID = ConstantData.ShapeIconType.EXPANDEDVIEW;
+          iconParams.iconID = OptConstant.ShapeIconType.EXPANDEDVIEW;
           iconParams.imageURL = Constants.FilePath_Icons + Constants.Icon_ExpandedView;
           const expandedViewIcon = this.AddIcon(svgDoc, container, iconParams);
           expandedViewIcon.SetCustomAttribute('_expextendtt_', this.ExpandedViewID);
@@ -5356,9 +5392,9 @@ class BaseDrawingObject {
         // Note icon with hover functionality
         if (this.NoteID !== -1 || T3Gv.opt.NoteIsShowing(this.BlockID, null)) {
           let noteIcon: any, noteHoverTimeout: any;
-          iconParams.iconID = ConstantData.ShapeIconType.NOTES;
+          iconParams.iconID = OptConstant.ShapeIconType.NOTES;
           iconParams.imageURL = Constants.FilePath_Icons + Constants.Icon_Note;
-          if (this.moreflags & ConstantData.ObjMoreFlags.SED_MF_UseInfoNoteIcon) {
+          if (this.moreflags & OptConstant.ObjMoreFlags.SED_MF_UseInfoNoteIcon) {
             iconParams.imageURL = Constants.FilePath_Icons + Constants.Icon_Info;
           }
           noteIcon = this.AddIcon(svgDoc, container, iconParams);
@@ -5384,18 +5420,18 @@ class BaseDrawingObject {
         // Field data icon with tooltip and double tap functionality
       }
     }
-    console.log("= S.BaseDrawingObject: AddIcons - Output: Completed");
+    T3Util.Log("= S.BaseDrawingObject: AddIcons - Output: Completed");
   }
 
   HideAllIcons(unused: any, svgLayer: any): void {
-    console.log("= S.BaseDrawingObject: HideAllIcons - Input: svgLayer =", svgLayer);
+    T3Util.Log("= S.BaseDrawingObject: HideAllIcons - Input: svgLayer =", svgLayer);
 
     this.nIcons = 0;
 
-    const hyperlinkIcon = svgLayer.GetElementByID(ConstantData.ShapeIconType.HYPERLINK);
-    const notesIcon = svgLayer.GetElementByID(ConstantData.ShapeIconType.NOTES);
-    const commentIcon = svgLayer.GetElementByID(ConstantData.ShapeIconType.COMMENT);
-    const fieldDataIcon = svgLayer.GetElementByID(ConstantData.ShapeIconType.FIELDDATA);
+    const hyperlinkIcon = svgLayer.GetElementByID(OptConstant.ShapeIconType.HYPERLINK);
+    const notesIcon = svgLayer.GetElementByID(OptConstant.ShapeIconType.NOTES);
+    const commentIcon = svgLayer.GetElementByID(OptConstant.ShapeIconType.COMMENT);
+    const fieldDataIcon = svgLayer.GetElementByID(OptConstant.ShapeIconType.FIELDDATA);
 
     if (hyperlinkIcon) {
       svgLayer.RemoveElement(hyperlinkIcon);
@@ -5411,13 +5447,13 @@ class BaseDrawingObject {
       svgLayer.RemoveElement(fieldDataIcon);
     }
 
-    console.log("= S.BaseDrawingObject: HideAllIcons - Output: Icons hidden");
+    T3Util.Log("= S.BaseDrawingObject: HideAllIcons - Output: Icons hidden");
   }
 
   GetHyperlink(input: string): string {
-    console.log("= S.BaseDrawingObject: GetHyperlink - Input:", input);
+    T3Util.Log("= S.BaseDrawingObject: GetHyperlink - Input:", input);
     let hyperlinkIndex: number | undefined;
-    const table = this.GetTable(false);
+    // const table = this.GetTable(false);
 
     if (input) {
       if (typeof input === "string" && input.split) {
@@ -5426,26 +5462,30 @@ class BaseDrawingObject {
           hyperlinkIndex = parseInt(parts[1], 10);
         }
       }
-    } else if (table && table.select >= 0) {
-      hyperlinkIndex = table.select;
     }
 
+    // else if (table && table.select >= 0) {
+    //   hyperlinkIndex = table.select;
+    // }
+
     let result: string;
-    if (table && typeof hyperlinkIndex === "number" && hyperlinkIndex >= 0 && hyperlinkIndex < table.cells.length) {
-      result = table.cells[hyperlinkIndex].hyperlink;
-    } else {
+    // if (table && typeof hyperlinkIndex === "number" && hyperlinkIndex >= 0 && hyperlinkIndex < table.cells.length) {
+    //   result = table.cells[hyperlinkIndex].hyperlink;
+    // } else
+
+    {
       result = this.HyperlinkText;
     }
 
-    console.log("= S.BaseDrawingObject: GetHyperlink - Output:", result);
+    T3Util.Log("= S.BaseDrawingObject: GetHyperlink - Output:", result);
     return result;
   }
 
   IsNoteCell(cellIdentifier: any): any {
-    console.log("= S.BaseDrawingObject: IsNoteCell - Input:", cellIdentifier);
+    T3Util.Log("= S.BaseDrawingObject: IsNoteCell - Input:", cellIdentifier);
 
     let cellIndex: number | undefined;
-    const table = this.GetTable(false);
+    // const table = this.GetTable(false);
 
     if (cellIdentifier) {
       if (typeof cellIdentifier.split === "function") {
@@ -5454,61 +5494,62 @@ class BaseDrawingObject {
           cellIndex = parseInt(parts[1], 10);
         }
       }
-    } else if (table && table.select >= 0) {
-      cellIndex = table.select;
     }
+    // else if (table && table.select >= 0) {
+    //   cellIndex = table.select;
+    // }
 
     let noteCell = null;
-    if (table && typeof cellIndex === "number" && cellIndex >= 0 && cellIndex < table.cells.length) {
-      noteCell = table.cells[cellIndex];
-    }
+    // if (table && typeof cellIndex === "number" && cellIndex >= 0 && cellIndex < table.cells.length) {
+    //   noteCell = table.cells[cellIndex];
+    // }
 
-    console.log("= S.BaseDrawingObject: IsNoteCell - Output:", noteCell);
+    T3Util.Log("= S.BaseDrawingObject: IsNoteCell - Output:", noteCell);
     return noteCell;
   }
 
   SetCursors() {
-    console.log("= S.BaseDrawingObject: SetCursors - Input: BlockID =", this.BlockID);
+    T3Util.Log("= S.BaseDrawingObject: SetCursors - Input: BlockID =", this.BlockID);
 
     // Get the main SVG element for this object
     const svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
     let updateTextCursor = false;
 
-    if (!(this.flags & ConstantData.ObjFlags.SEDO_Lock) && svgElement) {
-      if (T3Gv.opt.GetEditMode() === ConstantData.EditState.DEFAULT) {
+    if (!(this.flags & NvConstant.ObjFlags.SEDO_Lock) && svgElement) {
+      if (T3Gv.opt.GetEditMode() === NvConstant.EditState.DEFAULT) {
         // Set cursor for the main shape element
-        const shapeElement = svgElement.GetElementByID(ConstantData.SVGElementClass.SHAPE);
+        const shapeElement = svgElement.GetElementByID(OptConstant.SVGElementClass.SHAPE);
         if (shapeElement) {
-          if (this.objecttype === ConstantData.ObjectTypes.SD_OBJT_FRAME_CONTAINER) {
-            shapeElement.SetCursor(ConstantData2.CursorType.DEFAULT);
+          if (this.objecttype === NvConstant.ObjectTypes.SD_OBJT_FRAME_CONTAINER) {
+            shapeElement.SetCursor(CursorConstant.CursorType.DEFAULT);
           } else {
-            shapeElement.SetCursor(ConstantData2.CursorType.ADD);
+            shapeElement.SetCursor(CursorConstant.CursorType.ADD);
           }
         }
 
         // Set cursors for various icon elements to POINTER
-        let iconElement = svgElement.GetElementByID(ConstantData.ShapeIconType.HYPERLINK);
-        if (iconElement) iconElement.SetCursor(ConstantData2.CursorType.POINTER);
+        let iconElement = svgElement.GetElementByID(OptConstant.ShapeIconType.HYPERLINK);
+        if (iconElement) iconElement.SetCursor(CursorConstant.CursorType.POINTER);
 
-        iconElement = svgElement.GetElementByID(ConstantData.ShapeIconType.NOTES);
-        if (iconElement) iconElement.SetCursor(ConstantData2.CursorType.POINTER);
+        iconElement = svgElement.GetElementByID(OptConstant.ShapeIconType.NOTES);
+        if (iconElement) iconElement.SetCursor(CursorConstant.CursorType.POINTER);
 
-        iconElement = svgElement.GetElementByID(ConstantData.ShapeIconType.EXPANDEDVIEW);
-        if (iconElement) iconElement.SetCursor(ConstantData2.CursorType.POINTER);
+        iconElement = svgElement.GetElementByID(OptConstant.ShapeIconType.EXPANDEDVIEW);
+        if (iconElement) iconElement.SetCursor(CursorConstant.CursorType.POINTER);
 
-        iconElement = svgElement.GetElementByID(ConstantData.ShapeIconType.COMMENT);
-        if (iconElement) iconElement.SetCursor(ConstantData2.CursorType.POINTER);
+        iconElement = svgElement.GetElementByID(OptConstant.ShapeIconType.COMMENT);
+        if (iconElement) iconElement.SetCursor(CursorConstant.CursorType.POINTER);
 
-        iconElement = svgElement.GetElementByID(ConstantData.ShapeIconType.ATTACHMENT);
-        if (iconElement) iconElement.SetCursor(ConstantData2.CursorType.POINTER);
+        iconElement = svgElement.GetElementByID(OptConstant.ShapeIconType.ATTACHMENT);
+        if (iconElement) iconElement.SetCursor(CursorConstant.CursorType.POINTER);
 
-        iconElement = svgElement.GetElementByID(ConstantData.ShapeIconType.FIELDDATA);
-        if (iconElement) iconElement.SetCursor(ConstantData2.CursorType.POINTER);
+        iconElement = svgElement.GetElementByID(OptConstant.ShapeIconType.FIELDDATA);
+        if (iconElement) iconElement.SetCursor(CursorConstant.CursorType.POINTER);
 
         // Set cursor for "slope" element
-        const slopeElement = svgElement.GetElementByID(ConstantData.SVGElementClass.SLOP);
+        const slopeElement = svgElement.GetElementByID(OptConstant.SVGElementClass.SLOP);
         if (slopeElement) {
-          slopeElement.SetCursor(ConstantData2.CursorType.ADD);
+          slopeElement.SetCursor(CursorConstant.CursorType.ADD);
         }
 
         // Check for active text editing element
@@ -5516,23 +5557,23 @@ class BaseDrawingObject {
         if (this.DataID && this.DataID >= 0 && svgElement.textElem) {
           if (svgElement.textElem === activeEditElement) {
             if (shapeElement) {
-              shapeElement.SetCursor(ConstantData2.CursorType.TEXT);
+              shapeElement.SetCursor(CursorConstant.CursorType.TEXT);
             }
-            svgElement.textElem.SetCursorState(ConstantData.CursorState.EDITLINK);
+            svgElement.textElem.SetCursorState(CursorConstant.CursorState.EDITLINK);
           } else {
-            svgElement.textElem.SetCursorState(ConstantData.CursorState.LINKONLY);
+            svgElement.textElem.SetCursorState(CursorConstant.CursorState.LINKONLY);
           }
         }
 
         // If dimensions should always be shown or if selected, adjust dimension text cursors
         if (
-          (this.Dimensions & ConstantData.DimensionFlags.SED_DF_Always ||
-            this.Dimensions & ConstantData.DimensionFlags.SED_DF_Select) &&
+          (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Always ||
+            this.Dimensions & NvConstant.DimensionFlags.SED_DF_Select) &&
           this.IsSelected()
         ) {
-          const dimensionTextElements = svgElement.GetElementListWithID(ConstantData.SVGElementClass.DIMENSIONTEXT);
+          const dimensionTextElements = svgElement.GetElementListWithID(OptConstant.SVGElementClass.DIMENSIONTEXT);
           for (let idx = 0; idx < dimensionTextElements.length; idx++) {
-            dimensionTextElements[idx].SetCursorState(ConstantData.CursorState.EDITONLY);
+            dimensionTextElements[idx].SetCursorState(CursorConstant.CursorState.EDITONLY);
             if (dimensionTextElements[idx] === activeEditElement) {
               updateTextCursor = true;
             }
@@ -5556,31 +5597,31 @@ class BaseDrawingObject {
       this.ClearCursors();
     }
 
-    console.log("= S.BaseDrawingObject: SetCursors - Output: Completed");
+    T3Util.Log("= S.BaseDrawingObject: SetCursors - Output: Completed");
   }
 
   ClearCursors() {
-    console.log("= S.BaseDrawingObject: ClearCursors - Input: {}");
+    T3Util.Log("= S.BaseDrawingObject: ClearCursors - Input: {}");
     const element = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
     if (element) {
       element.ClearAllCursors();
       if (element.textElem) {
-        element.textElem.SetCursorState(ConstantData.CursorState.NONE);
+        element.textElem.SetCursorState(CursorConstant.CursorState.NONE);
       }
     }
-    console.log("= S.BaseDrawingObject: ClearCursors - Output: Completed");
+    T3Util.Log("= S.BaseDrawingObject: ClearCursors - Output: Completed");
   }
 
   PostCreateShapeCallback(shape: any, container: any, config: any, additionalInfo: any): void {
-    console.log("= S.BaseDrawingObject PostCreateShapeCallback - Input:", { shape, container, config, additionalInfo });
+    T3Util.Log("= S.BaseDrawingObject PostCreateShapeCallback - Input:", { shape, container, config, additionalInfo });
 
     // (Any additional processing logic can be added here)
 
-    console.log("= S.BaseDrawingObject PostCreateShapeCallback - Output: completed");
+    T3Util.Log("= S.BaseDrawingObject PostCreateShapeCallback - Output: completed");
   }
 
   SVGTokenizerHook(svgElementData: any): any {
-    console.log("= S.BaseDrawingObject: SVGTokenizerHook - Input:", svgElementData);
+    T3Util.Log("= S.BaseDrawingObject: SVGTokenizerHook - Input:", svgElementData);
 
     // Process the SVG element data only if tokenization is enabled
     if (T3Gv.opt.bTokenizeStyle) {
@@ -5588,15 +5629,15 @@ class BaseDrawingObject {
       svgElementData = Utils1.DeepCopy(svgElementData);
 
       // If all colors are disabled, return the unchanged data
-      if (currentColorFilter === ConstantData2.SDRColorFilters.SD_NOCOLOR_ALL) {
-        console.log("= S.BaseDrawingObject: SVGTokenizerHook - Output (SD_NOCOLOR_ALL):", svgElementData);
+      if (currentColorFilter === StyleConstant.SDRColorFilters.SD_NOCOLOR_ALL) {
+        T3Util.Log("= S.BaseDrawingObject: SVGTokenizerHook - Output (SD_NOCOLOR_ALL):", svgElementData);
         return svgElementData;
       }
 
       // Process Fill settings if fill color is allowed
-      if (!(currentColorFilter & ConstantData2.SDRColorFilters.SD_NOCOLOR_FILL)) {
-        if (svgElementData.Fill.Paint.FillType === ConstantData.FillTypes.SDFILL_GRADIENT) {
-          svgElementData.Fill.Paint.FillType = ConstantData.FillTypes.SDFILL_SOLID;
+      if (!(currentColorFilter & StyleConstant.SDRColorFilters.SD_NOCOLOR_FILL)) {
+        if (svgElementData.Fill.Paint.FillType === NvConstant.FillTypes.SDFILL_GRADIENT) {
+          svgElementData.Fill.Paint.FillType = NvConstant.FillTypes.SDFILL_SOLID;
         }
         svgElementData.Fill.Paint.Color = Basic.Symbol.CreatePlaceholder(
           Basic.Symbol.Placeholder.FillColor,
@@ -5605,7 +5646,7 @@ class BaseDrawingObject {
       }
 
       // Process Line color if line color is allowed
-      if (!(currentColorFilter & ConstantData2.SDRColorFilters.SD_NOCOLOR_LINE)) {
+      if (!(currentColorFilter & StyleConstant.SDRColorFilters.SD_NOCOLOR_LINE)) {
         svgElementData.Line.Paint.Color = Basic.Symbol.CreatePlaceholder(
           Basic.Symbol.Placeholder.LineColor,
           svgElementData.Line.Paint.Color
@@ -5613,7 +5654,7 @@ class BaseDrawingObject {
       }
 
       // Process Line thickness if line thickness is allowed
-      if (!(currentColorFilter & ConstantData2.SDRColorFilters.SD_NOCOLOR_LINETHICK)) {
+      if (!(currentColorFilter & StyleConstant.SDRColorFilters.SD_NOCOLOR_LINETHICK)) {
         svgElementData.Line.Thickness = Basic.Symbol.CreatePlaceholder(
           Basic.Symbol.Placeholder.LineThick,
           svgElementData.Line.Thickness
@@ -5621,24 +5662,24 @@ class BaseDrawingObject {
       }
     }
 
-    console.log("= S.BaseDrawingObject: SVGTokenizerHook - Output:", svgElementData);
+    T3Util.Log("= S.BaseDrawingObject: SVGTokenizerHook - Output:", svgElementData);
     return svgElementData;
   }
 
   CancelObjectDraw(): boolean {
-    console.log("= S.BaseDrawingObject: CancelObjectDraw - Input: {}");
+    T3Util.Log("= S.BaseDrawingObject: CancelObjectDraw - Input: {}");
 
     T3Gv.opt.UnbindActionClickHammerEvents();
     this.ResetAutoScrollTimer();
 
-    console.log("= S.BaseDrawingObject: CancelObjectDraw - Output: true");
+    T3Util.Log("= S.BaseDrawingObject: CancelObjectDraw - Output: true");
     return true;
   }
 
   GetAlignRect(): any {
-    console.log("= S.BaseDrawingObject: GetAlignRect - Input:", { Frame: this.Frame });
+    T3Util.Log("= S.BaseDrawingObject: GetAlignRect - Input:", { Frame: this.Frame });
     const alignRect = $.extend(true, {}, this.Frame);
-    console.log("= S.BaseDrawingObject: GetAlignRect - Output:", { alignRect });
+    T3Util.Log("= S.BaseDrawingObject: GetAlignRect - Output:", { alignRect });
     return alignRect;
   }
 
@@ -5647,9 +5688,9 @@ class BaseDrawingObject {
   }
 
   GetTextures(textures: string[]): void {
-    console.log("= S.BaseDrawingObject: GetTextures - Input:", { textures });
+    T3Util.Log("= S.BaseDrawingObject: GetTextures - Input:", { textures });
 
-    const textureFillType = ConstantData.FillTypes.SDFILL_TEXTURE;
+    const textureFillType = NvConstant.FillTypes.SDFILL_TEXTURE;
 
     // Process fill texture
     if (this.StyleRecord.Fill.Paint.FillType === textureFillType) {
@@ -5675,17 +5716,17 @@ class BaseDrawingObject {
       }
     }
 
-    // Process table textures if table exists
-    const table = this.GetTable(false);
-    if (table) {
-      T3Gv.opt.Table_GetTextures(table, textures);
-    }
+    // // Process table textures if table exists
+    // const table = this.GetTable(false);
+    // if (table) {
+    //   T3Gv.opt.Table_GetTextures(table, textures);
+    // }
 
-    console.log("= S.BaseDrawingObject: GetTextures - Output:", { textures });
+    T3Util.Log("= S.BaseDrawingObject: GetTextures - Output:", { textures });
   }
 
   GetContrastingColorName(e: any): string {
-    console.log("= S.BaseDrawingObject: GetContrastingColorName - Input:", e);
+    T3Util.Log("= S.BaseDrawingObject: GetContrastingColorName - Input:", e);
 
     const color = this.StyleRecord.Line.Paint.Color;
     const red = parseInt(color.substr(1, 2), 16);
@@ -5694,21 +5735,21 @@ class BaseDrawingObject {
     const brightness = (299 * red + 587 * green + 114 * blue) / 1000;
     const result = brightness >= 128 ? 'black' : 'white';
 
-    console.log("= S.BaseDrawingObject: GetContrastingColorName - Output:", result);
+    T3Util.Log("= S.BaseDrawingObject: GetContrastingColorName - Output:", result);
     return result;
   }
 
   SetRuntimeEffects(effectParams: any): void {
-    console.log("= S.BaseDrawingObject: SetRuntimeEffects - Input:", { effectParams });
+    T3Util.Log("= S.BaseDrawingObject: SetRuntimeEffects - Input:", { effectParams });
     const targetElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
     if (targetElement) {
       this.ApplyEffects(targetElement, effectParams, false);
     }
-    console.log("= S.BaseDrawingObject: SetRuntimeEffects - Output: Completed");
+    T3Util.Log("= S.BaseDrawingObject: SetRuntimeEffects - Output: Completed");
   }
 
   ApplyEffects(targetElement: any, effectParams: any, isSecondary: boolean) {
-    console.log("= S.BaseDrawingObject: ApplyEffects - Input:", { targetElement, effectParams, isSecondary });
+    T3Util.Log("= S.BaseDrawingObject: ApplyEffects - Input:", { targetElement, effectParams, isSecondary });
 
     targetElement = targetElement || T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
 
@@ -5717,15 +5758,15 @@ class BaseDrawingObject {
       T3Gv.opt.bDrawEffects &&
       !T3Gv.opt.bTokenizeStyle
     ) {
-      const shapeElement = targetElement.GetElementByID(ConstantData.SVGElementClass.SHAPE);
+      const shapeElement = targetElement.GetElementByID(OptConstant.SVGElementClass.SHAPE);
       const groupElement = targetElement.shapeGroup || targetElement;
       const outsideEffectType = this.StyleRecord.OutsideEffect
         ? this.StyleRecord.OutsideEffect.OutsideType
         : 0;
 
       if (
-        outsideEffectType === ConstantData2.OutEffect.SDOUT_EFFECT_REFL ||
-        outsideEffectType === ConstantData2.OutEffect.SDOUT_EFFECT_CAST
+        outsideEffectType === StyleConstant.OutEffect.SDOUT_EFFECT_REFL ||
+        outsideEffectType === StyleConstant.OutEffect.SDOUT_EFFECT_CAST
       ) {
         this.SetEffects(shapeElement, effectParams, isSecondary, null, false, isSecondary);
       } else {
@@ -5735,9 +5776,9 @@ class BaseDrawingObject {
         this.SetEffects(groupElement, effectParams, isSecondary, null, false, true);
       }
 
-      console.log("= S.BaseDrawingObject: ApplyEffects - Output: Effects applied");
+      T3Util.Log("= S.BaseDrawingObject: ApplyEffects - Output: Effects applied");
     } else {
-      console.log("= S.BaseDrawingObject: ApplyEffects - Output: No target element or effects disabled");
+      T3Util.Log("= S.BaseDrawingObject: ApplyEffects - Output: No target element or effects disabled");
     }
   }
 
@@ -5749,7 +5790,7 @@ class BaseDrawingObject {
     skipOutsideEffects,         // boolean flag to skip outside effects processing
     skipInsideEffects           // boolean flag to skip inside effects processing
   ) {
-    console.log("= S.BaseDrawingObject: SetEffects - Input:", {
+    T3Util.Log("= S.BaseDrawingObject: SetEffects - Input:", {
       targetElement,
       flagOverrideGlow,
       isSecondary,
@@ -5778,7 +5819,7 @@ class BaseDrawingObject {
           // Process outside effects if any
           if (effectSettings.outside.type) {
             // If flagOverrideGlow is true and the outside type is GLOW, then push its settings
-            if (flagOverrideGlow && effectSettings.outside.type.id === Effects.EffectType.GLOW.id) {
+            if (flagOverrideGlow && effectSettings.outside.type.id === BConstant.EffectType.GLOW.id) {
               effectsArray.push({
                 type: effectSettings.outside.type,
                 params: effectSettings.outside.settings
@@ -5794,7 +5835,7 @@ class BaseDrawingObject {
           if (flagOverrideGlow) {
             // Add a default glow effect for collaboration
             effectsArray.push({
-              type: Effects.EffectType.GLOW,
+              type: BConstant.EffectType.GLOW,
               params: {
                 color: "#FFD64A",
                 size: 4,
@@ -5804,7 +5845,7 @@ class BaseDrawingObject {
           } else if (this.collabGlowColor) {
             // Use collaboration glow color if available
             effectsArray.push({
-              type: Effects.EffectType.GLOW,
+              type: BConstant.EffectType.GLOW,
               params: {
                 color: this.collabGlowColor,
                 size: 6,
@@ -5814,7 +5855,7 @@ class BaseDrawingObject {
           } else if (overrideGlowColor) {
             // Fallback to override color from dataStyleOverride
             effectsArray.push({
-              type: Effects.EffectType.GLOW,
+              type: BConstant.EffectType.GLOW,
               params: {
                 color: overrideGlowColor,
                 size: 4,
@@ -5837,14 +5878,14 @@ class BaseDrawingObject {
       }
     }
 
-    console.log("= S.BaseDrawingObject: SetEffects - Output:", {
+    T3Util.Log("= S.BaseDrawingObject: SetEffects - Output:", {
       appliedEffects: effectsArray,
       frame
     });
   }
 
   CalcEffectSettings(frame: { width: number; height: number }, style: any, isSecondary: boolean): any {
-    console.log("= S.BaseDrawingObject CalcEffectSettings - Input:", { frame, style, isSecondary });
+    T3Util.Log("= S.BaseDrawingObject CalcEffectSettings - Input:", { frame, style, isSecondary });
 
     let minDimension: number;
     let secondaryOffset: number;
@@ -5881,7 +5922,7 @@ class BaseDrawingObject {
     if (style.OutsideEffect && style.OutsideEffect.OutsideType) {
       config.outside.settings = {};
       switch (style.OutsideEffect.OutsideType) {
-        case ConstantData2.OutEffect.SDOUT_EFFECT_DROP:
+        case StyleConstant.OutEffect.SDOUT_EFFECT_DROP:
           extent.left = minDimension * style.OutsideEffect.OutsideExtent_Left;
           extent.top = minDimension * style.OutsideEffect.OutsideExtent_Top;
           extent.right = minDimension * style.OutsideEffect.OutsideExtent_Right;
@@ -5892,7 +5933,7 @@ class BaseDrawingObject {
             if (extent.right) extent.right = Math.min(extent.right, 2);
             if (extent.bottom) extent.bottom = Math.min(extent.bottom, 2);
           }
-          config.outside.type = Effects.EffectType.DROPSHADOW;
+          config.outside.type = BConstant.EffectType.DROPSHADOW;
           config.outside.settings.size = Math.min(Math.max((extent.left + extent.right) / 2, 2), 50);
           config.outside.settings.xOff = extent.right / 2 - extent.left / 2;
           config.outside.settings.yOff = extent.bottom / 2 - extent.top / 2;
@@ -5904,20 +5945,20 @@ class BaseDrawingObject {
           extent.bottom = Math.max(config.outside.settings.yOff + config.outside.settings.size, 0);
           break;
 
-        case ConstantData2.OutEffect.SDOUT_EFFECT_GLOW:
+        case StyleConstant.OutEffect.SDOUT_EFFECT_GLOW:
           extent.left = extent.top = extent.right = extent.bottom = Math.max(minDimension * style.OutsideEffect.OutsideExtent_Left, 2);
-          config.outside.type = Effects.EffectType.GLOW;
+          config.outside.type = BConstant.EffectType.GLOW;
           config.outside.settings.size = Math.min(Math.max((extent.left + extent.right) / 2, 2), 50);
           config.outside.settings.color = style.OutsideEffect.Color;
           config.outside.settings.asSecondary = true;
           extent.left = extent.top = extent.right = extent.bottom = config.outside.settings.size;
           break;
 
-        case ConstantData2.OutEffect.SDOUT_EFFECT_REFL:
+        case StyleConstant.OutEffect.SDOUT_EFFECT_REFL:
           extent.left = adjustedWidth * style.OutsideEffect.OutsideExtent_Left;
           extent.right = adjustedWidth * style.OutsideEffect.OutsideExtent_Right;
           extent.bottom = adjustedHeight * style.OutsideEffect.OutsideExtent_Bottom;
-          config.outside.type = Effects.EffectType.REFLECT;
+          config.outside.type = BConstant.EffectType.REFLECT;
           config.outside.settings.xOff = extent.right - extent.left;
           config.outside.settings.yOff = extent.bottom;
           config.outside.settings.asSecondary = true;
@@ -5926,11 +5967,11 @@ class BaseDrawingObject {
           extent.right = Math.max(secondaryOffset, 0);
           break;
 
-        case ConstantData2.OutEffect.SDOUT_EFFECT_CAST:
+        case StyleConstant.OutEffect.SDOUT_EFFECT_CAST:
           extent.left = adjustedWidth * style.OutsideEffect.OutsideExtent_Left;
           extent.right = adjustedWidth * style.OutsideEffect.OutsideExtent_Right;
           extent.bottom = adjustedHeight * style.OutsideEffect.OutsideExtent_Bottom;
-          config.outside.type = Effects.EffectType.CASTSHADOW;
+          config.outside.type = BConstant.EffectType.CASTSHADOW;
           config.outside.settings.xOff = extent.right - extent.left;
           config.outside.settings.yOff = extent.bottom;
           config.outside.settings.size = Math.min(Math.max(0.1 * Math.abs(extent.bottom), 2), 25);
@@ -5948,8 +5989,8 @@ class BaseDrawingObject {
       minDimension = Math.min(adjustedWidth, adjustedHeight);
       config.inside.settings = {};
       switch (style.Fill.FillEffect) {
-        case ConstantData2.FillEffect.SDFILL_EFFECT_GLOSS:
-          config.inside.type = Effects.EffectType.GLOSS;
+        case StyleConstant.FillEffect.SDFILL_EFFECT_GLOSS:
+          config.inside.type = BConstant.EffectType.GLOSS;
           config.inside.settings.size = Math.min(adjustedWidth, adjustedHeight);
           config.inside.settings.type = Element.Effects.GlossType.SOFT;
           config.inside.settings.dir = Element.Effects.FilterDirection.TOP;
@@ -5972,9 +6013,9 @@ class BaseDrawingObject {
           }
           break;
 
-        case ConstantData2.FillEffect.SDFILL_EFFECT_BEVEL:
+        case StyleConstant.FillEffect.SDFILL_EFFECT_BEVEL:
           minDimension = Math.max(Math.min(minDimension, 50) / 10, 2);
-          config.inside.type = Effects.EffectType.BEVEL;
+          config.inside.type = BConstant.EffectType.BEVEL;
           config.inside.settings.size = minDimension;
           config.inside.settings.type = Element.Effects.BevelType.SOFT;
           config.inside.settings.dir = Element.Effects.FilterDirection.LEFTTOP;
@@ -6022,7 +6063,7 @@ class BaseDrawingObject {
           }
           break;
 
-        case ConstantData2.FillEffect.SDFILL_EFFECT_INSHADOW:
+        case StyleConstant.FillEffect.SDFILL_EFFECT_INSHADOW:
           minDimension = Math.min(minDimension, 50) / 2;
           if (style.Fill.WParam) {
             shadowParam = style.Fill.WParam;
@@ -6038,7 +6079,7 @@ class BaseDrawingObject {
           config.inside.settings.dir = Element.Effects.FilterDirection.LEFTTOP;
           break;
 
-        case ConstantData2.FillEffect.SDFILL_EFFECT_INGLOW:
+        case StyleConstant.FillEffect.SDFILL_EFFECT_INGLOW:
           minDimension = Math.min(minDimension, 50) / 2;
           if (style.Fill.WParam) {
             shadowParam = style.Fill.WParam;
@@ -6057,7 +6098,7 @@ class BaseDrawingObject {
     }
 
     config.extent = extent;
-    console.log("= S.BaseDrawingObject CalcEffectSettings - Output:", config);
+    T3Util.Log("= S.BaseDrawingObject CalcEffectSettings - Output:", config);
     return config;
   }
 
@@ -6068,7 +6109,7 @@ class BaseDrawingObject {
     color2: string,
     opacity2: number
   ) {
-    console.log("= S.BaseDrawingObject: CreateGradientRecord - Input:", {
+    T3Util.Log("= S.BaseDrawingObject: CreateGradientRecord - Input:", {
       flags,
       color1,
       opacity1,
@@ -6077,8 +6118,8 @@ class BaseDrawingObject {
     });
 
     let gradientRecord = {
-      type: BasicConstants.GradientStyle.LINEAR,
-      startPos: BasicConstants.GradientPos.LEFTTOP,
+      type: BConstant.GradientStyle.Linear,
+      startPos: BConstant.GradientPos.LeftTop,
       stops: [] as Array<{ offset: number; color: string; opacity: number }>,
     };
 
@@ -6086,13 +6127,13 @@ class BaseDrawingObject {
     let secondStop = { color: color2, opacity: opacity2 };
 
     // Reverse colors if GRAD_REV flag is set
-    if (flags & ConstantData2.GradientStyle.GRAD_REV) {
+    if (flags & T3Constant.GradientStyle.GradRev) {
       firstStop = { color: color2, opacity: opacity2 };
       secondStop = { color: color1, opacity: opacity1 };
     }
 
     // Build gradient stops: if GRAD_MIDDLE flag is set, insert a middle stop at 50%
-    if (flags & ConstantData2.GradientStyle.GRAD_MIDDLE) {
+    if (flags & T3Constant.GradientStyle.GradMiddle) {
       gradientRecord.stops.push({
         offset: 0,
         color: firstStop.color,
@@ -6122,36 +6163,36 @@ class BaseDrawingObject {
     }
 
     // Set gradient type and start position
-    if (flags & ConstantData2.GradientStyle.GRAD_RADIAL) {
-      gradientRecord.type = BasicConstants.GradientStyle.RADIAL;
-      gradientRecord.startPos = BasicConstants.GradientPos.CENTER;
-    } else if (flags & ConstantData2.GradientStyle.GRAD_SHAPE) {
-      gradientRecord.type = BasicConstants.GradientStyle.RADIALFILL;
-      gradientRecord.startPos = BasicConstants.GradientPos.CENTER;
+    if (flags & T3Constant.GradientStyle.GradRadial) {
+      gradientRecord.type = BConstant.GradientStyle.Radial;
+      gradientRecord.startPos = BConstant.GradientPos.Center;
+    } else if (flags & T3Constant.GradientStyle.GradShape) {
+      gradientRecord.type = BConstant.GradientStyle.Radialfill;
+      gradientRecord.startPos = BConstant.GradientPos.Center;
     } else {
-      gradientRecord.type = BasicConstants.GradientStyle.LINEAR;
-      if (flags & ConstantData2.GradientStyle.GRAD_TLBR) {
-        gradientRecord.startPos = BasicConstants.GradientPos.LEFTTOP;
-      } else if (flags & ConstantData2.GradientStyle.GRAD_TRBL) {
-        gradientRecord.startPos = BasicConstants.GradientPos.RIGHTTOP;
-      } else if (flags & ConstantData2.GradientStyle.GRAD_VERT) {
-        gradientRecord.startPos = BasicConstants.GradientPos.TOP;
-      } else if (flags & ConstantData2.GradientStyle.GRAD_HORIZ) {
-        gradientRecord.startPos = BasicConstants.GradientPos.LEFT;
+      gradientRecord.type = BConstant.GradientStyle.Linear;
+      if (flags & T3Constant.GradientStyle.GradTlbr) {
+        gradientRecord.startPos = BConstant.GradientPos.LeftTop;
+      } else if (flags & T3Constant.GradientStyle.GradTrbl) {
+        gradientRecord.startPos = BConstant.GradientPos.RightTop;
+      } else if (flags & T3Constant.GradientStyle.GradVert) {
+        gradientRecord.startPos = BConstant.GradientPos.Top;
+      } else if (flags & T3Constant.GradientStyle.GradHoriz) {
+        gradientRecord.startPos = BConstant.GradientPos.Left;
       } else {
-        gradientRecord.startPos = BasicConstants.GradientPos.LEFTTOP;
+        gradientRecord.startPos = BConstant.GradientPos.LeftTop;
       }
     }
 
-    console.log("= S.BaseDrawingObject: CreateGradientRecord - Output:", gradientRecord);
+    T3Util.Log("= S.BaseDrawingObject: CreateGradientRecord - Output:", gradientRecord);
     return gradientRecord;
   }
 
   CreateRichGradientRecord(index: number) {
-    console.log("= S.BaseDrawingObject: CreateRichGradientRecord - Input:", { index });
+    T3Util.Log("= S.BaseDrawingObject: CreateRichGradientRecord - Input:", { index });
 
     if (index < 0 || index >= T3Gv.opt.richGradients.length) {
-      console.log("= S.BaseDrawingObject: CreateRichGradientRecord - Output:", null, "(Invalid index)");
+      T3Util.Log("= S.BaseDrawingObject: CreateRichGradientRecord - Output:", null, "(Invalid index)");
       return null;
     }
 
@@ -6162,52 +6203,52 @@ class BaseDrawingObject {
       stops: Array<{ color: string; opacity: number; offset: number }>;
       angle?: number;
     } = {
-      type: BasicConstants.GradientStyle.LINEAR,
-      startPos: BasicConstants.GradientPos.LEFTTOP,
+      type: BConstant.GradientStyle.Linear,
+      startPos: BConstant.GradientPos.LeftTop,
       stops: [],
     };
 
     switch (richGradient.gradienttype) {
-      case ConstantData2.RichGradientTypes.SDFILL_RICHGRADIENT_LINEAR:
-        gradientRecord.type = BasicConstants.GradientStyle.LINEAR;
+      case StyleConstant.RichGradientTypes.SDFILL_RICHGRADIENT_LINEAR:
+        gradientRecord.type = BConstant.GradientStyle.Linear;
         gradientRecord.angle = richGradient.angle;
         break;
-      case ConstantData2.RichGradientTypes.SDFILL_RICHGRADIENT_RADIAL_BR:
-      case ConstantData2.RichGradientTypes.SDFILL_RICHGRADIENT_RECT_BR:
-        gradientRecord.type = BasicConstants.GradientStyle.RADIAL;
-        gradientRecord.startPos = BasicConstants.GradientPos.RIGHTBOTTOM;
+      case StyleConstant.RichGradientTypes.SDFILL_RICHGRADIENT_RADIAL_BR:
+      case StyleConstant.RichGradientTypes.SDFILL_RICHGRADIENT_RECT_BR:
+        gradientRecord.type = BConstant.GradientStyle.Radial;
+        gradientRecord.startPos = BConstant.GradientPos.RightBottom;
         break;
-      case ConstantData2.RichGradientTypes.SDFILL_RICHGRADIENT_RADIAL_BL:
-      case ConstantData2.RichGradientTypes.SDFILL_RICHGRADIENT_RECT_BL:
-        gradientRecord.type = BasicConstants.GradientStyle.RADIAL;
-        gradientRecord.startPos = BasicConstants.GradientPos.LEFTBOTTOM;
+      case StyleConstant.RichGradientTypes.SDFILL_RICHGRADIENT_RADIAL_BL:
+      case StyleConstant.RichGradientTypes.SDFILL_RICHGRADIENT_RECT_BL:
+        gradientRecord.type = BConstant.GradientStyle.Radial;
+        gradientRecord.startPos = BConstant.GradientPos.LeftBottom;
         break;
-      case ConstantData2.RichGradientTypes.SDFILL_RICHGRADIENT_RADIAL_CENTER:
-      case ConstantData2.RichGradientTypes.SDFILL_RICHGRADIENT_RECT_CENTER:
-        gradientRecord.type = BasicConstants.GradientStyle.RADIAL;
-        gradientRecord.startPos = BasicConstants.GradientPos.CENTER;
+      case StyleConstant.RichGradientTypes.SDFILL_RICHGRADIENT_RADIAL_CENTER:
+      case StyleConstant.RichGradientTypes.SDFILL_RICHGRADIENT_RECT_CENTER:
+        gradientRecord.type = BConstant.GradientStyle.Radial;
+        gradientRecord.startPos = BConstant.GradientPos.Center;
         break;
-      case ConstantData2.RichGradientTypes.SDFILL_RICHGRADIENT_RADIAL_TR:
-      case ConstantData2.RichGradientTypes.SDFILL_RICHGRADIENT_RECT_TR:
-        gradientRecord.type = BasicConstants.GradientStyle.RADIAL;
-        gradientRecord.startPos = BasicConstants.GradientPos.RIGHTTOP;
+      case StyleConstant.RichGradientTypes.SDFILL_RICHGRADIENT_RADIAL_TR:
+      case StyleConstant.RichGradientTypes.SDFILL_RICHGRADIENT_RECT_TR:
+        gradientRecord.type = BConstant.GradientStyle.Radial;
+        gradientRecord.startPos = BConstant.GradientPos.RightTop;
         break;
-      case ConstantData2.RichGradientTypes.SDFILL_RICHGRADIENT_RADIAL_TL:
-      case ConstantData2.RichGradientTypes.SDFILL_RICHGRADIENT_RECT_TL:
-        gradientRecord.type = BasicConstants.GradientStyle.RADIAL;
-        gradientRecord.startPos = BasicConstants.GradientPos.LEFTTOP;
+      case StyleConstant.RichGradientTypes.SDFILL_RICHGRADIENT_RADIAL_TL:
+      case StyleConstant.RichGradientTypes.SDFILL_RICHGRADIENT_RECT_TL:
+        gradientRecord.type = BConstant.GradientStyle.Radial;
+        gradientRecord.startPos = BConstant.GradientPos.LeftTop;
         break;
-      case ConstantData2.RichGradientTypes.SDFILL_RICHGRADIENT_RADIAL_BC:
-        gradientRecord.type = BasicConstants.GradientStyle.RADIAL;
-        gradientRecord.startPos = BasicConstants.GradientPos.BOTTOM;
+      case StyleConstant.RichGradientTypes.SDFILL_RICHGRADIENT_RADIAL_BC:
+        gradientRecord.type = BConstant.GradientStyle.Radial;
+        gradientRecord.startPos = BConstant.GradientPos.Bottom;
         break;
-      case ConstantData2.RichGradientTypes.SDFILL_RICHGRADIENT_RADIAL_TC:
-        gradientRecord.type = BasicConstants.GradientStyle.RADIAL;
-        gradientRecord.startPos = BasicConstants.GradientPos.TOP;
+      case StyleConstant.RichGradientTypes.SDFILL_RICHGRADIENT_RADIAL_TC:
+        gradientRecord.type = BConstant.GradientStyle.Radial;
+        gradientRecord.startPos = BConstant.GradientPos.Top;
         break;
-      case ConstantData2.RichGradientTypes.SDFILL_RICHGRADIENT_SHAPE:
-        gradientRecord.type = BasicConstants.GradientStyle.RADIALFILL;
-        gradientRecord.startPos = BasicConstants.GradientPos.CENTER;
+      case StyleConstant.RichGradientTypes.SDFILL_RICHGRADIENT_SHAPE:
+        gradientRecord.type = BConstant.GradientStyle.Radialfill;
+        gradientRecord.startPos = BConstant.GradientPos.Center;
         break;
     }
 
@@ -6220,7 +6261,7 @@ class BaseDrawingObject {
       });
     }
 
-    console.log("= S.BaseDrawingObject: CreateRichGradientRecord - Output:", gradientRecord);
+    T3Util.Log("= S.BaseDrawingObject: CreateRichGradientRecord - Output:", gradientRecord);
     return gradientRecord;
   }
 
@@ -6228,25 +6269,25 @@ class BaseDrawingObject {
   }
 
   AddHopPoint(pointA: any, pointB: any, hopIndex: number, radius: number, angle: number, flag: boolean) {
-    console.log("= S.BaseDrawingObject: AddHopPoint input:", { pointA, pointB, hopIndex, radius, angle, flag });
+    T3Util.Log("= S.BaseDrawingObject: AddHopPoint input:", { pointA, pointB, hopIndex, radius, angle, flag });
     const result = {
       bSuccess: false,
       tindex: -1
     };
-    console.log("= S.BaseDrawingObject: AddHopPoint output:", result);
+    T3Util.Log("= S.BaseDrawingObject: AddHopPoint output:", result);
     return result;
   }
 
   ResetAutoScrollTimer() {
-    console.log("= S.BaseDrawingObject: ResetAutoScrollTimer - Input: {}");
+    T3Util.Log("= S.BaseDrawingObject: ResetAutoScrollTimer - Input: {}");
 
     if (T3Gv.opt.autoScrollTimerId !== -1) {
       T3Gv.opt.autoScrollTimer.clearTimeout(T3Gv.opt.autoScrollTimerId);
       T3Gv.opt.autoScrollTimer.obj = T3Gv.opt;
       T3Gv.opt.autoScrollTimerId = -1;
-      console.log("= S.BaseDrawingObject: ResetAutoScrollTimer - Output: Timer has been reset");
+      T3Util.Log("= S.BaseDrawingObject: ResetAutoScrollTimer - Output: Timer has been reset");
     } else {
-      console.log("= S.BaseDrawingObject: ResetAutoScrollTimer - Output: No active timer to reset");
+      T3Util.Log("= S.BaseDrawingObject: ResetAutoScrollTimer - Output: No active timer to reset");
     }
   }
 
@@ -6255,14 +6296,14 @@ class BaseDrawingObject {
   }
 
   GetArrowheadSelection(selection: any): boolean {
-    console.log("= S.BaseDrawingObject: GetArrowheadSelection - Input:", { selection });
+    T3Util.Log("= S.BaseDrawingObject: GetArrowheadSelection - Input:", { selection });
     const result = false;
-    console.log("= S.BaseDrawingObject: GetArrowheadSelection - Output:", result);
+    T3Util.Log("= S.BaseDrawingObject: GetArrowheadSelection - Output:", result);
     return result;
   }
 
   SetRolloverActions(rolloverElement: any, eventObj: any) {
-    console.log("= S.BaseDrawingObject SetRolloverActions - Input:", { rolloverElement, eventObj });
+    T3Util.Log("= S.BaseDrawingObject SetRolloverActions - Input:", { rolloverElement, eventObj });
 
     // If current highlighted shape is different than this, clear its effects and cursors
     if (
@@ -6271,7 +6312,7 @@ class BaseDrawingObject {
     ) {
       const previousShape = T3Gv.opt.GetObjectPtr(T3Gv.opt.curHiliteShape, false);
       if (previousShape) {
-        console.log("= S.BaseDrawingObject SetRolloverActions - Clearing previous shape:", T3Gv.opt.curHiliteShape);
+        T3Util.Log("= S.BaseDrawingObject SetRolloverActions - Clearing previous shape:", T3Gv.opt.curHiliteShape);
         previousShape.SetRuntimeEffects(false);
         previousShape.ClearCursors();
       }
@@ -6288,64 +6329,64 @@ class BaseDrawingObject {
     const self = this; // preserve context for event handler
 
     eventObj.svgObj.mouseout(function () {
-      console.log("= S.BaseDrawingObject SetRolloverActions - MouseOut Triggered for BlockID:", self.BlockID);
+      T3Util.Log("= S.BaseDrawingObject SetRolloverActions - MouseOut Triggered for BlockID:", self.BlockID);
       self.SetRuntimeEffects(false);
       self.ClearCursors();
       if (T3Gv.opt.curHiliteShape === self.BlockID) {
         T3Gv.opt.curHiliteShape = -1;
       }
-      console.log("= S.BaseDrawingObject SetRolloverActions - MouseOut Completed for BlockID:", self.BlockID);
+      T3Util.Log("= S.BaseDrawingObject SetRolloverActions - MouseOut Completed for BlockID:", self.BlockID);
     });
 
-    console.log("= S.BaseDrawingObject SetRolloverActions - Output: Completed setup for BlockID", this.BlockID);
+    T3Util.Log("= S.BaseDrawingObject SetRolloverActions - Output: Completed setup for BlockID", this.BlockID);
   }
 
   CalcCursorForAngle(angle: number, swap: boolean): string {
-    console.log("= S.BaseDrawingObject: CalcCursorForAngle - Input:", { angle, swap });
+    T3Util.Log("= S.BaseDrawingObject: CalcCursorForAngle - Input:", { angle, swap });
 
     // Round the angle to the nearest multiple of 10.
     angle = 10 * Math.round(angle / 10);
 
     // Initialize the cursor with a default value.
-    let cursor: string = ConstantData2.CursorType.RESIZE_LR;
+    let cursor: string = CursorConstant.CursorType.RESIZE_LR;
 
     // Determine the cursor type based on the angle.
     if ((angle > 0 && angle < 90) || (angle > 180 && angle < 270)) {
-      cursor = ConstantData2.CursorType.NWSE_RESIZE;
+      cursor = CursorConstant.CursorType.NWSE_RESIZE;
     } else if ((angle > 90 && angle < 180) || (angle > 270 && angle < 360)) {
-      cursor = ConstantData2.CursorType.NESW_RESIZE;
+      cursor = CursorConstant.CursorType.NESW_RESIZE;
     } else if (angle === 90 || angle === 270) {
-      cursor = ConstantData2.CursorType.RESIZE_TB;
+      cursor = CursorConstant.CursorType.RESIZE_TB;
     }
 
     // Optionally swap the cursor type.
     if (swap) {
       switch (cursor) {
-        case ConstantData2.CursorType.RESIZE_LR:
-          cursor = ConstantData2.CursorType.RESIZE_TB;
+        case CursorConstant.CursorType.RESIZE_LR:
+          cursor = CursorConstant.CursorType.RESIZE_TB;
           break;
-        case ConstantData2.CursorType.RESIZE_TB:
-          cursor = ConstantData2.CursorType.RESIZE_LR;
+        case CursorConstant.CursorType.RESIZE_TB:
+          cursor = CursorConstant.CursorType.RESIZE_LR;
           break;
-        case ConstantData2.CursorType.NWSE_RESIZE:
-          cursor = ConstantData2.CursorType.NESW_RESIZE;
+        case CursorConstant.CursorType.NWSE_RESIZE:
+          cursor = CursorConstant.CursorType.NESW_RESIZE;
           break;
-        case ConstantData2.CursorType.NESW_RESIZE:
-          cursor = ConstantData2.CursorType.NWSE_RESIZE;
+        case CursorConstant.CursorType.NESW_RESIZE:
+          cursor = CursorConstant.CursorType.NWSE_RESIZE;
           break;
       }
     }
 
-    console.log("= S.BaseDrawingObject: CalcCursorForAngle - Output:", cursor);
+    T3Util.Log("= S.BaseDrawingObject: CalcCursorForAngle - Output:", cursor);
     return cursor;
   }
 
   FoundText(searchText: string, selectionLength: number, targetBlockId: number): boolean {
-    console.log("= S.BaseDrawingObject FoundText - Input:", { searchText, selectionLength, targetBlockId });
+    T3Util.Log("= S.BaseDrawingObject FoundText - Input:", { searchText, selectionLength, targetBlockId });
 
     // If the target block is this block then skip processing.
     if (this.BlockID === targetBlockId) {
-      console.log("= S.BaseDrawingObject FoundText - Output:", false, "Same BlockID");
+      T3Util.Log("= S.BaseDrawingObject FoundText - Output:", false, "Same BlockID");
       return false;
     }
 
@@ -6366,12 +6407,12 @@ class BaseDrawingObject {
       }
     }
 
-    console.log("= S.BaseDrawingObject FoundText - Output:", found);
+    T3Util.Log("= S.BaseDrawingObject FoundText - Output:", found);
     return found;
   }
 
   MoveBehindAllLinked() {
-    console.log("= S.BaseDrawingObject MoveBehindAllLinked - Input: {}");
+    T3Util.Log("= S.BaseDrawingObject MoveBehindAllLinked - Input: {}");
 
     // Flag to track if modifications were made.
     let hasMoved: boolean = false;
@@ -6406,69 +6447,69 @@ class BaseDrawingObject {
       }
     }
 
-    console.log("= S.BaseDrawingObject MoveBehindAllLinked - Output: { hasMoved: " + hasMoved + " }");
+    T3Util.Log("= S.BaseDrawingObject MoveBehindAllLinked - Output: { hasMoved: " + hasMoved + " }");
     return hasMoved;
   }
 
   HookedObjectMoving(event: any): boolean {
-    console.log("= S.BaseDrawingObject HookedObjectMoving - Input:", { event });
+    T3Util.Log("= S.BaseDrawingObject HookedObjectMoving - Input:", { event });
     const result = false;
-    console.log("= S.BaseDrawingObject HookedObjectMoving - Output:", result);
+    T3Util.Log("= S.BaseDrawingObject HookedObjectMoving - Output:", result);
     return result;
   }
 
   CustomSnap(snapTarget: any, snapOptions: any, tolerance: number, additionalData: any, flag: boolean): boolean {
-    console.log("= S.BaseDrawingObject CustomSnap - Input:", { snapTarget, snapOptions, tolerance, additionalData, flag });
+    T3Util.Log("= S.BaseDrawingObject CustomSnap - Input:", { snapTarget, snapOptions, tolerance, additionalData, flag });
 
     // Custom snapping logic can be added here.
     const result = false;
 
-    console.log("= S.BaseDrawingObject CustomSnap - Output:", result);
+    T3Util.Log("= S.BaseDrawingObject CustomSnap - Output:", result);
     return result;
   }
 
   GetSnapRect(): any {
-    console.log("= S.BaseDrawingObject GetSnapRect - Input:", { frame: this.Frame });
+    T3Util.Log("= S.BaseDrawingObject GetSnapRect - Input:", { frame: this.Frame });
     const snapRect: any = {};
     Utils2.CopyRect(snapRect, this.Frame);
-    console.log("= S.BaseDrawingObject GetSnapRect - Output:", snapRect);
+    T3Util.Log("= S.BaseDrawingObject GetSnapRect - Output:", snapRect);
     return snapRect;
   }
 
   CanSnapToShapes(): number {
-    console.log("= S.BaseDrawingObject CanSnapToShapes - Input: {}");
+    T3Util.Log("= S.BaseDrawingObject CanSnapToShapes - Input: {}");
     const result: number = -1;
-    console.log("= S.BaseDrawingObject CanSnapToShapes - Output:", result);
+    T3Util.Log("= S.BaseDrawingObject CanSnapToShapes - Output:", result);
     return result;
   }
 
   IsSnapTarget(): boolean {
-    console.log("= S.BaseDrawingObject IsSnapTarget - Input:", {});
+    T3Util.Log("= S.BaseDrawingObject IsSnapTarget - Input:", {});
     const result = false;
-    console.log("= S.BaseDrawingObject IsSnapTarget - Output:", result);
+    T3Util.Log("= S.BaseDrawingObject IsSnapTarget - Output:", result);
     return result;
   }
 
   GuideDistanceOnly(): boolean {
-    console.log("= S.BaseDrawingObject Guide_DistanceOnly - Input:", {});
+    T3Util.Log("= S.BaseDrawingObject Guide_DistanceOnly - Input:", {});
     const result = false;
-    console.log("= S.BaseDrawingObject Guide_DistanceOnly - Output:", result);
+    T3Util.Log("= S.BaseDrawingObject Guide_DistanceOnly - Output:", result);
     return result;
   }
 
   ActionApplySnaps(snapTarget: any, snapOptions: any): any {
-    console.log("= S.BaseDrawingObject ActionApplySnaps - Input:", { snapTarget, snapOptions });
+    T3Util.Log("= S.BaseDrawingObject ActionApplySnaps - Input:", { snapTarget, snapOptions });
 
     // TODO: implement snap action logic here.
     // For now, we'll assume no snap action is applied and return null.
     const result = null;
 
-    console.log("= S.BaseDrawingObject ActionApplySnaps - Output:", result);
+    T3Util.Log("= S.BaseDrawingObject ActionApplySnaps - Output:", result);
     return result;
   }
 
   GetNotePos(source, container) {
-    console.log("= S.BaseDrawingObject GetNotePos - Input:", { source, container });
+    T3Util.Log("= S.BaseDrawingObject GetNotePos - Input:", { source, container });
 
     // Copy the source frame deeply to noteFrame
     let noteFrame = $.extend(true, {}, source.Frame);
@@ -6488,12 +6529,12 @@ class BaseDrawingObject {
       y: noteFrame.y + height + source.StyleRecord.Line.Thickness / 2 + 1
     };
 
-    console.log("= S.BaseDrawingObject GetNotePos - Output:", notePosition);
+    T3Util.Log("= S.BaseDrawingObject GetNotePos - Output:", notePosition);
     return notePosition;
   }
 
   RefreshFromRuleChange(fieldDataTableID: number, fieldDataElementID: number): void {
-    console.log("= S.BaseDrawingObject RefreshFromRuleChange - Input:", {
+    T3Util.Log("= S.BaseDrawingObject RefreshFromRuleChange - Input:", {
       fieldDataTableID,
       fieldDataElementID
     });
@@ -6501,11 +6542,11 @@ class BaseDrawingObject {
     if (this.HasFieldDataRecord(fieldDataTableID, fieldDataElementID, true)) {
       this.GetFieldDataStyleOverride();
       T3Gv.opt.AddToDirtyList(this.BlockID);
-      console.log("= S.BaseDrawingObject RefreshFromRuleChange - Output: Rule change refreshed", {
+      T3Util.Log("= S.BaseDrawingObject RefreshFromRuleChange - Output: Rule change refreshed", {
         BlockID: this.BlockID
       });
     } else {
-      console.log("= S.BaseDrawingObject RefreshFromRuleChange - Output: No matching field data record", {
+      T3Util.Log("= S.BaseDrawingObject RefreshFromRuleChange - Output: No matching field data record", {
         fieldDataTableID,
         fieldDataElementID
       });
@@ -6513,9 +6554,9 @@ class BaseDrawingObject {
   }
 
   IsShapeContainer(element: any): boolean {
-    console.log("= S.BaseDrawingObject IsShapeContainer - Input:", element);
+    T3Util.Log("= S.BaseDrawingObject IsShapeContainer - Input:", element);
     const result = false;
-    console.log("= S.BaseDrawingObject IsShapeContainer - Output:", result);
+    T3Util.Log("= S.BaseDrawingObject IsShapeContainer - Output:", result);
     return result;
   }
 
@@ -6552,7 +6593,49 @@ class BaseDrawingObject {
   HasFieldDataRules(event) {
   }
 
-  GetFieldDataStyleOverride() {
+  /**
+   * Retrieves and calculates the style override based on field data rules
+   * If this shape is part of a group, it will also inherit style overrides from its parent group
+   * @returns The calculated style override object or null if no field data exists
+   */
+  GetFieldDataStyleOverride(): any {
+    T3Util.Log("= S.BaseDrawingObject: GetFieldDataStyleOverride input");
+
+    // If no field data, set style override to null
+    // Otherwise, process rules for the record
+    if (!this.HasFieldData()) {
+      this.dataStyleOverride = null;
+    } else if (this.fieldDataElemID >= 0) {
+      this.dataStyleOverride = TODO.SDData.FieldedDataProcessRulesForRecord(this.fieldDataTableID, this.fieldDataElemID);
+    } else {
+      this.dataStyleOverride = null;
+    }
+
+    // If this shape is in a group, inherit style overrides from the parent group
+    if (this.bInGroup) {
+      const parentGroup = T3Gv.opt.FindParentGroup(this.BlockID);
+
+      if (parentGroup) {
+        const parentStyleOverride = parentGroup.GetFieldDataStyleOverride();
+
+        if (parentStyleOverride) {
+          // Create a deep copy of parent style and reset some properties
+          const parentStyleCopy = $.extend(true, {}, parentStyleOverride);
+          parentStyleCopy.glowColor = null;
+          parentStyleCopy.iconID = null;
+
+          // Merge parent style with this object's style if it exists
+          if (this.dataStyleOverride) {
+            this.dataStyleOverride = $.extend(true, {}, parentStyleCopy, this.dataStyleOverride);
+          } else {
+            this.dataStyleOverride = parentStyleCopy;
+          }
+        }
+      }
+    }
+
+    T3Util.Log("= S.BaseDrawingObject: GetFieldDataStyleOverride output:", this.dataStyleOverride);
+    return this.dataStyleOverride;
   }
 
   RefreshFromFieldData(event) {

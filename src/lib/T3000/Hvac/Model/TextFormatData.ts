@@ -1,10 +1,9 @@
 
 import { Type } from 'class-transformer'
 import 'reflect-metadata'
-
 import PaintData from './PaintData'
 import OutsideEffectData from './OutsideEffectData'
-import ConstantData from '../Data/Constant/ConstantData'
+import NvConstant from '../Data/Constant/NvConstant'
 
 class TextFormatData {
 
@@ -22,7 +21,7 @@ class TextFormatData {
 
   constructor() {
 
-    this.Paint = new PaintData(ConstantData.Colors.Color_Black);
+    this.Paint = new PaintData(NvConstant.Colors.Color_Black);
     this.FontName = 'Arial';
     this.FontType = 'sanserif';
     this.FontId = 1;

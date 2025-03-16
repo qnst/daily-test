@@ -3,7 +3,7 @@ import { Type } from 'class-transformer'
 import 'reflect-metadata'
 
 import PaintData from './PaintData'
-import ConstantData from '../Data/Constant/ConstantData'
+import NvConstant from '../Data/Constant/NvConstant'
 
 class FillData {
 
@@ -18,7 +18,7 @@ class FillData {
 
   // White: '#FFFFFF' Black: '#000000' Hilite: '#0099FF' Select: '#00FF00' Shade: '#F1F1F1' Gray: '#C0C0C0'
   constructor() {
-    this.Paint = new PaintData(ConstantData.Colors.Color_White);
+    this.Paint = new PaintData(NvConstant.Colors.Color_White);
     this.Hatch = 0;
     this.FillEffect = 0;
     this.EffectColor = null;

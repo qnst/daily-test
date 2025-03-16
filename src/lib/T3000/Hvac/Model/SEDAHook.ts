@@ -1,9 +1,9 @@
 
 import { Type } from 'class-transformer'
 import 'reflect-metadata'
-
 import CRect from './CRect'
-import ConstantData from '../Data/Constant/ConstantData'
+import NvConstant from '../Data/Constant/NvConstant'
+import OptConstant from '../Data/Constant/OptConstant';
 
 class SEDAHook {
 
@@ -30,7 +30,7 @@ class SEDAHook {
     this.id = - 1;
     this.textid = - 1;
     this.tuniqueid = - 1;
-    this.gap = ConstantData.ConnectorDefines.DefaultWd;
+    this.gap = OptConstant.ConnectorDefines.DefaultWd;
     this.ogap = 0;
     this.extra = 0;
     this.comanagerht = 0;

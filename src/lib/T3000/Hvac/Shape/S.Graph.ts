@@ -1,6 +1,6 @@
 
-import Utils2 from "../Helper/Utils2";
-import Utils3 from "../Helper/Utils3";
+import Utils2 from "../Util/Utils2";
+import Utils3 from "../Util/Utils3";
 import T3Gv from '../Data/T3Gv'
 import EvtUtil from "../Event/EvtUtil";
 import Element from "../Basic/B.Element";

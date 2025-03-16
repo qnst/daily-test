@@ -1,12 +1,11 @@
 
 import { Type } from 'class-transformer'
 import 'reflect-metadata'
-
-import ConstantData from "../Data/Constant/ConstantData"
 import Layer from './Layer'
+import StateConstant from '../Data/State/StateConstant';
 
 class LayersManager {
-  public Type: number;
+  public Type: string;
   public nlayers: number;
 
   @Type(() => Layer)
@@ -18,7 +17,7 @@ class LayersManager {
   public swimlanelist: any[];
 
   constructor() {
-    this.Type = ConstantData.StoredObjectType.LAYERS_MANAGER_OBJECT;
+    this.Type = StateConstant.StoredObjectType.LayersManagerObject;
     this.nlayers = 0;
     this.layers = new Array<Layer>();
     this.activelayer = 0;

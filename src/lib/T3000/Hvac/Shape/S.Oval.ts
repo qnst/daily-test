@@ -1,39 +1,40 @@
 
 
 import BaseShape from './S.BaseShape'
-import Utils2 from "../Helper/Utils2";
-import Utils3 from "../Helper/Utils3";
+import Utils2 from "../Util/Utils2";
+import Utils3 from "../Util/Utils3";
 import T3Gv from '../Data/T3Gv'
 import $ from 'jquery'
 import Point from '../Model/Point'
-import ConstantData from '../Data/Constant/ConstantData'
-import ConstantData2 from '../Data/Constant/ConstantData2';
-import PolygonConstant from '../Util/PolygonConstant';
+import NvConstant from '../Data/Constant/NvConstant'
+import PolygonConstant from '../Opt/Polygon/PolygonConstant';
+import OptConstant from '../Data/Constant/OptConstant';
+import T3Util from '../Util/T3Util';
 
 class Oval extends BaseShape {
 
   constructor(options) {
     options = options || {};
-    options.ShapeType = ConstantData.ShapeType.OVAL;
+    options.ShapeType = OptConstant.ShapeType.OVAL;
     options.Frame;
 
-    console.log('S.Oval: Input options:', options);
+    T3Util.Log('S.Oval: Input options:', options);
 
     super(options);
 
-    this.dataclass = this.ObjGrow === ConstantData.GrowBehavior.PROPORTIONAL
+    this.dataclass = this.ObjGrow === OptConstant.GrowBehavior.PROPORTIONAL
       ? PolygonConstant.ShapeTypes.CIRCLE
       : PolygonConstant.ShapeTypes.OVAL;
 
-    console.log('S.Oval: Output dataclass:', this.dataclass);
+    T3Util.Log('S.Oval: Output dataclass:', this.dataclass);
   }
 
   CreateShape(renderer, isHidden) {
-    if (this.flags & ConstantData.ObjFlags.SEDO_NotVisible) return null;
+    if (this.flags & NvConstant.ObjFlags.SEDO_NotVisible) return null;
 
-    console.log('S.Oval: Input renderer:', renderer, 'isHidden:', isHidden);
+    T3Util.Log('S.Oval: Input renderer:', renderer, 'isHidden:', isHidden);
 
-    const shapeContainer = renderer.CreateShape(ConstantData.CreateShapeType.SHAPECONTAINER);
+    const shapeContainer = renderer.CreateShape(OptConstant.CSType.SHAPECONTAINER);
     const frameCopy = $.extend(true, {}, this.Frame);
     const style = this.StyleRecord;
 
@@ -50,7 +51,7 @@ class Oval extends BaseShape {
     shapeContainer.SetSize(width, height);
     shapeContainer.SetPos(frameCopy.x, frameCopy.y);
 
-    const ovalShape = renderer.CreateShape(ConstantData.CreateShapeType.OVAL);
+    const ovalShape = renderer.CreateShape(OptConstant.CSType.OVAL);
     ovalShape.SetSize(width, height);
     ovalShape.SetStrokeColor(strokeColor);
     ovalShape.SetStrokeWidth(strokeWidth);
@@ -59,33 +60,33 @@ class Oval extends BaseShape {
       ovalShape.SetStrokePattern(strokePattern);
     }
 
-    ovalShape.SetID(ConstantData.SVGElementClass.SHAPE);
+    ovalShape.SetID(OptConstant.SVGElementClass.SHAPE);
     shapeContainer.AddElement(ovalShape);
 
     this.ApplyStyles(ovalShape, style);
     this.ApplyEffects(shapeContainer, false, false);
 
-    const slopShape = renderer.CreateShape(ConstantData.CreateShapeType.OVAL);
+    const slopShape = renderer.CreateShape(OptConstant.CSType.OVAL);
     slopShape.SetStrokeColor('white');
     slopShape.SetFillColor('none');
     slopShape.SetOpacity(0);
-    slopShape.SetStrokeWidth(strokeWidth + ConstantData.Defines.SED_Slop);
+    slopShape.SetStrokeWidth(strokeWidth + OptConstant.Defines.SED_Slop);
 
     if (isHidden) {
-      slopShape.SetEventBehavior(ConstantData2.EventBehavior.HIDDEN_OUT);
+      slopShape.SetEventBehavior(OptConstant.EventBehavior.HIDDEN_OUT);
     } else {
-      slopShape.SetEventBehavior(ConstantData2.EventBehavior.NONE);
+      slopShape.SetEventBehavior(OptConstant.EventBehavior.NONE);
     }
 
-    slopShape.SetID(ConstantData.SVGElementClass.SLOP);
+    slopShape.SetID(OptConstant.SVGElementClass.SLOP);
     slopShape.ExcludeFromExport(true);
     slopShape.SetSize(width, height);
     shapeContainer.AddElement(slopShape);
 
     const hatchFill = style.Fill.Hatch;
     if (hatchFill && hatchFill !== 0) {
-      const hatchShape = renderer.CreateShape(ConstantData.CreateShapeType.OVAL);
-      hatchShape.SetID(ConstantData.SVGElementClass.HATCH);
+      const hatchShape = renderer.CreateShape(OptConstant.CSType.OVAL);
+      hatchShape.SetID(OptConstant.SVGElementClass.HATCH);
       hatchShape.SetSize(width, height);
       hatchShape.SetStrokeWidth(0);
       this.SetFillHatch(hatchShape, hatchFill);
@@ -94,22 +95,22 @@ class Oval extends BaseShape {
 
     shapeContainer.isShape = true;
 
-    const table = this.GetTable(false);
-    if (table) {
-      T3Gv.opt.LM_AddSVGTableObject(this, renderer, shapeContainer, table);
-    }
+    // const table = this.GetTable(false);
+    // if (table) {
+    //   T3Gv.opt.LM_AddSVGTableObject(this, renderer, shapeContainer, table);
+    // }
 
     if (this.DataID >= 0) {
       this.LM_AddSVGTextObject(renderer, shapeContainer);
     }
 
-    console.log('S.Oval: Output shapeContainer:', shapeContainer);
+    T3Util.Log('S.Oval: Output shapeContainer:', shapeContainer);
 
     return shapeContainer;
   }
 
   GetPolyPoints(curveType, frame, inflate, isClosed, isReversed) {
-    console.log('S.Oval: Input parameters:', { curveType, frame, inflate, isClosed, isReversed });
+    T3Util.Log('S.Oval: Input parameters:', { curveType, frame, inflate, isClosed, isReversed });
 
     let points = [];
     let frameCopy = {};
@@ -148,91 +149,91 @@ class Oval extends BaseShape {
       }
     }
 
-    console.log('S.Oval: Output points:', points);
+    T3Util.Log('S.Oval: Output points:', points);
     return points;
   }
 
   ExtendLines() {
-    console.log('S.Oval: ExtendLines called');
+    T3Util.Log('S.Oval: ExtendLines called');
 
-    const table = this.GetTable(false);
-    if (table) {
-      console.log('S.Oval: Input table:', table);
-      T3Gv.opt.Table_ExtendLines(this, table);
-      console.log('S.Oval: Table lines extended');
-    }
+    // const table = this.GetTable(false);
+    // if (table) {
+    //   T3Util.Log('S.Oval: Input table:', table);
+    //   T3Gv.opt.Table_ExtendLines(this, table);
+    //   T3Util.Log('S.Oval: Table lines extended');
+    // }
   }
 
-  ExtendCell(cellIndex, rowIndex, columnIndex) {
-    console.log('S.Oval: Input parameters:', { cellIndex, rowIndex, columnIndex });
+  // ExtendCell(cellIndex, rowIndex, columnIndex) {
+  //   T3Util.Log('S.Oval: Input parameters:', { cellIndex, rowIndex, columnIndex });
 
-    const table = this.GetTable(false);
-    if (table) {
-      const extendedCells = T3Gv.opt.Table_ExtendCell(this, table, cellIndex, rowIndex, columnIndex);
-      if (extendedCells) {
-        const svgFrame = this.GetSVGFrame(this.Frame);
-        const offsetX = this.inside.x - svgFrame.x;
-        const offsetY = this.inside.y - svgFrame.y;
+  //   const table = this.GetTable(false);
+  //   if (table) {
+  //     const extendedCells = T3Gv.opt.Table_ExtendCell(this, table, cellIndex, rowIndex, columnIndex);
+  //     if (extendedCells) {
+  //       const svgFrame = this.GetSVGFrame(this.Frame);
+  //       const offsetX = this.inside.x - svgFrame.x;
+  //       const offsetY = this.inside.y - svgFrame.y;
 
-        if (offsetX || offsetY) {
-          for (let i = 0; i < extendedCells.length; i++) {
-            extendedCells[i].x += offsetX;
-            extendedCells[i].y += offsetY;
-          }
-        }
+  //       if (offsetX || offsetY) {
+  //         for (let i = 0; i < extendedCells.length; i++) {
+  //           extendedCells[i].x += offsetX;
+  //           extendedCells[i].y += offsetY;
+  //         }
+  //       }
 
-        console.log('S.Oval: Output extendedCells:', extendedCells);
-        return extendedCells;
-      }
-    }
+  //       T3Util.Log('S.Oval: Output extendedCells:', extendedCells);
+  //       return extendedCells;
+  //     }
+  //   }
 
-    console.log('S.Oval: No table found or no cells extended');
-    return null;
-  }
+  //   T3Util.Log('S.Oval: No table found or no cells extended');
+  //   return null;
+  // }
 
   GetPerimeterPoints(event, points, hookType, isClosed, tableIndex, isReversed) {
-    console.log('S.Oval: Input parameters:', { event, points, hookType, isClosed, tableIndex, isReversed });
+    T3Util.Log('S.Oval: Input parameters:', { event, points, hookType, isClosed, tableIndex, isReversed });
 
     let perimeterPoints = [];
     let frameWidth = this.Frame.width;
     let frameHeight = this.Frame.height;
     let halfWidth = frameWidth / 2;
     let halfHeight = frameHeight / 2;
-    let dimension = ConstantData.Defines.SED_CDim;
+    let dimension = OptConstant.Defines.SED_CDim;
 
-    if (points.length === 1 && points[0].y === -ConstantData.SEDA_Styles.SEDA_CoManager && this.IsCoManager({})) {
+    if (points.length === 1 && points[0].y === -OptConstant.SEDA_Styles.SEDA_CoManager && this.IsCoManager({})) {
       perimeterPoints.push(new Point(this.Frame.x, this.Frame.y));
       if (points[0].id != null) {
         perimeterPoints[0].id = points[0].id;
       }
-      console.log('S.Oval: Output perimeterPoints:', perimeterPoints);
+      T3Util.Log('S.Oval: Output perimeterPoints:', perimeterPoints);
       return perimeterPoints;
     }
 
-    if (hookType === ConstantData.HookPts.SED_KAT) {
+    if (hookType === OptConstant.HookPts.SED_KAT) {
       perimeterPoints = this.BaseDrawingObject_GetPerimPts(event, points, hookType, false, tableIndex, isReversed);
-      console.log('S.Oval: Output perimeterPoints:', perimeterPoints);
+      T3Util.Log('S.Oval: Output perimeterPoints:', perimeterPoints);
       return perimeterPoints;
     }
 
-    let table = this.GetTable(false);
-    if (tableIndex != null && table) {
-      let tablePerimeterPoints = T3Gv.opt.Table_GetPerimPts(this, table, tableIndex, points);
-      if (tablePerimeterPoints) {
-        perimeterPoints = tablePerimeterPoints;
-        if (!isClosed) {
-          let rotationAngle = -this.RotationAngle / (180 / ConstantData.Geometry.PI);
-          Utils3.RotatePointsAboutCenter(this.Frame, rotationAngle, perimeterPoints);
-        }
-        console.log('S.Oval: Output perimeterPoints:', perimeterPoints);
-        return perimeterPoints;
-      }
-    }
+    // let table = this.GetTable(false);
+    // if (tableIndex != null && table) {
+    //   let tablePerimeterPoints = T3Gv.opt.Table_GetPerimPts(this, table, tableIndex, points);
+    //   if (tablePerimeterPoints) {
+    //     perimeterPoints = tablePerimeterPoints;
+    //     if (!isClosed) {
+    //       let rotationAngle = -this.RotationAngle / (180 / NvConstant.Geometry.PI);
+    //       Utils3.RotatePointsAboutCenter(this.Frame, rotationAngle, perimeterPoints);
+    //     }
+    //     T3Util.Log('S.Oval: Output perimeterPoints:', perimeterPoints);
+    //     return perimeterPoints;
+    //   }
+    // }
 
-    let useConnect = this.flags & ConstantData.ObjFlags.SEDO_UseConnect;
-    let useTableRows = this.hookflags & ConstantData.HookFlags.SED_LC_TableRows && table;
+    let useConnect = this.flags & NvConstant.ObjFlags.SEDO_UseConnect;
+    // let useTableRows = this.hookflags & NvConstant.HookFlags.SED_LC_TableRows && table;
 
-    if (useConnect || useTableRows) {
+    if (useConnect /*|| useTableRows*/) {
       for (let i = 0; i < points.length; i++) {
         perimeterPoints[i] = {
           x: points[i].x / dimension * frameWidth + this.Frame.x,
@@ -260,21 +261,21 @@ class Oval extends BaseShape {
     }
 
     if (!isClosed) {
-      let rotationAngle = -this.RotationAngle / (180 / ConstantData.Geometry.PI);
+      let rotationAngle = -this.RotationAngle / (180 / NvConstant.Geometry.PI);
       Utils3.RotatePointsAboutCenter(this.Frame, rotationAngle, perimeterPoints);
     }
 
-    console.log('S.Oval: Output perimeterPoints:', perimeterPoints);
+    T3Util.Log('S.Oval: Output perimeterPoints:', perimeterPoints);
     return perimeterPoints;
   }
 
   BaseDrawingObject_GetPerimPts(event, points, hookType, isClosed, tableIndex, isReversed) {
-    console.log('S.Oval: Input parameters:', { event, points, hookType, isClosed, tableIndex, isReversed });
+    T3Util.Log('S.Oval: Input parameters:', { event, points, hookType, isClosed, tableIndex, isReversed });
 
     const perimeterPoints = [];
     const numPoints = points.length;
     const triangleShapeType = PolygonConstant.ShapeTypes.TRIANGLE;
-    const dimension = ConstantData.Defines.SED_CDim;
+    const dimension = OptConstant.Defines.SED_CDim;
 
     for (let i = 0; i < numPoints; i++) {
       const point = {
@@ -286,18 +287,18 @@ class Oval extends BaseShape {
     }
 
     if (!isClosed) {
-      const rotationAngle = -this.RotationAngle / (180 / ConstantData.Geometry.PI);
+      const rotationAngle = -this.RotationAngle / (180 / NvConstant.Geometry.PI);
       Utils3.RotatePointsAboutCenter(this.Frame, rotationAngle, perimeterPoints);
     }
 
-    console.log('S.Oval: Output perimeterPoints:', perimeterPoints);
+    T3Util.Log('S.Oval: Output perimeterPoints:', perimeterPoints);
     return perimeterPoints;
   }
 
   SetShapeIndent(isIndented) {
-    console.log('S.Oval: Input isIndented:', isIndented);
+    T3Util.Log('S.Oval: Input isIndented:', isIndented);
 
-    const roundFactor = ConstantData.Defines.SED_RoundFactor / 2;
+    const roundFactor = OptConstant.Defines.SED_RoundFactor / 2;
     const width = this.inside.width;
     const height = this.inside.height;
 
@@ -321,7 +322,7 @@ class Oval extends BaseShape {
     this.tindent.right = this.rightIndent * width / rightFactor;
     this.tindent.bottom = this.bottomIndent * height / bottomFactor;
 
-    console.log('S.Oval: Output tindent:', this.tindent);
+    T3Util.Log('S.Oval: Output tindent:', this.tindent);
   }
 
 }

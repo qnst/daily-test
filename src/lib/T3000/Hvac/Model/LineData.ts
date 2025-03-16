@@ -1,9 +1,8 @@
 
 import { Type } from 'class-transformer'
 import 'reflect-metadata'
-
 import PaintData from './PaintData'
-import ConstantData from '../Data/Constant/ConstantData'
+import NvConstant from '../Data/Constant/NvConstant'
 
 class LineData {
 
@@ -22,12 +21,10 @@ class LineData {
   constructor() {
 
     //'#00FF00'
-    this.Paint = new PaintData(ConstantData.Colors.Color_Gray);
+    this.Paint = new PaintData(NvConstant.Colors.Color_Gray);
     this.Hatch = 0;
     this.LineEffect = 0;
-
-    //1
-    this.Thickness = ConstantData.StyleDefaults.SDSTYLE_DEFTHICK;
+    this.Thickness = NvConstant.StyleDefaults.SDSTYLE_DEFTHICK;
     this.LinePattern = 0;
     this.BThick = 0;
     this.EdgeColor = null;

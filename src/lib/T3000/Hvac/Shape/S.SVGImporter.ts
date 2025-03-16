@@ -1,3 +1,4 @@
+import T3Util from "../Util/T3Util";
 
 
 class SVGImporter {
@@ -5,7 +6,7 @@ class SVGImporter {
   // This method imports an SVG file, creates a URL for it, and processes the file using the given callback.
   ImportSVG(file: any, callback: (url: string, blob: Blob, uint8Array: Uint8Array) => void) {
     // Log the input file for debugging purposes.
-    console.log("=S.SVGImporter - Input file:", file);
+    T3Util.Log("=S.SVGImporter - Input file:", file);
     const fileType = file.type;
 
     // Check if the file type is supported (i.e. SVG).
@@ -29,9 +30,9 @@ class SVGImporter {
         if (urlCreator && urlCreator.createObjectURL) {
           // Create an object URL for the Blob.
           url = urlCreator.createObjectURL(blob);
-          console.log("=S.SVGImporter - Generated URL:", url);
-          console.log("=S.SVGImporter - Generated Blob:", blob);
-          console.log("=S.SVGImporter - Generated Uint8Array:", uint8Array);
+          T3Util.Log("=S.SVGImporter - Generated URL:", url);
+          T3Util.Log("=S.SVGImporter - Generated Blob:", blob);
+          T3Util.Log("=S.SVGImporter - Generated Uint8Array:", uint8Array);
 
           // If a callback is provided, call it with the generated URL, Blob, and Uint8Array.
           if (callback) {
@@ -41,7 +42,7 @@ class SVGImporter {
 
         // This is a Microsoft-specific file close operation, if available.
         if (file.msClose !== undefined) {
-          console.log("=S.SVGImporter - Calling msClose");
+          T3Util.Log("=S.SVGImporter - Calling msClose");
           file.msClose();
         }
       };
@@ -50,7 +51,7 @@ class SVGImporter {
       reader.readAsArrayBuffer(file);
     } else {
       // Log a message if the file type is unsupported.
-      console.log("=S.SVGImporter - Unsupported file type:", fileType);
+      T3Util.Log("=S.SVGImporter - Unsupported file type:", fileType);
     }
   }
 }

@@ -1,22 +1,27 @@
 
 
 import BaseShape from './S.BaseShape'
-import Utils2 from "../Helper/Utils2";
+import Utils2 from "../Util/Utils2";
 import T3Gv from '../Data/T3Gv'
 import $ from 'jquery';
 import Point from '../Model/Point'
 import Instance from '../Data/Instance/Instance';
-import ConstantData from '../Data/Constant/ConstantData'
-import ConstantData2 from '../Data/Constant/ConstantData2';
-import PolygonConstant from '../Util/PolygonConstant';
+import NvConstant from '../Data/Constant/NvConstant'
+import PolygonConstant from '../Opt/Polygon/PolygonConstant';
+import OptConstant from '../Data/Constant/OptConstant';
+import T3Util from '../Util/T3Util';
 
 class Rect extends BaseShape {
 
+  /**
+   * Constructor for the Rect shape class
+   * @param options - Configuration options for the rectangle
+   */
   constructor(options: any) {
-    console.log("= S.Rect Input:", options);
+    T3Util.Log("= S.Rect Input:", options);
     options = options || {};
-    options.ShapeType = ConstantData.ShapeType.RECT;
-    options.moreflags |= ConstantData.ObjMoreFlags.SED_MF_FixedRR;
+    options.ShapeType = OptConstant.ShapeType.RECT;
+    options.moreflags |= OptConstant.ObjMoreFlags.SED_MF_FixedRR;
 
     super(options);
 
@@ -24,114 +29,190 @@ class Rect extends BaseShape {
     this.nativeDataArrayBuffer = options.nativeDataArrayBuffer || null;
     this.SymbolData = options.SymbolData || null;
 
-    console.log("= S.Rect Created instance:", this);
+    T3Util.Log("= S.Rect Created instance:", this);
   }
 
-  CreateShape(e, t) {
-    if (this.flags & ConstantData.ObjFlags.SEDO_NotVisible) return null;
-    var a = e.CreateShape(ConstantData.CreateShapeType.SHAPECONTAINER),
-      r = $.extend(!0, {
-      }, this.Frame),
-      i = this.StyleRecord;
-    i.Line.BThick &&
-      null == this.polylist &&
-      Utils2.InflateRect(r, i.Line.BThick, i.Line.BThick);
-    var n = (i = this.SVGTokenizerHook(i)).Line.Paint.Color,
-      o = i.Line.Thickness,
-      s = i.Line.LinePattern,
-      l = i.Line.Paint.Opacity,
-      S = r.width,
-      c = r.height;
-    a.SetSize(S, c),
-      a.SetPos(r.x, r.y);
-    var u = this.RRect_GetCornerSize();
+  /**
+   * Creates an SVG shape representation of the rectangle
+   * @param renderer - The rendering engine to create SVG elements
+   * @param enableEvents - Whether to enable event handling on the shape
+   * @returns The created SVG shape container or null if shape is not visible
+   */
+  CreateShape(renderer, enableEvents) {
+    // Don't render if the shape is marked as not visible
+    if (this.flags & NvConstant.ObjFlags.SEDO_NotVisible) return null;
+
+    // Create the main shape container
+    const shapeContainer = renderer.CreateShape(OptConstant.CSType.SHAPECONTAINER);
+
+    // Clone the frame and apply necessary adjustments
+    const adjustedFrame = $.extend(true, {}, this.Frame);
+    const styleRecord = this.StyleRecord;
+
+    // Inflate the rectangle if border thickness is set
+    if (styleRecord.Line.BThick && this.polylist === null) {
+      Utils2.InflateRect(adjustedFrame, styleRecord.Line.BThick, styleRecord.Line.BThick);
+    }
+
+    // Process style attributes through any hooks
+    const processedStyle = this.SVGTokenizerHook(styleRecord);
+
+    // Extract styling properties
+    const strokeColor = processedStyle.Line.Paint.Color;
+    const strokeWidth = processedStyle.Line.Thickness;
+    const strokePattern = processedStyle.Line.LinePattern;
+    const opacity = processedStyle.Line.Paint.Opacity;
+    const width = adjustedFrame.width;
+    const height = adjustedFrame.height;
+
+    // Set container dimensions and position
+    shapeContainer.SetSize(width, height);
+    shapeContainer.SetPos(adjustedFrame.x, adjustedFrame.y);
+
+    // Get corner radius for rounded rectangle
+    const cornerRadius = this.RRect_GetCornerSize();
+    let mainShape;
+
+    // Handle symbol URL case (using image)
     if (this.SymbolURL) {
-      var p = e.CreateShape(ConstantData.CreateShapeType.RECT);
-      p.SetID(ConstantData.SVGElementClass.SHAPE),
-        p.SetSize(S, c),
-        p.SetImageFill(this.SymbolURL, {
-          scaleType: 'NOPROP'
-        });
-      var d = (this.extraflags & ConstantData.ExtraFlags.SEDE_FlipHoriz) > 0,
-        D = (this.extraflags & ConstantData.ExtraFlags.SEDE_FlipVert) > 0;
-      d &&
-        p.SetMirror(d),
-        D &&
-        p.SetFlip(D),
-        a.AddElement(p),
-        this.GetFieldDataStyleOverride()
-    } else {
-      if (u > 0) (g = e.CreateShape(ConstantData.CreateShapeType.RRECT)).SetRRectSize(S, c, u, u);
-      else var g = e.CreateShape(ConstantData.CreateShapeType.RECT);
-      g.SetStrokeColor(n),
-        g.SetStrokeOpacity(l),
-        g.SetStrokeWidth(o),
-        0 !== s &&
-        g.SetStrokePattern(s),
-        g.SetID(ConstantData.SVGElementClass.SHAPE),
-        g.SetSize(S, c),
-        a.AddElement(g)
+      const imageRect = renderer.CreateShape(OptConstant.CSType.RECT);
+      imageRect.SetID(OptConstant.SVGElementClass.SHAPE);
+      imageRect.SetSize(width, height);
+      imageRect.SetImageFill(this.SymbolURL, { scaleType: 'NOPROP' });
+
+      // Apply flip transformations if needed
+      const isFlipHorizontal = (this.extraflags & OptConstant.ExtraFlags.SEDE_FlipHoriz) > 0;
+      const isFlipVertical = (this.extraflags & OptConstant.ExtraFlags.SEDE_FlipVert) > 0;
+
+      if (isFlipHorizontal) {
+        imageRect.SetMirror(isFlipHorizontal);
+      }
+      if (isFlipVertical) {
+        imageRect.SetFlip(isFlipVertical);
+      }
+
+      shapeContainer.AddElement(imageRect);
+      this.GetFieldDataStyleOverride();
     }
-    if (
-      this.ApplyStyles(g, i),
-      this.ApplyEffects(a, !1, !1),
-      !(this instanceof Instance.Shape.ShapeContainer)
-    ) {
-      var h = ConstantData.Defines.SED_Slop,
-        m = c,
-        C = S;
-      if (
-        (
-          //this.IsSwimlane() ||
-          this.objecttype === ConstantData.ObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER
-        ) &&
-        (h *= 3),
-        u > 0
-      ) (y = e.CreateShape(ConstantData.CreateShapeType.RRECT)).SetRRectSize(C, m, u, u);
-      else var y = e.CreateShape(ConstantData.CreateShapeType.RECT);
-      y.SetStrokeColor('white'),
-        y.SetFillColor('none'),
-        y.SetOpacity(0),
-        y.SetStrokeWidth(o + h),
-        t ? this.SymbolURL ||
-          i.Fill.Paint.FillType == ConstantData.FillTypes.SDFILL_TRANSPARENT &&
-          this.DataID >= 0 ? y.SetEventBehavior(ConstantData2.EventBehavior.HIDDEN_ALL) : y.SetEventBehavior(ConstantData2.EventBehavior.HIDDEN_OUT) : y.SetEventBehavior(ConstantData2.EventBehavior.NONE),
-        y.SetID(ConstantData.SVGElementClass.SLOP),
-        y.ExcludeFromExport(!0),
-        y.SetSize(C || 1, m),
-        a.AddElement(y)
+    // Otherwise create a regular rectangle or rounded rectangle
+    else {
+      if (cornerRadius > 0) {
+        mainShape = renderer.CreateShape(OptConstant.CSType.RRECT);
+        mainShape.SetRRectSize(width, height, cornerRadius, cornerRadius);
+      } else {
+        mainShape = renderer.CreateShape(OptConstant.CSType.RECT);
+      }
+
+      // Apply stroke styling
+      mainShape.SetStrokeColor(strokeColor);
+      mainShape.SetStrokeOpacity(opacity);
+      mainShape.SetStrokeWidth(strokeWidth);
+
+      if (strokePattern !== 0) {
+        mainShape.SetStrokePattern(strokePattern);
+      }
+
+      mainShape.SetID(OptConstant.SVGElementClass.SHAPE);
+      mainShape.SetSize(width, height);
+      shapeContainer.AddElement(mainShape);
     }
-    var f = i.Fill.Hatch;
-    if (f && 0 !== f) {
-      if (u > 0) (L = e.CreateShape(ConstantData.CreateShapeType.RRECT)).SetRRectSize(S, c, u, u);
-      else var L = e.CreateShape(ConstantData.CreateShapeType.RECT);
-      L.SetID(ConstantData.SVGElementClass.HATCH),
-        L.SetSize(S, c),
-        L.SetStrokeWidth(0),
-        this.SetFillHatch(L, f),
-        a.AddElement(L)
+
+    // Apply additional styles and effects
+    this.ApplyStyles(mainShape, processedStyle);
+    this.ApplyEffects(shapeContainer, false, false);
+
+    // Create interactive slop area for better user interaction
+    if (!(this instanceof Instance.Shape.ShapeContainer)) {
+      let slopSize = OptConstant.Defines.SED_Slop;
+      const slopHeight = height;
+      const slopWidth = width;
+
+      // Increase slop size for certain shape types
+      if ((this.objecttype === NvConstant.ObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER)) {
+        slopSize *= 3;
+      }
+
+      let slopShape;
+      if (cornerRadius > 0) {
+        slopShape = renderer.CreateShape(OptConstant.CSType.RRECT);
+        slopShape.SetRRectSize(slopWidth, slopHeight, cornerRadius, cornerRadius);
+      } else {
+        slopShape = renderer.CreateShape(OptConstant.CSType.RECT);
+      }
+
+      // Configure slop area (invisible interactive area)
+      slopShape.SetStrokeColor('white');
+      slopShape.SetFillColor('none');
+      slopShape.SetOpacity(0);
+      slopShape.SetStrokeWidth(strokeWidth + slopSize);
+
+      // Set event behavior based on conditions
+      if (enableEvents) {
+        const isTransparentFillWithData = this.SymbolURL ||
+          (processedStyle.Fill.Paint.FillType === NvConstant.FillTypes.SDFILL_TRANSPARENT && this.DataID >= 0);
+
+        slopShape.SetEventBehavior(isTransparentFillWithData ?
+          OptConstant.EventBehavior.HIDDEN_ALL :
+          OptConstant.EventBehavior.HIDDEN_OUT);
+      } else {
+        slopShape.SetEventBehavior(OptConstant.EventBehavior.NONE);
+      }
+
+      slopShape.SetID(OptConstant.SVGElementClass.SLOP);
+      slopShape.ExcludeFromExport(true);
+      slopShape.SetSize(slopWidth || 1, slopHeight);
+      shapeContainer.AddElement(slopShape);
     }
-    a.isShape = !0;
-    var I = this.GetTable(!1);
-    I &&
-      T3Gv.opt.LM_AddSVGTableObject(this, e, a, I);
-    var T = this.GetGraph(!1);
-    return T &&
-      T3Gv.opt.LM_AddSVGGraphObject(this, e, a, T),
-      this.DataID >= 0 &&
-      this.LM_AddSVGTextObject(e, a),
-      a
+
+    // Create hatch fill pattern if needed
+    const hatchPattern = processedStyle.Fill.Hatch;
+    if (hatchPattern && hatchPattern !== 0) {
+      let hatchShape;
+      if (cornerRadius > 0) {
+        hatchShape = renderer.CreateShape(OptConstant.CSType.RRECT);
+        hatchShape.SetRRectSize(width, height, cornerRadius, cornerRadius);
+      } else {
+        hatchShape = renderer.CreateShape(OptConstant.CSType.RECT);
+      }
+
+      hatchShape.SetID(OptConstant.SVGElementClass.HATCH);
+      hatchShape.SetSize(width, height);
+      hatchShape.SetStrokeWidth(0);
+      this.SetFillHatch(hatchShape, hatchPattern);
+      shapeContainer.AddElement(hatchShape);
+    }
+
+    // Mark as shape
+    shapeContainer.isShape = true;
+
+    // Add table and graph objects if present
+    const table = null; // this.GetTable(false); - Commented out in original code
+    if (table) {
+      T3Gv.opt.LM_AddSVGTableObject(this, renderer, shapeContainer, table);
+    }
+
+    const graph = this.GetGraph(false);
+    if (graph) {
+      T3Gv.opt.LM_AddSVGGraphObject(this, renderer, shapeContainer, graph);
+    }
+
+    // Add text if there's data
+    if (this.DataID >= 0) {
+      this.LM_AddSVGTextObject(renderer, shapeContainer);
+    }
+
+    return shapeContainer;
   }
 
   GetCornerSize(inputSize) {
-    console.log("= S.Rect GetCornerSize Input:", inputSize);
+    T3Util.Log("= S.Rect GetCornerSize Input:", inputSize);
     const cornerSize = this.RRect_GetCornerSize(inputSize);
-    console.log("= S.Rect GetCornerSize Output:", cornerSize);
+    T3Util.Log("= S.Rect GetCornerSize Output:", cornerSize);
     return cornerSize;
   }
 
   RRect_GetCornerSize(inputSize) {
-    console.log("= S.Rect RRect_GetCornerSize Input:", inputSize);
+    T3Util.Log("= S.Rect RRect_GetCornerSize Input:", inputSize);
 
     let width = this.Frame.width;
     let height = this.Frame.height;
@@ -141,23 +222,23 @@ class Rect extends BaseShape {
       minDimension = inputSize;
     }
 
-    if (this.moreflags & ConstantData.ObjMoreFlags.SED_MF_FixedRR) {
-      let fixedSize = ConstantData.Defines.RRectFixedDim * this.shapeparam;
+    if (this.moreflags & OptConstant.ObjMoreFlags.SED_MF_FixedRR) {
+      let fixedSize = OptConstant.Defines.RRectFixedDim * this.shapeparam;
       let maxSize = 0.4 * minDimension;
       if (fixedSize > maxSize) {
         fixedSize = maxSize;
       }
-      console.log("= S.Rect RRect_GetCornerSize Output:", fixedSize);
+      T3Util.Log("= S.Rect RRect_GetCornerSize Output:", fixedSize);
       return fixedSize;
     }
 
     let cornerSize = minDimension * this.shapeparam;
-    console.log("= S.Rect RRect_GetCornerSize Output:", cornerSize);
+    T3Util.Log("= S.Rect RRect_GetCornerSize Output:", cornerSize);
     return cornerSize;
   }
 
   GetPolyPoints(event, type, arg, rect, index) {
-    console.log("= S.Rect GetPolyPoints Input:", { event, type, arg, rect, index });
+    T3Util.Log("= S.Rect GetPolyPoints Input:", { event, type, arg, rect, index });
     const cornerSize = this.RRect_GetCornerSize();
     let polyPoints;
     if (cornerSize > 0) {
@@ -165,12 +246,12 @@ class Rect extends BaseShape {
     } else {
       polyPoints = this.BaseDrawingObject_GetPolyPoints(event, type, arg, rect, index);
     }
-    console.log("= S.Rect GetPolyPoints Output:", polyPoints);
+    T3Util.Log("= S.Rect GetPolyPoints Output:", polyPoints);
     return polyPoints;
   }
 
   RRect_GetPolyPoints(event, type, arg, rect, index) {
-    console.log("= S.Rect RRect_GetPolyPoints Input:", { event, type, arg, rect, index });
+    T3Util.Log("= S.Rect RRect_GetPolyPoints Input:", { event, type, arg, rect, index });
 
     let points = [];
     let frameCopy = {};
@@ -217,12 +298,12 @@ class Rect extends BaseShape {
       }
     }
 
-    console.log("= S.Rect RRect_GetPolyPoints Output:", points);
+    T3Util.Log("= S.Rect RRect_GetPolyPoints Output:", points);
     return points;
   }
 
   BaseDrawingObject_GetPolyPoints(event, type, arg, rect, index) {
-    console.log("= S.Rect BaseDrawingObject_GetPolyPoints Input:", { event, type, arg, rect, index });
+    T3Util.Log("= S.Rect BaseDrawingObject_GetPolyPoints Input:", { event, type, arg, rect, index });
 
     let points = [];
     let frameCopy = {};
@@ -247,69 +328,69 @@ class Rect extends BaseShape {
       }
     }
 
-    console.log("= S.Rect BaseDrawingObject_GetPolyPoints Output:", points);
+    T3Util.Log("= S.Rect BaseDrawingObject_GetPolyPoints Output:", points);
     return points;
   }
 
   ExtendLines(extend) {
-    console.log("= S.Rect ExtendLines Input:", extend);
+    T3Util.Log("= S.Rect ExtendLines Input:", extend);
     const cornerSize = this.RRect_GetCornerSize();
     if (cornerSize > 0 || extend) {
       this.RRect_ExtendLines();
     }
-    console.log("= S.Rect ExtendLines Output");
+    T3Util.Log("= S.Rect ExtendLines Output");
   }
 
-  RRect_ExtendLines() {
-    console.log("= S.Rect RRect_ExtendLines Input");
+  // RRect_ExtendLines() {
+  //   // T3Util.Log("= S.Rect RRect_ExtendLines Input");
 
-    var table = this.GetTable(false);
-    if (table) {
-      T3Gv.opt.Table_ExtendLines(this, table);
-    }
+  //   // var table = this.GetTable(false);
+  //   // if (table) {
+  //   //   T3Gv.opt.Table_ExtendLines(this, table);
+  //   // }
 
-    console.log("= S.Rect RRect_ExtendLines Output");
-  }
+  //   // T3Util.Log("= S.Rect RRect_ExtendLines Output");
+  // }
 
-  ExtendCell(event, type, arg) {
-    console.log("= S.Rect ExtendCell Input:", { event, type, arg });
-    const cornerSize = this.RRect_GetCornerSize();
-    let result;
-    if (cornerSize > 0) {
-      result = this.RRect_ExtendCell(event, type, arg);
-    }
-    console.log("= S.Rect ExtendCell Output:", result);
-    return result;
-  }
+  // ExtendCell(event, type, arg) {
+  //   T3Util.Log("= S.Rect ExtendCell Input:", { event, type, arg });
+  //   const cornerSize = this.RRect_GetCornerSize();
+  //   let result;
+  //   if (cornerSize > 0) {
+  //     result = this.RRect_ExtendCell(event, type, arg);
+  //   }
+  //   T3Util.Log("= S.Rect ExtendCell Output:", result);
+  //   return result;
+  // }
 
-  RRect_ExtendCell(event, type, arg) {
-    console.log("= S.Rect RRect_ExtendCell Input:", { event, type, arg });
+  // RRect_ExtendCell(event, type, arg) {
+  //   T3Util.Log("= S.Rect RRect_ExtendCell Input:", { event, type, arg });
 
-    var table = this.GetTable(false);
-    let result = null;
+  //   var table = this.GetTable(false);
+  //   let result = null;
 
-    if (table) {
-      result = T3Gv.opt.Table_ExtendCell(this, table, event, type, arg);
+  //   if (table) {
+  //     result = T3Gv.opt.Table_ExtendCell(this, table, event, type, arg);
 
-      if (result) {
-        var offsetX = this.inside.x - this.Frame.x;
-        var offsetY = this.inside.y - this.Frame.y;
+  //     if (result) {
+  //       var offsetX = this.inside.x - this.Frame.x;
+  //       var offsetY = this.inside.y - this.Frame.y;
 
-        if (offsetX || offsetY) {
-          for (let i = 0; i < result.length; i++) {
-            result[i].x += offsetX;
-            result[i].y += offsetY;
-          }
-        }
-      }
-    }
+  //       if (offsetX || offsetY) {
+  //         for (let i = 0; i < result.length; i++) {
+  //           result[i].x += offsetX;
+  //           result[i].y += offsetY;
+  //         }
+  //       }
+  //     }
+  //   }
 
-    console.log("= S.Rect RRect_ExtendCell Output:", result);
-    return result;
-  }
+  //   T3Util.Log("= S.Rect RRect_ExtendCell Output:", result);
+  //   return result;
+  // }
 
   SetShapeIndent(indentOptions) {
-    console.log("= S.Rect SetShapeIndent Input:", indentOptions);
+    T3Util.Log("= S.Rect SetShapeIndent Input:", indentOptions);
     const cornerSize = this.RRect_GetCornerSize();
     let result;
     if (cornerSize > 0) {
@@ -321,28 +402,28 @@ class Rect extends BaseShape {
       this.bottom_sindent = 0;
       result = super.SetShapeIndent(indentOptions);
     }
-    console.log("= S.Rect SetShapeIndent Output:", result);
+    T3Util.Log("= S.Rect SetShapeIndent Output:", result);
     return result;
   }
 
   RRect_SetShapeIndent(indentOptions) {
-    console.log("= S.Rect RRect_SetShapeIndent Input:", indentOptions);
+    T3Util.Log("= S.Rect RRect_SetShapeIndent Input:", indentOptions);
 
     let width = this.inside.width;
     let height = this.inside.height;
     let minDimension = width < height ? width : height;
     let shapeParam = this.shapeparam;
 
-    if (this.moreflags & ConstantData.ObjMoreFlags.SED_MF_FixedRR) {
+    if (this.moreflags & OptConstant.ObjMoreFlags.SED_MF_FixedRR) {
       let adjustedDimension = minDimension;
       if (indentOptions) {
-        adjustedDimension += 2 * (this.GetCornerSize() * ConstantData.Defines.SED_RoundFactor);
-        adjustedDimension = minDimension + 2 * (this.GetCornerSize(adjustedDimension) * ConstantData.Defines.SED_RoundFactor);
+        adjustedDimension += 2 * (this.GetCornerSize() * OptConstant.Defines.SED_RoundFactor);
+        adjustedDimension = minDimension + 2 * (this.GetCornerSize(adjustedDimension) * OptConstant.Defines.SED_RoundFactor);
       }
       shapeParam = this.GetCornerSize(adjustedDimension) / adjustedDimension;
     }
 
-    this.left_sindent = shapeParam * ConstantData.Defines.SED_RoundFactor;
+    this.left_sindent = shapeParam * OptConstant.Defines.SED_RoundFactor;
     this.top_sindent = this.left_sindent;
     this.right_sindent = this.left_sindent;
     this.bottom_sindent = this.left_sindent;
@@ -357,7 +438,7 @@ class Rect extends BaseShape {
     this.tindent.right = this.right_sindent * width / scaleRight;
     this.tindent.bottom = this.bottom_sindent * height / scaleBottom;
 
-    console.log("= S.Rect RRect_SetShapeIndent Output:", {
+    T3Util.Log("= S.Rect RRect_SetShapeIndent Output:", {
       left_sindent: this.left_sindent,
       top_sindent: this.top_sindent,
       right_sindent: this.right_sindent,
@@ -367,9 +448,9 @@ class Rect extends BaseShape {
   }
 
   SetShapeProperties(properties) {
-    console.log("= S.Rect SetShapeProperties Input:", properties);
+    T3Util.Log("= S.Rect SetShapeProperties Input:", properties);
     let updated = false;
-    const fixedRRectFlag = ConstantData.ObjMoreFlags.SED_MF_FixedRR;
+    const fixedRRectFlag = OptConstant.ObjMoreFlags.SED_MF_FixedRR;
 
     if (properties.hasrrectselected) {
       const isFixedRRectChanged = (this.moreflags & fixedRRectFlag) > 0 !== properties.rrectfixed;
@@ -391,7 +472,7 @@ class Rect extends BaseShape {
           this.tindent.bottom = 0;
         }
 
-        this.SetSize(this.Frame.width, 0, ConstantData.ActionTriggerType.LINELENGTH);
+        this.SetSize(this.Frame.width, 0, OptConstant.ActionTriggerType.LINELENGTH);
 
         if (this.shapeparam === 0) {
           this.ExtendLines(true);
@@ -405,23 +486,23 @@ class Rect extends BaseShape {
       updated = true;
     }
 
-    console.log("= S.Rect SetShapeProperties Output:", updated);
+    T3Util.Log("= S.Rect SetShapeProperties Output:", updated);
     return updated;
   }
 
   ApplyCurvature(curvatureParam) {
-    console.log("= S.Rect ApplyCurvature Input:", curvatureParam);
+    T3Util.Log("= S.Rect ApplyCurvature Input:", curvatureParam);
 
-    var table = this.GetTable(false);
-    if (table) {
-      var firstRow = table.rows[0];
-      for (var i = 0; i < firstRow.ncells; i++) {
-        if (table.cells[i].flags & TODO.Table.CellFlags.SDT_F_UseExpandedRectAsFrame) {
-          console.log("= S.Rect ApplyCurvature Output: No action taken due to expanded rect as frame");
-          return;
-        }
-      }
-    }
+    // var table = this.GetTable(false);
+    // if (table) {
+    //   var firstRow = table.rows[0];
+    //   for (var i = 0; i < firstRow.ncells; i++) {
+    //     if (table.cells[i].flags & TODO.Table.CellFlags.SDT_F_UseExpandedRectAsFrame) {
+    //       T3Util.Log("= S.Rect ApplyCurvature Output: No action taken due to expanded rect as frame");
+    //       return;
+    //     }
+    //   }
+    // }
 
     var shapeProperties = {
       hasrrectselected: true,
@@ -430,7 +511,7 @@ class Rect extends BaseShape {
     };
 
     this.SetShapeProperties(shapeProperties);
-    console.log("= S.Rect ApplyCurvature Output: Shape properties updated");
+    T3Util.Log("= S.Rect ApplyCurvature Output: Shape properties updated");
   }
 
 }

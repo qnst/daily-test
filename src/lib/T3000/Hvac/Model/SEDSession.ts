@@ -4,11 +4,13 @@ import { Type } from 'class-transformer'
 import 'reflect-metadata'
 import RulerConfig from "./RulerConfig"
 import PageRecord from "./PageRecord"
-import ConstantData from "../Data/Constant/ConstantData"
+import NvConstant from "../Data/Constant/NvConstant"
 import RecentSymbol from "./RecentSymbol"
 import FillData from "./FillData"
 import SEDDefault from './SEDDefault'
 import SEDGraphDefault from './SEDGraphDefault'
+import StateConstant from '../Data/State/StateConstant'
+import OptConstant from '../Data/Constant/OptConstant'
 
 class SEDSession {
 
@@ -80,9 +82,9 @@ class SEDSession {
 
     //#region Initialize Properties
 
-    this.Type = ConstantData.StoredObjectType.SED_SESSION_OBJECT;
+    this.Type = StateConstant.StoredObjectType.SedSessionObject;
     this.dim = { x: 1000, y: 750 };
-    this.flags = ConstantData.SessionFlags.SEDS_LLink | ConstantData.SessionFlags.SEDS_FreeHand | ConstantData.SessionFlags.SEDS_NoTreeOverlap;
+    this.flags = OptConstant.SessionFlags.SEDS_LLink | OptConstant.SessionFlags.SEDS_FreeHand | OptConstant.SessionFlags.SEDS_NoTreeOverlap;
     this.tselect = -1;
     this.dupdisp = { x: 0, y: 0 };
     this.def = new SEDDefault();
@@ -95,14 +97,14 @@ class SEDSession {
     this.d_arrowsize = 1;
     this.centersnapalign = true;
     this.hopdimindex = 1;
-    this.hopdim = { x: ConstantData.HopDimX[1], y: ConstantData.HopDimY[1] };
-    this.hopstyle = ConstantData.HopStyle.SDH_Arc;
+    this.hopdim = { x: NvConstant.HopDimX[1], y: NvConstant.HopDimY[1] };
+    this.hopstyle = NvConstant.HopStyle.SDH_Arc;
 
     // Double change it to SED_DF_Select: 8 | SED_DF_Always: 16
-    this.dimensions = ConstantData.DimensionFlags.SED_DF_Total;
+    this.dimensions = NvConstant.DimensionFlags.SED_DF_Total;
     this.shapedimensions = 0;
     this.background = new FillData();
-    this.background.Paint.FillType = ConstantData.FillTypes.SDFILL_TRANSPARENT;
+    this.background.Paint.FillType = NvConstant.FillTypes.SDFILL_TRANSPARENT;
     this.bkdir = 0;
     this.bkid = -1;
     this.bkcroprect = { left: 0, top: 0, right: 0, bottom: 0 };

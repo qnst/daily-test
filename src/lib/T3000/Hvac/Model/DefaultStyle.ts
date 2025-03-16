@@ -33,21 +33,3 @@ class DefaultStyle {
 }
 
 export default DefaultStyle
-
-// static DefaultStyle = function () {
-//   //'use strict';
-//   return {
-//     font: 'Arial',
-//     type: 'sanserif',
-//     size: 10,
-//     weight: 'normal',
-//     style: 'normal',
-//     baseOffset: 'none',
-//     decoration: 'none',
-//     color: '#000',
-//     colorTrans: 1,
-//     spError: false,
-//     dataField: null,
-//     hyperlink: - 1
-//   }
-// }

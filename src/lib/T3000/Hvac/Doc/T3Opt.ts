@@ -1,17 +1,16 @@
 
 import T3Gv from '../Data/T3Gv';
 import DocUtil from './DocUtil';
-import OptUtil from '../Opt/OptUtil';
-import Base from '../Util/Base';
-import WallOpt from "../Util/WallOpt";
-import Clipboard from '../Util/Clipboard'
+import OptUtil from '../Opt/Opt/OptUtil';
+import WallOpt from "../Opt/Wall/WallOpt";
+import Clipboard from '../Opt/Clipboard/Clipboard'
 import Instance from '../Data/Instance/Instance';
 import Shape from '../Data/Instance/Shape';
 import Basic from '../Data/Instance/Basic';
-import DataOpt from '../Util/DataOpt';
+import DataOpt from '../Opt/Data/DataOpt';
 import EvtOpt from '../Event/EvtOpt';
-import KeyboardOpt from '../Util/KeyboardOpt';
-import UserOpt from '../Util/UserOpt';
+import KeyboardOpt from '../Opt/Keyboard/KeyboardOpt';
+import UserOpt from '../Opt/User/UserOpt';
 
 /**
  * Extends the global Window interface to include T3000 HVAC application references
@@ -66,7 +65,6 @@ class T3Opt {
     T3Gv.opt.Initialize();
 
     // Initialize wall operations
-    T3Gv.baseOpt = null;
     T3Gv.wallOpt = new WallOpt();
 
     // Prevent default context menu

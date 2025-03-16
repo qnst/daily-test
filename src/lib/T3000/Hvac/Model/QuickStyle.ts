@@ -35,18 +35,6 @@ class QuickStyle {
   }
 }
 
-// var df = new QuickStyle();
-
-// /*
-// var df = new FillData();
-// df.SetPaint(new PaintData('#000000'));
-// */
-
-// df.Border = new LineData().SetPaint(new PaintData('#7F7F7F'));
-// df.Fill = new FillData().SetPaint(new PaintData('#FFFFFF'));
-// df.Line = new LineData().SetPaint(new PaintData('#545454'));
-// df.Text = new TextFormatData().SetPaint(new PaintData('#333333'));
-
 export default QuickStyle
 
 

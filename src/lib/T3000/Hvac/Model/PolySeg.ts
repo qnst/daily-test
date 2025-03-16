@@ -1,5 +1,5 @@
 
-import ConstantData from "../Data/Constant/ConstantData"
+import OptConstant from "../Data/Constant/OptConstant";
 
 class PolySeg {
 
@@ -16,7 +16,7 @@ class PolySeg {
 
   constructor(lineType: any, ptx: any, pty: any) {
 
-    this.LineType = lineType || ConstantData.LineType.LINE;
+    this.LineType = lineType || OptConstant.LineType.LINE;
     this.dataclass = 0;
     this.ShortRef = 0;
     this.param = 0;

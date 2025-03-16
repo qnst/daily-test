@@ -1,5 +1,6 @@
 
-import ConstantData from "../Data/Constant/ConstantData"
+import NvConstant from "../Data/Constant/NvConstant"
+import StateConstant from "../Data/State/StateConstant";
 
 class TEDSession {
 
@@ -15,11 +16,11 @@ class TEDSession {
   public EditorID: number;
 
   constructor() {
-    this.Type = ConstantData.StoredObjectType.TED_SESSION_OBJECT;
+    this.Type = StateConstant.StoredObjectType.TedSessionObject;
     this.theActiveTextEditObjectID = -1;
     this.theTEWasResized = false;
     this.theTEWasEdited = false;
-    this.theTELastOp = ConstantData.TELastOp.INIT;
+    this.theTELastOp = NvConstant.TELastOp.INIT;
     this.theActiveTableObjectID = -1;
     this.theActiveTableObjectIndex = -1;
     this.theActiveOutlineObjectID = -1;

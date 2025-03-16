@@ -1,30 +1,30 @@
 
 
 class DocInfo {
-  public dispX: number;
-  public dispY: number;
-  public dispWidth: number;
-  public dispHeight: number;
-  public dispDpiX: number;
-  public dispDpiY: number;
-  public scrollX: number;
-  public scrollY: number;
-  public docDpi: number;
-  public docScale: number;
-  public docWidth: number;
-  public docHeight: number;
-  public docToScreenScale: number;
-  public docDpiScale: number;
-  public docVisX: number;
-  public docVisY: number;
-  public docVisWidth: number;
-  public docVisHeight: number;
-  public docScreenX: number;
-  public docScreenY: number;
-  public docScreenWidth: number;
-  public docScreenHeight: number;
-  public maxScrollX: number;
-  public maxScrollY: number;
+  dispX: number;
+  dispY: number;
+  dispWidth: number;
+  dispHeight: number;
+  dispDpiX: number;
+  dispDpiY: number;
+  scrollX: number;
+  scrollY: number;
+  docDpi: number;
+  docScale: number;
+  docWidth: number;
+  docHeight: number;
+  docToScreenScale: number;
+  docDpiScale: number;
+  docVisX: number;
+  docVisY: number;
+  docVisWidth: number;
+  docVisHeight: number;
+  docScreenX: number;
+  docScreenY: number;
+  docScreenWidth: number;
+  docScreenHeight: number;
+  maxScrollX: number;
+  maxScrollY: number;
 
   constructor() {
     this.dispX = 0;

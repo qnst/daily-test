@@ -1,5 +1,5 @@
 
-import ConstantData from "../Data/Constant/ConstantData"
+import StateConstant from "../Data/State/StateConstant";
 
 class TextObject {
 
@@ -9,7 +9,7 @@ class TextObject {
 
   constructor(txtObj: any) {
     txtObj = txtObj || {};
-    this.Type = ConstantData.StoredObjectType.LM_TEXT_OBJECT;
+    this.Type = StateConstant.StoredObjectType.TextObject;
     this.runtimeText = txtObj.runtimeText || null;
     this.selrange = txtObj.selrange || { start: 0, end: 0, line: 0 };
   }

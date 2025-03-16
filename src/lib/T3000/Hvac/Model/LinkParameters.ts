@@ -1,6 +1,6 @@
 
 
-import ConstantData from "../Data/Constant/ConstantData"
+import NvConstant from "../Data/Constant/NvConstant"
 
 class LinkParameters {
 
@@ -90,7 +90,7 @@ class LinkParameters {
     this.cpt = [];
     this.ContainerPt = [];
     this.AllowJoin = 0;
-    this.savedEditState = ConstantData.EditState.DEFAULT;
+    this.savedEditState = NvConstant.EditState.DEFAULT;
 
     //#endregion
   }

@@ -1,17 +1,17 @@
 
 
-import T3Svg from "../Helper/T3Svg"
+import T3Svg from "../Util/T3Svg"
 import $ from 'jquery';
-import Utils1 from "../Helper/Utils1"
-import Utils2 from "../Helper/Utils2"
-import Utils3 from "../Helper/Utils3"
-import Spell from './B.Text.Spell'
-import ConstantData from "../Data/Constant/ConstantData"
+import Utils1 from "../Util/Utils1"
+import Utils3 from "../Util/Utils3"
 import DefaultFmtText from '../Model/DefaultFmtText'
 import DefaultRuntimeText from '../Model/DefaultRuntimeText'
 import DefaultStyle from "../Model/DefaultStyle";
 import Instance from "../Data/Instance/Instance";
-import ConstantData2 from "../Data/Constant/ConstantData2";
+import OptConstant from "../Data/Constant/OptConstant";
+import CursorConstant from "../Data/Constant/CursorConstant";
+import T3Util from "../Util/T3Util";
+import BConstant from "./B.Constant";
 
 class Formatter {
 
@@ -42,20 +42,22 @@ class Formatter {
     this.dataNameEnabled = !1;
   }
 
+  /**
+   * Sets minimum and maximum width limits for text formatting
+   * @param limits - Object containing minWidth and maxWidth properties
+   */
   SetLimits(limits) {
-    console.log("B.Text.Formatter: setLimits input:", limits);
-
     this.limits.minWidth = limits.minWidth !== undefined ? limits.minWidth : this.limits.minWidth;
     this.limits.maxWidth = limits.maxWidth !== undefined ? limits.maxWidth : this.limits.maxWidth;
 
     this.fmtText = this.CalcFromRuntime(this.rtData, this.limits);
-
-    console.log("B.Text.Formatter: setLimits output:", this.fmtText);
   }
 
-  SetRenderingEnabled(isEnabled: boolean) {
-    console.log("B.Text.Formatter: setRenderingEnabled input:", isEnabled);
-
+  /**
+   * Enables or disables text rendering with deferred processing support
+   * @param isEnabled - Boolean indicating if rendering should be enabled
+   */
+  SetRenderingEnabled(isEnabled) {
     let styleRunsCopy = [];
     this.renderingEnabled = isEnabled;
 
@@ -70,13 +72,17 @@ class Formatter {
       this.UpdateSpellCheckFormatting();
       this.deferredRenderNeeded = false;
     }
-
-    console.log("B.Text.Formatter: setRenderingEnabled output:", this.renderingEnabled);
   }
 
-  SetText(text: string, format?: any, start?: number, length?: number, skipCallback?: boolean) {
-    console.log("B.Text.Formatter: SetText input:", { text, format, start, length, skipCallback });
-
+  /**
+   * Sets text content with optional formatting at specified position
+   * @param text - The text content to insert
+   * @param format - Format to apply to the inserted text (optional)
+   * @param startPosition - Starting position for insertion (optional)
+   * @param selectionLength - Length of text to replace (optional)
+   * @param skipCallback - Whether to skip edit callbacks (optional)
+   */
+  SetText(text, format, startPosition, selectionLength, skipCallback) {
     let newText = '';
     let paragraphInfo = this.DefaultPStyle();
     let paragraphStyles = [];
@@ -88,30 +94,30 @@ class Formatter {
 
     text = String(text).replace(/(\r\n|\r|\u2028|\u2029)/g, '\n').replace(/([\u0000-\u0008]|[\u000B-\u001F])/g, '');
 
-    if (start == null) {
-      start = 0;
-    } else if (start < 0 || start > this.rtData.text.length) {
-      start = this.rtData.text.length;
+    if (startPosition == null) {
+      startPosition = 0;
+    } else if (startPosition < 0 || startPosition > this.rtData.text.length) {
+      startPosition = this.rtData.text.length;
     }
 
-    if (length == null || length > this.rtData.text.length - start) {
-      length = this.rtData.text.length - start;
+    if (selectionLength == null || selectionLength > this.rtData.text.length - startPosition) {
+      selectionLength = this.rtData.text.length - startPosition;
     }
 
     if (typeof format === 'number') {
       formatId = format;
-    } else if (!this.rtData.text.length || start >= this.rtData.text.length - 1) {
+    } else if (!this.rtData.text.length || startPosition >= this.rtData.text.length - 1) {
       formatId = Math.max(this.rtData.styles.length - 1, 0);
       isNewFormat = true;
-    } else if (length > 0) {
-      formatId = this.GetFormatAtOffset(start).id;
-      endFormatId = this.GetFormatAtOffset(start + length).id;
+    } else if (selectionLength > 0) {
+      formatId = this.GetFormatAtOffset(startPosition).id;
+      endFormatId = this.GetFormatAtOffset(startPosition + selectionLength).id;
     } else {
-      formatId = this.GetFormatAtOffset(start - 1).id;
-      endFormatId = this.GetFormatAtOffset(start).id;
+      formatId = this.GetFormatAtOffset(startPosition - 1).id;
+      endFormatId = this.GetFormatAtOffset(startPosition).id;
     }
 
-    if (start === 0) {
+    if (startPosition === 0) {
       isNewFormat = true;
     }
 
@@ -120,7 +126,7 @@ class Formatter {
     }
 
     const paragraphCount = this.GetTextParagraphCount(text);
-    const paragraphIndex = this.GetParagraphAtOffset(start);
+    const paragraphIndex = this.GetParagraphAtOffset(startPosition);
 
     if (paragraphIndex >= 0) {
       paragraphInfo = this.rtData.styleRuns[paragraphIndex].pStyle;
@@ -130,16 +136,16 @@ class Formatter {
       paragraphStyles.push({ pStyle: Utils1.CopyObj(paragraphInfo) });
     }
 
-    paragraphStyles = this.MergeParagraphInfo(paragraphStyles, start, length);
+    paragraphStyles = this.MergeParagraphInfo(paragraphStyles, startPosition, selectionLength);
 
-    if (start === this.rtData.text.length) {
+    if (startPosition === this.rtData.text.length) {
       newText = this.rtData.text + text;
     } else {
-      if (start > 0) {
-        preText = this.rtData.text.slice(0, start);
+      if (startPosition > 0) {
+        preText = this.rtData.text.slice(0, startPosition);
       }
-      if (start + length < this.rtData.text.length) {
-        postText = this.rtData.text.slice(start + length);
+      if (startPosition + selectionLength < this.rtData.text.length) {
+        postText = this.rtData.text.slice(startPosition + selectionLength);
       }
       newText = preText + text + postText;
     }
@@ -170,13 +176,13 @@ class Formatter {
 
       if (text.length) {
         const newCharStyles = new Array(text.length).fill(formatId);
-        this.rtData.charStyles.splice(start, length, ...newCharStyles);
+        this.rtData.charStyles.splice(startPosition, selectionLength, ...newCharStyles);
 
         if (format && typeof format === 'object') {
-          this.SetFormat(format, start, text.length);
+          this.SetFormat(format, startPosition, text.length);
         }
-      } else if (length) {
-        this.rtData.charStyles.splice(start, length);
+      } else if (selectionLength) {
+        this.rtData.charStyles.splice(startPosition, selectionLength);
 
         if (!this.rtData.text.length) {
           if (format && typeof format === 'object') {
@@ -197,35 +203,41 @@ class Formatter {
         this.SetRenderingEnabled(true);
       }
     }
-
-    console.log("B.Text.Formatter: SetText output:", this.rtData.text);
   }
 
-  GetText(startIndex: number, length: number) {
-    console.log("B.Text.Formatter: GetText input:", { startIndex, length });
-
+  /**
+   * Gets text content from specified position and length
+   * @param startPosition - Starting position to get text from
+   * @param textLength - Length of text to get
+   * @returns The requested text content
+   */
+  GetText(startPosition, textLength) {
     let result = '';
     if (this.rtData.text.length) {
-      if (startIndex == null) {
-        startIndex = 0;
-      } else if (startIndex >= this.rtData.text.length) {
-        startIndex = this.rtData.text.length - 1;
+      if (startPosition == null) {
+        startPosition = 0;
+      } else if (startPosition >= this.rtData.text.length) {
+        startPosition = this.rtData.text.length - 1;
       }
 
-      if (!length || startIndex + length > this.rtData.text.length) {
-        length = this.rtData.text.length - startIndex;
+      if (!textLength || startPosition + textLength > this.rtData.text.length) {
+        textLength = this.rtData.text.length - startPosition;
       }
 
-      result = this.rtData.text.substr(startIndex, length);
+      result = this.rtData.text.substr(startPosition, textLength);
     }
 
-    console.log("B.Text.Formatter: GetText output:", result);
     return result;
   }
 
-  SetRuntimeText(newTextData, startIndex, length, skipCallback) {
-    console.log("B.Text.Formatter: SetRuntimeText input:", { newTextData, startIndex, length, skipCallback });
-
+  /**
+   * Sets text with full runtime formatting data
+   * @param newTextData - Object containing text and formatting information
+   * @param startPosition - Starting position for insertion
+   * @param selectionLength - Length of text to replace
+   * @param skipCallback - Whether to skip edit callbacks
+   */
+  SetRuntimeText(newTextData, startPosition, selectionLength, skipCallback) {
     let newText = '';
     let preText = '';
     let postText = '';
@@ -233,26 +245,26 @@ class Formatter {
     let mergedParagraphInfo = [];
 
     if (newTextData.styles && newTextData.styles.length) {
-      if (startIndex == null) {
-        startIndex = 0;
-      } else if (startIndex < 0 || startIndex > this.rtData.text.length) {
-        startIndex = this.rtData.text.length;
+      if (startPosition == null) {
+        startPosition = 0;
+      } else if (startPosition < 0 || startPosition > this.rtData.text.length) {
+        startPosition = this.rtData.text.length;
       }
 
-      if (length == null || length > this.rtData.text.length - startIndex) {
-        length = this.rtData.text.length - startIndex;
+      if (selectionLength == null || selectionLength > this.rtData.text.length - startPosition) {
+        selectionLength = this.rtData.text.length - startPosition;
       }
 
-      const isFullReplace = startIndex === 0 && length === this.rtData.text.length;
+      const isFullReplace = startPosition === 0 && selectionLength === this.rtData.text.length;
 
-      if (startIndex === this.rtData.text.length) {
+      if (startPosition === this.rtData.text.length) {
         newText = this.rtData.text + newTextData.text;
       } else {
-        if (startIndex > 0) {
-          preText = this.rtData.text.slice(0, startIndex);
+        if (startPosition > 0) {
+          preText = this.rtData.text.slice(0, startPosition);
         }
-        if (startIndex + length < this.rtData.text.length) {
-          postText = this.rtData.text.slice(startIndex + length);
+        if (startPosition + selectionLength < this.rtData.text.length) {
+          postText = this.rtData.text.slice(startPosition + selectionLength);
         }
         newText = preText + newTextData.text + postText;
       }
@@ -261,7 +273,7 @@ class Formatter {
         this.rtData.text = newText;
         this.contentVersion++;
 
-        mergedParagraphInfo = this.MergeParagraphInfo(newTextData.paraInfo, startIndex, length);
+        mergedParagraphInfo = this.MergeParagraphInfo(newTextData.paraInfo, startPosition, selectionLength);
 
         newTextData.hyperlinks.forEach((hyperlink) => {
           this.rtData.hyperlinks.push(String(hyperlink));
@@ -298,9 +310,9 @@ class Formatter {
             charStylesCopy[i] = mappedStyleIndex;
           }
 
-          this.rtData.charStyles.splice(startIndex, length, ...charStylesCopy);
-        } else if (length) {
-          this.rtData.charStyles.splice(startIndex, length);
+          this.rtData.charStyles.splice(startPosition, selectionLength, ...charStylesCopy);
+        } else if (selectionLength) {
+          this.rtData.charStyles.splice(startPosition, selectionLength);
         } else {
           this.rtData.styles[0] = $.extend(true, {}, newTextData.styles[0]);
         }
@@ -326,15 +338,17 @@ class Formatter {
         }
       }
     } else {
-      this.SetText(newTextData.text, null, startIndex, length);
+      this.SetText(newTextData.text, null, startPosition, selectionLength);
     }
-
-    console.log("B.Text.Formatter: SetRuntimeText output:", this.rtData.text);
   }
 
-  GetRuntimeText(startIndex: number, length: number) {
-    console.log("B.Text.Formatter: GetRuntimeText input:", { startIndex, length });
-
+  /**
+   * Gets text content with full runtime formatting data
+   * @param startPosition - Starting position to get text from
+   * @param textLength - Length of text to get
+   * @returns Object containing text and formatting information
+   */
+  GetRuntimeText(startPosition, textLength) {
     let result = {
       text: '',
       charStyles: [],
@@ -346,19 +360,19 @@ class Formatter {
       contentVersion: 0
     };
 
-    if (startIndex == null) {
-      startIndex = 0;
-    } else if (startIndex >= this.rtData.text.length) {
-      startIndex = this.rtData.text.length - 1;
+    if (startPosition == null) {
+      startPosition = 0;
+    } else if (startPosition >= this.rtData.text.length) {
+      startPosition = this.rtData.text.length - 1;
     }
 
-    if (!length || startIndex + length > this.rtData.text.length) {
-      length = this.rtData.text.length - startIndex;
+    if (!textLength || startPosition + textLength > this.rtData.text.length) {
+      textLength = this.rtData.text.length - startPosition;
     }
 
-    const endIndex = startIndex + length;
-    const startParagraph = this.GetParagraphAtOffset(startIndex);
-    const endParagraph = this.GetParagraphAtOffset(endIndex);
+    const endPosition = startPosition + textLength;
+    const startParagraph = this.GetParagraphAtOffset(startPosition);
+    const endParagraph = this.GetParagraphAtOffset(endPosition);
 
     this.rtData.styles.forEach(style => {
       result.styles.push(Utils1.CopyObj(style));
@@ -372,8 +386,8 @@ class Formatter {
       result.hyperlinks.push(Utils1.CopyObj(link));
     });
 
-    result.text = this.rtData.text.substr(startIndex, length);
-    result.charStyles = this.rtData.charStyles.slice(startIndex, startIndex + length);
+    result.text = this.rtData.text.substr(startPosition, textLength);
+    result.charStyles = this.rtData.charStyles.slice(startPosition, startPosition + textLength);
 
     const bulletIndent = Math.max(this.GetBulletIndent(), 8);
 
@@ -409,93 +423,89 @@ class Formatter {
     result.internalID = this.parent.internalID;
     result.contentVersion = this.contentVersion;
 
-    console.log("B.Text.Formatter: GetRuntimeText output:", result);
     return result;
   }
 
+  /**
+   * Deletes text from the document at the specified position
+   * @param startIndex - The starting position for deletion
+   * @param length - The number of characters to delete
+   */
   DeleteText(startIndex: number, length: number) {
-    console.log("B.Text.Formatter: DeleteText input:", { startIndex, length });
-
     this.SetText('', null, startIndex, length);
-
-    console.log("B.Text.Formatter: DeleteText output:", this.rtData.text);
   }
 
+  /**
+   * Gets the total length of the text in the formatter
+   * @returns The length of the formatted text
+   */
   GetTextLength() {
-    console.log("B.Text.Formatter: GetTextLength input");
-
-    const length = this.rtData.text.length;
-
-    console.log("B.Text.Formatter: GetTextLength output:", length);
-    return length;
+    return this.rtData.text.length;
   }
 
+  /**
+   * Gets the formatted text dimensions considering the current limits
+   * @returns Object containing width and height of the formatted text
+   */
   GetTextFormatSize() {
-    console.log("B.Text.Formatter: GetTextFormatSize input");
-
     let width = Math.max(this.fmtText.width, this.limits.minWidth);
     if (this.limits.maxWidth) {
       width = Math.min(width, this.limits.maxWidth);
     }
 
-    const result = {
+    return {
       width: width,
       height: this.fmtText.height
     };
-
-    console.log("B.Text.Formatter: GetTextFormatSize output:", result);
-    return result;
   }
 
+  /**
+   * Gets the current content version number used to track changes
+   * @returns The current content version number
+   */
   GetContentVersion() {
-    console.log("B.Text.Formatter: GetContentVersion input");
-
-    const version = this.contentVersion;
-
-    console.log("B.Text.Formatter: GetContentVersion output:", version);
-    return version;
+    return this.contentVersion;
   }
 
+  /**
+   * Gets the current state of spell checking functionality
+   * @returns Boolean indicating if spell checking is enabled
+   */
   GetSpellCheckEnabled() {
-    console.log("B.Text.Formatter: GetSpellCheckEnabled input");
-
-    const isEnabled = this.spellCheckEnabled;
-
-    console.log("B.Text.Formatter: GetSpellCheckEnabled output:", isEnabled);
-    return isEnabled;
+    return this.spellCheckEnabled;
   }
 
+  /**
+   * Determines if spell checking can be applied in the current state
+   * @returns Boolean indicating if spell checking is valid and active
+   */
   SpellCheckValid() {
-    console.log("B.Text.Formatter: SpellCheckValid input");
-
-    const isValid = this.spellCheckEnabled &&
+    return this.spellCheckEnabled &&
       this.parent.doc.spellChecker &&
       this.parent.doc.spellChecker.GetActive() &&
       this.parent.IsActive();
-
-    console.log("B.Text.Formatter: SpellCheckValid output:", isValid);
-    return isValid;
   }
 
+  /**
+   * Enables or disables spell checking functionality
+   * @param isEnabled - Boolean to enable or disable spell checking
+   */
   SetSpellCheck(isEnabled: boolean) {
-    console.log("B.Text.Formatter: SetSpellCheck input:", isEnabled);
-
     this.spellCheckEnabled = isEnabled;
 
     if (!isEnabled) {
       this.UpdateSpellCheckFormatting();
     }
-
-    console.log("B.Text.Formatter: SetSpellCheck output:", this.spellCheckEnabled);
   }
 
+  /**
+   * Updates the spell check state with new word list information
+   * @param newWordList - New word list with updated spelling information
+   */
   UpdateSpellCheck(newWordList) {
-    console.log("B.Text.Formatter: UpdateSpellCheck input:", newWordList);
-
     if (!this.SpellCheckValid()) {
       this.UpdateSpellCheckFormatting();
       this.parent.CallEditCallback('spellcheck');
-      console.log("B.Text.Formatter: UpdateSpellCheck output: Spell check not valid");
       return;
     }
 
@@ -503,17 +513,15 @@ class Formatter {
     this.MergeWordLists(newWordList, currentWordList);
     this.UpdateSpellCheckFormatting();
     this.parent.CallEditCallback('spellcheck');
-
-    console.log("B.Text.Formatter: UpdateSpellCheck output: Spell check updated");
   }
 
+  /**
+   * Updates text formatting to show or hide spelling errors
+   */
   UpdateSpellCheckFormatting() {
-    console.log("B.Text.Formatter: UpdateSpellCheckFormatting input");
-
     if (!this.SpellCheckValid()) {
       this.SetFormat({ spError: false });
       this.wordList = null;
-      console.log("B.Text.Formatter: UpdateSpellCheckFormatting output: Spell check not valid");
       return;
     }
 
@@ -526,7 +534,7 @@ class Formatter {
       const start = wordList.list[i].start;
       const end = wordList.list[i].end;
 
-      if (wordList.list[i].status === Instance.Basic.Text.Spell.WordState.WRONG && !this.IsDataFieldInRange(start, end)) {
+      if (wordList.list[i].status === BConstant.WordState.WRONG && !this.IsDataFieldInRange(start, end)) {
         this.SetFormat({ spError: true }, start, wordList.list[i].word.length, true);
       }
     }
@@ -539,13 +547,13 @@ class Formatter {
       this.BuildRuntimeRuns(this.rtData, paragraphStyles);
       this.fmtText = this.CalcFromRuntime(this.rtData, this.limits);
     }
-
-    console.log("B.Text.Formatter: UpdateSpellCheckFormatting output");
   }
 
+  /**
+   * Adjusts spell checking when text is modified
+   * @param newText - The newly inserted text, if any
+   */
   AdjustSpellCheck(newText?: string) {
-    console.log("B.Text.Formatter: AdjustSpellCheck input:", newText);
-
     let needsSpellCheck = newText && newText.length === 1 && newText.search(/[^\u0000-\u2FFF]|[A-Za-z0-9\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u024F\u0386-\u04FF\u1E00-\u1FFF]/) >= 0;
     let spellCheckRequired = false;
 
@@ -554,7 +562,7 @@ class Formatter {
 
       if (!needsSpellCheck) {
         for (let i = 0; i < wordList.list.length; i++) {
-          if (wordList.list[i].status === Instance.Basic.Text.Spell.WordState.NOTPROCESSED) {
+          if (wordList.list[i].status === BConstant.WordState.NOTPROCESSED) {
             spellCheckRequired = true;
             break;
           }
@@ -569,13 +577,14 @@ class Formatter {
     } else {
       this.wordList = null;
     }
-
-    console.log("B.Text.Formatter: AdjustSpellCheck output:", this.wordList);
   }
 
+  /**
+   * Gets the character index at a specific point that has a spelling error
+   * @param point - The point coordinates to check for spelling errors
+   * @returns The character index with spelling error, or -1 if none found
+   */
   GetSpellAtPoint(point) {
-    console.log("B.Text.Formatter: GetSpellAtPoint input:", point);
-
     let line = null;
     let run = null;
     let charIndex = -1;
@@ -623,13 +632,15 @@ class Formatter {
       }
     }
 
-    console.log("B.Text.Formatter: GetSpellAtPoint output:", charIndex);
     return charIndex;
   }
 
+  /**
+   * Calculates the minimum dimensions required to fit text within a maximum width
+   * @param maxWidth - The maximum width available for text layout
+   * @returns Object containing required width and height
+   */
   CalcTextFit(maxWidth: number) {
-    console.log("B.Text.Formatter: CalcTextFit input:", maxWidth);
-
     let calculatedText;
     let options = { maxWidth: 0 };
 
@@ -639,17 +650,14 @@ class Formatter {
 
     calculatedText = this.CalcFromRuntime(this.rtData, options);
 
-    const result = {
+    return {
       width: calculatedText.dispMinWidth,
       height: calculatedText.height
     };
-
-    console.log("B.Text.Formatter: CalcTextFit output:", result);
-    return result;
   }
 
   CalcTextWrap(maxWidth: number) {
-    console.log("B.Text.Formatter: CalcTextWrap input:", maxWidth);
+    T3Util.Log("B.Text.Formatter: CalcTextWrap input:", maxWidth);
 
     let options = { maxWidth: 0 };
     if (maxWidth) {
@@ -672,12 +680,12 @@ class Formatter {
       }
     }
 
-    console.log("B.Text.Formatter: CalcTextWrap output:", wrapPoints);
+    T3Util.Log("B.Text.Formatter: CalcTextWrap output:", wrapPoints);
     return wrapPoints;
   }
 
   CalcFormatChange(formatChange) {
-    console.log("B.Text.Formatter: CalcFormatChange input:", formatChange);
+    T3Util.Log("B.Text.Formatter: CalcFormatChange input:", formatChange);
 
     let updatedRuntimeData = Utils1.CopyObj(this.rtData);
     let paragraphStyles = [];
@@ -714,12 +722,12 @@ class Formatter {
       height: formattedText.height
     };
 
-    console.log("B.Text.Formatter: CalcFormatChange output:", result);
+    T3Util.Log("B.Text.Formatter: CalcFormatChange output:", result);
     return result;
   }
 
   GetHitInfo(point) {
-    console.log("B.Text.Formatter: GetHitInfo input:", point);
+    T3Util.Log("B.Text.Formatter: GetHitInfo input:", point);
 
     let x = point.x;
     let y = point.y;
@@ -738,7 +746,7 @@ class Formatter {
     };
 
     if (y < 0) {
-      console.log("B.Text.Formatter: GetHitInfo output:", hitInfo);
+      T3Util.Log("B.Text.Formatter: GetHitInfo output:", hitInfo);
       return hitInfo;
     }
 
@@ -746,7 +754,7 @@ class Formatter {
       hitInfo.index = this.fmtText.text.length;
       hitInfo.rLine = this.renderedLines.length;
       hitInfo.fPara = this.fmtText.paragraphs.length;
-      console.log("B.Text.Formatter: GetHitInfo output:", hitInfo);
+      T3Util.Log("B.Text.Formatter: GetHitInfo output:", hitInfo);
       return hitInfo;
     }
 
@@ -766,7 +774,7 @@ class Formatter {
     }
 
     if (lineIndex < 0) {
-      console.log("B.Text.Formatter: GetHitInfo output:", hitInfo);
+      T3Util.Log("B.Text.Formatter: GetHitInfo output:", hitInfo);
       return hitInfo;
     }
 
@@ -790,7 +798,7 @@ class Formatter {
         hitInfo.inDataField = true;
         hitInfo.dataFieldInfo = this.GetDataField(hitInfo.index);
       }
-      console.log("B.Text.Formatter: GetHitInfo output:", hitInfo);
+      T3Util.Log("B.Text.Formatter: GetHitInfo output:", hitInfo);
       return hitInfo;
     }
 
@@ -818,12 +826,12 @@ class Formatter {
       hitInfo.index = charIndex;
     }
 
-    console.log("B.Text.Formatter: GetHitInfo output:", hitInfo);
+    T3Util.Log("B.Text.Formatter: GetHitInfo output:", hitInfo);
     return hitInfo;
   }
 
   static FindPrevNextWord(text: string, position: number, isPrevious: boolean): number {
-    console.log("B.Text.Formatter: FindPrevNextWord input:", { text, position, isPrevious });
+    T3Util.Log("B.Text.Formatter: FindPrevNextWord input:", { text, position, isPrevious });
 
     const length = text.length;
     const whitespace = /[ \f\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]/;
@@ -863,12 +871,12 @@ class Formatter {
       }
     }
 
-    console.log("B.Text.Formatter: FindPrevNextWord output:", position);
+    T3Util.Log("B.Text.Formatter: FindPrevNextWord output:", position);
     return position;
   }
 
   GetAdjacentChar(index: number, line: number, direction: string, event: KeyboardEvent) {
-    console.log("B.Text.Formatter: GetAdjacentChar input:", { index, line, direction, event });
+    T3Util.Log("B.Text.Formatter: GetAdjacentChar input:", { index, line, direction, event });
 
     let currentIndex = index;
     let currentLine = line;
@@ -1046,12 +1054,12 @@ class Formatter {
       }
     }
 
-    console.log("B.Text.Formatter: GetAdjacentChar output:", result);
+    T3Util.Log("B.Text.Formatter: GetAdjacentChar output:", result);
     return result;
   }
 
   GetRenderedCharInfo(charIndex: number, lineIndex?: number) {
-    console.log("B.Text.Formatter: GetRenderedCharInfo input:", { charIndex, lineIndex });
+    T3Util.Log("B.Text.Formatter: GetRenderedCharInfo input:", { charIndex, lineIndex });
 
     let renderedLine, lineRec, runRec, run, charPos;
     const textSize = this.GetTextFormatSize();
@@ -1095,7 +1103,7 @@ class Formatter {
     if (charIndex < 0) {
       result.left = Math.max(0, Math.min(textSize.width, renderedLine.left));
       result.right = Math.max(0, Math.min(textSize.width, renderedLine.right));
-      console.log("B.Text.Formatter: GetRenderedCharInfo output:", result);
+      T3Util.Log("B.Text.Formatter: GetRenderedCharInfo output:", result);
       return result;
     }
 
@@ -1140,12 +1148,12 @@ class Formatter {
     result.left = Math.max(0, Math.min(textSize.width, result.left));
     result.right = Math.max(0, Math.min(textSize.width, result.right));
 
-    console.log("B.Text.Formatter: GetRenderedCharInfo output:", result);
+    T3Util.Log("B.Text.Formatter: GetRenderedCharInfo output:", result);
     return result;
   }
 
   GetRenderedRange(startIndex: number, endIndex: number) {
-    console.log("B.Text.Formatter: GetRenderedRange input:", { startIndex, endIndex });
+    T3Util.Log("B.Text.Formatter: GetRenderedRange input:", { startIndex, endIndex });
 
     let renderedRanges = [];
     if (startIndex > endIndex || startIndex < 0 || endIndex < 0) {
@@ -1194,12 +1202,12 @@ class Formatter {
       }
     }
 
-    console.log("B.Text.Formatter: GetRenderedRange output:", renderedRanges);
+    T3Util.Log("B.Text.Formatter: GetRenderedRange output:", renderedRanges);
     return renderedRanges;
   }
 
   BuildRuntimeCharPos(line, run) {
-    console.log("B.Text.Formatter: BuildRuntimeCharPos input:", { line, run });
+    T3Util.Log("B.Text.Formatter: BuildRuntimeCharPos input:", { line, run });
 
     let charPos = [];
     let currentPos = run.left;
@@ -1232,11 +1240,11 @@ class Formatter {
 
     run.charPos = charPos;
 
-    console.log("B.Text.Formatter: BuildRuntimeCharPos output:", run.charPos);
+    T3Util.Log("B.Text.Formatter: BuildRuntimeCharPos output:", run.charPos);
   }
 
   GetWordAtIndex(index: number) {
-    console.log("B.Text.Formatter: GetWordAtIndex input:", index);
+    T3Util.Log("B.Text.Formatter: GetWordAtIndex input:", index);
 
     let wordList = this.GetWordList();
     let result = { start: index, end: index };
@@ -1249,16 +1257,16 @@ class Formatter {
       }
     }
 
-    console.log("B.Text.Formatter: GetWordAtIndex output:", result);
+    T3Util.Log("B.Text.Formatter: GetWordAtIndex output:", result);
     return result;
   }
 
   GetWordList() {
-    console.log("B.Text.Formatter: GetWordList input");
+    T3Util.Log("B.Text.Formatter: GetWordList input");
 
     let previousWordList;
     if (this.wordList && this.wordList.sessionID === this.GetContentVersion()) {
-      console.log("B.Text.Formatter: GetWordList output:", this.wordList);
+      T3Util.Log("B.Text.Formatter: GetWordList output:", this.wordList);
       return this.wordList;
     }
 
@@ -1269,12 +1277,12 @@ class Formatter {
       this.MergeWordLists(previousWordList, this.wordList);
     }
 
-    console.log("B.Text.Formatter: GetWordList output:", this.wordList);
+    T3Util.Log("B.Text.Formatter: GetWordList output:", this.wordList);
     return this.wordList;
   }
 
   MergeWordLists(newWordList, currentWordList) {
-    console.log("B.Text.Formatter: MergeWordLists input:", { newWordList, currentWordList });
+    T3Util.Log("B.Text.Formatter: MergeWordLists input:", { newWordList, currentWordList });
 
     for (let i = 0; i < newWordList.list.length; i++) {
       const newWord = newWordList.list[i];
@@ -1290,11 +1298,11 @@ class Formatter {
       }
     }
 
-    console.log("B.Text.Formatter: MergeWordLists output:", currentWordList);
+    T3Util.Log("B.Text.Formatter: MergeWordLists output:", currentWordList);
   }
 
   BuildWordList() {
-    console.log("B.Text.Formatter: BuildWordList input");
+    T3Util.Log("B.Text.Formatter: BuildWordList input");
 
     let match;
     const wordList = {
@@ -1311,19 +1319,19 @@ class Formatter {
         word: word,
         start: match.index,
         end: match.index + match[0].length,
-        status: Spell.WordState.NOTPROCESSED,
+        status: BConstant.WordState.NOTPROCESSED,
         auto: false,
         needSuggest: true,
         suggestions: null
       });
     }
 
-    console.log("B.Text.Formatter: BuildWordList output:", wordList);
+    T3Util.Log("B.Text.Formatter: BuildWordList output:", wordList);
     return wordList;
   }
 
   SetFormat(format, start?, length?, skipCallback?) {
-    console.log("B.Text.Formatter: SetFormat input:", { format, start, length, skipCallback });
+    T3Util.Log("B.Text.Formatter: SetFormat input:", { format, start, length, skipCallback });
 
     let styleIndex = -1;
     let formatChanged = false;
@@ -1351,7 +1359,7 @@ class Formatter {
         this.rtData.styles = [style];
         styleIndex = 0;
       }
-      console.log("B.Text.Formatter: SetFormat output:", styleIndex);
+      T3Util.Log("B.Text.Formatter: SetFormat output:", styleIndex);
       return styleIndex;
     }
 
@@ -1363,7 +1371,7 @@ class Formatter {
     }
 
     if (skipCallback || !formatChanged) {
-      console.log("B.Text.Formatter: SetFormat output: No format change");
+      T3Util.Log("B.Text.Formatter: SetFormat output: No format change");
       return -1;
     }
 
@@ -1394,12 +1402,12 @@ class Formatter {
     this.fmtText = this.CalcFromRuntime(this.rtData, this.limits);
     this.parent.CallEditCallback('select');
 
-    console.log("B.Text.Formatter: SetFormat output:", -1);
+    T3Util.Log("B.Text.Formatter: SetFormat output:", -1);
     return -1;
   }
 
   GetFormatAtOffset(offset: number, runtimeData?: any) {
-    console.log("B.Text.Formatter: GetFormatAtOffset input:", { offset, runtimeData });
+    T3Util.Log("B.Text.Formatter: GetFormatAtOffset input:", { offset, runtimeData });
 
     let styleIndex = 0;
     let style = new DefaultStyle();
@@ -1426,24 +1434,24 @@ class Formatter {
       style: style
     };
 
-    console.log("B.Text.Formatter: GetFormatAtOffset output:", result);
+    T3Util.Log("B.Text.Formatter: GetFormatAtOffset output:", result);
     return result;
   }
 
   GetFormatByID(formatId: number) {
-    console.log("B.Text.Formatter: GetFormatByID input:", formatId);
+    T3Util.Log("B.Text.Formatter: GetFormatByID input:", formatId);
 
     let style = new DefaultStyle();
     if (formatId >= 0 && formatId < this.rtData.styles.length) {
       style = this.rtData.styles[formatId];
     }
 
-    console.log("B.Text.Formatter: GetFormatByID output:", style);
+    T3Util.Log("B.Text.Formatter: GetFormatByID output:", style);
     return style;
   }
 
   SetParagraphStyle(paragraphStyle, startOffset, length) {
-    console.log("B.Text.Formatter: SetParagraphStyle input:", { paragraphStyle, startOffset, length });
+    T3Util.Log("B.Text.Formatter: SetParagraphStyle input:", { paragraphStyle, startOffset, length });
 
     let startParagraph, endParagraph;
 
@@ -1493,11 +1501,11 @@ class Formatter {
       this.fmtText = this.CalcFromRuntime(this.rtData, this.limits);
     }
 
-    console.log("B.Text.Formatter: SetParagraphStyle output:", this.fmtText);
+    T3Util.Log("B.Text.Formatter: SetParagraphStyle output:", this.fmtText);
   }
 
   GetParagraphStyle(offset: number) {
-    console.log("B.Text.Formatter: GetParagraphStyle input:", offset);
+    T3Util.Log("B.Text.Formatter: GetParagraphStyle input:", offset);
 
     let paragraphStyle = this.DefaultPStyle();
     const paragraphIndex = this.GetParagraphAtOffset(offset);
@@ -1506,45 +1514,45 @@ class Formatter {
       paragraphStyle = Utils1.CopyObj(this.rtData.styleRuns[paragraphIndex].pStyle);
     }
 
-    console.log("B.Text.Formatter: GetParagraphStyle output:", paragraphStyle);
+    T3Util.Log("B.Text.Formatter: GetParagraphStyle output:", paragraphStyle);
     return paragraphStyle;
   }
 
   GetParagraphAtOffset(offset: number) {
-    console.log("B.Text.Formatter: GetParagraphAtOffset input:", offset);
+    T3Util.Log("B.Text.Formatter: GetParagraphAtOffset input:", offset);
 
     for (let i = 0; i < this.rtData.styleRuns.length; i++) {
       if (offset < this.rtData.styleRuns[i].start + this.rtData.styleRuns[i].nChars) {
-        console.log("B.Text.Formatter: GetParagraphAtOffset output:", i);
+        T3Util.Log("B.Text.Formatter: GetParagraphAtOffset output:", i);
         return i;
       }
     }
 
     const result = this.rtData.styleRuns.length - 1;
-    console.log("B.Text.Formatter: GetParagraphAtOffset output:", result);
+    T3Util.Log("B.Text.Formatter: GetParagraphAtOffset output:", result);
     return result;
   }
 
   GetParagraphCount() {
-    console.log("B.Text.Formatter: GetParagraphCount input");
+    T3Util.Log("B.Text.Formatter: GetParagraphCount input");
 
     const paragraphCount = this.rtData.styleRuns.length;
 
-    console.log("B.Text.Formatter: GetParagraphCount output:", paragraphCount);
+    T3Util.Log("B.Text.Formatter: GetParagraphCount output:", paragraphCount);
     return paragraphCount;
   }
 
   GetParagraphPosition(paragraphIndex: number): number {
-    console.log("B.Text.Formatter: GetParagraphPosition input:", paragraphIndex);
+    T3Util.Log("B.Text.Formatter: GetParagraphPosition input:", paragraphIndex);
 
     const position = paragraphIndex < this.rtData.styleRuns.length ? this.rtData.styleRuns[paragraphIndex].start : -1;
 
-    console.log("B.Text.Formatter: GetParagraphPosition output:", position);
+    T3Util.Log("B.Text.Formatter: GetParagraphPosition output:", position);
     return position;
   }
 
   GetCommonFormatForRange(startIndex: number, length: number) {
-    console.log("B.Text.Formatter: GetCommonFormatForRange input:", { startIndex, length });
+    T3Util.Log("B.Text.Formatter: GetCommonFormatForRange input:", { startIndex, length });
 
     let commonFormat = {};
     let currentStyleIndex, charStyleIndex;
@@ -1571,12 +1579,12 @@ class Formatter {
       }
     }
 
-    console.log("B.Text.Formatter: GetCommonFormatForRange output:", commonFormat);
+    T3Util.Log("B.Text.Formatter: GetCommonFormatForRange output:", commonFormat);
     return commonFormat;
   }
 
   GetFormatRangeAtIndex(format, index) {
-    console.log("B.Text.Formatter: GetFormatRangeAtIndex input:", { format, index });
+    T3Util.Log("B.Text.Formatter: GetFormatRangeAtIndex input:", { format, index });
 
     let start = index;
     let end = index;
@@ -1584,7 +1592,7 @@ class Formatter {
     const totalChars = this.rtData.charStyles.length;
 
     if (!this.IsFormatAtIndex(format, index)) {
-      console.log("B.Text.Formatter: GetFormatRangeAtIndex output:", { start: -1, end: -1 });
+      T3Util.Log("B.Text.Formatter: GetFormatRangeAtIndex output:", { start: -1, end: -1 });
       return { start: -1, end: -1 };
     }
 
@@ -1604,34 +1612,34 @@ class Formatter {
     }
 
     const result = { start, end };
-    console.log("B.Text.Formatter: GetFormatRangeAtIndex output:", result);
+    T3Util.Log("B.Text.Formatter: GetFormatRangeAtIndex output:", result);
     return result;
   }
 
   IsFormatAtIndex(format: any, index: number): boolean {
-    console.log("B.Text.Formatter: IsFormatAtIndex input:", { format, index });
+    T3Util.Log("B.Text.Formatter: IsFormatAtIndex input:", { format, index });
 
     const formatAtOffset = this.GetFormatAtOffset(index);
     const result = this.MatchPartialStyles(formatAtOffset.style, format);
 
-    console.log("B.Text.Formatter: IsFormatAtIndex output:", result);
+    T3Util.Log("B.Text.Formatter: IsFormatAtIndex output:", result);
     return result;
   }
 
   GetFormatTextMinDimensions() {
-    console.log("B.Text.Formatter: GetFormatTextMinDimensions input");
+    T3Util.Log("B.Text.Formatter: GetFormatTextMinDimensions input");
 
     const width = this.fmtText.width;
     const height = this.fmtText.height;
 
     const result = { width: width, height: height };
 
-    console.log("B.Text.Formatter: GetFormatTextMinDimensions output:", result);
+    T3Util.Log("B.Text.Formatter: GetFormatTextMinDimensions output:", result);
     return result;
   }
 
   SetHyperlink(url: string, startOffset: number, length: number) {
-    console.log("B.Text.Formatter: SetHyperlink input:", { url, startOffset, length });
+    T3Util.Log("B.Text.Formatter: SetHyperlink input:", { url, startOffset, length });
 
     let hyperlinkRange, formatRange, currentHyperlink, endOffset, isExtended = false;
 
@@ -1683,11 +1691,11 @@ class Formatter {
     length = endOffset - startOffset;
     this.SetFormat({ hyperlink: hyperlinkId }, startOffset, length);
 
-    console.log("B.Text.Formatter: SetHyperlink output:", { url, startOffset, length });
+    T3Util.Log("B.Text.Formatter: SetHyperlink output:", { url, startOffset, length });
   }
 
   GetHyperlinkAtOffset(offset: number) {
-    console.log("B.Text.Formatter: GetHyperlinkAtOffset input:", offset);
+    T3Util.Log("B.Text.Formatter: GetHyperlinkAtOffset input:", offset);
 
     const format = this.GetFormatAtOffset(offset).style;
     let result = null;
@@ -1699,17 +1707,17 @@ class Formatter {
       };
     }
 
-    console.log("B.Text.Formatter: GetHyperlinkAtOffset output:", result);
+    T3Util.Log("B.Text.Formatter: GetHyperlinkAtOffset output:", result);
     return result;
   }
 
   GetHyperlinkAtPoint(point) {
-    console.log("B.Text.Formatter: GetHyperlinkAtPoint input:", point);
+    T3Util.Log("B.Text.Formatter: GetHyperlinkAtPoint input:", point);
 
     let lineIndex, runIndex, styleIndex = -1;
 
     if (point.y < 0 || point.y > this.fmtText.height) {
-      console.log("B.Text.Formatter: GetHyperlinkAtPoint output:", null);
+      T3Util.Log("B.Text.Formatter: GetHyperlinkAtPoint output:", null);
       return null;
     }
 
@@ -1739,12 +1747,12 @@ class Formatter {
       }
     }
 
-    console.log("B.Text.Formatter: GetHyperlinkAtPoint output:", result);
+    T3Util.Log("B.Text.Formatter: GetHyperlinkAtPoint output:", result);
     return result;
   }
 
   ClearHyperlink(offset: number) {
-    console.log("B.Text.Formatter: ClearHyperlink input:", offset);
+    T3Util.Log("B.Text.Formatter: ClearHyperlink input:", offset);
 
     const hyperlink = this.GetHyperlinkAtOffset(offset);
     if (hyperlink) {
@@ -1752,11 +1760,11 @@ class Formatter {
       this.fmtText = this.CalcFromRuntime(this.rtData, this.limits);
     }
 
-    console.log("B.Text.Formatter: ClearHyperlink output:", this.fmtText);
+    T3Util.Log("B.Text.Formatter: ClearHyperlink output:", this.fmtText);
   }
 
   RemoveHyperlink(hyperlinkIndex: number) {
-    console.log("B.Text.Formatter: RemoveHyperlink input:", hyperlinkIndex);
+    T3Util.Log("B.Text.Formatter: RemoveHyperlink input:", hyperlinkIndex);
 
     if (hyperlinkIndex >= 0 && hyperlinkIndex < this.rtData.hyperlinks.length) {
       this.rtData.hyperlinks.splice(hyperlinkIndex, 1);
@@ -1770,11 +1778,11 @@ class Formatter {
       }
     }
 
-    console.log("B.Text.Formatter: RemoveHyperlink output:", this.rtData.hyperlinks);
+    T3Util.Log("B.Text.Formatter: RemoveHyperlink output:", this.rtData.hyperlinks);
   }
 
   SetHyperlinkCursor() {
-    console.log("B.Text.Formatter: SetHyperlinkCursor input");
+    T3Util.Log("B.Text.Formatter: SetHyperlinkCursor input");
 
     let lineIndex, runIndex, styleIndex, element;
 
@@ -1784,13 +1792,13 @@ class Formatter {
         if (this.rtData.styles[styleIndex].hyperlink >= 0) {
           element = this.renderedLines[lineIndex].runs[runIndex].elem;
           if (element) {
-            element.node.setAttribute('class', ConstantData2.CursorType.POINTER);
+            element.node.setAttribute('class', CursorConstant.CursorType.POINTER);
           }
         }
       }
     }
 
-    console.log("B.Text.Formatter: SetHyperlinkCursor output");
+    T3Util.Log("B.Text.Formatter: SetHyperlinkCursor output");
   }
 
   /**
@@ -1799,7 +1807,7 @@ class Formatter {
    * @param formattingLayer - The layer where underlines, spell errors, and other formatting will be rendered
    */
   RenderFormattedText(textContainer, formattingLayer) {
-    console.log("B.Text.Formatter: RenderFormattedText input:", { textContainer, formattingLayer });
+    T3Util.Log("B.Text.Formatter: RenderFormattedText input:", { textContainer, formattingLayer });
 
     let style, text, horizontalOffset, lineWidth, formattingInfo, lineElement;
     let bulletInfo, renderInfo, run, textElement, styleCache, linkColor;
@@ -1988,11 +1996,11 @@ class Formatter {
       parentContainer.add(textContainer, containerPosition);
     }
 
-    console.log("B.Text.Formatter: RenderFormattedText output:", this.renderedLines);
+    T3Util.Log("B.Text.Formatter: RenderFormattedText output:", this.renderedLines);
   }
 
   AttachHyperlinkToRun(element, style) {
-    console.log("B.Text.Formatter: AttachHyperlinkToRun input:", { element, style });
+    T3Util.Log("B.Text.Formatter: AttachHyperlinkToRun input:", { element, style });
 
     if (style.hyperlink !== undefined && style.hyperlink >= 0 && style.hyperlink < this.fmtText.hyperlinks.length) {
       const hyperlink = this.fmtText.hyperlinks[style.hyperlink];
@@ -2002,17 +2010,17 @@ class Formatter {
       if (actualHyperlink) {
         element.node.setAttribute('_explink_', actualHyperlink);
         Instance.Basic.Element.SetTooltipOnElement(element, resolvedHyperlink);
-        console.log("B.Text.Formatter: AttachHyperlinkToRun output:", true);
+        T3Util.Log("B.Text.Formatter: AttachHyperlinkToRun output:", true);
         return true;
       }
     }
 
-    console.log("B.Text.Formatter: AttachHyperlinkToRun output:", false);
+    T3Util.Log("B.Text.Formatter: AttachHyperlinkToRun output:", false);
     return false;
   }
 
   RenderUnderline(underline, formattingLayer) {
-    console.log("B.Text.Formatter: RenderUnderline input:", { underline, formattingLayer });
+    T3Util.Log("B.Text.Formatter: RenderUnderline input:", { underline, formattingLayer });
 
     const path = new T3Svg.Path();
     const startX = Utils1.RoundCoord(underline.x);
@@ -2026,11 +2034,11 @@ class Formatter {
 
     formattingLayer.add(path);
 
-    console.log("B.Text.Formatter: RenderUnderline output");
+    T3Util.Log("B.Text.Formatter: RenderUnderline output");
   }
 
   RenderSpellError(spellError, formattingLayer) {
-    console.log("B.Text.Formatter: RenderSpellError input:", { spellError, formattingLayer });
+    T3Util.Log("B.Text.Formatter: RenderSpellError input:", { spellError, formattingLayer });
 
     const path = new T3Svg.Path();
     let x = spellError.x;
@@ -2051,11 +2059,11 @@ class Formatter {
     path.node.setAttribute('no-export', '1');
     formattingLayer.add(path);
 
-    console.log("B.Text.Formatter: RenderSpellError output");
+    T3Util.Log("B.Text.Formatter: RenderSpellError output");
   }
 
   RenderDataFieldHilites(formattingLayer) {
-    console.log("B.Text.Formatter: RenderDataFieldHilites input:", formattingLayer);
+    T3Util.Log("B.Text.Formatter: RenderDataFieldHilites input:", formattingLayer);
 
     let dataField, tooltipText, rectElement;
 
@@ -2078,11 +2086,11 @@ class Formatter {
       }
     }
 
-    console.log("B.Text.Formatter: RenderDataFieldHilites output");
+    T3Util.Log("B.Text.Formatter: RenderDataFieldHilites output");
   }
 
   ClearDataFieldHilites(formattingLayer) {
-    console.log("B.Text.Formatter: ClearDataFieldHilites input:", formattingLayer);
+    T3Util.Log("B.Text.Formatter: ClearDataFieldHilites input:", formattingLayer);
 
     if (this.renderedDataFields) {
       for (let i = 0; i < this.renderedDataFields.length; i++) {
@@ -2094,11 +2102,11 @@ class Formatter {
       }
     }
 
-    console.log("B.Text.Formatter: ClearDataFieldHilites output");
+    T3Util.Log("B.Text.Formatter: ClearDataFieldHilites output");
   }
 
   RenderBullet(bulletInfo, formattingLayer) {
-    console.log("B.Text.Formatter: RenderBullet input:", { bulletInfo, formattingLayer });
+    T3Util.Log("B.Text.Formatter: RenderBullet input:", { bulletInfo, formattingLayer });
 
     let shape, path, size, color, isFilled = false, isStroked = false;
     const halfIndent = Math.max(4, bulletInfo.indent / 2);
@@ -2106,23 +2114,23 @@ class Formatter {
 
     switch (bulletInfo.bullet) {
       case 'hround':
-        shape = this.parent.doc.CreateShape(ConstantData.CreateShapeType.OVAL).SetSize(halfIndent, halfIndent);
+        shape = this.parent.doc.CreateShape(OptConstant.CSType.OVAL).SetSize(halfIndent, halfIndent);
         isStroked = true;
         break;
       case 'sround':
-        shape = this.parent.doc.CreateShape(ConstantData.CreateShapeType.OVAL).SetSize(halfIndent, halfIndent);
+        shape = this.parent.doc.CreateShape(OptConstant.CSType.OVAL).SetSize(halfIndent, halfIndent);
         isFilled = true;
         break;
       case 'hsquare':
-        shape = this.parent.doc.CreateShape(ConstantData.CreateShapeType.RECT).SetSize(halfIndent, halfIndent);
+        shape = this.parent.doc.CreateShape(OptConstant.CSType.RECT).SetSize(halfIndent, halfIndent);
         isStroked = true;
         break;
       case 'ssquare':
-        shape = this.parent.doc.CreateShape(ConstantData.CreateShapeType.RECT).SetSize(halfIndent, halfIndent);
+        shape = this.parent.doc.CreateShape(OptConstant.CSType.RECT).SetSize(halfIndent, halfIndent);
         isFilled = true;
         break;
       case 'diamond':
-        shape = this.parent.doc.CreateShape(ConstantData.CreateShapeType.POLYGON).SetPoints([
+        shape = this.parent.doc.CreateShape(OptConstant.CSType.POLYGON).SetPoints([
           { x: halfIndent / 2, y: 0 },
           { x: halfIndent, y: halfIndent / 2 },
           { x: halfIndent / 2, y: halfIndent },
@@ -2131,7 +2139,7 @@ class Formatter {
         isFilled = true;
         break;
       case 'chevron':
-        shape = this.parent.doc.CreateShape(ConstantData.CreateShapeType.POLYGON).SetPoints([
+        shape = this.parent.doc.CreateShape(OptConstant.CSType.POLYGON).SetPoints([
           { x: 0, y: 0 },
           { x: halfIndent, y: halfIndent / 2 },
           { x: 0, y: halfIndent },
@@ -2140,7 +2148,7 @@ class Formatter {
         isFilled = true;
         break;
       case 'check':
-        shape = this.parent.doc.CreateShape(ConstantData.CreateShapeType.POLYLINE).SetPoints([
+        shape = this.parent.doc.CreateShape(OptConstant.CSType.POLYLINE).SetPoints([
           { x: 0, y: halfIndent - halfIndent / 4 },
           { x: halfIndent / 4, y: halfIndent },
           { x: halfIndent, y: 0 }
@@ -2148,7 +2156,7 @@ class Formatter {
         isStroked = true;
         break;
       case 'plus':
-        path = this.parent.doc.CreateShape(ConstantData.CreateShapeType.PATH).PathCreator();
+        path = this.parent.doc.CreateShape(OptConstant.CSType.PATH).PathCreator();
         path.MoveTo(0, halfIndent / 2).LineTo(halfIndent, halfIndent / 2);
         path.MoveTo(halfIndent / 2, 0).LineTo(halfIndent / 2, halfIndent);
         path.Apply();
@@ -2166,11 +2174,11 @@ class Formatter {
       formattingLayer.add(shape.svgObj);
     }
 
-    console.log("B.Text.Formatter: RenderBullet output");
+    T3Util.Log("B.Text.Formatter: RenderBullet output");
   }
 
   SetRuntimeCharFormat(charIndex: number, format: any, apply: boolean): number {
-    console.log("B.Text.Formatter: SetRuntimeCharFormat input:", { charIndex, format, apply });
+    T3Util.Log("B.Text.Formatter: SetRuntimeCharFormat input:", { charIndex, format, apply });
 
     let currentStyle = this.GetFormatAtOffset(charIndex).style;
     let mergedStyle = this.MergeStyles(format, currentStyle);
@@ -2180,12 +2188,12 @@ class Formatter {
       this.rtData.charStyles[charIndex] = styleIndex;
     }
 
-    console.log("B.Text.Formatter: SetRuntimeCharFormat output:", styleIndex);
+    T3Util.Log("B.Text.Formatter: SetRuntimeCharFormat output:", styleIndex);
     return styleIndex;
   }
 
   CalcFromRuntime(runtimeData, limits) {
-    console.log("B.Text.Formatter: CalcFromRuntime input:", { runtimeData, limits });
+    T3Util.Log("B.Text.Formatter: CalcFromRuntime input:", { runtimeData, limits });
 
     let formattedText = new DefaultFmtText();
     let maxWidth = limits ? limits.maxWidth : 0;
@@ -2239,13 +2247,15 @@ class Formatter {
         let paragraphRunMetrics = this.CalcParagraphRunMetrics(runtimeData, styleRun, formattingLayer, this.parent.doc.GetFormattingLayer());
         let nextRunInfo = null;
 
+        let lineForDisplay;
+
         do {
           let indent = paragraph.lines.length ? paragraph.pStyle.lindent : paragraph.pStyle.pindent;
           if (bulletWidth) {
             indent = 0;
           }
           let availableWidth = maxWidth - (bulletWidth + paragraph.pStyle.rindent + indent);
-          let lineForDisplay = this.BuildLineForDisplay(paragraphRunMetrics, availableWidth, nextRunInfo, paragraph.pStyle);
+          lineForDisplay = this.BuildLineForDisplay(paragraphRunMetrics, availableWidth, nextRunInfo, paragraph.pStyle);
 
           if (lineForDisplay.runs.length) {
             let line = {
@@ -2366,12 +2376,12 @@ class Formatter {
       this.deferredRenderNeeded = true;
     }
 
-    console.log("B.Text.Formatter: CalcFromRuntime output:", formattedText);
+    T3Util.Log("B.Text.Formatter: CalcFromRuntime output:", formattedText);
     return formattedText;
   }
 
   BuildLineForDisplay(paragraphRunMetrics, availableWidth, nextRunInfo, paragraphStyle) {
-    console.log("B.Text.Formatter: BuildLineForDisplay input:", { paragraphRunMetrics, availableWidth, nextRunInfo, paragraphStyle });
+    T3Util.Log("B.Text.Formatter: BuildLineForDisplay input:", { paragraphRunMetrics, availableWidth, nextRunInfo, paragraphStyle });
 
     let currentRunIndex = 0;
     let currentCharIndex = 0;
@@ -2612,12 +2622,12 @@ class Formatter {
 
     line.nextRunInfo = nextRunInfo;
 
-    console.log("B.Text.Formatter: BuildLineForDisplay output:", line);
+    T3Util.Log("B.Text.Formatter: BuildLineForDisplay output:", line);
     return line;
   }
 
   CalcParagraphRunMetrics(runtimeData, styleRun, formattingLayer, docFormattingLayer) {
-    console.log("B.Text.Formatter: CalcParagraphRunMetrics input:", { runtimeData, styleRun, formattingLayer, docFormattingLayer });
+    T3Util.Log("B.Text.Formatter: CalcParagraphRunMetrics input:", { runtimeData, styleRun, formattingLayer, docFormattingLayer });
 
     const whitespaceRegex = /(\s+)/g;
     const tabRegex = /(\t+)/g;
@@ -2687,7 +2697,7 @@ class Formatter {
 
     for (let segmentIndex = 0; segmentIndex < runSegments.length; segmentIndex++) {
       const segmentStart = runSegments[segmentIndex].start;
-      const segmentLength = runSegments[segmentIndex].nChars;
+      let segmentLength = runSegments[segmentIndex].nChars;
       const segmentStyle = runtimeData.styles[runSegments[segmentIndex].style];
       const hasCarriageReturn = segmentLength && '\n' === runtimeData.text[segmentStart + segmentLength - 1];
       if (hasCarriageReturn) segmentLength--;
@@ -2780,12 +2790,12 @@ class Formatter {
       }
     }
 
-    console.log("B.Text.Formatter: CalcParagraphRunMetrics output:", paragraphRunMetrics);
+    T3Util.Log("B.Text.Formatter: CalcParagraphRunMetrics output:", paragraphRunMetrics);
     return paragraphRunMetrics;
   }
 
   GetTextParagraphCount(text: string): number {
-    console.log("B.Text.Formatter: GetTextParagraphCount input:", text);
+    T3Util.Log("B.Text.Formatter: GetTextParagraphCount input:", text);
 
     let paragraphCount = 1;
     const newLineMatches = text.match(/\n/g);
@@ -2794,12 +2804,12 @@ class Formatter {
       paragraphCount += newLineMatches.length;
     }
 
-    console.log("B.Text.Formatter: GetTextParagraphCount output:", paragraphCount);
+    T3Util.Log("B.Text.Formatter: GetTextParagraphCount output:", paragraphCount);
     return paragraphCount;
   }
 
   MergeParagraphInfo(paragraphStyles, startOffset, length) {
-    console.log("B.Text.Formatter: MergeParagraphInfo input:", { paragraphStyles, startOffset, length });
+    T3Util.Log("B.Text.Formatter: MergeParagraphInfo input:", { paragraphStyles, startOffset, length });
 
     let startParagraphIndex = this.GetParagraphAtOffset(startOffset);
     let endParagraphIndex = this.GetParagraphAtOffset(startOffset + length);
@@ -2846,12 +2856,12 @@ class Formatter {
       });
     }
 
-    console.log("B.Text.Formatter: MergeParagraphInfo output:", mergedParagraphStyles);
+    T3Util.Log("B.Text.Formatter: MergeParagraphInfo output:", mergedParagraphStyles);
     return mergedParagraphStyles;
   }
 
   BuildRuntimeRuns(runtimeData, paragraphStyles) {
-    console.log("B.Text.Formatter: BuildRuntimeRuns input:", { runtimeData, paragraphStyles });
+    T3Util.Log("B.Text.Formatter: BuildRuntimeRuns input:", { runtimeData, paragraphStyles });
 
     let paragraphStartIndices = [];
     let defaultParagraphStyle = this.DefaultPStyle();
@@ -2952,11 +2962,11 @@ class Formatter {
       }
     }
 
-    console.log("B.Text.Formatter: BuildRuntimeRuns output:", runtimeData.styleRuns);
+    T3Util.Log("B.Text.Formatter: BuildRuntimeRuns output:", runtimeData.styleRuns);
   }
 
   static GetRunPositionForChar(element, charIndex?, isStart?, cache?, offset?) {
-    console.log("B.Text.Formatter: GetRunPositionForChar input:", { element, charIndex, isStart, cache, offset });
+    T3Util.Log("B.Text.Formatter: GetRunPositionForChar input:", { element, charIndex, isStart, cache, offset });
 
     if (charIndex < 0) return -1;
 
@@ -2981,12 +2991,12 @@ class Formatter {
       }
     }
 
-    console.log("B.Text.Formatter: GetRunPositionForChar output:", position);
+    T3Util.Log("B.Text.Formatter: GetRunPositionForChar output:", position);
     return position;
   }
 
   static CalcStyleMetrics(style, doc) {
-    console.log("B.Text.Formatter: CalcStyleMetrics input:", { style, doc });
+    T3Util.Log("B.Text.Formatter: CalcStyleMetrics input:", { style, doc });
 
     let tempStyle = null;
     const metrics = { height: 0, width: 0, ascent: 0, descent: 0, extraYOffset: 0 };
@@ -3045,21 +3055,21 @@ class Formatter {
       }
     }
 
-    console.log("B.Text.Formatter: CalcStyleMetrics output:", metrics);
+    T3Util.Log("B.Text.Formatter: CalcStyleMetrics output:", metrics);
     return metrics;
   }
 
   static MakeIDFromStyle(style) {
-    console.log("B.Text.Formatter: MakeIDFromStyle input:", style);
+    T3Util.Log("B.Text.Formatter: MakeIDFromStyle input:", style);
 
     const id = (style.font + '_' + style.size + '_' + style.weight + '_' + style.style + '_' + style.baseOffset).replace(/ /g, '');
 
-    console.log("B.Text.Formatter: MakeIDFromStyle output:", id);
+    T3Util.Log("B.Text.Formatter: MakeIDFromStyle output:", id);
     return id;
   }
 
   GetBulletPIndex() {
-    console.log("B.Text.Formatter: GetBulletPIndex input");
+    T3Util.Log("B.Text.Formatter: GetBulletPIndex input");
 
     let paragraphIndex = 0;
 
@@ -3073,12 +3083,12 @@ class Formatter {
       }
     }
 
-    console.log("B.Text.Formatter: GetBulletPIndex output:", paragraphIndex);
+    T3Util.Log("B.Text.Formatter: GetBulletPIndex output:", paragraphIndex);
     return paragraphIndex;
   }
 
   GetBulletIndent() {
-    console.log("B.Text.Formatter: GetBulletIndent input");
+    T3Util.Log("B.Text.Formatter: GetBulletIndent input");
 
     let bulletIndent = 0;
     const bulletParagraphIndex = this.GetBulletPIndex();
@@ -3090,12 +3100,12 @@ class Formatter {
       bulletIndent = this.rtData.styleRuns[bulletParagraphIndex].runs[0].metrics.ascent;
     }
 
-    console.log("B.Text.Formatter: GetBulletIndent output:", bulletIndent);
+    T3Util.Log("B.Text.Formatter: GetBulletIndent output:", bulletIndent);
     return bulletIndent;
   }
 
   GetBulletStyle(paragraphIndex) {
-    console.log("B.Text.Formatter: GetBulletStyle input:", paragraphIndex);
+    T3Util.Log("B.Text.Formatter: GetBulletStyle input:", paragraphIndex);
 
     let bulletStyle = new DefaultStyle();
 
@@ -3108,12 +3118,12 @@ class Formatter {
       bulletStyle = this.rtData.styles[styleIndex];
     }
 
-    console.log("B.Text.Formatter: GetBulletStyle output:", bulletStyle);
+    T3Util.Log("B.Text.Formatter: GetBulletStyle output:", bulletStyle);
     return bulletStyle;
   }
 
   static CreateTextRunElem(text: string, style: any, doc: any, linksDisabled: boolean, fieldStyleOverride: any) {
-    console.log("B.Text.Formatter: CreateTextRunElem input:", { text, style, doc, linksDisabled, fieldStyleOverride });
+    T3Util.Log("B.Text.Formatter: CreateTextRunElem input:", { text, style, doc, linksDisabled, fieldStyleOverride });
 
     let fontSizeMultiplier = 1;
     const tspanElement = new T3Svg.Container(T3Svg.create('tspan'));
@@ -3169,7 +3179,7 @@ class Formatter {
         switch (key) {
           case 'font':
             if (!style.mappedFont) {
-              style.mappedFont = doc.MapFont(style.font, style.type);
+              style.mappedFont = [];// doc.MapFont(style.font, style.type);
             }
             $(tspanElement.node).css('font-family', style.mappedFont);
             break;
@@ -3206,18 +3216,18 @@ class Formatter {
       }
     }
 
-    console.log("B.Text.Formatter: CreateTextRunElem output:", tspanElement);
+    T3Util.Log("B.Text.Formatter: CreateTextRunElem output:", tspanElement);
     return tspanElement;
   }
 
   FindAddStyle(style, skipAdd?) {
-    console.log("B.Text.Formatter: FindAddStyle input:", { style, skipAdd });
+    T3Util.Log("B.Text.Formatter: FindAddStyle input:", { style, skipAdd });
 
     let styleIndex = -1;
     const totalStyles = this.rtData.styles.length;
 
     if (!style) {
-      console.log("B.Text.Formatter: FindAddStyle output:", 0);
+      T3Util.Log("B.Text.Formatter: FindAddStyle output:", 0);
       return 0;
     }
 
@@ -3233,12 +3243,12 @@ class Formatter {
       styleIndex = totalStyles;
     }
 
-    console.log("B.Text.Formatter: FindAddStyle output:", styleIndex);
+    T3Util.Log("B.Text.Formatter: FindAddStyle output:", styleIndex);
     return styleIndex;
   }
 
   TrimUnusedStyles(formattedText) {
-    console.log("B.Text.Formatter: TrimUnusedStyles input:", formattedText);
+    T3Util.Log("B.Text.Formatter: TrimUnusedStyles input:", formattedText);
 
     let charStyleUsage = [];
     let newStyles = [];
@@ -3272,11 +3282,11 @@ class Formatter {
       formattedText.styles = newStyles;
     }
 
-    console.log("B.Text.Formatter: TrimUnusedStyles output:", formattedText);
+    T3Util.Log("B.Text.Formatter: TrimUnusedStyles output:", formattedText);
   }
 
   MergeStyles(newStyle, baseStyle) {
-    console.log("B.Text.Formatter: MergeStyles input:", { newStyle, baseStyle });
+    T3Util.Log("B.Text.Formatter: MergeStyles input:", { newStyle, baseStyle });
 
     const mergedStyle = {
       font: newStyle.font !== undefined ? newStyle.font : baseStyle.font,
@@ -3293,12 +3303,12 @@ class Formatter {
       hyperlink: newStyle.hyperlink !== undefined ? newStyle.hyperlink : baseStyle.hyperlink
     };
 
-    console.log("B.Text.Formatter: MergeStyles output:", mergedStyle);
+    T3Util.Log("B.Text.Formatter: MergeStyles output:", mergedStyle);
     return mergedStyle;
   }
 
   AndStyles(style1, style2) {
-    console.log("B.Text.Formatter: AndStyles input:", { style1, style2 });
+    T3Util.Log("B.Text.Formatter: AndStyles input:", { style1, style2 });
 
     const result = {
       font: style1.font === style2.font ? style1.font : undefined,
@@ -3315,12 +3325,12 @@ class Formatter {
       hyperlink: style1.hyperlink === style2.hyperlink ? style1.hyperlink : undefined
     };
 
-    console.log("B.Text.Formatter: AndStyles output:", result);
+    T3Util.Log("B.Text.Formatter: AndStyles output:", result);
     return result;
   }
 
   MatchStyles(style1, style2) {
-    console.log("B.Text.Formatter: MatchStyles input:", { style1, style2 });
+    T3Util.Log("B.Text.Formatter: MatchStyles input:", { style1, style2 });
 
     const result = style1.font === style2.font &&
       style1.type === style2.type &&
@@ -3335,12 +3345,12 @@ class Formatter {
       style1.dataField === style2.dataField &&
       style1.hyperlink === style2.hyperlink;
 
-    console.log("B.Text.Formatter: MatchStyles output:", result);
+    T3Util.Log("B.Text.Formatter: MatchStyles output:", result);
     return result;
   }
 
   MatchStylesNoSpell(style1, style2) {
-    console.log("B.Text.Formatter: MatchStylesNoSpell input:", { style1, style2 });
+    T3Util.Log("B.Text.Formatter: MatchStylesNoSpell input:", { style1, style2 });
 
     const result = style1.font === style2.font &&
       style1.type === style2.type &&
@@ -3354,12 +3364,12 @@ class Formatter {
       style1.dataField === style2.dataField &&
       style1.hyperlink === style2.hyperlink;
 
-    console.log("B.Text.Formatter: MatchStylesNoSpell output:", result);
+    T3Util.Log("B.Text.Formatter: MatchStylesNoSpell output:", result);
     return result;
   }
 
   MatchPartialStyles(style1, style2) {
-    console.log("B.Text.Formatter: MatchPartialStyles input:", { style1, style2 });
+    T3Util.Log("B.Text.Formatter: MatchPartialStyles input:", { style1, style2 });
 
     const result = !(
       (style1.font !== undefined && style2.font !== undefined && style1.font !== style2.font) ||
@@ -3376,7 +3386,7 @@ class Formatter {
       (style1.hyperlink !== undefined && style2.hyperlink !== undefined && style1.hyperlink !== style2.hyperlink)
     );
 
-    console.log("B.Text.Formatter: MatchPartialStyles output:", result);
+    T3Util.Log("B.Text.Formatter: MatchPartialStyles output:", result);
     return result;
   }
 
@@ -3394,25 +3404,25 @@ class Formatter {
   }
 
   SetDataNameDisplay(isEnabled: boolean) {
-    console.log("B.Text.Formatter: SetDataNameDisplay input:", isEnabled);
+    T3Util.Log("B.Text.Formatter: SetDataNameDisplay input:", isEnabled);
     this.dataNameEnabled = isEnabled;
-    console.log("B.Text.Formatter: SetDataNameDisplay output:", this.dataNameEnabled);
+    T3Util.Log("B.Text.Formatter: SetDataNameDisplay output:", this.dataNameEnabled);
   }
 
   GetDataNameDisplay() {
-    console.log("B.Text.Formatter: GetDataNameDisplay input");
+    T3Util.Log("B.Text.Formatter: GetDataNameDisplay input");
 
     const dataNameEnabled = this.dataNameEnabled;
 
-    console.log("B.Text.Formatter: GetDataNameDisplay output:", dataNameEnabled);
+    T3Util.Log("B.Text.Formatter: GetDataNameDisplay output:", dataNameEnabled);
     return dataNameEnabled;
   }
 
   GetDataField(position: number) {
-    console.log("B.Text.Formatter: GetDataField input:", position);
+    T3Util.Log("B.Text.Formatter: GetDataField input:", position);
 
     if (!this.HasDataFields() || !this.IsDataFieldAtPos(position)) {
-      console.log("B.Text.Formatter: GetDataField output:", null);
+      T3Util.Log("B.Text.Formatter: GetDataField output:", null);
       return null;
     }
 
@@ -3431,69 +3441,69 @@ class Formatter {
       }
     }
 
-    console.log("B.Text.Formatter: GetDataField output:", dataFieldInfo);
+    T3Util.Log("B.Text.Formatter: GetDataField output:", dataFieldInfo);
     return dataFieldInfo;
   }
 
   IsDataFieldAtPos(position: number): boolean {
-    console.log("B.Text.Formatter: IsDataFieldAtPos input:", position);
+    T3Util.Log("B.Text.Formatter: IsDataFieldAtPos input:", position);
 
     const hasDataField = !!this.GetFormatAtOffset(position).style.dataField;
 
-    console.log("B.Text.Formatter: IsDataFieldAtPos output:", hasDataField);
+    T3Util.Log("B.Text.Formatter: IsDataFieldAtPos output:", hasDataField);
     return hasDataField;
   }
 
   IsDataFieldInRange(startIndex: number, endIndex: number): boolean {
-    console.log("B.Text.Formatter: IsDataFieldInRange input:", { startIndex, endIndex });
+    T3Util.Log("B.Text.Formatter: IsDataFieldInRange input:", { startIndex, endIndex });
 
     if (!this.HasDataFields()) {
-      console.log("B.Text.Formatter: IsDataFieldInRange output:", false);
+      T3Util.Log("B.Text.Formatter: IsDataFieldInRange output:", false);
       return false;
     }
 
     for (let i = startIndex; i <= endIndex; i++) {
       if (this.IsDataFieldAtPos(i)) {
-        console.log("B.Text.Formatter: IsDataFieldInRange output:", true);
+        T3Util.Log("B.Text.Formatter: IsDataFieldInRange output:", true);
         return true;
       }
     }
 
-    console.log("B.Text.Formatter: IsDataFieldInRange output:", false);
+    T3Util.Log("B.Text.Formatter: IsDataFieldInRange output:", false);
     return false;
   }
 
   HasDataFields() {
-    console.log("B.Text.Formatter: HasDataFields input");
+    T3Util.Log("B.Text.Formatter: HasDataFields input");
 
     const hasDataFields = this.rtData.dataFields && this.rtData.dataFields.length > 0;
 
-    console.log("B.Text.Formatter: HasDataFields output:", hasDataFields);
+    T3Util.Log("B.Text.Formatter: HasDataFields output:", hasDataFields);
     return hasDataFields;
   }
 
   HasDataField(fieldID: string): boolean {
-    console.log("B.Text.Formatter: HasDataField input:", fieldID);
+    T3Util.Log("B.Text.Formatter: HasDataField input:", fieldID);
 
     if (!this.HasDataFields()) {
-      console.log("B.Text.Formatter: HasDataField output:", false);
+      T3Util.Log("B.Text.Formatter: HasDataField output:", false);
       return false;
     }
 
     const formattedFieldID = Formatter.FormatDataFieldID(fieldID, false);
     for (let i = 0; i < this.rtData.dataFields.length; i++) {
       if (Formatter.FormatDataFieldID(this.rtData.dataFields[i].fieldID, false) === formattedFieldID) {
-        console.log("B.Text.Formatter: HasDataField output:", true);
+        T3Util.Log("B.Text.Formatter: HasDataField output:", true);
         return true;
       }
     }
 
-    console.log("B.Text.Formatter: HasDataField output:", false);
+    T3Util.Log("B.Text.Formatter: HasDataField output:", false);
     return false;
   }
 
   ClearDataFieldRun(fieldID: string) {
-    console.log("B.Text.Formatter: ClearDataFieldRun input:", fieldID);
+    T3Util.Log("B.Text.Formatter: ClearDataFieldRun input:", fieldID);
 
     if (this.HasDataFields()) {
       if (fieldID) {
@@ -3509,11 +3519,11 @@ class Formatter {
       }
     }
 
-    console.log("B.Text.Formatter: ClearDataFieldRun output");
+    T3Util.Log("B.Text.Formatter: ClearDataFieldRun output");
   }
 
   RebuildFromData() {
-    console.log("B.Text.Formatter: RebuildFromData input");
+    T3Util.Log("B.Text.Formatter: RebuildFromData input");
 
     if (this.HasDataFields()) {
       const dataFieldsCopy = Utils1.CopyObj(this.rtData.dataFields);
@@ -3529,11 +3539,11 @@ class Formatter {
       }
     }
 
-    console.log("B.Text.Formatter: RebuildFromData output");
+    T3Util.Log("B.Text.Formatter: RebuildFromData output");
   }
 
   static FormatDataFieldID(fieldID, generateUnique) {
-    console.log("B.Text.Formatter: FormatDataFieldID input:", { fieldID, generateUnique });
+    T3Util.Log("B.Text.Formatter: FormatDataFieldID input:", { fieldID, generateUnique });
 
     let formattedID = fieldID;
     const hasUnderscore = formattedID.indexOf('_') > 0;
@@ -3548,12 +3558,12 @@ class Formatter {
       }
     }
 
-    console.log("B.Text.Formatter: FormatDataFieldID output:", formattedID);
+    T3Util.Log("B.Text.Formatter: FormatDataFieldID output:", formattedID);
     return formattedID;
   }
 
   RemapDataFields(mapping) {
-    console.log("B.Text.Formatter: RemapDataFields input:", mapping);
+    T3Util.Log("B.Text.Formatter: RemapDataFields input:", mapping);
 
     if (this.HasDataFields()) {
       const remapFieldID = (fieldID) => {
@@ -3605,7 +3615,7 @@ class Formatter {
       }
     }
 
-    console.log("B.Text.Formatter: RemapDataFields output");
+    T3Util.Log("B.Text.Formatter: RemapDataFields output");
   }
 
 }

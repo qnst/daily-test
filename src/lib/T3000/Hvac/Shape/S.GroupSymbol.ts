@@ -1,18 +1,26 @@
 
 
 import BaseSymbol from './S.BaseSymbol'
-import Utils1 from '../Helper/Utils1';
-import Utils2 from "../Helper/Utils2";
+import Utils1 from '../Util/Utils1';
+import Utils2 from "../Util/Utils2";
 import T3Gv from '../Data/T3Gv'
 import WResult from '../Model/WResult'
-import ShapeDataUtil from '../Util/ShapeDataUtil'
+import ShapeUtil from '../Opt/Shape/ShapeUtil'
 import $ from 'jquery'
 import Effects from '../Basic/B.Element.Effects'
 import Instance from '../Data/Instance/Instance'
-import ConstantData from '../Data/Constant/ConstantData'
+import NvConstant from '../Data/Constant/NvConstant'
 import ConstantData2 from '../Data/Constant/ConstantData2'
-import PolygonConstant from '../Util/PolygonConstant';
-import ShapeConstant from '../Util/ShapeConstant';
+import PolygonConstant from '../Opt/Polygon/PolygonConstant';
+import ShapeConstant from '../Opt/DS/DSConstant';
+import OptConstant from '../Data/Constant/OptConstant';
+import T3Constant from '../Data/Constant/T3Constant';
+import BConstant from '../Basic/B.Constant';
+import StateConstant from '../Data/State/StateConstant';
+import CursorConstant from '../Data/Constant/CursorConstant';
+import TextConstant from '../Data/Constant/TextConstant';
+import StyleConstant from '../Data/Constant/StyleConstant';
+import T3Util from '../Util/T3Util';
 
 class GroupSymbol extends BaseSymbol {
 
@@ -20,37 +28,37 @@ class GroupSymbol extends BaseSymbol {
 
   constructor(options) {
     options = options || {};
-    options.ShapeType = ConstantData.ShapeType.GROUPSYMBOL;
-    options.flags = ConstantData.ObjFlags.SEDO_ImageOnly;
-    console.log('S.GroupSymbol - Input options:', options);
+    options.ShapeType = OptConstant.ShapeType.GROUPSYMBOL;
+    options.flags = NvConstant.ObjFlags.SEDO_ImageOnly;
+    T3Util.Log('S.GroupSymbol - Input options:', options);
     super(options);
-    console.log('S.GroupSymbol - GroupSymbol created');
+    T3Util.Log('S.GroupSymbol - GroupSymbol created');
   }
 
   CreateShape(svgDocument, shapeOptions) {
-    console.log("S.GroupSymbol - CreateShape input:", { svgDocument, shapeOptions });
-    if (this.flags & ConstantData.ObjFlags.SEDO_NotVisible) {
-      console.log("S.GroupSymbol - CreateShape output:", null);
+    T3Util.Log("S.GroupSymbol - CreateShape input:", { svgDocument, shapeOptions });
+    if (this.flags & NvConstant.ObjFlags.SEDO_NotVisible) {
+      T3Util.Log("S.GroupSymbol - CreateShape output:", null);
       return null;
     }
     // Retrieve any style override if present
     this.GetFieldDataStyleOverride();
-    const shapeContainer = svgDocument.CreateShape(ConstantData.CreateShapeType.SHAPECONTAINER);
-    console.log("S.GroupSymbol - CreateShape output:", shapeContainer);
+    const shapeContainer = svgDocument.CreateShape(OptConstant.CSType.SHAPECONTAINER);
+    T3Util.Log("S.GroupSymbol - CreateShape output:", shapeContainer);
     return shapeContainer;
   }
 
   PostCreateShapeCallback(svgDocument, groupElement, eventSettings, extraFlags) {
-    console.log("S.GroupSymbol - PostCreateShapeCallback input:", {
+    T3Util.Log("S.GroupSymbol - PostCreateShapeCallback input:", {
       svgDocument,
       groupElement,
       eventSettings,
       extraFlags
     });
 
-    if (!(this.flags & ConstantData.ObjFlags.SEDO_NotVisible)) {
-      let groupContainer = svgDocument.CreateShape(ConstantData.CreateShapeType.GROUP);
-      groupContainer.SetID(ConstantData.SVGElementClass.SHAPE);
+    if (!(this.flags & NvConstant.ObjFlags.SEDO_NotVisible)) {
+      let groupContainer = svgDocument.CreateShape(OptConstant.CSType.GROUP);
+      groupContainer.SetID(OptConstant.SVGElementClass.SHAPE);
       groupElement.AddElement(groupContainer);
 
       let currentFrame = this.Frame;
@@ -61,21 +69,21 @@ class GroupSymbol extends BaseSymbol {
 
       let shapeObj, totalShapes = this.ShapesInGroup.length;
       let originalDimensions = null, currentShapeInstance = null, rotationAngle = 0, textElement = null;
-      let isFlipHorizontally = (this.extraflags & ConstantData.ExtraFlags.SEDE_FlipHoriz) > 0;
-      let isFlipVertically = (this.extraflags & ConstantData.ExtraFlags.SEDE_FlipVert) > 0;
+      let isFlipHorizontally = (this.extraflags & OptConstant.ExtraFlags.SEDE_FlipHoriz) > 0;
+      let isFlipVertically = (this.extraflags & OptConstant.ExtraFlags.SEDE_FlipVert) > 0;
       let updatedFlipHoriz = isFlipHorizontally, updatedFlipVert = isFlipVertically;
       let flagValue = 0;
 
       if (extraFlags != null) {
-        if ((extraFlags & ConstantData.ExtraFlags.SEDE_FlipHoriz) > 0) {
+        if ((extraFlags & OptConstant.ExtraFlags.SEDE_FlipHoriz) > 0) {
           updatedFlipHoriz = !updatedFlipHoriz;
         }
-        if ((extraFlags & ConstantData.ExtraFlags.SEDE_FlipVert) > 0) {
+        if ((extraFlags & OptConstant.ExtraFlags.SEDE_FlipVert) > 0) {
           updatedFlipVert = !updatedFlipVert;
         }
       }
-      flagValue = Utils2.SetFlag(flagValue, ConstantData.ExtraFlags.SEDE_FlipHoriz, updatedFlipHoriz);
-      flagValue = Utils2.SetFlag(flagValue, ConstantData.ExtraFlags.SEDE_FlipVert, updatedFlipVert);
+      flagValue = Utils2.SetFlag(flagValue, OptConstant.ExtraFlags.SEDE_FlipHoriz, updatedFlipHoriz);
+      flagValue = Utils2.SetFlag(flagValue, OptConstant.ExtraFlags.SEDE_FlipVert, updatedFlipVert);
 
       for (let idx = 0; idx < totalShapes; ++idx) {
         let shapeId = this.ShapesInGroup[idx];
@@ -97,7 +105,7 @@ class GroupSymbol extends BaseSymbol {
             currentShapeInstance.SetRotation(rotationAngle);
           }
           if (shapeObj.DataID >= 0 && (updatedFlipHoriz || updatedFlipVert)) {
-            textElement = currentShapeInstance.GetElementByID(ConstantData.SVGElementClass.TEXT);
+            textElement = currentShapeInstance.GetElementByID(OptConstant.SVGElementClass.TEXT);
             if (textElement) {
               if (updatedFlipHoriz) {
                 textElement.SetMirror(updatedFlipHoriz);
@@ -113,20 +121,20 @@ class GroupSymbol extends BaseSymbol {
       groupContainer.SetSize(width, height);
       groupElement.isShape = true;
 
-      let slopRect = svgDocument.CreateShape(ConstantData.CreateShapeType.RECT);
+      let slopRect = svgDocument.CreateShape(OptConstant.CSType.RECT);
       slopRect.SetStrokeColor('white');
       slopRect.SetFillColor('none');
       slopRect.SetOpacity(0);
       slopRect.SetStrokeWidth(5);
 
       if (eventSettings) {
-        slopRect.SetEventBehavior(ConstantData2.EventBehavior.HIDDEN_ALL);
+        slopRect.SetEventBehavior(OptConstant.EventBehavior.HIDDEN_ALL);
       } else {
-        slopRect.SetEventBehavior(ConstantData2.EventBehavior.NONE);
+        slopRect.SetEventBehavior(OptConstant.EventBehavior.NONE);
       }
 
       groupElement.AddElement(slopRect);
-      slopRect.SetID(ConstantData.SVGElementClass.SLOP);
+      slopRect.SetID(OptConstant.SVGElementClass.SLOP);
       slopRect.ExcludeFromExport(true);
       slopRect.SetSize(width, height);
       groupContainer.SetScale(
@@ -146,17 +154,17 @@ class GroupSymbol extends BaseSymbol {
       this.AddIcons(svgDocument, groupElement);
       this.ApplyEffects(groupElement, false, false);
     }
-    console.log("S.GroupSymbol - PostCreateShapeCallback output executed");
+    T3Util.Log("S.GroupSymbol - PostCreateShapeCallback output executed");
   }
 
   SetObjectStyle(styleOptions: any) {
-    console.log("S.GroupSymbol - SetObjectStyle input:", styleOptions);
+    T3Util.Log("S.GroupSymbol - SetObjectStyle input:", styleOptions);
     if (!styleOptions.ImageURL || styleOptions.ImageURL === '') {
       const filteredStyle = T3Gv.opt.ApplyColorFilter(styleOptions, this, this.StyleRecord, this.colorfilter);
       T3Gv.opt.ApplyGroupProperties(filteredStyle, this);
-      console.log("S.GroupSymbol - SetObjectStyle output: Applied color filter and group properties");
+      T3Util.Log("S.GroupSymbol - SetObjectStyle output: Applied color filter and group properties");
     } else {
-      console.log("S.GroupSymbol - SetObjectStyle output: No changes applied since ImageURL exists");
+      T3Util.Log("S.GroupSymbol - SetObjectStyle output: No changes applied since ImageURL exists");
     }
   }
 
@@ -170,7 +178,7 @@ class GroupSymbol extends BaseSymbol {
     parentElementOverride: any,
     forceUpdate: any
   ) {
-    console.log("S.GroupSymbol - ChangeTextAttributes input:", {
+    T3Util.Log("S.GroupSymbol - ChangeTextAttributes input:", {
       textContent,
       styleOptions,
       textAlignment,
@@ -197,7 +205,7 @@ class GroupSymbol extends BaseSymbol {
 
       let shapeElement;
       if (svgElement) {
-        shapeElement = svgElement.GetElementByID(ConstantData.SVGElementClass.SHAPE);
+        shapeElement = svgElement.GetElementByID(OptConstant.SVGElementClass.SHAPE);
       }
       if (shapeElement != null) {
         // If text editing is allowed, call the base ChangeTextAttributes function
@@ -238,7 +246,7 @@ class GroupSymbol extends BaseSymbol {
 
         for (let index = 0; index < shapesCount; ++index) {
           let shapeObject = T3Gv.opt.GetObjectPtr(shapesGroup[index], true);
-          if (shapeObject && (shapeObject.colorfilter & ConstantData2.SDRColorFilters.SD_NOCOLOR_TEXT) === 0) {
+          if (shapeObject && (shapeObject.colorfilter & StyleConstant.SDRColorFilters.SD_NOCOLOR_TEXT) === 0) {
             let childShapeElement = shapeElement.GetElementByID(shapeObject.BlockID);
             // Remember current dimensions to check for changes after update
             shapeHeightBefore = shapeObject.Frame.height;
@@ -275,11 +283,11 @@ class GroupSymbol extends BaseSymbol {
         this.ConvertToNative(T3Gv.opt.richGradients, false);
       }
     }
-    console.log("S.GroupSymbol - ChangeTextAttributes output executed");
+    T3Util.Log("S.GroupSymbol - ChangeTextAttributes output executed");
   }
 
   GetTextures(textureList: any): void {
-    console.log("S.GroupSymbol - GetTextures input:", textureList);
+    T3Util.Log("S.GroupSymbol - GetTextures input:", textureList);
     const totalShapes = this.ShapesInGroup.length;
     for (let index = 0; index < totalShapes; index++) {
       const shapeObject = T3Gv.opt.GetObjectPtr(this.ShapesInGroup[index], false);
@@ -287,11 +295,11 @@ class GroupSymbol extends BaseSymbol {
         shapeObject.GetTextures(textureList);
       }
     }
-    console.log("S.GroupSymbol - GetTextures output executed");
+    T3Util.Log("S.GroupSymbol - GetTextures output executed");
   }
 
   Resize(svgElement, newDimensions, resizeInfo) {
-    console.log("S.GroupSymbol - Resize input:", { svgElement, newDimensions, resizeInfo });
+    T3Util.Log("S.GroupSymbol - Resize input:", { svgElement, newDimensions, resizeInfo });
 
     const rotation = svgElement.GetRotation();
     const previousBoundingBox = $.extend(true, {}, this.prevBBox);
@@ -301,14 +309,14 @@ class GroupSymbol extends BaseSymbol {
     svgElement.SetSize(newDimensions.width, newDimensions.height);
     svgElement.SetPos(newDimensions.x + offset.x, newDimensions.y + offset.y);
 
-    const shapeElement = svgElement.GetElementByID(ConstantData.SVGElementClass.SHAPE);
+    const shapeElement = svgElement.GetElementByID(OptConstant.SVGElementClass.SHAPE);
     shapeElement.SetSize(newDimensions.width, newDimensions.height);
     shapeElement.SetScale(
       newDimensions.width / this.InitialGroupBounds.width,
       newDimensions.height / this.InitialGroupBounds.height
     );
 
-    const slopElement = svgElement.GetElementByID(ConstantData.SVGElementClass.SLOP);
+    const slopElement = svgElement.GetElementByID(OptConstant.SVGElementClass.SLOP);
     slopElement.SetSize(newDimensions.width, newDimensions.height);
 
     this.LM_ResizeSVGTextObject(svgElement, resizeInfo, newDimensions);
@@ -316,43 +324,43 @@ class GroupSymbol extends BaseSymbol {
     svgElement.SetRotation(rotation);
     this.UpdateDimensionLines(svgElement);
 
-    console.log("S.GroupSymbol - Resize output:", offset);
+    T3Util.Log("S.GroupSymbol - Resize output:", offset);
     return offset;
   }
 
   CreateActionTriggers(svgDocument, triggerType, shapeOptions, actionRequest) {
-    console.log("S.GroupSymbol - CreateActionTriggers input:", { svgDocument, triggerType, shapeOptions, actionRequest });
+    T3Util.Log("S.GroupSymbol - CreateActionTriggers input:", { svgDocument, triggerType, shapeOptions, actionRequest });
     const actionTriggers = this.BaseShape_CreateActionTriggers(svgDocument, triggerType, shapeOptions, actionRequest);
-    console.log("S.GroupSymbol - CreateActionTriggers output:", actionTriggers);
+    T3Util.Log("S.GroupSymbol - CreateActionTriggers output:", actionTriggers);
     return actionTriggers;
   }
 
   BaseShape_CreateActionTriggers(svgDocument, triggerType, shapeOptions, actionRequest) {
-    console.log("S.GroupSymbol - BaseShape_CreateActionTriggers input:", { svgDocument, triggerType, shapeOptions, actionRequest });
+    T3Util.Log("S.GroupSymbol - BaseShape_CreateActionTriggers input:", { svgDocument, triggerType, shapeOptions, actionRequest });
 
     // Define the list of resize cursors in a clockwise order starting from the top-left
     const resizeCursorList = [
-      ConstantData2.CursorType.RESIZE_LT,
-      ConstantData2.CursorType.RESIZE_T,
-      ConstantData2.CursorType.RESIZE_RT,
-      ConstantData2.CursorType.RESIZE_R,
-      ConstantData2.CursorType.RESIZE_RB,
-      ConstantData2.CursorType.RESIZE_B,
-      ConstantData2.CursorType.RESIZE_LB,
-      ConstantData2.CursorType.RESIZE_L
+      CursorConstant.CursorType.RESIZE_LT,
+      CursorConstant.CursorType.RESIZE_T,
+      CursorConstant.CursorType.RESIZE_RT,
+      CursorConstant.CursorType.RESIZE_R,
+      CursorConstant.CursorType.RESIZE_RB,
+      CursorConstant.CursorType.RESIZE_B,
+      CursorConstant.CursorType.RESIZE_LB,
+      CursorConstant.CursorType.RESIZE_L
     ];
 
-    if (T3Gv.opt.Table_GetActiveID() === this.BlockID) {
-      console.log("S.GroupSymbol - BaseShape_CreateActionTriggers output:", null);
-      return null;
-    }
+    // if (T3Gv.opt.Table_GetActiveID() === this.BlockID) {
+    //   T3Util.Log("S.GroupSymbol - BaseShape_CreateActionTriggers output:", null);
+    //   return null;
+    // }
 
-    let actionTriggerGroup = svgDocument.CreateShape(ConstantData.CreateShapeType.GROUP);
-    const knobSize = ConstantData.Defines.SED_KnobSize;
-    const smallKnobSize = ConstantData.Defines.SED_RKnobSize;
-    let useSideKnobs = ((this.extraflags & ConstantData.ExtraFlags.SEDE_SideKnobs) &&
+    let actionTriggerGroup = svgDocument.CreateShape(OptConstant.CSType.GROUP);
+    const knobSize = OptConstant.Defines.SED_KnobSize;
+    const smallKnobSize = OptConstant.Defines.SED_RKnobSize;
+    let useSideKnobs = ((this.extraflags & OptConstant.ExtraFlags.SEDE_SideKnobs) &&
       this.dataclass === PolygonConstant.ShapeTypes.POLYGON) > 0;
-    const minSidePointLength = ConstantData.Defines.MinSidePointLength;
+    const minSidePointLength = OptConstant.Defines.MinSidePointLength;
     let docScale = svgDocument.docInfo.docToScreenScale;
     if (svgDocument.docInfo.docScale <= 0.5) {
       docScale *= 2;
@@ -385,15 +393,15 @@ class GroupSymbol extends BaseSymbol {
     let allowHorizontal = !useSideKnobs;
     let allowVertical = !useSideKnobs;
     switch (this.ObjGrow) {
-      case ConstantData.GrowBehavior.HCONSTRAIN:
+      case OptConstant.GrowBehavior.HCONSTRAIN:
         allowGrow = false;
         allowVertical = false;
         break;
-      case ConstantData.GrowBehavior.VCONSTRAIN:
+      case OptConstant.GrowBehavior.VCONSTRAIN:
         allowGrow = false;
         allowHorizontal = false;
         break;
-      case ConstantData.GrowBehavior.PROPORTIONAL:
+      case OptConstant.GrowBehavior.PROPORTIONAL:
         allowGrow = true;
         allowHorizontal = false;
         allowVertical = false;
@@ -401,7 +409,7 @@ class GroupSymbol extends BaseSymbol {
 
     let knobProps = {
       svgDoc: svgDocument,
-      shapeType: ConstantData.CreateShapeType.RECT,
+      shapeType: OptConstant.CSType.RECT,
       x: 0,
       y: 0,
       knobSize: adjustedKnobSize,
@@ -419,7 +427,7 @@ class GroupSymbol extends BaseSymbol {
       knobProps.fillOpacity = '0.0';
     }
 
-    if (this.flags & ConstantData.ObjFlags.SEDO_Lock) {
+    if (this.flags & NvConstant.ObjFlags.SEDO_Lock) {
       knobProps.fillColor = 'gray';
       knobProps.locked = true;
       useSideKnobs = false;
@@ -428,20 +436,20 @@ class GroupSymbol extends BaseSymbol {
       useSideKnobs = false;
       knobProps.strokeColor = 'red';
       orderedCursorList = [
-        ConstantData2.CursorType.DEFAULT,
-        ConstantData2.CursorType.DEFAULT,
-        ConstantData2.CursorType.DEFAULT,
-        ConstantData2.CursorType.DEFAULT,
-        ConstantData2.CursorType.DEFAULT,
-        ConstantData2.CursorType.DEFAULT,
-        ConstantData2.CursorType.DEFAULT,
-        ConstantData2.CursorType.DEFAULT
+        CursorConstant.CursorType.DEFAULT,
+        CursorConstant.CursorType.DEFAULT,
+        CursorConstant.CursorType.DEFAULT,
+        CursorConstant.CursorType.DEFAULT,
+        CursorConstant.CursorType.DEFAULT,
+        CursorConstant.CursorType.DEFAULT,
+        CursorConstant.CursorType.DEFAULT,
+        CursorConstant.CursorType.DEFAULT
       ];
     }
 
     // Add corner knobs if growing is allowed
     if (allowGrow) {
-      knobProps.knobID = ConstantData.ActionTriggerType.TOPLEFT;
+      knobProps.knobID = OptConstant.ActionTriggerType.TOPLEFT;
       knobProps.cursorType = orderedCursorList[0];
       let newKnob = this.GenericKnob(knobProps);
       actionTriggerGroup.AddElement(newKnob);
@@ -449,21 +457,21 @@ class GroupSymbol extends BaseSymbol {
       knobProps.x = frameWidth - adjustedKnobSize;
       knobProps.y = 0;
       knobProps.cursorType = orderedCursorList[2];
-      knobProps.knobID = ConstantData.ActionTriggerType.TOPRIGHT;
+      knobProps.knobID = OptConstant.ActionTriggerType.TOPRIGHT;
       newKnob = this.GenericKnob(knobProps);
       actionTriggerGroup.AddElement(newKnob);
 
       knobProps.x = frameWidth - adjustedKnobSize;
       knobProps.y = frameHeight - adjustedKnobSize;
       knobProps.cursorType = orderedCursorList[4];
-      knobProps.knobID = ConstantData.ActionTriggerType.BOTTOMRIGHT;
+      knobProps.knobID = OptConstant.ActionTriggerType.BOTTOMRIGHT;
       newKnob = this.GenericKnob(knobProps);
       actionTriggerGroup.AddElement(newKnob);
 
       knobProps.x = 0;
       knobProps.y = frameHeight - adjustedKnobSize;
       knobProps.cursorType = orderedCursorList[6];
-      knobProps.knobID = ConstantData.ActionTriggerType.BOTTOMLEFT;
+      knobProps.knobID = OptConstant.ActionTriggerType.BOTTOMLEFT;
       newKnob = this.GenericKnob(knobProps);
       actionTriggerGroup.AddElement(newKnob);
     }
@@ -473,14 +481,14 @@ class GroupSymbol extends BaseSymbol {
       knobProps.x = frameWidth / 2 - adjustedKnobSize / 2;
       knobProps.y = 0;
       knobProps.cursorType = orderedCursorList[1];
-      knobProps.knobID = ConstantData.ActionTriggerType.TOPCENTER;
+      knobProps.knobID = OptConstant.ActionTriggerType.TOPCENTER;
       let centerKnob = this.GenericKnob(knobProps);
       actionTriggerGroup.AddElement(centerKnob);
 
       knobProps.x = frameWidth / 2 - adjustedKnobSize / 2;
       knobProps.y = frameHeight - adjustedKnobSize;
       knobProps.cursorType = orderedCursorList[5];
-      knobProps.knobID = ConstantData.ActionTriggerType.BOTTOMCENTER;
+      knobProps.knobID = OptConstant.ActionTriggerType.BOTTOMCENTER;
       centerKnob = this.GenericKnob(knobProps);
       actionTriggerGroup.AddElement(centerKnob);
     }
@@ -490,14 +498,14 @@ class GroupSymbol extends BaseSymbol {
       knobProps.x = 0;
       knobProps.y = frameHeight / 2 - adjustedKnobSize / 2;
       knobProps.cursorType = orderedCursorList[7];
-      knobProps.knobID = ConstantData.ActionTriggerType.CENTERLEFT;
+      knobProps.knobID = OptConstant.ActionTriggerType.CENTERLEFT;
       let sideKnob = this.GenericKnob(knobProps);
       actionTriggerGroup.AddElement(sideKnob);
 
       knobProps.x = frameWidth - adjustedKnobSize;
       knobProps.y = frameHeight / 2 - adjustedKnobSize / 2;
       knobProps.cursorType = orderedCursorList[3];
-      knobProps.knobID = ConstantData.ActionTriggerType.CENTERRIGHT;
+      knobProps.knobID = OptConstant.ActionTriggerType.CENTERRIGHT;
       sideKnob = this.GenericKnob(knobProps);
       actionTriggerGroup.AddElement(sideKnob);
     }
@@ -507,7 +515,7 @@ class GroupSymbol extends BaseSymbol {
       let hookInfo = null;
       if (currentObject.hooks.length) {
         const hookTarget = T3Gv.opt.GetObjectPtr(currentObject.hooks[0].objid, false);
-        if ((hookTarget && hookTarget.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.CONNECTOR) ||
+        if ((hookTarget && hookTarget.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.CONNECTOR) ||
           (hookTarget && hookTarget instanceof Instance.Shape.ShapeContainer)) {
           hookInfo = hookTarget.Pr_GetShapeConnectorInfo(currentObject.hooks[0]);
         }
@@ -536,8 +544,8 @@ class GroupSymbol extends BaseSymbol {
         iconProps.cursorType = connectorInfo[i].cursorType;
         iconProps.iconID = connectorInfo[i].knobID;
         iconProps.imageURL = connectorInfo[i].polyType === 'vertical' ?
-          ConstantData.Defines.Connector_Move_Vertical_Path :
-          ConstantData.Defines.Connector_Move_Horizontal_Path;
+          OptConstant.Defines.Connector_Move_Vertical_Path :
+          OptConstant.Defines.Connector_Move_Horizontal_Path;
         iconProps.userData = connectorInfo[i].knobData;
         let newIcon = this.GenericIcon(iconProps);
         actionTriggerGroup.AddElement(newIcon);
@@ -550,13 +558,13 @@ class GroupSymbol extends BaseSymbol {
       let copyOfThis = Utils1.DeepCopy(this);
       copyOfThis.inside = $.extend(true, {}, copyOfThis.Frame);
       let polyPoints = T3Gv.opt.ShapeToPolyLine(this.BlockID, false, true, copyOfThis)
-        .GetPolyPoints(ConstantData.Defines.NPOLYPTS, true, true, false, []);
+        .GetPolyPoints(OptConstant.Defines.NPOLYPTS, true, true, false, []);
       if (polyPoints) {
         for (let k = 1, len = polyPoints.length; k < len; k++) {
           const deltaX = polyPoints[k].x - polyPoints[k - 1].x;
           const deltaY = polyPoints[k].y - polyPoints[k - 1].y;
           if (Utils2.sqrt(deltaX * deltaX + deltaY * deltaY) > minSidePointLength) {
-            knobProps.cursorType = deltaX * deltaX > deltaY * deltaY ? ConstantData2.CursorType.RESIZE_TB : ConstantData2.CursorType.RESIZE_LR;
+            knobProps.cursorType = deltaX * deltaX > deltaY * deltaY ? CursorConstant.CursorType.RESIZE_TB : CursorConstant.CursorType.RESIZE_LR;
             knobProps.x = polyPoints[k - 1].x + deltaX / 2;
             knobProps.y = polyPoints[k - 1].y + deltaY / 2;
             let polyKnob = this.GenericKnob(knobProps);
@@ -573,20 +581,20 @@ class GroupSymbol extends BaseSymbol {
     let hasConnectorHook = this.hooks.length > 0;
     if (hasConnectorHook) {
       const hookObject = T3Gv.opt.GetObjectPtr(this.hooks[0].objid, false);
-      if (hookObject && hookObject.DrawingObjectBaseClass !== ConstantData.DrawingObjectBaseClass.CONNECTOR) {
+      if (hookObject && hookObject.DrawingObjectBaseClass !== OptConstant.DrawingObjectBaseClass.CONNECTOR) {
         hasConnectorHook = false;
       }
     }
 
     if (!disableRotation && !isNarrow && !hasConnectorHook) {
-      const isTextGrowHorizontal = this.TextGrow === ConstantData.TextGrowBehavior.HORIZONTAL &&
-        (this.flags & ConstantData.ObjFlags.SEDO_TextOnly) &&
-        ShapeDataUtil.TextAlignToWin(this.TextAlign).just === ConstantData2.TextJust.TA_LEFT;
-      knobProps.shapeType = ConstantData.CreateShapeType.OVAL;
+      const isTextGrowHorizontal = this.TextGrow === NvConstant.TextGrowBehavior.HORIZONTAL &&
+        (this.flags & NvConstant.ObjFlags.SEDO_TextOnly) &&
+        ShapeUtil.TextAlignToWin(this.TextAlign).just === TextConstant.TextJust.TA_LEFT;
+      knobProps.shapeType = OptConstant.CSType.OVAL;
       knobProps.x = isTextGrowHorizontal ? frameWidth + adjustedSmallKnobSize : frameWidth - 3 * adjustedSmallKnobSize;
       knobProps.y = frameHeight / 2 - adjustedSmallKnobSize / 2;
-      knobProps.cursorType = ConstantData2.CursorType.ROTATE;
-      knobProps.knobID = ConstantData.ActionTriggerType.ROTATE;
+      knobProps.cursorType = CursorConstant.CursorType.ROTATE;
+      knobProps.knobID = OptConstant.ActionTriggerType.ROTATE;
       knobProps.fillColor = 'white';
       knobProps.fillOpacity = 0.001;
       knobProps.strokeSize = 1.5;
@@ -596,7 +604,7 @@ class GroupSymbol extends BaseSymbol {
     }
 
     // Create dimension adjustment knobs if applicable
-    if (this.Dimensions & ConstantData.DimensionFlags.SED_DF_Standoff && this.CanUseStandOffDimensionLines()) {
+    if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Standoff && this.CanUseStandOffDimensionLines()) {
       const svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
       this.CreateDimensionAdjustmentKnobs(actionTriggerGroup, svgElement, knobProps);
     }
@@ -604,9 +612,9 @@ class GroupSymbol extends BaseSymbol {
     actionTriggerGroup.SetSize(frameWidth, frameHeight);
     actionTriggerGroup.SetPos(groupPosition.x, groupPosition.y);
     actionTriggerGroup.isShape = true;
-    actionTriggerGroup.SetID(ConstantData.Defines.Action + triggerType);
+    actionTriggerGroup.SetID(OptConstant.Defines.Action + triggerType);
 
-    console.log("S.GroupSymbol - BaseShape_CreateActionTriggers output:", actionTriggerGroup);
+    T3Util.Log("S.GroupSymbol - BaseShape_CreateActionTriggers output:", actionTriggerGroup);
     return actionTriggerGroup;
   }
 
@@ -615,31 +623,31 @@ class GroupSymbol extends BaseSymbol {
   // }
 
   ContainsText(): boolean {
-    console.log("S.GroupSymbol - ContainsText input:", {
+    T3Util.Log("S.GroupSymbol - ContainsText input:", {
       DataID: this.DataID,
       BlockID: this.BlockID,
       ShapesCount: this.ShapesInGroup.length
     });
 
     if (this.DataID >= 0) {
-      console.log("S.GroupSymbol - ContainsText output:", false);
+      T3Util.Log("S.GroupSymbol - ContainsText output:", false);
       return false;
     }
 
     for (let index = 0; index < this.ShapesInGroup.length; index++) {
       const shapeObject = T3Gv.opt.GetObjectPtr(this.ShapesInGroup[index], false);
       if (shapeObject.ContainsText()) {
-        console.log("S.GroupSymbol - ContainsText output:", true);
+        T3Util.Log("S.GroupSymbol - ContainsText output:", true);
         return true;
       }
     }
 
-    console.log("S.GroupSymbol - ContainsText output:", false);
+    T3Util.Log("S.GroupSymbol - ContainsText output:", false);
     return false;
   }
 
   ConvertToNative(richGradients: any, shouldReturnBuffer: boolean) {
-    console.log('S.GroupSymbol - ConvertToNative input:', { richGradients, shouldReturnBuffer });
+    T3Util.Log('S.GroupSymbol - ConvertToNative input:', { richGradients, shouldReturnBuffer });
 
     let preservedBlock: any;
     const result = new WResult();
@@ -666,9 +674,9 @@ class GroupSymbol extends BaseSymbol {
       T3Gv.docUtil.svgDoc.GetWorkArea();
       result.docDpi = T3Gv.docUtil.svgDoc.docInfo.docDpi;
 
-      const buffer = ShapeDataUtil.WriteBuffer(result, true, true, true);
+      const buffer = ShapeUtil.WriteBuffer(result, true, true, true);
       if (shouldReturnBuffer === true) {
-        console.log('S.GroupSymbol - ConvertToNative output:', buffer);
+        T3Util.Log('S.GroupSymbol - ConvertToNative output:', buffer);
         return buffer;
       }
 
@@ -681,36 +689,36 @@ class GroupSymbol extends BaseSymbol {
             preservedBlock.Data = uint8Buffer;
           }
         } else {
-          preservedBlock = T3Gv.stdObj.CreateBlock(ConstantData.StoredObjectType.H_NATIVE_OBJECT, uint8Buffer);
+          preservedBlock = T3Gv.stdObj.CreateBlock(StateConstant.StoredObjectType.HNativeObject, uint8Buffer);
           this.NativeID = preservedBlock.ID;
         }
       }
-      console.log('S.GroupSymbol - ConvertToNative output:', { preservedBlock });
+      T3Util.Log('S.GroupSymbol - ConvertToNative output:', { preservedBlock });
     } else {
-      console.log('S.GroupSymbol - ConvertToNative output: No shapes in group');
+      T3Util.Log('S.GroupSymbol - ConvertToNative output: No shapes in group');
     }
   }
 
   WriteShapeData(outputStream, writeOptions) {
-    console.log("S.GroupSymbol - WriteShapeData input:", { outputStream, writeOptions });
+    T3Util.Log("S.GroupSymbol - WriteShapeData input:", { outputStream, writeOptions });
 
     let numShapes: number, shapeObj: any, buffer: any, codeLength: any;
     let nativeStorageResult = new WResult();
     let dataId = this.DataID;
 
     // Modify dataId if text attachment flags are set and we are not writing blocks
-    if ((this.TextFlags & ConstantData.TextFlags.SED_TF_AttachB ||
-      this.TextFlags & ConstantData.TextFlags.SED_TF_AttachA) &&
+    if ((this.TextFlags & NvConstant.TextFlags.SED_TF_AttachB ||
+      this.TextFlags & NvConstant.TextFlags.SED_TF_AttachA) &&
       !writeOptions.WriteBlocks) {
       dataId = -1;
     }
 
     nativeStorageResult.richGradients = T3Gv.opt.richGradients;
 
-    ShapeDataUtil.WriteTextParams(outputStream, this, dataId, writeOptions);
+    ShapeUtil.WriteTextParams(outputStream, this, dataId, writeOptions);
 
     if (writeOptions.WriteBlocks) {
-      ShapeDataUtil.WriteNativeID(outputStream, this.NativeID, writeOptions);
+      ShapeUtil.WriteNativeID(outputStream, this.NativeID, writeOptions);
     } else if (this.NativeID && (numShapes = this.ShapesInGroup.length)) {
       for (let i = 0; i < numShapes; i++) {
         const shapeId = this.ShapesInGroup[i];
@@ -738,17 +746,17 @@ class GroupSymbol extends BaseSymbol {
       T3Gv.docUtil.svgDoc.GetWorkArea();
       nativeStorageResult.docDpi = T3Gv.docUtil.svgDoc.docInfo.docDpi;
 
-      buffer = ShapeDataUtil.WriteBuffer(nativeStorageResult, true, true, true);
-      codeLength = ShapeDataUtil.WriteCode(outputStream, ShapeConstant.OpNameCode.cNativeStorage);
+      buffer = ShapeUtil.WriteBuffer(nativeStorageResult, true, true, true);
+      codeLength = ShapeUtil.WriteCode(outputStream, ShapeConstant.OpNameCode.cNativeStorage);
       ShapeConstant.writeNativeBuffer(outputStream, buffer);
-      ShapeDataUtil.WriteLength(outputStream, codeLength);
+      ShapeUtil.WriteLength(outputStream, codeLength);
     }
 
-    console.log("S.GroupSymbol - WriteShapeData output executed");
+    T3Util.Log("S.GroupSymbol - WriteShapeData output executed");
   }
 
   DeleteObject() {
-    console.log("S.GroupSymbol - DeleteObject input: none");
+    T3Util.Log("S.GroupSymbol - DeleteObject input: none");
     const shapesInGroup = this.ShapesInGroup;
     const count = shapesInGroup.length;
     for (let index = 0; index < count; index++) {
@@ -762,29 +770,29 @@ class GroupSymbol extends BaseSymbol {
       }
     }
     this.BaseDrawingObject_DeleteObject();
-    console.log("S.GroupSymbol - DeleteObject output: deleted");
+    T3Util.Log("S.GroupSymbol - DeleteObject output: deleted");
   }
 
 
   BaseDrawingObject_DeleteObject() {
-    console.log("S.GroupSymbol - BaseDrawingObject_DeleteObject input: none");
+    T3Util.Log("S.GroupSymbol - BaseDrawingObject_DeleteObject input: none");
 
     let currentObject = null;
     let hookObject = null;
     let tempHookElement = null;
     let hooksBackup = [];
 
-    // Delete Table object if exists
-    if (this.TableID !== -1) {
-      let tablePointer = T3Gv.opt.GetObjectPtr(this.TableID, true);
-      if (tablePointer) {
-        T3Gv.opt.Table_DeleteObject(tablePointer);
-      }
-      currentObject = T3Gv.stdObj.GetObject(this.TableID);
-      if (currentObject) {
-        currentObject.Delete();
-      }
-    }
+    // // Delete Table object if exists
+    // if (this.TableID !== -1) {
+    //   let tablePointer = T3Gv.opt.GetObjectPtr(this.TableID, true);
+    //   if (tablePointer) {
+    //     T3Gv.opt.Table_DeleteObject(tablePointer);
+    //   }
+    //   currentObject = T3Gv.stdObj.GetObject(this.TableID);
+    //   if (currentObject) {
+    //     currentObject.Delete();
+    //   }
+    // }
 
     // Delete Data object if exists
     if (this.DataID !== -1) {
@@ -843,7 +851,7 @@ class GroupSymbol extends BaseSymbol {
     // Update hooked object's dimension lines if applicable
     if (this.hooks.length) {
       hookObject = T3Gv.opt.GetObjectPtr(this.hooks[0].objid, false);
-      if (hookObject && hookObject.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL && !(hookObject.Dimensions & ConstantData.DimensionFlags.SED_DF_HideHookedObjDimensions)) {
+      if (hookObject && hookObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL && !(hookObject.Dimensions & NvConstant.DimensionFlags.SED_DF_HideHookedObjDimensions)) {
         hooksBackup = Utils1.DeepCopy(this.hooks);
         this.hooks = [];
         tempHookElement = T3Gv.opt.svgObjectLayer.GetElementByID(hookObject.BlockID);
@@ -857,11 +865,11 @@ class GroupSymbol extends BaseSymbol {
       T3Gv.opt.CommentObjectDelete(this);
     }
 
-    console.log("S.GroupSymbol - BaseDrawingObject_DeleteObject output: executed");
+    T3Util.Log("S.GroupSymbol - BaseDrawingObject_DeleteObject output: executed");
   }
 
   BaseDrawingObject_RemoveFieldData(shouldRemove: boolean, fieldDataTableId?: number) {
-    console.log("S.GroupSymbol - BaseDrawingObject_RemoveFieldData input:", { shouldRemove, fieldDataTableId });
+    T3Util.Log("S.GroupSymbol - BaseDrawingObject_RemoveFieldData input:", { shouldRemove, fieldDataTableId });
 
     if (this.HasFieldData() && (!fieldDataTableId || this.fieldDataTableID === fieldDataTableId)) {
       // Retrieve the object pointer for the current BlockID (forcing load)
@@ -888,14 +896,14 @@ class GroupSymbol extends BaseSymbol {
       this.BaseDrawingObject_RefreshFromFieldData();
     }
 
-    console.log("S.GroupSymbol - BaseDrawingObject_RemoveFieldData output executed");
+    T3Util.Log("S.GroupSymbol - BaseDrawingObject_RemoveFieldData output executed");
   }
 
   BaseDrawingObject_RefreshFromFieldData(tableId) {
-    console.log('S.GroupSymbol - BaseDrawingObject_RefreshFromFieldData input:', { tableId });
+    T3Util.Log('S.GroupSymbol - BaseDrawingObject_RefreshFromFieldData input:', { tableId });
 
     if (tableId && this.fieldDataTableID !== tableId) {
-      console.log('S.GroupSymbol - BaseDrawingObject_RefreshFromFieldData output:', false);
+      T3Util.Log('S.GroupSymbol - BaseDrawingObject_RefreshFromFieldData output:', false);
       return false;
     }
 
@@ -904,7 +912,7 @@ class GroupSymbol extends BaseSymbol {
     let needsRefresh = false;
 
     if (!hasFieldDataInText && !hasFieldDataRules) {
-      console.log('S.GroupSymbol - BaseDrawingObject_RefreshFromFieldData output:', false);
+      T3Util.Log('S.GroupSymbol - BaseDrawingObject_RefreshFromFieldData output:', false);
       return false;
     }
 
@@ -920,21 +928,21 @@ class GroupSymbol extends BaseSymbol {
       needsRefresh = true;
     }
 
-    console.log('S.GroupSymbol - BaseDrawingObject_RefreshFromFieldData output:', needsRefresh);
+    T3Util.Log('S.GroupSymbol - BaseDrawingObject_RefreshFromFieldData output:', needsRefresh);
     return needsRefresh;
   }
 
   ApplyEffects(svgElement, isHighlighted, extraParam) {
-    console.log("S.GroupSymbol - ApplyEffects input:", { svgElement, isHighlighted, extraParam });
+    T3Util.Log("S.GroupSymbol - ApplyEffects input:", { svgElement, isHighlighted, extraParam });
 
     svgElement = svgElement || T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
     if (!svgElement) {
-      console.log("S.GroupSymbol - ApplyEffects output: No SVG element found");
+      T3Util.Log("S.GroupSymbol - ApplyEffects output: No SVG element found");
       return;
     }
 
     if (!T3Gv.opt.bDrawEffects || T3Gv.opt.bTokenizeStyle) {
-      console.log("S.GroupSymbol - ApplyEffects output: Global flags disable effects");
+      T3Util.Log("S.GroupSymbol - ApplyEffects output: Global flags disable effects");
       return;
     }
 
@@ -954,7 +962,7 @@ class GroupSymbol extends BaseSymbol {
 
     if (glowColor) {
       effectsList.push({
-        type: Effects.EffectType.GLOW,
+        type: BConstant.EffectType.GLOW,
         params: {
           color: glowColor,
           size: glowSize,
@@ -962,26 +970,26 @@ class GroupSymbol extends BaseSymbol {
         }
       });
       targetElement.Effects().SetEffects(effectsList, this.Frame);
-      console.log("S.GroupSymbol - ApplyEffects output:", "Effects applied with glowColor", glowColor);
+      T3Util.Log("S.GroupSymbol - ApplyEffects output:", "Effects applied with glowColor", glowColor);
     } else {
-      console.log("S.GroupSymbol - ApplyEffects output: No glow color configured");
+      T3Util.Log("S.GroupSymbol - ApplyEffects output: No glow color configured");
     }
   }
 
   AllowTextEdit(): boolean {
-    console.log("S.GroupSymbol - AllowTextEdit input:", {});
+    T3Util.Log("S.GroupSymbol - AllowTextEdit input:", {});
     const canEdit = Boolean(
-      (this.TextFlags & ConstantData.TextFlags.SED_TF_AttachB) ||
-      (this.TextFlags & ConstantData.TextFlags.SED_TF_AttachA) ||
-      (this.TextFlags & ConstantData.TextFlags.SED_TF_AttachD) ||
+      (this.TextFlags & NvConstant.TextFlags.SED_TF_AttachB) ||
+      (this.TextFlags & NvConstant.TextFlags.SED_TF_AttachA) ||
+      (this.TextFlags & NvConstant.TextFlags.SED_TF_AttachD) ||
       (this.DataID >= 0)
     );
-    console.log("S.GroupSymbol - AllowTextEdit output:", canEdit);
+    T3Util.Log("S.GroupSymbol - AllowTextEdit output:", canEdit);
     return canEdit;
   }
 
   RemoveFieldData(fieldKey, fieldValue) {
-    console.log("S.GroupSymbol - RemoveFieldData input:", { fieldKey, fieldValue });
+    T3Util.Log("S.GroupSymbol - RemoveFieldData input:", { fieldKey, fieldValue });
     Instance.Shape.BaseSymbol.prototype.RemoveFieldData.call(this, fieldKey, fieldValue);
     const shapesList = this.ShapesInGroup;
     const totalShapes = shapesList.length;
@@ -991,63 +999,63 @@ class GroupSymbol extends BaseSymbol {
         shapeObject.RemoveFieldData(fieldKey, fieldValue);
       }
     }
-    console.log("S.GroupSymbol - RemoveFieldData output executed");
+    T3Util.Log("S.GroupSymbol - RemoveFieldData output executed");
   }
 
   HasFieldDataInText(fieldData: any): boolean {
-    console.log("S.GroupSymbol - HasFieldDataInText input:", { fieldData });
+    T3Util.Log("S.GroupSymbol - HasFieldDataInText input:", { fieldData });
 
     const shapesInGroup = this.ShapesInGroup;
     const totalShapes = shapesInGroup.length;
 
     if (Instance.Shape.BaseSymbol.prototype.HasFieldDataInText.call(this, fieldData)) {
-      console.log("S.GroupSymbol - HasFieldDataInText output:", true);
+      T3Util.Log("S.GroupSymbol - HasFieldDataInText output:", true);
       return true;
     }
 
     for (let index = 0; index < totalShapes; ++index) {
       const shapeObject = T3Gv.opt.GetObjectPtr(shapesInGroup[index], false);
       if (shapeObject && shapeObject.HasFieldDataInText(fieldData)) {
-        console.log("S.GroupSymbol - HasFieldDataInText output:", true);
+        T3Util.Log("S.GroupSymbol - HasFieldDataInText output:", true);
         return true;
       }
     }
 
-    console.log("S.GroupSymbol - HasFieldDataInText output:", false);
+    T3Util.Log("S.GroupSymbol - HasFieldDataInText output:", false);
     return false;
   }
 
   HasFieldDataRules(criteria: any): boolean {
-    console.log("S.GroupSymbol - HasFieldDataRules input:", { criteria });
+    T3Util.Log("S.GroupSymbol - HasFieldDataRules input:", { criteria });
 
     const shapesInGroup = this.ShapesInGroup;
     const shapesCount = shapesInGroup.length;
 
     if (Instance.Shape.BaseSymbol.prototype.HasFieldDataRules.call(this, criteria)) {
-      console.log("S.GroupSymbol - HasFieldDataRules output:", true);
+      T3Util.Log("S.GroupSymbol - HasFieldDataRules output:", true);
       return true;
     }
 
     for (let index = 0; index < shapesCount; index++) {
       const shapeObject = T3Gv.opt.GetObjectPtr(shapesInGroup[index], false);
       if (shapeObject && shapeObject.HasFieldDataRules(criteria)) {
-        console.log("S.GroupSymbol - HasFieldDataRules output:", true);
+        T3Util.Log("S.GroupSymbol - HasFieldDataRules output:", true);
         return true;
       }
     }
 
-    console.log("S.GroupSymbol - HasFieldDataRules output:", false);
+    T3Util.Log("S.GroupSymbol - HasFieldDataRules output:", false);
     return false;
   }
 
   HasFieldDataForTable(tableId: any): boolean {
-    console.log("S.GroupSymbol - HasFieldDataForTable input:", { tableId });
+    T3Util.Log("S.GroupSymbol - HasFieldDataForTable input:", { tableId });
     const groupShapes = this.ShapesInGroup;
     const totalShapes = groupShapes.length;
 
     // Check in base symbol first
     if (Instance.Shape.BaseSymbol.prototype.HasFieldDataForTable.call(this, tableId)) {
-      console.log("S.GroupSymbol - HasFieldDataForTable output:", true);
+      T3Util.Log("S.GroupSymbol - HasFieldDataForTable output:", true);
       return true;
     }
 
@@ -1055,41 +1063,41 @@ class GroupSymbol extends BaseSymbol {
     for (let index = 0; index < totalShapes; index++) {
       const shapeObj = T3Gv.opt.GetObjectPtr(groupShapes[index], false);
       if (shapeObj && shapeObj.HasFieldDataForTable(tableId)) {
-        console.log("S.GroupSymbol - HasFieldDataForTable output:", true);
+        T3Util.Log("S.GroupSymbol - HasFieldDataForTable output:", true);
         return true;
       }
     }
 
-    console.log("S.GroupSymbol - HasFieldDataForTable output:", false);
+    T3Util.Log("S.GroupSymbol - HasFieldDataForTable output:", false);
     return false;
   }
 
   HasFieldDataRecord(fieldKey, fieldValue, recordId) {
-    console.log("S.GroupSymbol - HasFieldDataRecord input:", { fieldKey, fieldValue, recordId });
+    T3Util.Log("S.GroupSymbol - HasFieldDataRecord input:", { fieldKey, fieldValue, recordId });
     const shapesInGroup = this.ShapesInGroup;
     const totalShapes = shapesInGroup.length;
 
     if (Instance.Shape.BaseSymbol.prototype.HasFieldDataRecord.call(this, fieldKey, fieldValue, recordId)) {
-      console.log("S.GroupSymbol - HasFieldDataRecord output:", true);
+      T3Util.Log("S.GroupSymbol - HasFieldDataRecord output:", true);
       return true;
     }
     if (!recordId) {
-      console.log("S.GroupSymbol - HasFieldDataRecord output:", false);
+      T3Util.Log("S.GroupSymbol - HasFieldDataRecord output:", false);
       return false;
     }
     for (let index = 0; index < totalShapes; ++index) {
       const shapeObject = T3Gv.opt.GetObjectPtr(shapesInGroup[index], false);
       if (shapeObject && shapeObject.HasFieldDataRecord(fieldKey, fieldValue, recordId)) {
-        console.log("S.GroupSymbol - HasFieldDataRecord output:", true);
+        T3Util.Log("S.GroupSymbol - HasFieldDataRecord output:", true);
         return true;
       }
     }
-    console.log("S.GroupSymbol - HasFieldDataRecord output:", false);
+    T3Util.Log("S.GroupSymbol - HasFieldDataRecord output:", false);
     return false;
   }
 
   RefreshFromFieldData(fieldData) {
-    console.log("S.GroupSymbol - refreshFromFieldData input:", fieldData);
+    T3Util.Log("S.GroupSymbol - refreshFromFieldData input:", fieldData);
 
     let needsRefresh = false;
 
@@ -1108,12 +1116,12 @@ class GroupSymbol extends BaseSymbol {
       needsRefresh = true;
     }
 
-    console.log("S.GroupSymbol - refreshFromFieldData output:", needsRefresh);
+    T3Util.Log("S.GroupSymbol - refreshFromFieldData output:", needsRefresh);
     return needsRefresh;
   }
 
   RemapDataFields(fieldData) {
-    console.log("S.GroupSymbol - remapDataFields input:", fieldData);
+    T3Util.Log("S.GroupSymbol - remapDataFields input:", fieldData);
 
     Instance.Shape.BaseSymbol.prototype.RemapDataFields.call(this, fieldData);
     const shapesGroup = this.ShapesInGroup;
@@ -1124,7 +1132,7 @@ class GroupSymbol extends BaseSymbol {
       }
     }
 
-    console.log("S.GroupSymbol - remapDataFields output: completed");
+    T3Util.Log("S.GroupSymbol - remapDataFields output: completed");
   }
 
 }

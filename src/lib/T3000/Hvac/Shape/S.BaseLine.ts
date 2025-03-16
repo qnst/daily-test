@@ -1,27 +1,30 @@
 
 
 import BaseDrawingObject from './S.BaseDrawingObject'
-import Utils1 from '../Helper/Utils1';
-import Utils2 from "../Helper/Utils2";
-import Utils3 from "../Helper/Utils3";
+import Utils1 from '../Util/Utils1';
+import Utils2 from "../Util/Utils2";
+import Utils3 from "../Util/Utils3";
 import T3Gv from '../Data/T3Gv'
 import EvtUtil from "../Event/EvtUtil";
 import $ from 'jquery'
-import T3Timer from '../Helper/T3Timer'
+import T3Timer from '../Util/T3Timer'
 import Point from '../Model/Point'
 import Rect from "./S.Rect";
 import Document from '../Basic/B.Document'
 import Instance from "../Data/Instance/Instance"
-import ConstantData from "../Data/Constant/ConstantData"
+import NvConstant from "../Data/Constant/NvConstant"
 import HitResult from '../Model/HitResult'
 import LinkParameters from '../Model/LinkParameters'
 import RightClickData from '../Model/RightClickData'
-import ConstantData1 from "../Data/Constant/ConstantData1"
 import ArrowheadRecord from '../Model/ArrowheadRecord'
 import ConstantData2 from "../Data/Constant/ConstantData2"
-import ShapeDataUtil from '../Util/ShapeDataUtil';
+import ShapeUtil from '../Opt/Shape/ShapeUtil';
 import T3Constant from '../Data/Constant/T3Constant';
-import ShapeConstant from '../Util/ShapeConstant';
+import ShapeConstant from '../Opt/DS/DSConstant';
+import OptConstant from '../Data/Constant/OptConstant';
+import CursorConstant from '../Data/Constant/CursorConstant';
+import TextConstant from '../Data/Constant/TextConstant';
+import T3Util from '../Util/T3Util';
 
 class BaseLine extends BaseDrawingObject {
 
@@ -38,19 +41,19 @@ class BaseLine extends BaseDrawingObject {
   public ArrowSizeIndex: any;
 
   constructor(params: any) {
-    console.log("= S.BaseLine: constructor called with input:", params);
+    T3Util.Log("= S.BaseLine: constructor called with input:", params);
 
     // Ensure params is defined and set default values
     params = params || {};
-    params.DrawingObjectBaseClass = ConstantData.DrawingObjectBaseClass.LINE;
+    params.DrawingObjectBaseClass = OptConstant.DrawingObjectBaseClass.LINE;
     params.maxhooks = 2;
 
     if (typeof params.targflags === "undefined") {
-      params.targflags = ConstantData.HookFlags.SED_LC_Line | ConstantData.HookFlags.SED_LC_AttachToLine;
+      params.targflags = NvConstant.HookFlags.SED_LC_Line | NvConstant.HookFlags.SED_LC_AttachToLine;
     }
 
     if (typeof params.hookflags === "undefined") {
-      params.hookflags = ConstantData.HookFlags.SED_LC_Shape | ConstantData.HookFlags.SED_LC_Line;
+      params.hookflags = NvConstant.HookFlags.SED_LC_Shape | NvConstant.HookFlags.SED_LC_Line;
     }
 
     // Call the base class constructor
@@ -64,61 +67,61 @@ class BaseLine extends BaseDrawingObject {
     this.iconShapeBottomOffset = 20;
     this.iconShapeRightOffset = 0;
 
-    console.log("= S.BaseLine: constructor output:", this);
+    T3Util.Log("= S.BaseLine: constructor output:", this);
   }
 
   checkIfPolyLine(polylineObj: any): boolean {
-    console.log("= S.BaseLine: checkIfPolyLine called with input:", polylineObj);
+    T3Util.Log("= S.BaseLine: checkIfPolyLine called with input:", polylineObj);
 
     const PolyLineClass = Instance.Shape.PolyLine;
     const isPolyLine = polylineObj instanceof PolyLineClass;
 
-    console.log("= S.BaseLine: checkIfPolyLine output:", isPolyLine);
+    T3Util.Log("= S.BaseLine: checkIfPolyLine output:", isPolyLine);
     return isPolyLine;
   }
 
   CalcFrame(inputFlag?: boolean): void {
-    console.log("= S.BaseLine: CalcFrame called with inputFlag =", inputFlag);
+    T3Util.Log("= S.BaseLine: CalcFrame called with inputFlag =", inputFlag);
 
     // Calculate the initial frame from start and end points
     let isSegLine = false;
     this.Frame = Utils2.Pt2Rect(this.StartPoint, this.EndPoint);
-    console.log("= S.BaseLine: Initial Frame calculated as", this.Frame);
+    T3Util.Log("= S.BaseLine: Initial Frame calculated as", this.Frame);
 
     // Check if the line type requires segment processing
-    if (this.LineType === ConstantData.LineType.SEGLINE) {
+    if (this.LineType === OptConstant.LineType.SEGLINE) {
       isSegLine = true;
-      console.log("= S.BaseLine: LineType is SEGLINE, setting isSegLine to", isSegLine);
+      T3Util.Log("= S.BaseLine: LineType is SEGLINE, setting isSegLine to", isSegLine);
     }
 
     // Get the polygon points for the frame computation
-    const polyPoints = this.GetPolyPoints(ConstantData.Defines.NPOLYPTS, false, isSegLine, false, null);
-    console.log("= S.BaseLine: Retrieved polyPoints:", polyPoints);
+    const polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, isSegLine, false, null);
+    T3Util.Log("= S.BaseLine: Retrieved polyPoints:", polyPoints);
 
     // If polyPoints exist, update the frame accordingly
     if (polyPoints && polyPoints.length) {
       Utils2.GetPolyRect(this.Frame, polyPoints);
-      console.log("= S.BaseLine: Updated Frame using polyPoints:", this.Frame);
+      T3Util.Log("= S.BaseLine: Updated Frame using polyPoints:", this.Frame);
     }
 
     // Update the frame with additional properties if needed
     this.UpdateFrame(this.Frame, inputFlag);
-    console.log("= S.BaseLine: Final Frame after UpdateFrame:", this.Frame);
+    T3Util.Log("= S.BaseLine: Final Frame after UpdateFrame:", this.Frame);
   }
 
   GetArrowheadFormat(): ArrowheadRecord {
-    console.log("= S.BaseLine: GetArrowheadFormat called");
-    console.log("= S.BaseLine: Input this =", this);
+    T3Util.Log("= S.BaseLine: GetArrowheadFormat called");
+    T3Util.Log("= S.BaseLine: Input this =", this);
 
     const arrHead = new ArrowheadRecord();
-    if (ShapeDataUtil.LineIsReversed(this, null, false)) {
-      console.log("= S.BaseLine: Line is reversed");
+    if (ShapeUtil.LineIsReversed(this, null, false)) {
+      T3Util.Log("= S.BaseLine: Line is reversed");
       arrHead.StartArrowID = this.EndArrowID;
       arrHead.EndArrowID = this.StartArrowID;
       arrHead.StartArrowDisp = this.EndArrowDisp;
       arrHead.EndArrowDisp = this.StartArrowDisp;
     } else {
-      console.log("= S.BaseLine: Line is not reversed");
+      T3Util.Log("= S.BaseLine: Line is not reversed");
       arrHead.StartArrowID = this.StartArrowID;
       arrHead.EndArrowID = this.EndArrowID;
       arrHead.StartArrowDisp = this.StartArrowDisp;
@@ -126,12 +129,12 @@ class BaseLine extends BaseDrawingObject {
     }
     arrHead.ArrowSizeIndex = this.ArrowSizeIndex;
 
-    console.log("= S.BaseLine: Output ArrowheadRecord =", arrHead);
+    T3Util.Log("= S.BaseLine: Output ArrowheadRecord =", arrHead);
     return arrHead;
   }
 
   GetSVGFrame(inputFrame?: any): any {
-    console.log("= S.BaseLine: GetSVGFrame called with input:", inputFrame);
+    T3Util.Log("= S.BaseLine: GetSVGFrame called with input:", inputFrame);
     let frame: any = {};
 
     if (inputFrame != null) {
@@ -140,39 +143,39 @@ class BaseLine extends BaseDrawingObject {
       frame = Utils2.Pt2Rect(this.StartPoint, this.EndPoint);
     }
 
-    console.log("= S.BaseLine: GetSVGFrame output:", frame);
+    T3Util.Log("= S.BaseLine: GetSVGFrame output:", frame);
     return frame;
   }
 
   GetPositionRect(): any {
-    console.log("= S.BaseLine: GetPositionRect called with StartPoint:", this.StartPoint, "and EndPoint:", this.EndPoint);
+    T3Util.Log("= S.BaseLine: GetPositionRect called with StartPoint:", this.StartPoint, "and EndPoint:", this.EndPoint);
     const positionRect = Utils2.Pt2Rect(this.StartPoint, this.EndPoint);
-    console.log("= S.BaseLine: GetPositionRect output:", positionRect);
+    T3Util.Log("= S.BaseLine: GetPositionRect output:", positionRect);
     return positionRect;
   }
 
   AdjustPinRect(pinRect: any, offset: any, additional: any): any {
-    console.log("= S.BaseLine: AdjustPinRect called with", { pinRect, offset, additional });
+    T3Util.Log("= S.BaseLine: AdjustPinRect called with", { pinRect, offset, additional });
     const adjustedPinRect = pinRect;
-    console.log("= S.BaseLine: AdjustPinRect output:", adjustedPinRect);
+    T3Util.Log("= S.BaseLine: AdjustPinRect output:", adjustedPinRect);
     return adjustedPinRect;
   }
 
   GetDimensions(): { x: number; y: number } {
-    console.log("= S.BaseLine: GetDimensions called with StartPoint:", this.StartPoint, "and EndPoint:", this.EndPoint);
+    T3Util.Log("= S.BaseLine: GetDimensions called with StartPoint:", this.StartPoint, "and EndPoint:", this.EndPoint);
     const deltaX = this.EndPoint.x - this.StartPoint.x;
     const deltaY = this.EndPoint.y - this.StartPoint.y;
     const distance = Utils2.sqrt(deltaX * deltaX + deltaY * deltaY);
     const dimensions = { x: distance, y: 0 };
-    console.log("= S.BaseLine: GetDimensions output:", dimensions);
+    T3Util.Log("= S.BaseLine: GetDimensions output:", dimensions);
     return dimensions;
   }
 
   GetDimensionsForDisplay(): { x: number; y: number; width: number; height: number } {
-    console.log("= S.BaseLine: GetDimensionsForDisplay called with no input parameters");
+    T3Util.Log("= S.BaseLine: GetDimensionsForDisplay called with no input parameters");
 
     const dimensions = this.GetDimensions();
-    console.log("= S.BaseLine: Dimensions retrieved:", dimensions);
+    T3Util.Log("= S.BaseLine: Dimensions retrieved:", dimensions);
 
     const result = {
       x: this.Frame.x,
@@ -181,20 +184,20 @@ class BaseLine extends BaseDrawingObject {
       height: dimensions.y,
     };
 
-    console.log("= S.BaseLine: GetDimensionsForDisplay output:", result);
+    T3Util.Log("= S.BaseLine: GetDimensionsForDisplay output:", result);
     return result;
   }
 
   GetSnapRect() {
-    console.log("= S.BaseLine: GetSnapRect called with no input");
+    T3Util.Log("= S.BaseLine: GetSnapRect called with no input");
 
     // Create a snap rectangle by copying the current frame.
     let snapRect: any = {};
     Utils2.CopyRect(snapRect, this.Frame);
-    console.log("= S.BaseLine: Initial snapRect copied from Frame:", snapRect);
+    T3Util.Log("= S.BaseLine: Initial snapRect copied from Frame:", snapRect);
 
     // If the object is a wall opt wall, adjust the snap rectangle dimensions.
-    if (this.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
+    if (this.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
       let widthInflation = 0;
       let heightInflation = 0;
 
@@ -209,47 +212,47 @@ class BaseLine extends BaseDrawingObject {
       }
 
       Utils2.InflateRect(snapRect, widthInflation, heightInflation);
-      console.log("= S.BaseLine: snapRect after inflation for wall opt wall:", snapRect);
+      T3Util.Log("= S.BaseLine: snapRect after inflation for wall opt wall:", snapRect);
     }
 
-    console.log("= S.BaseLine: GetSnapRect returning:", snapRect);
+    T3Util.Log("= S.BaseLine: GetSnapRect returning:", snapRect);
     return snapRect;
   }
 
   CanSnapToShapes(input: any): number {
-    console.log("= S.BaseLine: CanSnapToShapes called with input:", input);
+    T3Util.Log("= S.BaseLine: CanSnapToShapes called with input:", input);
 
-    if (input && this.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
+    if (input && this.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
       if (Utils2.IsEqual(this.StartPoint.x, this.EndPoint.x, this.StyleRecord.Line.BThick)) {
-        input.distanceonly = ConstantData.Guide_DistanceTypes.Vertical_Wall;
-        console.log("= S.BaseLine: CanSnapToShapes output:", this.BlockID, "for Vertical_Wall");
+        input.distanceonly = NvConstant.Guide_DistanceTypes.Vertical_Wall;
+        T3Util.Log("= S.BaseLine: CanSnapToShapes output:", this.BlockID, "for Vertical_Wall");
         return this.BlockID;
       }
       if (Utils2.IsEqual(this.StartPoint.y, this.EndPoint.y, this.StyleRecord.Line.BThick)) {
-        input.distanceonly = ConstantData.Guide_DistanceTypes.Horizontal_Wall;
-        console.log("= S.BaseLine: CanSnapToShapes output:", this.BlockID, "for Horizontal_Wall");
+        input.distanceonly = NvConstant.Guide_DistanceTypes.Horizontal_Wall;
+        T3Util.Log("= S.BaseLine: CanSnapToShapes output:", this.BlockID, "for Horizontal_Wall");
         return this.BlockID;
       }
     }
 
-    console.log("= S.BaseLine: CanSnapToShapes output: -1");
+    T3Util.Log("= S.BaseLine: CanSnapToShapes output: -1");
     return -1;
   }
 
   IsSnapTarget(): boolean {
-    console.log("= S.BaseLine: IsSnapTarget called with no input");
+    T3Util.Log("= S.BaseLine: IsSnapTarget called with no input");
     const result = false;
-    console.log("= S.BaseLine: IsSnapTarget output:", result);
+    T3Util.Log("= S.BaseLine: IsSnapTarget output:", result);
     return result;
   }
 
   GuideDistanceOnly(): any {
-    console.log("= S.BaseLine: Guide_DistanceOnly called");
+    T3Util.Log("= S.BaseLine: Guide_DistanceOnly called");
 
-    const isFloorPlanWall = this.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL;
-    const result = isFloorPlanWall ? ConstantData.Guide_DistanceTypes.PolyWall : false;
+    const isFloorPlanWall = this.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL;
+    const result = isFloorPlanWall ? NvConstant.Guide_DistanceTypes.PolyWall : false;
 
-    console.log("= S.BaseLine: Guide_DistanceOnly returning", result);
+    T3Util.Log("= S.BaseLine: Guide_DistanceOnly returning", result);
     return result;
   }
 
@@ -266,7 +269,7 @@ class BaseLine extends BaseDrawingObject {
     extraParam7: any,
     extraParam8: any
   ): any {
-    console.log("= S.BaseLine: CreateDimension called with input:", {
+    T3Util.Log("= S.BaseLine: CreateDimension called with input:", {
       startPoint,
       endPoint,
       dimensionParam,
@@ -299,21 +302,21 @@ class BaseLine extends BaseDrawingObject {
         extraParam7,
         extraParam8
       );
-      console.log("= S.BaseLine: CreateDimension output:", result);
+      T3Util.Log("= S.BaseLine: CreateDimension output:", result);
       return result;
     }
 
-    console.log("= S.BaseLine: CreateDimension condition not met, returning undefined.");
+    T3Util.Log("= S.BaseLine: CreateDimension condition not met, returning undefined.");
     return undefined;
   }
 
   GetDimensionTextForPoints(startPoint: Point, endPoint: Point): string {
-    console.log("= S.BaseDrawingObject: GetDimensionTextForPoints input:", { startPoint, endPoint });
+    T3Util.Log("= S.BaseDrawingObject: GetDimensionTextForPoints input:", { startPoint, endPoint });
 
     let totalLength = 0;
 
     // If total dimension flag is set then calculate the total polyline length.
-    if (this.Dimensions & ConstantData.DimensionFlags.SED_DF_Total) {
+    if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Total) {
       const polyPoints = this.GetPolyPoints(200, true, false, false, null);
       for (let i = 1; i < polyPoints.length; i++) {
         const deltaX = Math.abs(polyPoints[i].x - polyPoints[i - 1].x);
@@ -342,14 +345,14 @@ class BaseLine extends BaseDrawingObject {
 
     // Convert the calculated length in pixels (or document units) into ruler units (e.g. inches, cm, etc.).
     const dimensionText: string = this.GetLengthInRulerUnits(totalLength);
-    console.log("= S.BaseDrawingObject: GetDimensionTextForPoints output:", dimensionText);
+    T3Util.Log("= S.BaseDrawingObject: GetDimensionTextForPoints output:", dimensionText);
     return dimensionText;
   }
 
   EnforceMinimum(isPrimary: boolean): void {
-    console.log("= S.BaseDrawingObject: EnforceMinimum input:", { isPrimary, StartPoint: this.StartPoint, EndPoint: this.EndPoint });
+    T3Util.Log("= S.BaseDrawingObject: EnforceMinimum input:", { isPrimary, StartPoint: this.StartPoint, EndPoint: this.EndPoint });
 
-    const minDim = ConstantData.Defines.SED_MinDim;
+    const minDim = OptConstant.Defines.SED_MinDim;
 
     // Case 1: Vertical line (same x-coordinate)
     if (Utils2.IsEqual(this.EndPoint.x, this.StartPoint.x)) {
@@ -429,11 +432,11 @@ class BaseLine extends BaseDrawingObject {
       }
     }
 
-    console.log("= S.BaseDrawingObject: EnforceMinimum output:", { StartPoint: this.StartPoint, EndPoint: this.EndPoint });
+    T3Util.Log("= S.BaseDrawingObject: EnforceMinimum output:", { StartPoint: this.StartPoint, EndPoint: this.EndPoint });
   }
 
   UpdateDimensions(newLength: number, unusedParam1: any, unusedParam2: any): void {
-    console.log("= S.BaseLine: UpdateDimensions called with input:", { newLength, unusedParam1, unusedParam2 });
+    T3Util.Log("= S.BaseLine: UpdateDimensions called with input:", { newLength, unusedParam1, unusedParam2 });
 
     let angleDegrees = 0;
     let adjustedX = 0;
@@ -478,10 +481,10 @@ class BaseLine extends BaseDrawingObject {
     if (adjustedY < 0) {
       shiftY += -adjustedY;
       if (
-        this.Dimensions & ConstantData.DimensionFlags.SED_DF_Always ||
-        this.Dimensions & ConstantData.DimensionFlags.SED_DF_Select
+        this.Dimensions & NvConstant.DimensionFlags.SED_DF_Always ||
+        this.Dimensions & NvConstant.DimensionFlags.SED_DF_Select
       ) {
-        shiftY += ConstantData.Defines.DimensionDefaultStandoff;
+        shiftY += OptConstant.Defines.DimensionDefaultStandoff;
       }
       adjustedY += shiftY;
     }
@@ -489,20 +492,20 @@ class BaseLine extends BaseDrawingObject {
     const svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
 
     // Adjust the line end point using the calculated coordinates
-    this.AdjustLineEnd(svgElement, adjustedX, adjustedY, ConstantData.ActionTriggerType.LINEEND, true);
+    this.AdjustLineEnd(svgElement, adjustedX, adjustedY, OptConstant.ActionTriggerType.LINEEND, true);
 
     // If there's any shift, adjust the line start point accordingly
     if (shiftX > 0 || shiftY > 0) {
       adjustedX = this.StartPoint.x + shiftX;
       adjustedY = this.StartPoint.y + shiftY;
-      this.AdjustLineStart(svgElement, adjustedX, adjustedY, ConstantData.ActionTriggerType.LINESTART, true);
+      this.AdjustLineStart(svgElement, adjustedX, adjustedY, OptConstant.ActionTriggerType.LINESTART, true);
     }
 
-    console.log("= S.BaseLine: UpdateDimensions output: StartPoint:", this.StartPoint, "EndPoint:", this.EndPoint);
+    T3Util.Log("= S.BaseLine: UpdateDimensions output: StartPoint:", this.StartPoint, "EndPoint:", this.EndPoint);
   }
 
   OffsetShape(offsetX: number, offsetY: number): void {
-    console.log("= S.BaseLine: OffsetShape called with offsetX:", offsetX, "offsetY:", offsetY);
+    T3Util.Log("= S.BaseLine: OffsetShape called with offsetX:", offsetX, "offsetY:", offsetY);
 
     // Update frame and points with the given offsets
     this.Frame.x += offsetX;
@@ -517,11 +520,11 @@ class BaseLine extends BaseDrawingObject {
     // Recalculate the frame
     this.CalcFrame();
 
-    console.log("= S.BaseLine: OffsetShape updated Frame:", this.Frame, "StartPoint:", this.StartPoint, "EndPoint:", this.EndPoint);
+    T3Util.Log("= S.BaseLine: OffsetShape updated Frame:", this.Frame, "StartPoint:", this.StartPoint, "EndPoint:", this.EndPoint);
   }
 
   SetShapeOrigin(newX: number, newY: number, additionalParam: any): void {
-    console.log("= S.BaseLine: SetShapeOrigin called with newX:", newX, "newY:", newY, "additionalParam:", additionalParam);
+    T3Util.Log("= S.BaseLine: SetShapeOrigin called with newX:", newX, "newY:", newY, "additionalParam:", additionalParam);
 
     const frame = this.GetSVGFrame();
     let deltaX = 0;
@@ -542,18 +545,18 @@ class BaseLine extends BaseDrawingObject {
 
     this.CalcFrame();
 
-    console.log("= S.BaseLine: SetShapeOrigin updated StartPoint:", this.StartPoint, "EndPoint:", this.EndPoint);
+    T3Util.Log("= S.BaseLine: SetShapeOrigin updated StartPoint:", this.StartPoint, "EndPoint:", this.EndPoint);
   }
 
   UpdateFrame(inputFrame, shouldRedraw) {
-    console.log("= S.BaseLine: UpdateFrame called with inputFrame:", inputFrame, "shouldRedraw:", shouldRedraw);
+    T3Util.Log("= S.BaseLine: UpdateFrame called with inputFrame:", inputFrame, "shouldRedraw:", shouldRedraw);
 
     let arrowheadBounds;
     let shapeElement;
     let frame = inputFrame || this.Frame;
     let lineTextRect = this.LineTextX ? $.extend(true, {}, this.trect) : null;
     let lineThickness = this.StyleRecord?.Line?.Thickness || 0;
-    let minLineThickness = Math.max(lineThickness, ConstantData.Defines.SED_MinWid);
+    let minLineThickness = Math.max(lineThickness, OptConstant.Defines.SED_MinWid);
 
     // Call the base class UpdateFrame method
     super.UpdateFrame(frame);
@@ -576,12 +579,12 @@ class BaseLine extends BaseDrawingObject {
         if (shapeElement) {
           T3Gv.opt.svgObjectLayer.RemoveElement(shapeElement);
           // Collab.NoRedrawFromSameEditor = false;
-          T3Gv.opt.collaboration.NoRedrawFromSameEditor = false;
+          // T3Gv.opt.collaboration.NoRedrawFromSameEditor = false;
         }
         shapeElement = this.CreateShape(T3Gv.opt.svgDoc, false);
       } else if (shapeElement) {
         frame = this.GetSVGFrame();
-        shapeElement = shapeElement.GetElementByID(ConstantData.SVGElementClass.SHAPE);
+        shapeElement = shapeElement.GetElementByID(OptConstant.SVGElementClass.SHAPE);
       }
 
       if (shapeElement) {
@@ -616,7 +619,7 @@ class BaseLine extends BaseDrawingObject {
     this.AddDimensionsToR();
 
     // Handle vertical text growth
-    if (this.TextGrow === ConstantData.TextGrowBehavior.VERTICAL && !this.LineTextX) {
+    if (this.TextGrow === NvConstant.TextGrowBehavior.VERTICAL && !this.LineTextX) {
       let textParams = this.GetTextOnLineParams(this.BlockID);
       let textRect = Utils2.Pt2Rect(textParams.StartPoint, textParams.EndPoint);
 
@@ -626,12 +629,12 @@ class BaseLine extends BaseDrawingObject {
       }
 
       let widthDifference = textRect.width - this.TextWrapWidth;
-      switch (ShapeDataUtil.TextAlignToWin(this.TextAlign).just) {
-        case ConstantData2.TextJust.TA_LEFT:
+      switch (ShapeUtil.TextAlignToWin(this.TextAlign).just) {
+        case TextConstant.TextJust.TA_LEFT:
           this.trect.x = textRect.x;
           this.trect.width = this.TextWrapWidth;
           break;
-        case ConstantData2.TextJust.TA_RIGHT:
+        case TextConstant.TextJust.TA_RIGHT:
           this.trect.x = textRect.x + textRect.width - this.TextWrapWidth;
           this.trect.width = this.TextWrapWidth;
           break;
@@ -647,31 +650,31 @@ class BaseLine extends BaseDrawingObject {
       this.trect.height = lineTextRect.height;
     }
 
-    console.log("= S.BaseLine: UpdateFrame output:", this.Frame, this.r);
+    T3Util.Log("= S.BaseLine: UpdateFrame output:", this.Frame, this.r);
   }
 
   GetHitTestFrame(): any {
-    console.log("= S.BaseLine: GetHitTestFrame called");
+    T3Util.Log("= S.BaseLine: GetHitTestFrame called");
 
     // Create a copy of the current frame
     let hitTestFrame = {};
     Utils2.CopyRect(hitTestFrame, this.Frame);
-    console.log("= S.BaseLine: Initial hitTestFrame copied from Frame:", hitTestFrame);
+    T3Util.Log("= S.BaseLine: Initial hitTestFrame copied from Frame:", hitTestFrame);
 
     // Inflate the rectangle by half the knob size
-    const knobSize = ConstantData.Defines.SED_KnobSize;
+    const knobSize = OptConstant.Defines.SED_KnobSize;
     Utils2.InflateRect(hitTestFrame, knobSize / 2, knobSize / 2);
-    console.log("= S.BaseLine: Inflated hitTestFrame by knob size:", hitTestFrame);
+    T3Util.Log("= S.BaseLine: Inflated hitTestFrame by knob size:", hitTestFrame);
 
     // Union the inflated rectangle with the main rectangle
     hitTestFrame = Utils2.UnionRect(hitTestFrame, this.r, hitTestFrame);
-    console.log("= S.BaseLine: Final hitTestFrame after union with main rectangle:", hitTestFrame);
+    T3Util.Log("= S.BaseLine: Final hitTestFrame after union with main rectangle:", hitTestFrame);
 
     return hitTestFrame;
   }
 
   GetMoveRect(includeInflation: boolean): any {
-    console.log("= S.BaseLine: GetMoveRect called with includeInflation:", includeInflation);
+    T3Util.Log("= S.BaseLine: GetMoveRect called with includeInflation:", includeInflation);
 
     const moveRect: any = {};
 
@@ -682,18 +685,18 @@ class BaseLine extends BaseDrawingObject {
       Utils2.CopyRect(moveRect, this.Frame);
     }
 
-    console.log("= S.BaseLine: GetMoveRect output:", moveRect);
+    T3Util.Log("= S.BaseLine: GetMoveRect output:", moveRect);
     return moveRect;
   }
 
   SetSize(newWidth: number, newHeight: number, actionType: number): void {
-    console.log("= S.BaseLine: SetSize called with newWidth:", newWidth, "newHeight:", newHeight, "actionType:", actionType);
+    T3Util.Log("= S.BaseLine: SetSize called with newWidth:", newWidth, "newHeight:", newHeight, "actionType:", actionType);
 
     let shouldAdjustEnd = false;
     let widthDifference = 0;
     let heightDifference = 0;
 
-    if (actionType !== ConstantData.ActionTriggerType.LINELENGTH || newWidth == null) {
+    if (actionType !== OptConstant.ActionTriggerType.LINELENGTH || newWidth == null) {
       if (newWidth != null) {
         widthDifference = newWidth - this.Frame.width;
       }
@@ -702,8 +705,8 @@ class BaseLine extends BaseDrawingObject {
       }
 
       if (this.rflags) {
-        this.rflags = Utils2.SetFlag(this.rflags, ConstantData.FloatingPointDim.SD_FP_Width, false);
-        this.rflags = Utils2.SetFlag(this.rflags, ConstantData.FloatingPointDim.SD_FP_Height, false);
+        this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Width, false);
+        this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Height, false);
       }
 
       if (this.StartPoint.x < this.EndPoint.x || (Utils2.IsEqual(this.StartPoint.x, this.EndPoint.x) && this.StartPoint.y < this.EndPoint.y)) {
@@ -723,11 +726,11 @@ class BaseLine extends BaseDrawingObject {
       this.UpdateDimensions(newWidth);
     }
 
-    console.log("= S.BaseLine: SetSize completed with updated StartPoint:", this.StartPoint, "EndPoint:", this.EndPoint);
+    T3Util.Log("= S.BaseLine: SetSize completed with updated StartPoint:", this.StartPoint, "EndPoint:", this.EndPoint);
   }
 
   AdjustForLineAngleSnap(startPoint: Point, endPoint: Point): boolean {
-    console.log("= S.BaseLine: AdjustForLineAngleSnap called with startPoint:", startPoint, "endPoint:", endPoint);
+    T3Util.Log("= S.BaseLine: AdjustForLineAngleSnap called with startPoint:", startPoint, "endPoint:", endPoint);
 
     let angle = Utils1.CalcAngleFromPoints(startPoint, endPoint);
     let adjusted = false;
@@ -743,19 +746,19 @@ class BaseLine extends BaseDrawingObject {
       adjusted = true;
     }
 
-    console.log("= S.BaseLine: AdjustForLineAngleSnap output endPoint:", endPoint, "adjusted:", adjusted);
+    T3Util.Log("= S.BaseLine: AdjustForLineAngleSnap output endPoint:", endPoint, "adjusted:", adjusted);
     return adjusted;
   }
 
   GetAngle(params: any): number {
-    console.log("= S.BaseLine: GetAngle called with params:", params);
+    T3Util.Log("= S.BaseLine: GetAngle called with params:", params);
 
     let angle = 0;
     const textParams = this.GetTextOnLineParams(params);
     let startPoint = textParams.StartPoint;
     let endPoint = textParams.EndPoint;
 
-    if (this.LineType === ConstantData.LineType.LINE) {
+    if (this.LineType === OptConstant.LineType.LINE) {
       if (startPoint.x > endPoint.x) {
         startPoint = textParams.EndPoint;
         endPoint = textParams.StartPoint;
@@ -776,12 +779,12 @@ class BaseLine extends BaseDrawingObject {
       angle = T3Gv.opt.SD_GetClockwiseAngleBetween2PointsInDegrees(startPoint, endPoint);
     }
 
-    console.log("= S.BaseLine: GetAngle output:", angle);
+    T3Util.Log("= S.BaseLine: GetAngle output:", angle);
     return angle;
   }
 
   GetDrawNormalizedAngle(startPoint: Point, endPoint: Point): number {
-    console.log("= S.BaseLine: GetDrawNormalizedAngle called with startPoint:", startPoint, "endPoint:", endPoint);
+    T3Util.Log("= S.BaseLine: GetDrawNormalizedAngle called with startPoint:", startPoint, "endPoint:", endPoint);
 
     let angle = Utils1.CalcAngleFromPoints(startPoint, endPoint);
     let isReversed = false;
@@ -803,28 +806,28 @@ class BaseLine extends BaseDrawingObject {
       }
     }
 
-    console.log("= S.BaseLine: GetDrawNormalizedAngle output:", angle);
+    T3Util.Log("= S.BaseLine: GetDrawNormalizedAngle output:", angle);
     return angle;
   }
 
   GetApparentAngle(params: any): number {
-    console.log("= S.BaseLine: GetApparentAngle called with params:", params);
+    T3Util.Log("= S.BaseLine: GetApparentAngle called with params:", params);
 
     const angle = this.GetDrawNormalizedAngle(this.StartPoint, this.EndPoint);
 
-    console.log("= S.BaseLine: GetApparentAngle output:", angle);
+    T3Util.Log("= S.BaseLine: GetApparentAngle output:", angle);
     return angle;
   }
 
   IsReverseWinding(): boolean {
-    console.log("= S.BaseLine: IsReverseWinding called");
+    T3Util.Log("= S.BaseLine: IsReverseWinding called");
 
-    let points = this.GetPolyPoints(ConstantData.Defines.NPOLYPTS, false, true, false, null);
-    console.log("= S.BaseLine: Retrieved points:", points);
+    let points = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, true, false, null);
+    T3Util.Log("= S.BaseLine: Retrieved points:", points);
 
     if (points.length === 2) {
       const isReversed = points[0].x > points[1].x;
-      console.log("= S.BaseLine: IsReverseWinding output (2 points):", isReversed);
+      T3Util.Log("= S.BaseLine: IsReverseWinding output (2 points):", isReversed);
       return isReversed;
     }
 
@@ -834,19 +837,19 @@ class BaseLine extends BaseDrawingObject {
     }
 
     const isReversed = 0.5 * area >= 0;
-    console.log("= S.BaseLine: IsReverseWinding output:", isReversed);
+    T3Util.Log("= S.BaseLine: IsReverseWinding output:", isReversed);
     return isReversed;
   }
 
   LinkGrow(blockID: number, hookPoint: number, newPoint: Point): void {
-    console.log("= S.BaseLine: LinkGrow called with blockID:", blockID, "hookPoint:", hookPoint, "newPoint:", newPoint);
+    T3Util.Log("= S.BaseLine: LinkGrow called with blockID:", blockID, "hookPoint:", hookPoint, "newPoint:", newPoint);
 
     switch (hookPoint) {
-      case ConstantData.HookPts.SED_KTL:
+      case OptConstant.HookPts.SED_KTL:
         this.StartPoint.x = newPoint.x;
         this.StartPoint.y = newPoint.y;
         break;
-      case ConstantData.HookPts.SED_KTR:
+      case OptConstant.HookPts.SED_KTR:
         this.EndPoint.x = newPoint.x;
         this.EndPoint.y = newPoint.y;
         break;
@@ -856,7 +859,7 @@ class BaseLine extends BaseDrawingObject {
     T3Gv.opt.SetLinkFlag(blockID, ShapeConstant.LinkFlags.SED_L_MOVE);
     T3Gv.opt.AddToDirtyList(blockID);
 
-    console.log("= S.BaseLine: LinkGrow updated StartPoint:", this.StartPoint, "EndPoint:", this.EndPoint);
+    T3Util.Log("= S.BaseLine: LinkGrow updated StartPoint:", this.StartPoint, "EndPoint:", this.EndPoint);
   }
 
   HandleActionTriggerTrackCommon(
@@ -865,7 +868,7 @@ class BaseLine extends BaseDrawingObject {
     redrawFlag: boolean,
     eventObj: any
   ): void {
-    console.log("= S.BaseLine: HandleActionTriggerTrackCommon called with input:", {
+    T3Util.Log("= S.BaseLine: HandleActionTriggerTrackCommon called with input:", {
       newX,
       newY,
       redrawFlag,
@@ -885,7 +888,7 @@ class BaseLine extends BaseDrawingObject {
     }
 
     switch (T3Gv.opt.actionTriggerId) {
-      case ConstantData.ActionTriggerType.LINESTART:
+      case OptConstant.ActionTriggerType.LINESTART:
         this.AdjustLineStart(
           T3Gv.opt.actionSvgObject,
           newX,
@@ -904,8 +907,8 @@ class BaseLine extends BaseDrawingObject {
           );
         }
         break;
-      case ConstantData.ActionTriggerType.POLYLEND:
-      case ConstantData.ActionTriggerType.LINEEND:
+      case OptConstant.ActionTriggerType.POLYLEND:
+      case OptConstant.ActionTriggerType.LINEEND:
         this.AdjustLineEnd(
           T3Gv.opt.actionSvgObject,
           newX,
@@ -924,19 +927,19 @@ class BaseLine extends BaseDrawingObject {
           );
         }
         break;
-      case ConstantData.ActionTriggerType.ROTATE:
+      case OptConstant.ActionTriggerType.ROTATE:
         this.AdjustRotate(newX, newY, eventObj);
         break;
-      case ConstantData.ActionTriggerType.MODIFYSHAPE:
-      case ConstantData.ActionTriggerType.SEGL_ONE:
-      case ConstantData.ActionTriggerType.SEGL_TWO:
-      case ConstantData.ActionTriggerType.SEGL_THREE:
-      case ConstantData.ActionTriggerType.POLYLNODE:
-      case ConstantData.ActionTriggerType.POLYLADJ:
-      case ConstantData.ActionTriggerType.TOPLEFT:
-      case ConstantData.ActionTriggerType.TOPRIGHT:
-      case ConstantData.ActionTriggerType.BOTTOMLEFT:
-      case ConstantData.ActionTriggerType.BOTTOMRIGHT:
+      case OptConstant.ActionTriggerType.MODIFYSHAPE:
+      case OptConstant.ActionTriggerType.SEGL_ONE:
+      case OptConstant.ActionTriggerType.SEGL_TWO:
+      case OptConstant.ActionTriggerType.SEGL_THREE:
+      case OptConstant.ActionTriggerType.POLYLNODE:
+      case OptConstant.ActionTriggerType.POLYLADJ:
+      case OptConstant.ActionTriggerType.TOPLEFT:
+      case OptConstant.ActionTriggerType.TOPRIGHT:
+      case OptConstant.ActionTriggerType.BOTTOMLEFT:
+      case OptConstant.ActionTriggerType.BOTTOMRIGHT:
         this.ModifyShape(
           T3Gv.opt.actionSvgObject,
           newX,
@@ -958,7 +961,7 @@ class BaseLine extends BaseDrawingObject {
           this.UpdateFrame();
         }
         break;
-      case ConstantData.ActionTriggerType.MOVEPOLYSEG:
+      case OptConstant.ActionTriggerType.MOVEPOLYSEG:
         this.MovePolySeg(
           T3Gv.opt.actionSvgObject,
           newX,
@@ -967,7 +970,7 @@ class BaseLine extends BaseDrawingObject {
           T3Gv.opt.actionTriggerData
         );
         break;
-      case ConstantData.ActionTriggerType.DIMENSION_LINE_ADJ:
+      case OptConstant.ActionTriggerType.DIMENSION_LINE_ADJ:
         this.DimensionLineDeflectionAdjust(
           T3Gv.opt.actionSvgObject,
           newX,
@@ -978,12 +981,12 @@ class BaseLine extends BaseDrawingObject {
         break;
     }
 
-    console.log("= S.BaseLine: HandleActionTriggerTrackCommon completed with updated StartPoint:", this.StartPoint, "and EndPoint:", this.EndPoint);
+    T3Util.Log("= S.BaseLine: HandleActionTriggerTrackCommon completed with updated StartPoint:", this.StartPoint, "and EndPoint:", this.EndPoint);
   }
 
 
   AdjustRotate(mouseX: number, mouseY: number, event: any): void {
-    console.log("= S.BaseLine: AdjustRotate called with mouseX:", mouseX, "mouseY:", mouseY, "event:", event);
+    T3Util.Log("= S.BaseLine: AdjustRotate called with mouseX:", mouseX, "mouseY:", mouseY, "event:", event);
 
     const pivotX = T3Gv.opt.rotatePivotX;
     const pivotY = T3Gv.opt.rotatePivotY;
@@ -996,11 +999,11 @@ class BaseLine extends BaseDrawingObject {
     } else if (deltaX === 0) {
       angle = deltaY > 0 ? 90 : 270;
     } else if (deltaX >= 0 && deltaY >= 0) {
-      angle = Math.atan(deltaY / deltaX) * (180 / ConstantData.Geometry.PI);
+      angle = Math.atan(deltaY / deltaX) * (180 / NvConstant.Geometry.PI);
     } else if ((deltaX < 0 && deltaY >= 0) || (deltaX < 0 && deltaY < 0)) {
-      angle = 180 + Math.atan(deltaY / deltaX) * (180 / ConstantData.Geometry.PI);
+      angle = 180 + Math.atan(deltaY / deltaX) * (180 / NvConstant.Geometry.PI);
     } else if (deltaX >= 0 && deltaY < 0) {
-      angle = 360 + Math.atan(deltaY / deltaX) * (180 / ConstantData.Geometry.PI);
+      angle = 360 + Math.atan(deltaY / deltaX) * (180 / NvConstant.Geometry.PI);
     }
 
     const overrideSnaps = T3Gv.opt.OverrideSnaps(event);
@@ -1014,11 +1017,11 @@ class BaseLine extends BaseDrawingObject {
       T3Gv.opt.rotateEndRotation = angle;
     }
 
-    console.log("= S.BaseLine: AdjustRotate output angle:", angle);
+    T3Util.Log("= S.BaseLine: AdjustRotate output angle:", angle);
   }
 
   DimensionLineDeflectionAdjust(svgDoc, mouseX, mouseY, actionTriggerID, triggerData) {
-    console.log('= S.BaseLine: DimensionLineDeflectionAdjust called with', {
+    T3Util.Log('= S.BaseLine: DimensionLineDeflectionAdjust called with', {
       svgDoc,
       mouseX,
       mouseY,
@@ -1028,23 +1031,23 @@ class BaseLine extends BaseDrawingObject {
 
     // Calculate the horizontal deflection for the dimension line
     this.dimensionDeflectionH = this.GetDimensionLineDeflection(svgDoc, mouseX, mouseY, triggerData);
-    console.log('= S.BaseLine: Calculated dimensionDeflectionH:', this.dimensionDeflectionH);
+    T3Util.Log('= S.BaseLine: Calculated dimensionDeflectionH:', this.dimensionDeflectionH);
 
     // Update the dimension lines on the SVG document
     this.UpdateDimensionLines(svgDoc);
-    console.log('= S.BaseLine: Dimension lines updated');
+    T3Util.Log('= S.BaseLine: Dimension lines updated');
 
     // Check if the dimension should be shown only when selected
-    const isDimSelect = this.Dimensions & ConstantData.DimensionFlags.SED_DF_Select;
-    console.log('= S.BaseLine: isDimSelect:', isDimSelect);
+    const isDimSelect = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Select;
+    T3Util.Log('= S.BaseLine: isDimSelect:', isDimSelect);
 
     // Hide or show dimensions based on selection state
     if (isDimSelect) {
       this.HideOrShowSelectOnlyDimensions(true);
-      console.log('= S.BaseLine: Select-only dimensions shown');
+      T3Util.Log('= S.BaseLine: Select-only dimensions shown');
     }
 
-    console.log('= S.BaseLine: DimensionLineDeflectionAdjust completed');
+    T3Util.Log('= S.BaseLine: DimensionLineDeflectionAdjust completed');
   }
 
   ScaleObject(
@@ -1056,7 +1059,7 @@ class BaseLine extends BaseDrawingObject {
     scaleY: number,
     adjustThickness: boolean
   ) {
-    console.log("= S.BaseLine: ScaleObject called with", {
+    T3Util.Log("= S.BaseLine: ScaleObject called with", {
       offsetX,
       offsetY,
       rotationCenter,
@@ -1086,8 +1089,8 @@ class BaseLine extends BaseDrawingObject {
 
     // Reset floating point dimensions flags
     if (this.rflags) {
-      this.rflags = Utils2.SetFlag(this.rflags, ConstantData.FloatingPointDim.SD_FP_Width, false);
-      this.rflags = Utils2.SetFlag(this.rflags, ConstantData.FloatingPointDim.SD_FP_Height, false);
+      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Width, false);
+      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Height, false);
     }
 
     // Adjust line thickness if required
@@ -1100,7 +1103,7 @@ class BaseLine extends BaseDrawingObject {
     // Recalculate the frame
     this.CalcFrame();
 
-    console.log("= S.BaseLine: ScaleObject output", {
+    T3Util.Log("= S.BaseLine: ScaleObject output", {
       StartPoint: this.StartPoint,
       EndPoint: this.EndPoint,
       CurveAdjust: this.CurveAdjust,
@@ -1109,14 +1112,14 @@ class BaseLine extends BaseDrawingObject {
   }
 
   CanUseStandOffDimensionLines(): boolean {
-    console.log("= S.BaseLine: CanUseStandOffDimensionLines called");
+    T3Util.Log("= S.BaseLine: CanUseStandOffDimensionLines called");
     const result = true;
-    console.log("= S.BaseLine: CanUseStandOffDimensionLines output:", result);
+    T3Util.Log("= S.BaseLine: CanUseStandOffDimensionLines output:", result);
     return result;
   }
 
   GetDimensionLineDeflection(svgDoc, mouseX, mouseY, triggerData) {
-    console.log("= S.BaseLine: GetDimensionLineDeflection called with", {
+    T3Util.Log("= S.BaseLine: GetDimensionLineDeflection called with", {
       svgDoc,
       mouseX,
       mouseY,
@@ -1165,12 +1168,12 @@ class BaseLine extends BaseDrawingObject {
       deflection = triggerData.originalDeflection + deflection;
     }
 
-    console.log("= S.BaseLine: GetDimensionLineDeflection output:", deflection);
+    T3Util.Log("= S.BaseLine: GetDimensionLineDeflection output:", deflection);
     return deflection;
   }
 
   HandleActionTriggerCallResize(event, triggerData) {
-    console.log("= S.BaseLine: HandleActionTriggerCallResize called with event:", event, "triggerData:", triggerData);
+    T3Util.Log("= S.BaseLine: HandleActionTriggerCallResize called with event:", event, "triggerData:", triggerData);
 
     // Perform the resize operation
     const resizeAdjustment = this.Resize(
@@ -1184,18 +1187,18 @@ class BaseLine extends BaseDrawingObject {
     T3Gv.opt.actionStartX += resizeAdjustment.x;
     T3Gv.opt.actionStartY += resizeAdjustment.y;
 
-    console.log("= S.BaseLine: HandleActionTriggerCallResize output resizeAdjustment:", resizeAdjustment);
+    T3Util.Log("= S.BaseLine: HandleActionTriggerCallResize output resizeAdjustment:", resizeAdjustment);
   }
 
   HandleActionTriggerDoAutoScroll() {
-    console.log("= S.BaseLine: HandleActionTriggerDoAutoScroll called");
+    T3Util.Log("= S.BaseLine: HandleActionTriggerDoAutoScroll called");
 
     // Set a timeout for the auto-scroll function
     T3Gv.opt.autoScrollTimerId = T3Gv.opt.autoScrollTimer.setTimeout('HandleActionTriggerDoAutoScroll', 100);
 
     // Convert window coordinates to document coordinates
     const docCoords = T3Gv.opt.svgDoc.ConvertWindowToDocCoords(T3Gv.opt.autoScrollXPos, T3Gv.opt.autoScrollYPos);
-    console.log("= S.BaseLine: Converted document coordinates:", docCoords);
+    T3Util.Log("= S.BaseLine: Converted document coordinates:", docCoords);
 
     // Track the pin point if pinRect is defined
     if (T3Gv.opt.pinRect) {
@@ -1204,7 +1207,7 @@ class BaseLine extends BaseDrawingObject {
 
     // Perform auto-grow drag adjustments
     const adjustedCoords = T3Gv.opt.DoAutoGrowDrag(docCoords);
-    console.log("= S.BaseLine: Adjusted coordinates after auto-grow drag:", adjustedCoords);
+    T3Util.Log("= S.BaseLine: Adjusted coordinates after auto-grow drag:", adjustedCoords);
 
     // Scroll to the new position
     T3Gv.docUtil.ScrollToPosition(adjustedCoords.x, adjustedCoords.y);
@@ -1212,12 +1215,12 @@ class BaseLine extends BaseDrawingObject {
     // Handle the common action trigger track
     this.HandleActionTriggerTrackCommon(adjustedCoords.x, adjustedCoords.y);
 
-    console.log("= S.BaseLine: HandleActionTriggerDoAutoScroll completed");
+    T3Util.Log("= S.BaseLine: HandleActionTriggerDoAutoScroll completed");
   }
 
 
   AutoScrollCommon(event, enableSnap, autoScrollCallback) {
-    console.log('= S.BaseLine: AutoScrollCommon called with event:', event, 'enableSnap:', enableSnap, 'autoScrollCallback:', autoScrollCallback);
+    T3Util.Log('= S.BaseLine: AutoScrollCommon called with event:', event, 'enableSnap:', enableSnap, 'autoScrollCallback:', autoScrollCallback);
 
     let clientX, clientY;
     let shouldAutoScroll = false;
@@ -1272,18 +1275,18 @@ class BaseLine extends BaseDrawingObject {
         T3Gv.opt.autoScrollTimerId = T3Gv.opt.autoScrollTimer.setTimeout(autoScrollCallback, 0);
       }
 
-      console.log('= S.BaseLine: AutoScrollCommon output: shouldAutoScroll = false');
+      T3Util.Log('= S.BaseLine: AutoScrollCommon output: shouldAutoScroll = false');
       return false;
     }
 
     // Reset the auto-scroll timer if no auto-scroll is needed
     this.ResetAutoScrollTimer();
-    console.log('= S.BaseLine: AutoScrollCommon output: shouldAutoScroll = true');
+    T3Util.Log('= S.BaseLine: AutoScrollCommon output: shouldAutoScroll = true');
     return true;
   }
 
   LM_ActionTrack(event) {
-    console.log('= S.BaseLine: LM_ActionTrack called with event:', event);
+    T3Util.Log('= S.BaseLine: LM_ActionTrack called with event:', event);
 
     let t;
     let a;
@@ -1310,13 +1313,13 @@ class BaseLine extends BaseDrawingObject {
       t = true;
     }
 
-    if (T3Gv.opt.actionTriggerId !== ConstantData.ActionTriggerType.MODIFYSHAPE &&
+    if (T3Gv.opt.actionTriggerId !== OptConstant.ActionTriggerType.MODIFYSHAPE &&
       T3Gv.docUtil.docConfig.enableSnap && !t) {
       const deltaX = trackCoords.x - T3Gv.opt.actionStartX;
       const deltaY = trackCoords.y - T3Gv.opt.actionStartY;
-      const isMovePolySeg = T3Gv.opt.actionTriggerId === ConstantData.ActionTriggerType.MOVEPOLYSEG;
+      const isMovePolySeg = T3Gv.opt.actionTriggerId === OptConstant.ActionTriggerType.MOVEPOLYSEG;
 
-      if (T3Gv.opt.actionTriggerId === ConstantData.ActionTriggerType.ROTATE ||
+      if (T3Gv.opt.actionTriggerId === OptConstant.ActionTriggerType.ROTATE ||
         this.CustomSnap(this.Frame.x, this.Frame.y, deltaX, deltaY, isMovePolySeg, trackCoords) || isMovePolySeg) {
         // Do nothing
       } else {
@@ -1328,11 +1331,11 @@ class BaseLine extends BaseDrawingObject {
       this.HandleActionTriggerTrackCommon(trackCoords.x, trackCoords.y, o, event);
     }
 
-    console.log('= S.BaseLine: LM_ActionTrack completed with updated coordinates:', trackCoords);
+    T3Util.Log('= S.BaseLine: LM_ActionTrack completed with updated coordinates:', trackCoords);
   }
 
   LM_ActionRelease(event, isSecondary) {
-    console.log("= S.BaseLine: LM_ActionRelease called with event:", event, "isSecondary:", isSecondary);
+    T3Util.Log("= S.BaseLine: LM_ActionRelease called with event:", event, "isSecondary:", isSecondary);
 
     if (!isSecondary) {
       T3Gv.opt.UnbindActionClickHammerEvents();
@@ -1384,7 +1387,7 @@ class BaseLine extends BaseDrawingObject {
       //     actionData.pointlist = Utils1.DeepCopy(this.pointlist);
       //   }
 
-      //   if (T3Gv.opt.actionTriggerId === ConstantData.ActionTriggerType.DIMENSION_LINE_ADJ) {
+      //   if (T3Gv.opt.actionTriggerId === OptConstant.ActionTriggerType.DIMENSION_LINE_ADJ) {
       //     actionData.dimensionDeflectionH = this.dimensionDeflectionH;
       //     actionData.dimensionDeflectionV = this.dimensionDeflectionV;
       //   }
@@ -1392,17 +1395,17 @@ class BaseLine extends BaseDrawingObject {
     }
 
     switch (T3Gv.opt.actionTriggerId) {
-      case ConstantData.ActionTriggerType.ROTATE:
+      case OptConstant.ActionTriggerType.ROTATE:
         this.AfterRotateShape(T3Gv.opt.actionStoredObjectId);
         break;
-      case ConstantData.ActionTriggerType.MODIFYSHAPE:
-      case ConstantData.ActionTriggerType.SEGL_ONE:
-      case ConstantData.ActionTriggerType.SEGL_TWO:
-      case ConstantData.ActionTriggerType.SEGL_THREE:
-      case ConstantData.ActionTriggerType.POLYLNODE:
-      case ConstantData.ActionTriggerType.POLYLADJ:
-      case ConstantData.ActionTriggerType.POLYLEND:
-      case ConstantData.ActionTriggerType.MOVEPOLYSEG:
+      case OptConstant.ActionTriggerType.MODIFYSHAPE:
+      case OptConstant.ActionTriggerType.SEGL_ONE:
+      case OptConstant.ActionTriggerType.SEGL_TWO:
+      case OptConstant.ActionTriggerType.SEGL_THREE:
+      case OptConstant.ActionTriggerType.POLYLNODE:
+      case OptConstant.ActionTriggerType.POLYLADJ:
+      case OptConstant.ActionTriggerType.POLYLEND:
+      case OptConstant.ActionTriggerType.MOVEPOLYSEG:
         this.AfterModifyShape(T3Gv.opt.actionStoredObjectId, T3Gv.opt.actionTriggerId);
         break;
       default:
@@ -1429,18 +1432,18 @@ class BaseLine extends BaseDrawingObject {
     T3Gv.opt.ShowOverlayLayer();
     T3Gv.opt.CompleteOperation(null);
 
-    console.log("= S.BaseLine: LM_ActionRelease completed");
+    T3Util.Log("= S.BaseLine: LM_ActionRelease completed");
   }
 
   LM_ActionPreTrack(actionStoredObjectID, actionTriggerID) {
-    console.log("= S.BaseLine: LM_ActionPreTrack called with actionStoredObjectID:", actionStoredObjectID, "actionTriggerID:", actionTriggerID);
+    T3Util.Log("= S.BaseLine: LM_ActionPreTrack called with actionStoredObjectID:", actionStoredObjectID, "actionTriggerID:", actionTriggerID);
 
     let objectPtr, sessionPtr, linkParams, hookIndex = -1;
 
     // Retrieve the object pointer for the given actionStoredObjectID
     objectPtr = T3Gv.opt.GetObjectPtr(actionStoredObjectID, false);
     if (!objectPtr) {
-      console.log("= S.BaseLine: LM_ActionPreTrack - objectPtr not found");
+      T3Util.Log("= S.BaseLine: LM_ActionPreTrack - objectPtr not found");
       return;
     }
 
@@ -1449,24 +1452,24 @@ class BaseLine extends BaseDrawingObject {
 
     // Determine the hook index based on the actionTriggerID
     switch (actionTriggerID) {
-      case ConstantData.ActionTriggerType.LINESTART:
+      case OptConstant.ActionTriggerType.LINESTART:
         for (let i = 0; i < objectPtr.hooks.length; i++) {
           if (
-            objectPtr.hooks[i].hookpt === ConstantData.HookPts.SED_KTL ||
-            objectPtr.hooks[i].hookpt === ConstantData.HookPts.SED_WTL ||
-            objectPtr.hooks[i].hookpt === ConstantData.HookPts.SED_WTR
+            objectPtr.hooks[i].hookpt === OptConstant.HookPts.SED_KTL ||
+            objectPtr.hooks[i].hookpt === OptConstant.HookPts.SED_WTL ||
+            objectPtr.hooks[i].hookpt === OptConstant.HookPts.SED_WTR
           ) {
             hookIndex = i;
             break;
           }
         }
         break;
-      case ConstantData.ActionTriggerType.LINEEND:
+      case OptConstant.ActionTriggerType.LINEEND:
         for (let i = 0; i < objectPtr.hooks.length; i++) {
           if (
-            objectPtr.hooks[i].hookpt === ConstantData.HookPts.SED_KTR ||
-            objectPtr.hooks[i].hookpt === ConstantData.HookPts.SED_WBL ||
-            objectPtr.hooks[i].hookpt === ConstantData.HookPts.SED_WBR
+            objectPtr.hooks[i].hookpt === OptConstant.HookPts.SED_KTR ||
+            objectPtr.hooks[i].hookpt === OptConstant.HookPts.SED_WBL ||
+            objectPtr.hooks[i].hookpt === OptConstant.HookPts.SED_WBR
           ) {
             hookIndex = i;
             break;
@@ -1474,14 +1477,14 @@ class BaseLine extends BaseDrawingObject {
         }
         break;
       default:
-        console.log("= S.BaseLine: LM_ActionPreTrack - invalid actionTriggerID");
+        T3Util.Log("= S.BaseLine: LM_ActionPreTrack - invalid actionTriggerID");
         return;
     }
 
     // Reset floating point dimensions flags
     if (this.rflags) {
-      this.rflags = Utils2.SetFlag(this.rflags, ConstantData.FloatingPointDim.SD_FP_Width, false);
-      this.rflags = Utils2.SetFlag(this.rflags, ConstantData.FloatingPointDim.SD_FP_Height, false);
+      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Width, false);
+      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Height, false);
     }
 
     // Initialize LinkParameters
@@ -1498,7 +1501,7 @@ class BaseLine extends BaseDrawingObject {
 
     // Set AllowJoin flag based on session flags
     if (sessionPtr) {
-      linkParams.AllowJoin = sessionPtr.flags & ConstantData.SessionFlags.SEDS_FreeHand;
+      linkParams.AllowJoin = sessionPtr.flags & OptConstant.SessionFlags.SEDS_FreeHand;
     }
 
     // Set connection parameters if a valid hook index is found
@@ -1521,7 +1524,7 @@ class BaseLine extends BaseDrawingObject {
       linkParams.lpCircList,
       actionStoredObjectID,
       objectPtr,
-      ConstantData.ListCodes.SED_LC_CIRCTARG,
+      NvConstant.ListCodes.SED_LC_CIRCTARG,
       {}
     );
 
@@ -1530,13 +1533,13 @@ class BaseLine extends BaseDrawingObject {
       linkParams.lpCircList.push(objectPtr.hooks[0].objid);
     }
 
-    console.log("= S.BaseLine: LM_ActionPreTrack completed with linkParams:", linkParams);
+    T3Util.Log("= S.BaseLine: LM_ActionPreTrack completed with linkParams:", linkParams);
     return true;
   }
 
 
   LM_ActionDuringTrack(event) {
-    console.log('= S.BaseLine: LM_ActionDuringTrack called with event:', event);
+    T3Util.Log('= S.BaseLine: LM_ActionDuringTrack called with event:', event);
 
     const points = [{ x: 0, y: 0 }];
 
@@ -1544,10 +1547,10 @@ class BaseLine extends BaseDrawingObject {
       points[0].x = event.x;
       points[0].y = event.y;
 
-      if (this.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
-        points[0].id = T3Gv.opt.actionTriggerId === ConstantData.ActionTriggerType.LINESTART
-          ? ConstantData.HookPts.SED_KTL
-          : ConstantData.HookPts.SED_KTR;
+      if (this.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
+        points[0].id = T3Gv.opt.actionTriggerId === OptConstant.ActionTriggerType.LINESTART
+          ? OptConstant.HookPts.SED_KTL
+          : OptConstant.HookPts.SED_KTR;
 
         T3Gv.opt.dragDeltaX = 0;
         T3Gv.opt.dragDeltaY = 0;
@@ -1567,16 +1570,16 @@ class BaseLine extends BaseDrawingObject {
       }
     }
 
-    console.log('= S.BaseLine: LM_ActionDuringTrack output event:', event);
+    T3Util.Log('= S.BaseLine: LM_ActionDuringTrack output event:', event);
     return event;
   }
 
   AfterRotateShape(blockID: number): void {
-    console.log("= S.BaseLine: AfterRotateShape called with blockID:", blockID);
+    T3Util.Log("= S.BaseLine: AfterRotateShape called with blockID:", blockID);
 
     // Check if the rectangle's x or y coordinates are negative
     if (this.r.x < 0 || this.r.y < 0) {
-      console.log("= S.BaseLine: Rectangle coordinates are negative, performing undo operation");
+      T3Util.Log("= S.BaseLine: Rectangle coordinates are negative, performing undo operation");
       T3Gv.opt.Undo();
       // Collab.UnLockMessages();
       // Collab.UnBlockMessages();
@@ -1585,8 +1588,8 @@ class BaseLine extends BaseDrawingObject {
 
     // Maintain link if the frame is defined
     if (T3Gv.opt.ob.Frame) {
-      console.log("= S.BaseLine: Maintaining link with frame:", T3Gv.opt.ob.Frame);
-      T3Gv.opt.MaintainLink(blockID, this, T3Gv.opt.ob, ConstantData.ActionTriggerType.ROTATE);
+      T3Util.Log("= S.BaseLine: Maintaining link with frame:", T3Gv.opt.ob.Frame);
+      T3Gv.opt.MaintainLink(blockID, this, T3Gv.opt.ob, OptConstant.ActionTriggerType.ROTATE);
       T3Gv.opt.ob = {};
     }
 
@@ -1594,50 +1597,50 @@ class BaseLine extends BaseDrawingObject {
     T3Gv.opt.SetLinkFlag(blockID, ShapeConstant.LinkFlags.SED_L_MOVE);
     T3Gv.opt.UpdateLinks();
 
-    console.log("= S.BaseLine: AfterRotateShape completed for blockID:", blockID);
+    T3Util.Log("= S.BaseLine: AfterRotateShape completed for blockID:", blockID);
   }
 
   AfterModifyShape(blockID: number, actionTriggerID: number): void {
-    console.log("= S.BaseLine: AfterModifyShape called with blockID:", blockID, "actionTriggerID:", actionTriggerID);
+    T3Util.Log("= S.BaseLine: AfterModifyShape called with blockID:", blockID, "actionTriggerID:", actionTriggerID);
 
     if (T3Gv.opt.actionSvgObject) {
-      const ellipseAxesElement = T3Gv.opt.actionSvgObject.GetElementByID(ConstantData.Defines.EllipseAxes);
+      const ellipseAxesElement = T3Gv.opt.actionSvgObject.GetElementByID(OptConstant.Defines.EllipseAxes);
       if (ellipseAxesElement != null) {
         T3Gv.opt.actionSvgObject.RemoveElement(ellipseAxesElement);
-        console.log("= S.BaseLine: Removed ellipseAxesElement:", ellipseAxesElement);
+        T3Util.Log("= S.BaseLine: Removed ellipseAxesElement:", ellipseAxesElement);
       }
     }
 
     if (T3Gv.opt.ob.Frame) {
       T3Gv.opt.MaintainLink(blockID, this, T3Gv.opt.ob, actionTriggerID);
       T3Gv.opt.ob = {};
-      console.log("= S.BaseLine: Maintained link and reset ob.Frame");
+      T3Util.Log("= S.BaseLine: Maintained link and reset ob.Frame");
     }
 
     if (this.rflags) {
-      this.rflags = Utils2.SetFlag(this.rflags, ConstantData.FloatingPointDim.SD_FP_Width, false);
-      this.rflags = Utils2.SetFlag(this.rflags, ConstantData.FloatingPointDim.SD_FP_Height, false);
-      console.log("= S.BaseLine: Reset floating point dimensions flags");
+      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Width, false);
+      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Height, false);
+      T3Util.Log("= S.BaseLine: Reset floating point dimensions flags");
     }
 
     T3Gv.opt.SetLinkFlag(blockID, ShapeConstant.LinkFlags.SED_L_MOVE);
     T3Gv.opt.UpdateLinks();
-    console.log("= S.BaseLine: Set link flag and updated links");
+    T3Util.Log("= S.BaseLine: Set link flag and updated links");
 
     if (this.arcobj) {
       this.arcobj = null;
-      console.log("= S.BaseLine: Reset arcobj to null");
+      T3Util.Log("= S.BaseLine: Reset arcobj to null");
     }
 
-    console.log("= S.BaseLine: AfterModifyShape completed for blockID:", blockID);
+    T3Util.Log("= S.BaseLine: AfterModifyShape completed for blockID:", blockID);
   }
 
 
   LM_ActionPostRelease(blockID: number): void {
-    console.log("= S.BaseLine: LM_ActionPostRelease called with blockID:", blockID);
+    T3Util.Log("= S.BaseLine: LM_ActionPostRelease called with blockID:", blockID);
 
     // Set edit mode to default
-    T3Gv.opt.SetEditMode(ConstantData.EditState.DEFAULT);
+    T3Gv.opt.SetEditMode(NvConstant.EditState.DEFAULT);
 
     // Check if linkParams is not null
     if (T3Gv.opt.linkParams) {
@@ -1696,11 +1699,11 @@ class BaseLine extends BaseDrawingObject {
       T3Gv.opt.linkParams = null;
     }
 
-    console.log("= S.BaseLine: LM_ActionPostRelease completed for blockID:", blockID);
+    T3Util.Log("= S.BaseLine: LM_ActionPostRelease completed for blockID:", blockID);
   }
 
   LM_SetupActionClick(event, isSecondary) {
-    console.log("= S.BaseLine: LM_SetupActionClick called with event:", event, "isSecondary:", isSecondary);
+    T3Util.Log("= S.BaseLine: LM_SetupActionClick called with event:", event, "isSecondary:", isSecondary);
 
     let actionStoredObjectID, actionTriggerID, preservedBlock, targetElement;
 
@@ -1718,7 +1721,7 @@ class BaseLine extends BaseDrawingObject {
       if (overlayElement === null) return false;
 
       const elementID = overlayElement.GetID();
-      actionStoredObjectID = parseInt(elementID.substring(ConstantData.Defines.Action.length), 10);
+      actionStoredObjectID = parseInt(elementID.substring(OptConstant.Defines.Action.length), 10);
       T3Gv.opt.actionStoredObjectId = actionStoredObjectID;
 
       targetElement = overlayElement.GetTargetForEvent(event);
@@ -1778,18 +1781,18 @@ class BaseLine extends BaseDrawingObject {
     T3Gv.opt.actionStartX = startX;
     T3Gv.opt.actionStartY = startY;
 
-    if (T3Gv.opt.actionTriggerId === ConstantData.ActionTriggerType.ROTATE) {
+    if (T3Gv.opt.actionTriggerId === OptConstant.ActionTriggerType.ROTATE) {
       this.BeforeRotate(svgFrame);
-    } else if (T3Gv.opt.actionTriggerId === ConstantData.ActionTriggerType.MODIFYSHAPE || T3Gv.opt.actionTriggerId === ConstantData.ActionTriggerType.POLYLADJ) {
+    } else if (T3Gv.opt.actionTriggerId === OptConstant.ActionTriggerType.MODIFYSHAPE || T3Gv.opt.actionTriggerId === OptConstant.ActionTriggerType.POLYLADJ) {
       this.BeforeModifyShape(startX, startY, T3Gv.opt.actionTriggerData);
     }
 
-    console.log("= S.BaseLine: LM_SetupActionClick output:", true);
+    T3Util.Log("= S.BaseLine: LM_SetupActionClick output:", true);
     return true;
   }
 
   BeforeRotate(frame: any): void {
-    console.log("= S.BaseLine: BeforeRotate called with frame:", frame);
+    T3Util.Log("= S.BaseLine: BeforeRotate called with frame:", frame);
 
     // Set the rotation knob center divisor
     T3Gv.opt.rotateKnobCenterDivisor = this.RotateKnobCenterDivisor();
@@ -1808,7 +1811,7 @@ class BaseLine extends BaseDrawingObject {
     T3Gv.opt.rotateStartPoint = $.extend(true, {}, this.StartPoint);
     T3Gv.opt.rotateEndPoint = $.extend(true, {}, this.EndPoint);
 
-    console.log("= S.BaseLine: BeforeRotate output:", {
+    T3Util.Log("= S.BaseLine: BeforeRotate output:", {
       rotateStartRotation: T3Gv.opt.rotateStartRotation,
       rotateEndRotation: T3Gv.opt.rotateEndRotation,
       rotatePivotX: T3Gv.opt.rotatePivotX,
@@ -1819,7 +1822,7 @@ class BaseLine extends BaseDrawingObject {
   }
 
   LM_ActionClick_ExceptionCleanup(error) {
-    console.log("= S.BaseLine: LM_ActionClick_ExceptionCleanup called with error:", error);
+    T3Util.Log("= S.BaseLine: LM_ActionClick_ExceptionCleanup called with error:", error);
 
     // Unbind action click hammer events
     T3Gv.opt.UnbindActionClickHammerEvents();
@@ -1838,25 +1841,25 @@ class BaseLine extends BaseDrawingObject {
     // Unblock messages
     // Collab.UnBlockMessages();
 
-    console.log("= S.BaseLine: LM_ActionClick_ExceptionCleanup completed");
+    T3Util.Log("= S.BaseLine: LM_ActionClick_ExceptionCleanup completed");
   }
 
   LM_ActionClick(event, isSecondary) {
-    console.log("= S.BaseLine: LM_ActionClick called with event:", event, "isSecondary:", isSecondary);
+    T3Util.Log("= S.BaseLine: LM_ActionClick called with event:", event, "isSecondary:", isSecondary);
 
     try {
       const blockID = this.BlockID;
       const objectPtr = T3Gv.opt.GetObjectPtr(blockID, false);
 
       if (!(objectPtr && objectPtr instanceof BaseDrawingObject)) {
-        console.log("= S.BaseLine: LM_ActionClick - objectPtr is not an instance of BaseDrawingObject");
+        T3Util.Log("= S.BaseLine: LM_ActionClick - objectPtr is not an instance of BaseDrawingObject");
         return false;
       }
 
       T3Gv.opt.InitializeAutoGrowDrag(0, blockID);
 
       if (!this.LM_SetupActionClick(event, isSecondary)) {
-        console.log("= S.BaseLine: LM_ActionClick - LM_SetupActionClick returned false");
+        T3Util.Log("= S.BaseLine: LM_ActionClick - LM_SetupActionClick returned false");
         return;
       }
 
@@ -1866,7 +1869,7 @@ class BaseLine extends BaseDrawingObject {
       T3Gv.opt.WorkAreaHammer.on('drag', EvtUtil.Evt_ActionTrackHandlerFactory(actionObjectPtr));
       T3Gv.opt.WorkAreaHammer.on('dragend', EvtUtil.Evt_ActionReleaseHandlerFactory(actionObjectPtr));
 
-      console.log("= S.BaseLine: LM_ActionClick setup completed for blockID:", blockID);
+      T3Util.Log("= S.BaseLine: LM_ActionClick setup completed for blockID:", blockID);
     } catch (error) {
       console.error("= S.BaseLine: LM_ActionClick encountered an error:", error);
       this.LM_ActionClick_ExceptionCleanup(error);
@@ -1876,59 +1879,59 @@ class BaseLine extends BaseDrawingObject {
   }
 
   Rotate(svgElement: any, endRotation: number): boolean {
-    console.log("= S.BaseLine: Rotate called with svgElement:", svgElement, "endRotation:", endRotation);
+    T3Util.Log("= S.BaseLine: Rotate called with svgElement:", svgElement, "endRotation:", endRotation);
 
     const pivotPoint = {
       x: T3Gv.opt.rotatePivotX,
       y: T3Gv.opt.rotatePivotY
     };
 
-    const rotationRadians = (endRotation - T3Gv.opt.rotateStartRotation) / (180 / ConstantData.Geometry.PI);
+    const rotationRadians = (endRotation - T3Gv.opt.rotateStartRotation) / (180 / NvConstant.Geometry.PI);
     const rotatedStartPoint = T3Gv.opt.RotatePointAroundPoint(pivotPoint, T3Gv.opt.rotateStartPoint, rotationRadians);
     const rotatedEndPoint = T3Gv.opt.RotatePointAroundPoint(pivotPoint, T3Gv.opt.rotateEndPoint, rotationRadians);
 
-    console.log("= S.BaseLine: Rotated points calculated as rotatedStartPoint:", rotatedStartPoint, "rotatedEndPoint:", rotatedEndPoint);
+    T3Util.Log("= S.BaseLine: Rotated points calculated as rotatedStartPoint:", rotatedStartPoint, "rotatedEndPoint:", rotatedEndPoint);
 
     if (rotatedStartPoint.x < 0 || rotatedStartPoint.y < 0 || rotatedEndPoint.x < 0 || rotatedEndPoint.y < 0) {
-      console.log("= S.BaseLine: Rotation resulted in negative coordinates, returning false");
+      T3Util.Log("= S.BaseLine: Rotation resulted in negative coordinates, returning false");
       return false;
     }
 
-    if (T3Gv.opt.contentHeader.flags & ConstantData.ContentHeaderFlags.CT_DA_NoAuto) {
+    if (T3Gv.opt.contentHeader.flags & OptConstant.ContentHeaderFlags.CT_DA_NoAuto) {
       const sessionObject = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
       if (rotatedStartPoint.x > sessionObject.dim.x || rotatedStartPoint.y > sessionObject.dim.y || rotatedEndPoint.x > sessionObject.dim.x || rotatedEndPoint.y > sessionObject.dim.y) {
-        console.log("= S.BaseLine: Rotation resulted in coordinates outside session dimensions, returning false");
+        T3Util.Log("= S.BaseLine: Rotation resulted in coordinates outside session dimensions, returning false");
         return false;
       }
     }
 
     this.AdjustLineStart(svgElement, rotatedStartPoint.x, rotatedStartPoint.y, 0, true);
-    this.AdjustLineEnd(svgElement, rotatedEndPoint.x, rotatedEndPoint.y, ConstantData.ActionTriggerType.LINEEND, true);
+    this.AdjustLineEnd(svgElement, rotatedEndPoint.x, rotatedEndPoint.y, OptConstant.ActionTriggerType.LINEEND, true);
 
-    console.log("= S.BaseLine: Rotate completed successfully");
+    T3Util.Log("= S.BaseLine: Rotate completed successfully");
     return true;
   }
 
   RotateKnobCenterDivisor(): { x: number; y: number } {
-    console.log("= S.BaseLine: RotateKnobCenterDivisor called");
+    T3Util.Log("= S.BaseLine: RotateKnobCenterDivisor called");
 
     const divisor = {
       x: 2,
       y: 2
     };
 
-    console.log("= S.BaseLine: RotateKnobCenterDivisor output:", divisor);
+    T3Util.Log("= S.BaseLine: RotateKnobCenterDivisor output:", divisor);
     return divisor;
   }
 
   GetHookFlags(): number {
-    console.log("= S.BaseLine: GetHookFlags called");
+    T3Util.Log("= S.BaseLine: GetHookFlags called");
 
-    const hookFlags = ConstantData.HookFlags.SED_LC_Shape |
-      ConstantData.HookFlags.SED_LC_Line |
-      ConstantData.HookFlags.SED_LC_CHook;
+    const hookFlags = NvConstant.HookFlags.SED_LC_Shape |
+      NvConstant.HookFlags.SED_LC_Line |
+      NvConstant.HookFlags.SED_LC_CHook;
 
-    console.log("= S.BaseLine: GetHookFlags output:", hookFlags);
+    T3Util.Log("= S.BaseLine: GetHookFlags output:", hookFlags);
     return hookFlags;
   }
 
@@ -1937,36 +1940,36 @@ class BaseLine extends BaseDrawingObject {
     const layersManager = T3Gv.opt.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
     const session = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
 
-    const useEdges = layersManager && layersManager.activelayer >= 0 && (layersManager.layers[layersManager.activelayer].flags & ConstantData.LayerFlags.SDLF_UseEdges);
+    const useEdges = layersManager && layersManager.activelayer >= 0 && (layersManager.layers[layersManager.activelayer].flags & NvConstant.LayerFlags.SDLF_UseEdges);
     const fromOverlayLayer = T3Gv.opt.fromOverlayLayer;
-    const sessionLink = session && (session.flags & ConstantData.SessionFlags.SEDS_LLink);
+    const sessionLink = session && (session.flags & OptConstant.SessionFlags.SEDS_LLink);
 
     return !useEdges && (fromOverlayLayer || sessionLink);
   }
 
   GetHookPoints(): { x: number; y: number; id: number }[] {
-    console.log("= S.BaseLine: GetHookPoints called");
+    T3Util.Log("= S.BaseLine: GetHookPoints called");
 
-    const hookDimension = ConstantData.Defines.SED_CDim;
+    const hookDimension = OptConstant.Defines.SED_CDim;
     const hookPoints = [
       {
         x: 0,
         y: 0,
-        id: ConstantData.HookPts.SED_KTL
+        id: OptConstant.HookPts.SED_KTL
       },
       {
         x: hookDimension,
         y: hookDimension,
-        id: ConstantData.HookPts.SED_KTR
+        id: OptConstant.HookPts.SED_KTR
       }
     ];
 
-    console.log("= S.BaseLine: GetHookPoints output:", hookPoints);
+    T3Util.Log("= S.BaseLine: GetHookPoints output:", hookPoints);
     return hookPoints;
   }
 
   Pr_GetWidthAdjustment() {
-    console.log("= S.BaseLine: Pr_GetWidthAdjustment called");
+    T3Util.Log("= S.BaseLine: Pr_GetWidthAdjustment called");
 
     const lineThicknessHalf = this.StyleRecord.Line.Thickness / 2;
     let angle = this.GetAngle(null);
@@ -1984,31 +1987,31 @@ class BaseLine extends BaseDrawingObject {
       deltay: deltaY
     };
 
-    console.log("= S.BaseLine: Pr_GetWidthAdjustment output:", result);
+    T3Util.Log("= S.BaseLine: Pr_GetWidthAdjustment output:", result);
     return result;
   }
 
   GetConnectLine(): { startpt: Point; endpt: Point } | null {
-    console.log("= S.BaseLine: GetConnectLine called");
+    T3Util.Log("= S.BaseLine: GetConnectLine called");
 
     // This method is intended to be overridden by subclasses if needed.
     // By default, it returns null indicating no specific connection line.
     const result = null;
 
-    console.log("= S.BaseLine: GetConnectLine output:", result);
+    T3Util.Log("= S.BaseLine: GetConnectLine output:", result);
     return result;
   }
 
   GetPerimPts(hookPoints, targetPoints, targetID, isRelative, additionalParam, hookIndex) {
-    console.log("= S.BaseLine: GetPerimPts called with", { hookPoints, targetPoints, targetID, isRelative, additionalParam, hookIndex });
+    T3Util.Log("= S.BaseLine: GetPerimPts called with", { hookPoints, targetPoints, targetID, isRelative, additionalParam, hookIndex });
 
     let resultPoints = [];
     let startPoint = {};
     let endPoint = {};
-    const HookPts = ConstantData.HookPts;
+    const HookPts = OptConstant.HookPts;
     const numTargetPoints = targetPoints.length;
 
-    if (this.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL && hookIndex < 0 && numTargetPoints > 1) {
+    if (this.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL && hookIndex < 0 && numTargetPoints > 1) {
       const lineThickness = this.StyleRecord.Line.Thickness / 2;
       const widthAdjustment = this.Pr_GetWidthAdjustment();
 
@@ -2036,13 +2039,13 @@ class BaseLine extends BaseDrawingObject {
         }
         resultPoints.push(point);
       }
-      console.log("= S.BaseLine: GetPerimPts output:", resultPoints);
+      T3Util.Log("= S.BaseLine: GetPerimPts output:", resultPoints);
       return resultPoints;
     }
 
     if (hookIndex >= 0) {
       const targetObject = T3Gv.opt.GetObjectPtr(hookIndex, false);
-      if (targetObject && targetObject.objecttype === ConstantData.ObjectTypes.SD_OBJT_MULTIPLICITY) {
+      if (targetObject && targetObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_MULTIPLICITY) {
         let offsetX = 5;
         let offsetY = 5;
         offsetX += targetObject.Frame.width / 2;
@@ -2052,7 +2055,7 @@ class BaseLine extends BaseDrawingObject {
         let delta = 0;
 
         if (angle <= 45) {
-          if (targetObject.subtype == ConstantData.ObjectSubTypes.SD_SUBT_MULTIPLICITY_FLIPPED) offsetY = -targetObject.Frame.height - 5;
+          if (targetObject.subtype == NvConstant.ObjectSubTypes.SD_SUBT_MULTIPLICITY_FLIPPED) offsetY = -targetObject.Frame.height - 5;
           delta = Math.tan(angleRadians) * offsetX;
           if (targetPoints[0].x === 0) {
             if (this.StartPoint.y < this.EndPoint.y) offsetY -= delta;
@@ -2064,7 +2067,7 @@ class BaseLine extends BaseDrawingObject {
           offsetY = -offsetY;
           if (this.StartPoint.x >= this.EndPoint.x) offsetX = -offsetX;
         } else {
-          if (targetObject.subtype == ConstantData.ObjectSubTypes.SD_SUBT_MULTIPLICITY_FLIPPED) offsetX = -offsetX;
+          if (targetObject.subtype == NvConstant.ObjectSubTypes.SD_SUBT_MULTIPLICITY_FLIPPED) offsetX = -offsetX;
           const tanInverse = Math.tan(Math.PI / 2 - angleRadians);
           if (targetPoints[0].x === 0) {
             if (this.StartPoint.y >= this.EndPoint.y) offsetY = -offsetY;
@@ -2089,14 +2092,14 @@ class BaseLine extends BaseDrawingObject {
           resultPoints.push(new Point(this.EndPoint.x - offsetX, this.EndPoint.y + offsetY));
           resultPoints[0].id = targetPoints[0].id;
         }
-        console.log("= S.BaseLine: GetPerimPts output:", resultPoints);
+        T3Util.Log("= S.BaseLine: GetPerimPts output:", resultPoints);
         return resultPoints;
-      } else if (targetObject && targetObject.objecttype === ConstantData.ObjectTypes.SD_OBJT_EXTRATEXTLABEL && numTargetPoints === 1) {
-        const proportion = targetPoints[0].x / ConstantData.Defines.SED_CDim;
+      } else if (targetObject && targetObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_EXTRATEXTLABEL && numTargetPoints === 1) {
+        const proportion = targetPoints[0].x / OptConstant.Defines.SED_CDim;
         const pointOnLine = this.GetPointOnLine(proportion);
         resultPoints.push(pointOnLine);
         resultPoints[0].id = targetPoints[0].id;
-        console.log("= S.BaseLine: GetPerimPts output:", resultPoints);
+        T3Util.Log("= S.BaseLine: GetPerimPts output:", resultPoints);
         return resultPoints;
       }
     }
@@ -2115,24 +2118,24 @@ class BaseLine extends BaseDrawingObject {
       if (targetPoints[i].x === 0 && targetPoints[i].y === 0) {
         resultPoints[i].x = startPoint.x;
         resultPoints[i].y = startPoint.y;
-      } else if (targetPoints[i].x === ConstantData.Defines.SED_CDim && targetPoints[i].y === ConstantData.Defines.SED_CDim) {
+      } else if (targetPoints[i].x === OptConstant.Defines.SED_CDim && targetPoints[i].y === OptConstant.Defines.SED_CDim) {
         resultPoints[i].x = endPoint.x;
         resultPoints[i].y = endPoint.y;
       } else {
         const deltaX = endPoint.x - startPoint.x;
         const deltaY = endPoint.y - startPoint.y;
-        resultPoints[i].x = (targetPoints[i].x / ConstantData.Defines.SED_CDim) * deltaX + startPoint.x;
-        resultPoints[i].y = (targetPoints[i].y / ConstantData.Defines.SED_CDim) * deltaY + startPoint.y;
+        resultPoints[i].x = (targetPoints[i].x / OptConstant.Defines.SED_CDim) * deltaX + startPoint.x;
+        resultPoints[i].y = (targetPoints[i].y / OptConstant.Defines.SED_CDim) * deltaY + startPoint.y;
       }
       if (targetPoints[i].id != null) resultPoints[i].id = targetPoints[i].id;
     }
 
-    console.log("= S.BaseLine: GetPerimPts output:", resultPoints);
+    T3Util.Log("= S.BaseLine: GetPerimPts output:", resultPoints);
     return resultPoints;
   }
 
   GetPointOnLine(proportion: number): Point {
-    console.log("= S.BaseLine: GetPointOnLine called with proportion:", proportion);
+    T3Util.Log("= S.BaseLine: GetPointOnLine called with proportion:", proportion);
 
     const distanceBetweenPoints = (point1: Point, point2: Point): number => {
       const deltaX = point1.x - point2.x;
@@ -2141,7 +2144,7 @@ class BaseLine extends BaseDrawingObject {
     };
 
     const resultPoint: Point = { x: this.StartPoint.x, y: this.StartPoint.y };
-    const polyPoints = this.GetPolyPoints(ConstantData.Defines.NPOLYPTS, false, false, false, null);
+    const polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, false, false, null);
     const segments: { pt1: Point; pt2: Point; len: number }[] = [];
     let totalLength = 0;
 
@@ -2168,53 +2171,53 @@ class BaseLine extends BaseDrawingObject {
       accumulatedLength += len;
     }
 
-    console.log("= S.BaseLine: GetPointOnLine output:", resultPoint);
+    T3Util.Log("= S.BaseLine: GetPointOnLine output:", resultPoint);
     return resultPoint;
   }
 
   GetTargetPoints(hookPoint, hookFlags, targetID) {
-    console.log("= S.BaseLine: GetTargetPoints called with", { hookPoint, hookFlags, targetID });
+    T3Util.Log("= S.BaseLine: GetTargetPoints called with", { hookPoint, hookFlags, targetID });
 
     let isVertical = false;
     let isHorizontal = false;
     const targetPoints = [{ x: 0, y: 0 }];
-    const adjustedPoint = { x: 0, y: 0 };
-    const hookPts = ConstantData.HookPts;
+    let adjustedPoint = { x: 0, y: 0 };
+    const hookPts = OptConstant.HookPts;
 
     if (targetID != null && targetID >= 0) {
       const targetObject = T3Gv.opt.GetObjectPtr(targetID, false);
 
-      if (targetObject.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.SHAPE) {
+      if (targetObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.SHAPE) {
         switch (hookPoint.id) {
           case hookPts.SED_KTC:
           case hookPts.SED_KBC:
           case hookPts.SED_KRC:
           case hookPts.SED_KLC:
-            const isReversed = ShapeDataUtil.LineIsReversed(this, null, false);
+            const isReversed = ShapeUtil.LineIsReversed(this, null, false);
             if (this.hooks.length === 0) {
               if (isReversed) {
-                targetPoints[0].x = ConstantData.Defines.SED_CDim;
-                targetPoints[0].y = ConstantData.Defines.SED_CDim;
+                targetPoints[0].x = OptConstant.Defines.SED_CDim;
+                targetPoints[0].y = OptConstant.Defines.SED_CDim;
                 targetPoints.push({ x: 0, y: 0 });
               } else {
                 targetPoints[0].x = 0;
                 targetPoints[0].y = 0;
-                targetPoints.push({ x: ConstantData.Defines.SED_CDim, y: ConstantData.Defines.SED_CDim });
+                targetPoints.push({ x: OptConstant.Defines.SED_CDim, y: OptConstant.Defines.SED_CDim });
               }
-              console.log("= S.BaseLine: GetTargetPoints output:", targetPoints);
+              T3Util.Log("= S.BaseLine: GetTargetPoints output:", targetPoints);
               return targetPoints;
             }
             if (this.hooks.length === 1) {
               if (this.hooks[0].hookpt === hookPts.SED_KTR) {
                 targetPoints[0].x = 0;
                 targetPoints[0].y = 0;
-                console.log("= S.BaseLine: GetTargetPoints output:", targetPoints);
+                T3Util.Log("= S.BaseLine: GetTargetPoints output:", targetPoints);
                 return targetPoints;
               }
               if (this.hooks[0].hookpt === hookPts.SED_KTL) {
-                targetPoints[0].x = ConstantData.Defines.SED_CDim;
-                targetPoints[0].y = ConstantData.Defines.SED_CDim;
-                console.log("= S.BaseLine: GetTargetPoints output:", targetPoints);
+                targetPoints[0].x = OptConstant.Defines.SED_CDim;
+                targetPoints[0].y = OptConstant.Defines.SED_CDim;
+                T3Util.Log("= S.BaseLine: GetTargetPoints output:", targetPoints);
                 return targetPoints;
               }
             }
@@ -2244,8 +2247,8 @@ class BaseLine extends BaseDrawingObject {
     adjustedPoint.x = hookPoint.x;
     adjustedPoint.y = hookPoint.y;
 
-    if (isVertical || Math.abs(slope) > 1 || (hookFlags & ConstantData.HookFlags.SED_LC_HOnly && !isHorizontal)) {
-      if (T3Gv.docUtil.docConfig.enableSnap && !(hookFlags & ConstantData.HookFlags.SED_LC_NoSnaps)) {
+    if (isVertical || Math.abs(slope) > 1 || (hookFlags & NvConstant.HookFlags.SED_LC_HOnly && !isHorizontal)) {
+      if (T3Gv.docUtil.docConfig.enableSnap && !(hookFlags & NvConstant.HookFlags.SED_LC_NoSnaps)) {
         adjustedPoint = T3Gv.docUtil.SnapToGrid(adjustedPoint);
         const frame = Utils2.Pt2Rect(this.StartPoint, this.EndPoint);
         if (adjustedPoint.y < frame.y) {
@@ -2258,7 +2261,7 @@ class BaseLine extends BaseDrawingObject {
       const offsetY = adjustedPoint.y - this.StartPoint.y;
       var offsetX = isVertical ? offsetY : offsetY / slope;
     } else {
-      if (T3Gv.docUtil.docConfig.enableSnap && !(hookFlags & ConstantData.HookFlags.SED_LC_NoSnaps)) {
+      if (T3Gv.docUtil.docConfig.enableSnap && !(hookFlags & NvConstant.HookFlags.SED_LC_NoSnaps)) {
         adjustedPoint = T3Gv.docUtil.SnapToGrid(adjustedPoint);
         const frame = Utils2.Pt2Rect(this.StartPoint, this.EndPoint);
         if (adjustedPoint.x < frame.x) {
@@ -2273,19 +2276,19 @@ class BaseLine extends BaseDrawingObject {
     }
 
     if (!isHorizontal) {
-      targetPoints[0].y = (offsetY / deltaY) * ConstantData.Defines.SED_CDim;
+      targetPoints[0].y = (offsetY / deltaY) * OptConstant.Defines.SED_CDim;
     }
-    targetPoints[0].x = isVertical ? targetPoints[0].y : (offsetX / deltaX) * ConstantData.Defines.SED_CDim;
+    targetPoints[0].x = isVertical ? targetPoints[0].y : (offsetX / deltaX) * OptConstant.Defines.SED_CDim;
 
     if (isHorizontal) {
       targetPoints[0].y = targetPoints[0].x;
     }
 
-    if (targetPoints[0].x > ConstantData.Defines.SED_CDim) {
-      targetPoints[0].x = ConstantData.Defines.SED_CDim;
+    if (targetPoints[0].x > OptConstant.Defines.SED_CDim) {
+      targetPoints[0].x = OptConstant.Defines.SED_CDim;
     }
-    if (targetPoints[0].y > ConstantData.Defines.SED_CDim) {
-      targetPoints[0].y = ConstantData.Defines.SED_CDim;
+    if (targetPoints[0].y > OptConstant.Defines.SED_CDim) {
+      targetPoints[0].y = OptConstant.Defines.SED_CDim;
     }
     if (targetPoints[0].x < 0) {
       targetPoints[0].x = 0;
@@ -2294,44 +2297,44 @@ class BaseLine extends BaseDrawingObject {
       targetPoints[0].y = 0;
     }
 
-    console.log("= S.BaseLine: GetTargetPoints output:", targetPoints);
+    T3Util.Log("= S.BaseLine: GetTargetPoints output:", targetPoints);
     return targetPoints;
   }
 
   AllowHook(hookPoint: any, targetID: number, distance: number): boolean {
-    console.log("= S.BaseLine: AllowHook called with hookPoint:", hookPoint, "targetID:", targetID, "distance:", distance);
+    T3Util.Log("= S.BaseLine: AllowHook called with hookPoint:", hookPoint, "targetID:", targetID, "distance:", distance);
 
-    const HookPts = ConstantData.HookPts;
+    const HookPts = OptConstant.HookPts;
 
     if (targetID != null && targetID >= 0) {
       const targetObject = T3Gv.opt.GetObjectPtr(targetID, false);
 
-      if (targetObject.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.SHAPE) {
+      if (targetObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.SHAPE) {
         switch (hookPoint.id) {
           case HookPts.SED_KTC:
           case HookPts.SED_KBC:
           case HookPts.SED_KRC:
           case HookPts.SED_KLC:
             if (distance > 200) {
-              console.log("= S.BaseLine: AllowHook output: false (distance > 200)");
+              T3Util.Log("= S.BaseLine: AllowHook output: false (distance > 200)");
               return false;
             }
             break;
           default:
             if (hookPoint.id >= HookPts.SED_CustomBase && hookPoint.id < HookPts.SED_CustomBase + 100 && distance > 200) {
-              console.log("= S.BaseLine: AllowHook output: false (custom hook point and distance > 200)");
+              T3Util.Log("= S.BaseLine: AllowHook output: false (custom hook point and distance > 200)");
               return false;
             }
         }
       }
     }
 
-    console.log("= S.BaseLine: AllowHook output: true");
+    T3Util.Log("= S.BaseLine: AllowHook output: true");
     return true;
   }
 
   DeleteObject() {
-    console.log("= S.BaseLine: DeleteObject called");
+    T3Util.Log("= S.BaseLine: DeleteObject called");
 
     // Call the base class DeleteObject method
     super.DeleteObject();
@@ -2339,43 +2342,43 @@ class BaseLine extends BaseDrawingObject {
     // Handle specific object types
     switch (this.objecttype) {
 
-      case ConstantData.ObjectTypes.SD_OBJT_NG_EVENT:
-        console.log("= S.BaseLine: Handling SD_OBJT_NG_EVENT");
+      case NvConstant.ObjectTypes.SD_OBJT_NG_EVENT:
+        T3Util.Log("= S.BaseLine: Handling SD_OBJT_NG_EVENT");
 
         if (this.hooks.length) {
           const hookObject = T3Gv.opt.GetObjectPtr(this.hooks[0].objid, false);
 
-          if (hookObject && hookObject.objecttype === ConstantData.ObjectTypes.SD_OBJT_NG_TIMELINE) {
-            console.log("= S.BaseLine: Returning NG timeline object:", hookObject);
+          if (hookObject && hookObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_NG_TIMELINE) {
+            T3Util.Log("= S.BaseLine: Returning NG timeline object:", hookObject);
             return hookObject;
           }
         }
         break;
 
       default:
-        console.log("= S.BaseLine: No specific handling for objecttype:", this.objecttype);
+        T3Util.Log("= S.BaseLine: No specific handling for objecttype:", this.objecttype);
     }
 
-    console.log("= S.BaseLine: DeleteObject completed");
+    T3Util.Log("= S.BaseLine: DeleteObject completed");
   }
 
   GetSegLFace(objectType: number, point: Point, referencePoint: Point): number {
-    console.log("= S.BaseLine: GetSegLFace called with objectType:", objectType, "point:", point, "referencePoint:", referencePoint);
+    T3Util.Log("= S.BaseLine: GetSegLFace called with objectType:", objectType, "point:", point, "referencePoint:", referencePoint);
 
     let result: number;
 
     if (this.Frame.width >= this.Frame.height) {
-      result = point.y >= referencePoint.y ? ConstantData.HookPts.SED_KBC : ConstantData.HookPts.SED_KTC;
+      result = point.y >= referencePoint.y ? OptConstant.HookPts.SED_KBC : OptConstant.HookPts.SED_KTC;
     } else {
-      result = point.x >= referencePoint.x ? ConstantData.HookPts.SED_KRC : ConstantData.HookPts.SED_KLC;
+      result = point.x >= referencePoint.x ? OptConstant.HookPts.SED_KRC : OptConstant.HookPts.SED_KLC;
     }
 
-    console.log("= S.BaseLine: GetSegLFace output:", result);
+    T3Util.Log("= S.BaseLine: GetSegLFace output:", result);
     return result;
   }
 
   GetSpacing(): { width: number | null; height: number | null } {
-    console.log("= S.BaseLine: GetSpacing called");
+    T3Util.Log("= S.BaseLine: GetSpacing called");
 
     const rect = Utils2.Pt2Rect(this.StartPoint, this.EndPoint);
     const spacing = { width: null, height: null };
@@ -2401,16 +2404,16 @@ class BaseLine extends BaseDrawingObject {
       }
     }
 
-    console.log("= S.BaseLine: GetSpacing output:", spacing);
+    T3Util.Log("= S.BaseLine: GetSpacing output:", spacing);
     return spacing;
   }
 
   GetShapeConnectPoint(hookPointID) {
-    console.log("= S.BaseLine: GetShapeConnectPoint called with hookPointID:", hookPointID);
+    T3Util.Log("= S.BaseLine: GetShapeConnectPoint called with hookPointID:", hookPointID);
 
     const connectPoint = { x: 0, y: 0 };
     const alternatePoint = { x: 0, y: 0 };
-    const dimension = ConstantData.Defines.SED_CDim;
+    const dimension = OptConstant.Defines.SED_CDim;
     const frame = Utils2.Pt2Rect(this.StartPoint, this.EndPoint);
 
     if (frame.width < frame.height) {
@@ -2435,21 +2438,21 @@ class BaseLine extends BaseDrawingObject {
       }
     }
 
-    const result = hookPointID === ConstantData.HookPts.SED_KTL ? alternatePoint : connectPoint;
-    console.log("= S.BaseLine: GetShapeConnectPoint output:", result);
+    const result = hookPointID === OptConstant.HookPts.SED_KTL ? alternatePoint : connectPoint;
+    T3Util.Log("= S.BaseLine: GetShapeConnectPoint output:", result);
     return result;
   }
 
   GetBestHook(hookPointID: number, hookPoint: Point, relativePoint: Point): any {
-    console.log("= S.BaseLine: GetBestHook called with hookPointID:", hookPointID, "hookPoint:", hookPoint, "relativePoint:", relativePoint);
+    T3Util.Log("= S.BaseLine: GetBestHook called with hookPointID:", hookPointID, "hookPoint:", hookPoint, "relativePoint:", relativePoint);
 
-    const dimension = ConstantData.Defines.SED_CDim;
+    const dimension = OptConstant.Defines.SED_CDim;
     const rect = Utils2.Pt2Rect(this.StartPoint, this.EndPoint);
-    const HookPts = ConstantData.HookPts;
+    const HookPts = OptConstant.HookPts;
     let isEndPoint = false;
 
     const targetObject = T3Gv.opt.GetObjectPtr(hookPointID, false);
-    if (targetObject && targetObject.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.SHAPE) {
+    if (targetObject && targetObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.SHAPE) {
       switch (hookPoint) {
         case HookPts.SED_KTC:
         case HookPts.SED_KBC:
@@ -2458,26 +2461,26 @@ class BaseLine extends BaseDrawingObject {
           if (rect.width < rect.height) {
             isEndPoint = rect.y === this.EndPoint.y;
             const bestHook = relativePoint.y < dimension / 2 ? (isEndPoint ? HookPts.SED_KTC : HookPts.SED_KBC) : (isEndPoint ? HookPts.SED_KBC : HookPts.SED_KTC);
-            console.log("= S.BaseLine: GetBestHook output:", bestHook);
+            T3Util.Log("= S.BaseLine: GetBestHook output:", bestHook);
             return bestHook;
           } else {
             isEndPoint = rect.x === this.EndPoint.x;
             const bestHook = relativePoint.x < dimension / 2 ? (isEndPoint ? HookPts.SED_KLC : HookPts.SED_KRC) : (isEndPoint ? HookPts.SED_KRC : HookPts.SED_KLC);
-            console.log("= S.BaseLine: GetBestHook output:", bestHook);
+            T3Util.Log("= S.BaseLine: GetBestHook output:", bestHook);
             return bestHook;
           }
         default:
-          console.log("= S.BaseLine: GetBestHook output (default):", hookPoint);
+          T3Util.Log("= S.BaseLine: GetBestHook output (default):", hookPoint);
           return hookPoint;
       }
     }
 
-    console.log("= S.BaseLine: GetBestHook output (no target object):", hookPoint);
+    T3Util.Log("= S.BaseLine: GetBestHook output (no target object):", hookPoint);
     return hookPoint;
   }
 
   CreateConnectHilites(svgDoc, targetPoint, hookPoint, isJoin, hookIndex, additionalParam) {
-    console.log("= S.BaseLine: CreateConnectHilites called with", {
+    T3Util.Log("= S.BaseLine: CreateConnectHilites called with", {
       svgDoc,
       targetPoint,
       hookPoint,
@@ -2486,15 +2489,15 @@ class BaseLine extends BaseDrawingObject {
       additionalParam
     });
 
-    const groupElement = svgDoc.CreateShape(ConstantData.CreateShapeType.GROUP);
+    const groupElement = svgDoc.CreateShape(OptConstant.CSType.GROUP);
     let scale = svgDoc.docInfo.docToScreenScale;
     if (svgDoc.docInfo.docScale <= 0.5) {
       scale *= 2;
     }
 
-    let knobSize = ConstantData.Defines.CONNECTPT_LINE_DIM / scale;
+    let knobSize = OptConstant.Defines.CONNECTPT_LINE_DIM / scale;
     if (isJoin) {
-      knobSize = ConstantData.Defines.JOINPT_LINE_DIM / scale;
+      knobSize = OptConstant.Defines.JOINPT_LINE_DIM / scale;
     }
 
     const perimeterPoints = [];
@@ -2508,7 +2511,7 @@ class BaseLine extends BaseDrawingObject {
         if (hookPoint.x === 0 && hookPoint.y === 0) {
           perimeter[0].x = this.StartPoint.x;
           perimeter[0].y = this.StartPoint.y;
-        } else if (hookPoint.x === ConstantData.Defines.SED_CDim && hookPoint.y === ConstantData.Defines.SED_CDim) {
+        } else if (hookPoint.x === OptConstant.Defines.SED_CDim && hookPoint.y === OptConstant.Defines.SED_CDim) {
           perimeter[0].x = this.EndPoint.x;
           perimeter[0].y = this.EndPoint.y;
         }
@@ -2523,7 +2526,7 @@ class BaseLine extends BaseDrawingObject {
       if (T3Gv.opt.touchInitiated) {
         knobParams = {
           svgDoc,
-          shapeType: ConstantData.CreateShapeType.OVAL,
+          shapeType: OptConstant.CSType.OVAL,
           x: knobSize / 2,
           y: knobSize / 2,
           knobSize,
@@ -2532,18 +2535,18 @@ class BaseLine extends BaseDrawingObject {
           strokeSize: 1,
           strokeColor: '#777777',
           KnobID: 0,
-          cursorType: ConstantData2.CursorType.ANCHOR
+          cursorType: CursorConstant.CursorType.ANCHOR
         };
         if (isJoin) {
           knobParams.fillColor = 'none';
           knobParams.strokeSize = 2;
           knobParams.strokeColor = 'black';
-          knobParams.cursorType = ConstantData2.CursorType.CUR_JOIN;
+          knobParams.cursorType = CursorConstant.CursorType.CUR_JOIN;
         }
       } else {
         knobParams = {
           svgDoc,
-          shapeType: ConstantData.CreateShapeType.OVAL,
+          shapeType: OptConstant.CSType.OVAL,
           x: knobSize / 2,
           y: knobSize / 2,
           knobSize,
@@ -2552,13 +2555,13 @@ class BaseLine extends BaseDrawingObject {
           strokeSize: 1,
           strokeColor: '#777777',
           KnobID: 0,
-          cursorType: ConstantData2.CursorType.ANCHOR
+          cursorType: CursorConstant.CursorType.ANCHOR
         };
         if (isJoin) {
           knobParams.fillColor = 'none';
           knobParams.strokeSize = 1;
           knobParams.strokeColor = 'black';
-          knobParams.cursorType = ConstantData2.CursorType.CUR_JOIN;
+          knobParams.cursorType = CursorConstant.CursorType.CUR_JOIN;
         }
       }
 
@@ -2569,19 +2572,19 @@ class BaseLine extends BaseDrawingObject {
       groupElement.isShape = true;
       groupElement.SetID('hilite_' + targetPoint);
 
-      console.log("= S.BaseLine: CreateConnectHilites output:", groupElement);
+      T3Util.Log("= S.BaseLine: CreateConnectHilites output:", groupElement);
       return groupElement;
     }
   }
 
   HookToPoint(hookId: number, outRect?: any): Point {
-    console.log("= S.BaseLine: HookToPoint input, hookId:", hookId, "outRect:", outRect);
+    T3Util.Log("= S.BaseLine: HookToPoint input, hookId:", hookId, "outRect:", outRect);
 
     // Initialize the result point
     const resultPoint: Point = { x: 0, y: 0 };
 
     // Get the constant alias for ease of reading
-    const CD = ConstantData;
+    const CD = OptConstant;
 
     // Calculate the width adjustment using the helper method
     const widthAdjustment = this.Pr_GetWidthAdjustment();
@@ -2626,23 +2629,23 @@ class BaseLine extends BaseDrawingObject {
       outRect.height = computedRect.height;
     }
 
-    console.log("= S.BaseLine: HookToPoint output, resultPoint:", resultPoint, "outRect:", outRect);
+    T3Util.Log("= S.BaseLine: HookToPoint output, resultPoint:", resultPoint, "outRect:", outRect);
     return resultPoint;
   }
 
   MaintainPoint(point: Point, targetId: number, distance: number, lineObj: any, offset: any): boolean {
-    console.log("= S.BaseLine: MaintainPoint input:", { point, targetId, distance, lineObj, offset });
+    T3Util.Log("= S.BaseLine: MaintainPoint input:", { point, targetId, distance, lineObj, offset });
 
     let hookIndex: number = -1;
     let currentLine = lineObj;
     const hookRect: any = {};
     let newLine: any = {};
 
-    if (currentLine.DrawingObjectBaseClass === ConstantData.DrawingObjectBaseClass.LINE) {
+    if (currentLine.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.LINE) {
       switch (currentLine.LineType) {
-        case ConstantData.LineType.SEGLINE:
-        case ConstantData.LineType.ARCSEGLINE:
-        case ConstantData.LineType.POLYLINE:
+        case OptConstant.LineType.SEGLINE:
+        case OptConstant.LineType.ARCSEGLINE:
+        case OptConstant.LineType.POLYLINE:
           // loop through hooks to find the matching target id
           for (let i = 0; i < currentLine.hooks.length; i++) {
             if (currentLine.hooks[i].targetid === targetId) {
@@ -2652,7 +2655,7 @@ class BaseLine extends BaseDrawingObject {
             }
           }
           if (hookIndex !== 0) {
-            console.log("= S.BaseLine: MaintainPoint output: returning true early (no matching hook)");
+            T3Util.Log("= S.BaseLine: MaintainPoint output: returning true early (no matching hook)");
             return true;
           }
           newLine = Utils1.DeepCopy(currentLine);
@@ -2665,11 +2668,11 @@ class BaseLine extends BaseDrawingObject {
           break;
       }
       if (T3Gv.opt.LineCheckPoint(this, point)) {
-        console.log("= S.BaseLine: MaintainPoint output: returning true early (LineCheckPoint true)");
+        T3Util.Log("= S.BaseLine: MaintainPoint output: returning true early (LineCheckPoint true)");
         return true;
       }
       if (T3Gv.opt.Lines_Intersect(this, currentLine, point)) {
-        console.log("= S.BaseLine: MaintainPoint output: returning true early (Lines_Intersect true)");
+        T3Util.Log("= S.BaseLine: MaintainPoint output: returning true early (Lines_Intersect true)");
         return true;
       }
       T3Gv.opt.Lines_MaintainDist(this, distance, offset, point);
@@ -2677,24 +2680,24 @@ class BaseLine extends BaseDrawingObject {
       T3Gv.opt.Lines_MaintainDist(this, distance, offset, point);
     }
 
-    console.log("= S.BaseLine: MaintainPoint output: returning true");
+    T3Util.Log("= S.BaseLine: MaintainPoint output: returning true");
     return true;
   }
 
   ChangeTarget(e: any, targetId: any, a: any, r: any, i: any, n: any): void {
-    console.log("= S.BaseLine: ChangeTarget called with e:", e, "targetId:", targetId, "a:", a, "r:", r, "i:", i, "n:", n);
+    T3Util.Log("= S.BaseLine: ChangeTarget called with e:", e, "targetId:", targetId, "a:", a, "r:", r, "i:", i, "n:", n);
 
     let apparentAngle = 0;
     let targetObj: any = T3Gv.opt.GetObjectPtr(targetId, false);
 
-    if (this.TextFlags & ConstantData.TextFlags.SED_TF_HorizText &&
+    if (this.TextFlags & NvConstant.TextFlags.SED_TF_HorizText &&
       targetObj instanceof Instance.Shape.BaseShape) {
 
       apparentAngle = this.GetApparentAngle(-1);
       apparentAngle = Math.abs(apparentAngle) % 180;
 
       let targetRotation = Math.abs(targetObj.RotationAngle % 180);
-      console.log("= S.BaseLine: ChangeTarget computed apparentAngle:", apparentAngle, "targetRotation:", targetRotation);
+      T3Util.Log("= S.BaseLine: ChangeTarget computed apparentAngle:", apparentAngle, "targetRotation:", targetRotation);
 
       if (Math.abs(targetRotation - apparentAngle) > 2 &&
         Math.abs(targetRotation - (apparentAngle - 180)) > 2) {
@@ -2704,18 +2707,18 @@ class BaseLine extends BaseDrawingObject {
           ShapeConstant.LinkFlags.SED_L_MOVE | ShapeConstant.LinkFlags.SED_L_CHANGE
         );
         T3Gv.opt.AddToDirtyList(targetId);
-        console.log("= S.BaseLine: ChangeTarget updated targetObj.RotationAngle to:", apparentAngle);
+        T3Util.Log("= S.BaseLine: ChangeTarget updated targetObj.RotationAngle to:", apparentAngle);
       } else {
-        console.log("= S.BaseLine: ChangeTarget rotation difference within tolerance, no update performed");
+        T3Util.Log("= S.BaseLine: ChangeTarget rotation difference within tolerance, no update performed");
       }
     }
 
     T3Gv.opt.AddToDirtyList(this.BlockID);
-    console.log("= S.BaseLine: ChangeTarget completed for BlockID:", this.BlockID);
+    T3Util.Log("= S.BaseLine: ChangeTarget completed for BlockID:", this.BlockID);
   }
 
   GetPolyPoints(numPoints: number, isRelative: boolean, a: any, r: any, i: any): Point[] {
-    console.log("= S.BaseLine: GetPolyPoints called with:", { numPoints, isRelative, a, r, i });
+    T3Util.Log("= S.BaseLine: GetPolyPoints called with:", { numPoints, isRelative, a, r, i });
 
     // Create the points array using StartPoint and EndPoint
     const points: Point[] = [
@@ -2731,7 +2734,7 @@ class BaseLine extends BaseDrawingObject {
       }
     }
 
-    console.log("= S.BaseLine: GetPolyPoints output:", points);
+    T3Util.Log("= S.BaseLine: GetPolyPoints output:", points);
     return points;
   }
 
@@ -2742,12 +2745,12 @@ class BaseLine extends BaseDrawingObject {
     hitResult: any,
     hookPointID: number
   ): number {
-    console.log("= S.BaseLine: Hit called with input:", { point, t, isKnob, hitResult, hookPointID });
+    T3Util.Log("= S.BaseLine: Hit called with input:", { point, t, isKnob, hitResult, hookPointID });
 
     let hitCode: number;
     let inflatedStartPoint: any;
     let inflatedEndPoint: any;
-    const knobSize = ConstantData.Defines.SED_KnobSize;
+    const knobSize = OptConstant.Defines.SED_KnobSize;
     let docToScreenScale = T3Gv.opt.svgDoc.docInfo.docToScreenScale;
 
     if (T3Gv.opt.svgDoc.docInfo.docScale <= 0.5) {
@@ -2760,20 +2763,20 @@ class BaseLine extends BaseDrawingObject {
       inflatedEndPoint = Utils2.InflatePoint(this.EndPoint, inflatedSize);
 
       if (hookPointID) {
-        if (hookPointID === ConstantData.HookPts.SED_KTL) {
+        if (hookPointID === OptConstant.HookPts.SED_KTL) {
           inflatedStartPoint = null;
         }
-        if (hookPointID === ConstantData.HookPts.SED_KTR) {
+        if (hookPointID === OptConstant.HookPts.SED_KTR) {
           inflatedEndPoint = null;
         }
       }
 
       if (this.hooks) {
         for (let i = 0; i < this.hooks.length; i++) {
-          if (this.hooks[i].hookpt === ConstantData.HookPts.SED_KTL) {
+          if (this.hooks[i].hookpt === OptConstant.HookPts.SED_KTL) {
             inflatedStartPoint = null;
           }
-          if (this.hooks[i].hookpt === ConstantData.HookPts.SED_KTR) {
+          if (this.hooks[i].hookpt === OptConstant.HookPts.SED_KTR) {
             inflatedEndPoint = null;
           }
         }
@@ -2783,13 +2786,13 @@ class BaseLine extends BaseDrawingObject {
         const targetObject = T3Gv.opt.GetObjectPtr(hitResult.objectid, false);
         if (!(targetObject && targetObject.polylist && targetObject.polylist.closed)) {
           if (hitResult) {
-            hitResult.hitcode = ConstantData.HitCodes.SED_PLApp;
-            hitResult.segment = ConstantData.HookPts.SED_KTL;
+            hitResult.hitcode = NvConstant.HitCodes.SED_PLApp;
+            hitResult.segment = OptConstant.HookPts.SED_KTL;
             hitResult.pt.x = this.StartPoint.x;
             hitResult.pt.y = this.StartPoint.y;
           }
-          console.log("= S.BaseLine: Hit output:", ConstantData.HitCodes.SED_PLApp);
-          return ConstantData.HitCodes.SED_PLApp;
+          T3Util.Log("= S.BaseLine: Hit output:", NvConstant.HitCodes.SED_PLApp);
+          return NvConstant.HitCodes.SED_PLApp;
         }
       }
 
@@ -2797,18 +2800,18 @@ class BaseLine extends BaseDrawingObject {
         const targetObject = T3Gv.opt.GetObjectPtr(hitResult.objectid, false);
         if (!(targetObject && targetObject.polylist && targetObject.polylist.closed)) {
           if (hitResult) {
-            hitResult.hitcode = ConstantData.HitCodes.SED_PLApp;
-            hitResult.segment = ConstantData.HookPts.SED_KTR;
+            hitResult.hitcode = NvConstant.HitCodes.SED_PLApp;
+            hitResult.segment = OptConstant.HookPts.SED_KTR;
             hitResult.pt.x = this.EndPoint.x;
             hitResult.pt.y = this.EndPoint.y;
           }
-          console.log("= S.BaseLine: Hit output:", ConstantData.HitCodes.SED_PLApp);
-          return ConstantData.HitCodes.SED_PLApp;
+          T3Util.Log("= S.BaseLine: Hit output:", NvConstant.HitCodes.SED_PLApp);
+          return NvConstant.HitCodes.SED_PLApp;
         }
       }
     }
 
-    const polyPoints = this.GetPolyPoints(ConstantData.Defines.NPOLYPTS, false, false, true, []);
+    const polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, false, true, []);
     const hitPoint = { x: point.x, y: point.y };
     const hitData = {};
 
@@ -2828,66 +2831,66 @@ class BaseLine extends BaseDrawingObject {
       hitResult.hitcode = hitCode;
     }
 
-    console.log("= S.BaseLine: Hit output:", hitCode);
+    T3Util.Log("= S.BaseLine: Hit output:", hitCode);
     return hitCode;
   }
 
   StartNewObjectDrawDoAutoScroll() {
-    console.log("= S.BaseLine: StartNewObjectDrawDoAutoScroll called");
+    T3Util.Log("= S.BaseLine: StartNewObjectDrawDoAutoScroll called");
 
     // Set the auto-scroll timer with a 100ms timeout
     T3Gv.opt.autoScrollTimerId = T3Gv.opt.autoScrollTimer.setTimeout(
       'StartNewObjectDrawDoAutoScroll',
       100
     );
-    console.log("= S.BaseLine: autoScrollTimerId set to", T3Gv.opt.autoScrollTimerId);
+    T3Util.Log("= S.BaseLine: autoScrollTimerId set to", T3Gv.opt.autoScrollTimerId);
 
     // Convert window coordinates (autoScrollXPos, autoScrollYPos) to document coordinates
     let docCoords = T3Gv.opt.svgDoc.ConvertWindowToDocCoords(
       T3Gv.opt.autoScrollXPos,
       T3Gv.opt.autoScrollYPos
     );
-    console.log("= S.BaseLine: Converted window coords to docCoords:", docCoords);
+    T3Util.Log("= S.BaseLine: Converted window coords to docCoords:", docCoords);
 
     // Adjust the document coordinates for auto-grow drag
     docCoords = T3Gv.opt.DoAutoGrowDrag(docCoords);
-    console.log("= S.BaseLine: After DoAutoGrowDrag, docCoords:", docCoords);
+    T3Util.Log("= S.BaseLine: After DoAutoGrowDrag, docCoords:", docCoords);
 
     // Scroll the document to the new position
     T3Gv.docUtil.ScrollToPosition(docCoords.x, docCoords.y);
-    console.log("= S.BaseLine: Scrolled to position:", docCoords);
+    T3Util.Log("= S.BaseLine: Scrolled to position:", docCoords);
 
     // Continue drawing tracking with the updated coordinates
     this.StartNewObjectDrawTrackCommon(docCoords.x, docCoords.y, null);
-    console.log("= S.BaseLine: Called StartNewObjectDrawTrackCommon with coords:", docCoords.x, docCoords.y);
+    T3Util.Log("= S.BaseLine: Called StartNewObjectDrawTrackCommon with coords:", docCoords.x, docCoords.y);
   }
 
   StartNewObjectDrawTrackCommon(x: number, y: number, extraFlag: any): void {
-    console.log("= S.BaseLine: StartNewObjectDrawTrackCommon called with x:", x, "y:", y, "extraFlag:", extraFlag);
+    T3Util.Log("= S.BaseLine: StartNewObjectDrawTrackCommon called with x:", x, "y:", y, "extraFlag:", extraFlag);
 
     // Compute differences relative to the action start coordinates
     const deltaX = x - T3Gv.opt.actionStartX;
     const deltaY = y - T3Gv.opt.actionStartY;
     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-    console.log("= S.BaseLine: Computed deltaX:", deltaX, "deltaY:", deltaY, "distance:", distance);
+    T3Util.Log("= S.BaseLine: Computed deltaX:", deltaX, "deltaY:", deltaY, "distance:", distance);
 
     // Make a deep copy of the action bounding box
     const actionBBox = $.extend(true, {}, T3Gv.opt.actionBBox);
-    console.log("= S.BaseLine: actionBBox:", actionBBox);
+    T3Util.Log("= S.BaseLine: actionBBox:", actionBBox);
 
     // Adjust the line end point
     this.AdjustLineEnd(
       T3Gv.opt.actionSvgObject,
       x,
       y,
-      ConstantData.ActionTriggerType.LINEEND,
+      OptConstant.ActionTriggerType.LINEEND,
       extraFlag
     );
-    console.log("= S.BaseLine: AdjustLineEnd called with x:", x, "y:", y, "trigger:", ConstantData.ActionTriggerType.LINEEND, "extraFlag:", extraFlag);
+    T3Util.Log("= S.BaseLine: AdjustLineEnd called with x:", x, "y:", y, "trigger:", OptConstant.ActionTriggerType.LINEEND, "extraFlag:", extraFlag);
   }
 
   LM_DrawTrack(event: any) {
-    console.log("= S.BaseLine: LM_DrawTrack called with event:", event);
+    T3Util.Log("= S.BaseLine: LM_DrawTrack called with event:", event);
 
     // Stop propagation and default handling
     Utils2.StopPropagationAndDefaults(event);
@@ -2897,7 +2900,7 @@ class BaseLine extends BaseDrawingObject {
 
     // Check if action stored object is valid
     if (T3Gv.opt.actionStoredObjectId === -1) {
-      console.log("= S.BaseLine: LM_DrawTrack aborted, actionStoredObjectId is -1");
+      T3Util.Log("= S.BaseLine: LM_DrawTrack aborted, actionStoredObjectId is -1");
       return false;
     }
 
@@ -2915,11 +2918,11 @@ class BaseLine extends BaseDrawingObject {
       );
     }
 
-    console.log("= S.BaseLine: LM_DrawTrack input point (before track):", trackPoint);
+    T3Util.Log("= S.BaseLine: LM_DrawTrack input point (before track):", trackPoint);
 
     // Process during track
     trackPoint = this.LM_DrawDuringTrack(trackPoint);
-    console.log("= S.BaseLine: After LM_DrawDuringTrack, trackPoint:", trackPoint);
+    T3Util.Log("= S.BaseLine: After LM_DrawDuringTrack, trackPoint:", trackPoint);
 
     // Determine if link parameters indicate an active connection
     let hasLinkParams =
@@ -2935,34 +2938,34 @@ class BaseLine extends BaseDrawingObject {
     if (T3Gv.docUtil.docConfig.enableSnap && !hasLinkParams) {
       const deltaX = trackPoint.x - T3Gv.opt.actionStartX;
       const deltaY = trackPoint.y - T3Gv.opt.actionStartY;
-      console.log("= S.BaseLine: Calculated delta for snapping:", { deltaX, deltaY });
+      T3Util.Log("= S.BaseLine: Calculated delta for snapping:", { deltaX, deltaY });
       if (!this.CustomSnap(this.Frame.x, this.Frame.y, deltaX, deltaY, false, trackPoint)) {
         trackPoint = T3Gv.docUtil.SnapToGrid(trackPoint);
-        console.log("= S.BaseLine: After SnapToGrid, trackPoint:", trackPoint);
+        T3Util.Log("= S.BaseLine: After SnapToGrid, trackPoint:", trackPoint);
       }
     }
 
     // Adjust the point for auto-grow dragging
     trackPoint = T3Gv.opt.DoAutoGrowDrag(trackPoint);
-    console.log("= S.BaseLine: After DoAutoGrowDrag, trackPoint:", trackPoint);
+    T3Util.Log("= S.BaseLine: After DoAutoGrowDrag, trackPoint:", trackPoint);
 
     // Auto-scroll and process new object drawing
     if (this.AutoScrollCommon(event, !hasLinkParams, "StartNewObjectDrawDoAutoScroll")) {
-      console.log("= S.BaseLine: AutoScrollCommon returned true. Calling StartNewObjectDrawTrackCommon with:", {
+      T3Util.Log("= S.BaseLine: AutoScrollCommon returned true. Calling StartNewObjectDrawTrackCommon with:", {
         x: trackPoint.x,
         y: trackPoint.y,
         altKey: altKeyFlag
       });
       this.StartNewObjectDrawTrackCommon(trackPoint.x, trackPoint.y, altKeyFlag);
     } else {
-      console.log("= S.BaseLine: AutoScrollCommon returned false, not calling StartNewObjectDrawTrackCommon");
+      T3Util.Log("= S.BaseLine: AutoScrollCommon returned false, not calling StartNewObjectDrawTrackCommon");
     }
 
-    console.log("= S.BaseLine: LM_DrawTrack completed with final trackPoint:", trackPoint);
+    T3Util.Log("= S.BaseLine: LM_DrawTrack completed with final trackPoint:", trackPoint);
   }
 
   CancelObjectDraw(): boolean {
-    console.log("= S.BaseLine: CancelObjectDraw called");
+    T3Util.Log("= S.BaseLine: CancelObjectDraw called");
 
     // Unbind click hammer events
     T3Gv.opt.UnbindActionClickHammerEvents();
@@ -2982,17 +2985,17 @@ class BaseLine extends BaseDrawingObject {
     // Reset auto-scroll timer
     this.ResetAutoScrollTimer();
 
-    console.log("= S.BaseLine: CancelObjectDraw completed with output: true");
+    T3Util.Log("= S.BaseLine: CancelObjectDraw completed with output: true");
     return true;
   }
 
   LM_DrawRelease(event: any, touch: any) {
-    console.log("= S.BaseLine: LM_DrawRelease called with input:", { event: event, touch: touch });
+    T3Util.Log("= S.BaseLine: LM_DrawRelease called with input:", { event: event, touch: touch });
     try {
       // Determine pointer position and conversion point (document coordinates)
       let conversionPoint: any;
       let pointerPos: { x: number; y: number } = { x: 0, y: 0 };
-      const defaultMinLength: number = ConstantData.Defines.SED_SegDefLen;
+      const defaultMinLength: number = OptConstant.Defines.SED_SegDefLen;
       let minLength: number = defaultMinLength;
 
       if (touch) {
@@ -3011,7 +3014,7 @@ class BaseLine extends BaseDrawingObject {
         pointerPos = { x: event.clientX, y: event.clientY };
         conversionPoint = T3Gv.opt.svgDoc.ConvertWindowToDocCoords(event.clientX, event.clientY);
       }
-      console.log("= S.BaseLine: LM_DrawRelease - pointerPos:", pointerPos, "conversionPoint:", conversionPoint);
+      T3Util.Log("= S.BaseLine: LM_DrawRelease - pointerPos:", pointerPos, "conversionPoint:", conversionPoint);
 
       if (event) {
         Utils2.StopPropagationAndDefaults(event);
@@ -3019,7 +3022,7 @@ class BaseLine extends BaseDrawingObject {
 
       // Calculate differences between starting draw point and current conversion point
       let deltaX: number, deltaY: number;
-      const movementThreshold: number = 2 * ConstantData.Defines.SED_MinDim;
+      const movementThreshold: number = 2 * OptConstant.Defines.SED_MinDim;
 
       if (T3Gv.opt.fromOverlayLayer) {
         deltaX = T3Gv.opt.lineDrawStartX - conversionPoint.x;
@@ -3030,7 +3033,7 @@ class BaseLine extends BaseDrawingObject {
         deltaX = T3Gv.opt.drawStartX - conversionPoint.x;
         deltaY = T3Gv.opt.drawStartY - conversionPoint.y;
       }
-      console.log("= S.BaseLine: LM_DrawRelease - deltaX:", deltaX, "deltaY:", deltaY, "minLength:", minLength);
+      T3Util.Log("= S.BaseLine: LM_DrawRelease - deltaX:", deltaX, "deltaY:", deltaY, "minLength:", minLength);
 
       // If movement is very small and lineStamp flag is not set, set lineStamp and bind mousemove (for desktop)
       if (
@@ -3045,7 +3048,7 @@ class BaseLine extends BaseDrawingObject {
             EvtUtil.Evt_DrawTrackHandlerFactory(this)
           );
         }
-        console.log("= S.BaseLine: LM_DrawRelease - negligible movement; early exit.");
+        T3Util.Log("= S.BaseLine: LM_DrawRelease - negligible movement; early exit.");
         return;
       }
 
@@ -3064,7 +3067,7 @@ class BaseLine extends BaseDrawingObject {
         T3Gv.opt.fromOverlayLayer &&
         (deltaX * deltaX + deltaY * deltaY) < minLength * minLength
       ) {
-        console.log("= S.BaseLine: LM_DrawRelease - movement below minimum length; canceling modal operation.");
+        T3Util.Log("= S.BaseLine: LM_DrawRelease - movement below minimum length; canceling modal operation.");
         return SDUI.Commands.MainController.Shapes.CancelModalOperation();
       }
 
@@ -3100,7 +3103,7 @@ class BaseLine extends BaseDrawingObject {
         T3Gv.opt.fromOverlayLayer = false;
         gBusinessController.CompleteAction(this.BlockID, pointerPos);
       }
-      console.log("= S.BaseLine: LM_DrawRelease output: completed successfully");
+      T3Util.Log("= S.BaseLine: LM_DrawRelease output: completed successfully");
     } catch (error) {
       T3Gv.opt.CancelModalOperation();
       this.LM_DrawClick_ExceptionCleanup(error);
@@ -3111,7 +3114,7 @@ class BaseLine extends BaseDrawingObject {
   }
 
   LM_DrawPreTrack(event: any): boolean {
-    console.log("= S.BaseLine: LM_DrawPreTrack called with event:", event);
+    T3Util.Log("= S.BaseLine: LM_DrawPreTrack called with event:", event);
 
     // Initialize variables with readable names
     let hookFlags = this.GetHookFlags();
@@ -3126,13 +3129,13 @@ class BaseLine extends BaseDrawingObject {
 
       if (sessionObj) {
         if (!T3Gv.opt.fromOverlayLayer) {
-          T3Gv.opt.linkParams.AllowJoin = sessionObj.flags & ConstantData.SessionFlags.SEDS_FreeHand;
+          T3Gv.opt.linkParams.AllowJoin = sessionObj.flags & OptConstant.SessionFlags.SEDS_FreeHand;
         }
       }
 
-      if (hookFlags & ConstantData.HookFlags.SED_LC_CHook) {
+      if (hookFlags & NvConstant.HookFlags.SED_LC_CHook) {
         // Set the hook list using the event point as starting hook (Top Left)
-        hookList[0].id = ConstantData.HookPts.SED_KTL;
+        hookList[0].id = OptConstant.HookPts.SED_KTL;
         hookList[0].x = event.x;
         hookList[0].y = event.y;
 
@@ -3181,7 +3184,7 @@ class BaseLine extends BaseDrawingObject {
             T3Gv.opt.linkParams.lpCircList,
             T3Gv.opt.linkParams.SConnectIndex,
             this,
-            ConstantData.ListCodes.SED_LC_TARGONLY,
+            NvConstant.ListCodes.SED_LC_TARGONLY,
             extraData
           );
         } else if (T3Gv.opt.linkParams.JoinIndex >= 0) {
@@ -3199,28 +3202,28 @@ class BaseLine extends BaseDrawingObject {
             T3Gv.opt.linkParams.lpCircList,
             T3Gv.opt.linkParams.SJoinIndex,
             this,
-            ConstantData.ListCodes.SED_LC_CIRCTARG,
+            NvConstant.ListCodes.SED_LC_CIRCTARG,
             extraData
           );
         }
       }
     } else if (sessionObj) {
       // If linking is not allowed, check if object is a PolyLine or freehand allowed
-      if (this instanceof Instance.Shape.PolyLine || sessionObj.flags & ConstantData.SessionFlags.SEDS_FreeHand) {
+      if (this instanceof Instance.Shape.PolyLine || sessionObj.flags & OptConstant.SessionFlags.SEDS_FreeHand) {
         T3Gv.opt.linkParams = new LinkParameters();
         T3Gv.opt.linkParams.ArraysOnly = true;
-        T3Gv.opt.linkParams.AllowJoin = sessionObj.flags & ConstantData.SessionFlags.SEDS_FreeHand;
+        T3Gv.opt.linkParams.AllowJoin = sessionObj.flags & OptConstant.SessionFlags.SEDS_FreeHand;
       }
     }
 
-    console.log("= S.BaseLine: LM_DrawPreTrack returning:", true);
+    T3Util.Log("= S.BaseLine: LM_DrawPreTrack returning:", true);
     return true;
   }
 
   // LM_DrawDuringTrack(e) { }
 
   LM_DrawDuringTrack(event: any) {
-    console.log("= S.BaseLine: LM_DrawDuringTrack called with input:", event);
+    T3Util.Log("= S.BaseLine: LM_DrawDuringTrack called with input:", event);
 
     let connectionResult: any;
     let hitResult: HitResult;
@@ -3231,14 +3234,14 @@ class BaseLine extends BaseDrawingObject {
 
     // If no linkParams then skip connection logic
     if (T3Gv.opt.linkParams == null) {
-      console.log("= S.BaseLine: LM_DrawDuringTrack output (no linkParams):", event);
+      T3Util.Log("= S.BaseLine: LM_DrawDuringTrack output (no linkParams):", event);
       return event;
     }
 
     // Set hook point for connection attempt
     hookPoints[0].x = event.x;
     hookPoints[0].y = event.y;
-    hookPoints[0].id = ConstantData.HookPts.SED_KTR;
+    hookPoints[0].id = OptConstant.HookPts.SED_KTR;
 
     // Reset drag deltas
     T3Gv.opt.dragDeltaX = 0;
@@ -3272,7 +3275,7 @@ class BaseLine extends BaseDrawingObject {
 
         if (
           hitResult &&
-          hitResult.hitcode === ConstantData.HitCodes.SED_PLApp &&
+          hitResult.hitcode === NvConstant.HitCodes.SED_PLApp &&
           T3Gv.opt.linkParams.SJoinData != hitResult.segment
         ) {
           joinChanged = true;
@@ -3283,10 +3286,10 @@ class BaseLine extends BaseDrawingObject {
           T3Gv.opt.linkParams.JoinData = hitResult.segment;
           if (T3Gv.opt.linkParams.HiliteJoin < 0) {
             T3Gv.opt.linkParams.hiliteJoin = joinObject.BlockID;
-            if (T3Gv.opt.GetEditMode() != ConstantData.EditState.LINKJOIN) {
-              T3Gv.opt.SetEditMode(ConstantData.EditState.LINKJOIN, null, false);
+            if (T3Gv.opt.GetEditMode() != NvConstant.EditState.LINKJOIN) {
+              T3Gv.opt.SetEditMode(NvConstant.EditState.LINKJOIN, null, false);
               joinObject.SetCursors();
-              T3Gv.opt.SetEditMode(ConstantData.EditState.LINKJOIN, null, false);
+              T3Gv.opt.SetEditMode(NvConstant.EditState.LINKJOIN, null, false);
             }
           }
         } else {
@@ -3301,17 +3304,17 @@ class BaseLine extends BaseDrawingObject {
             );
             T3Gv.opt.linkParams.HiliteJoin = -1;
           }
-          T3Gv.opt.SetEditMode(ConstantData.EditState.DEFAULT);
+          T3Gv.opt.SetEditMode(NvConstant.EditState.DEFAULT);
         }
       }
     }
 
-    console.log("= S.BaseLine: LM_DrawDuringTrack output:", event);
+    T3Util.Log("= S.BaseLine: LM_DrawDuringTrack output:", event);
     return event;
   }
 
   LM_DrawPostRelease(actionTarget: number): number {
-    console.log("= S.BaseLine: LM_DrawPostRelease input:", actionTarget);
+    T3Util.Log("= S.BaseLine: LM_DrawPostRelease input:", actionTarget);
 
     // Check if linkParams exist
     if (T3Gv.opt.linkParams != null) {
@@ -3372,7 +3375,7 @@ class BaseLine extends BaseDrawingObject {
       }
 
       // Reset edit mode to default
-      T3Gv.opt.SetEditMode(ConstantData.EditState.DEFAULT);
+      T3Gv.opt.SetEditMode(NvConstant.EditState.DEFAULT);
 
       // If SJoinIndex is set then perform PolyLJoin on the join information
       if (lp.SJoinIndex >= 0) {
@@ -3426,13 +3429,13 @@ class BaseLine extends BaseDrawingObject {
       }
 
       // Clear the NoContinuous flag from hookflags
-      this.hookflags = Utils2.SetFlag(this.hookflags, ConstantData.HookFlags.SED_LC_NoContinuous, false);
+      this.hookflags = Utils2.SetFlag(this.hookflags, NvConstant.HookFlags.SED_LC_NoContinuous, false);
 
       // Update links and clear the linkParams
       T3Gv.opt.UpdateLinks();
       T3Gv.opt.linkParams = null;
 
-      console.log("= S.BaseLine: LM_DrawPostRelease output:", result);
+      T3Util.Log("= S.BaseLine: LM_DrawPostRelease output:", result);
       return result;
     }
     // If no linkParams, do nothing and return default (0)
@@ -3440,7 +3443,7 @@ class BaseLine extends BaseDrawingObject {
   }
 
   LM_DrawClick_ExceptionCleanup(event) {
-    console.log("= S.BaseLine: LM_DrawClick_ExceptionCleanup called with input:", event);
+    T3Util.Log("= S.BaseLine: LM_DrawClick_ExceptionCleanup called with input:", event);
 
     T3Gv.opt.UnbindActionClickHammerEvents();
 
@@ -3460,14 +3463,14 @@ class BaseLine extends BaseDrawingObject {
     T3Gv.opt.fromOverlayLayer = false;
     T3Gv.opt.WorkAreaHammer.on('dragstart', EvtUtil.Evt_WorkAreaHammerDragStart);
 
-    console.log("= S.BaseLine: LM_DrawClick_ExceptionCleanup output: cleanup complete");
+    T3Util.Log("= S.BaseLine: LM_DrawClick_ExceptionCleanup output: cleanup complete");
   }
 
   LM_DrawClick(docCorX, docCorY) {
 
     //docCorX, docCorY
 
-    console.log('3 ========= LM_DrawClick 1 draw click e=>', docCorX, docCorY);
+    T3Util.Log('3 ========= LM_DrawClick 1 draw click e=>', docCorX, docCorY);
 
     try {
       this.Frame.x = docCorX;
@@ -3479,7 +3482,7 @@ class BaseLine extends BaseDrawingObject {
       T3Gv.opt.WorkAreaHammer.off('tap');
     } catch (error) {
 
-      console.log('3 ========= LM_DrawClick 2 eRRdraw click e=>', error);
+      T3Util.Log('3 ========= LM_DrawClick 2 eRRdraw click e=>', error);
 
       this.LM_DrawClick_ExceptionCleanup(error);
       T3Gv.opt.ExceptionCleanup(error);
@@ -3488,7 +3491,7 @@ class BaseLine extends BaseDrawingObject {
   }
 
   WriteShapeData(outputStream, options) {
-    console.log("= S.BaseLine: WriteShapeData called with input:", { outputStream: outputStream, options: options });
+    T3Util.Log("= S.BaseLine: WriteShapeData called with input:", { outputStream: outputStream, options: options });
 
     // Initialize attach flag and a temporary DataID holder.
     let attachFlag = 0;
@@ -3496,91 +3499,91 @@ class BaseLine extends BaseDrawingObject {
 
     // Process only if DataID is valid.
     if (this.DataID >= 0) {
-      console.log("= S.BaseLine: DataID is valid:", this.DataID);
+      T3Util.Log("= S.BaseLine: DataID is valid:", this.DataID);
 
       // Evaluate vertical justification from text alignment.
-      const textAlignWin = ShapeDataUtil.TextAlignToWin(this.TextAlign);
+      const textAlignWin = ShapeUtil.TextAlignToWin(this.TextAlign);
       switch (textAlignWin.vjust) {
-        case ConstantData2.TextJust.TA_TOP:
-        case ConstantData2.TextJust.TA_BOTTOM:
-          console.log("= S.BaseLine: Vertical justification is TOP or BOTTOM");
+        case TextConstant.TextJust.TA_TOP:
+        case TextConstant.TextJust.TA_BOTTOM:
+          T3Util.Log("= S.BaseLine: Vertical justification is TOP or BOTTOM");
           break;
       }
 
       // Set attachFlag based on LineTextX. Default is AttachC.
-      attachFlag = ConstantData.TextFlags.SED_TF_AttachC;
+      attachFlag = NvConstant.TextFlags.SED_TF_AttachC;
       if (this.LineTextX) {
-        attachFlag = ConstantData.TextFlags.SED_TF_AttachC;
-        console.log("= S.BaseLine: LineTextX is set; using AttachC flag");
+        attachFlag = NvConstant.TextFlags.SED_TF_AttachC;
+        T3Util.Log("= S.BaseLine: LineTextX is set; using AttachC flag");
       }
 
       // Clear all attach flags (AttachA, AttachB, AttachC, and AttachD).
       this.TextFlags = Utils2.SetFlag(
         this.TextFlags,
-        ConstantData.TextFlags.SED_TF_AttachA |
-        ConstantData.TextFlags.SED_TF_AttachB |
-        ConstantData.TextFlags.SED_TF_AttachC |
-        ConstantData.TextFlags.SED_TF_AttachD,
+        NvConstant.TextFlags.SED_TF_AttachA |
+        NvConstant.TextFlags.SED_TF_AttachB |
+        NvConstant.TextFlags.SED_TF_AttachC |
+        NvConstant.TextFlags.SED_TF_AttachD,
         false
       );
-      console.log("= S.BaseLine: Cleared attach flags; current TextFlags:", this.TextFlags);
+      T3Util.Log("= S.BaseLine: Cleared attach flags; current TextFlags:", this.TextFlags);
 
       // Set the specific attach flag.
       this.TextFlags = Utils2.SetFlag(this.TextFlags, attachFlag, true);
-      console.log("= S.BaseLine: Set attach flag (", attachFlag, "); current TextFlags:", this.TextFlags);
+      T3Util.Log("= S.BaseLine: Set attach flag (", attachFlag, "); current TextFlags:", this.TextFlags);
 
       // Set the horizontal text flag based on TextDirection.
       this.TextFlags = Utils2.SetFlag(
         this.TextFlags,
-        ConstantData.TextFlags.SED_TF_HorizText,
+        NvConstant.TextFlags.SED_TF_HorizText,
         !this.TextDirection
       );
-      console.log("= S.BaseLine: Set horizontal text flag (", !this.TextDirection, "); current TextFlags:", this.TextFlags);
+      T3Util.Log("= S.BaseLine: Set horizontal text flag (", !this.TextDirection, "); current TextFlags:", this.TextFlags);
     }
 
     if (options.WriteBlocks) {
       dataIdForWrite = this.DataID;
     }
 
-    // Write text parameters to ShapeDataUtil.
-    console.log("= S.BaseLine: Writing text parameters with DataID:", dataIdForWrite);
-    ShapeDataUtil.WriteTextParams(outputStream, this, dataIdForWrite, options);
+    // Write text parameters to ShapeUtil.
+    T3Util.Log("= S.BaseLine: Writing text parameters with DataID:", dataIdForWrite);
+    ShapeUtil.WriteTextParams(outputStream, this, dataIdForWrite, options);
 
     // Write arrowhead attributes.
-    console.log("= S.BaseLine: Writing arrowhead attributes");
-    ShapeDataUtil.WriteArrowheads(outputStream, options, this);
+    T3Util.Log("= S.BaseLine: Writing arrowhead attributes");
+    ShapeUtil.WriteArrowheads(outputStream, options, this);
 
-    console.log("= S.BaseLine: WriteShapeData completed with output:", {
+    T3Util.Log("= S.BaseLine: WriteShapeData completed with output:", {
       DataID: this.DataID,
       TextFlags: this.TextFlags
     });
   }
 
   ChangeBackgroundColor(newColor: string, currentColor: string): void {
-    console.log("= S.BaseLine: ChangeBackgroundColor called with newColor:", newColor, "currentColor:", currentColor);
+    T3Util.Log("= S.BaseLine: ChangeBackgroundColor called with newColor:", newColor, "currentColor:", currentColor);
 
     if (
-      this.StyleRecord.Fill.Paint.FillType !== ConstantData.FillTypes.SDFILL_TRANSPARENT &&
+      this.StyleRecord.Fill.Paint.FillType !== NvConstant.FillTypes.SDFILL_TRANSPARENT &&
       this.StyleRecord.Fill.Paint.Color === currentColor
     ) {
-      console.log("= S.BaseLine: Condition met. Updating background color.");
+      T3Util.Log("= S.BaseLine: Condition met. Updating background color.");
       T3Gv.opt.GetObjectPtr(this.BlockID, true);
       this.StyleRecord.Fill.Paint.Color = newColor;
-      console.log("= S.BaseLine: Background color updated to:", this.StyleRecord.Fill.Paint.Color);
+      T3Util.Log("= S.BaseLine: Background color updated to:", this.StyleRecord.Fill.Paint.Color);
     } else {
-      console.log("= S.BaseLine: Condition not met. Background color remains:", this.StyleRecord.Fill.Paint.Color);
+      T3Util.Log("= S.BaseLine: Condition not met. Background color remains:", this.StyleRecord.Fill.Paint.Color);
     }
   }
 
   ResizeInTextEdit(textObject: any, newSize: any): { x: number; y: number } {
-    console.log("= S.BaseLine: ResizeInTextEdit called with input:", { textObject, newSize });
+    T3Util.Log("= S.BaseLine: ResizeInTextEdit called with input:", { textObject, newSize });
     const result = { x: 0, y: 0 };
-    console.log("= S.BaseLine: ResizeInTextEdit output:", result);
+    T3Util.Log("= S.BaseLine: ResizeInTextEdit output:", result);
     return result;
   }
 
   CalcTextPosition(params: any) {
-    console.log("= S.BaseLine: CalcTextPosition input:", params);
+    T3Util.Log("= S.BaseLine: CalcTextPosition input:", params);
 
     // Calculate the center of the incoming frame
     const paramsCenter = {
@@ -3605,7 +3608,7 @@ class BaseLine extends BaseDrawingObject {
     let rotationAngle = params.RotationAngle;
 
     // If this is a simple line, adjust the rotation angle and normalize it to [0,180)
-    if (this.LineType === ConstantData.LineType.LINE) {
+    if (this.LineType === OptConstant.LineType.LINE) {
       rotationAngle = lineAngle + rotationAngle;
       rotationAngle %= 180;
       if (Math.abs(rotationAngle) < 1) {
@@ -3623,7 +3626,7 @@ class BaseLine extends BaseDrawingObject {
     if (!Utils2.IsEqual(modAngle, 0) && rotationAngle === 0) {
       this.TextFlags = Utils2.SetFlag(
         this.TextFlags,
-        ConstantData.TextFlags.SED_TF_HorizText,
+        NvConstant.TextFlags.SED_TF_HorizText,
         true
       );
     }
@@ -3633,7 +3636,7 @@ class BaseLine extends BaseDrawingObject {
     this.TextWrapWidth = lineLength;
 
     // Rotate the line points about the frame center by the negative line angle (in radians)
-    const angleInRadians = -lineAngle * ConstantData.Geometry.PI / 180;
+    const angleInRadians = -lineAngle * NvConstant.Geometry.PI / 180;
     Utils3.RotatePointsAboutPoint(frameCenter, angleInRadians, linePoints);
 
     // Calculate the relative text positions based on the rotated points
@@ -3648,7 +3651,7 @@ class BaseLine extends BaseDrawingObject {
       this.trect = $.extend(true, {}, params.trect);
     }
 
-    console.log("= S.BaseLine: CalcTextPosition output:", {
+    T3Util.Log("= S.BaseLine: CalcTextPosition output:", {
       LineTextX: this.LineTextX,
       LineTextY: this.LineTextY,
       TextWrapWidth: this.TextWrapWidth,
@@ -3657,32 +3660,32 @@ class BaseLine extends BaseDrawingObject {
   }
 
   SetTextObject(newDataId: any): boolean {
-    console.log("= S.BaseLine: SetTextObject called with newDataId =", newDataId);
+    T3Util.Log("= S.BaseLine: SetTextObject called with newDataId =", newDataId);
 
     // Set the DataID property
     this.DataID = newDataId;
 
     // Get text alignment settings and session object
-    const textAlignWin = ShapeDataUtil.TextAlignToWin(this.TextAlign);
+    const textAlignWin = ShapeUtil.TextAlignToWin(this.TextAlign);
     const sessionObj = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
 
     // Update the fill color based on the session background
     this.StyleRecord.Fill.Paint.Color = sessionObj.background.Paint.Color;
 
     // Set FillType and Opacity based on vertical justification
-    if (textAlignWin.vjust === ConstantData2.TextJust.TA_CENTER) {
-      this.StyleRecord.Fill.Paint.FillType = ConstantData.FillTypes.SDFILL_SOLID;
+    if (textAlignWin.vjust === TextConstant.TextJust.TA_CENTER) {
+      this.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.SDFILL_SOLID;
       this.StyleRecord.Fill.Paint.Opacity = 1;
     } else {
-      this.StyleRecord.Fill.Paint.FillType = ConstantData.FillTypes.SDFILL_TRANSPARENT;
+      this.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.SDFILL_TRANSPARENT;
     }
 
-    console.log("= S.BaseLine: SetTextObject output, DataID =", this.DataID, "StyleRecord.Fill =", this.StyleRecord.Fill);
+    T3Util.Log("= S.BaseLine: SetTextObject output, DataID =", this.DataID, "StyleRecord.Fill =", this.StyleRecord.Fill);
     return true;
   }
 
   GetTextOnLineParams(e) {
-    console.log("= S.BaseLine: GetTextOnLineParams called with input:", e);
+    T3Util.Log("= S.BaseLine: GetTextOnLineParams called with input:", e);
 
     let params = {
       Frame: new Rect(),
@@ -3705,12 +3708,12 @@ class BaseLine extends BaseDrawingObject {
       params.Displacement = this.LineTextY;
     }
 
-    console.log("= S.BaseLine: GetTextOnLineParams output:", params);
+    T3Util.Log("= S.BaseLine: GetTextOnLineParams output:", params);
     return params;
   }
 
   TextDirectionCommon(textObj, bgObj, useOriginal, extraParam) {
-    console.log("= S.BaseLine: TextDirectionCommon input:", { textObj, bgObj, useOriginal, extraParam });
+    T3Util.Log("= S.BaseLine: TextDirectionCommon input:", { textObj, bgObj, useOriginal, extraParam });
     // Get the minimum text dimensions
     let textMinDim = textObj.GetTextMinDimensions();
     let textWidth = textMinDim.width;
@@ -3728,7 +3731,7 @@ class BaseLine extends BaseDrawingObject {
 
     // Calculate the rotation angle between start and end points (in radians and degrees)
     let angleRadians = T3Gv.opt.SD_GetClockwiseAngleBetween2PointsInRadians(textParams.StartPoint, textParams.EndPoint);
-    let angleDegrees = angleRadians * (180 / ConstantData.Geometry.PI);
+    let angleDegrees = angleRadians * (180 / NvConstant.Geometry.PI);
 
     // Flags and adjustments
     let flipText = false;
@@ -3777,16 +3780,16 @@ class BaseLine extends BaseDrawingObject {
         }
 
         // Get a justification object from text alignment
-        let just = ShapeDataUtil.TextAlignToJust(this.TextAlign);
+        let just = ShapeUtil.TextAlignToJust(this.TextAlign);
 
         // If text is flipped and this is a simple line, swap left/right alignment
-        if (flipText && this.LineType === ConstantData.LineType.LINE) {
+        if (flipText && this.LineType === OptConstant.LineType.LINE) {
           switch (just.just) {
-            case ConstantData.TextAlign.LEFT:
-              just.just = ConstantData.TextAlign.RIGHT;
+            case TextConstant.TextAlign.LEFT:
+              just.just = TextConstant.TextAlign.RIGHT;
               break;
-            case ConstantData.TextAlign.RIGHT:
-              just.just = ConstantData.TextAlign.LEFT;
+            case TextConstant.TextAlign.RIGHT:
+              just.just = TextConstant.TextAlign.LEFT;
               break;
           }
         }
@@ -3810,7 +3813,7 @@ class BaseLine extends BaseDrawingObject {
         let finalTextHeight = this.trect.height > textHeight ? this.trect.height : textHeight;
 
         // Calculate the position for text object placement
-        finalX = this.TextGrow === ConstantData.TextGrowBehavior.HORIZONTAL ?
+        finalX = this.TextGrow === NvConstant.TextGrowBehavior.HORIZONTAL ?
           posX - textWidth / 2 : posX - this.trect.width / 2;
         finalY = posY - finalTextHeight / 2;
 
@@ -3831,10 +3834,10 @@ class BaseLine extends BaseDrawingObject {
         if (bgObj) {
           let bgPos = {};
           switch (just.just) {
-            case ConstantData.TextAlign.LEFT:
+            case TextConstant.TextAlign.LEFT:
               bgPos.x = finalX - 1;
               break;
-            case ConstantData.TextAlign.RIGHT:
+            case TextConstant.TextAlign.RIGHT:
               bgPos.x = finalX - 1 + this.trect.width - textWidth;
               break;
             default:
@@ -3878,7 +3881,7 @@ class BaseLine extends BaseDrawingObject {
       this.theMinTextDim.height = textHeight;
       bgObj.SetSize(textWidth + 2, textHeight + 2);
       switch (this.TextAlign) {
-        case ConstantData.TextAlign.TOPLEFT:
+        case TextConstant.TextAlign.TOPLEFT:
           finalX = startX - frameX + textWidth / 2 * Math.cos(angleRadians);
           finalY = startY - frameY + textWidth / 2 * Math.sin(angleRadians);
           bgObj.SetPos(finalX - textWidth / 2 - 1, finalY - textHeight - this.StyleRecord.Line.Thickness / 2 - 2);
@@ -3888,13 +3891,13 @@ class BaseLine extends BaseDrawingObject {
           textObj.SetRotation(angleDegrees, finalX + textWidth / 2, finalY + textHeight / 2);
           centerPoint = { x: finalX + textWidth / 2, y: finalY + textHeight / 2 };
           bgObj.SetRotation(angleDegrees, finalX + textWidth / 2, finalY + textHeight / 2);
-          if (this.TextGrow === ConstantData.TextGrowBehavior.VERTICAL) {
+          if (this.TextGrow === NvConstant.TextGrowBehavior.VERTICAL) {
             flipText = false;
           }
-          flipText ? textObj.SetParagraphAlignment(ConstantData.TextAlign.RIGHT)
-            : textObj.SetParagraphAlignment(ConstantData.TextAlign.LEFT);
+          flipText ? textObj.SetParagraphAlignment(TextConstant.TextAlign.RIGHT)
+            : textObj.SetParagraphAlignment(TextConstant.TextAlign.LEFT);
           break;
-        case ConstantData.TextAlign.LEFT:
+        case TextConstant.TextAlign.LEFT:
           finalX = startX - frameX + textWidth / 2 * Math.cos(angleRadians);
           finalY = startY - frameY + textWidth / 2 * Math.sin(angleRadians);
           bgObj.SetPos(finalX - textWidth / 2 - 1, finalY - textHeight / 2 - 1);
@@ -3904,11 +3907,11 @@ class BaseLine extends BaseDrawingObject {
           textObj.SetRotation(angleDegrees, finalX + textWidth / 2, finalY + textHeight / 2);
           centerPoint = { x: finalX + textWidth / 2, y: finalY + textHeight / 2 };
           bgObj.SetRotation(angleDegrees, finalX + textWidth / 2, finalY + textHeight / 2);
-          if (this.TextGrow === ConstantData.TextGrowBehavior.VERTICAL) {
+          if (this.TextGrow === NvConstant.TextGrowBehavior.VERTICAL) {
             flipText = false;
           }
-          flipText ? textObj.SetParagraphAlignment(ConstantData.TextAlign.RIGHT)
-            : textObj.SetParagraphAlignment(ConstantData.TextAlign.LEFT);
+          flipText ? textObj.SetParagraphAlignment(TextConstant.TextAlign.RIGHT)
+            : textObj.SetParagraphAlignment(TextConstant.TextAlign.LEFT);
           break;
         // Implement other cases for BOTTOMLEFT, TOPCENTER, CENTER, BOTTOMCENTER,
         // TOPRIGHT, RIGHT, BOTTOMRIGHT similar to above as needed...
@@ -3922,7 +3925,7 @@ class BaseLine extends BaseDrawingObject {
           textObj.SetRotation(angleDegrees, finalX, finalY);
           centerPoint = { x: finalX, y: finalY };
           bgObj.SetRotation(angleDegrees, finalX, finalY);
-          textObj.SetParagraphAlignment(ConstantData.TextAlign.CENTER);
+          textObj.SetParagraphAlignment(TextConstant.TextAlign.CENTER);
           break;
       }
 
@@ -3945,31 +3948,31 @@ class BaseLine extends BaseDrawingObject {
       this.TextDirection = origTextDirection;
       this.TextAlign = origTextAlign;
     }
-    console.log("= S.BaseLine: TextDirectionCommon output:", { linerect: this.linetrect });
+    T3Util.Log("= S.BaseLine: TextDirectionCommon output:", { linerect: this.linetrect });
   }
 
   LM_AddSVGTextObject(svgDoc, container) {
-    console.log("= S.BaseLine: LM_AddSVGTextObject input:", { svgDoc, container });
+    T3Util.Log("= S.BaseLine: LM_AddSVGTextObject input:", { svgDoc, container });
 
     // Use the text rectangle stored in this.trect to size the text object.
     const trect = this.trect;
 
     // Create background rectangle for the text.
-    const bgRect = svgDoc.CreateShape(Document.CreateShapeType.RECT);
-    bgRect.SetID(ConstantData.SVGElementClass.TEXTBACKGROUND);
+    const bgRect = svgDoc.CreateShape(OptConstant.CSType.RECT);
+    bgRect.SetID(OptConstant.SVGElementClass.TEXTBACKGROUND);
     bgRect.SetStrokeWidth(0);
 
     let fillColor = this.StyleRecord.Fill.Paint.Color;
     bgRect.SetFillColor(fillColor);
-    if (this.StyleRecord.Fill.Paint.FillType === ConstantData.FillTypes.SDFILL_TRANSPARENT) {
+    if (this.StyleRecord.Fill.Paint.FillType === NvConstant.FillTypes.SDFILL_TRANSPARENT) {
       bgRect.SetOpacity(0);
     } else {
       bgRect.SetOpacity(this.StyleRecord.Fill.Paint.Opacity);
     }
 
     // Create the text shape.
-    const textShape = svgDoc.CreateShape(Document.CreateShapeType.TEXT);
-    textShape.SetID(ConstantData.SVGElementClass.TEXT);
+    const textShape = svgDoc.CreateShape(OptConstant.CSType.TEXT);
+    textShape.SetID(OptConstant.SVGElementClass.TEXT);
     textShape.SetRenderingEnabled(false);
     textShape.SetSize(trect.width, trect.height);
     textShape.SetSpellCheck(this.AllowSpell());
@@ -3992,7 +3995,7 @@ class BaseLine extends BaseDrawingObject {
     }
 
     // Set constraints if the text is not growing vertically.
-    if (this.TextGrow !== ConstantData.TextGrowBehavior.VERTICAL) {
+    if (this.TextGrow !== NvConstant.TextGrowBehavior.VERTICAL) {
       textShape.SetConstraints(T3Gv.opt.contentHeader.MaxWorkDim.x, 0, trect.height);
     }
 
@@ -4020,12 +4023,12 @@ class BaseLine extends BaseDrawingObject {
 
     // Calculate vertical offset based on text alignment.
     if (this.LineTextY || this.LineTextX) {
-      const winTextAlign = ShapeDataUtil.TextAlignToWin(this.TextAlign);
+      const winTextAlign = ShapeUtil.TextAlignToWin(this.TextAlign);
       switch (winTextAlign.vjust) {
-        case ConstantData2.TextJust.TA_TOP:
+        case TextConstant.TextJust.TA_TOP:
           verticalOffset = this.trect.height / 2 - textHeight / 2 + this.LineTextY;
           break;
-        case ConstantData2.TextJust.TA_BOTTOM:
+        case TextConstant.TextJust.TA_BOTTOM:
           verticalOffset = -this.trect.height / 2 + textHeight / 2 + this.LineTextY;
           break;
         default:
@@ -4047,65 +4050,65 @@ class BaseLine extends BaseDrawingObject {
     // Set the text edit callback.
     textShape.SetEditCallback(T3Gv.opt.TextCallback, container);
 
-    console.log("= S.BaseLine: LM_AddSVGTextObject output:", { addedTextElement: textShape });
+    T3Util.Log("= S.BaseLine: LM_AddSVGTextObject output:", { addedTextElement: textShape });
   }
 
   LM_ResizeSVGTextObject(svgDoc: any, textContainer: any, extraData: any): void {
-    console.log("= S.BaseLine: LM_ResizeSVGTextObject called with input:", { svgDoc, textContainer, extraData });
+    T3Util.Log("= S.BaseLine: LM_ResizeSVGTextObject called with input:", { svgDoc, textContainer, extraData });
 
     if (textContainer.DataID !== -1) {
-      const textBackground = svgDoc.GetElementByID(ConstantData.SVGElementClass.TEXTBACKGROUND);
-      const textElement = svgDoc.GetElementByID(ConstantData.SVGElementClass.TEXT);
+      const textBackground = svgDoc.GetElementByID(OptConstant.SVGElementClass.TEXTBACKGROUND);
+      const textElement = svgDoc.GetElementByID(OptConstant.SVGElementClass.TEXT);
 
       if (textElement) {
         textContainer.TextDirectionCommon(textElement, textBackground, false, null);
       }
     }
 
-    console.log("= S.BaseLine: LM_ResizeSVGTextObject completed");
+    T3Util.Log("= S.BaseLine: LM_ResizeSVGTextObject completed");
   }
 
   AdjustTextEditBackground(elementId: string | number, container?: any) {
-    console.log("= S.BaseLine: AdjustTextEditBackground called with input:", { elementId, container });
+    T3Util.Log("= S.BaseLine: AdjustTextEditBackground called with input:", { elementId, container });
 
     // Only adjust if a valid DataID exists
     if (this.DataID !== -1) {
       // Use provided container if available; otherwise get it from the SVG object layer by elementId
       const svgContainer = container ? container : T3Gv.opt.svgObjectLayer.GetElementByID(elementId);
-      console.log("= S.BaseLine: Retrieved svgContainer:", svgContainer);
+      T3Util.Log("= S.BaseLine: Retrieved svgContainer:", svgContainer);
 
       // Retrieve text background and text elements from the container
-      const textBackgroundElement = svgContainer.GetElementByID(ConstantData.SVGElementClass.TEXTBACKGROUND);
-      const textElement = svgContainer.GetElementByID(ConstantData.SVGElementClass.TEXT);
-      console.log("= S.BaseLine: Retrieved textBackgroundElement:", textBackgroundElement, "and textElement:", textElement);
+      const textBackgroundElement = svgContainer.GetElementByID(OptConstant.SVGElementClass.TEXTBACKGROUND);
+      const textElement = svgContainer.GetElementByID(OptConstant.SVGElementClass.TEXT);
+      T3Util.Log("= S.BaseLine: Retrieved textBackgroundElement:", textBackgroundElement, "and textElement:", textElement);
 
       // If a text element is present, adjust its text direction
       if (textElement) {
         // If no container parameter was provided we treat it as original (true)
         const useOriginal = container == null;
         this.TextDirectionCommon(textElement, textBackgroundElement, useOriginal, null);
-        console.log("= S.BaseLine: TextDirectionCommon applied with useOriginal =", useOriginal);
+        T3Util.Log("= S.BaseLine: TextDirectionCommon applied with useOriginal =", useOriginal);
       } else {
-        console.log("= S.BaseLine: No text element found in the SVG container.");
+        T3Util.Log("= S.BaseLine: No text element found in the SVG container.");
       }
     } else {
-      console.log("= S.BaseLine: Skipped AdjustTextEditBackground because DataID is -1.");
+      T3Util.Log("= S.BaseLine: Skipped AdjustTextEditBackground because DataID is -1.");
     }
 
-    console.log("= S.BaseLine: AdjustTextEditBackground completed.");
+    T3Util.Log("= S.BaseLine: AdjustTextEditBackground completed.");
   }
 
   AddCorner(cornerIndex: number, cornerData: any): void {
-    console.log("= S.BaseLine: AddCorner called with input:", { cornerIndex, cornerData });
+    T3Util.Log("= S.BaseLine: AddCorner called with input:", { cornerIndex, cornerData });
 
     // TODO: Implement the logic to add a corner using the provided parameters.
     // For example, you might want to update internal corner lists or recalc shapes.
 
-    console.log("= S.BaseLine: AddCorner completed with no output (void)");
+    T3Util.Log("= S.BaseLine: AddCorner completed with no output (void)");
   }
 
   SVGTokenizerHook(e: any): any {
-    console.log("= S.BaseLine: SVGTokenizerHook called with input:", e);
+    T3Util.Log("= S.BaseLine: SVGTokenizerHook called with input:", e);
 
     if (T3Gv.opt.bTokenizeStyle) {
       // Make a deep copy of input object
@@ -4132,43 +4135,43 @@ class BaseLine extends BaseDrawingObject {
       }
     }
 
-    console.log("= S.BaseLine: SVGTokenizerHook output:", e);
+    T3Util.Log("= S.BaseLine: SVGTokenizerHook output:", e);
     return e;
   }
 
   GetDimensionPoints(): Point[] {
-    console.log("= S.BaseLine: GetDimensionPoints called, input: none");
+    T3Util.Log("= S.BaseLine: GetDimensionPoints called, input: none");
 
     const points: Point[] = [];
     const rect = Utils2.Pt2Rect(this.StartPoint, this.EndPoint);
-    console.log("= S.BaseLine: Computed rect =", rect);
+    T3Util.Log("= S.BaseLine: Computed rect =", rect);
 
     const startPointRelative = new Point(this.StartPoint.x - rect.x, this.StartPoint.y - rect.y);
-    console.log("= S.BaseLine: Computed relative start point =", startPointRelative);
+    T3Util.Log("= S.BaseLine: Computed relative start point =", startPointRelative);
 
     const endPointRelative = new Point(this.EndPoint.x - rect.x, this.EndPoint.y - rect.y);
-    console.log("= S.BaseLine: Computed relative end point =", endPointRelative);
+    T3Util.Log("= S.BaseLine: Computed relative end point =", endPointRelative);
 
     points.push(startPointRelative);
     points.push(endPointRelative);
 
-    console.log("= S.BaseLine: GetDimensionPoints output =", points);
+    T3Util.Log("= S.BaseLine: GetDimensionPoints output =", points);
     return points;
   }
 
   PostCreateShapeCallback(svgDoc: any, shapeContainer: any, flag: boolean, extra: any): void {
-    console.log("= S.BaseLine: PostCreateShapeCallback input:", { svgDoc, shapeContainer, flag, extra });
+    T3Util.Log("= S.BaseLine: PostCreateShapeCallback input:", { svgDoc, shapeContainer, flag, extra });
 
     // Retrieve the main shape and the slop elements from the container.
-    const shapeElement = shapeContainer.GetElementByID(ConstantData.SVGElementClass.SHAPE);
-    const slopElement = shapeContainer.GetElementByID(ConstantData.SVGElementClass.SLOP);
-    console.log("= S.BaseLine: Retrieved shapeElement and slopElement", { shapeElement, slopElement });
+    const shapeElement = shapeContainer.GetElementByID(OptConstant.SVGElementClass.SHAPE);
+    const slopElement = shapeContainer.GetElementByID(OptConstant.SVGElementClass.SLOP);
+    T3Util.Log("= S.BaseLine: Retrieved shapeElement and slopElement", { shapeElement, slopElement });
 
     // Look up arrowhead definitions using constants.
-    let startArrow = ConstantData1.ArrowheadLookupTable[this.StartArrowID];
-    let endArrow = ConstantData1.ArrowheadLookupTable[this.EndArrowID];
-    const arrowSize = ConstantData1.ArrowheadSizeTable[this.ArrowSizeIndex];
-    console.log("= S.BaseLine: Arrow lookup:", { startArrow, endArrow, arrowSize });
+    let startArrow = T3Gv.ArrowheadLookupTable[this.StartArrowID];
+    let endArrow = T3Gv.ArrowheadLookupTable[this.EndArrowID];
+    const arrowSize = T3Gv.ArrowheadSizeTable[this.ArrowSizeIndex];
+    T3Util.Log("= S.BaseLine: Arrow lookup:", { startArrow, endArrow, arrowSize });
 
     // If arrow id is zero, set the corresponding arrow to null.
     if (startArrow.id === 0) {
@@ -4177,34 +4180,34 @@ class BaseLine extends BaseDrawingObject {
     if (endArrow.id === 0) {
       endArrow = null;
     }
-    console.log("= S.BaseLine: Arrow after check:", { startArrow, endArrow });
+    T3Util.Log("= S.BaseLine: Arrow after check:", { startArrow, endArrow });
 
     // If either arrow is set, assign them to both shapeElement and slopElement.
     if (startArrow || endArrow) {
       shapeElement.SetArrowheads(startArrow, arrowSize, endArrow, arrowSize, this.StartArrowDisp, this.EndArrowDisp);
       slopElement.SetArrowheads(startArrow, arrowSize, endArrow, arrowSize, this.StartArrowDisp, this.EndArrowDisp);
-      console.log("= S.BaseLine: Arrowheads set on shapeElement and slopElement");
+      T3Util.Log("= S.BaseLine: Arrowheads set on shapeElement and slopElement");
     } else {
-      console.log("= S.BaseLine: No arrowheads to set (both null)");
+      T3Util.Log("= S.BaseLine: No arrowheads to set (both null)");
     }
 
     // If DataID is valid, add the SVG text object.
     if (this.DataID >= 0) {
       this.LM_AddSVGTextObject(svgDoc, shapeContainer);
-      console.log("= S.BaseLine: SVG text object added");
+      T3Util.Log("= S.BaseLine: SVG text object added");
     } else {
-      console.log("= S.BaseLine: DataID is invalid, skipping text object addition");
+      T3Util.Log("= S.BaseLine: DataID is invalid, skipping text object addition");
     }
 
     // Update dimension lines.
     this.UpdateDimensionLines(shapeContainer, null);
-    console.log("= S.BaseLine: Dimension lines updated");
+    T3Util.Log("= S.BaseLine: Dimension lines updated");
 
     // Update coordinate lines (horizontal/vertical) fixed at the start point.
     this.UpdateCoordinateLines(shapeContainer, null);
-    console.log("= S.BaseLine: Coordinate lines updated");
+    T3Util.Log("= S.BaseLine: Coordinate lines updated");
 
-    console.log("= S.BaseLine: PostCreateShapeCallback completed");
+    T3Util.Log("= S.BaseLine: PostCreateShapeCallback completed");
   }
 
   CreateActionTriggers(
@@ -4213,18 +4216,18 @@ class BaseLine extends BaseDrawingObject {
     unusedParam: any,
     secondaryTarget: any
   ): any {
-    console.log("= S.BaseLine: CreateActionTriggers input:", { svgDoc, triggerTarget, unusedParam, secondaryTarget });
+    T3Util.Log("= S.BaseLine: CreateActionTriggers input:", { svgDoc, triggerTarget, unusedParam, secondaryTarget });
 
     let isInteractive = true,
       actionKnob: any,
-      groupShape = svgDoc.CreateShape(Document.CreateShapeType.GROUP),
-      knobSizeConst = ConstantData.Defines.SED_KnobSize,
-      rotationKnobSizeConst = ConstantData.Defines.SED_RKnobSize;
+      groupShape = svgDoc.CreateShape(OptConstant.CSType.GROUP),
+      knobSizeConst = OptConstant.Defines.SED_KnobSize,
+      rotationKnobSizeConst = OptConstant.Defines.SED_RKnobSize;
 
     // Check if the object is a Line that is a wall opt wall and if the wall tool is enabled
     if (!(
       this instanceof Instance.Shape.Line &&
-      this.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL &&
+      this.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL &&
       (
         (T3Gv.wallOpt && T3Gv.wallOpt.IsAddingWalls && T3Gv.wallOpt.IsAddingWalls()) ||
         T3Constant.DocContext.UsingWallTool
@@ -4234,7 +4237,7 @@ class BaseLine extends BaseDrawingObject {
       if (svgDoc.docInfo.docScale <= 0.5) {
         docScale *= 2;
       }
-      const scaledKnobSize = (knobSizeConst / docScale) * (this.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL ? 2 : 1);
+      const scaledKnobSize = (knobSizeConst / docScale) * (this.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL ? 2 : 1);
       const scaledRotKnobSize = rotationKnobSizeConst / docScale;
 
       // Get frame properties and adjust for knob placement
@@ -4252,7 +4255,7 @@ class BaseLine extends BaseDrawingObject {
       // Prepare knob parameters for the LINESTART knob
       let knobParams: any = {
         svgDoc: svgDoc,
-        shapeType: Document.CreateShapeType.RECT,
+        shapeType: OptConstant.CSType.RECT,
         knobSize: scaledKnobSize,
         fillColor: 'black',
         fillOpacity: 1,
@@ -4271,55 +4274,55 @@ class BaseLine extends BaseDrawingObject {
       }
 
       // Adjust knob appearance if the object is locked or not growable
-      if (this.flags & ConstantData.ObjFlags.SEDO_Lock) {
+      if (this.flags & NvConstant.ObjFlags.SEDO_Lock) {
         knobParams.fillColor = 'gray';
         knobParams.locked = true;
       } else if (this.NoGrow()) {
         knobParams.fillColor = 'red';
         knobParams.strokeColor = 'red';
-        knobParams.cursorType = ConstantData2.CursorType.DEFAULT;
+        knobParams.cursorType = CursorConstant.CursorType.DEFAULT;
       }
 
       // Set the position and ID for the LINESTART knob
       knobParams.x = this.StartPoint.x - this.Frame.x;
       knobParams.y = this.StartPoint.y - this.Frame.y;
-      knobParams.knobID = ConstantData.ActionTriggerType.LINESTART;
+      knobParams.knobID = OptConstant.ActionTriggerType.LINESTART;
 
       // Check for a hook in the linked object (for example, if a hook with SED_KTL exists)
       let hookIndex: number;
       const linkedObject = T3Gv.opt.GetObjectPtr(triggerTarget, false);
       if (linkedObject && linkedObject.hooks) {
         for (hookIndex = 0; hookIndex < linkedObject.hooks.length; hookIndex++) {
-          if (linkedObject.hooks[hookIndex].hookpt === ConstantData.HookPts.SED_KTL) {
-            knobParams.shapeType = Document.CreateShapeType.OVAL;
+          if (linkedObject.hooks[hookIndex].hookpt === OptConstant.HookPts.SED_KTL) {
+            knobParams.shapeType = OptConstant.CSType.OVAL;
             isInteractive = false;
             break;
           }
         }
       }
       // For wall opt walls, set the shape type to IMAGE
-      if (this.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
-        knobParams.shapeType = Document.CreateShapeType.IMAGE;
+      if (this.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
+        knobParams.shapeType = OptConstant.CSType.IMAGE;
       }
 
       // Create the LINESTART knob and add it to the group
       actionKnob = this.GenericKnob(knobParams);
-      if (this.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL && actionKnob.SetURL) {
+      if (this.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL && actionKnob.SetURL) {
         actionKnob.SetURL(
-          knobParams.cursorType === ConstantData2.CursorType.NWSE_RESIZE
-            ? ConstantData.Constants.FilePath_ImageKnobs + ConstantData.Constants.Knob_ExpandDiag1
-            : ConstantData.Constants.FilePath_ImageKnobs + ConstantData.Constants.Knob_ExpandDiag2
+          knobParams.cursorType === CursorConstant.CursorType.NWSE_RESIZE
+            ? CursorConstant.Knob.Path + CursorConstant.Knob.DiagonLeft
+            : CursorConstant.Knob.Path + CursorConstant.Knob.DiagonRight
         );
         actionKnob.ExcludeFromExport(true);
       }
       groupShape.AddElement(actionKnob);
 
       // Create the LINEEND knob: reset shapeType to RECT by default
-      knobParams.shapeType = Document.CreateShapeType.RECT;
+      knobParams.shapeType = OptConstant.CSType.RECT;
       if (linkedObject && linkedObject.hooks) {
         for (hookIndex = 0; hookIndex < linkedObject.hooks.length; hookIndex++) {
-          if (linkedObject.hooks[hookIndex].hookpt === ConstantData.HookPts.SED_KTR) {
-            knobParams.shapeType = Document.CreateShapeType.OVAL;
+          if (linkedObject.hooks[hookIndex].hookpt === OptConstant.HookPts.SED_KTR) {
+            knobParams.shapeType = OptConstant.CSType.OVAL;
             isInteractive = false;
             break;
           }
@@ -4327,16 +4330,16 @@ class BaseLine extends BaseDrawingObject {
       }
       knobParams.x = this.EndPoint.x - this.Frame.x;
       knobParams.y = this.EndPoint.y - this.Frame.y;
-      knobParams.knobID = ConstantData.ActionTriggerType.LINEEND;
-      if (this.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
-        knobParams.shapeType = Document.CreateShapeType.IMAGE;
+      knobParams.knobID = OptConstant.ActionTriggerType.LINEEND;
+      if (this.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
+        knobParams.shapeType = OptConstant.CSType.IMAGE;
       }
       actionKnob = this.GenericKnob(knobParams);
-      if (this.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL && actionKnob.SetURL) {
+      if (this.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL && actionKnob.SetURL) {
         actionKnob.SetURL(
-          knobParams.cursorType === ConstantData2.CursorType.NWSE_RESIZE
-            ? ConstantData.Constants.FilePath_ImageKnobs + ConstantData.Constants.Knob_ExpandDiag1
-            : ConstantData.Constants.FilePath_ImageKnobs + ConstantData.Constants.Knob_ExpandDiag2
+          knobParams.cursorType === CursorConstant.CursorType.NWSE_RESIZE
+            ? CursorConstant.Knob.Path + CursorConstant.Knob.DiagonLeft
+            : CursorConstant.Knob.Path + CursorConstant.Knob.DiagonRight
         );
         actionKnob.ExcludeFromExport(true);
       }
@@ -4344,7 +4347,7 @@ class BaseLine extends BaseDrawingObject {
 
       // Create the ROTATE knob if interactive and allowed
       if (isInteractive && !knobParams.locked && !this.NoGrow()) {
-        knobParams.shapeType = Document.CreateShapeType.OVAL;
+        knobParams.shapeType = OptConstant.CSType.OVAL;
         // Calculate angle tangent for adjustment
         let angleTan = Math.atan((this.EndPoint.y - this.StartPoint.y) / (this.EndPoint.x - this.StartPoint.x));
         if (angleTan < 0) {
@@ -4362,8 +4365,8 @@ class BaseLine extends BaseDrawingObject {
         } else {
           knobParams.y = this.EndPoint.y + 3 * scaledRotKnobSize * Math.sin(angleTan) - this.Frame.y + scaledKnobSize / 2 - scaledRotKnobSize / 2;
         }
-        knobParams.cursorType = ConstantData2.CursorType.ROTATE;
-        knobParams.knobID = ConstantData.ActionTriggerType.ROTATE;
+        knobParams.cursorType = CursorConstant.CursorType.ROTATE;
+        knobParams.knobID = OptConstant.ActionTriggerType.ROTATE;
         knobParams.fillColor = 'white';
         knobParams.fillOpacity = 0.001;
         knobParams.strokeSize = 2.5;
@@ -4382,7 +4385,7 @@ class BaseLine extends BaseDrawingObject {
 
       // Add dimension adjustment knobs if stand-off dimension lines are allowed and used
       if (
-        this.Dimensions & ConstantData.DimensionFlags.SED_DF_Standoff &&
+        this.Dimensions & NvConstant.DimensionFlags.SED_DF_Standoff &&
         this.CanUseStandOffDimensionLines()
       ) {
         const svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
@@ -4392,43 +4395,43 @@ class BaseLine extends BaseDrawingObject {
       groupShape.SetSize(width, height);
       groupShape.SetPos(expandedFrame.x, expandedFrame.y);
       groupShape.isShape = true;
-      groupShape.SetID(ConstantData.Defines.Action + triggerTarget);
+      groupShape.SetID(OptConstant.Defines.Action + triggerTarget);
 
-      console.log("= S.BaseLine: CreateActionTriggers output:", groupShape);
+      T3Util.Log("= S.BaseLine: CreateActionTriggers output:", groupShape);
       return groupShape;
     }
   }
 
   CalcCursorForSegment(startPoint: Point, endPoint: Point, flag?: boolean): string {
-    console.log("= S.BaseLine: CalcCursorForSegment input:", { startPoint, endPoint, flag });
+    T3Util.Log("= S.BaseLine: CalcCursorForSegment input:", { startPoint, endPoint, flag });
     const angle = Utils1.CalcAngleFromPoints(startPoint, endPoint);
-    console.log("= S.BaseLine: Calculated angle:", angle);
+    T3Util.Log("= S.BaseLine: Calculated angle:", angle);
     const cursor = this.CalcCursorForAngle(angle, flag);
-    console.log("= S.BaseLine: CalcCursorForSegment output:", { cursor });
+    T3Util.Log("= S.BaseLine: CalcCursorForSegment output:", { cursor });
     return cursor;
   }
 
   NoRotate(): boolean {
-    console.log("= S.BaseLine: NoRotate called, input: none");
+    T3Util.Log("= S.BaseLine: NoRotate called, input: none");
     const result = this.hooks.length > 1;
-    console.log("= S.BaseLine: NoRotate output:", result);
+    T3Util.Log("= S.BaseLine: NoRotate output:", result);
     return result;
   }
 
   SetRuntimeEffects(effects: any): void {
-    console.log("= S.BaseLine: SetRuntimeEffects called with input:", effects);
+    T3Util.Log("= S.BaseLine: SetRuntimeEffects called with input:", effects);
     const svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
     if (svgElement) {
-      console.log("= S.BaseLine: Retrieved SVG element for BlockID", this.BlockID, ":", svgElement);
+      T3Util.Log("= S.BaseLine: Retrieved SVG element for BlockID", this.BlockID, ":", svgElement);
       this.ApplyEffects(svgElement, effects, true);
-      console.log("= S.BaseLine: Applied runtime effects with input:", effects);
+      T3Util.Log("= S.BaseLine: Applied runtime effects with input:", effects);
     } else {
-      console.log("= S.BaseLine: No SVG element found for BlockID", this.BlockID);
+      T3Util.Log("= S.BaseLine: No SVG element found for BlockID", this.BlockID);
     }
   }
 
   ApplyStyles(element: any, styleObj: any) {
-    console.log("= S.BaseLine: ApplyStyles called with input:", { element, styleObj });
+    T3Util.Log("= S.BaseLine: ApplyStyles called with input:", { element, styleObj });
 
     // Retrieve fill and stroke types and check if an image is set
     const fillType = styleObj.Fill.Paint.FillType;
@@ -4449,17 +4452,17 @@ class BaseLine extends BaseDrawingObject {
             cropRect.height = this.ImageHeader.croprect.bottom - this.ImageHeader.croprect.top;
           }
           if (this.ImageHeader.imageflags !== undefined &&
-            this.ImageHeader.imageflags === ConstantData.ImageScales.SDIMAGE_ALWAYS_FIT) {
+            this.ImageHeader.imageflags === NvConstant.ImageScales.SDIMAGE_ALWAYS_FIT) {
             scaleType = 'NOPROP';
           }
         }
-        console.log("= S.BaseLine: Applying image fill with", { url: this.ImageURL, scaleType, cropRect });
+        T3Util.Log("= S.BaseLine: Applying image fill with", { url: this.ImageURL, scaleType, cropRect });
         element.SetImageFill(this.ImageURL, { scaleType, cropRect });
         element.SetFillOpacity(styleObj.Fill.Paint.Opacity);
       }
     } else {
       // Process normal fill styles based on the fill type
-      if (fillType === ConstantData.FillTypes.SDFILL_GRADIENT) {
+      if (fillType === NvConstant.FillTypes.SDFILL_GRADIENT) {
         const gradientRecord = this.CreateGradientRecord(
           styleObj.Fill.Paint.GradientFlags,
           styleObj.Fill.Paint.Color,
@@ -4467,13 +4470,13 @@ class BaseLine extends BaseDrawingObject {
           styleObj.Fill.Paint.EndColor,
           styleObj.Fill.Paint.EndOpacity
         );
-        console.log("= S.BaseLine: Applying gradient fill with record:", gradientRecord);
+        T3Util.Log("= S.BaseLine: Applying gradient fill with record:", gradientRecord);
         element.SetGradientFill(gradientRecord);
-      } else if (fillType === ConstantData.FillTypes.SDFILL_RICHGRADIENT) {
+      } else if (fillType === NvConstant.FillTypes.SDFILL_RICHGRADIENT) {
         const richGradientRecord = this.CreateRichGradientRecord(styleObj.Fill.Paint.GradientFlags);
-        console.log("= S.BaseLine: Applying rich gradient fill with record:", richGradientRecord);
+        T3Util.Log("= S.BaseLine: Applying rich gradient fill with record:", richGradientRecord);
         element.SetGradientFill(richGradientRecord);
-      } else if (fillType === ConstantData.FillTypes.SDFILL_TEXTURE) {
+      } else if (fillType === NvConstant.FillTypes.SDFILL_TEXTURE) {
         const textureParams = {
           url: '',
           scale: 1,
@@ -4489,22 +4492,22 @@ class BaseLine extends BaseDrawingObject {
             textureParams.url = Constants.FilePath_CMSRoot + Constants.FilePath_Textures +
               T3Gv.opt.TextureList.Textures[textureIndex].filename;
           }
-          console.log("= S.BaseLine: Applying texture fill with params:", textureParams);
+          T3Util.Log("= S.BaseLine: Applying texture fill with params:", textureParams);
           element.SetTextureFill(textureParams);
           element.SetFillOpacity(styleObj.Fill.Paint.Opacity);
         }
-      } else if (fillType === ConstantData.FillTypes.SDFILL_TRANSPARENT) {
-        console.log("= S.BaseLine: Applying transparent fill");
+      } else if (fillType === NvConstant.FillTypes.SDFILL_TRANSPARENT) {
+        T3Util.Log("= S.BaseLine: Applying transparent fill");
         element.SetFillColor('none');
       } else {
-        console.log("= S.BaseLine: Applying solid fill with color:", styleObj.Fill.Paint.Color);
+        T3Util.Log("= S.BaseLine: Applying solid fill with color:", styleObj.Fill.Paint.Color);
         element.SetFillColor(styleObj.Fill.Paint.Color);
         element.SetFillOpacity(styleObj.Fill.Paint.Opacity);
       }
     }
 
     // Process stroke (line) styles based on the line fill type
-    if (lineFillType === ConstantData.FillTypes.SDFILL_GRADIENT) {
+    if (lineFillType === NvConstant.FillTypes.SDFILL_GRADIENT) {
       const gradientStrokeRecord = this.CreateGradientRecord(
         styleObj.Line.Paint.GradientFlags,
         styleObj.Line.Paint.Color,
@@ -4512,13 +4515,13 @@ class BaseLine extends BaseDrawingObject {
         styleObj.Line.Paint.EndColor,
         styleObj.Line.Paint.EndOpacity
       );
-      console.log("= S.BaseLine: Applying gradient stroke with record:", gradientStrokeRecord);
+      T3Util.Log("= S.BaseLine: Applying gradient stroke with record:", gradientStrokeRecord);
       element.SetGradientStroke(gradientStrokeRecord);
-    } else if (lineFillType === ConstantData.FillTypes.SDFILL_RICHGRADIENT) {
+    } else if (lineFillType === NvConstant.FillTypes.SDFILL_RICHGRADIENT) {
       const richGradientStrokeRecord = this.CreateRichGradientRecord(styleObj.Line.Paint.GradientFlags);
-      console.log("= S.BaseLine: Applying rich gradient stroke with record:", richGradientStrokeRecord);
+      T3Util.Log("= S.BaseLine: Applying rich gradient stroke with record:", richGradientStrokeRecord);
       element.SetGradientStroke(richGradientStrokeRecord);
-    } else if (lineFillType === ConstantData.FillTypes.SDFILL_TEXTURE) {
+    } else if (lineFillType === NvConstant.FillTypes.SDFILL_TEXTURE) {
       const textureStrokeParams = {
         url: '',
         scale: styleObj.Line.Paint.TextureScale.Scale,
@@ -4532,35 +4535,35 @@ class BaseLine extends BaseDrawingObject {
           Constants.FilePath_Textures +
           T3Gv.opt.TextureList.Textures[textureIndex].filename;
       }
-      console.log("= S.BaseLine: Applying texture stroke with params:", textureStrokeParams);
+      T3Util.Log("= S.BaseLine: Applying texture stroke with params:", textureStrokeParams);
       element.SetTextureStroke(textureStrokeParams);
       element.SetStrokeOpacity(styleObj.Line.Paint.Opacity);
-    } else if (lineFillType === ConstantData.FillTypes.SDFILL_SOLID) {
-      console.log("= S.BaseLine: Applying solid stroke with color:", styleObj.Line.Paint.Color);
+    } else if (lineFillType === NvConstant.FillTypes.SDFILL_SOLID) {
+      T3Util.Log("= S.BaseLine: Applying solid stroke with color:", styleObj.Line.Paint.Color);
       element.SetStrokeColor(styleObj.Line.Paint.Color);
       element.SetStrokeOpacity(styleObj.Line.Paint.Opacity);
     } else {
-      console.log("= S.BaseLine: No stroke to apply, setting stroke color to none");
+      T3Util.Log("= S.BaseLine: No stroke to apply, setting stroke color to none");
       element.SetStrokeColor('none');
     }
 
-    console.log("= S.BaseLine: ApplyStyles completed for element:", element);
+    T3Util.Log("= S.BaseLine: ApplyStyles completed for element:", element);
   }
 
   CalcLineHops(targetShape: any, hopData: any): void {
-    console.log("= S.BaseLine: CalcLineHops called with targetShape =", targetShape, "and hopData =", hopData);
+    T3Util.Log("= S.BaseLine: CalcLineHops called with targetShape =", targetShape, "and hopData =", hopData);
 
     // Get poly-points for the current object and the target shape
-    const basePolyPoints: Point[] = this.GetPolyPoints(ConstantData.Defines.NPOLYPTS, false, false, false, null);
+    const basePolyPoints: Point[] = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, false, false, null);
     let basePointCount: number = basePolyPoints.length;
-    let targetPolyPoints: Point[] = targetShape.GetPolyPoints(ConstantData.Defines.NPOLYPTS, false, false, false, null);
+    let targetPolyPoints: Point[] = targetShape.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, false, false, null);
     let targetPointCount: number = targetPolyPoints.length;
 
     // Iterate over base poly-points
     for (let baseIdx = 0; baseIdx < basePointCount; ++baseIdx) {
       // Check if maximum hops is exceeded
-      if (this.hoplist.nhops > ConstantData.Defines.SDMAXHOPS) {
-        console.log("= S.BaseLine: Maximum hop count exceeded, exiting CalcLineHops");
+      if (this.hoplist.nhops > OptConstant.Defines.SDMAXHOPS) {
+        T3Util.Log("= S.BaseLine: Maximum hop count exceeded, exiting CalcLineHops");
         return;
       }
 
@@ -4575,50 +4578,50 @@ class BaseLine extends BaseDrawingObject {
         baseIdx++;
       }
 
-      console.log("= S.BaseLine: Processing base segment between", prevPoint, "and", currPoint);
+      T3Util.Log("= S.BaseLine: Processing base segment between", prevPoint, "and", currPoint);
 
       // Try to add a hop point using the current segment and target poly points
       let hopResult = this.AddHopPoint(prevPoint, currPoint, targetPolyPoints, targetPointCount, baseIdx, hopData);
       if (hopResult == null) {
-        console.log("= S.BaseLine: AddHopPoint returned null, breaking out of loop");
+        T3Util.Log("= S.BaseLine: AddHopPoint returned null, breaking out of loop");
         break;
       }
-      console.log("= S.BaseLine: AddHopPoint result =", hopResult);
+      T3Util.Log("= S.BaseLine: AddHopPoint result =", hopResult);
 
       // If hop was successful, refine the target poly points further
       if (hopResult.bSuccess) {
         let tIndex: number = hopResult.tindex;
         if (tIndex >= 1 && targetPointCount > 2) {
-          console.log("= S.BaseLine: First hop success with tindex =", tIndex, "; refining target poly points");
+          T3Util.Log("= S.BaseLine: First hop success with tindex =", tIndex, "; refining target poly points");
           targetPolyPoints = targetPolyPoints.slice(tIndex);
           targetPointCount -= tIndex;
           hopResult = this.AddHopPoint(prevPoint, currPoint, targetPolyPoints, targetPointCount, baseIdx, hopData);
           if (hopResult == null) {
-            console.log("= S.BaseLine: Second AddHopPoint returned null, breaking out of loop");
+            T3Util.Log("= S.BaseLine: Second AddHopPoint returned null, breaking out of loop");
             break;
           }
           tIndex = hopResult.tindex;
-          console.log("= S.BaseLine: Refined hop result, new tindex =", tIndex);
+          T3Util.Log("= S.BaseLine: Refined hop result, new tindex =", tIndex);
         }
         if (tIndex < targetPointCount - 1) {
-          console.log("= S.BaseLine: tindex =", tIndex, "is less than targetPointCount - 1 =", targetPointCount - 1, "; further refining target poly points");
+          T3Util.Log("= S.BaseLine: tindex =", tIndex, "is less than targetPointCount - 1 =", targetPointCount - 1, "; further refining target poly points");
           targetPolyPoints = targetPolyPoints.slice(tIndex);
           targetPointCount -= tIndex;
           hopResult = this.AddHopPoint(prevPoint, currPoint, targetPolyPoints, targetPointCount, baseIdx, hopData);
           if (hopResult == null) {
-            console.log("= S.BaseLine: Third AddHopPoint returned null, breaking out of loop");
+            T3Util.Log("= S.BaseLine: Third AddHopPoint returned null, breaking out of loop");
             break;
           }
           tIndex = hopResult.tindex;
-          console.log("= S.BaseLine: Final hop refinement, new tindex =", tIndex);
+          T3Util.Log("= S.BaseLine: Final hop refinement, new tindex =", tIndex);
         }
       }
     }
-    console.log("= S.BaseLine: CalcLineHops completed");
+    T3Util.Log("= S.BaseLine: CalcLineHops completed");
   }
 
   DebugLineHops(svgDoc: any): void {
-    console.log("= S.BaseLine: DebugLineHops called with input:", svgDoc);
+    T3Util.Log("= S.BaseLine: DebugLineHops called with input:", svgDoc);
 
     // Total number of hops in the hoplist
     const totalHops: number = this.hoplist.nhops;
@@ -4631,7 +4634,7 @@ class BaseLine extends BaseDrawingObject {
     const session = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
 
     // Process only if the session allows hops
-    if ((session.flags & ConstantData.SessionFlags.SEDS_AllowHops) !== 0) {
+    if ((session.flags & OptConstant.SessionFlags.SEDS_AllowHops) !== 0) {
       // Get the base hop dimension from the session and initialize accumulators
       let hopDimension: number = session.hopdim.x;
       let sumX: number = 0;
@@ -4676,7 +4679,7 @@ class BaseLine extends BaseDrawingObject {
           // Prepare knob parameters with readable names
           const knobParams = {
             svgDoc: svgDoc,
-            shapeType: Document.CreateShapeType.OVAL,
+            shapeType: OptConstant.CSType.OVAL,
             x: rect.x + (sumX - hopDimension / 2),
             y: rect.y + (sumY - hopDimension / 2),
             knobSize: hopDimension,
@@ -4685,10 +4688,10 @@ class BaseLine extends BaseDrawingObject {
             strokeSize: 1,
             strokeColor: strokeColor,
             KnobID: 0,
-            cursorType: ConstantData2.CursorType.CROSSHAIR
+            cursorType: CursorConstant.CursorType.CROSSHAIR
           };
 
-          console.log("= S.BaseLine: DebugLineHops knobParams:", knobParams);
+          T3Util.Log("= S.BaseLine: DebugLineHops knobParams:", knobParams);
 
           // Create a knob element based on the parameters
           const knob = this.GenericKnob(knobParams);
@@ -4704,7 +4707,7 @@ class BaseLine extends BaseDrawingObject {
         }
       }
     }
-    console.log("= S.BaseLine: DebugLineHops completed");
+    T3Util.Log("= S.BaseLine: DebugLineHops completed");
   }
 
   AddHopPoint(
@@ -4715,7 +4718,7 @@ class BaseLine extends BaseDrawingObject {
     segmentIndex: number,
     hopIndex: number
   ): { bSuccess: boolean; tindex: number } {
-    console.log("= S.BaseLine: AddHopPoint called with input:", {
+    T3Util.Log("= S.BaseLine: AddHopPoint called with input:", {
       startPoint,
       endPoint,
       polyPoints,
@@ -4733,8 +4736,8 @@ class BaseLine extends BaseDrawingObject {
       iteration = 0;
 
     // Exit early if maximum hops reached
-    if (this.hoplist.nhops > ConstantData.Defines.SDMAXHOPS) {
-      console.log("= S.BaseLine: Maximum hops exceeded, no hop added.");
+    if (this.hoplist.nhops > OptConstant.Defines.SDMAXHOPS) {
+      T3Util.Log("= S.BaseLine: Maximum hops exceeded, no hop added.");
       return { bSuccess: false, tindex: 0 };
     }
 
@@ -4775,7 +4778,7 @@ class BaseLine extends BaseDrawingObject {
         this.hoplist.hops.push(hopObj);
         this.hoplist.nhops++;
         const output = { bSuccess: true, tindex: tindexAcc };
-        console.log("= S.BaseLine: AddHopPoint output:", output);
+        T3Util.Log("= S.BaseLine: AddHopPoint output:", output);
         return output;
       }
 
@@ -4798,89 +4801,89 @@ class BaseLine extends BaseDrawingObject {
     }
 
     const output = { bSuccess: false, tindex: tindexAcc };
-    console.log("= S.BaseLine: AddHopPoint output:", output);
+    T3Util.Log("= S.BaseLine: AddHopPoint output:", output);
     return output;
   }
 
   RightClick(e) {
-    console.log("= S.BaseLine: RightClick called with input:", e);
+    // T3Util.Log("= S.BaseLine: RightClick called with input:", e);
 
-    // Convert window coordinates to document coordinates.
-    const docPt = T3Gv.opt.svgDoc.ConvertWindowToDocCoords(
-      e.gesture.center.clientX,
-      e.gesture.center.clientY
-    );
-    console.log("= S.BaseLine: Converted document coords:", docPt);
+    // // Convert window coordinates to document coordinates.
+    // const docPt = T3Gv.opt.svgDoc.ConvertWindowToDocCoords(
+    //   e.gesture.center.clientX,
+    //   e.gesture.center.clientY
+    // );
+    // T3Util.Log("= S.BaseLine: Converted document coords:", docPt);
 
-    // Find the target SVG element that was clicked.
-    const targetElement = T3Gv.opt.svgObjectLayer.FindElementByDOMElement(e.currentTarget);
-    console.log("= S.BaseLine: Found target element:", targetElement);
+    // // Find the target SVG element that was clicked.
+    // const targetElement = T3Gv.opt.svgObjectLayer.FindElementByDOMElement(e.currentTarget);
+    // T3Util.Log("= S.BaseLine: Found target element:", targetElement);
 
-    // Select the object from the click; if not selected, exit.
-    if (!T3Gv.opt.SelectObjectFromClick(e, targetElement)) {
-      console.log("= S.BaseLine: RightClick - selection failed, returning false");
-      return false;
-    }
+    // // Select the object from the click; if not selected, exit.
+    // if (!T3Gv.opt.SelectObjectFromClick(e, targetElement)) {
+    //   T3Util.Log("= S.BaseLine: RightClick - selection failed, returning false");
+    //   return false;
+    // }
 
-    // Retrieve the object via its ID.
-    const objID = targetElement.GetID();
-    let obj = T3Gv.opt.GetObjectPtr(objID, false);
-    console.log("= S.BaseLine: Retrieved object:", obj);
+    // // Retrieve the object via its ID.
+    // const objID = targetElement.GetID();
+    // let obj = T3Gv.opt.GetObjectPtr(objID, false);
+    // T3Util.Log("= S.BaseLine: Retrieved object:", obj);
 
-    // If the object has a text object, check for spell location and activate text edit if needed.
-    if (obj && obj.GetTextObject() >= 0) {
-      const textElem = targetElement.textElem;
-      if (textElem) {
-        const spellIndex = textElem.GetSpellAtLocation(e.gesture.center.clientX, e.gesture.center.clientY);
-        console.log("= S.BaseLine: Spell index at location:", spellIndex);
-        if (spellIndex >= 0) {
-          T3Gv.opt.ActivateTextEdit(targetElement, e, true);
-        }
-      }
-    }
+    // // If the object has a text object, check for spell location and activate text edit if needed.
+    // if (obj && obj.GetTextObject() >= 0) {
+    //   const textElem = targetElement.textElem;
+    //   if (textElem) {
+    //     const spellIndex = textElem.GetSpellAtLocation(e.gesture.center.clientX, e.gesture.center.clientY);
+    //     T3Util.Log("= S.BaseLine: Spell index at location:", spellIndex);
+    //     if (spellIndex >= 0) {
+    //       T3Gv.opt.ActivateTextEdit(targetElement, e, true);
+    //     }
+    //   }
+    // }
 
-    // Prepare right-click parameters.
-    T3Gv.opt.rightClickParams = new RightClickData();
-    T3Gv.opt.rightClickParams.TargetID = targetElement.GetID();
-    T3Gv.opt.rightClickParams.HitPt.x = docPt.x;
-    T3Gv.opt.rightClickParams.HitPt.y = docPt.y;
-    T3Gv.opt.rightClickParams.Locked = ((this.flags & ConstantData.ObjFlags.SEDO_Lock) > 0);
-    console.log("= S.BaseLine: Set RightClickParams:", T3Gv.opt.rightClickParams);
+    // // Prepare right-click parameters.
+    // T3Gv.opt.rightClickParams = new RightClickData();
+    // T3Gv.opt.rightClickParams.TargetID = targetElement.GetID();
+    // T3Gv.opt.rightClickParams.HitPt.x = docPt.x;
+    // T3Gv.opt.rightClickParams.HitPt.y = docPt.y;
+    // T3Gv.opt.rightClickParams.Locked = ((this.flags & NvConstant.ObjFlags.SEDO_Lock) > 0);
+    // T3Util.Log("= S.BaseLine: Set RightClickParams:", T3Gv.opt.rightClickParams);
 
-    // If there is an active text edit, show the spell menu or the text contextual menu.
-    if (T3Gv.opt.GetActiveTextEdit() != null) {
-      const activeEdit = T3Gv.opt.svgDoc.GetActiveEdit();
-      let spellIndex = -1;
-      if (activeEdit) {
-        spellIndex = activeEdit.GetSpellAtLocation(e.gesture.center.clientX, e.gesture.center.clientY);
-      }
-      console.log("= S.BaseLine: Active edit spell index:", spellIndex);
-      if (spellIndex >= 0) {
-        T3Gv.opt.svgDoc.GetSpellCheck().ShowSpellMenu(
-          activeEdit,
-          spellIndex,
-          e.gesture.center.clientX,
-          e.gesture.center.clientY
-        );
-      } else {
-        // Show the context menu
-      }
-    } else {
-      // Show the context menu
-    }
+    // // If there is an active text edit, show the spell menu or the text contextual menu.
+    // if (T3Gv.opt.GetActiveTextEdit() != null) {
+    //   const activeEdit = T3Gv.opt.svgDoc.GetActiveEdit();
+    //   let spellIndex = -1;
+    //   if (activeEdit) {
+    //     spellIndex = activeEdit.GetSpellAtLocation(e.gesture.center.clientX, e.gesture.center.clientY);
+    //   }
+    //   T3Util.Log("= S.BaseLine: Active edit spell index:", spellIndex);
+    //   if (spellIndex >= 0) {
+    //     T3Gv.opt.svgDoc.GetSpellCheck().ShowSpellMenu(
+    //       activeEdit,
+    //       spellIndex,
+    //       e.gesture.center.clientX,
+    //       e.gesture.center.clientY
+    //     );
+    //   } else {
+    //     // Show the context menu
+    //   }
+    // } else {
+    //   // Show the context menu
+    // }
 
-    console.log("= S.BaseLine: RightClick completed");
+    // T3Util.Log("= S.BaseLine: RightClick completed");
   }
 
   SetObjectStyle(style: any) {
-    console.log("= S.BaseLine: SetObjectStyle called with input:", style);
+    T3Util.Log("= S.BaseLine: SetObjectStyle called with input:", style);
 
     // Make a deep copy of the input style
     let newStyle = Utils1.DeepCopy(style);
     let shouldSwapArrows = false;
 
     // If not a SEGLINE and segl property exists, delete it
-    if (this.LineType !== ConstantData.LineType.SEGLINE && newStyle.segl != null) {
+    if (this.LineType !== OptConstant.LineType.SEGLINE && newStyle.segl != null) {
       delete newStyle.segl;
     }
 
@@ -4930,12 +4933,12 @@ class BaseLine extends BaseDrawingObject {
       this.ImageURL = '';
     }
 
-    console.log("= S.BaseLine: SetObjectStyle output:", result);
+    T3Util.Log("= S.BaseLine: SetObjectStyle output:", result);
     return result;
   }
 
   GetArrowheadSelection(selection: any): boolean {
-    console.log("= S.BaseLine: GetArrowheadSelection - input:", selection);
+    T3Util.Log("= S.BaseLine: GetArrowheadSelection - input:", selection);
 
     if (selection) {
       // Determine if the arrowhead order should be reversed
@@ -4964,12 +4967,12 @@ class BaseLine extends BaseDrawingObject {
       selection.ArrowSizeIndex = this.ArrowSizeIndex;
     }
 
-    console.log("= S.BaseLine: GetArrowheadSelection - output:", selection);
+    T3Util.Log("= S.BaseLine: GetArrowheadSelection - output:", selection);
     return true;
   }
 
   UpdateDimensionFromTextObj(sourceElement: any, textData: any) {
-    console.log("= S.BaseLine: UpdateDimensionFromTextObj called with input:", { sourceElement, textData });
+    T3Util.Log("= S.BaseLine: UpdateDimensionFromTextObj called with input:", { sourceElement, textData });
 
     // Local variables for text content and user data
     let textContent: string = "";
@@ -4983,7 +4986,7 @@ class BaseLine extends BaseDrawingObject {
 
     // Retrieve the SVG element for this block
     const svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
-    console.log("= S.BaseLine: Retrieved SVG element for BlockID", this.BlockID, svgElement);
+    T3Util.Log("= S.BaseLine: Retrieved SVG element for BlockID", this.BlockID, svgElement);
 
     // Get text content and user data either from textData or from the source element
     if (textData) {
@@ -4993,43 +4996,43 @@ class BaseLine extends BaseDrawingObject {
       textContent = sourceElement.GetText();
       userData = sourceElement.GetUserData();
     }
-    console.log("= S.BaseLine: Determined text content and userData:", { textContent, userData });
+    T3Util.Log("= S.BaseLine: Determined text content and userData:", { textContent, userData });
 
     // Update dimensions based on the text content and user data
     this.UpdateDimensionFromText(svgElement, textContent, userData);
-    console.log("= S.BaseLine: UpdateDimensionFromText completed");
+    T3Util.Log("= S.BaseLine: UpdateDimensionFromText completed");
 
     // Set link flag for the current block
     T3Gv.opt.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
-    console.log("= S.BaseLine: Set link flag for BlockID", this.BlockID);
+    T3Util.Log("= S.BaseLine: Set link flag for BlockID", this.BlockID);
 
     // Set link flag for each hooked object
     for (let i = 0; i < this.hooks.length; i++) {
       T3Gv.opt.SetLinkFlag(this.hooks[i].objid, ShapeConstant.LinkFlags.SED_L_MOVE);
-      console.log("= S.BaseLine: Set link flag for hook object with id", this.hooks[i].objid);
+      T3Util.Log("= S.BaseLine: Set link flag for hook object with id", this.hooks[i].objid);
     }
 
     // If hyperlink, note, comment, or field data exists, add this block to the dirty list
     if (this.HyperlinkText !== "" || this.NoteID !== -1 || this.CommentID !== -1 || this.HasFieldData()) {
       T3Gv.opt.AddToDirtyList(this.BlockID);
-      console.log("= S.BaseLine: Added BlockID to dirty list", this.BlockID);
+      T3Util.Log("= S.BaseLine: Added BlockID to dirty list", this.BlockID);
     }
 
     // Complete the current operation
     T3Gv.opt.CompleteOperation(null);
-    console.log("= S.BaseLine: Completed operation for BlockID", this.BlockID);
+    T3Util.Log("= S.BaseLine: Completed operation for BlockID", this.BlockID);
 
     // If frame coordinates are negative, scroll the object into view
     if (this.Frame.x < 0 || this.Frame.y < 0) {
       T3Gv.opt.ScrollObjectIntoView(this.BlockID, false);
-      console.log("= S.BaseLine: Scrolled object into view for BlockID", this.BlockID);
+      T3Util.Log("= S.BaseLine: Scrolled object into view for BlockID", this.BlockID);
     }
 
-    console.log("= S.BaseLine: UpdateDimensionFromTextObj completed for BlockID", this.BlockID);
+    T3Util.Log("= S.BaseLine: UpdateDimensionFromTextObj completed for BlockID", this.BlockID);
   }
 
   UpdateDimensionFromText(inputElement: any, textValue: string, options: any): void {
-    console.log("= S.BaseLine: UpdateDimensionFromText called with input:", { inputElement, textValue, options });
+    T3Util.Log("= S.BaseLine: UpdateDimensionFromText called with input:", { inputElement, textValue, options });
 
     let dimensionValue: number;
     let segment: number;
@@ -5039,7 +5042,7 @@ class BaseLine extends BaseDrawingObject {
     // If hooked object info exists, delegate accordingly.
     if (options.hookedObjectInfo) {
       const hookedResult = this.UpdateDimensionsFromTextForHookedObject(inputElement, textValue, options);
-      console.log("= S.BaseLine: UpdateDimensionFromText (hooked) output:", hookedResult);
+      T3Util.Log("= S.BaseLine: UpdateDimensionFromText (hooked) output:", hookedResult);
       return;
     }
 
@@ -5056,7 +5059,7 @@ class BaseLine extends BaseDrawingObject {
     if (dimensionLength < 0) {
       T3Gv.opt.AddToDirtyList(this.BlockID);
       T3Gv.opt.RenderDirtySVGObjects();
-      console.log("= S.BaseLine: UpdateDimensionFromText output: invalid dimensionLength (< 0), early return");
+      T3Util.Log("= S.BaseLine: UpdateDimensionFromText output: invalid dimensionLength (< 0), early return");
       return;
     }
 
@@ -5083,65 +5086,65 @@ class BaseLine extends BaseDrawingObject {
     // If the display width equals the dimensionLength, update runtime flags.
     if (this.GetDimensionsForDisplay().width === dimensionLength) {
       this.rwd = dimensionValue;
-      this.rflags = Utils2.SetFlag(this.rflags, ConstantData.FloatingPointDim.SD_FP_Width, true);
+      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Width, true);
     }
 
     // Update the dimension lines based on the new dimensions.
     this.UpdateDimensionLines(inputElement);
 
-    console.log("= S.BaseLine: UpdateDimensionFromText completed, output dimensionLength:", dimensionLength);
+    T3Util.Log("= S.BaseLine: UpdateDimensionFromText completed, output dimensionLength:", dimensionLength);
   }
 
   UpdateSecondaryDimensions(container: any, creator: any, forcedUpdate: boolean): void {
-    console.log("= S.BaseLine: UpdateSecondaryDimensions called with input:", { container, creator, forcedUpdate });
+    T3Util.Log("= S.BaseLine: UpdateSecondaryDimensions called with input:", { container, creator, forcedUpdate });
 
-    const isWall: boolean = this.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL;
-    const isHookedDimVisible: boolean = !(this.Dimensions & ConstantData.DimensionFlags.SED_DF_HideHookedObjDimensions);
+    const isWall: boolean = this.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL;
+    const isHookedDimVisible: boolean = !(this.Dimensions & NvConstant.DimensionFlags.SED_DF_HideHookedObjDimensions);
     const shouldShowAlways: boolean =
-      Boolean(this.Dimensions & ConstantData.DimensionFlags.SED_DF_Always ||
-        this.Dimensions & ConstantData.DimensionFlags.SED_DF_Select || forcedUpdate);
+      Boolean(this.Dimensions & NvConstant.DimensionFlags.SED_DF_Always ||
+        this.Dimensions & NvConstant.DimensionFlags.SED_DF_Select || forcedUpdate);
 
     if (isWall && isHookedDimVisible && shouldShowAlways) {
       this.UpdateHookedObjectDimensionLines(container, creator, forcedUpdate);
     }
 
-    console.log("= S.BaseLine: UpdateSecondaryDimensions completed");
+    T3Util.Log("= S.BaseLine: UpdateSecondaryDimensions completed");
   }
 
   GetBoundingBoxesForSecondaryDimensions(): any[] {
-    console.log("= S.BaseLine: GetBoundingBoxesForSecondaryDimensions called, input: none");
+    T3Util.Log("= S.BaseLine: GetBoundingBoxesForSecondaryDimensions called, input: none");
 
     // Retrieve hooked object dimension info
     const hookedInfo = this.GetHookedObjectDimensionInfo();
-    console.log("= S.BaseLine: Retrieved hookedInfo:", hookedInfo);
+    T3Util.Log("= S.BaseLine: Retrieved hookedInfo:", hookedInfo);
 
     const boundingBoxes: any[] = [];
 
     // Process only if the object is a wall opt wall, secondary dimensions are not hidden, and all segments are enabled.
     if (
-      this.objecttype === ConstantData.ObjectTypes.SD_OBJT_FLOORPLAN_WALL &&
-      !(this.Dimensions & ConstantData.DimensionFlags.SED_DF_HideHookedObjDimensions) &&
-      (this.Dimensions & ConstantData.DimensionFlags.SED_DF_AllSeg)
+      this.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL &&
+      !(this.Dimensions & NvConstant.DimensionFlags.SED_DF_HideHookedObjDimensions) &&
+      (this.Dimensions & NvConstant.DimensionFlags.SED_DF_AllSeg)
     ) {
-      console.log("= S.BaseLine: Conditions met for processing secondary dimensions.");
+      T3Util.Log("= S.BaseLine: Conditions met for processing secondary dimensions.");
 
       for (let index = 0, count = hookedInfo.length; index < count; index++) {
         const dimensionInfo = hookedInfo[index];
-        console.log(`= S.BaseLine: Processing hookedInfo[${index}]:`, dimensionInfo);
+        T3Util.Log(`= S.BaseLine: Processing hookedInfo[${index}]:`, dimensionInfo);
 
         // Skip processing if start and end points are identical
         if (Utils2.EqualPt(dimensionInfo.start, dimensionInfo.end)) {
-          console.log(`= S.BaseLine: Skipping index ${index} as start and end points are equal.`);
+          T3Util.Log(`= S.BaseLine: Skipping index ${index} as start and end points are equal.`);
           continue;
         }
 
         // Calculate angle between start and end points
         const angle = Utils1.CalcAngleFromPoints(dimensionInfo.start, dimensionInfo.end);
-        console.log(`= S.BaseLine: Calculated angle at index ${index}:`, angle);
+        T3Util.Log(`= S.BaseLine: Calculated angle at index ${index}:`, angle);
 
         // Get the dimension text for the current segment
         const dimensionText = this.GetDimensionTextForPoints(dimensionInfo.start, dimensionInfo.end);
-        console.log(`= S.BaseLine: Retrieved dimensionText at index ${index}:`, dimensionText);
+        T3Util.Log(`= S.BaseLine: Retrieved dimensionText at index ${index}:`, dimensionText);
 
         // Retrieve left, right, and text frame bounding boxes for the dimension
         const dimensionPoints = this.GetPointsForDimension(
@@ -5152,94 +5155,116 @@ class BaseLine extends BaseDrawingObject {
           dimensionInfo.segment,
           true
         );
-        console.log(`= S.BaseLine: Retrieved dimensionPoints at index ${index}:`, dimensionPoints);
+        T3Util.Log(`= S.BaseLine: Retrieved dimensionPoints at index ${index}:`, dimensionPoints);
 
         if (dimensionPoints) {
           boundingBoxes.push(dimensionPoints.left);
           boundingBoxes.push(dimensionPoints.right);
           boundingBoxes.push(dimensionPoints.textFrame);
-          console.log(`= S.BaseLine: Added bounding boxes from index ${index}.`);
+          T3Util.Log(`= S.BaseLine: Added bounding boxes from index ${index}.`);
         }
       }
     } else {
-      console.log("= S.BaseLine: Conditions not met for processing secondary dimensions.");
+      T3Util.Log("= S.BaseLine: Conditions not met for processing secondary dimensions.");
     }
 
-    console.log("= S.BaseLine: GetBoundingBoxesForSecondaryDimensions output:", boundingBoxes);
+    T3Util.Log("= S.BaseLine: GetBoundingBoxesForSecondaryDimensions output:", boundingBoxes);
     return boundingBoxes;
   }
 
-  AddIcon(e: any, container: any, iconPosition: any): any {
-    console.log("= S.BaseLine: AddIcon called with input:", { e, container, iconPosition });
+  /**
+   * Adds an icon to a line shape at an appropriate position based on the line's geometry
+   *
+   * This method calculates the position of an icon based on the line's geometry and type.
+   * For lines with valid DataID, icons are positioned near the endpoints.
+   * For lines without DataID, icons are positioned near the midpoint or center.
+   * Different positioning logic applies based on whether the line is a straight line,
+   * arc line, segmented line, or other line type.
+   *
+   * @param eventData - Event data that triggered the icon creation
+   * @param svgContainer - The SVG container to add the icon to
+   * @param iconPositionCoords - Object to store the calculated icon position
+   * @returns The created icon element
+   */
+  AddIcon(eventData: any, svgContainer: any, iconPositionCoords: any): any {
+    T3Util.Log("= S.BaseLine: AddIcon called with input:", { eventData, svgContainer, iconPositionCoords });
 
     let targetX: number, targetY: number;
-    const polyPoints: any[] = this.GetPolyPoints(ConstantData.Defines.NPOLYPTS, true);
-    const len: number = polyPoints.length;
+    const polylinePoints: any[] = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true);
+    const pointsCount: number = polylinePoints.length;
 
     if (this.DataID >= 0) {
-      // When DataID is valid, choose target point based on polyPoints length.
-      if (len === 2) {
-        targetX = polyPoints[1].x;
-        targetY = polyPoints[1].y;
-      } else if (len === 3) {
-        targetX = polyPoints[2].x;
-        targetY = polyPoints[2].y;
+      // When DataID is valid, choose target point based on polylinePoints length
+      if (pointsCount === 2) {
+        // For simple lines, use the end point
+        targetX = polylinePoints[1].x;
+        targetY = polylinePoints[1].y;
+      } else if (pointsCount === 3) {
+        // For lines with 3 points, use the last point
+        targetX = polylinePoints[2].x;
+        targetY = polylinePoints[2].y;
       } else {
-        targetX = polyPoints[len - 1].x;
-        targetY = polyPoints[len - 1].y;
+        // For lines with many points, use the last point
+        targetX = polylinePoints[pointsCount - 1].x;
+        targetY = polylinePoints[pointsCount - 1].y;
       }
 
+      // Adjust position based on line type
       if (this instanceof Instance.Shape.Line || this instanceof Instance.Shape.ArcLine) {
         targetX -= this.iconSize;
-        iconPosition.y = targetY - 2 * this.iconSize;
+        iconPositionCoords.y = targetY - 2 * this.iconSize;
       } else {
-        // For segmented lines or other shapes.
+        // For segmented lines or other shapes
         targetX -= this.iconSize;
-        iconPosition.y = targetY - 2 * this.iconSize;
+        iconPositionCoords.y = targetY - 2 * this.iconSize;
       }
-      iconPosition.x = targetX - this.iconSize * this.nIcons;
+      iconPositionCoords.x = targetX - this.iconSize * this.nIcons;
     } else {
-      // When DataID is not valid, choose the midpoint or center point.
-      if (len === 2) {
-        targetX = (polyPoints[0].x + polyPoints[1].x) / 2;
-        targetY = (polyPoints[0].y + polyPoints[1].y) / 2;
-      } else if (len === 3) {
-        targetX = polyPoints[1].x;
-        targetY = polyPoints[1].y;
+      // When DataID is not valid, choose the midpoint or center point
+      if (pointsCount === 2) {
+        // For simple lines, use the midpoint
+        targetX = (polylinePoints[0].x + polylinePoints[1].x) / 2;
+        targetY = (polylinePoints[0].y + polylinePoints[1].y) / 2;
+      } else if (pointsCount === 3) {
+        // For lines with 3 points, use the middle point
+        targetX = polylinePoints[1].x;
+        targetY = polylinePoints[1].y;
       } else {
-        const midIndex = Math.floor(len / 2);
-        targetX = polyPoints[midIndex].x;
-        targetY = polyPoints[midIndex].y;
+        // For lines with many points, use a point in the middle
+        const midIndex = Math.floor(pointsCount / 2);
+        targetX = polylinePoints[midIndex].x;
+        targetY = polylinePoints[midIndex].y;
       }
 
+      // Adjust position based on line type
       if (this instanceof Instance.Shape.Line) {
         targetX += this.iconSize / 2;
-        iconPosition.y = targetY + this.iconSize / 4;
+        iconPositionCoords.y = targetY + this.iconSize / 4;
       } else if (this instanceof Instance.Shape.ArcLine) {
         targetX += this.iconSize / 2;
-        iconPosition.y = targetY + this.iconSize / 2;
+        iconPositionCoords.y = targetY + this.iconSize / 2;
       } else if (this instanceof Instance.Shape.SegmentedLine) {
-        iconPosition.y = targetY + this.iconSize / 2;
+        iconPositionCoords.y = targetY + this.iconSize / 2;
       } else {
-        iconPosition.y = targetY - this.iconSize / 2;
+        iconPositionCoords.y = targetY - this.iconSize / 2;
       }
-      iconPosition.x = targetX - this.iconSize * this.nIcons;
+      iconPositionCoords.x = targetX - this.iconSize * this.nIcons;
     }
 
-    // Create the icon element using the computed iconPosition.
-    const iconElement = this.GenericIcon(iconPosition);
+    // Create the icon element using the computed iconPositionCoords
+    const iconElement = this.GenericIcon(iconPositionCoords);
     this.nIcons++;
-    container.AddElement(iconElement);
+    svgContainer.AddElement(iconElement);
 
-    console.log("= S.BaseLine: AddIcon output:", iconElement);
+    T3Util.Log("= S.BaseLine: AddIcon output:", iconElement);
     return iconElement;
   }
 
   GetNotePos(event: any, param: any): { x: number; y: number } {
-    console.log("= S.BaseLine: GetNotePos called with input:", { event, param });
+    T3Util.Log("= S.BaseLine: GetNotePos called with input:", { event, param });
 
     // Retrieve polyline points (relative to frame)
-    const polyPoints = this.GetPolyPoints(ConstantData.Defines.NPOLYPTS, true);
+    const polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true);
     const numPoints = polyPoints.length;
     let posX: number, posY: number;
     let adjustedPos: { x: number; y: number } = { x: 0, y: 0 };
@@ -5277,7 +5302,7 @@ class BaseLine extends BaseDrawingObject {
         x: svgFrame.x + adjustedPos.x,
         y: svgFrame.y + adjustedPos.y + this.iconSize
       };
-      console.log("= S.BaseLine: GetNotePos output (DataID valid):", result);
+      T3Util.Log("= S.BaseLine: GetNotePos output (DataID valid):", result);
       return result;
     } else {
       // When DataID is not valid, use alternative positioning based on polyline midpoint
@@ -5316,7 +5341,7 @@ class BaseLine extends BaseDrawingObject {
         x: svgFrame.x + adjustedPos.x,
         y: svgFrame.y + adjustedPos.y + this.iconSize
       };
-      console.log("= S.BaseLine: GetNotePos output (DataID invalid):", result);
+      T3Util.Log("= S.BaseLine: GetNotePos output (DataID invalid):", result);
       return result;
     }
   }
@@ -5326,7 +5351,7 @@ class BaseLine extends BaseDrawingObject {
     endPoint: Point,
     angle: number
   ): { param: number; ShortRef: number } {
-    console.log("= S.BaseLine: PolyLine_Pr_PolyLGetArcQuadrant - input:", {
+    T3Util.Log("= S.BaseLine: PolyLine_Pr_PolyLGetArcQuadrant - input:", {
       startPoint,
       endPoint,
       angle,
@@ -5340,11 +5365,11 @@ class BaseLine extends BaseDrawingObject {
       new Point(startPoint.x, startPoint.y),
       new Point(endPoint.x, endPoint.y)
     ];
-    console.log("= S.BaseLine: Points array before rotation:", points);
+    T3Util.Log("= S.BaseLine: Points array before rotation:", points);
 
     // Define the center of rotation (use startPoint as center)
     let center = { x: startPoint.x, y: startPoint.y };
-    console.log("= S.BaseLine: Center of rotation:", center);
+    T3Util.Log("= S.BaseLine: Center of rotation:", center);
 
     // If the angle is significant, rotate the points about the center
     if (Math.abs(angle) >= 0.01) {
@@ -5354,66 +5379,66 @@ class BaseLine extends BaseDrawingObject {
       if (cosValue < 0) {
         rotationAngle = -rotationAngle;
       }
-      console.log("= S.BaseLine: rotationAngle computed:", rotationAngle);
+      T3Util.Log("= S.BaseLine: rotationAngle computed:", rotationAngle);
       Utils3.RotatePointsAboutPoint(center, rotationAngle, points);
-      console.log("= S.BaseLine: Points array after rotation:", points);
+      T3Util.Log("= S.BaseLine: Points array after rotation:", points);
     } else {
-      console.log("= S.BaseLine: Angle less than threshold, no rotation applied.");
+      T3Util.Log("= S.BaseLine: Angle less than threshold, no rotation applied.");
     }
 
     // Extract the rotated start and end points
     const rotatedStart = points[0];
     const rotatedEnd = points[1];
-    console.log("= S.BaseLine: Rotated start point:", rotatedStart);
-    console.log("= S.BaseLine: Rotated end point:", rotatedEnd);
+    T3Util.Log("= S.BaseLine: Rotated start point:", rotatedStart);
+    T3Util.Log("= S.BaseLine: Rotated end point:", rotatedEnd);
 
     // Determine the quadrant of the arc and set parameters accordingly
     if (rotatedEnd.x > rotatedStart.x) {
       if (rotatedEnd.y > rotatedStart.y) {
-        result.param = -ConstantData.Geometry.PI / 2;
-        result.ShortRef = ConstantData.ArcQuad.SD_PLA_BL;
-        console.log("= S.BaseLine: Condition: rotatedEnd.x > rotatedStart.x and rotatedEnd.y > rotatedStart.y");
+        result.param = -NvConstant.Geometry.PI / 2;
+        result.ShortRef = NvConstant.ArcQuad.SD_PLA_BL;
+        T3Util.Log("= S.BaseLine: Condition: rotatedEnd.x > rotatedStart.x and rotatedEnd.y > rotatedStart.y");
         if (endPoint.notclockwise) {
           result.param = 0;
-          console.log("= S.BaseLine: endPoint.notclockwise is true, setting result.param to 0");
+          T3Util.Log("= S.BaseLine: endPoint.notclockwise is true, setting result.param to 0");
         }
       } else {
-        result.ShortRef = ConstantData.ArcQuad.SD_PLA_TL;
-        console.log("= S.BaseLine: Condition: rotatedEnd.x > rotatedStart.x and rotatedEnd.y <= rotatedStart.y");
+        result.ShortRef = NvConstant.ArcQuad.SD_PLA_TL;
+        T3Util.Log("= S.BaseLine: Condition: rotatedEnd.x > rotatedStart.x and rotatedEnd.y <= rotatedStart.y");
         if (endPoint.notclockwise) {
-          result.ShortRef = ConstantData.ArcQuad.SD_PLA_TR;
-          result.param = ConstantData.Geometry.PI / 2;
-          console.log("= S.BaseLine: endPoint.notclockwise is true, setting result.ShortRef to SD_PLA_TR and result.param to PI/2");
+          result.ShortRef = NvConstant.ArcQuad.SD_PLA_TR;
+          result.param = NvConstant.Geometry.PI / 2;
+          T3Util.Log("= S.BaseLine: endPoint.notclockwise is true, setting result.ShortRef to SD_PLA_TR and result.param to PI/2");
         }
       }
     } else {
       if (rotatedEnd.y > rotatedStart.y) {
-        result.ShortRef = ConstantData.ArcQuad.SD_PLA_BR;
-        console.log("= S.BaseLine: Condition: rotatedEnd.x <= rotatedStart.x and rotatedEnd.y > rotatedStart.y");
+        result.ShortRef = NvConstant.ArcQuad.SD_PLA_BR;
+        T3Util.Log("= S.BaseLine: Condition: rotatedEnd.x <= rotatedStart.x and rotatedEnd.y > rotatedStart.y");
         if (endPoint.notclockwise) {
-          result.ShortRef = ConstantData.ArcQuad.SD_PLA_BL;
-          result.param = ConstantData.Geometry.PI / 2;
-          console.log("= S.BaseLine: endPoint.notclockwise is true, setting result.ShortRef to SD_PLA_BL and result.param to PI/2");
+          result.ShortRef = NvConstant.ArcQuad.SD_PLA_BL;
+          result.param = NvConstant.Geometry.PI / 2;
+          T3Util.Log("= S.BaseLine: endPoint.notclockwise is true, setting result.ShortRef to SD_PLA_BL and result.param to PI/2");
         }
       } else {
-        result.param = -ConstantData.Geometry.PI / 2;
-        result.ShortRef = ConstantData.ArcQuad.SD_PLA_TR;
-        console.log("= S.BaseLine: Condition: rotatedEnd.x <= rotatedStart.x and rotatedEnd.y <= rotatedStart.y");
+        result.param = -NvConstant.Geometry.PI / 2;
+        result.ShortRef = NvConstant.ArcQuad.SD_PLA_TR;
+        T3Util.Log("= S.BaseLine: Condition: rotatedEnd.x <= rotatedStart.x and rotatedEnd.y <= rotatedStart.y");
         if (endPoint.notclockwise) {
           result.param = 0;
-          console.log("= S.BaseLine: endPoint.notclockwise is true, setting result.param to 0");
+          T3Util.Log("= S.BaseLine: endPoint.notclockwise is true, setting result.param to 0");
         }
       }
     }
 
-    console.log("= S.BaseLine: PolyLine_Pr_PolyLGetArcQuadrant - output:", result);
+    T3Util.Log("= S.BaseLine: PolyLine_Pr_PolyLGetArcQuadrant - output:", result);
     return result;
   }
 
   FieldDataAllowed(): boolean {
-    console.log("= S.BaseLine: FieldDataAllowed called, input: none");
+    T3Util.Log("= S.BaseLine: FieldDataAllowed called, input: none");
     const result: boolean = false;
-    console.log("= S.BaseLine: FieldDataAllowed output:", result);
+    T3Util.Log("= S.BaseLine: FieldDataAllowed output:", result);
     return result;
   }
 }

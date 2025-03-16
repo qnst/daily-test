@@ -1,5 +1,6 @@
 
-import ConstantData from '../Data/Constant/ConstantData'
+import NvConstant from '../Data/Constant/NvConstant'
+import OptConstant from '../Data/Constant/OptConstant';
 
 class RulerConfig {
 
@@ -21,14 +22,14 @@ class RulerConfig {
 
     this.useInches = true;
     this.majorScale = 1;
-    this.units = ConstantData.RulerUnits.SED_Inches;
+    this.units = NvConstant.RulerUnits.SED_Inches;
     this.nTics = 12;
     this.nMid = 1;
     this.nGrid = 12;
     this.originx = 0;
     this.originy = 0;
-    this.major = ConstantData.Defines.DefaultRulerMajor;
-    this.metricConv = ConstantData.Defines.MetricConv;
+    this.major = OptConstant.Defines.DefaultRulerMajor;
+    this.metricConv = OptConstant.Defines.MetricConv;
     this.dp = 2;
     this.showpixels = false;
     this.fractionaldenominator = 1;
