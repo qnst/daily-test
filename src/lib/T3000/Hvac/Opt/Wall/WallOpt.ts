@@ -98,7 +98,7 @@ class WallOpt {
 
     // Configure wall dimensions
     const dimensions = sessionData.dimensions;
-    const wallDimensions = Utils2.SetFlag(dimensions, NvConstant.DimensionFlags.SED_DF_Area, false);
+    const wallDimensions = Utils2.SetFlag(dimensions, NvConstant.DimensionFlags.Area, false);
 
     // Define wall parameters
     const wallParameters = {
@@ -107,7 +107,7 @@ class WallOpt {
       EndPoint: { x: 0, y: 0 },
       StyleRecord: wallStyle,
       bOverrideDefaultStyleOnDraw: true,
-      TextGrow: NvConstant.TextGrowBehavior.HORIZONTAL,
+      TextGrow: NvConstant.TextGrowBehavior.Horizontal,
       TextAlign: T3Constant.DocContext.CurrentTextAlignment,
       TextDirection: false,
       Dimensions: wallDimensions,
@@ -424,8 +424,8 @@ class WallOpt {
 
     const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
     const isTextVertical = (sessionData.def.textflags & NvConstant.TextFlags.SED_TF_HorizText) === 0;
-    let dimensions = NvConstant.DimensionFlags.SED_DF_Always | sessionData.dimensions;
-    dimensions = Utils2.SetFlag(dimensions, NvConstant.DimensionFlags.SED_DF_Standoff, false);
+    let dimensions = NvConstant.DimensionFlags.Always | sessionData.dimensions;
+    dimensions = Utils2.SetFlag(dimensions, NvConstant.DimensionFlags.Standoff, false);
 
     this.StopAddingWalls();
 
@@ -444,7 +444,7 @@ class WallOpt {
       EndArrowDisp: false,
       ArrowSizeIndex: 1,
       StyleRecord: lineStyle,
-      TextGrow: NvConstant.TextGrowBehavior.HORIZONTAL,
+      TextGrow: NvConstant.TextGrowBehavior.Horizontal,
       TextAlign: T3Constant.DocContext.CurrentTextAlignment,
       TextDirection: isTextVertical,
       Dimensions: dimensions,
@@ -502,10 +502,10 @@ class WallOpt {
       EndArrowDisp: sessionData.d_earrowdisp,
       ArrowSizeIndex: sessionData.d_arrowsize,
       targflags: 0,
-      TextGrow: NvConstant.TextGrowBehavior.HORIZONTAL,
+      TextGrow: NvConstant.TextGrowBehavior.Horizontal,
       TextAlign: T3Constant.DocContext.CurrentTextAlignment,
       TextDirection: isTextVertical,
-      Dimensions: NvConstant.DimensionFlags.SED_DF_Always | NvConstant.DimensionFlags.SED_DF_Area,
+      Dimensions: NvConstant.DimensionFlags.Always | NvConstant.DimensionFlags.Area,
       TextFlags: NvConstant.TextFlags.SED_TF_HorizText,
       StyleRecord: areaStyle,
       bOverrideDefaultStyleOnDraw: true,
@@ -513,7 +513,7 @@ class WallOpt {
     };
 
     // Set style properties for area measurement visualization
-    measureAreaParams.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.SDFILL_SOLID;
+    measureAreaParams.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.Solid;
     measureAreaParams.StyleRecord.Fill.Paint.Color = '#FF0000';
     measureAreaParams.StyleRecord.Fill.Paint.EndColor = '#FF0000';
     measureAreaParams.StyleRecord.Fill.FillEffect = 0;

@@ -26,7 +26,7 @@ class PolyLineContainer extends PolyLine {
 
     params = params || {};
     if (params.Dimensions === undefined) {
-      params.Dimensions = NvConstant.DimensionFlags.SED_DF_Always;
+      params.Dimensions = NvConstant.DimensionFlags.Always;
     }
     if (params.objecttype === undefined) {
       params.objecttype = NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL;
@@ -693,7 +693,7 @@ class PolyLineContainer extends PolyLine {
 
     polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true, true, false, null);
     rotatedPoints = isClosed && this instanceof PolyLineContainer
-      ? T3Gv.opt.InflateLine(polyPoints, this.StyleRecord.Line.BThick, isClosed, this.Dimensions & NvConstant.DimensionFlags.SED_DF_Exterior)
+      ? T3Gv.opt.InflateLine(polyPoints, this.StyleRecord.Line.BThick, isClosed, this.Dimensions & NvConstant.DimensionFlags.Exterior)
       : Utils1.DeepCopy(polyPoints);
 
     for (let i = 0; i < rotatedPoints.length; i++) {
@@ -707,19 +707,19 @@ class PolyLineContainer extends PolyLine {
 
     let segmentHeight = Math.abs(rotatedPoints[segmentIndex].y - rotatedPoints[segmentIndex - 1].y);
     if (Math.abs(dimensionLength) <= segmentHeight || isAllSegments) {
-      if (!(this.Dimensions & NvConstant.DimensionFlags.SED_DF_AllSeg)) {
+      if (!(this.Dimensions & NvConstant.DimensionFlags.AllSeg)) {
         originalDimensions = this.Dimensions;
-        this.Dimensions = Utils2.SetFlag(this.Dimensions, NvConstant.DimensionFlags.SED_DF_AllSeg, true);
-        this.Dimensions = Utils2.SetFlag(this.Dimensions, NvConstant.DimensionFlags.SED_DF_Total, false);
-        this.Dimensions = Utils2.SetFlag(this.Dimensions, NvConstant.DimensionFlags.SED_DF_EndPts, false);
+        this.Dimensions = Utils2.SetFlag(this.Dimensions, NvConstant.DimensionFlags.AllSeg, true);
+        this.Dimensions = Utils2.SetFlag(this.Dimensions, NvConstant.DimensionFlags.Total, false);
+        this.Dimensions = Utils2.SetFlag(this.Dimensions, NvConstant.DimensionFlags.EndPts, false);
       }
 
       super.UpdateDimensionFromText(event, text, dimensionData);
 
       if (originalDimensions > 0) {
-        this.Dimensions = Utils2.SetFlag(this.Dimensions, NvConstant.DimensionFlags.SED_DF_AllSeg, originalDimensions & NvConstant.DimensionFlags.SED_DF_AllSeg);
-        this.Dimensions = Utils2.SetFlag(this.Dimensions, NvConstant.DimensionFlags.SED_DF_Total, originalDimensions & NvConstant.DimensionFlags.SED_DF_Total);
-        this.Dimensions = Utils2.SetFlag(this.Dimensions, NvConstant.DimensionFlags.SED_DF_EndPts, originalDimensions & NvConstant.DimensionFlags.SED_DF_EndPts);
+        this.Dimensions = Utils2.SetFlag(this.Dimensions, NvConstant.DimensionFlags.AllSeg, originalDimensions & NvConstant.DimensionFlags.AllSeg);
+        this.Dimensions = Utils2.SetFlag(this.Dimensions, NvConstant.DimensionFlags.Total, originalDimensions & NvConstant.DimensionFlags.Total);
+        this.Dimensions = Utils2.SetFlag(this.Dimensions, NvConstant.DimensionFlags.EndPts, originalDimensions & NvConstant.DimensionFlags.EndPts);
       }
 
       return;
@@ -766,7 +766,7 @@ class PolyLineContainer extends PolyLine {
       }
       if (this.Frame.y < 0) {
         frameAdjustment.y = -this.Frame.y;
-        if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Always || this.Dimensions & NvConstant.DimensionFlags.SED_DF_Select) {
+        if (this.Dimensions & NvConstant.DimensionFlags.Always || this.Dimensions & NvConstant.DimensionFlags.Select) {
           frameAdjustment.y += OptConstant.Defines.DimensionDefaultStandoff;
         }
         this.Frame.y += frameAdjustment.y;
@@ -969,8 +969,8 @@ class PolyLineContainer extends PolyLine {
           }
         }
 
-        if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Always ||
-          (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Select && this.IsSelected())) {
+        if (this.Dimensions & NvConstant.DimensionFlags.Always ||
+          (this.Dimensions & NvConstant.DimensionFlags.Select && this.IsSelected())) {
           const dimensionTextElements = svgElement.GetElementListWithID(OptConstant.SVGElementClass.DIMENSIONTEXT);
           dimensionTextElements.forEach(dimensionTextElement => {
             dimensionTextElement.SetCursorState(CursorConstant.CursorState.EDITONLY);
@@ -1103,7 +1103,7 @@ class PolyLineContainer extends PolyLine {
     T3Util.Log("= S.PolyLineContainer: Getting points for area dimension");
 
     const polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, false, false, null);
-    const result = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Exterior
+    const result = this.Dimensions & NvConstant.DimensionFlags.Exterior
       ? T3Gv.opt.InflateLine(polyPoints, this.StyleRecord.Line.BThick, this.polylist.closed, true)
       : T3Gv.opt.InflateLine(polyPoints, this.StyleRecord.Line.BThick, this.polylist.closed, false);
 
@@ -1123,10 +1123,10 @@ class PolyLineContainer extends PolyLine {
     let startPoint = {};
     let endPoint = {};
 
-    if (!this.polylist.closed && this.Dimensions & NvConstant.DimensionFlags.SED_DF_EndPts) {
+    if (!this.polylist.closed && this.Dimensions & NvConstant.DimensionFlags.EndPts) {
       dimensionPoints.push(new Point(this.StartPoint.x - this.Frame.x, this.StartPoint.y - this.Frame.y));
       dimensionPoints.push(new Point(this.EndPoint.x - this.Frame.x, this.EndPoint.y - this.Frame.y));
-    } else if (!this.polylist.closed && this.Dimensions & NvConstant.DimensionFlags.SED_DF_Total) {
+    } else if (!this.polylist.closed && this.Dimensions & NvConstant.DimensionFlags.Total) {
       polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true, true, false, null);
       for (let i = 1; i < polyPoints.length; i++) {
         deltaX = Math.abs(polyPoints[i - 1].x - polyPoints[i].x);
@@ -1144,7 +1144,7 @@ class PolyLineContainer extends PolyLine {
     } else {
       polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true, true, false, null);
       dimensionPoints = this.polylist.closed
-        ? T3Gv.opt.InflateLine(polyPoints, this.StyleRecord.Line.BThick, this.polylist.closed, this.Dimensions & NvConstant.DimensionFlags.SED_DF_Exterior)
+        ? T3Gv.opt.InflateLine(polyPoints, this.StyleRecord.Line.BThick, this.polylist.closed, this.Dimensions & NvConstant.DimensionFlags.Exterior)
         : Utils1.DeepCopy(polyPoints);
     }
 
@@ -1316,7 +1316,7 @@ class PolyLineContainer extends PolyLine {
     let adjustedLength = dimensionLength;
 
     if (this.polylist && this.polylist.closed && this.GetPolyRectangularInfo(null) !== null) {
-      const thicknessAdjustment = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Exterior
+      const thicknessAdjustment = this.Dimensions & NvConstant.DimensionFlags.Exterior
         ? -this.StyleRecord.Line.Thickness
         : this.StyleRecord.Line.Thickness;
 
@@ -1340,7 +1340,7 @@ class PolyLineContainer extends PolyLine {
     };
 
     if (this.polylist && this.polylist.closed) {
-      if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Exterior) {
+      if (this.Dimensions & NvConstant.DimensionFlags.Exterior) {
         dimensions.x -= this.StyleRecord.Line.Thickness / 2;
         dimensions.y -= this.StyleRecord.Line.Thickness / 2;
         dimensions.width += this.StyleRecord.Line.Thickness;
@@ -1387,7 +1387,7 @@ class PolyLineContainer extends PolyLine {
     let offsetY = 0;
 
     if (this.polylist && this.polylist.closed && height) {
-      if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Exterior) {
+      if (this.Dimensions & NvConstant.DimensionFlags.Exterior) {
         frame.x -= this.StyleRecord.Line.Thickness / 2;
         frame.y -= this.StyleRecord.Line.Thickness / 2;
         frame.width += this.StyleRecord.Line.Thickness;
@@ -1423,11 +1423,11 @@ class PolyLineContainer extends PolyLine {
     let isExterior = false;
 
     if (isClosed) {
-      this.Dimensions = Utils2.SetFlag(this.Dimensions, NvConstant.DimensionFlags.SED_DF_Total | NvConstant.DimensionFlags.SED_DF_EndPts, false);
-      this.Dimensions = Utils2.SetFlag(this.Dimensions, NvConstant.DimensionFlags.SED_DF_AllSeg, true);
+      this.Dimensions = Utils2.SetFlag(this.Dimensions, NvConstant.DimensionFlags.Total | NvConstant.DimensionFlags.EndPts, false);
+      this.Dimensions = Utils2.SetFlag(this.Dimensions, NvConstant.DimensionFlags.AllSeg, true);
     }
 
-    isExterior = isClosed ? !(this.Dimensions & NvConstant.DimensionFlags.SED_DF_Exterior) : this.Dimensions & NvConstant.DimensionFlags.SED_DF_Exterior;
+    isExterior = isClosed ? !(this.Dimensions & NvConstant.DimensionFlags.Exterior) : this.Dimensions & NvConstant.DimensionFlags.Exterior;
 
     let inflatedPoints = T3Gv.opt.InflateLine(polyPoints, this.StyleRecord.Line.Thickness / 2, true, isExterior);
 

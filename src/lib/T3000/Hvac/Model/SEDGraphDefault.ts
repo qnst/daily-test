@@ -53,12 +53,12 @@ class SEDGraphDefault {
   public pointLabelStyle: QuickStyle;
 
   constructor() {
-    this.type = NvConstant.GraphType.SDGRAPH_TYPE_BAR;
-    this.flags = NvConstant.GraphFlags.SDAX_SEQUENCE_BY_CATEGORY;
+    this.type = NvConstant.GraphType.Bar;
+    this.flags = NvConstant.GraphFlags.SequenceByCategory;
     this.pointflags = 0;
-    this.catAxisflags = NvConstant.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR | NvConstant.AxisFlags.SDAX_HIDE_MINOR_TICKS;
-    this.magAxisflags = NvConstant.AxisFlags.SDAX_SHOW_GRID_LINE_MAJOR;
-    this.legendType = NvConstant.LegendType.SDAX_LEGEND_FULL;
+    this.catAxisflags = NvConstant.AxisFlags.DaxShowGridLineMajor | NvConstant.AxisFlags.DaxHideMinorTicks;
+    this.magAxisflags = NvConstant.AxisFlags.DaxShowGridLineMajor;
+    this.legendType = NvConstant.LegendType.DaxLegendFull;
     this.legendlayoutflags = 0;
     this.imagevaluerep = - 1;
     this.quadrant = 0;

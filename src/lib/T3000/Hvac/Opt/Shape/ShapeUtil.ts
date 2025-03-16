@@ -748,13 +748,13 @@ class ShapeUtil {
             let activeLayerUsesEdges = false;
             let anyVisibleLayerUsesEdges = false;
 
-            if (layersManagerBlock.layers[layersManagerBlock.activelayer].flags & NvConstant.LayerFlags.SDLF_UseEdges) {
+            if (layersManagerBlock.layers[layersManagerBlock.activelayer].flags & NvConstant.LayerFlags.UseEdges) {
               activeLayerUsesEdges = true;
             }
 
             for (index = 0; index < layerCount; index++) {
-              if ((layersManagerBlock.layers[index].flags & NvConstant.LayerFlags.SDLF_UseEdges) &&
-                (layersManagerBlock.layers[index].flags & NvConstant.LayerFlags.SDLF_Visible) ||
+              if ((layersManagerBlock.layers[index].flags & NvConstant.LayerFlags.UseEdges) &&
+                (layersManagerBlock.layers[index].flags & NvConstant.LayerFlags.Visible) ||
                 activeLayerUsesEdges) {
                 anyVisibleLayerUsesEdges = true;
                 break;
@@ -1057,9 +1057,9 @@ class ShapeUtil {
         if (!object) continue;
 
         // Fix texture fill type if needed
-        if (object.StyleRecord.Fill.Paint.FillType === NvConstant.FillTypes.SDFILL_TEXTURE &&
+        if (object.StyleRecord.Fill.Paint.FillType === NvConstant.FillTypes.Texture &&
           object.StyleRecord.Fill.Paint.Texture === undefined) {
-          object.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.SDFILL_TRANSPARENT;
+          object.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.Transparent;
         }
 
         // Determine object base class, handling special case for closed polylines
@@ -1269,7 +1269,7 @@ class ShapeUtil {
             object.StyleRecord.name = OptConstant.Defines.TextBlockStyle;
 
             if (object.moreflags & OptConstant.ObjMoreFlags.SED_MF_VisioText && !result.ReadingGroup) {
-              object.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.SDFILL_TRANSPARENT;
+              object.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.Transparent;
               object.StyleRecord.Line.Thickness = 0;
 
               const parentId = T3Gv.opt.SD_GetVisioTextParent(object.BlockID);
@@ -1310,7 +1310,7 @@ class ShapeUtil {
 
               if (svgElement.textElem.formatter.renderedLines.length === 1 &&
                 textAlignment.just === TextConstant.TextAlign.CENTER) {
-                object.TextGrow = NvConstant.TextGrowBehavior.HORIZONTAL;
+                object.TextGrow = NvConstant.TextGrowBehavior.Horizontal;
                 object.sizedim.width = OptConstant.Defines.SED_MinDim;
                 T3Gv.opt.TextResizeCommon(objectId, false, true);
               }
@@ -1761,7 +1761,7 @@ class ShapeUtil {
     // Initialize fill properties with default values
     fillObject.Hatch = 0;
     fillObject.FillEffect = 0;
-    fillObject.EffectColor = NvConstant.Colors.Color_White;
+    fillObject.EffectColor = NvConstant.Colors.White;
     fillObject.LParam = 0;
     fillObject.WParam = 0;
 
@@ -1929,10 +1929,10 @@ class ShapeUtil {
               lineStyleObject.BThick = lineStyleObject.Thickness / 2;
 
               // Update color if needed
-              if (lineStyleObject.Paint.Color === NvConstant.Colors.Color_White &&
+              if (lineStyleObject.Paint.Color === NvConstant.Colors.White &&
                 originalThickness > 0) {
                 colorValue = ShapeUtil.WinColorToHTML(codeData.codes[codeIndex].data.color);
-                if (colorValue != NvConstant.Colors.Color_White) {
+                if (colorValue != NvConstant.Colors.White) {
                   lineStyleObject.Paint.Color = colorValue;
                   lineStyleObject.Paint.Opacity = ShapeUtil.WinColorToAlpha(
                     codeData.codes[codeIndex].data.color
@@ -1990,7 +1990,7 @@ class ShapeUtil {
     paintObject.Opacity = ShapeUtil.WinColorToAlpha(codeData.codes[codeIndex].data.color);
 
     // Set default values for other properties
-    paintObject.EndColor = NvConstant.Colors.Color_White;
+    paintObject.EndColor = NvConstant.Colors.White;
     paintObject.GradientFlags = 0;
     paintObject.Texture = 0;
     paintObject.TextureScale = new TextureScale();
@@ -2906,7 +2906,7 @@ class ShapeUtil {
           codeIndex = ShapeUtil.ReadSDFill(sessionData.background, codeData, codeIndex, resultObject, opCodes);
 
           // Fix texture references if needed
-          if (resultObject.sdp.background.Paint.FillType === NvConstant.FillTypes.SDFILL_TEXTURE &&
+          if (resultObject.sdp.background.Paint.FillType === NvConstant.FillTypes.Texture &&
             resultObject.sdp.background.Paint.Texture == null) {
             resultObject.sdp.background.Paint.Texture = resultObject.ReadTexture;
           }
@@ -3377,7 +3377,7 @@ class ShapeUtil {
       // Create new default objects
       defaults.DefRun.fontrec = new FontRecord();
       defaults.DefFont = new FontRecord();
-      defaults.DefRun.paint = new PaintData(NvConstant.Colors.Color_Black);
+      defaults.DefRun.paint = new PaintData(NvConstant.Colors.Black);
     }
 
     // Set text run properties
@@ -4044,7 +4044,7 @@ class ShapeUtil {
             n.DataID = c,
             a.IsVisio &&
             (n.TextAlign = b.TextAlign, n.just = b.just, n.vjust = b.vjust),
-            b.TextGrow === NvConstant.TextGrowBehavior.VERTICAL &&
+            b.TextGrow === NvConstant.TextGrowBehavior.Vertical &&
             (n.TextGrow = b.TextGrow, n.TextWrapWidth = b.TextWrapWidth),
             b.Paint &&
             (n.StyleRecord.Fill.Paint = b.Paint)
@@ -4151,11 +4151,11 @@ class ShapeUtil {
                     Math.abs(l.VisioRotationDiff) < 1 &&
                     (l.VisioRotationDiff = 0)
                 }
-                if (n.TextGrow === NvConstant.TextGrowBehavior.VERTICAL) if (l.LineTextX) l.TextGrow = NvConstant.TextGrowBehavior.VERTICAL,
+                if (n.TextGrow === NvConstant.TextGrowBehavior.Vertical) if (l.LineTextX) l.TextGrow = NvConstant.TextGrowBehavior.Vertical,
                   l.trect = $.extend(!0, {
                   }, n.trect);
                 else {
-                  l.TextGrow = NvConstant.TextGrowBehavior.VERTICAL,
+                  l.TextGrow = NvConstant.TextGrowBehavior.Vertical,
                     l.TextWrapWidth = n.trect.width,
                     M = l.Frame.width,
                     P = l.Frame.height;
@@ -4167,7 +4167,7 @@ class ShapeUtil {
                     a.IsVisio &&
                     n.moreflags & OptConstant.ObjMoreFlags.SED_MF_VisioDefaultText &&
                     (l.TextWrapWidth = U)
-                } else l.TextGrow = NvConstant.TextGrowBehavior.HORIZONTAL
+                } else l.TextGrow = NvConstant.TextGrowBehavior.Horizontal
               }
               a.textonline = - 1
             }
@@ -5162,7 +5162,7 @@ class ShapeUtil {
           shapeInstance = ShapeUtil.CreateShapeObject(objectConfig, sourceData, resultObject, sourceData.extraflags);
         }
 
-        shapeInstance.ResizeAspectConstrain = sourceData.objgrow === OptConstant.GrowBehavior.PROPORTIONAL;
+        shapeInstance.ResizeAspectConstrain = sourceData.objgrow === OptConstant.GrowBehavior.ProPortional;
         break;
 
       case ShapeConstant.ObjectTypes.SED_LineD:
@@ -5301,11 +5301,11 @@ class ShapeUtil {
 
         // Set dimension flags
         shapeInstance.Dimensions = sourceData.dimensions;
-        if (shapeInstance.Dimensions & NvConstant.DimensionFlags.SED_DF_Always &&
-          shapeInstance.Dimensions & NvConstant.DimensionFlags.SED_DF_Select) {
+        if (shapeInstance.Dimensions & NvConstant.DimensionFlags.Always &&
+          shapeInstance.Dimensions & NvConstant.DimensionFlags.Select) {
           shapeInstance.Dimensions = Utils2.SetFlag(
             shapeInstance.Dimensions,
-            NvConstant.DimensionFlags.SED_DF_Select,
+            NvConstant.DimensionFlags.Select,
             false
           );
         }
@@ -6677,7 +6677,7 @@ class ShapeUtil {
       rectObject.tstyleindex = resultObject.TextStyleIndex;
       rectObject.flags = Utils2.SetFlag(rectObject.flags, NvConstant.ObjFlags.SEDO_Assoc, true);
       rectObject.flags = Utils2.SetFlag(rectObject.flags, NvConstant.ObjFlags.SEDO_TextOnly, true);
-      rectObject.TextGrow = NvConstant.TextGrowBehavior.HORIZONTAL;
+      rectObject.TextGrow = NvConstant.TextGrowBehavior.Horizontal;
       rectObject.hooks.push(new Hook(0, null, -1, 0, {
         x: 0,
         y: 0
@@ -6695,7 +6695,7 @@ class ShapeUtil {
         rectObject.DataID = -objectId;
         rectObject.TextFlags = 0;
         rectObject.associd = connectorBlockId;
-        rectObject.TextGrow = NvConstant.TextGrowBehavior.HORIZONTAL;
+        rectObject.TextGrow = NvConstant.TextGrowBehavior.Horizontal;
         rectObject.Frame.width = 100;
         rectObject.inside.width = 100;
         rectObject.trect.width = 100;
@@ -6734,9 +6734,9 @@ class ShapeUtil {
 
           // Set fill type based on vertical justification
           if (textAlign.vjust === TextConstant.TextJust.TA_CENTER) {
-            rectObject.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.SDFILL_SOLID;
+            rectObject.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.Solid;
           } else {
-            rectObject.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.SDFILL_TRANSPARENT;
+            rectObject.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.Transparent;
           }
         } else {
           // Handle text for non-connector objects
@@ -6750,7 +6750,7 @@ class ShapeUtil {
             rectObject.hooks[0].objid = resultObject.UniqueMap[uniqueMapIndex - 1];
             rectObject.StyleRecord.Fill.Paint = $.extend(true, {}, currentObject.StyleRecord.Fill.Paint);
 
-            if (currentObject.TextGrow === NvConstant.TextGrowBehavior.VERTICAL) {
+            if (currentObject.TextGrow === NvConstant.TextGrowBehavior.Vertical) {
               rectObject.TextGrow = currentObject.TextGrow;
               rectObject.Frame.width = currentObject.TextWrapWidth;
               rectObject.inside.width = currentObject.TextWrapWidth;
@@ -6765,13 +6765,13 @@ class ShapeUtil {
               OptConstant.Defines.SED_CDim
             );
             rectObject.hooks[0].objid = resultObject.UniqueMap[uniqueMapIndex - 1];
-            rectObject.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.SDFILL_TRANSPARENT;
+            rectObject.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.Transparent;
           } else if (currentObject && currentObject.TextFlags & NvConstant.TextFlags.SED_TF_AttachA) {
             // Handle top-attached text
             rectObject.hooks[0].hookpt = OptConstant.HookPts.SED_KBC;
             rectObject.hooks[0].connect = new Point(OptConstant.Defines.SED_CDim / 2, 0);
             rectObject.hooks[0].objid = resultObject.UniqueMap[uniqueMapIndex - 1];
-            rectObject.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.SDFILL_TRANSPARENT;
+            rectObject.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.Transparent;
           }
 
           currentObject = rectObject;
@@ -7097,7 +7097,7 @@ class ShapeUtil {
 
     // Configure transparent text style for line labels
     transparentTextStyle.Line.Thickness = 0;
-    transparentTextStyle.Fill.Paint.FillType = NvConstant.FillTypes.SDFILL_SOLID;
+    transparentTextStyle.Fill.Paint.FillType = NvConstant.FillTypes.Solid;
     transparentTextStyle.Fill.Paint.Color = resultObject.sdp.background.Paint.Color;
 
     // Process each object in the list
@@ -7397,7 +7397,7 @@ class ShapeUtil {
     ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cBeginFill);
 
     // Write paint properties with white as default color
-    ShapeUtil.WritePaint(dataStream, fillData.Paint, NvConstant.Colors.Color_White, resultObject);
+    ShapeUtil.WritePaint(dataStream, fillData.Paint, NvConstant.Colors.White, resultObject);
 
     // Write hatch pattern if present
     if (fillData.Hatch) {
@@ -7489,7 +7489,7 @@ class ShapeUtil {
     ShapeUtil.WriteLength(dataStream, codeOffset);
 
     // Write line paint properties with black as default color
-    ShapeUtil.WritePaint(dataStream, lineData.Paint, NvConstant.Colors.Color_Black, resultObject);
+    ShapeUtil.WritePaint(dataStream, lineData.Paint, NvConstant.Colors.Black, resultObject);
 
     // Write filled line data if thickness is specified
     if (fillLineThickness) {
@@ -7543,7 +7543,7 @@ class ShapeUtil {
     ShapeUtil.WriteLength(dataStream, codeOffset);
 
     // Write text color properties
-    ShapeUtil.WritePaint(dataStream, textFormatting.Paint, NvConstant.Colors.Color_Black, resultObject);
+    ShapeUtil.WritePaint(dataStream, textFormatting.Paint, NvConstant.Colors.Black, resultObject);
 
     // Write text effects if present
     if (textFormatting.Effect.OutsideType) {
@@ -7575,7 +7575,7 @@ class ShapeUtil {
     // Get color value, using black as default if no color specified
     const colorValue = outsideEffect.Color
       ? ShapeUtil.HTMLColorToWin(outsideEffect.Color)
-      : ShapeUtil.HTMLColorToWin(NvConstant.Colors.Color_Black);
+      : ShapeUtil.HTMLColorToWin(NvConstant.Colors.Black);
 
     // Create outside effect data structure
     const outsideEffectData = {
@@ -7629,12 +7629,12 @@ class ShapeUtil {
 
     // Set default end color if none provided
     if (paintData.EndColor == null) {
-      paintData.EndColor = NvConstant.Colors.Color_White;
+      paintData.EndColor = NvConstant.Colors.White;
     }
 
     // Write additional information based on fill type
     switch (paintData.FillType) {
-      case NvConstant.FillTypes.SDFILL_GRADIENT:
+      case NvConstant.FillTypes.Gradient:
         // Write standard two-color gradient
         const gradientData = {
           ecolor: ShapeUtil.HTMLColorToWin(paintData.EndColor, paintData.EndOpacity),
@@ -7646,7 +7646,7 @@ class ShapeUtil {
         ShapeUtil.WriteLength(dataStream, gradientOffset);
         break;
 
-      case NvConstant.FillTypes.SDFILL_RICHGRADIENT:
+      case NvConstant.FillTypes.RichGradient:
         // Write multi-stop rich gradient
         const richGradient = resultObject.richGradients[paintData.GradientFlags];
 
@@ -7678,7 +7678,7 @@ class ShapeUtil {
         }
         break;
 
-      case NvConstant.FillTypes.SDFILL_TEXTURE:
+      case NvConstant.FillTypes.Texture:
         // Write texture fill
         const textureOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cTexture);
         let textureId = paintData.Texture;
@@ -7970,7 +7970,7 @@ class ShapeUtil {
             break;
           case OptConstant.ShapeType.OVAL:
             D = Math.abs(a.Frame.x - a.Frame.y) < 0.2 &&
-              a.ObjGrow === OptConstant.GrowBehavior.PROPORTIONAL ? PolygonConstant.ShapeTypes.CIRCLE : PolygonConstant.ShapeTypes.OVAL;
+              a.ObjGrow === OptConstant.GrowBehavior.ProPortional ? PolygonConstant.ShapeTypes.CIRCLE : PolygonConstant.ShapeTypes.OVAL;
             break;
           case OptConstant.ShapeType.POLYGON:
             a.dataclass ? (D = a.dataclass, n = ShapeUtil.ShapeParamToSDR(a, r)) : (
@@ -8095,7 +8095,7 @@ class ShapeUtil {
       r.WriteVisio &&
         a.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.LINE &&
         (
-          a.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.SDFILL_TRANSPARENT
+          a.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.Transparent
         ),
         ShapeUtil.WriteStyleOverrides(e, a, r),
         a.StyleRecord.Fill.Paint.FillType = E
@@ -9130,7 +9130,7 @@ class ShapeUtil {
     );
 
     // Write background fill if not transparent
-    if (resultObject.sdp.background.Paint.FillType !== NvConstant.FillTypes.SDFILL_TRANSPARENT) {
+    if (resultObject.sdp.background.Paint.FillType !== NvConstant.FillTypes.Transparent) {
       ShapeUtil.WriteSDFill(dataStream, resultObject.sdp.background, resultObject);
     }
 

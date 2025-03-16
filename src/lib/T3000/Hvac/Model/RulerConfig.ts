@@ -22,7 +22,7 @@ class RulerConfig {
 
     this.useInches = true;
     this.majorScale = 1;
-    this.units = NvConstant.RulerUnits.SED_Inches;
+    this.units = NvConstant.RulerUnit.Inches;
     this.nTics = 12;
     this.nMid = 1;
     this.nGrid = 12;

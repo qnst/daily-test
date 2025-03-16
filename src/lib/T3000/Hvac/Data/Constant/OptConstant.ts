@@ -388,13 +388,13 @@ class OptConstant {
     ALL: 0,
     HCONSTRAIN: 1,
     VCONSTRAIN: 2,
-    PROPORTIONAL: 3
+    ProPortional: 3
   }
 
   static LineOrientation = {
     NONE: 1,
-    HORIZONTAL: 2,
-    VERTICAL: 3,
+    Horizontal: 2,
+    Vertical: 3,
     DIAGONAL_TLRB: 4,
     DIAGONAL_TRBL: 5
   }

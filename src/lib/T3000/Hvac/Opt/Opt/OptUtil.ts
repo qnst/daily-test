@@ -1157,8 +1157,8 @@ class OptUtil {
     this.selectionState.subscript = (sessionData.def.style.Text.Face & TEXT_FACE.Subscript) > 0;
     this.selectionState.TextDirection = (sessionData.def.textflags & NvConstant.TextFlags.SED_TF_HorizText) === 0;
     this.selectionState.dimensions =
-      (sessionData.dimensions & NvConstant.DimensionFlags.SED_DF_Always) ||
-      (sessionData.dimensions & NvConstant.DimensionFlags.SED_DF_Select);
+      (sessionData.dimensions & NvConstant.DimensionFlags.Always) ||
+      (sessionData.dimensions & NvConstant.DimensionFlags.Select);
 
     // Handle business manager for note edit
     if (this.bInNoteEdit && this.curNoteShape >= 0) {
@@ -1332,7 +1332,7 @@ class OptUtil {
 
     // Update dimensions flags
     this.selectionState.dimensions |= object.Dimensions & (
-      NvConstant.DimensionFlags.SED_DF_Always | NvConstant.DimensionFlags.SED_DF_Select
+      NvConstant.DimensionFlags.Always | NvConstant.DimensionFlags.Select
     );
 
     T3Util.Log('O.Opt ProcessSelectedObject - Output: Object processed');
@@ -1708,16 +1708,16 @@ class OptUtil {
       let showFractionalInches = 0;
       let showFeetAsInches = 0;
       const useFeet = T3Gv.docUtil.rulerConfig.useInches &&
-        T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnits.SED_Feet;
+        T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnit.Feet;
 
       // Configure display options for feet/inch mode
       if (useFeet) {
-        showFractionalInches = showFeetAsInches = NvConstant.DimensionFlags.SED_DF_ShowFractionalInches;
+        showFractionalInches = showFeetAsInches = NvConstant.DimensionFlags.ShowFractionalInches;
         if (drawingObject) {
           showFeetAsInches = Utils.SetFlag(
             showFractionalInches,
-            NvConstant.DimensionFlags.SED_DF_ShowFeetAsInches,
-            (drawingObject.Dimensions & NvConstant.DimensionFlags.SED_DF_ShowFeetAsInches) > 0
+            NvConstant.DimensionFlags.ShowFeetAsInches,
+            (drawingObject.Dimensions & NvConstant.DimensionFlags.ShowFeetAsInches) > 0
           );
         }
       }
@@ -2129,7 +2129,7 @@ class OptUtil {
 
     for (let i = numberOfLayers - 1; i >= 0; i--) {
       const layer = layers[i];
-      if (i === activeLayerIndex || (layer.flags & NvConstant.LayerFlags.SDLF_Visible)) {
+      if (i === activeLayerIndex || (layer.flags & NvConstant.LayerFlags.Visible)) {
         visibleZList = visibleZList.concat(layer.zList);
       }
     }
@@ -2232,7 +2232,7 @@ class OptUtil {
       }
 
       // Handle dimension visibility
-      if (drawingObject.Dimensions & NvConstant.DimensionFlags.SED_DF_Select) {
+      if (drawingObject.Dimensions & NvConstant.DimensionFlags.Select) {
         let elementId;
         let currentElement = null;
 
@@ -2263,7 +2263,7 @@ class OptUtil {
 
     for (let i = numberOfLayers - 1; i >= 0; i--) {
       const layer = layers[i];
-      if (i === activeLayerIndex || (layer.flags & NvConstant.LayerFlags.SDLF_Visible && layer.flags & NvConstant.LayerFlags.SDLF_Active)) {
+      if (i === activeLayerIndex || (layer.flags & NvConstant.LayerFlags.Visible && layer.flags & NvConstant.LayerFlags.Active)) {
         visibleZList = visibleZList.concat(layer.zList);
       }
     }
@@ -3979,7 +3979,7 @@ class OptUtil {
     drawingObject.UniqueID = this.uniqueId++;
 
     if (drawingObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
-      layerFlag = NvConstant.LayerFlags.SDLF_UseEdges;
+      layerFlag = NvConstant.LayerFlags.UseEdges;
     }
 
     drawingObject.DataID = textContent ? T3Gv.opt.CreateTextBlock(drawingObject, textContent) : -1;
@@ -4168,10 +4168,10 @@ class OptUtil {
     const layers = layersManager.layers;
     const activeLayerIndex = layersManager.activelayer;
     let currentLayer = layers[activeLayerIndex];
-    if ((currentLayer.flags & NvConstant.LayerFlags.SDLF_NoAdd) || (currentLayer.flags & additionalLayerFlag)) {
+    if ((currentLayer.flags & NvConstant.LayerFlags.NoAdd) || (currentLayer.flags & additionalLayerFlag)) {
       const totalLayers = layers.length;
       for (let index = 0; index < totalLayers; index++) {
-        if ((layers[index].flags & NvConstant.LayerFlags.SDLF_NoAdd) === 0) {
+        if ((layers[index].flags & NvConstant.LayerFlags.NoAdd) === 0) {
           this.MakeLayerActiveByIndex(index);
           T3Gv.opt.DirtyObjectsOnLayer(activeLayerIndex, currentLayer);
           T3Gv.opt.DirtyObjectsOnLayer(index, layers[index]);
@@ -4199,7 +4199,7 @@ class OptUtil {
     const layers = layersManager.layers;
     const totalLayers = layersManager.nlayers;
     for (let i = 0; i < totalLayers; ++i) {
-      if (layers[i].flags & NvConstant.LayerFlags.SDLF_Visible) {
+      if (layers[i].flags & NvConstant.LayerFlags.Visible) {
         T3Util.Log('O.Opt getTopMostVisibleLayer - Output:', i);
         return i;
       }
@@ -4498,11 +4498,11 @@ class OptUtil {
     // Determine whether to show fractional inches by default
     let showFractionalInches = false;
     if (displayFlags) {
-      showFractionalInches = (displayFlags & NvConstant.DimensionFlags.SED_DF_ShowFractionalInches) > 0;
+      showFractionalInches = (displayFlags & NvConstant.DimensionFlags.ShowFractionalInches) > 0;
     }
     let useFeetAsInches = false;
     if (displayFlags) {
-      useFeetAsInches = (displayFlags & NvConstant.DimensionFlags.SED_DF_ShowFeetAsInches) > 0;
+      useFeetAsInches = (displayFlags & NvConstant.DimensionFlags.ShowFeetAsInches) > 0;
     }
     // Adjust for offset if provided
     if (offset) {
@@ -4523,7 +4523,7 @@ class OptUtil {
     // Process conversion if the settings use inches but display in feet and conversion is not skipped
     if (
       T3Gv.docUtil.rulerConfig.useInches &&
-      T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnits.SED_Feet &&
+      T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnit.Feet &&
       !skipFeetConversion
     ) {
       if (totalUnits < 0) {
@@ -4583,10 +4583,10 @@ class OptUtil {
     }
     // If display units are not feet, simply format the number with specified decimal places
     else if (
-      T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnits.SED_Inches ||
-      T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnits.SED_M ||
-      T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnits.SED_Cm ||
-      T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnits.SED_Mm
+      T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnit.Inches ||
+      T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnit.M ||
+      T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnit.Cm ||
+      T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnit.Mm
     ) {
       resultString = totalUnits.toFixed(T3Gv.docUtil.rulerConfig.dp);
     }
@@ -5873,16 +5873,16 @@ class OptUtil {
     const layersManager = T3Gv.opt.GetObjectPtr(this.layersManagerBlockId, false);
 
     // Check for edge layers and their visibility
-    if (layersManager.layers[layersManager.activelayer].flags & NvConstant.LayerFlags.SDLF_UseEdges) {
+    if (layersManager.layers[layersManager.activelayer].flags & NvConstant.LayerFlags.UseEdges) {
       isUsingEdgeLayer = true;
-      isEdgeLayerVisible = layersManager.layers[layersManager.activelayer].flags & NvConstant.LayerFlags.SDLF_Visible;
+      isEdgeLayerVisible = layersManager.layers[layersManager.activelayer].flags & NvConstant.LayerFlags.Visible;
     }
 
     // Check if any visible layer uses edges
     layerCount = layersManager.nlayers;
     for (layerIndex = 0; layerIndex < layerCount; layerIndex++) {
-      if ((layersManager.layers[layerIndex].flags & NvConstant.LayerFlags.SDLF_UseEdges) &&
-        (layersManager.layers[layerIndex].flags & NvConstant.LayerFlags.SDLF_Visible) ||
+      if ((layersManager.layers[layerIndex].flags & NvConstant.LayerFlags.UseEdges) &&
+        (layersManager.layers[layerIndex].flags & NvConstant.LayerFlags.Visible) ||
         isUsingEdgeLayer) {
         shouldUseEdges = true;
         break;
@@ -6110,7 +6110,7 @@ class OptUtil {
     // Collect objects from edge layers if needed
     for (layerIndex = 0; layerIndex < layersManager.nlayers; layerIndex++) {
       if (layerIndex !== layersManager.activelayer &&
-        layersManager.layers[layerIndex].flags & NvConstant.LayerFlags.SDLF_UseEdges) {
+        layersManager.layers[layerIndex].flags & NvConstant.LayerFlags.UseEdges) {
 
         // Add objects from this edge layer to our collection
         objectsFromEdgeLayers = objectsFromEdgeLayers.concat(layersManager.layers[layerIndex].zList);
@@ -8155,10 +8155,10 @@ class OptUtil {
       }
 
       // Mark for rendering if object has dimensions or comes from collaboration
-      if (drawingObject.Dimensions & NvConstant.DimensionFlags.SED_DF_Always ||
-        drawingObject.Dimensions & NvConstant.DimensionFlags.SED_DF_Select ||
+      if (drawingObject.Dimensions & NvConstant.DimensionFlags.Always ||
+        drawingObject.Dimensions & NvConstant.DimensionFlags.Select ||
         moveData ||
-        drawingObject.Dimensions & NvConstant.DimensionFlags.SED_DF_Area) {
+        drawingObject.Dimensions & NvConstant.DimensionFlags.Area) {
         this.AddToDirtyList(objectId);
       }
 
@@ -9170,7 +9170,7 @@ class OptUtil {
         selectionAttributes.top = displayDimensions.y;
 
         // Check if we need to display dimensions as feet/inches
-        const showFeetAsInches = targetObject.Dimensions & NvConstant.DimensionFlags.SED_DF_ShowFeetAsInches;
+        const showFeetAsInches = targetObject.Dimensions & NvConstant.DimensionFlags.ShowFeetAsInches;
 
         // Format the dimensions as strings
         selectionAttributes.widthstr = T3Constant.DocContext.CurrentWidth;
@@ -9633,7 +9633,7 @@ class OptUtil {
     for (layerIndex = 0; layerIndex < numberOfLayers; layerIndex++) {
       // Skip active layer and non-edge layers
       if (layerIndex !== layersManager.activelayer &&
-        layers[layerIndex].flags & NvConstant.LayerFlags.SDLF_UseEdges) {
+        layers[layerIndex].flags & NvConstant.LayerFlags.UseEdges) {
 
         objectList = layers[layerIndex].zList;
         objectCount = objectList.length;
@@ -11473,7 +11473,7 @@ class OptUtil {
       selectionAttrs.top = dimensionsData.y;
 
       const showFeetAsInches = drawingObject.Dimensions &
-        NvConstant.DimensionFlags.SED_DF_ShowFeetAsInches;
+        NvConstant.DimensionFlags.ShowFeetAsInches;
 
       selectionAttrs.widthstr = T3Constant.DocContext.CurrentWidth;
       selectionAttrs.heightstr = T3Constant.DocContext.CurrentHeight;
@@ -11581,7 +11581,7 @@ class OptUtil {
       selectionAttrs.top = dimensionsData.y;
 
       const showFeetAsInches = drawingObject.Dimensions &
-        NvConstant.DimensionFlags.SED_DF_ShowFeetAsInches;
+        NvConstant.DimensionFlags.ShowFeetAsInches;
 
       selectionAttrs.widthstr = T3Constant.DocContext.CurrentWidth;
       selectionAttrs.heightstr = T3Constant.DocContext.CurrentHeight;
@@ -12359,7 +12359,7 @@ class OptUtil {
   GetDrawingScale(drawingScale) {
     T3Util.Log("O.Opt GetDrawingScale - Input:", drawingScale);
 
-    const units = NvConstant.RulerUnits;
+    const units = NvConstant.RulerUnit;
     let majorScale = drawingScale.majorScale;
     let majorUnit = drawingScale.major;
 
@@ -12369,13 +12369,13 @@ class OptUtil {
 
     // Adjust scale based on unit type
     switch (drawingScale.units) {
-      case units.SED_Feet:
+      case units.Feet:
         majorScale *= 12;
         break;
-      case units.SED_Mm:
+      case units.Mm:
         majorScale /= 10;
         break;
-      case units.SED_M:
+      case units.M:
         majorScale *= 100;
         break;
     }
@@ -12587,7 +12587,7 @@ class OptUtil {
       U.StyleRecord = Utils1.DeepCopy(f.StyleRecord);
 
       if (U.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
-        U.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.SDFILL_TRANSPARENT;
+        U.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.Transparent;
       }
 
       U.StyleRecord.Fill.Hatch = 0;
@@ -17569,7 +17569,7 @@ class OptUtil {
       }
 
       // Update the opacity of dimension elements if the object's dimensions include selection flag.
-      if (objectData.Dimensions & NvConstant.DimensionFlags.SED_DF_Select) {
+      if (objectData.Dimensions & NvConstant.DimensionFlags.Select) {
         for (let index = objectElement.ElementCount() - 1; index >= 1; index--) {
           const childElement = objectElement.GetElementByIndex(index);
           // If the element is a dimension line or dimension text, update its opacity.
@@ -18418,24 +18418,24 @@ class OptUtil {
       const fillSettings = sessionObject.background.Paint;
 
       // Process according to the fill type.
-      if (fillSettings.FillType === NvConstant.FillTypes.SDFILL_SOLID) {
+      if (fillSettings.FillType === NvConstant.FillTypes.Solid) {
         // For solid fill, if the color is white or opacity is zero, set fill to 'none'.
-        if (fillSettings.Color === NvConstant.Colors.Color_White || fillSettings.Opacity === 0) {
+        if (fillSettings.Color === NvConstant.Colors.White || fillSettings.Opacity === 0) {
           backgroundElement.SetFillColor('none');
         } else {
           backgroundElement.SetFillColor(fillSettings.Color);
         }
-      } else if (fillSettings.FillType === NvConstant.FillTypes.SDFILL_GRADIENT) {
+      } else if (fillSettings.FillType === NvConstant.FillTypes.Gradient) {
         // For gradient fill, create a gradient record and apply it.
         const baseShape = new Instance.Shape.BaseShape();
         backgroundElement.SetGradientFill(
           baseShape.CreateGradientRecord(fillSettings.GradientFlags, fillSettings.Color, fillSettings.Opacity, fillSettings.EndColor, fillSettings.EndOpacity)
         );
-      } else if (fillSettings.FillType === NvConstant.FillTypes.SDFILL_RICHGRADIENT) {
+      } else if (fillSettings.FillType === NvConstant.FillTypes.RichGradient) {
         // For rich gradient fill, create a rich gradient record and apply it.
         const baseShape = new Instance.Shape.BaseShape();
         backgroundElement.SetGradientFill(baseShape.CreateRichGradientRecord(fillSettings.GradientFlags));
-      } else if (fillSettings.FillType === NvConstant.FillTypes.SDFILL_TEXTURE) {
+      } else if (fillSettings.FillType === NvConstant.FillTypes.Texture) {
         // For texture fill, prepare the texture fill settings.
         const textureFill = {
           url: '',
@@ -18493,14 +18493,14 @@ class OptUtil {
     if (session && backgroundElement) {
       const paintSettings = session.background.Paint;
       switch (paintSettings.FillType) {
-        case NvConstant.FillTypes.SDFILL_SOLID:
+        case NvConstant.FillTypes.Solid:
           isTransparent =
-            paintSettings.Color === NvConstant.Colors.Color_White ||
+            paintSettings.Color === NvConstant.Colors.White ||
             paintSettings.Opacity === 0;
           break;
-        case NvConstant.FillTypes.SDFILL_GRADIENT:
-        case NvConstant.FillTypes.SDFILL_RICHGRADIENT:
-        case NvConstant.FillTypes.SDFILL_TEXTURE:
+        case NvConstant.FillTypes.Gradient:
+        case NvConstant.FillTypes.RichGradient:
+        case NvConstant.FillTypes.Texture:
           isTransparent = false;
           break;
         default:
@@ -18768,7 +18768,7 @@ class OptUtil {
         width: boundingRect.width,
         height: boundingRect.height
       },
-      TextGrow: NvConstant.TextGrowBehavior.PROPORTIONAL,
+      TextGrow: NvConstant.TextGrowBehavior.ProPortional,
       ShapesInGroup: filteredObjects,
       InitialGroupBounds: {
         x: boundingRect.x,
@@ -18880,8 +18880,8 @@ class OptUtil {
 
         // Save dimensions that need to be preserved
         if (
-          currentObject.Dimensions & NvConstant.DimensionFlags.SED_DF_Always ||
-          currentObject.Dimensions & NvConstant.DimensionFlags.SED_DF_Select
+          currentObject.Dimensions & NvConstant.DimensionFlags.Always ||
+          currentObject.Dimensions & NvConstant.DimensionFlags.Select
         ) {
           dimensionData.push({
             index: i,
@@ -21942,7 +21942,7 @@ class OptUtil {
 
             // Process based on the text growth behavior
             switch (shape.TextGrow) {
-              case NvConstant.TextGrowBehavior.HORIZONTAL:
+              case NvConstant.TextGrowBehavior.Horizontal:
                 if (!Utils2.IsEqual(minTextWidth, textRect.width) ||
                   !Utils2.IsEqual(minTextHeight, textRect.height)) {
 
@@ -22097,11 +22097,11 @@ class OptUtil {
                 }
                 break;
 
-              case NvConstant.TextGrowBehavior.VERTICAL:
-              // Similar structure to HORIZONTAL case but with vertical growth logic
+              case NvConstant.TextGrowBehavior.Vertical:
+              // Similar structure to Horizontal case but with vertical growth logic
               // ...
 
-              case NvConstant.TextGrowBehavior.PROPORTIONAL:
+              case NvConstant.TextGrowBehavior.ProPortional:
               // Proportional resize logic
               // ...
             }

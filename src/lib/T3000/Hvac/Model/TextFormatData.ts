@@ -21,7 +21,7 @@ class TextFormatData {
 
   constructor() {
 
-    this.Paint = new PaintData(NvConstant.Colors.Color_Black);
+    this.Paint = new PaintData(NvConstant.Colors.Black);
     this.FontName = 'Arial';
     this.FontType = 'sanserif';
     this.FontId = 1;

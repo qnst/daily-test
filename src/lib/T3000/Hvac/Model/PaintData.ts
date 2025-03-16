@@ -20,9 +20,9 @@ class PaintData {
 
   constructor(color: string) {
 
-    this.FillType = NvConstant.FillTypes.SDFILL_SOLID;
+    this.FillType = NvConstant.FillTypes.Solid;
     this.Color = color;
-    this.EndColor = NvConstant.Colors.Color_White;
+    this.EndColor = NvConstant.Colors.White;
     this.GradientFlags = 0;
     this.Texture = 0;
     this.TextureScale = new TextureScale();

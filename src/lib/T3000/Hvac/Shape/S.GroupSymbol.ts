@@ -401,7 +401,7 @@ class GroupSymbol extends BaseSymbol {
         allowGrow = false;
         allowHorizontal = false;
         break;
-      case OptConstant.GrowBehavior.PROPORTIONAL:
+      case OptConstant.GrowBehavior.ProPortional:
         allowGrow = true;
         allowHorizontal = false;
         allowVertical = false;
@@ -587,7 +587,7 @@ class GroupSymbol extends BaseSymbol {
     }
 
     if (!disableRotation && !isNarrow && !hasConnectorHook) {
-      const isTextGrowHorizontal = this.TextGrow === NvConstant.TextGrowBehavior.HORIZONTAL &&
+      const isTextGrowHorizontal = this.TextGrow === NvConstant.TextGrowBehavior.Horizontal &&
         (this.flags & NvConstant.ObjFlags.SEDO_TextOnly) &&
         ShapeUtil.TextAlignToWin(this.TextAlign).just === TextConstant.TextJust.TA_LEFT;
       knobProps.shapeType = OptConstant.CSType.OVAL;
@@ -604,7 +604,7 @@ class GroupSymbol extends BaseSymbol {
     }
 
     // Create dimension adjustment knobs if applicable
-    if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Standoff && this.CanUseStandOffDimensionLines()) {
+    if (this.Dimensions & NvConstant.DimensionFlags.Standoff && this.CanUseStandOffDimensionLines()) {
       const svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
       this.CreateDimensionAdjustmentKnobs(actionTriggerGroup, svgElement, knobProps);
     }
@@ -851,7 +851,7 @@ class GroupSymbol extends BaseSymbol {
     // Update hooked object's dimension lines if applicable
     if (this.hooks.length) {
       hookObject = T3Gv.opt.GetObjectPtr(this.hooks[0].objid, false);
-      if (hookObject && hookObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL && !(hookObject.Dimensions & NvConstant.DimensionFlags.SED_DF_HideHookedObjDimensions)) {
+      if (hookObject && hookObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL && !(hookObject.Dimensions & NvConstant.DimensionFlags.HideHookedObjDimensions)) {
         hooksBackup = Utils1.DeepCopy(this.hooks);
         this.hooks = [];
         tempHookElement = T3Gv.opt.svgObjectLayer.GetElementByID(hookObject.BlockID);

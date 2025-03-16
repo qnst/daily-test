@@ -171,7 +171,7 @@ class BaseShape extends BaseDrawingObject {
         showVerticalKnobs = false;
         break;
 
-      case OptConstant.GrowBehavior.PROPORTIONAL: // Maintain aspect ratio
+      case OptConstant.GrowBehavior.ProPortional: // Maintain aspect ratio
         showCornerKnobs = true;
         showVerticalKnobs = false;
         showHorizontalKnobs = false;
@@ -399,7 +399,7 @@ class BaseShape extends BaseDrawingObject {
 
     if (canRotate) {
       // Special positioning for left-aligned text
-      const isTextAlignedLeft = (this.TextGrow === NvConstant.TextGrowBehavior.HORIZONTAL &&
+      const isTextAlignedLeft = (this.TextGrow === NvConstant.TextGrowBehavior.Horizontal &&
         (this.flags & NvConstant.ObjFlags.SEDO_TextOnly) &&
         ShapeUtil.TextAlignToWin(this.TextAlign).just === TextConstant.TextJust.TA_LEFT);
 
@@ -423,7 +423,7 @@ class BaseShape extends BaseDrawingObject {
     }
 
     // Add dimension adjustment controls if shape uses standoff dimension lines
-    if ((this.Dimensions & NvConstant.DimensionFlags.SED_DF_Standoff) &&
+    if ((this.Dimensions & NvConstant.DimensionFlags.Standoff) &&
       this.CanUseStandOffDimensionLines()) {
       const shapeElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
       this.CreateDimensionAdjustmentKnobs(triggerGroup, shapeElement, knobConfig);
@@ -655,10 +655,10 @@ class BaseShape extends BaseDrawingObject {
       (this.TextFlags & NvConstant.TextFlags.SED_TF_AttachB);
 
     const isTransparent =
-      this.StyleRecord.Fill.Paint.FillType === NvConstant.FillTypes.SDFILL_TRANSPARENT;
+      this.StyleRecord.Fill.Paint.FillType === NvConstant.FillTypes.Transparent;
 
     const isSolidAndSameColor =
-      this.StyleRecord.Fill.Paint.FillType === NvConstant.FillTypes.SDFILL_SOLID &&
+      this.StyleRecord.Fill.Paint.FillType === NvConstant.FillTypes.Solid &&
       this.StyleRecord.Text.Paint.Color.toUpperCase() === this.StyleRecord.Fill.Paint.Color.toUpperCase();
 
     const result = hasAttachFlag || isTransparent || isSolidAndSameColor;
@@ -775,13 +775,13 @@ class BaseShape extends BaseDrawingObject {
         if (shapeElement) {
           const textElement = shapeElement.textElem;
 
-          if (this.TextGrow === NvConstant.TextGrowBehavior.HORIZONTAL) {
+          if (this.TextGrow === NvConstant.TextGrowBehavior.Horizontal) {
             textElement.SetConstraints(
               T3Gv.opt.contentHeader.MaxWorkDim.x,
               this.trect.width,
               this.trect.height
             );
-            T3Util.Log("= S.BaseShape - SetTextGrow applied HORIZONTAL constraints");
+            T3Util.Log("= S.BaseShape - SetTextGrow applied Horizontal constraints");
           } else {
             const shapeCopy = Utils1.DeepCopy(this);
             const frameCopy = Utils1.DeepCopy(this.Frame);
@@ -792,7 +792,7 @@ class BaseShape extends BaseDrawingObject {
               shapeCopy.trect.width,
               this.trect.height
             );
-            T3Util.Log("= S.BaseShape - SetTextGrow applied VERTICAL constraints");
+            T3Util.Log("= S.BaseShape - SetTextGrow applied Vertical constraints");
           }
         }
         T3Gv.opt.TextResizeCommon(this.BlockID, true);
@@ -875,7 +875,7 @@ class BaseShape extends BaseDrawingObject {
           false
         );
       }
-      newShape.ObjGrow = preserveAspect ? OptConstant.GrowBehavior.PROPORTIONAL : OptConstant.GrowBehavior.ALL;
+      newShape.ObjGrow = preserveAspect ? OptConstant.GrowBehavior.ProPortional : OptConstant.GrowBehavior.ALL;
       newShape.BlockID = preservedBlock.Data.BlockID;
       newShape.left_sindent = 0;
       newShape.top_sindent = 0;
@@ -1069,7 +1069,7 @@ class BaseShape extends BaseDrawingObject {
       this.ObjGrow = properties.ObjGrow;
       T3Gv.opt.AddToDirtyList(this.BlockID);
       changed = true;
-      this.ResizeAspectConstrain = this.ObjGrow === OptConstant.GrowBehavior.PROPORTIONAL;
+      this.ResizeAspectConstrain = this.ObjGrow === OptConstant.GrowBehavior.ProPortional;
     }
 
     // Update text grow property if changed
@@ -1145,7 +1145,7 @@ class BaseShape extends BaseDrawingObject {
 
       if (
         (this.flags & NvConstant.ObjFlags.SEDO_TextOnly) &&
-        this.StyleRecord.Fill.Paint.FillType !== NvConstant.FillTypes.SDFILL_TRANSPARENT
+        this.StyleRecord.Fill.Paint.FillType !== NvConstant.FillTypes.Transparent
       ) {
         this.flags = Utils2.SetFlag(this.flags, NvConstant.ObjFlags.SEDO_TextOnly, false);
       }
@@ -1524,7 +1524,7 @@ class BaseShape extends BaseDrawingObject {
       }
 
       // Determine if we need to adjust the base rect for the table cells.
-      let fillIsTransparent = (this.StyleRecord.Fill.Paint.FillType === NvConstant.FillTypes.SDFILL_TRANSPARENT);
+      let fillIsTransparent = (this.StyleRecord.Fill.Paint.FillType === NvConstant.FillTypes.Transparent);
       // Override fill transparent check.
       fillIsTransparent = false;
       if (!fillIsTransparent) {
@@ -1534,7 +1534,7 @@ class BaseShape extends BaseDrawingObject {
         //   let transparentCellIndex = -1;
         //   for (let i = 0; i < cellCount; i++) {
         //     const cell = tableObj.cells[i];
-        //     if (cell.fill.Paint.FillType === NvConstant.FillTypes.SDFILL_TRANSPARENT) {
+        //     if (cell.fill.Paint.FillType === NvConstant.FillTypes.Transparent) {
         //       if (transparentCellIndex === -1) {
         //         transparentCellIndex = i;
         //       }
@@ -1987,7 +1987,7 @@ class BaseShape extends BaseDrawingObject {
 
         // Verify text fit after movement
         const textRect = shapeObject.trect;
-        const textWidth = (this.TextGrow === NvConstant.TextGrowBehavior.HORIZONTAL)
+        const textWidth = (this.TextGrow === NvConstant.TextGrowBehavior.Horizontal)
           ? T3Gv.opt.contentHeader.MaxWorkDim.x
           : textRect.width;
 
@@ -2388,7 +2388,7 @@ class BaseShape extends BaseDrawingObject {
         adjustedTextRect = this.trect;
 
         // Calculate text fit based on growth constraints
-        const maxTextWidth = (this.TextGrow === NvConstant.TextGrowBehavior.HORIZONTAL)
+        const maxTextWidth = (this.TextGrow === NvConstant.TextGrowBehavior.Horizontal)
           ? T3Gv.opt.contentHeader.MaxWorkDim.x
           : adjustedTextRect.width;
 
@@ -5159,12 +5159,12 @@ class BaseShape extends BaseDrawingObject {
     const fieldDataStyleOverride = null;// this.GetFieldDataStyleOverride();
 
     if (fieldDataStyleOverride) {
-      if (fieldDataStyleOverride.fillColor && fillType !== NvConstant.FillTypes.SDFILL_TRANSPARENT) {
-        fillType = NvConstant.FillTypes.SDFILL_SOLID;
+      if (fieldDataStyleOverride.fillColor && fillType !== NvConstant.FillTypes.Transparent) {
+        fillType = NvConstant.FillTypes.Solid;
         fillColor = fieldDataStyleOverride.fillColor;
       }
       if (fieldDataStyleOverride.strokeColor) {
-        strokeType = NvConstant.FillTypes.SDFILL_SOLID;
+        strokeType = NvConstant.FillTypes.Solid;
         strokeColor = fieldDataStyleOverride.strokeColor;
       }
     }
@@ -5229,7 +5229,7 @@ class BaseShape extends BaseDrawingObject {
         element.SetFillOpacity(styleRecord.Fill.Paint.Opacity);
       } else {
         switch (fillType) {
-          case NvConstant.FillTypes.SDFILL_GRADIENT:
+          case NvConstant.FillTypes.Gradient:
             element.SetGradientFill(this.CreateGradientRecord(
               styleRecord.Fill.Paint.GradientFlags,
               fillColor,
@@ -5238,10 +5238,10 @@ class BaseShape extends BaseDrawingObject {
               styleRecord.Fill.Paint.EndOpacity
             ));
             break;
-          case NvConstant.FillTypes.SDFILL_RICHGRADIENT:
+          case NvConstant.FillTypes.RichGradient:
             element.SetGradientFill(this.CreateRichGradientRecord(styleRecord.Fill.Paint.GradientFlags));
             break;
-          case NvConstant.FillTypes.SDFILL_TEXTURE:
+          case NvConstant.FillTypes.Texture:
             const texture = {
               url: '',
               scale: 1,
@@ -5260,7 +5260,7 @@ class BaseShape extends BaseDrawingObject {
               element.SetFillOpacity(styleRecord.Fill.Paint.Opacity);
             }
             break;
-          case NvConstant.FillTypes.SDFILL_TRANSPARENT:
+          case NvConstant.FillTypes.Transparent:
             element.SetFillColor('none');
             break;
           default:
@@ -5275,7 +5275,7 @@ class BaseShape extends BaseDrawingObject {
         }
 
         switch (strokeType) {
-          case NvConstant.FillTypes.SDFILL_GRADIENT:
+          case NvConstant.FillTypes.Gradient:
             element.SetGradientStroke(this.CreateGradientRecord(
               styleRecord.Line.Paint.GradientFlags,
               strokeColor,
@@ -5284,10 +5284,10 @@ class BaseShape extends BaseDrawingObject {
               styleRecord.Line.Paint.EndOpacity
             ));
             break;
-          case NvConstant.FillTypes.SDFILL_RICHGRADIENT:
+          case NvConstant.FillTypes.RichGradient:
             element.SetGradientStroke(this.CreateRichGradientRecord(styleRecord.Line.Paint.GradientFlags));
             break;
-          case NvConstant.FillTypes.SDFILL_TEXTURE:
+          case NvConstant.FillTypes.Texture:
             const strokeTexture = {
               url: '',
               scale: styleRecord.Line.Paint.TextureScale.Scale,
@@ -5353,7 +5353,7 @@ class BaseShape extends BaseDrawingObject {
   IsTransparent() {
     T3Util.Log("= S.BaseShape - IsTransparent input");
 
-    const isTransparent = this.StyleRecord.Fill.Paint.FillType === NvConstant.FillTypes.SDFILL_TRANSPARENT;
+    const isTransparent = this.StyleRecord.Fill.Paint.FillType === NvConstant.FillTypes.Transparent;
 
     T3Util.Log("= S.BaseShape - IsTransparent output:", isTransparent);
     return isTransparent;
@@ -5622,7 +5622,7 @@ class BaseShape extends BaseDrawingObject {
                 this.Frame.height + this.TMargins.bottom
               ),
                 c.SetParagraphAlignment(TextConstant.TextAlign.CENTER)
-          } else this.TextGrow == NvConstant.TextGrowBehavior.HORIZONTAL ? c.SetConstraints(T3Gv.opt.contentHeader.MaxWorkDim.x, i.width, i.height) : c.SetConstraints(i.width, i.width, i.height);
+          } else this.TextGrow == NvConstant.TextGrowBehavior.Horizontal ? c.SetConstraints(T3Gv.opt.contentHeader.MaxWorkDim.x, i.width, i.height) : c.SetConstraints(i.width, i.width, i.height);
       c.SetRenderingEnabled(!0),
         c.SetEditCallback(T3Gv.opt.TextCallback, t)
     }
@@ -5675,7 +5675,7 @@ class BaseShape extends BaseDrawingObject {
         } else {
           r.SetPos(i.x - a.x, i.y - a.y);
           var o = i.width;
-          this.TextGrow == NvConstant.TextGrowBehavior.HORIZONTAL &&
+          this.TextGrow == NvConstant.TextGrowBehavior.Horizontal &&
             (o = T3Gv.opt.contentHeader.MaxWorkDim.x),
             r.SetConstraints(o, i.width, i.height)
         }
@@ -6027,7 +6027,7 @@ class BaseShape extends BaseDrawingObject {
 
     this.UpdateDimensionLines(svgElement);
 
-    if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Select) {
+    if (this.Dimensions & NvConstant.DimensionFlags.Select) {
       this.HideOrShowSelectOnlyDimensions(true);
     }
 
@@ -6154,7 +6154,7 @@ class BaseShape extends BaseDrawingObject {
         // Filter allowed characters based on ruler settings.
         if (
           T3Gv.docUtil.rulerConfig.useInches &&
-          T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnits.SED_Feet
+          T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnit.Feet
         ) {
           if (eventData.search(/(\d|\.|'|"| )/) === -1) {
             T3Util.Log("S.BaseShape - DimensionEditCallback output:", false);
@@ -6404,7 +6404,7 @@ class BaseShape extends BaseDrawingObject {
 
     // Check layer settings: if the active layer is using edges, no buttons should be available.
     const layersManager = T3Gv.opt.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
-    if (layersManager && (layersManager.layers[layersManager.activelayer].flags & NvConstant.LayerFlags.SDLF_UseEdges)) {
+    if (layersManager && (layersManager.layers[layersManager.activelayer].flags & NvConstant.LayerFlags.UseEdges)) {
       T3Util.Log("= S.BaseShape - GetActionButtons output:", null);
       return null;
     }

@@ -345,8 +345,8 @@ class Line extends BaseLine {
           }
         }
 
-        if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Always ||
-          (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Select && this.IsSelected())) {
+        if (this.Dimensions & NvConstant.DimensionFlags.Always ||
+          (this.Dimensions & NvConstant.DimensionFlags.Select && this.IsSelected())) {
           const dimensionTextElements = shapeContainer.GetElementListWithID(OptConstant.SVGElementClass.DIMENSIONTEXT);
           for (let i = 0; i < dimensionTextElements.length; i++) {
             dimensionTextElements[i].SetCursorState(CursorConstant.CursorState.EDITONLY);
@@ -731,14 +731,14 @@ class Line extends BaseLine {
 
       let dimensionText = Number(T3Gv.docUtil.rulerConfig.majorScale).toString();
       switch (T3Gv.docUtil.rulerConfig.units) {
-        case NvConstant.RulerUnits.SED_Feet:
-          if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_ShowFeetAsInches) {
+        case NvConstant.RulerUnit.Feet:
+          if (this.Dimensions & NvConstant.DimensionFlags.ShowFeetAsInches) {
             dimensionText = `${12 * T3Gv.docUtil.rulerConfig.majorScale}"`;
           } else {
             dimensionText += "'";
           }
           break;
-        case NvConstant.RulerUnits.SED_Inches:
+        case NvConstant.RulerUnit.Inches:
           dimensionText += '"';
           break;
       }

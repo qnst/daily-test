@@ -316,7 +316,7 @@ class BaseLine extends BaseDrawingObject {
     let totalLength = 0;
 
     // If total dimension flag is set then calculate the total polyline length.
-    if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Total) {
+    if (this.Dimensions & NvConstant.DimensionFlags.Total) {
       const polyPoints = this.GetPolyPoints(200, true, false, false, null);
       for (let i = 1; i < polyPoints.length; i++) {
         const deltaX = Math.abs(polyPoints[i].x - polyPoints[i - 1].x);
@@ -481,8 +481,8 @@ class BaseLine extends BaseDrawingObject {
     if (adjustedY < 0) {
       shiftY += -adjustedY;
       if (
-        this.Dimensions & NvConstant.DimensionFlags.SED_DF_Always ||
-        this.Dimensions & NvConstant.DimensionFlags.SED_DF_Select
+        this.Dimensions & NvConstant.DimensionFlags.Always ||
+        this.Dimensions & NvConstant.DimensionFlags.Select
       ) {
         shiftY += OptConstant.Defines.DimensionDefaultStandoff;
       }
@@ -619,7 +619,7 @@ class BaseLine extends BaseDrawingObject {
     this.AddDimensionsToR();
 
     // Handle vertical text growth
-    if (this.TextGrow === NvConstant.TextGrowBehavior.VERTICAL && !this.LineTextX) {
+    if (this.TextGrow === NvConstant.TextGrowBehavior.Vertical && !this.LineTextX) {
       let textParams = this.GetTextOnLineParams(this.BlockID);
       let textRect = Utils2.Pt2Rect(textParams.StartPoint, textParams.EndPoint);
 
@@ -1038,7 +1038,7 @@ class BaseLine extends BaseDrawingObject {
     T3Util.Log('= S.BaseLine: Dimension lines updated');
 
     // Check if the dimension should be shown only when selected
-    const isDimSelect = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Select;
+    const isDimSelect = this.Dimensions & NvConstant.DimensionFlags.Select;
     T3Util.Log('= S.BaseLine: isDimSelect:', isDimSelect);
 
     // Hide or show dimensions based on selection state
@@ -1940,7 +1940,7 @@ class BaseLine extends BaseDrawingObject {
     const layersManager = T3Gv.opt.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
     const session = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
 
-    const useEdges = layersManager && layersManager.activelayer >= 0 && (layersManager.layers[layersManager.activelayer].flags & NvConstant.LayerFlags.SDLF_UseEdges);
+    const useEdges = layersManager && layersManager.activelayer >= 0 && (layersManager.layers[layersManager.activelayer].flags & NvConstant.LayerFlags.UseEdges);
     const fromOverlayLayer = T3Gv.opt.fromOverlayLayer;
     const sessionLink = session && (session.flags & OptConstant.SessionFlags.SEDS_LLink);
 
@@ -3563,7 +3563,7 @@ class BaseLine extends BaseDrawingObject {
     T3Util.Log("= S.BaseLine: ChangeBackgroundColor called with newColor:", newColor, "currentColor:", currentColor);
 
     if (
-      this.StyleRecord.Fill.Paint.FillType !== NvConstant.FillTypes.SDFILL_TRANSPARENT &&
+      this.StyleRecord.Fill.Paint.FillType !== NvConstant.FillTypes.Transparent &&
       this.StyleRecord.Fill.Paint.Color === currentColor
     ) {
       T3Util.Log("= S.BaseLine: Condition met. Updating background color.");
@@ -3674,10 +3674,10 @@ class BaseLine extends BaseDrawingObject {
 
     // Set FillType and Opacity based on vertical justification
     if (textAlignWin.vjust === TextConstant.TextJust.TA_CENTER) {
-      this.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.SDFILL_SOLID;
+      this.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.Solid;
       this.StyleRecord.Fill.Paint.Opacity = 1;
     } else {
-      this.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.SDFILL_TRANSPARENT;
+      this.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.Transparent;
     }
 
     T3Util.Log("= S.BaseLine: SetTextObject output, DataID =", this.DataID, "StyleRecord.Fill =", this.StyleRecord.Fill);
@@ -3813,7 +3813,7 @@ class BaseLine extends BaseDrawingObject {
         let finalTextHeight = this.trect.height > textHeight ? this.trect.height : textHeight;
 
         // Calculate the position for text object placement
-        finalX = this.TextGrow === NvConstant.TextGrowBehavior.HORIZONTAL ?
+        finalX = this.TextGrow === NvConstant.TextGrowBehavior.Horizontal ?
           posX - textWidth / 2 : posX - this.trect.width / 2;
         finalY = posY - finalTextHeight / 2;
 
@@ -3891,7 +3891,7 @@ class BaseLine extends BaseDrawingObject {
           textObj.SetRotation(angleDegrees, finalX + textWidth / 2, finalY + textHeight / 2);
           centerPoint = { x: finalX + textWidth / 2, y: finalY + textHeight / 2 };
           bgObj.SetRotation(angleDegrees, finalX + textWidth / 2, finalY + textHeight / 2);
-          if (this.TextGrow === NvConstant.TextGrowBehavior.VERTICAL) {
+          if (this.TextGrow === NvConstant.TextGrowBehavior.Vertical) {
             flipText = false;
           }
           flipText ? textObj.SetParagraphAlignment(TextConstant.TextAlign.RIGHT)
@@ -3907,7 +3907,7 @@ class BaseLine extends BaseDrawingObject {
           textObj.SetRotation(angleDegrees, finalX + textWidth / 2, finalY + textHeight / 2);
           centerPoint = { x: finalX + textWidth / 2, y: finalY + textHeight / 2 };
           bgObj.SetRotation(angleDegrees, finalX + textWidth / 2, finalY + textHeight / 2);
-          if (this.TextGrow === NvConstant.TextGrowBehavior.VERTICAL) {
+          if (this.TextGrow === NvConstant.TextGrowBehavior.Vertical) {
             flipText = false;
           }
           flipText ? textObj.SetParagraphAlignment(TextConstant.TextAlign.RIGHT)
@@ -3964,7 +3964,7 @@ class BaseLine extends BaseDrawingObject {
 
     let fillColor = this.StyleRecord.Fill.Paint.Color;
     bgRect.SetFillColor(fillColor);
-    if (this.StyleRecord.Fill.Paint.FillType === NvConstant.FillTypes.SDFILL_TRANSPARENT) {
+    if (this.StyleRecord.Fill.Paint.FillType === NvConstant.FillTypes.Transparent) {
       bgRect.SetOpacity(0);
     } else {
       bgRect.SetOpacity(this.StyleRecord.Fill.Paint.Opacity);
@@ -3995,7 +3995,7 @@ class BaseLine extends BaseDrawingObject {
     }
 
     // Set constraints if the text is not growing vertically.
-    if (this.TextGrow !== NvConstant.TextGrowBehavior.VERTICAL) {
+    if (this.TextGrow !== NvConstant.TextGrowBehavior.Vertical) {
       textShape.SetConstraints(T3Gv.opt.contentHeader.MaxWorkDim.x, 0, trect.height);
     }
 
@@ -4385,7 +4385,7 @@ class BaseLine extends BaseDrawingObject {
 
       // Add dimension adjustment knobs if stand-off dimension lines are allowed and used
       if (
-        this.Dimensions & NvConstant.DimensionFlags.SED_DF_Standoff &&
+        this.Dimensions & NvConstant.DimensionFlags.Standoff &&
         this.CanUseStandOffDimensionLines()
       ) {
         const svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
@@ -4462,7 +4462,7 @@ class BaseLine extends BaseDrawingObject {
       }
     } else {
       // Process normal fill styles based on the fill type
-      if (fillType === NvConstant.FillTypes.SDFILL_GRADIENT) {
+      if (fillType === NvConstant.FillTypes.Gradient) {
         const gradientRecord = this.CreateGradientRecord(
           styleObj.Fill.Paint.GradientFlags,
           styleObj.Fill.Paint.Color,
@@ -4472,11 +4472,11 @@ class BaseLine extends BaseDrawingObject {
         );
         T3Util.Log("= S.BaseLine: Applying gradient fill with record:", gradientRecord);
         element.SetGradientFill(gradientRecord);
-      } else if (fillType === NvConstant.FillTypes.SDFILL_RICHGRADIENT) {
+      } else if (fillType === NvConstant.FillTypes.RichGradient) {
         const richGradientRecord = this.CreateRichGradientRecord(styleObj.Fill.Paint.GradientFlags);
         T3Util.Log("= S.BaseLine: Applying rich gradient fill with record:", richGradientRecord);
         element.SetGradientFill(richGradientRecord);
-      } else if (fillType === NvConstant.FillTypes.SDFILL_TEXTURE) {
+      } else if (fillType === NvConstant.FillTypes.Texture) {
         const textureParams = {
           url: '',
           scale: 1,
@@ -4496,7 +4496,7 @@ class BaseLine extends BaseDrawingObject {
           element.SetTextureFill(textureParams);
           element.SetFillOpacity(styleObj.Fill.Paint.Opacity);
         }
-      } else if (fillType === NvConstant.FillTypes.SDFILL_TRANSPARENT) {
+      } else if (fillType === NvConstant.FillTypes.Transparent) {
         T3Util.Log("= S.BaseLine: Applying transparent fill");
         element.SetFillColor('none');
       } else {
@@ -4507,7 +4507,7 @@ class BaseLine extends BaseDrawingObject {
     }
 
     // Process stroke (line) styles based on the line fill type
-    if (lineFillType === NvConstant.FillTypes.SDFILL_GRADIENT) {
+    if (lineFillType === NvConstant.FillTypes.Gradient) {
       const gradientStrokeRecord = this.CreateGradientRecord(
         styleObj.Line.Paint.GradientFlags,
         styleObj.Line.Paint.Color,
@@ -4517,11 +4517,11 @@ class BaseLine extends BaseDrawingObject {
       );
       T3Util.Log("= S.BaseLine: Applying gradient stroke with record:", gradientStrokeRecord);
       element.SetGradientStroke(gradientStrokeRecord);
-    } else if (lineFillType === NvConstant.FillTypes.SDFILL_RICHGRADIENT) {
+    } else if (lineFillType === NvConstant.FillTypes.RichGradient) {
       const richGradientStrokeRecord = this.CreateRichGradientRecord(styleObj.Line.Paint.GradientFlags);
       T3Util.Log("= S.BaseLine: Applying rich gradient stroke with record:", richGradientStrokeRecord);
       element.SetGradientStroke(richGradientStrokeRecord);
-    } else if (lineFillType === NvConstant.FillTypes.SDFILL_TEXTURE) {
+    } else if (lineFillType === NvConstant.FillTypes.Texture) {
       const textureStrokeParams = {
         url: '',
         scale: styleObj.Line.Paint.TextureScale.Scale,
@@ -4538,7 +4538,7 @@ class BaseLine extends BaseDrawingObject {
       T3Util.Log("= S.BaseLine: Applying texture stroke with params:", textureStrokeParams);
       element.SetTextureStroke(textureStrokeParams);
       element.SetStrokeOpacity(styleObj.Line.Paint.Opacity);
-    } else if (lineFillType === NvConstant.FillTypes.SDFILL_SOLID) {
+    } else if (lineFillType === NvConstant.FillTypes.Solid) {
       T3Util.Log("= S.BaseLine: Applying solid stroke with color:", styleObj.Line.Paint.Color);
       element.SetStrokeColor(styleObj.Line.Paint.Color);
       element.SetStrokeOpacity(styleObj.Line.Paint.Opacity);
@@ -5099,10 +5099,10 @@ class BaseLine extends BaseDrawingObject {
     T3Util.Log("= S.BaseLine: UpdateSecondaryDimensions called with input:", { container, creator, forcedUpdate });
 
     const isWall: boolean = this.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL;
-    const isHookedDimVisible: boolean = !(this.Dimensions & NvConstant.DimensionFlags.SED_DF_HideHookedObjDimensions);
+    const isHookedDimVisible: boolean = !(this.Dimensions & NvConstant.DimensionFlags.HideHookedObjDimensions);
     const shouldShowAlways: boolean =
-      Boolean(this.Dimensions & NvConstant.DimensionFlags.SED_DF_Always ||
-        this.Dimensions & NvConstant.DimensionFlags.SED_DF_Select || forcedUpdate);
+      Boolean(this.Dimensions & NvConstant.DimensionFlags.Always ||
+        this.Dimensions & NvConstant.DimensionFlags.Select || forcedUpdate);
 
     if (isWall && isHookedDimVisible && shouldShowAlways) {
       this.UpdateHookedObjectDimensionLines(container, creator, forcedUpdate);
@@ -5123,8 +5123,8 @@ class BaseLine extends BaseDrawingObject {
     // Process only if the object is a wall opt wall, secondary dimensions are not hidden, and all segments are enabled.
     if (
       this.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL &&
-      !(this.Dimensions & NvConstant.DimensionFlags.SED_DF_HideHookedObjDimensions) &&
-      (this.Dimensions & NvConstant.DimensionFlags.SED_DF_AllSeg)
+      !(this.Dimensions & NvConstant.DimensionFlags.HideHookedObjDimensions) &&
+      (this.Dimensions & NvConstant.DimensionFlags.AllSeg)
     ) {
       T3Util.Log("= S.BaseLine: Conditions met for processing secondary dimensions.");
 

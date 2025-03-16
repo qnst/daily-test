@@ -6,75 +6,75 @@ class NvConstant {
     INIT: - 1, CHAR: 0, BS: 1, DEL: 2, STYLE: 3, CUT: 4, COPY: 5, PASTE: 6, SELECT: 7, TIMEOUT: 8
   }
 
-  static RulerUnits = {
-    SED_UNone: 0, SED_Inches: 1, SED_Feet: 2, SED_Mm: 3, SED_Cm: 4, SED_M: 5
+  static RulerUnit = {
+    None: 0, Inches: 1, Feet: 2, Mm: 3, Cm: 4, M: 5
   }
 
   static Colors = {
-    Color_White: '#FFFFFF',
-    Color_Black: '#000000',
-    Color_Hilite: '#0099FF',
-    Color_Select: '#00FF00',
-    Color_Row_Shade: '#F1F1F1',
-    Color_Trans: 4294967295,
-    Color_Gray: '#C0C0C0'
+    White: '#FFFFFF',
+    Black: '#000000',
+    Hilite: '#0099FF',
+    Select: '#00FF00',
+    Row_Shade: '#F1F1F1',
+    Trans: 4294967295,
+    Gray: '#C0C0C0'
   }
 
   static FillTypes = {
-    SDFILL_TRANSPARENT: 0,
-    SDFILL_SOLID: 1,
-    SDFILL_GRADIENT: 2,
-    SDFILL_TEXTURE: 3,
-    SDFILL_IMAGE: 4,
-    SDFILL_RICHGRADIENT: 5
+    Transparent: 0,
+    Solid: 1,
+    Gradient: 2,
+    Texture: 3,
+    Image: 4,
+    RichGradient: 5
   }
 
   static GraphType = {
-    SDGRAPH_TYPE_UNSET: - 1,
-    SDGRAPH_TYPE_BAR: 0,
-    SDGRAPH_TYPE_STACKEDBAR: 1,
-    SDGRAPH_TYPE_LINE: 2,
-    SDGRAPH_TYPE_PIE: 3,
-    SDGRAPH_TYPE_LINEARPIE: 4,
-    SDGRAPH_TYPE_STACKEDLINE: 5
+    Unset: - 1,
+    Bar: 0,
+    StackedBar: 1,
+    Line: 2,
+    Pie: 3,
+    LineArpie: 4,
+    StackedLine: 5
   }
 
   static GraphFlags = {
-    SDAX_SEQUENCE_BY_POINTS: 1,
-    SDAX_SEQUENCE_BY_SERIES: 2,
-    SDAX_SEQUENCE_BY_CATEGORY: 4,
-    SDAX_SEQUENCE_BY_POINTS_BY_SERIES: 8,
-    SDAX_3D: 16,
-    SDAX_FLAG_DATA_MODIFIED: 32,
-    SDAX_AVAILABLE: 64,
-    SDAX_SHOW_TABLE: 128,
-    SDAX_FLIP_ROW_COL_ORIENTATION: 256,
-    SDAX_REDIRECT_EDIT_SERIES_NAME: 2048,
-    SDAX_DATATABLE_USER_MANAGED_GEOMETRY: 4096,
-    SDAX_BG_IMAGEFILL: 8192,
-    SDAX_AREABG_IMAGEFILL: 16384,
-    SDAX_SHOW_STACKED_SCALE: 32768
+    // SequenceByPoints: 1,
+    // SequenceBySeries: 2,
+    SequenceByCategory: 4,
+    // SequenceByPointsBySeries: 8,
+    // Dax3D: 16,
+    // DaxFlagDataModified: 32,
+    // DaxAvailable: 64,
+    // DaxShowTable: 128,
+    // DaxFlipRowColOrientation: 256,
+    // DaxRedirectEditSeriesName: 2048,
+    // DaxDataTableUserManagedGeomet: 4096,
+    // DaxBGImageFill: 8192,
+    // DaxAreaBGImageFill: 16384,
+    // DaxShowStackedScale: 32768
   }
 
   static AxisFlags = {
-    SDAX_START_AT_LOWER_BOUND: 1,
-    SDAX_HIDE_MAJOR_TICKS: 2,
-    SDAX_HIDE_MINOR_TICKS: 4,
-    SDAX_MAJOR_TICK_IF_LABEL: 8,
-    SDAX_LABELS_ANGLED: 16,
-    SDAX_SHOW_GRID_LINE_MAJOR: 32,
-    SDAX_HIDE_AXIS_LINE: 64,
-    SDAX_HIDE_LABELS: 128,
-    SDAX_HIDE_TITLE: 256,
-    SDAX_SHOW_GRID_LINE_MINOR: 512,
-    SDAX_SHOW_SUMMARY_LABELS: 1024
+    //SDAX_START_AT_LOWER_BOUND: 1,
+    // SDAX_HIDE_MAJOR_TICKS: 2,
+    DaxHideMinorTicks: 4,
+    // SDAX_MAJOR_TICK_IF_LABEL: 8,
+    // SDAX_LABELS_ANGLED: 16,
+    DaxShowGridLineMajor: 32,
+    // SDAX_HIDE_AXIS_LINE: 64,
+    // SDAX_HIDE_LABELS: 128,
+    // SDAX_HIDE_TITLE: 256,
+    // SDAX_SHOW_GRID_LINE_MINOR: 512,
+    // SDAX_SHOW_SUMMARY_LABELS: 1024
   }
 
   static LegendType = {
-    SDAX_LEGEND_FULL: 0,
-    SDAX_LEGEND_NONE: 1,
-    SDAX_LEGEND_NAMES: 2,
-    SDAX_LEGEND_SWATCHES: 3
+    DaxLegendFull: 0,
+    DaxLegendNone: 1,
+    DaxLegendNames: 2,
+    DaxLegendSwatches: 3
   }
 
   static HopDimX = [6, 8, 10]
@@ -84,62 +84,62 @@ class NvConstant {
   static HopStyle = { SDH_Box: 0, SDH_Arc: 1 }
 
   static DimensionFlags = {
-    SED_DF_EndPts: 1,
-    SED_DF_AllSeg: 2,
-    SED_DF_Total: 4,
-    SED_DF_Select: 8,
-    SED_DF_Always: 16,
-    SED_DF_Area: 32,
-    SED_DF_AreaSel: 64,
-    SED_DF_Standoff: 128,
-    SED_DF_Exterior: 256,
-    SED_DF_ShowFractionalInches: 512,
-    SED_DF_RectWithAndHeight: 1024,
-    SED_DF_ShowLineAngles: 2048,
-    SED_DF_InteriorAngles: 4096,
-    SED_DF_HideHookedObjDimensions: 8192,
-    SED_DF_ShowFeetAsInches: 16384
+    EndPts: 1,
+    AllSeg: 2,
+    Total: 4,
+    Select: 8,
+    Always: 16,
+    Area: 32,
+    AreaSel: 64,
+    Standoff: 128,
+    Exterior: 256,
+    ShowFractionalInches: 512,
+    RectWithAndHeight: 1024,
+    ShowLineAngles: 2048,
+    InteriorAngles: 4096,
+    HideHookedObjDimensions: 8192,
+    ShowFeetAsInches: 16384
   }
 
   static TextGrowBehavior = {
-    PROPORTIONAL: 0,
-    HORIZONTAL: 1,
-    VERTICAL: 2,
-    FSIZE: 3
+    ProPortional: 0,
+    Horizontal: 1,
+    Vertical: 2,
+    FSize: 3
   }
 
   static StyleDefaults = {
-    SDSTYLE_DEFAULT: 'Style7',
-    SDSTYLE_DEFTHICK: 1,
-    SDSTYLE_DEFFONT: 'Arial'
+    Default: 'Style7',
+    DefThick: 1,
+    DefFont: 'Arial'
   }
 
   static LayerFlags = {
-    SDLF_Visible: 1,
-    SDLF_Active: 2,
-    SDLF_NoAdd: 4,
-    SDLF_AllowCellEdit: 8,
-    SDLF_UseEdges: 16
+    Visible: 1,
+    Active: 2,
+    NoAdd: 4,
+    AllowCellEdit: 8,
+    UseEdges: 16
   }
 
   static LayerTypes = {
-    SD_LAYERT_NONE: 0,
+    None: 0,
     // SD_LAYERT_MINDMAP: 1,
     // SD_LAYERT_GANTT: 2,
     // SD_LAYERT_PERT: 3,
-    SD_LAYERT_WEBPAGE: 4,
+    WebPage: 4,
     // SD_LAYERT_TIMELINE: 5,
     // SD_LAYERT_MEETING: 6,
-    SD_LAYERT_BACKGROUND: 7
+    BackGround: 7
   }
 
 
 
   static LayerMoveType = {
-    BOTTOM: 0,
-    BEFORE: 1,
-    AFTER: 2,
-    TOP: 3
+    Bottom: 0,
+    Before: 1,
+    After: 2,
+    Top: 3
   }
 
   static ContainerListArrangements = {

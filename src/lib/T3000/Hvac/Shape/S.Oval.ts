@@ -22,7 +22,7 @@ class Oval extends BaseShape {
 
     super(options);
 
-    this.dataclass = this.ObjGrow === OptConstant.GrowBehavior.PROPORTIONAL
+    this.dataclass = this.ObjGrow === OptConstant.GrowBehavior.ProPortional
       ? PolygonConstant.ShapeTypes.CIRCLE
       : PolygonConstant.ShapeTypes.OVAL;
 

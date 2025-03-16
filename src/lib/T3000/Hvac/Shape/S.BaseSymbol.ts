@@ -19,7 +19,7 @@ class BaseSymbol extends BaseShape {
 
     // Ensure options is initialized and set readable property names
     options = options || {};
-    options.ObjGrow = OptConstant.GrowBehavior.PROPORTIONAL;
+    options.ObjGrow = OptConstant.GrowBehavior.ProPortional;
     options.ResizeAspectConstrain = true;
 
     // Call the parent constructor with the modified options

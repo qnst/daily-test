@@ -173,7 +173,7 @@ class Connector extends BaseDrawingObject {
     T3Util.Log('S.Connector: Input newColor:', newColor, 'currentColor:', currentColor);
 
     if (
-      this.StyleRecord.Fill.Paint.FillType !== NvConstant.FillTypes.SDFILL_TRANSPARENT &&
+      this.StyleRecord.Fill.Paint.FillType !== NvConstant.FillTypes.Transparent &&
       this.StyleRecord.Fill.Paint.Color.toLowerCase() === currentColor.toLowerCase()
     ) {
       T3Gv.opt.GetObjectPtr(this.BlockID, true);
@@ -215,7 +215,7 @@ class Connector extends BaseDrawingObject {
     backgroundRect.SetStrokeWidth(0);
     const fillColor = this.StyleRecord.Fill.Paint.Color;
     backgroundRect.SetFillColor(fillColor);
-    if (this.StyleRecord.Fill.Paint.FillType === NvConstant.FillTypes.SDFILL_TRANSPARENT) {
+    if (this.StyleRecord.Fill.Paint.FillType === NvConstant.FillTypes.Transparent) {
       backgroundRect.SetOpacity(0);
     } else {
       backgroundRect.SetOpacity(this.StyleRecord.Fill.Paint.Opacity);
@@ -447,7 +447,7 @@ class Connector extends BaseDrawingObject {
     const fillType = styleRecord.Line.Paint.FillType;
     shape.SetStrokeOpacity(styleRecord.Line.Paint.Opacity);
 
-    if (fillType === NvConstant.FillTypes.SDFILL_GRADIENT) {
+    if (fillType === NvConstant.FillTypes.Gradient) {
       const gradientRecord = this.CreateGradientRecord(
         styleRecord.Line.Paint.GradientFlags,
         styleRecord.Line.Paint.Color,
@@ -456,9 +456,9 @@ class Connector extends BaseDrawingObject {
         styleRecord.Line.Paint.EndOpacity
       );
       shape.SetGradientStroke(gradientRecord);
-    } else if (fillType === NvConstant.FillTypes.SDFILL_RICHGRADIENT) {
+    } else if (fillType === NvConstant.FillTypes.RichGradient) {
       shape.SetGradientStroke(this.CreateRIchGradientRecord(styleRecord.Line.Paint.GradientFlags));
-    } else if (fillType === NvConstant.FillTypes.SDFILL_TEXTURE) {
+    } else if (fillType === NvConstant.FillTypes.Texture) {
       const textureConfig = {
         url: '',
         scale: styleRecord.Line.Paint.TextureScale.Scale,
@@ -471,7 +471,7 @@ class Connector extends BaseDrawingObject {
         textureConfig.url = Constants.FilePath_CMSRoot + Constants.FilePath_Textures + T3Gv.opt.TextureList.Textures[textureKey].filename;
       }
       shape.SetTextureStroke(textureConfig);
-    } else if (fillType === NvConstant.FillTypes.SDFILL_SOLID) {
+    } else if (fillType === NvConstant.FillTypes.Solid) {
       shape.SetStrokeColor(styleRecord.Line.Paint.Color);
     } else {
       shape.SetStrokeColor('none');
@@ -491,7 +491,7 @@ class Connector extends BaseDrawingObject {
     let endPoint: { x: number; y: number } = {};
     let rotationAngle: number;
 
-    if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_EndPts) {
+    if (this.Dimensions & NvConstant.DimensionFlags.EndPts) {
       resultPoints.push(new Point(
         this.StartPoint.x - this.Frame.x,
         this.StartPoint.y - this.Frame.y
@@ -500,7 +500,7 @@ class Connector extends BaseDrawingObject {
         this.EndPoint.x - this.Frame.x,
         this.EndPoint.y - this.Frame.y
       ));
-    } else if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Total) {
+    } else if (this.Dimensions & NvConstant.DimensionFlags.Total) {
       polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true, true, false, null);
       for (segmentIndex = 1; segmentIndex < polyPoints.length; segmentIndex++) {
         deltaX = Math.abs(polyPoints[segmentIndex - 1].x - polyPoints[segmentIndex].x);
@@ -616,10 +616,10 @@ class Connector extends BaseDrawingObject {
     // Update background color and fill based on text alignment
     this.StyleRecord.Fill.Paint.Color = backgroundObj.background.Paint.Color;
     if (textAlignment.vjust === TextConstant.TextJust.TA_CENTER) {
-      this.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.SDFILL_SOLID;
+      this.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.Solid;
       this.StyleRecord.Fill.Paint.Opacity = 1;
     } else {
-      this.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.SDFILL_TRANSPARENT;
+      this.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.Transparent;
     }
 
     // If textId is -2, do nothing.

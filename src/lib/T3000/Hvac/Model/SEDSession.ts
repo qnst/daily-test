@@ -100,11 +100,11 @@ class SEDSession {
     this.hopdim = { x: NvConstant.HopDimX[1], y: NvConstant.HopDimY[1] };
     this.hopstyle = NvConstant.HopStyle.SDH_Arc;
 
-    // Double change it to SED_DF_Select: 8 | SED_DF_Always: 16
-    this.dimensions = NvConstant.DimensionFlags.SED_DF_Total;
+    // Double change it to Select: 8 | Always: 16
+    this.dimensions = NvConstant.DimensionFlags.Total;
     this.shapedimensions = 0;
     this.background = new FillData();
-    this.background.Paint.FillType = NvConstant.FillTypes.SDFILL_TRANSPARENT;
+    this.background.Paint.FillType = NvConstant.FillTypes.Transparent;
     this.bkdir = 0;
     this.bkid = -1;
     this.bkcroprect = { left: 0, top: 0, right: 0, bottom: 0 };

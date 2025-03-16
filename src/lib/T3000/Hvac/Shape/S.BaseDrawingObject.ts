@@ -211,7 +211,7 @@ class BaseDrawingObject {
     this.ContentID = config.ContentID || -1;
     this.CommentID = config.CommentID || -1;
     this.TextParams = config.TextParams || null;
-    this.TextGrow = config.TextGrow || NvConstant.TextGrowBehavior.PROPORTIONAL;
+    this.TextGrow = config.TextGrow || NvConstant.TextGrowBehavior.ProPortional;
     this.TextAlign = config.TextAlign || TextConstant.TextAlign.CENTER;
     this.colorfilter = config.colorfilter || 0;
     this.colorchanges = config.colorchanges || 0;
@@ -219,7 +219,7 @@ class BaseDrawingObject {
     this.sizedim = config.sizedim || { width: 0, height: 0 };
     this.ConnectPoints = config.ConnectPoints || [];
     this.ObjGrow = config.ObjGrow || OptConstant.GrowBehavior.ALL;
-    config.ResizeAspectConstrain = this.ObjGrow === OptConstant.GrowBehavior.PROPORTIONAL ? true : false;
+    config.ResizeAspectConstrain = this.ObjGrow === OptConstant.GrowBehavior.ProPortional ? true : false;
     this.datasetType = config.datasetType || -1;
     this.datasetID = config.datasetID || -1;
     this.datasetTableID = config.datasetTableID || -1;
@@ -531,8 +531,8 @@ class BaseDrawingObject {
     // Check if the dimension flags allow dimensions to be shown
     if (
       !(
-        this.Dimensions & NvConstant.DimensionFlags.SED_DF_Always ||
-        this.Dimensions & NvConstant.DimensionFlags.SED_DF_Select
+        this.Dimensions & NvConstant.DimensionFlags.Always ||
+        this.Dimensions & NvConstant.DimensionFlags.Select
       )
     ) {
       T3Util.Log("= S.BaseDrawingObject: GetDimensionsRect output, dimension flags not set. Result:", resultRect);
@@ -1164,7 +1164,7 @@ class BaseDrawingObject {
       if (
         hookedObj &&
         hookedObj.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL &&
-        !(hookedObj.Dimensions & NvConstant.DimensionFlags.SED_DF_HideHookedObjDimensions)
+        !(hookedObj.Dimensions & NvConstant.DimensionFlags.HideHookedObjDimensions)
       ) {
         hooksBackup = Utils1.DeepCopy(this.hooks);
         this.hooks = [];
@@ -1890,15 +1890,15 @@ class BaseDrawingObject {
       filteredStyle.StyleRecord.Name === undefined &&
       filteredStyle.StyleRecord.Fill.Paint.FillType === undefined
     ) {
-      if (this.StyleRecord.Fill.Paint.FillType === NvConstant.FillTypes.SDFILL_GRADIENT) {
+      if (this.StyleRecord.Fill.Paint.FillType === NvConstant.FillTypes.Gradient) {
         if (
           this.StyleRecord.Fill.Paint.Color.toUpperCase() ===
           filteredStyle.StyleRecord.Fill.Paint.Color.toUpperCase()
         ) {
-          filteredStyle.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.SDFILL_SOLID;
+          filteredStyle.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.Solid;
         }
       } else {
-        filteredStyle.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.SDFILL_SOLID;
+        filteredStyle.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.Solid;
       }
     }
 
@@ -2059,7 +2059,7 @@ class BaseDrawingObject {
       }
     }
 
-    const shouldSetVisibility = this.Dimensions === NvConstant.DimensionFlags.SED_DF_Always || this.Dimensions === NvConstant.DimensionFlags.SED_DF_Select;
+    const shouldSetVisibility = this.Dimensions === NvConstant.DimensionFlags.Always || this.Dimensions === NvConstant.DimensionFlags.Select;
 
     if (svgDoc && shouldSetVisibility) {
       setVisibility(svgDoc, OptConstant.SVGElementClass.DIMENSIONLINE, isVisible);
@@ -2108,7 +2108,7 @@ class BaseDrawingObject {
       return result;
     }
 
-    if (T3Gv.docUtil.rulerConfig.useInches && T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnits.SED_Feet) {
+    if (T3Gv.docUtil.rulerConfig.useInches && T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnit.Feet) {
       let totalInches = this.GetLengthInUnits(length, true);
       if (totalInches < 0) {
         sign = -1;
@@ -2118,7 +2118,7 @@ class BaseDrawingObject {
       inches = Math.floor(totalInches % 12);
       fractionalInches = totalInches - (feet * 12 + inches);
 
-      if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_ShowFeetAsInches) {
+      if (this.Dimensions & NvConstant.DimensionFlags.ShowFeetAsInches) {
         inches += feet * 12;
         feet = 0;
       }
@@ -2152,14 +2152,14 @@ class BaseDrawingObject {
         result += `${feet !== 0 || inches !== 0 ? ' ' : ''}${fraction}`;
       }
       result += '"';
-    } else if (T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnits.SED_Inches) {
+    } else if (T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnit.Inches) {
       const inches = this.GetLengthInUnits(length);
       result = (Math.round(inches * decimalPlaces) / decimalPlaces).toString();
     } else {
       const units = this.GetLengthInUnits(length);
-      if (T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnits.SED_M || T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnits.SED_Cm) {
+      if (T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnit.M || T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnit.Cm) {
         result = (Math.round(units * decimalPlaces) / decimalPlaces).toString();
-      } else if (T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnits.SED_Mm) {
+      } else if (T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnit.Mm) {
         result = Math.round(units).toString();
       }
     }
@@ -2363,12 +2363,12 @@ class BaseDrawingObject {
       container.AddElement(textShape);
       textShape.SetRenderingEnabled(false);
       textShape.SetText(text);
-      if (Utils2.HasFlag(this.Dimensions, NvConstant.DimensionFlags.SED_DF_Select)) {
+      if (Utils2.HasFlag(this.Dimensions, NvConstant.DimensionFlags.Select)) {
         textShape.ExcludeFromExport(true);
       }
       textShape.SetUserData(textFrameData);
 
-      if (this.LineType !== OptConstant.LineType.LINE && (isAreaDimension || this.Dimensions & NvConstant.DimensionFlags.SED_DF_Total || this.Dimensions & NvConstant.DimensionFlags.SED_DF_EndPts || this.NoGrow())) {
+      if (this.LineType !== OptConstant.LineType.LINE && (isAreaDimension || this.Dimensions & NvConstant.DimensionFlags.Total || this.Dimensions & NvConstant.DimensionFlags.EndPts || this.NoGrow())) {
         textShape.SetID(OptConstant.SVGElementClass.DIMENSIONTEXTNOEDIT);
       } else {
         textShape.SetID(OptConstant.SVGElementClass.DIMENSIONTEXT);
@@ -2397,7 +2397,7 @@ class BaseDrawingObject {
           container.RemoveElement(textShape);
           return;
         }
-        if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Standoff && this.CanUseStandOffDimensionLines() && !isStandoff) {
+        if (this.Dimensions & NvConstant.DimensionFlags.Standoff && this.CanUseStandOffDimensionLines() && !isStandoff) {
           this.CreateDimensionLineSegment(pathCreator, isAreaDimension, leftArrowPoints, dimensionBounds);
           this.CreateDimensionLineSegment(pathCreator, isAreaDimension, rightArrowPoints, dimensionBounds);
         } else {
@@ -2462,7 +2462,7 @@ class BaseDrawingObject {
     textShape.SetRenderingEnabled(false);
     textShape.SetText(angle);
 
-    const hasSelectFlag = Utils2.HasFlag(this.Dimensions, NvConstant.DimensionFlags.SED_DF_Select);
+    const hasSelectFlag = Utils2.HasFlag(this.Dimensions, NvConstant.DimensionFlags.Select);
 
     if (hasSelectFlag) {
       textShape.ExcludeFromExport(true);
@@ -2471,7 +2471,7 @@ class BaseDrawingObject {
     textShape.SetUserData(textFrameData);
 
     const isNotLine = this.LineType !== OptConstant.LineType.LINE;
-    const isTotalEndPtsFlag = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Total || this.Dimensions & NvConstant.DimensionFlags.SED_DF_EndPts;
+    const isTotalEndPtsFlag = this.Dimensions & NvConstant.DimensionFlags.Total || this.Dimensions & NvConstant.DimensionFlags.EndPts;
 
     if (isNotLine && (isAreaDimension || isTotalEndPtsFlag || this.NoGrow())) {
       textShape.SetID(OptConstant.SVGElementClass.DIMENSIONTEXTNOEDIT);
@@ -2510,7 +2510,7 @@ class BaseDrawingObject {
         return;
       }
 
-      const isStdOff = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Standoff;
+      const isStdOff = this.Dimensions & NvConstant.DimensionFlags.Standoff;
       const check3 = isStdOff && this.CanUseStandOffDimensionLines() && !isStandoff;
 
       if (check3) {
@@ -2608,7 +2608,7 @@ class BaseDrawingObject {
         this.DrawDimensionAngleArc(container, pathCreator, dimensionInfo.targetLinePts[0], dimensionInfo.targetLinePts[1], dimensionInfo.textRect, dimensionInfo.targetLinePts[1]);
       }
 
-      if (!(this.Dimensions & NvConstant.DimensionFlags.SED_DF_InteriorAngles)) {
+      if (!(this.Dimensions & NvConstant.DimensionFlags.InteriorAngles)) {
         pathCreator.MoveTo(dimensionInfo.baseLinePts[0].x, dimensionInfo.baseLinePts[0].y);
         pathCreator.LineTo(dimensionInfo.baseLinePts[1].x, dimensionInfo.baseLinePts[1].y);
       }
@@ -2804,7 +2804,7 @@ class BaseDrawingObject {
     const isClosedShape = this.polylist ? this.polylist.closed : points.length > 2 && points[0].x === points[points.length - 1].x && points[0].y === points[points.length - 1].y;
 
     // Skip if it's an interior angle and the first segment of an open shape
-    if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_InteriorAngles && segmentIndex === 1 && !isClosedShape) {
+    if (this.Dimensions & NvConstant.DimensionFlags.InteriorAngles && segmentIndex === 1 && !isClosedShape) {
       return null;
     }
 
@@ -2818,7 +2818,7 @@ class BaseDrawingObject {
 
     // Initialize base line points
     baseLinePoints.push(new Point(targetLinePoints[0].x, targetLinePoints[0].y));
-    if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_InteriorAngles) {
+    if (this.Dimensions & NvConstant.DimensionFlags.InteriorAngles) {
       if (segmentIndex === 1) {
         baseLinePoints.push(new Point(points[points.length - 2].x, points[points.length - 2].y));
       } else {
@@ -2958,9 +2958,9 @@ class BaseDrawingObject {
 
     let result: string | void;
 
-    if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Area) {
+    if (this.Dimensions & NvConstant.DimensionFlags.Area) {
       result = this.GetAreaDimensionText(points);
-    } else if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_RectWithAndHeight) {
+    } else if (this.Dimensions & NvConstant.DimensionFlags.RectWithAndHeight) {
       result = this.GetAreaWidthAndHeightText(points);
     }
 
@@ -3422,15 +3422,15 @@ class BaseDrawingObject {
     if (container != null) {
       this.RemoveDimensionLines(container);
 
-      const hasAreaOrRectDimensions = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Area ||
-        this.Dimensions & NvConstant.DimensionFlags.SED_DF_RectWithAndHeight;
+      const hasAreaOrRectDimensions = this.Dimensions & NvConstant.DimensionFlags.Area ||
+        this.Dimensions & NvConstant.DimensionFlags.RectWithAndHeight;
 
       if (hasAreaOrRectDimensions) {
         this.UpdateAreaDimensionLines(container);
       }
 
-      const hasAlwaysOrSelectDimensions = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Always ||
-        this.Dimensions & NvConstant.DimensionFlags.SED_DF_Select || triggerType;
+      const hasAlwaysOrSelectDimensions = this.Dimensions & NvConstant.DimensionFlags.Always ||
+        this.Dimensions & NvConstant.DimensionFlags.Select || triggerType;
 
       if (hasAlwaysOrSelectDimensions) {
         this.UpdateEdgeDimensionLines(container, triggerType);
@@ -3454,15 +3454,15 @@ class BaseDrawingObject {
     if (container != null) {
       this.RemoveCoordinateLines(container);
 
-      const hasAreaOrRectDimensions = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Area ||
-        this.Dimensions & NvConstant.DimensionFlags.SED_DF_RectWithAndHeight;
+      const hasAreaOrRectDimensions = this.Dimensions & NvConstant.DimensionFlags.Area ||
+        this.Dimensions & NvConstant.DimensionFlags.RectWithAndHeight;
 
       if (hasAreaOrRectDimensions) {
         this.UpdateAreaDimensionLines(container);
       }
 
-      const hasAlwaysOrSelectDimensions = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Always ||
-        this.Dimensions & NvConstant.DimensionFlags.SED_DF_Select || triggerType;
+      const hasAlwaysOrSelectDimensions = this.Dimensions & NvConstant.DimensionFlags.Always ||
+        this.Dimensions & NvConstant.DimensionFlags.Select || triggerType;
 
       if (hasAlwaysOrSelectDimensions) {
         this.UpdateEdgeCoordinateLines(container, triggerType);
@@ -3479,7 +3479,7 @@ class BaseDrawingObject {
   UpdateHookedObjectDimensionLines(container: any, pathCreator: any, dimensionInfo: any): void {
     T3Util.Log("= S.BaseDrawingObject: UpdateHookedObjectDimensionLines input:", { container, pathCreator, dimensionInfo });
 
-    if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_AllSeg) {
+    if (this.Dimensions & NvConstant.DimensionFlags.AllSeg) {
       const hookedObjectInfo = this.GetHookedObjectDimensionInfo(dimensionInfo);
       for (let i = 0; i < hookedObjectInfo.length; i++) {
         if (!Utils2.EqualPt(hookedObjectInfo[i].start, hookedObjectInfo[i].end)) {
@@ -3526,7 +3526,7 @@ class BaseDrawingObject {
     pathShape.SetStrokeWidth(1);
     pathCreator.BeginPath();
 
-    const alwaysOrSelectDimension = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Always || this.Dimensions & NvConstant.DimensionFlags.SED_DF_Select;
+    const alwaysOrSelectDimension = this.Dimensions & NvConstant.DimensionFlags.Always || this.Dimensions & NvConstant.DimensionFlags.Select;
     dimensionPoints = this.GetDimensionPoints();
 
     T3Util.Log('= S.BaseDrawingObject: dimensionPoints:', dimensionPoints);
@@ -3653,7 +3653,7 @@ class BaseDrawingObject {
           }
 
           shouldShow = show;
-          shouldShow = !!isHookedObject || !!(this.Dimensions & NvConstant.DimensionFlags.SED_DF_Always) || !!(this.Dimensions & NvConstant.DimensionFlags.SED_DF_Select) && show;
+          shouldShow = !!isHookedObject || !!(this.Dimensions & NvConstant.DimensionFlags.Always) || !!(this.Dimensions & NvConstant.DimensionFlags.Select) && show;
 
           element.SetOpacity(shouldShow ? 1 : 0);
         }
@@ -3675,7 +3675,7 @@ class BaseDrawingObject {
       if (
         !hookedObject ||
         hookedObject.objecttype !== NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL ||
-        hookedObject.Dimensions & NvConstant.DimensionFlags.SED_DF_HideHookedObjDimensions
+        hookedObject.Dimensions & NvConstant.DimensionFlags.HideHookedObjDimensions
       ) {
         hookedObject.HideOrShowSelectOnlyDimensions(show, context);
       }
@@ -3805,7 +3805,7 @@ class BaseDrawingObject {
 
     if (
       T3Gv.docUtil.rulerConfig.useInches &&
-      T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnits.SED_Feet &&
+      T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnit.Feet &&
       !T3Gv.docUtil.rulerConfig.showpixels
     ) {
       value = this.ConvertToFeet(input);
@@ -4016,7 +4016,7 @@ class BaseDrawingObject {
 
     // If using exterior dimensions, adjust the text frame vertically by line thickness
     const exteriorCheck =
-      (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Exterior) ||
+      (this.Dimensions & NvConstant.DimensionFlags.Exterior) ||
       (this.StyleRecord && this.StyleRecord.Line && this.StyleRecord.Line.Thickness);
     if (exteriorCheck) {
       textDim.y -= this.StyleRecord.Line.Thickness;
@@ -4024,12 +4024,12 @@ class BaseDrawingObject {
 
     // Determine if standoff should be used
     useStandOff =
-      (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Standoff) != 0 &&
+      (this.Dimensions & NvConstant.DimensionFlags.Standoff) != 0 &&
       this.CanUseStandOffDimensionLines();
 
     if (
       !isStandoff &&
-      !(this.Dimensions & NvConstant.DimensionFlags.SED_DF_HideHookedObjDimensions) &&
+      !(this.Dimensions & NvConstant.DimensionFlags.HideHookedObjDimensions) &&
       this instanceof Instance.Shape.BaseLine &&
       this.ShortRef != OptConstant.LineTypes.SedLsMeasuringTape &&
       this.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL
@@ -4052,7 +4052,7 @@ class BaseDrawingObject {
     textDim.y -= defaultOffset;
     textGap = OptConstant.Defines.DimensionDefaultTextGap;
     if (
-      (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Exterior) ||
+      (this.Dimensions & NvConstant.DimensionFlags.Exterior) ||
       (this.StyleRecord && this.StyleRecord.Line && this.StyleRecord.Line.Thickness)
     ) {
       textGap += this.StyleRecord.Line.Thickness;
@@ -4091,7 +4091,7 @@ class BaseDrawingObject {
     }
 
     // Handle standoff flag for further adjustment
-    let standOffFlag = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Standoff;
+    let standOffFlag = this.Dimensions & NvConstant.DimensionFlags.Standoff;
     if (standOffFlag && !this.CanUseStandOffDimensionLines()) {
       standOffFlag = false;
     }
@@ -4222,17 +4222,17 @@ class BaseDrawingObject {
     textDim.y -= textDim.height / 2;
     textDim.y -= textDim.height / 2;
 
-    const check1 = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Exterior || this.StyleRecord &&
+    const check1 = this.Dimensions & NvConstant.DimensionFlags.Exterior || this.StyleRecord &&
       this.StyleRecord.Line && this.StyleRecord.Line.Thickness;
 
     if (check1) {
       (textDim.y -= this.StyleRecord.Line.Thickness);
     }
 
-    const stdOffFlag = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Standoff;
+    const stdOffFlag = this.Dimensions & NvConstant.DimensionFlags.Standoff;
     isStdOff = stdOffFlag != 0 && this.CanUseStandOffDimensionLines();
 
-    const isHideHookedObjDimensions = this.Dimensions & NvConstant.DimensionFlags.SED_DF_HideHookedObjDimensions;
+    const isHideHookedObjDimensions = this.Dimensions & NvConstant.DimensionFlags.HideHookedObjDimensions;
 
     const check3 = !isStandoff && !isHideHookedObjDimensions && this instanceof Instance.Shape.BaseLine &&
       this.ShortRef != OptConstant.LineTypes.SedLsMeasuringTape &&
@@ -4258,7 +4258,7 @@ class BaseDrawingObject {
 
     if (textDim.y -= stdOffNum,
       m = OptConstant.Defines.DimensionDefaultTextGap,
-      this.Dimensions & NvConstant.DimensionFlags.SED_DF_Exterior ||
+      this.Dimensions & NvConstant.DimensionFlags.Exterior ||
       this.StyleRecord &&
       this.StyleRecord.Line &&
       this.StyleRecord.Line.Thickness &&
@@ -4293,7 +4293,7 @@ class BaseDrawingObject {
     }
 
     let isStdOff2 = false;
-    var stdOffFlag2 = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Standoff;
+    var stdOffFlag2 = this.Dimensions & NvConstant.DimensionFlags.Standoff;
 
     if (stdOffFlag2 && !this.CanUseStandOffDimensionLines()) {
       isStdOff2 = false;
@@ -4421,16 +4421,16 @@ class BaseDrawingObject {
     textDim.y -= textDim.height / 2;
     textDim.y -= textDim.height / 2;
 
-    const check1 = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Exterior || this.StyleRecord &&
+    const check1 = this.Dimensions & NvConstant.DimensionFlags.Exterior || this.StyleRecord &&
       this.StyleRecord.Line && this.StyleRecord.Line.Thickness;
 
     if (check1) {
       (textDim.y -= this.StyleRecord.Line.Thickness);
     }
 
-    const stdOffFlag = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Standoff;
+    const stdOffFlag = this.Dimensions & NvConstant.DimensionFlags.Standoff;
     isStdOff = stdOffFlag != 0 && this.CanUseStandOffDimensionLines();
-    const isHideHookedObjDimensions = this.Dimensions & NvConstant.DimensionFlags.SED_DF_HideHookedObjDimensions;
+    const isHideHookedObjDimensions = this.Dimensions & NvConstant.DimensionFlags.HideHookedObjDimensions;
 
     const check3 = !isStandoff && !isHideHookedObjDimensions && this instanceof Instance.Shape.BaseLine &&
       this.ShortRef != OptConstant.LineTypes.SedLsMeasuringTape &&
@@ -4458,7 +4458,7 @@ class BaseDrawingObject {
     textDim.y -= stdOffNum;
     textGap = OptConstant.Defines.CoordinateLineDefaultTextGap;
 
-    const check4 = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Exterior || this.StyleRecord &&
+    const check4 = this.Dimensions & NvConstant.DimensionFlags.Exterior || this.StyleRecord &&
       this.StyleRecord.Line && this.StyleRecord.Line.Thickness;
 
     if (check4) {
@@ -4501,7 +4501,7 @@ class BaseDrawingObject {
     }
 
     let isStdOff2 = false;
-    var stdOffFlag2 = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Standoff;
+    var stdOffFlag2 = this.Dimensions & NvConstant.DimensionFlags.Standoff;
 
     if (stdOffFlag2 && !this.CanUseStandOffDimensionLines()) {
       isStdOff2 = false;
@@ -4706,8 +4706,8 @@ class BaseDrawingObject {
     polygonShape.SetSize(polyRect.width, polyRect.height);
     polygonShape.SetFillColor("black");
 
-    // Exclude from export if the SED_DF_Select flag is set in Dimensions
-    if (Utils2.HasFlag(this.Dimensions, NvConstant.DimensionFlags.SED_DF_Select)) {
+    // Exclude from export if the Select flag is set in Dimensions
+    if (Utils2.HasFlag(this.Dimensions, NvConstant.DimensionFlags.Select)) {
       polygonShape.ExcludeFromExport(true);
     }
 
@@ -4923,13 +4923,13 @@ class BaseDrawingObject {
     if (inches >= 12 && feet === 0) {
       this.Dimensions = Utils2.SetFlag(
         this.Dimensions,
-        NvConstant.DimensionFlags.SED_DF_ShowFeetAsInches,
+        NvConstant.DimensionFlags.ShowFeetAsInches,
         true
       );
     } else if (feet > 0) {
       this.Dimensions = Utils2.SetFlag(
         this.Dimensions,
-        NvConstant.DimensionFlags.SED_DF_ShowFeetAsInches,
+        NvConstant.DimensionFlags.ShowFeetAsInches,
         false
       );
     }
@@ -5257,8 +5257,8 @@ class BaseDrawingObject {
         }
       }
 
-      if (this.StyleRecord.Fill.Paint.FillType === NvConstant.FillTypes.SDFILL_TRANSPARENT) {
-        copiedStyle.Fill.Paint.FillType = NvConstant.FillTypes.SDFILL_TRANSPARENT;
+      if (this.StyleRecord.Fill.Paint.FillType === NvConstant.FillTypes.Transparent) {
+        copiedStyle.Fill.Paint.FillType = NvConstant.FillTypes.Transparent;
         copiedStyle.Fill.Hatch = 0;
       }
 
@@ -5567,8 +5567,8 @@ class BaseDrawingObject {
 
         // If dimensions should always be shown or if selected, adjust dimension text cursors
         if (
-          (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Always ||
-            this.Dimensions & NvConstant.DimensionFlags.SED_DF_Select) &&
+          (this.Dimensions & NvConstant.DimensionFlags.Always ||
+            this.Dimensions & NvConstant.DimensionFlags.Select) &&
           this.IsSelected()
         ) {
           const dimensionTextElements = svgElement.GetElementListWithID(OptConstant.SVGElementClass.DIMENSIONTEXT);
@@ -5636,8 +5636,8 @@ class BaseDrawingObject {
 
       // Process Fill settings if fill color is allowed
       if (!(currentColorFilter & StyleConstant.SDRColorFilters.SD_NOCOLOR_FILL)) {
-        if (svgElementData.Fill.Paint.FillType === NvConstant.FillTypes.SDFILL_GRADIENT) {
-          svgElementData.Fill.Paint.FillType = NvConstant.FillTypes.SDFILL_SOLID;
+        if (svgElementData.Fill.Paint.FillType === NvConstant.FillTypes.Gradient) {
+          svgElementData.Fill.Paint.FillType = NvConstant.FillTypes.Solid;
         }
         svgElementData.Fill.Paint.Color = Basic.Symbol.CreatePlaceholder(
           Basic.Symbol.Placeholder.FillColor,
@@ -5690,7 +5690,7 @@ class BaseDrawingObject {
   GetTextures(textures: string[]): void {
     T3Util.Log("= S.BaseDrawingObject: GetTextures - Input:", { textures });
 
-    const textureFillType = NvConstant.FillTypes.SDFILL_TEXTURE;
+    const textureFillType = NvConstant.FillTypes.Texture;
 
     // Process fill texture
     if (this.StyleRecord.Fill.Paint.FillType === textureFillType) {

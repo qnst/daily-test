@@ -134,11 +134,11 @@ class SVGFragmentSymbol extends BaseSymbol {
 
       // Override fill color if field data style provides an override
       if (overrideFillColor) {
-        fillType = NvConstant.FillTypes.SDFILL_SOLID;
+        fillType = NvConstant.FillTypes.Solid;
         fillColor = fieldDataStyle.fillColor;
       }
 
-      if (fillType === NvConstant.FillTypes.SDFILL_GRADIENT) {
+      if (fillType === NvConstant.FillTypes.Gradient) {
         shapeElement.SetFillColor(styleRecord.Fill.Paint.Color);
         shapeElement.SetGradientFill(
           this.CreateGradientRecord(
@@ -150,7 +150,7 @@ class SVGFragmentSymbol extends BaseSymbol {
           )
         );
         shapeElement.fillPaintType = fillType;
-      } else if (fillType === NvConstant.FillTypes.SDFILL_TEXTURE) {
+      } else if (fillType === NvConstant.FillTypes.Texture) {
         const texture = styleRecord.Fill.Paint.Texture;
         const textureData = T3Gv.opt.TextureList.Textures[texture];
         if (textureData) {
@@ -164,7 +164,7 @@ class SVGFragmentSymbol extends BaseSymbol {
           styleRecord.Fill.Paint.TextureScale.Scale = textureFill.scale;
           shapeElement.SetTextureFill(textureFill);
         }
-      } else if (fillType === NvConstant.FillTypes.SDFILL_TRANSPARENT) {
+      } else if (fillType === NvConstant.FillTypes.Transparent) {
         shapeElement.SetFillColor('none');
       } else {
         shapeElement.SetFillColor(fillColor);
@@ -311,7 +311,7 @@ class SVGFragmentSymbol extends BaseSymbol {
         allowProportional = false;
         allowHorizontal = false;
         break;
-      case OptConstant.GrowBehavior.PROPORTIONAL:
+      case OptConstant.GrowBehavior.ProPortional:
         allowProportional = true;
         allowHorizontal = false;
         allowVertical = false;
@@ -508,7 +508,7 @@ class SVGFragmentSymbol extends BaseSymbol {
         hasHooks
       )
     ) {
-      const isTextGrowHorizontal = this.TextGrow === NvConstant.TextGrowBehavior.HORIZONTAL &&
+      const isTextGrowHorizontal = this.TextGrow === NvConstant.TextGrowBehavior.Horizontal &&
         (this.flags & NvConstant.ObjFlags.SEDO_TextOnly) &&
         ShapeUtil.TextAlignToWin(this.TextAlign).just === TextConstant.TextJust.TA_LEFT;
       knobConfig.shapeType = OptConstant.CSType.OVAL;
@@ -525,7 +525,7 @@ class SVGFragmentSymbol extends BaseSymbol {
     }
 
     // Create dimension adjustment knobs if applicable
-    if ((this.Dimensions & NvConstant.DimensionFlags.SED_DF_Standoff) && this.CanUseStandOffDimensionLines()) {
+    if ((this.Dimensions & NvConstant.DimensionFlags.Standoff) && this.CanUseStandOffDimensionLines()) {
       const svgObj = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
       this.CreateDimensionAdjustmentKnobs(groupShape, svgObj, knobConfig);
     }

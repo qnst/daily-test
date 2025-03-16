@@ -170,7 +170,7 @@ class D3Symbol extends BaseSymbol {
       : false;
 
     this.bMultiDataRecsAllowed = allowsFullDataTable;
-    this.ObjGrow = proportionalResize ? OptConstant.GrowBehavior.PROPORTIONAL : OptConstant.GrowBehavior.ALL;
+    this.ObjGrow = proportionalResize ? OptConstant.GrowBehavior.ProPortional : OptConstant.GrowBehavior.ALL;
     this.ResizeAspectConstrain = proportionalResize === true;
 
     T3Util.Log("S.D3Symbol: LoadCodeLibrary output - Loaded codeLibrary:", codeLibrary);
@@ -400,17 +400,17 @@ class D3Symbol extends BaseSymbol {
         let linePaintColor = this.StyleRecord.Line.Paint.Color;
         let textPaintColor = this.StyleRecord.Text.Paint.Color;
 
-        if (this.StyleRecord.Fill.Paint.FillType === NvConstant.FillTypes.SDFILL_TRANSPARENT) {
+        if (this.StyleRecord.Fill.Paint.FillType === NvConstant.FillTypes.Transparent) {
           fillPaintColor = 'none';
-        } else if (this.StyleRecord.Fill.Paint.FillType !== NvConstant.FillTypes.SDFILL_SOLID &&
-          this.StyleRecord.Fill.Paint.FillType !== NvConstant.FillTypes.SDFILL_GRADIENT) {
+        } else if (this.StyleRecord.Fill.Paint.FillType !== NvConstant.FillTypes.Solid &&
+          this.StyleRecord.Fill.Paint.FillType !== NvConstant.FillTypes.Gradient) {
           fillPaintColor = null;
         }
 
-        if (this.StyleRecord.Line.Paint.FillType === NvConstant.FillTypes.SDFILL_TRANSPARENT) {
+        if (this.StyleRecord.Line.Paint.FillType === NvConstant.FillTypes.Transparent) {
           linePaintColor = 'none';
-        } else if (this.StyleRecord.Line.Paint.FillType !== NvConstant.FillTypes.SDFILL_SOLID &&
-          this.StyleRecord.Line.Paint.FillType !== NvConstant.FillTypes.SDFILL_GRADIENT) {
+        } else if (this.StyleRecord.Line.Paint.FillType !== NvConstant.FillTypes.Solid &&
+          this.StyleRecord.Line.Paint.FillType !== NvConstant.FillTypes.Gradient) {
           linePaintColor = null;
         }
 

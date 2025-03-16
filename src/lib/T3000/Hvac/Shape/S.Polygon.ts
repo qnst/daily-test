@@ -1121,9 +1121,9 @@ class Polygon extends BaseShape {
     let pointsCount = 0;
 
     if (
-      (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Always ||
-        this.Dimensions & NvConstant.DimensionFlags.SED_DF_Select) &&
-      this.Dimensions & NvConstant.DimensionFlags.SED_DF_ShowLineAngles &&
+      (this.Dimensions & NvConstant.DimensionFlags.Always ||
+        this.Dimensions & NvConstant.DimensionFlags.Select) &&
+      this.Dimensions & NvConstant.DimensionFlags.ShowLineAngles &&
       this.polylist
     ) {
       pointsArray = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true, true, false, null);

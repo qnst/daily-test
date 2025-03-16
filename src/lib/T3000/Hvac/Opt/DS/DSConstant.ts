@@ -709,11 +709,11 @@ class DSConstant {
   // }
 
   static SDRFillTypes = {
-    SDFILL_TRANSPARENT: 0,
-    SDFILL_SOLID: 1,
-    SDFILL_GRADIENT: 2,
-    SDFILL_TEXTURE: 3,
-    SDFILL_IMAGE: 4
+    Transparent: 0,
+    Solid: 1,
+    Gradient: 2,
+    Texture: 3,
+    Image: 4
   }
 
   static v6ColorIndexes = {

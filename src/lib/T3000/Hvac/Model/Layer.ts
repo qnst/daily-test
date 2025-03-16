@@ -12,10 +12,10 @@ class Layer {
 
   constructor() {
     this.name = '';
-    this.flags = NvConstant.LayerFlags.SDLF_Visible;
+    this.flags = NvConstant.LayerFlags.Visible;
     this.n = 0;
     this.index = 0;
-    this.layertype = NvConstant.LayerTypes.SD_LAYERT_NONE;
+    this.layertype = NvConstant.LayerTypes.None;
     this.zList = [];
   }
 }

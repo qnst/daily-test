@@ -18,7 +18,7 @@ class OutsideEffectData {
     this.OutsideExtent_Left = 0;
     this.OutsideExtent_Top = 0;
     this.OutsideExtent_Bottom = 0;
-    this.Color = NvConstant.Colors.Color_Black;
+    this.Color = NvConstant.Colors.Black;
     this.LParam = 0;
     this.WParam = 0;
   }

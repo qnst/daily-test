@@ -304,7 +304,7 @@ class ToolUtil {
         EndArrowID: endArrowID,
         EndArrowDisp: endArrowDisplay,
         ArrowSizeIndex: sessionData.d_arrowsize,
-        TextGrow: NvConstant.TextGrowBehavior.HORIZONTAL,
+        TextGrow: NvConstant.TextGrowBehavior.Horizontal,
         TextAlign: T3Constant.DocContext.CurrentTextAlignment,
         TextDirection: isVerticalText,
         Dimensions: sessionData.dimensions,
@@ -423,7 +423,7 @@ class ToolUtil {
         width: width,
         height: height
       },
-      TextGrow: NvConstant.TextGrowBehavior.PROPORTIONAL,
+      TextGrow: NvConstant.TextGrowBehavior.ProPortional,
       shapeparam: sessionBlock.def.rrectparam,
       moreflags: OptConstant.ObjMoreFlags.SED_MF_FixedRR,
       ObjGrow: OptConstant.GrowBehavior.ALL
@@ -431,7 +431,7 @@ class ToolUtil {
 
     // Add proportional growth behavior if it's a square
     if (isSquare) {
-      shapeAttributes.ObjGrow = OptConstant.GrowBehavior.PROPORTIONAL;
+      shapeAttributes.ObjGrow = OptConstant.GrowBehavior.ProPortional;
     }
 
     // Create the rectangle shape
@@ -472,7 +472,7 @@ class ToolUtil {
         width: width,
         height: height
       },
-      TextGrow: NvConstant.TextGrowBehavior.PROPORTIONAL,
+      TextGrow: NvConstant.TextGrowBehavior.ProPortional,
       shapeparam: sessionBlock.def.rrectparam,
       moreflags: OptConstant.ObjMoreFlags.SED_MF_FixedRR,
       ObjGrow: OptConstant.GrowBehavior.ALL
@@ -480,7 +480,7 @@ class ToolUtil {
 
     // Add proportional growth behavior if it's a square
     if (isSquare) {
-      shapeAttributes.ObjGrow = OptConstant.GrowBehavior.PROPORTIONAL;
+      shapeAttributes.ObjGrow = OptConstant.GrowBehavior.ProPortional;
     }
 
     // Create the rounded rectangle shape
@@ -526,8 +526,8 @@ class ToolUtil {
           width: 100,
           height: 100
         },
-        TextGrow: NvConstant.TextGrowBehavior.PROPORTIONAL,
-        ObjGrow: OptConstant.GrowBehavior.PROPORTIONAL
+        TextGrow: NvConstant.TextGrowBehavior.ProPortional,
+        ObjGrow: OptConstant.GrowBehavior.ProPortional
       };
     } else {
       shapeAttributes = {
@@ -537,7 +537,7 @@ class ToolUtil {
           width: width,
           height: height
         },
-        TextGrow: NvConstant.TextGrowBehavior.PROPORTIONAL
+        TextGrow: NvConstant.TextGrowBehavior.ProPortional
       };
     }
 
@@ -604,7 +604,7 @@ class ToolUtil {
         bottom: 0,
         right: 0
       },
-      TextGrow: NvConstant.TextGrowBehavior.HORIZONTAL,
+      TextGrow: NvConstant.TextGrowBehavior.Horizontal,
       TextAlign: TextConstant.TextAlign.LEFT,
       flags: NvConstant.ObjFlags.SEDO_TextOnly
     };
@@ -673,14 +673,14 @@ class ToolUtil {
     // Configure shape attributes
     const shapeAttributes = {
       Frame: defaultFrame,
-      TextGrow: NvConstant.TextGrowBehavior.PROPORTIONAL,
+      TextGrow: NvConstant.TextGrowBehavior.ProPortional,
       dataclass: shapeParams.dataclass,
       shapeparam: shapeParams.shapeparam
     };
 
     // If it's a square shape, set proportional grow behavior
     if (shapeParams.bIsSquare) {
-      shapeAttributes.ObjGrow = OptConstant.GrowBehavior.PROPORTIONAL;
+      shapeAttributes.ObjGrow = OptConstant.GrowBehavior.ProPortional;
     }
 
     // Create the appropriate shape object based on dataclass
@@ -1210,8 +1210,8 @@ class ToolUtil {
         width: 40, //OptConstant.Defines.Shape_Width,
         height: 40,// OptConstant.Defines.Shape_Height
       },
-      TextGrow: NvConstant.TextGrowBehavior.PROPORTIONAL,
-      ObjGrow: OptConstant.GrowBehavior.PROPORTIONAL,
+      TextGrow: NvConstant.TextGrowBehavior.ProPortional,
+      ObjGrow: OptConstant.GrowBehavior.ProPortional,
       InitialGroupBounds: { x: 1000, y: 1000, width: 40, height: 40 },
     });
     symbolObject.StyleRecord = new QuickStyle();
@@ -1281,7 +1281,7 @@ class ToolUtil {
         EndArrowDisp: endArrowDisplay,
         ArrowSizeIndex: sessionData.d_arrowsize,
         CurveAdjust: 7,
-        TextGrow: NvConstant.TextGrowBehavior.HORIZONTAL,
+        TextGrow: NvConstant.TextGrowBehavior.Horizontal,
         TextAlign: T3Constant.DocContext.CurrentTextAlignment,
         TextDirection: isVerticalText,
         Dimensions: sessionData.dimensions,
@@ -1373,7 +1373,7 @@ class ToolUtil {
         EndArrowDisp: endArrowDisplay,
         ArrowSizeIndex: sessionData.d_arrowsize,
         CurveAdjust: 7,
-        TextGrow: NvConstant.TextGrowBehavior.HORIZONTAL,
+        TextGrow: NvConstant.TextGrowBehavior.Horizontal,
         TextAlign: T3Constant.DocContext.CurrentTextAlignment,
         TextDirection: isVerticalText,
         Dimensions: sessionData.dimensions,
@@ -1465,7 +1465,7 @@ class ToolUtil {
         ArrowSizeIndex: sessionData.d_arrowsize,
         CurveAdjust: 7,
         polylist: new PolyList(),
-        TextGrow: NvConstant.TextGrowBehavior.HORIZONTAL,
+        TextGrow: NvConstant.TextGrowBehavior.Horizontal,
         TextAlign: T3Constant.DocContext.CurrentTextAlignment,
         TextDirection: isVerticalText,
         Dimensions: sessionData.dimensions,
@@ -1548,7 +1548,7 @@ class ToolUtil {
         ArrowSizeIndex: sessionData.d_arrowsize,
         CurveAdjust: 7,
         polylist: new PolyList(),
-        TextGrow: NvConstant.TextGrowBehavior.HORIZONTAL,
+        TextGrow: NvConstant.TextGrowBehavior.Horizontal,
         TextAlign: T3Constant.DocContext.CurrentTextAlignment,
         TextDirection: isVerticalText,
         Dimensions: sessionData.dimensions
@@ -1692,7 +1692,7 @@ class ToolUtil {
         EndArrowDisp: endArrowDisplay,
         ArrowSizeIndex: sessionData.d_arrowsize,
         CurveAdjust: 7,
-        TextGrow: NvConstant.TextGrowBehavior.HORIZONTAL,
+        TextGrow: NvConstant.TextGrowBehavior.Horizontal,
         TextAlign: T3Constant.DocContext.CurrentTextAlignment,
         TextDirection: isVerticalText,
         Dimensions: sessionData.dimensions,

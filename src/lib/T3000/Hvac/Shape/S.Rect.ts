@@ -149,7 +149,7 @@ class Rect extends BaseShape {
       // Set event behavior based on conditions
       if (enableEvents) {
         const isTransparentFillWithData = this.SymbolURL ||
-          (processedStyle.Fill.Paint.FillType === NvConstant.FillTypes.SDFILL_TRANSPARENT && this.DataID >= 0);
+          (processedStyle.Fill.Paint.FillType === NvConstant.FillTypes.Transparent && this.DataID >= 0);
 
         slopShape.SetEventBehavior(isTransparentFillWithData ?
           OptConstant.EventBehavior.HIDDEN_ALL :

@@ -501,7 +501,7 @@ class ArcLine extends BaseLine {
     }
 
     // Create dimension adjustment knobs if standoff dimensions are enabled.
-    if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Standoff && this.CanUseStandOffDimensionLines()) {
+    if (this.Dimensions & NvConstant.DimensionFlags.Standoff && this.CanUseStandOffDimensionLines()) {
       let svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
       this.CreateDimensionAdjustmentKnobs(group, svgElement, knobConfig);
     }
@@ -939,8 +939,8 @@ class ArcLine extends BaseLine {
     }
 
     // If selection dimensions demand, mark the object as dirty.
-    if ((this.Dimensions & NvConstant.DimensionFlags.SED_DF_Select) ||
-      (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Always)) {
+    if ((this.Dimensions & NvConstant.DimensionFlags.Select) ||
+      (this.Dimensions & NvConstant.DimensionFlags.Always)) {
       T3Gv.opt.AddToDirtyList(this.BlockID);
     }
 

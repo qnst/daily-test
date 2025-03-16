@@ -771,7 +771,7 @@ class Document extends Container {
       formattingLayer = this.AddLayer('__FORMATTING__');
       formattingLayer.AllowDpiScalingOnly(true);
       formattingLayer.ExcludeFromExport(true);
-      this.MoveLayer('__FORMATTING__', NvConstant.LayerMoveType.BOTTOM);
+      this.MoveLayer('__FORMATTING__', NvConstant.LayerMoveType.Bottom);
       formattingLayer.SetOpacity(0);
       this.ApplyDocumentTransform();
     }
@@ -872,16 +872,16 @@ class Document extends Container {
     }
 
     switch (moveType) {
-      case NvConstant.LayerMoveType.BOTTOM:
+      case NvConstant.LayerMoveType.Bottom:
         targetIndex = 0;
         break;
-      case NvConstant.LayerMoveType.BEFORE:
+      case NvConstant.LayerMoveType.Before:
         targetIndex = targetLayerIndex;
         break;
-      case NvConstant.LayerMoveType.AFTER:
+      case NvConstant.LayerMoveType.After:
         targetIndex = targetLayerIndex + 1;
         break;
-      case NvConstant.LayerMoveType.TOP:
+      case NvConstant.LayerMoveType.Top:
         targetIndex = totalElements - 1;
         break;
       default:

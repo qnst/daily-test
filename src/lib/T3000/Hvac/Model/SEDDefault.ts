@@ -38,7 +38,7 @@ class SEDDefault {
     this.vjust = 'center';
     this.lf = new FontRecord();
     this.textflags = 0;
-    this.textgrow = NvConstant.TextGrowBehavior.PROPORTIONAL;
+    this.textgrow = NvConstant.TextGrowBehavior.ProPortional;
     this.fsize_min = 8;
     this.tmargins = { left: OptConstant.Defines.SED_DefTMargin, top: OptConstant.Defines.SED_DefTMargin, right: OptConstant.Defines.SED_DefTMargin, bottom: OptConstant.Defines.SED_DefTMargin };
     this.flags = 0;

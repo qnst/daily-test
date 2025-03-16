@@ -422,11 +422,11 @@ class SegmentedLine extends BaseLine {
     let dimensionPoints: Point[] = [];
 
     // Use all segmentation points if flag set
-    if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_AllSeg) {
+    if (this.Dimensions & NvConstant.DimensionFlags.AllSeg) {
       dimensionPoints = this.segl.pts;
     }
     // Calculate total dimension if flag set
-    else if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Total) {
+    else if (this.Dimensions & NvConstant.DimensionFlags.Total) {
       // Deep copy the points and adjust them by the frame offsets
       let copiedPoints = Utils1.DeepCopy(this.segl.pts);
       for (let i = 0; i < copiedPoints.length; i++) {
@@ -2155,7 +2155,7 @@ class SegmentedLine extends BaseLine {
     }
 
     // Set text growth behavior and update text flags.
-    textParams.TextGrow = NvConstant.TextGrowBehavior.VERTICAL;
+    textParams.TextGrow = NvConstant.TextGrowBehavior.Vertical;
     this.TextFlags = Utils2.SetFlag(this.TextFlags, NvConstant.TextFlags.SED_TF_HorizText, true);
 
     T3Util.Log("= S.SegmentedLine: CalcTextPosition output", {

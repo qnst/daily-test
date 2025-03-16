@@ -243,10 +243,10 @@ class PolyLine extends BaseLine {
     var startPoint = {};
     var endPoint = {};
 
-    if (!this.polylist.closed && this.Dimensions & NvConstant.DimensionFlags.SED_DF_EndPts) {
+    if (!this.polylist.closed && this.Dimensions & NvConstant.DimensionFlags.EndPts) {
       dimensionPoints.push(new Point(this.StartPoint.x - this.Frame.x, this.StartPoint.y - this.Frame.y));
       dimensionPoints.push(new Point(this.EndPoint.x - this.Frame.x, this.EndPoint.y - this.Frame.y));
-    } else if (!this.polylist.closed && this.Dimensions & NvConstant.DimensionFlags.SED_DF_Total) {
+    } else if (!this.polylist.closed && this.Dimensions & NvConstant.DimensionFlags.Total) {
       polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true, true, false, null);
       for (var i = 1; i < polyPoints.length; i++) {
         deltaX = Math.abs(polyPoints[i - 1].x - polyPoints[i].x);
@@ -282,7 +282,7 @@ class PolyLine extends BaseLine {
       if (segmentIndex >= 0 && segmentIndex < this.polylist.segs.length) {
         this.polylist.segs[segmentIndex].dimDeflection = this.getDimensionLineDeflection(event, target, angle, segmentInfo);
         this.updateDimensionLines(event);
-        if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Select) {
+        if (this.Dimensions & NvConstant.DimensionFlags.Select) {
           this.hideOrShowSelectOnlyDimensions(true);
         }
       }
@@ -1009,13 +1009,13 @@ class PolyLine extends BaseLine {
         // Calculate a label based on the ruler settings.
         majorScale = Number(T3Gv.docUtil.rulerConfig.majorScale);
         switch (T3Gv.docUtil.rulerConfig.units) {
-          case NvConstant.RulerUnits.SED_Feet:
+          case NvConstant.RulerUnit.Feet:
             scaleLabel = Math.abs(majorScale - this.polylist.segs.length);
             scaleLabel %= majorScale;
             scaleLabel++;
             labelText = scaleLabel.toString() + "'";
             break;
-          case NvConstant.RulerUnits.SED_Inches:
+          case NvConstant.RulerUnit.Inches:
             scaleLabel = Math.abs(majorScale - this.polylist.segs.length);
             scaleLabel %= majorScale;
             scaleLabel++;
@@ -1053,8 +1053,8 @@ class PolyLine extends BaseLine {
         if (frameRect.y < 0) {
           tempOffsetY = -frameRect.y;
           // Add default standoff if required.
-          if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Always ||
-            this.Dimensions & NvConstant.DimensionFlags.SED_DF_Select) {
+          if (this.Dimensions & NvConstant.DimensionFlags.Always ||
+            this.Dimensions & NvConstant.DimensionFlags.Select) {
             tempOffsetY += OptConstant.Defines.DimensionDefaultStandoff;
           }
           frameRect.y += tempOffsetY;
@@ -1395,7 +1395,7 @@ class PolyLine extends BaseLine {
     }
 
     // If the object has standoff dimensions and can use dimension lines, create adjustment knobs for dimensions.
-    if ((this.Dimensions & NvConstant.DimensionFlags.SED_DF_Standoff) && this.CanUseStandOffDimensionLines()) {
+    if ((this.Dimensions & NvConstant.DimensionFlags.Standoff) && this.CanUseStandOffDimensionLines()) {
       this.CreateDimensionAdjustmentKnobs(actionTriggersGroup, additionalData, knobProps);
     }
 
@@ -4462,7 +4462,7 @@ class PolyLine extends BaseLine {
   CanUseStandOffDimensionLines() {
     T3Util.Log("S.PolyLine: CanUseStandOffDimensionLines input");
 
-    const canUse = !!this.polylist.closed || !(this.Dimensions & NvConstant.DimensionFlags.SED_DF_Total) && !(this.Dimensions & NvConstant.DimensionFlags.SED_DF_EndPts);
+    const canUse = !!this.polylist.closed || !(this.Dimensions & NvConstant.DimensionFlags.Total) && !(this.Dimensions & NvConstant.DimensionFlags.EndPts);
 
     T3Util.Log("S.PolyLine: CanUseStandOffDimensionLines output", canUse);
     return canUse;
@@ -4479,7 +4479,7 @@ class PolyLine extends BaseLine {
     let angle = 0;
     let rotationRadians = 0;
 
-    if (!this.polylist.closed && this.Dimensions & NvConstant.DimensionFlags.SED_DF_Total) {
+    if (!this.polylist.closed && this.Dimensions & NvConstant.DimensionFlags.Total) {
       polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true, false, false, null);
       for (let i = 1; i < polyPoints.length; i++) {
         deltaX = Math.abs(polyPoints[i - 1].x - polyPoints[i].x);
@@ -4505,10 +4505,10 @@ class PolyLine extends BaseLine {
 
     let polyPoints = [];
     let pointCount = 0;
-    const shouldUpdateDimensions = this.Dimensions & NvConstant.DimensionFlags.SED_DF_Always || this.Dimensions & NvConstant.DimensionFlags.SED_DF_Select;
+    const shouldUpdateDimensions = this.Dimensions & NvConstant.DimensionFlags.Always || this.Dimensions & NvConstant.DimensionFlags.Select;
 
-    if (this.objecttype !== NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL || this.Dimensions & NvConstant.DimensionFlags.SED_DF_HideHookedObjDimensions || (shouldUpdateDimensions || additionalData) && this.UpdateHookedObjectDimensionLines(event, target, additionalData)) {
-      if (shouldUpdateDimensions && this.Dimensions & NvConstant.DimensionFlags.SED_DF_ShowLineAngles && this.polylist) {
+    if (this.objecttype !== NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL || this.Dimensions & NvConstant.DimensionFlags.HideHookedObjDimensions || (shouldUpdateDimensions || additionalData) && this.UpdateHookedObjectDimensionLines(event, target, additionalData)) {
+      if (shouldUpdateDimensions && this.Dimensions & NvConstant.DimensionFlags.ShowLineAngles && this.polylist) {
         polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true, true, false, null);
         pointCount = polyPoints.length;
         for (let i = 1; i < pointCount; i++) {
@@ -4525,7 +4525,7 @@ class PolyLine extends BaseLine {
 
     let boundingBoxes = super.GetBoundingBoxesForSecondaryDimensions();
 
-    if (!(this.Dimensions & NvConstant.DimensionFlags.SED_DF_ShowLineAngles)) {
+    if (!(this.Dimensions & NvConstant.DimensionFlags.ShowLineAngles)) {
       T3Util.Log("S.PolyLine: GetBoundingBoxesForSecondaryDimensions output", boundingBoxes);
       return boundingBoxes;
     }
@@ -4596,7 +4596,7 @@ class PolyLine extends BaseLine {
     rotationAngle = T3Gv.opt.SD_GetCounterClockwiseAngleBetween2Points(segmentPoints[0], segmentPoints[1]);
     Utils3.RotatePointsAboutPoint(segmentPoints[0], -rotationAngle, segmentPoints);
 
-    if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_InteriorAngles) {
+    if (this.Dimensions & NvConstant.DimensionFlags.InteriorAngles) {
       previousSegmentPoints.push(new Point(segmentPoints[0].x, segmentPoints[0].y));
       if (segmentIndex === 1) {
         if (!this.polylist.closed) {
@@ -4647,7 +4647,7 @@ class PolyLine extends BaseLine {
       }
       if (frame.y < 0) {
         offsetY = -frame.y;
-        if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Always || this.Dimensions & NvConstant.DimensionFlags.SED_DF_Select) {
+        if (this.Dimensions & NvConstant.DimensionFlags.Always || this.Dimensions & NvConstant.DimensionFlags.Select) {
           offsetY += OptConstant.Defines.DimensionDefaultStandoff;
         }
         frame.y += offsetY;
@@ -4791,7 +4791,7 @@ class PolyLine extends BaseLine {
 
     polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true, true, false, null);
     inflatedPoints = this.polylist.closed && this instanceof Instance.Shape.PolyLineContainer
-      ? T3Gv.opt.InflateLine(polyPoints, this.StyleRecord.Line.BThick, this.polylist.closed, this.Dimensions & NvConstant.DimensionFlags.SED_DF_Exterior)
+      ? T3Gv.opt.InflateLine(polyPoints, this.StyleRecord.Line.BThick, this.polylist.closed, this.Dimensions & NvConstant.DimensionFlags.Exterior)
       : Utils1.DeepCopy(polyPoints);
 
     inflatedPoints.forEach(point => {
@@ -4888,9 +4888,9 @@ class PolyLine extends BaseLine {
 
     const originalState = Utils1.DeepCopy(this);
 
-    if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_AllSeg ||
-      !(this.Dimensions & NvConstant.DimensionFlags.SED_DF_EndPts) &&
-      !(this.Dimensions & NvConstant.DimensionFlags.SED_DF_Total)) {
+    if (this.Dimensions & NvConstant.DimensionFlags.AllSeg ||
+      !(this.Dimensions & NvConstant.DimensionFlags.EndPts) &&
+      !(this.Dimensions & NvConstant.DimensionFlags.Total)) {
 
       this.UpdateSegmentDimensionFromText(event, dimensionLength, segmentIndex);
 
@@ -4907,9 +4907,9 @@ class PolyLine extends BaseLine {
         this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Width, false);
         this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Height, false);
       }
-    } else if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_EndPts) {
+    } else if (this.Dimensions & NvConstant.DimensionFlags.EndPts) {
       this.UpdateEndPointDimensionFromText(event, dimensionLength);
-    } else if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Total) {
+    } else if (this.Dimensions & NvConstant.DimensionFlags.Total) {
       this.UpdateTotalDimensionFromText(event, dimensionLength);
     }
 
@@ -4930,8 +4930,8 @@ class PolyLine extends BaseLine {
       }
       if (frame.y < 0) {
         heightAdjustment = -frame.y;
-        if (this.Dimensions & NvConstant.DimensionFlags.SED_DF_Always ||
-          this.Dimensions & NvConstant.DimensionFlags.SED_DF_Select) {
+        if (this.Dimensions & NvConstant.DimensionFlags.Always ||
+          this.Dimensions & NvConstant.DimensionFlags.Select) {
           heightAdjustment += OptConstant.Defines.DimensionDefaultStandoff;
         }
         frame.y += heightAdjustment;
@@ -5136,12 +5136,12 @@ class PolyLine extends BaseLine {
     if (isPolygonClosed) {
       this.Dimensions = Utils2.SetFlag(
         this.Dimensions,
-        NvConstant.DimensionFlags.SED_DF_Total | NvConstant.DimensionFlags.SED_DF_EndPts,
+        NvConstant.DimensionFlags.Total | NvConstant.DimensionFlags.EndPts,
         false
       );
       this.Dimensions = Utils2.SetFlag(
         this.Dimensions,
-        NvConstant.DimensionFlags.SED_DF_AllSeg,
+        NvConstant.DimensionFlags.AllSeg,
         true
       );
     }
