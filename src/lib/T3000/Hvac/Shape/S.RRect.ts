@@ -5,7 +5,7 @@ import Utils2 from "../Util/Utils2";
 import Utils3 from "../Util/Utils3";
 import T3Gv from '../Data/T3Gv'
 import Point from '../Model/Point'
-import BaseDrawingObject from './S.BaseDrawingObject'
+import BaseDrawObject from './S.BaseDrawObject'
 import $ from 'jquery'
 import NvConstant from '../Data/Constant/NvConstant'
 import PolygonConstant from '../Opt/Polygon/PolygonConstant';
@@ -17,7 +17,7 @@ class RRect extends BaseShape {
   constructor(inputParams: any) {
     T3Util.Log("= S.RRect: constructor input:", inputParams);
     const params = inputParams || {};
-    params.ShapeType = OptConstant.ShapeType.RRECT;
+    params.ShapeType = OptConstant.ShapeType.RRect;
     super(params);
     this.dataclass = PolygonConstant.ShapeTypes.ROUNDED_RECTANGLE;
     T3Util.Log("= S.RRect: constructor output:", this);
@@ -38,8 +38,8 @@ class RRect extends BaseShape {
       minDimension = inputCornerSize;
     }
 
-    if (this.moreflags & OptConstant.ObjMoreFlags.SED_MF_FixedRR) {
-      let fixedDimension = OptConstant.Defines.RRectFixedDim * this.shapeparam;
+    if (this.moreflags & OptConstant.ObjMoreFlags.FixedRR) {
+      let fixedDimension = OptConstant.Common.RRectFixedDim * this.shapeparam;
       const maxAllowed = 0.4 * minDimension;
       if (fixedDimension > maxAllowed) {
         fixedDimension = maxAllowed;
@@ -56,14 +56,14 @@ class RRect extends BaseShape {
   CreateShape(svgDoc: any, addEventSlop: boolean) {
     T3Util.Log("= S.RRect: CreateShape input:", { svgDoc, addEventSlop });
 
-    if (this.flags & NvConstant.ObjFlags.SEDO_NotVisible) {
+    if (this.flags & NvConstant.ObjFlags.NotVisible) {
       T3Util.Log("= S.RRect: CreateShape output:", null);
       return null;
     }
 
-    const shapeContainer = svgDoc.CreateShape(OptConstant.CSType.SHAPECONTAINER);
-    const mainShape = svgDoc.CreateShape(OptConstant.CSType.RRECT);
-    mainShape.SetID(OptConstant.SVGElementClass.SHAPE);
+    const shapeContainer = svgDoc.CreateShape(OptConstant.CSType.ShapeContainer);
+    const mainShape = svgDoc.CreateShape(OptConstant.CSType.RRect);
+    mainShape.SetID(OptConstant.SVGElementClass.Shape);
 
     const extendedFrame = $.extend(true, {}, this.Frame);
     let style = this.StyleRecord;
@@ -95,17 +95,17 @@ class RRect extends BaseShape {
     this.ApplyStyles(mainShape, style);
     this.ApplyEffects(shapeContainer, false, false);
 
-    const slopShape = svgDoc.CreateShape(OptConstant.CSType.RRECT);
+    const slopShape = svgDoc.CreateShape(OptConstant.CSType.RRect);
     slopShape.SetStrokeColor('white');
     slopShape.SetFillColor('none');
     slopShape.SetOpacity(0);
-    slopShape.SetStrokeWidth(strokeThickness + OptConstant.Defines.SED_Slop);
+    slopShape.SetStrokeWidth(strokeThickness + OptConstant.Common.Slop);
     if (addEventSlop) {
-      slopShape.SetEventBehavior(OptConstant.EventBehavior.HIDDEN_OUT);
+      slopShape.SetEventBehavior(OptConstant.EventBehavior.HiddenOut);
     } else {
-      slopShape.SetEventBehavior(OptConstant.EventBehavior.NONE);
+      slopShape.SetEventBehavior(OptConstant.EventBehavior.None);
     }
-    slopShape.SetID(OptConstant.SVGElementClass.SLOP);
+    slopShape.SetID(OptConstant.SVGElementClass.Slop);
     slopShape.ExcludeFromExport(true);
     slopShape.SetRRectSize(width, height, cornerSize, cornerSize);
 
@@ -113,8 +113,8 @@ class RRect extends BaseShape {
 
     const hatchType = style.Fill.Hatch;
     if (hatchType && hatchType !== 0) {
-      const hatchShape = svgDoc.CreateShape(OptConstant.CSType.RRECT);
-      hatchShape.SetID(OptConstant.SVGElementClass.HATCH);
+      const hatchShape = svgDoc.CreateShape(OptConstant.CSType.RRect);
+      hatchShape.SetID(OptConstant.SVGElementClass.Hatch);
       hatchShape.SetSize(width, height);
       hatchShape.SetRRectSize(width, height, cornerSize, cornerSize);
       hatchShape.SetStrokeWidth(0);
@@ -173,15 +173,15 @@ class RRect extends BaseShape {
       inflatedDimensions.y + offset.y
     );
 
-    const mainShape = svgElement.GetElementByID(OptConstant.SVGElementClass.SHAPE);
+    const mainShape = svgElement.GetElementById(OptConstant.SVGElementClass.Shape);
     mainShape.SetSize(inflatedDimensions.width, inflatedDimensions.height);
 
-    const slopShape = svgElement.GetElementByID(OptConstant.SVGElementClass.SLOP);
+    const slopShape = svgElement.GetElementById(OptConstant.SVGElementClass.Slop);
     if (slopShape) {
       slopShape.SetSize(inflatedDimensions.width, inflatedDimensions.height);
     }
 
-    const hatchShape = svgElement.GetElementByID(OptConstant.SVGElementClass.HATCH);
+    const hatchShape = svgElement.GetElementById(OptConstant.SVGElementClass.Hatch);
     if (hatchShape) {
       hatchShape.SetSize(newDimensions.width, newDimensions.height);
     }
@@ -270,12 +270,12 @@ class RRect extends BaseShape {
       inflatedDimensions.y + offset.y
     );
 
-    const shapeEl = svgElement.GetElementByID(OptConstant.SVGElementClass.SHAPE);
+    const shapeEl = svgElement.GetElementById(OptConstant.SVGElementClass.Shape);
     if (shapeEl) {
       shapeEl.SetSize(inflatedDimensions.width, inflatedDimensions.height);
     }
 
-    const slopEl = svgElement.GetElementByID(OptConstant.SVGElementClass.SLOP);
+    const slopEl = svgElement.GetElementById(OptConstant.SVGElementClass.Slop);
     if (slopEl) {
       slopEl.SetSize(inflatedDimensions.width, inflatedDimensions.height);
     }
@@ -289,7 +289,7 @@ class RRect extends BaseShape {
     //   );
     // }
 
-    const hatchEl = svgElement.GetElementByID(OptConstant.SVGElementClass.HATCH);
+    const hatchEl = svgElement.GetElementById(OptConstant.SVGElementClass.Hatch);
     if (hatchEl) {
       hatchEl.SetSize(inflatedDimensions.width, inflatedDimensions.height);
     }
@@ -520,13 +520,13 @@ class RRect extends BaseShape {
     const localPoints: any[] = [];
     const interSectionData: any = {};
     const tmpIntersect: number[] = [0, 0];
-    const baseDim = OptConstant.Defines.SED_CDim;
+    const baseDim = OptConstant.Common.MaxDim;
     const totalHooks = hookPoints.length;
 
     // Special check
     if (
       totalHooks === 1 &&
-      hookPoints[0].y === -OptConstant.SEDA_Styles.SEDA_CoManager &&
+      hookPoints[0].y === -OptConstant.AStyles.CoManager &&
       this.IsCoManager(interSectionData)
     ) {
       outputPoints.push(new Point(interSectionData.x, interSectionData.y));
@@ -538,11 +538,11 @@ class RRect extends BaseShape {
     }
 
     // If anchorType is KAT and optionalParam is null
-    if (anchorType === OptConstant.HookPts.SED_KAT && optionalParam == null) {
+    if (anchorType === OptConstant.HookPts.KAT && optionalParam == null) {
       // Double === todo
       T3Util.Log("= S.RRect: GetPerimPts output:", outputPoints);
       // Return from base
-      return new BaseDrawingObject(this).GetPerimPts(
+      return new BaseDrawObject(this).GetPerimPts(
         eventObj,
         hookPoints,
         anchorType,
@@ -571,17 +571,17 @@ class RRect extends BaseShape {
     //   }
     // }
 
-    const useConnect = !!(this.flags & NvConstant.ObjFlags.SEDO_UseConnect);
-    const useTableRows = !!(this.hookflags & NvConstant.HookFlags.SED_LC_TableRows && tableData);
+    const useConnect = !!(this.flags & NvConstant.ObjFlags.UseConnect);
+    // const useTableRows = !!(this.hookflags & NvConstant.HookFlags.LcTableRows && tableData);
 
-    if (useConnect || useTableRows) {
+    if (useConnect /*|| useTableRows*/) {
       for (let i = 0; i < totalHooks; i++) {
         outputPoints[i] = { x: 0, y: 0, id: 0 };
         outputPoints[i].x =
-          (hookPoints[i].x / OptConstant.Defines.SED_CDim) * this.Frame.width +
+          (hookPoints[i].x / OptConstant.Common.MaxDim) * this.Frame.width +
           this.Frame.x;
         outputPoints[i].y =
-          (hookPoints[i].y / OptConstant.Defines.SED_CDim) * this.Frame.height +
+          (hookPoints[i].y / OptConstant.Common.MaxDim) * this.Frame.height +
           this.Frame.y;
         if (hookPoints[i].id != null) {
           outputPoints[i].id = hookPoints[i].id;
@@ -589,7 +589,7 @@ class RRect extends BaseShape {
       }
     } else {
       // Double === todo
-      outputPoints = new BaseDrawingObject(this).GetPerimPts(
+      outputPoints = new BaseDrawObject(this).GetPerimPts(
         eventObj,
         hookPoints,
         anchorType,
@@ -602,9 +602,9 @@ class RRect extends BaseShape {
       if (this.Frame.height < minSize) {
         minSize = this.Frame.height;
       }
-      const cornerFactor = this.GetCornerSize() * OptConstant.Defines.SED_RoundFactor;
+      const cornerFactor = this.GetCornerSize() * OptConstant.Common.RoundFactor;
       const polyPoints = this.GetPolyPoints(
-        OptConstant.Defines.NPOLYPTS,
+        OptConstant.Common.MaxPolyPoints,
         false,
         false,
         false,
@@ -706,11 +706,11 @@ class RRect extends BaseShape {
     const minDimension = insideHeight > insideWidth ? insideWidth : insideHeight;
     // Default shape parameter
     let shapeParam = this.shapeparam;
-    const roundFactor = OptConstant.Defines.SED_RoundFactor;
+    const roundFactor = OptConstant.Common.RoundFactor;
     let rectDimension: number = minDimension;
 
     // When fixed rounded rectangle flag is set, adjust the shape parameter
-    if (this.moreflags & OptConstant.ObjMoreFlags.SED_MF_FixedRR) {
+    if (this.moreflags & OptConstant.ObjMoreFlags.FixedRR) {
       rectDimension = minDimension;
       if (applyAdjustment) {
         // Increase rectDimension by twice the corner size adjusted by roundFactor
@@ -754,7 +754,7 @@ class RRect extends BaseShape {
   SetShapeProperties(properties: any): boolean {
     T3Util.Log("= S.RRect: SetShapeProperties input:", properties);
     let updated = false;
-    const fixedRFlag = OptConstant.ObjMoreFlags.SED_MF_FixedRR;
+    const fixedRFlag = OptConstant.ObjMoreFlags.FixedRR;
 
     if (properties.hasrrectselected) {
       if (((this.moreflags & fixedRFlag) > 0) === properties.rrectfixed && properties.rrectparam === this.shapeparam) {
@@ -765,7 +765,7 @@ class RRect extends BaseShape {
         this.SetSize(
           this.Frame.width,
           0,
-          OptConstant.ActionTriggerType.LINELENGTH
+          OptConstant.ActionTriggerType.LineLength
         );
         updated = true;
       }

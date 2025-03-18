@@ -123,7 +123,7 @@ class Spell {
 
     if (forceRecheck) {
       for (let i = 0; i < spellCheckList.list.length; i++) {
-        spellCheckList.list[i].status = BConstant.WordState.NOTPROCESSED;
+        spellCheckList.list[i].status = BConstant.WordState.NotProcessed;
       }
     }
 
@@ -518,7 +518,7 @@ class Spell {
     const textID = targetTextObject.GetInternalID();
     const wordIndex = this.FindWordInWordList(spellCheckList, charIndex);
 
-    if (wordIndex < 0 || spellCheckList.list[wordIndex].status == BConstant.WordState.NOTPROCESSED) {
+    if (wordIndex < 0 || spellCheckList.list[wordIndex].status == BConstant.WordState.NotProcessed) {
       T3Util.Log("B.Text.Spell: Word not found or not processed yet, returning false");
       return false;
     }
@@ -551,7 +551,7 @@ class Spell {
     T3Util.Log("B.Text.Spell: Processing spell menu for text", textID, "at word index", wordIndex);
 
     if (wordIndex < 0 || wordIndex >= spellCheckList.list.length ||
-      spellCheckList.list[wordIndex].status != BConstant.WordState.WRONG) {
+      spellCheckList.list[wordIndex].status != BConstant.WordState.Wrong) {
       T3Util.Log("B.Text.Spell: Invalid word index or word is not misspelled");
       return;
     }
@@ -871,14 +871,14 @@ class Spell {
     const wordCount = spellCheckList.list.length;
 
     for (let wordIndex = 0; wordIndex < wordCount; wordIndex++) {
-      if (spellCheckList.list[wordIndex].status === BConstant.WordState.NOTPROCESSED) {
+      if (spellCheckList.list[wordIndex].status === BConstant.WordState.NotProcessed) {
         const word = spellCheckList.list[wordIndex].word;
         const cacheEntry = this.GetWordFromCache(word);
 
         if (cacheEntry) {
           // Word found in cache
           spellCheckList.list[wordIndex].status = cacheEntry.check ?
-            BConstant.WordState.CORRECT : BConstant.WordState.WRONG;
+            BConstant.WordState.Correct : BConstant.WordState.Wrong;
           spellCheckList.list[wordIndex].suggestions = cacheEntry.suggest;
           spellCheckList.list[wordIndex].needSuggest = cacheEntry.needSuggest;
           spellCheckList.list[wordIndex].auto = cacheEntry.auto;
@@ -886,7 +886,7 @@ class Spell {
         } else if (word.length > BConstant.Globals.MaxWordSize) {
           // Word too long, mark as incorrect
           this.AddWordToCache(word, false);
-          spellCheckList.list[wordIndex].status = BConstant.WordState.WRONG;
+          spellCheckList.list[wordIndex].status = BConstant.WordState.Wrong;
           spellCheckList.list[wordIndex].needSuggest = false;
           spellCheckList.list[wordIndex].suggestions = [];
           anyWordsProcessed = true;
@@ -896,7 +896,7 @@ class Spell {
           (this.bIgnoreMixedAlphaNum && this.HasNumber(word))
         ) {
           // Word matches one of the ignore rules, mark as correct
-          spellCheckList.list[wordIndex].status = BConstant.WordState.CORRECT;
+          spellCheckList.list[wordIndex].status = BConstant.WordState.Correct;
           spellCheckList.list[wordIndex].needSuggest = false;
           spellCheckList.list[wordIndex].suggestions = [];
           anyWordsProcessed = true;
@@ -932,7 +932,7 @@ class Spell {
 
     for (let wordIndex = startIndex; wordIndex < totalWords; wordIndex++) {
       if (
-        spellCheckList.list[wordIndex].status == BConstant.WordState.NOTPROCESSED &&
+        spellCheckList.list[wordIndex].status == BConstant.WordState.NotProcessed &&
         wordList.indexOf(spellCheckList.list[wordIndex].word) < 0
       ) {
         totalLength += spellCheckList.list[wordIndex].word.length + 1;

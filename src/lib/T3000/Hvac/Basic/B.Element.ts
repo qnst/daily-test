@@ -1018,34 +1018,34 @@ class Element {
 
       // Position the pattern based on alignment option
       switch (patternData.options.alignment) {
-        case TextConstant.TextureAlign.SDTX_TOPLEFT:
+        case TextConstant.TextureAlign.TopLeft:
           // Default position is already top-left
           break;
-        case TextConstant.TextureAlign.SDTX_TOPCENTER:
+        case TextConstant.TextureAlign.TopCenter:
           patternRect.x += elementFrame.width / 2;
           break;
-        case TextConstant.TextureAlign.SDTX_TOPRIGHT:
+        case TextConstant.TextureAlign.TopRight:
           patternRect.x = elementFrame.width - scaledImageSize.width;
           break;
-        case TextConstant.TextureAlign.SDTX_CENLEFT:
+        case TextConstant.TextureAlign.CenterLeft:
           patternRect.y += elementFrame.height / 2;
           break;
-        case TextConstant.TextureAlign.SDTX_CENTER:
+        case TextConstant.TextureAlign.Center:
           patternRect.x += elementFrame.width / 2;
           patternRect.y += elementFrame.height / 2;
           break;
-        case TextConstant.TextureAlign.SDTX_CENRIGHT:
+        case TextConstant.TextureAlign.CenterRight:
           patternRect.x = elementFrame.width - scaledImageSize.width;
           patternRect.y += elementFrame.height / 2;
           break;
-        case TextConstant.TextureAlign.SDTX_BOTLEFT:
+        case TextConstant.TextureAlign.BottomLeft:
           patternRect.y = elementFrame.height - scaledImageSize.height;
           break;
-        case TextConstant.TextureAlign.SDTX_BOTCENTER:
+        case TextConstant.TextureAlign.BottomCenter:
           patternRect.x += elementFrame.width / 2;
           patternRect.y = elementFrame.height - scaledImageSize.height;
           break;
-        case TextConstant.TextureAlign.SDTX_BOTRIGHT:
+        case TextConstant.TextureAlign.BottomRight:
           patternRect.x = elementFrame.width - scaledImageSize.width;
           patternRect.y = elementFrame.height - scaledImageSize.height;
           break;

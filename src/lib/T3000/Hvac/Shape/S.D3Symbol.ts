@@ -5,7 +5,7 @@ import T3Gv from '../Data/T3Gv'
 import NvConstant from '../Data/Constant/NvConstant'
 import Instance from '../Data/Instance/Instance';
 import ShapeUtil from '../Opt/Shape/ShapeUtil';
-import ShapeConstant from '../Opt/DS/DSConstant';
+import DSConstant from '../Opt/DS/DSConstant';
 import OptConstant from '../Data/Constant/OptConstant';
 import T3Util from '../Util/T3Util';
 
@@ -15,9 +15,9 @@ class D3Symbol extends BaseSymbol {
     options = options || {};
     T3Util.Log("S.D3Symbol: Input options:", options);
 
-    options.ShapeType = OptConstant.ShapeType.D3SYMBOL;
-    options.objecttype = NvConstant.ObjectTypes.SD_OBJT_D3SYMBOL;
-    options.TextFlags = options.TextFlags || NvConstant.TextFlags.SED_TF_AttachB;
+    options.ShapeType = OptConstant.ShapeType.D3Symbol;
+    options.objecttype = NvConstant.FNObjectTypes.D3Symbol;
+    options.TextFlags = options.TextFlags || NvConstant.TextFlags.AttachB;
 
     super();
 
@@ -53,36 +53,36 @@ class D3Symbol extends BaseSymbol {
   CreateShape(svgDocument, applyHiddenEventBehavior) {
     T3Util.Log("S.D3Symbol: Enter CreateShape with parameters:", { svgDocument, applyHiddenEventBehavior });
 
-    if (this.flags & NvConstant.ObjFlags.SEDO_NotVisible) {
+    if (this.flags & NvConstant.ObjFlags.NotVisible) {
       T3Util.Log("S.D3Symbol: Object not visible, exiting CreateShape.");
       return null;
     }
 
-    const shapeContainer = svgDocument.CreateShape(OptConstant.CSType.SHAPECONTAINER);
+    const shapeContainer = svgDocument.CreateShape(OptConstant.CSType.ShapeContainer);
     const frame = this.Frame;
 
-    this.TextFlags = NvConstant.TextFlags.SED_TF_AttachB;
+    this.TextFlags = NvConstant.TextFlags.AttachB;
     shapeContainer.SetSize(frame.width, frame.height);
     shapeContainer.SetPos(frame.x, frame.y);
     shapeContainer.isShape = true;
 
-    const groupShape = svgDocument.CreateShape(OptConstant.CSType.GROUP);
+    const groupShape = svgDocument.CreateShape(OptConstant.CSType.Group);
     groupShape.SetSize(frame.width, frame.height);
-    groupShape.SetID(OptConstant.SVGElementClass.SHAPE);
+    groupShape.SetID(OptConstant.SVGElementClass.Shape);
 
-    const transparentRect = svgDocument.CreateShape(OptConstant.CSType.RECT);
+    const transparentRect = svgDocument.CreateShape(OptConstant.CSType.Rect);
     transparentRect.SetStrokeColor('white');
     transparentRect.SetFillColor('none');
     transparentRect.SetOpacity(0);
     transparentRect.SetStrokeWidth(0);
 
     if (applyHiddenEventBehavior) {
-      transparentRect.SetEventBehavior(OptConstant.EventBehavior.HIDDEN_ALL);
+      transparentRect.SetEventBehavior(OptConstant.EventBehavior.HiddenAll);
     } else {
-      transparentRect.SetEventBehavior(OptConstant.EventBehavior.NONE);
+      transparentRect.SetEventBehavior(OptConstant.EventBehavior.None);
     }
 
-    transparentRect.SetID(OptConstant.SVGElementClass.SLOP);
+    transparentRect.SetID(OptConstant.SVGElementClass.Slop);
     transparentRect.ExcludeFromExport(true);
     transparentRect.SetSize(frame.width, frame.height);
 
@@ -95,8 +95,8 @@ class D3Symbol extends BaseSymbol {
       this.LM_AddSVGTextObject(svgDocument, shapeContainer);
     }
 
-    const flipHorizontally = (this.extraflags & OptConstant.ExtraFlags.SEDE_FlipHoriz) > 0;
-    const flipVertically = (this.extraflags & OptConstant.ExtraFlags.SEDE_FlipVert) > 0;
+    const flipHorizontally = (this.extraflags & OptConstant.ExtraFlags.FlipHoriz) > 0;
+    const flipVertically = (this.extraflags & OptConstant.ExtraFlags.FlipVert) > 0;
 
     if (flipHorizontally) {
       groupShape.SetMirror(flipHorizontally);
@@ -119,8 +119,8 @@ class D3Symbol extends BaseSymbol {
 
     const frame = this.Frame;
     const renderParams = this.GetRenderParams();
-    const shapeElement = shapeContainer.GetElementByID(OptConstant.SVGElementClass.SHAPE);
-    const slopElement = shapeContainer.GetElementByID(OptConstant.SVGElementClass.SLOP);
+    const shapeElement = shapeContainer.GetElementById(OptConstant.SVGElementClass.Shape);
+    const slopElement = shapeContainer.GetElementById(OptConstant.SVGElementClass.Slop);
     const codeLibrary = this.LoadCodeLibrary();
 
     if (slopElement) {
@@ -170,7 +170,7 @@ class D3Symbol extends BaseSymbol {
       : false;
 
     this.bMultiDataRecsAllowed = allowsFullDataTable;
-    this.ObjGrow = proportionalResize ? OptConstant.GrowBehavior.ProPortional : OptConstant.GrowBehavior.ALL;
+    this.ObjGrow = proportionalResize ? OptConstant.GrowBehavior.ProPortional : OptConstant.GrowBehavior.All;
     this.ResizeAspectConstrain = proportionalResize === true;
 
     T3Util.Log("S.D3Symbol: LoadCodeLibrary output - Loaded codeLibrary:", codeLibrary);
@@ -364,7 +364,7 @@ class D3Symbol extends BaseSymbol {
         frame.height = newSize.height;
         this.UpdateFrame(frame);
         this.Resize(
-          T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID),
+          T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID),
           frame,
           this
         );
@@ -544,7 +544,7 @@ class D3Symbol extends BaseSymbol {
     if (this.d3Settings) {
       const d3SettingsString = this.ExportD3Settings();
       if (d3SettingsString) {
-        ShapeUtil.WriteString(outputStream, d3SettingsString, ShapeConstant.OpNameCode.cD3Settings, options);
+        ShapeUtil.WriteString(outputStream, d3SettingsString, DSConstant.OpNameCode.cD3Settings, options);
       }
     }
 
@@ -600,7 +600,7 @@ class D3Symbol extends BaseSymbol {
       newText = null;
     }
 
-    Instance.Shape.BaseDrawingObject.prototype.ChangeTextAttributes.call(this, newText, newFont, newSize, newColor, newAlignment, newWeight, newStyle, newDecoration);
+    Instance.Shape.BaseDrawObject.prototype.ChangeTextAttributes.call(this, newText, newFont, newSize, newColor, newAlignment, newWeight, newStyle, newDecoration);
     T3Gv.opt.AddToDirtyList(this.BlockID);
 
     T3Util.Log("S.D3Symbol: ChangeTextAttributes - Completed");
@@ -624,7 +624,7 @@ class D3Symbol extends BaseSymbol {
     T3Util.Log("S.D3Symbol: RefreshFromFieldData - Input:", fieldDataTableID);
 
     if (!fieldDataTableID || this.fieldDataTableID === fieldDataTableID) {
-      Instance.Shape.BaseDrawingObject.prototype.RefreshFromFieldData.call(this, fieldDataTableID);
+      Instance.Shape.BaseDrawObject.prototype.RefreshFromFieldData.call(this, fieldDataTableID);
       this.UpdateSizeFromSettings();
       T3Gv.opt.AddToDirtyList(this.BlockID);
 

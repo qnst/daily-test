@@ -12,24 +12,25 @@ import Instance from "../../Data/Instance/Instance"
 import T3Constant from "../../Data/Constant/T3Constant"
 import KeyboardConstant from "../Keyboard/KeyboardConstant"
 import PolygonConstant from '../Polygon/PolygonConstant'
-import ShapeConstant from '../DS/DSConstant'
+import DSConstant from '../DS/DSConstant'
 import OptConstant from '../../Data/Constant/OptConstant'
-import CursorConstant from '../../Data/Constant/CursorConstant'
 import T3Util from '../../Util/T3Util'
 
 class WallOpt {
 
-  /**
-   * Gets the right-click menu ID for a line
-   * @param lineObject - The line object
-   * @returns Menu ID or null
-   */
-  GetLineRightClickMenuID(lineObject) {
-    T3Util.Log('U.WallUtil GetLineRightClickMenuID input:', lineObject);
-    const result = null;
-    T3Util.Log('U.WallUtil GetLineRightClickMenuID output:', result);
-    return result;
-  }
+  addingWalls: boolean;
+
+  // /**
+  //  * Gets the right-click menu ID for a line
+  //  * @param lineObject - The line object
+  //  * @returns Menu ID or null
+  //  */
+  // GetLineRightClickMenuID(lineObject) {
+  //   T3Util.Log('U.WallUtil GetLineRightClickMenuID input:', lineObject);
+  //   const result = null;
+  //   T3Util.Log('U.WallUtil GetLineRightClickMenuID output:', result);
+  //   return result;
+  // }
 
   /**
    * Determines if action buttons are allowed for the specified object
@@ -58,7 +59,7 @@ class WallOpt {
    * @param event - The event that triggered the wall addition (optional)
    * @param additionalData - Additional data for wall creation (optional)
    */
-  AddWall(event, additionalData) {
+  AddWall(event?, additionalData?) {
     T3Util.Log('U.WallUtil AddWall input:', { event, additionalData });
 
     let scaleFactor;
@@ -111,8 +112,8 @@ class WallOpt {
       TextAlign: T3Constant.DocContext.CurrentTextAlignment,
       TextDirection: false,
       Dimensions: wallDimensions,
-      TextFlags: NvConstant.TextFlags.SED_TF_HorizText | NvConstant.TextFlags.SED_TF_None,
-      objecttype: NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL
+      TextFlags: NvConstant.TextFlags.HorizText | NvConstant.TextFlags.None,
+      objecttype: NvConstant.FNObjectTypes.FlWall
     };
 
     // Get current selection and create a copy to restore after adding the wall
@@ -124,33 +125,33 @@ class WallOpt {
 
     // Draw the new wall and update UI state
     T3Gv.opt.DrawNewObject(wallLine, true);
-    T3Gv.opt.SetEditMode(NvConstant.EditState.EDIT);
+    T3Gv.opt.SetEditMode(NvConstant.EditState.Edit);
     T3Gv.opt.SelectObjects(currentSelection, false, false);
 
     T3Util.Log('U.WallUtil AddWall output:', { wallLine });
   }
 
-  /**
-   * Starts the wall creation process
-   * Checks if walls are already being added, and if not, starts the wall addition workflow
-   */
-  StartAddingWalls() {
-    T3Util.Log('U.WallUtil StartAddingWalls input: none');
+  // /**
+  //  * Starts the wall creation process
+  //  * Checks if walls are already being added, and if not, starts the wall addition workflow
+  //  */
+  // StartAddingWalls() {
+  //   T3Util.Log('U.WallUtil StartAddingWalls input: none');
 
-    if (!this.IsAddingWalls()) {
-      T3Gv.opt.CloseEdit();
-      this.ToggleAddingWalls();
-      this.AddWall();
-    }
+  //   if (!this.IsAddingWalls()) {
+  //     T3Gv.opt.CloseEdit();
+  //     this.ToggleAddingWalls();
+  //     this.AddWall();
+  //   }
 
-    T3Util.Log('U.WallUtil StartAddingWalls output: completed');
-  }
+  //   T3Util.Log('U.WallUtil StartAddingWalls output: completed');
+  // }
 
   /**
    * Stops the wall creation process and performs necessary cleanup
    * @param event - Optional event that triggered the stopping of wall creation
    */
-  StopAddingWalls(event) {
+  StopAddingWalls(event?) {
     T3Util.Log('U.WallUtil StopAddingWalls input:', event);
 
     const modalOperations = OptConstant.ModalOperations;
@@ -165,7 +166,7 @@ class WallOpt {
       if (selectedObjects && selectedObjects.length > 0) {
         // Reset object draw state and selection properties
         T3Gv.opt.ResetObjectDraw();
-        T3Constant.DocContext.SelectionToolSticky = false;
+        // T3Constant.DocContext.SelectionToolSticky = false;
         T3Gv.wallOpt.PostObjectDrawHook();
       } else {
         // Cancel current modal operation
@@ -173,7 +174,7 @@ class WallOpt {
       }
 
       // Set edit mode to default
-      T3Gv.opt.SetEditMode(NvConstant.EditState.DEFAULT);
+      T3Gv.opt.SetEditMode(NvConstant.EditState.Default);
 
       // Re-select any previously selected objects
       let objectsToSelect = [];
@@ -186,9 +187,8 @@ class WallOpt {
     } else {
       // Handle different modal operations if not adding walls
       switch (T3Gv.opt.currentModalOperation) {
-        case modalOperations.ADDCORNER:
-        case modalOperations.SPLITWALL:
-          T3Gv.gFloorplanManager.AddCornerCancel();
+        case modalOperations.AddCorner:
+          T3Gv.wallOpt.AddCornerCancel();
           break;
         default:
           T3Gv.opt.CancelModalOperation();
@@ -212,7 +212,7 @@ class WallOpt {
    * Toggles the wall adding mode state
    * @param forceState - Optional boolean to explicitly set the adding walls state
    */
-  ToggleAddingWalls(forceState) {
+  ToggleAddingWalls(forceState?) {
     T3Util.Log('U.WallUtil ToggleAddingWalls input:', forceState);
     this.addingWalls = forceState !== undefined ? forceState : !this.addingWalls;
     T3Util.Log('U.WallUtil ToggleAddingWalls output:', this.addingWalls);
@@ -238,7 +238,7 @@ class WallOpt {
   AddNewPolyLine(objectType, parameters) {
     T3Util.Log('U.WallUtil AddNewPolyLine input:', { objectType, parameters });
 
-    if (objectType !== NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
+    if (objectType !== NvConstant.FNObjectTypes.FlWall) {
       T3Util.Log('U.WallUtil AddNewPolyLine output: null');
       return null;
     }
@@ -255,11 +255,11 @@ class WallOpt {
   AddCornerCancel() {
     T3Util.Log('U.WallUtil AddCornerCancel input: none');
 
-    T3Gv.opt.SetEditMode(NvConstant.EditState.DEFAULT);
+    T3Gv.opt.SetEditMode(NvConstant.EditState.Default);
     T3Gv.opt.CancelModalOperation();
     T3Gv.opt.ResetObjectDraw();
-    T3Gv.gFloorplanManager.PostObjectDrawHook();
-    T3Gv.opt.SetEditMode(NvConstant.EditState.DEFAULT);
+    T3Gv.wallOpt.PostObjectDrawHook();
+    T3Gv.opt.SetEditMode(NvConstant.EditState.Default);
 
     T3Util.Log('U.WallUtil AddCornerCancel output: completed');
   }
@@ -294,7 +294,7 @@ class WallOpt {
         // For right-click events
         hitPoint = Utils1.DeepCopy(T3Gv.opt.rightClickParams.HitPt);
         targetId = T3Gv.opt.rightClickParams.TargetID;
-        targetElement = T3Gv.opt.svgObjectLayer.GetElementByID(targetId);
+        targetElement = T3Gv.opt.svgObjectLayer.GetElementById(targetId);
       }
 
       // Get the target object and add corner if it's valid
@@ -305,11 +305,11 @@ class WallOpt {
       }
 
       // Reset application state
-      T3Gv.opt.SetEditMode(NvConstant.EditState.DEFAULT);
+      T3Gv.opt.SetEditMode(NvConstant.EditState.Default);
       T3Gv.opt.CancelModalOperation();
       T3Gv.opt.ResetObjectDraw();
       T3Gv.wallOpt.PostObjectDrawHook();
-      T3Gv.opt.SetEditMode(NvConstant.EditState.DEFAULT);
+      T3Gv.opt.SetEditMode(NvConstant.EditState.Default);
 
       T3Util.Log('U.WallUtil AddCorner output: false');
       return false;
@@ -319,29 +319,29 @@ class WallOpt {
     }
   }
 
-  /**
-   * Enables outline movement mode for floor plan objects
-   * Stops adding walls, resets the edit mode, and sets up container move mode
-   * @param event - The event that triggered the outline movement
-   */
-  MoveOutline(event) {
-    T3Util.Log('U.WallUtil MoveOutline input:', event);
+  // /**
+  //  * Enables outline movement mode for floor plan objects
+  //  * Stops adding walls, resets the edit mode, and sets up container move mode
+  //  * @param event - The event that triggered the outline movement
+  //  */
+  // MoveOutline(event) {
+  //   T3Util.Log('U.WallUtil MoveOutline input:', event);
 
-    // Stop wall creation process
-    this.StopAddingWalls();
+  //   // Stop wall creation process
+  //   this.StopAddingWalls();
 
-    // Reset editor state
-    T3Gv.opt.SetEditMode(NvConstant.EditState.DEFAULT);
-    T3Gv.opt.CancelModalOperation();
+  //   // Reset editor state
+  //   T3Gv.opt.SetEditMode(NvConstant.EditState.Default);
+  //   T3Gv.opt.CancelModalOperation();
 
-    // Enable polyline container movement mode
-    T3Constant.DocContext.PolyLineContainerMoveMode = true;
+  //   // Enable polyline container movement mode
+  //   T3Constant.DocContext.PolyLineContainerMoveMode = true;
 
-    // Clear any active modal operations
-    T3Gv.opt.SetModalOperation(OptConstant.ModalOperations.NONE);
+  //   // Clear any active modal operations
+  //   T3Gv.opt.SetModalOperation(OptConstant.ModalOperations.None);
 
-    T3Util.Log('U.WallUtil MoveOutline output: completed');
-  }
+  //   T3Util.Log('U.WallUtil MoveOutline output: completed');
+  // }
 
   /**
    * Starts the process of adding a corner to a wall
@@ -353,7 +353,7 @@ class WallOpt {
     this.StopAddingWalls();
     T3Gv.opt.CloseEdit();
     T3Gv.opt.CancelModalOperation();
-    T3Gv.opt.SetEditMode(NvConstant.EditState.EDIT);
+    T3Gv.opt.SetEditMode(NvConstant.EditState.Edit);
 
     const visibleObjectIds = T3Gv.opt.ActiveVisibleZList();
 
@@ -361,14 +361,14 @@ class WallOpt {
       const objectId = visibleObjectIds[i];
       const object = T3Gv.opt.GetObjectPtr(objectId, false);
 
-      if (!(object.flags & NvConstant.ObjFlags.SEDO_Lock)) {
-        if (object.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
-          T3Gv.opt.svgObjectLayer.GetElementByID(objectId).svgObj.SDGObj.GetEventProxy().on('dragstart', this.AddCorner);
+      if (!(object.flags & NvConstant.ObjFlags.Lock)) {
+        if (object.objecttype === NvConstant.FNObjectTypes.FlWall) {
+          T3Gv.opt.svgObjectLayer.GetElementById(objectId).svgObj.SDGObj.GetEventProxy().on('dragstart', this.AddCorner);
         }
       }
     }
 
-    T3Gv.opt.SetModalOperation(OptConstant.ModalOperations.ADDCORNER);
+    T3Gv.opt.SetModalOperation(OptConstant.ModalOperations.AddCorner);
 
     T3Util.Log('U.WallUtil AddCornerStart output: completed');
   }
@@ -377,7 +377,7 @@ class WallOpt {
    * Hook called after an object is drawn
    * @param drawEvent - The draw event type
    */
-  PostObjectDrawHook(drawEvent) {
+  PostObjectDrawHook(drawEvent?) {
     T3Util.Log('U.WallUtil PostObjectDrawHook input:', drawEvent);
 
     if (this.addingWalls) {
@@ -400,10 +400,10 @@ class WallOpt {
     T3Util.Log('U.WallUtil NotifySetEditMode input:', editMode);
 
     if (
-      editMode === NvConstant.EditState.EDIT ||
-      editMode === NvConstant.EditState.DEFAULT ||
-      editMode === NvConstant.EditState.LINKCONNECT ||
-      editMode === NvConstant.EditState.LINKJOIN
+      editMode === NvConstant.EditState.Edit ||
+      editMode === NvConstant.EditState.Default ||
+      editMode === NvConstant.EditState.LinkConnect ||
+      editMode === NvConstant.EditState.LinkJoin
     ) {
       T3Util.Log('U.WallUtil NotifySetEditMode output:', false);
       return false;
@@ -423,7 +423,7 @@ class WallOpt {
     T3Util.Log('U.WallUtil AddMeasureLine input: none');
 
     const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
-    const isTextVertical = (sessionData.def.textflags & NvConstant.TextFlags.SED_TF_HorizText) === 0;
+    const isTextVertical = (sessionData.def.textflags & NvConstant.TextFlags.HorizText) === 0;
     let dimensions = NvConstant.DimensionFlags.Always | sessionData.dimensions;
     dimensions = Utils2.SetFlag(dimensions, NvConstant.DimensionFlags.Standoff, false);
 
@@ -448,8 +448,8 @@ class WallOpt {
       TextAlign: T3Constant.DocContext.CurrentTextAlignment,
       TextDirection: isTextVertical,
       Dimensions: dimensions,
-      TextFlags: NvConstant.TextFlags.SED_TF_HorizText,
-      ShortRef: OptConstant.LineTypes.SedLsMeasuringTape,
+      TextFlags: NvConstant.TextFlags.HorizText,
+      ShortRef: OptConstant.LineTypes.LsMeasuringTape,
       targflags: 0,
       hookflags: 0,
       bOverrideDefaultStyleOnDraw: true
@@ -472,7 +472,7 @@ class WallOpt {
     const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
 
     // Determine text orientation
-    const isTextVertical = (sessionData.def.textflags & NvConstant.TextFlags.SED_TF_HorizText) === 0;
+    const isTextVertical = (sessionData.def.textflags & NvConstant.TextFlags.HorizText) === 0;
 
     // Create a copy of the style
     const areaStyle = Utils1.DeepCopy(sessionData.def.style);
@@ -506,7 +506,7 @@ class WallOpt {
       TextAlign: T3Constant.DocContext.CurrentTextAlignment,
       TextDirection: isTextVertical,
       Dimensions: NvConstant.DimensionFlags.Always | NvConstant.DimensionFlags.Area,
-      TextFlags: NvConstant.TextFlags.SED_TF_HorizText,
+      TextFlags: NvConstant.TextFlags.HorizText,
       StyleRecord: areaStyle,
       bOverrideDefaultStyleOnDraw: true,
       dataclass: PolygonConstant.ShapeTypes.MEASURE_AREA
@@ -519,7 +519,7 @@ class WallOpt {
     measureAreaParams.StyleRecord.Fill.FillEffect = 0;
     measureAreaParams.StyleRecord.OutsideEffect.OutsideType = 0;
     measureAreaParams.StyleRecord.Border.Thickness = 1;
-    measureAreaParams.StyleRecord.Border.LinePattern = ShapeConstant.LinePatternData[ShapeConstant.WinLinePatterns.SEP_Dotted];
+    measureAreaParams.StyleRecord.Border.LinePattern = DSConstant.LinePatternData[DSConstant.WinLinePatterns.SEP_Dotted];
     measureAreaParams.StyleRecord.Fill.Paint.Opacity = 0.4;
     measureAreaParams.StyleRecord.Fill.Paint.EndOpacity = 0.4;
 
@@ -543,122 +543,122 @@ class WallOpt {
     return result;
   }
 
-  /**
-   * Adds a wall opening to the floor plan when clicked
-   * @param event - The click event that triggered the wall opening addition
-   */
-  AddWallOpening(event) {
-    T3Util.Log('U.WallUtil AddWallOpening input:', event);
+  // /**
+  //  * Adds a wall opening to the floor plan when clicked
+  //  * @param event - The click event that triggered the wall opening addition
+  //  */
+  // AddWallOpening(event) {
+  //   T3Util.Log('U.WallUtil AddWallOpening input:', event);
 
-    if (event.type === 'click') {
-      // Stop any active wall creation process
-      this.StopAddingWalls();
-      T3Gv.opt.CloseEdit();
+  //   if (event.type === 'click') {
+  //     // Stop any active wall creation process
+  //     this.StopAddingWalls();
+  //     T3Gv.opt.CloseEdit();
 
-      // Prevent default event behavior
-      if (event.preventDefault) {
-        event.preventDefault();
-      }
+  //     // Prevent default event behavior
+  //     if (event.preventDefault) {
+  //       event.preventDefault();
+  //     }
 
-      // // Load the wall opening symbol
-      // SDUI.Commands.MainController.Shapes.SD_PreLoad_Symbol(
-      //   OptConstant.Defines.Floorplan_WallOpeningID,
-      //   true,
-      //   SDUI.Commands.MainController.Shapes.ForceStampSymbol,
-      //   true
-      // );
-    }
+  //     // // Load the wall opening symbol
+  //     // SDUI.Commands.MainController.Shapes.SD_PreLoad_Symbol(
+  //     //   OptConstant.Common.WallOpenId,
+  //     //   true,
+  //     //   SDUI.Commands.MainController.Shapes.ForceStampSymbol,
+  //     //   true
+  //     // );
+  //   }
 
-    T3Util.Log('U.WallUtil AddWallOpening output: completed');
-  }
+  //   T3Util.Log('U.WallUtil AddWallOpening output: completed');
+  // }
 
-  /**
-   * Splits a wall at the point where the user clicked
-   * @param event - The event that triggered the wall splitting
-   * @returns Boolean indicating if the default event was prevented
-   */
-  SplitWall(event) {
-    T3Util.Log('U.WallUtil SplitWall input:', event);
+  // /**
+  //  * Splits a wall at the point where the user clicked
+  //  * @param event - The event that triggered the wall splitting
+  //  * @returns Boolean indicating if the default event was prevented
+  //  */
+  // SplitWall(event) {
+  //   T3Util.Log('U.WallUtil SplitWall input:', event);
 
-    try {
-      const hitInfo = {};
+  //   try {
+  //     const hitInfo = {};
 
-      // Handle event propagation
-      event.stopPropagation();
-      event.preventDefault();
+  //     // Handle event propagation
+  //     event.stopPropagation();
+  //     event.preventDefault();
 
-      // Get coordinates and target element
-      const hitPoint = T3Gv.opt.svgDoc.ConvertWindowToDocCoords(
-        event.gesture.center.clientX,
-        event.gesture.center.clientY
-      );
-      const targetElement = T3Gv.opt.svgObjectLayer.FindElementByDOMElement(event.currentTarget);
-      const targetObject = T3Gv.opt.GetObjectPtr(targetElement.GetID(), false);
+  //     // Get coordinates and target element
+  //     const hitPoint = T3Gv.opt.svgDoc.ConvertWindowToDocCoords(
+  //       event.gesture.center.clientX,
+  //       event.gesture.center.clientY
+  //     );
+  //     const targetElement = T3Gv.opt.svgObjectLayer.FindElementByDOMElement(event.currentTarget);
+  //     const targetObject = T3Gv.opt.GetObjectPtr(targetElement.GetID(), false);
 
-      // Perform hit testing
-      if (targetObject) {
-        targetObject.Hit(hitPoint, false, false, hitInfo);
-      }
+  //     // Perform hit testing
+  //     if (targetObject) {
+  //       targetObject.Hit(hitPoint, false, false, hitInfo);
+  //     }
 
-      // Split the wall if it's a polyline
-      if (targetObject instanceof Instance.Shape.PolyLine) {
-        // If the polyline is closed, prepare it for splitting
-        if (targetObject.polylist.closed) {
-          // Collab.BeginSecondaryEdit();
-          T3Gv.opt.GetObjectPtr(targetObject.BlockID, true);
-          targetObject.MaintainDimensionThroughPolygonOpennessChange(false);
-        }
+  //     // Split the wall if it's a polyline
+  //     if (targetObject instanceof Instance.Shape.PolyLine) {
+  //       // If the polyline is closed, prepare it for splitting
+  //       if (targetObject.polylist.closed) {
+  //         // Collab.BeginSecondaryEdit();
+  //         T3Gv.opt.GetObjectPtr(targetObject.BlockID, true);
+  //         targetObject.MaintainDimensionThroughPolygonOpennessChange(false);
+  //       }
 
-        // Split the polyline at the hit segment
-        T3Gv.opt.PolyLSplit(targetObject.BlockID, hitInfo.segment);
-        T3Gv.opt.SetEditMode(NvConstant.EditState.DEFAULT);
-      }
+  //       // Split the polyline at the hit segment
+  //       T3Gv.opt.PolyLSplit(targetObject.BlockID, hitInfo.segment);
+  //       T3Gv.opt.SetEditMode(NvConstant.EditState.Default);
+  //     }
 
-      // Clean up and reset state
-      T3Gv.opt.CancelModalOperation();
-      T3Gv.opt.PostObjectDraw();
+  //     // Clean up and reset state
+  //     T3Gv.opt.CancelModalOperation();
+  //     T3Gv.opt.PostObjectDraw();
 
-      T3Util.Log('U.WallUtil SplitWall output: false');
-      return false;
-    } catch (error) {
-      T3Gv.opt.ExceptionCleanup(error);
-      throw error;
-    }
-  }
+  //     T3Util.Log('U.WallUtil SplitWall output: false');
+  //     return false;
+  //   } catch (error) {
+  //     T3Gv.opt.ExceptionCleanup(error);
+  //     throw error;
+  //   }
+  // }
 
-  /**
-   * Initiates the wall splitting process
-   * Sets up event handlers on wall objects to allow them to be split
-   * @param event - The event that triggered the wall splitting start
-   */
-  SplitWallStart(event) {
-    T3Util.Log('U.WallUtil SplitWallStart input:', event);
+  // /**
+  //  * Initiates the wall splitting process
+  //  * Sets up event handlers on wall objects to allow them to be split
+  //  * @param event - The event that triggered the wall splitting start
+  //  */
+  // SplitWallStart(event) {
+  //   T3Util.Log('U.WallUtil SplitWallStart input:', event);
 
-    this.StopAddingWalls();
-    T3Gv.opt.CloseEdit();
-    T3Gv.opt.CancelModalOperation();
-    T3Gv.opt.SetEditMode(
-      NvConstant.EditState.EDIT,
-      CursorConstant.CursorType.ALIAS
-    );
+  //   this.StopAddingWalls();
+  //   T3Gv.opt.CloseEdit();
+  //   T3Gv.opt.CancelModalOperation();
+  //   T3Gv.opt.SetEditMode(
+  //     NvConstant.EditState.Edit,
+  //     CursorConstant.CursorType.ALIAS
+  //   );
 
-    const visibleObjectIds = T3Gv.opt.ActiveVisibleZList();
+  //   const visibleObjectIds = T3Gv.opt.ActiveVisibleZList();
 
-    for (let i = 0; i < visibleObjectIds.length; i++) {
-      const objectId = visibleObjectIds[i];
-      const object = T3Gv.opt.GetObjectPtr(objectId, false);
+  //   for (let i = 0; i < visibleObjectIds.length; i++) {
+  //     const objectId = visibleObjectIds[i];
+  //     const object = T3Gv.opt.GetObjectPtr(objectId, false);
 
-      if (!(object.flags & NvConstant.ObjFlags.SEDO_Lock)) {
-        if (object.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
-          T3Gv.opt.svgObjectLayer.GetElementByID(objectId).svgObj.SDGObj.GetEventProxy().on('dragstart', this.SplitWall);
-        }
-      }
-    }
+  //     if (!(object.flags & NvConstant.ObjFlags.Lock)) {
+  //       if (object.objecttype === NvConstant.FNObjectTypes.FlWall) {
+  //         T3Gv.opt.svgObjectLayer.GetElementById(objectId).svgObj.SDGObj.GetEventProxy().on('dragstart', this.SplitWall);
+  //       }
+  //     }
+  //   }
 
-    T3Gv.opt.SetModalOperation(OptConstant.ModalOperations.SPLITWALL);
+  //   T3Gv.opt.SetModalOperation(OptConstant.ModalOperations.SplitWall);
 
-    T3Util.Log('U.WallUtil SplitWallStart output: completed');
-  }
+  //   T3Util.Log('U.WallUtil SplitWallStart output: completed');
+  // }
 
   /**
    * Ensures a cubicle is positioned behind its outline
@@ -674,7 +674,7 @@ class WallOpt {
 
     // Helper function to check if one object is contained within another
     function isObjectContained(containerObject, contentObject) {
-      const contentPoints = contentObject.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, true, false, null);
+      const contentPoints = contentObject.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, true, false, null);
       let hasIntersection = false;
 
       // Check if any points of the content object are inside the container
@@ -682,7 +682,7 @@ class WallOpt {
         const hitResult = new HitResult(-1, 0, null);
         hitResult.hitcode = containerObject.Hit(contentPoints[i], false, true, hitResult);
 
-        if (hitResult && hitResult.hitcode === NvConstant.HitCodes.SED_Border) {
+        if (hitResult && hitResult.hitcode === NvConstant.HitCodes.Border) {
           hasIntersection = true;
           break;
         }

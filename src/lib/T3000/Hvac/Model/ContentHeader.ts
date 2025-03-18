@@ -57,11 +57,11 @@ class ContentHeader {
     this.Page = new PageRecord();
 
     // 320000
-    this.MaxWorkDim = new Point(OptConstant.Defines.MaxWorkDimX, OptConstant.Defines.MaxWorkDimY);
+    this.MaxWorkDim = new Point(OptConstant.Common.MaxWorkDimX, OptConstant.Common.MaxWorkDimY);
 
     this.DimensionFont = new FontRecord();
     this.DimensionFontStyle = new DefaultStyle();
-    this.flags = OptConstant.ContentHeaderFlags.CT_DA_Pages;
+    this.flags = OptConstant.CntHeaderFlags.Pages;
     this.BusinessModule = '';
     this.dateformat = - 1;
     this.originaltemplate = '';

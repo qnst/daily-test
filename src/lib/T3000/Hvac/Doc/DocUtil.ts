@@ -193,7 +193,7 @@ class DocUtil {
 
     // Set up background layer and shape
     let currentLayer = this.svgDoc.AddLayer(this.backgroundLayer);
-    this.backgroundElem = this.svgDoc.CreateShape(OptConstant.CSType.RECT);
+    this.backgroundElem = this.svgDoc.CreateShape(OptConstant.CSType.Rect);
     currentLayer.AddElement(this.backgroundElem);
     this.backgroundElem.SetPos(0, 0);
     this.backgroundElem.SetStrokeWidth(0);
@@ -1279,7 +1279,7 @@ class DocUtil {
     const scaledRulerFactor = this.GetScaledRuler(unitConversionFactor);
 
     // Create a PATH shape used to draw tick marks
-    const rulerPathElement = rulerDocument.CreateShape(OptConstant.CSType.PATH);
+    const rulerPathElement = rulerDocument.CreateShape(OptConstant.CSType.Path);
     let pathCommands = '';
 
     // Compute tick sizes for major, mid, and minor ticks
@@ -1291,7 +1291,7 @@ class DocUtil {
 
     // Adjust conversion factor for metric units if needed
     if (!this.rulerConfig.useInches) {
-      unitConversionFactor *= OptConstant.Defines.MetricConv;
+      unitConversionFactor *= OptConstant.Common.MetricConv;
     }
 
     // Get ruler tick configuration
@@ -1400,7 +1400,7 @@ class DocUtil {
     const labelDisplayInterval = Math.floor(totalLabels / 250) || 1;
 
     for (let i = 0; i < totalLabels; i += labelDisplayInterval) {
-      const labelElement = rulerDocument.CreateShape(OptConstant.CSType.TEXT);
+      const labelElement = rulerDocument.CreateShape(OptConstant.CSType.Text);
       labelElement.SetText(tickLabels[i].label, labelTextStyle);
       rulerDocument.AddElement(labelElement);
       labelElement.SetPos(tickLabels[i].x, tickLabels[i].y);
@@ -1489,12 +1489,12 @@ class DocUtil {
       const scaleFactor = this.GetScaledRuler(unitConversionFactor);
       gridLayer.RemoveAll();
 
-      const majorGridPath = this.svgDoc.CreateShape(OptConstant.CSType.PATH);
-      const minorGridPath = this.svgDoc.CreateShape(OptConstant.CSType.PATH);
+      const majorGridPath = this.svgDoc.CreateShape(OptConstant.CSType.Path);
+      const minorGridPath = this.svgDoc.CreateShape(OptConstant.CSType.Path);
 
       // Update unitConversionFactor if not using inches
       if (!this.rulerConfig.useInches) {
-        unitConversionFactor = OptConstant.Defines.MetricConv;
+        unitConversionFactor = OptConstant.Common.MetricConv;
       }
 
       const majorUnitSize = this.rulerConfig.major / unitConversionFactor;
@@ -1607,7 +1607,7 @@ class DocUtil {
 
       gridLayer.AddElement(minorGridPath);
       gridLayer.AddElement(majorGridPath);
-      gridLayer.SetEventBehavior(OptConstant.EventBehavior.NONE);
+      gridLayer.SetEventBehavior(OptConstant.EventBehavior.None);
 
       T3Util.Log("= U.DocUtil: UpdateGrid - Output:", {
         majorPathCommands,
@@ -1685,7 +1685,7 @@ class DocUtil {
       pageDividerLayer.RemoveAll();
 
       // Create a new path shape for the page divider
-      const dividerPathShape = this.svgDoc.CreateShape(OptConstant.CSType.PATH);
+      const dividerPathShape = this.svgDoc.CreateShape(OptConstant.CSType.Path);
       let pathCommands = '';
 
       // Get document page settings
@@ -1761,7 +1761,7 @@ class DocUtil {
     // Determine conversion factor based on units (inches or metric)
     let unitConversionFactor = 1;
     if (!this.rulerConfig.useInches) {
-      unitConversionFactor = OptConstant.Defines.MetricConv;
+      unitConversionFactor = OptConstant.Common.MetricConv;
     }
 
     // Get the scale adjustment for the current document zoom
@@ -1992,13 +1992,13 @@ class DocUtil {
           // If only center is active, update the horizontal origin.
           originUpdates.originx = documentCoordinates.x / this.rulerConfig.major;
           if (!this.rulerConfig.useInches) {
-            originUpdates.originx *= OptConstant.Defines.MetricConv;
+            originUpdates.originx *= OptConstant.Common.MetricConv;
           }
         } else if (isVerticalRuler) {
           // If only vertical is active, update the vertical origin.
           originUpdates.originy = documentCoordinates.y / this.rulerConfig.major;
           if (!this.rulerConfig.useInches) {
-            originUpdates.originy *= OptConstant.Defines.MetricConv;
+            originUpdates.originy *= OptConstant.Common.MetricConv;
           }
         } else {
           T3Util.Log("= U.DocUtil: RulerHandleDoubleClick - Early Exit: No valid direction specified.");
@@ -2048,7 +2048,7 @@ class DocUtil {
 
       // Create horizontal guide line if needed
       if (isVerticalRuler && !this.hRulerGuide) {
-        this.hRulerGuide = this.svgDoc.CreateShape(OptConstant.CSType.LINE);
+        this.hRulerGuide = this.svgDoc.CreateShape(OptConstant.CSType.Line);
         this.hRulerGuide.SetFillColor('none');
         this.hRulerGuide.SetStrokeColor('black');
         this.hRulerGuide.SetStrokeWidth(scaleFactor);
@@ -2058,7 +2058,7 @@ class DocUtil {
 
       // Create vertical guide line if needed
       if (isHorizontalRuler && !this.vRulerGuide) {
-        this.vRulerGuide = this.svgDoc.CreateShape(OptConstant.CSType.LINE);
+        this.vRulerGuide = this.svgDoc.CreateShape(OptConstant.CSType.Line);
         this.vRulerGuide.SetFillColor('none');
         this.vRulerGuide.SetStrokeColor('black');
         this.vRulerGuide.SetStrokeWidth(scaleFactor);

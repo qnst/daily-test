@@ -1,93 +1,111 @@
-
-
+/**
+ * Constants related to styling in the HVAC system
+ */
 class StyleConstant {
+  /**
+   * Color filter constants for styling elements
+   * Controls which style attributes should be ignored
+   */
+  static ColorFilters = {
+    NCFill: 1,         // Ignore fill color
+    NCTexture: 2,      // Ignore texture
+    NCLine: 4,         // Ignore line color
+    NCLineThick: 8,    // Ignore line thickness
+    NCLinePat: 16,     // Ignore line pattern
+    NCLineArrow: 32,   // Ignore line arrow
+    NCText: 64,        // Ignore text color
+    NCOutSide: 128,    // Ignore outside color
+    NCEffect: 256,     // Ignore effects
+    NCStyle: 512,      // Ignore style
+    NCAll: 1023,       // Ignore all color attributes
+    NCResize: 1024     // Ignore resize attributes
+  };
 
-
-  static SDRColorFilters = {
-    SD_NOCOLOR_FILL: 1,
-    SD_NOCOLOR_TEXTURE: 2,
-    SD_NOCOLOR_LINE: 4,
-    SD_NOCOLOR_LINETHICK: 8,
-    SD_NOCOLOR_LINEPAT: 16,
-    SD_NOCOLOR_LINEARROW: 32,
-    SD_NOCOLOR_TEXT: 64,
-    SD_NOCOLOR_OUTSIDE: 128,
-    SD_NOCOLOR_EFFECT: 256,
-    SD_NOCOLOR_STYLE: 512,
-    SD_NOCOLOR_ALL: 1023,
-    SD_NOCOLOR_RESIZE: 1024
-  }
-
-
+  /**
+   * Fill effect types for element styling
+   * Defines different interior effects that can be applied
+   */
   static FillEffect = {
-    SDFILL_EFFECT_NONE: 0,
-    SDFILL_EFFECT_GLOSS: 1,
-    SDFILL_EFFECT_BEVEL: 2,
-    SDFILL_EFFECT_INSHADOW: 3,
-    SDFILL_EFFECT_INGLOW: 4
-  }
+    None: 0,      // No fill effect
+    Gloss: 1,     // Glossy effect
+    Bevel: 2,     // Beveled effect
+    InShadow: 3,  // Inner shadow effect
+    InGlow: 4     // Inner glow effect
+  };
 
-
-
+  /**
+   * Outline effect types for element styling
+   * Defines different exterior effects that can be applied
+   */
   static OutEffect = {
-    SDOUT_EFFECT_NONE: 0,
-    SDOUT_EFFECT_DROP: 1,
-    SDOUT_EFFECT_CAST: 2,
-    SDOUT_EFFECT_GLOW: 3,
-    SDOUT_EFFECT_REFL: 4
-  }
+    None: 0,       // No outline effect
+    Drop: 1,       // Drop shadow effect
+    Cast: 2,       // Cast shadow effect
+    Glow: 3,       // Glow effect
+    Refl: 4        // Reflection effect
+  };
 
+  /**
+   * Paragraph style codes for text formatting
+   * Controls various aspects of paragraph formatting
+   */
   static ParaStyleCodes = {
-    SDF_S_JUST: 100,
-    SDF_S_SPACING: 101,
-    SDF_S_LEADING: 102,
-    SDF_S_TRACKING: 103,
-    SDF_S_LINDENT: 104,
-    SDF_S_RINDENT: 105,
-    SDF_S_PINDENT: 106,
-    SDF_S_BINDENT: 107,
-    SDF_S_BULLET: 108,
-    SDF_S_TABSPACE: 109,
-    SDF_S_HYPHEN: 110
-  }
+    Just: 100,            // Justification
+    Spacing: 101,         // Spacing between paragraphs
+    Leading: 102,         // Leading (space between lines)
+    Tracking: 103,        // Tracking (space between letters)
+    Lindent: 104,         // Left indent
+    Rindent: 105,         // Right indent
+    Pindent: 106,         // Paragraph indent
+    Bindent: 107,         // Bottom indent
+    Bullet: 108,          // Bullet style
+    TabSpace: 109,        // Tab spacing
+    Hyphen: 110           // Hyphenation
+  };
 
-
+  /**
+   * Format painter modes for copying styles
+   * Defines what type of formatting will be copied
+   */
   static FormatPainterModes = {
-    NONE: 0,
-    OBJECT: 1,
-    TEXT: 2,
-    TABLE: 3
-  }
+    None: 0,                    // No format copying
+    Object: 1,                  // Copy object formatting
+    Text: 2,                    // Copy text formatting
+    Table: 3                    // Copy table formatting
+  };
 
-
+  /**
+   * Image directory identifiers
+   * References to different image format directories
+   */
   static ImageDir = {
-    dir_meta: 113,
-    dir_jpg: 124,
-    dir_png: 125,
-    dir_svg: 143,
-    dir_store: 123
-  }
+    Meta: 113,              // Metadata directory
+    Jpg: 124,               // JPEG images directory
+    Png: 125,               // PNG images directory
+    Svg: 143,               // SVG images directory
+    Store: 123              // Storage directory
+  };
 
-
-
+  /**
+   * Rich gradient types for advanced fill effects
+   * Defines different gradient patterns and their focal points
+   */
   static RichGradientTypes = {
-    SDFILL_RICHGRADIENT_LINEAR: 0,
-    SDFILL_RICHGRADIENT_RADIAL_BR: 1,
-    SDFILL_RICHGRADIENT_RADIAL_BL: 2,
-    SDFILL_RICHGRADIENT_RADIAL_CENTER: 3,
-    SDFILL_RICHGRADIENT_RADIAL_BC: 4,
-    SDFILL_RICHGRADIENT_RADIAL_TC: 5,
-    SDFILL_RICHGRADIENT_RADIAL_TR: 6,
-    SDFILL_RICHGRADIENT_RADIAL_TL: 7,
-    SDFILL_RICHGRADIENT_RECT_BR: 8,
-    SDFILL_RICHGRADIENT_RECT_BL: 9,
-    SDFILL_RICHGRADIENT_RECT_CENTER: 10,
-    SDFILL_RICHGRADIENT_RECT_TR: 11,
-    SDFILL_RICHGRADIENT_RECT_TL: 12,
-    SDFILL_RICHGRADIENT_SHAPE: 13
-  }
-
-
+    Linear: 0,       // Linear gradient
+    BR: 1,           // Radial gradient focused at bottom right
+    BL: 2,           // Radial gradient focused at bottom left
+    RadialCenter: 3, // Radial gradient focused at center
+    RadialBC: 4,     // Radial gradient focused at bottom center
+    RadialTC: 5,     // Radial gradient focused at top center
+    RadialTR: 6,     // Radial gradient focused at top right
+    RadialTL: 7,     // Radial gradient focused at top left
+    RectBR: 8,       // Rectangular gradient focused at bottom right
+    RectBL: 9,       // Rectangular gradient focused at bottom left
+    RectCenter: 10,  // Rectangular gradient focused at center
+    RectTR: 11,      // Rectangular gradient focused at top right
+    RectTL: 12,      // Rectangular gradient focused at top left
+    Shape: 13        // Shape-based gradient
+  };
 }
 
 export default StyleConstant

@@ -19,7 +19,7 @@ class SVGFragmentSymbol extends BaseSymbol {
   constructor(options: any) {
     T3Util.Log("= S.SVGFragmentSymbol | Constructor Input:", options);
     options = options || {};
-    options.ShapeType = OptConstant.ShapeType.SVGFRAGMENTSYMBOL;
+    options.ShapeType = OptConstant.ShapeType.SVGFragmentSymbol;
     super(options);
     T3Util.Log("= S.SVGFragmentSymbol | Constructor Output:", this);
   }
@@ -27,17 +27,17 @@ class SVGFragmentSymbol extends BaseSymbol {
   CreateShape(svgDoc: any, useEvent: any) {
     T3Util.Log("= S.SVGFragmentSymbol | CreateShape Input:", { svgDoc, useEvent });
 
-    if (this.flags & NvConstant.ObjFlags.SEDO_NotVisible) {
+    if (this.flags & NvConstant.ObjFlags.NotVisible) {
       return null;
     }
 
     // Create container and symbol shapes
-    const container = svgDoc.CreateShape(OptConstant.CSType.SHAPECONTAINER);
-    const symbol = svgDoc.CreateShape(OptConstant.CSType.SYMBOL);
+    const container = svgDoc.CreateShape(OptConstant.CSType.ShapeContainer);
+    const symbol = svgDoc.CreateShape(OptConstant.CSType.Symbol);
 
     // Set up symbol properties
     symbol.SetSymbolSource(this.SVGFragment);
-    symbol.SetID(OptConstant.SVGElementClass.SHAPE);
+    symbol.SetID(OptConstant.SVGElementClass.Shape);
 
     const frame = this.Frame;
     const styleRecord = this.StyleRecord;
@@ -51,11 +51,11 @@ class SVGFragmentSymbol extends BaseSymbol {
     }
 
     // Set stroke color and width based on color changes flags
-    if (fieldStyle || (this.colorchanges & (StyleConstant.SDRColorFilters.SD_NOCOLOR_LINE | StyleConstant.SDRColorFilters.SD_NOCOLOR_STYLE))) {
+    if (fieldStyle || (this.colorchanges & (StyleConstant.ColorFilters.NCLine | StyleConstant.ColorFilters.NCStyle))) {
       symbol.SetStrokeColor(lineColor);
     }
 
-    if (this.colorchanges & (StyleConstant.SDRColorFilters.SD_NOCOLOR_LINETHICK | StyleConstant.SDRColorFilters.SD_NOCOLOR_STYLE)) {
+    if (this.colorchanges & (StyleConstant.ColorFilters.NCLineThick | StyleConstant.ColorFilters.NCStyle)) {
       symbol.SetStrokeWidth(lineThickness);
     }
 
@@ -74,8 +74,8 @@ class SVGFragmentSymbol extends BaseSymbol {
     symbol.SetScale(width / this.InitialGroupBounds.width, height / this.InitialGroupBounds.height);
 
     // Apply mirror/flip effects if needed
-    const flipHoriz = (this.extraflags & OptConstant.ExtraFlags.SEDE_FlipHoriz) > 0;
-    const flipVert = (this.extraflags & OptConstant.ExtraFlags.SEDE_FlipVert) > 0;
+    const flipHoriz = (this.extraflags & OptConstant.ExtraFlags.FlipHoriz) > 0;
+    const flipVert = (this.extraflags & OptConstant.ExtraFlags.FlipVert) > 0;
     if (flipHoriz) {
       symbol.SetMirror(flipHoriz);
     }
@@ -88,17 +88,17 @@ class SVGFragmentSymbol extends BaseSymbol {
     this.ApplyEffects(container, false, false);
 
     // Create a slop shape for event handling
-    const slopShape = svgDoc.CreateShape(OptConstant.CSType.RECT);
+    const slopShape = svgDoc.CreateShape(OptConstant.CSType.Rect);
     slopShape.SetStrokeColor('white');
     slopShape.SetFillColor('none');
     slopShape.SetOpacity(0);
     slopShape.SetStrokeWidth(0);
     if (useEvent) {
-      slopShape.SetEventBehavior(OptConstant.EventBehavior.HIDDEN_ALL);
+      slopShape.SetEventBehavior(OptConstant.EventBehavior.HiddenAll);
     } else {
-      slopShape.SetEventBehavior(OptConstant.EventBehavior.NONE);
+      slopShape.SetEventBehavior(OptConstant.EventBehavior.None);
     }
-    slopShape.SetID(OptConstant.SVGElementClass.SLOP);
+    slopShape.SetID(OptConstant.SVGElementClass.Slop);
     slopShape.ExcludeFromExport(true);
     slopShape.SetSize(width, height);
 
@@ -127,7 +127,7 @@ class SVGFragmentSymbol extends BaseSymbol {
 
     if (
       overrideFillColor ||
-      this.colorchanges & (StyleConstant.SDRColorFilters.SD_NOCOLOR_FILL | StyleConstant.SDRColorFilters.SD_NOCOLOR_STYLE)
+      this.colorchanges & (StyleConstant.ColorFilters.NCFill | StyleConstant.ColorFilters.NCStyle)
     ) {
       let fillType = styleRecord.Fill.Paint.FillType;
       let fillColor = styleRecord.Fill.Paint.Color;
@@ -193,7 +193,7 @@ class SVGFragmentSymbol extends BaseSymbol {
     shapeElement.SetPos(updatedBBox.x + offset.x, updatedBBox.y + offset.y);
 
     // Update the inner shape content.
-    const shapeContent = shapeElement.GetElementByID(OptConstant.SVGElementClass.SHAPE);
+    const shapeContent = shapeElement.GetElementById(OptConstant.SVGElementClass.Shape);
     shapeContent.SetSize(updatedBBox.width, updatedBBox.height);
     shapeContent.SetScale(
       updatedBBox.width / this.InitialGroupBounds.width,
@@ -201,7 +201,7 @@ class SVGFragmentSymbol extends BaseSymbol {
     );
 
     // Update the "slop" element, if present.
-    const slopElement = shapeElement.GetElementByID(OptConstant.SVGElementClass.SLOP);
+    const slopElement = shapeElement.GetElementById(OptConstant.SVGElementClass.Slop);
     if (slopElement) {
       slopElement.SetSize(updatedBBox.width, updatedBBox.height);
     }
@@ -267,12 +267,12 @@ class SVGFragmentSymbol extends BaseSymbol {
 
     let connectorData,
       knobIcon,
-      groupShape = svgDoc.CreateShape(OptConstant.CSType.GROUP),
-      knobSize = OptConstant.Defines.SED_KnobSize,
-      rKnobSize = OptConstant.Defines.SED_RKnobSize,
-      sideKnobs = ((this.extraflags & OptConstant.ExtraFlags.SEDE_SideKnobs &&
+      groupShape = svgDoc.CreateShape(OptConstant.CSType.Group),
+      knobSize = OptConstant.Common.KnobSize,
+      rKnobSize = OptConstant.Common.RKnobSize,
+      sideKnobs = ((this.extraflags & OptConstant.ExtraFlags.SideKnobs &&
         this.dataclass === PolygonConstant.ShapeTypes.POLYGON) > 0),
-      minSidePointLength = OptConstant.Defines.MinSidePointLength,
+      minSidePointLength = OptConstant.Common.MinSidePointLength,
       docToScreenScale = svgDoc.docInfo.docToScreenScale;
 
     if (svgDoc.docInfo.docScale <= 0.5) {
@@ -303,11 +303,11 @@ class SVGFragmentSymbol extends BaseSymbol {
     let allowProportional = true, allowHorizontal = !sideKnobs, allowVertical = !sideKnobs;
 
     switch (this.ObjGrow) {
-      case OptConstant.GrowBehavior.HCONSTRAIN:
+      case OptConstant.GrowBehavior.Horiz:
         allowProportional = false;
         allowVertical = false;
         break;
-      case OptConstant.GrowBehavior.VCONSTRAIN:
+      case OptConstant.GrowBehavior.Vertical:
         allowProportional = false;
         allowHorizontal = false;
         break;
@@ -320,7 +320,7 @@ class SVGFragmentSymbol extends BaseSymbol {
 
     const knobConfig: any = {
       svgDoc: svgDoc,
-      shapeType: OptConstant.CSType.RECT,
+      shapeType: OptConstant.CSType.Rect,
       x: 0,
       y: 0,
       knobSize: adjustedKnobSize,
@@ -338,7 +338,7 @@ class SVGFragmentSymbol extends BaseSymbol {
       knobConfig.fillOpacity = 0.0;
     }
 
-    if (this.flags & NvConstant.ObjFlags.SEDO_Lock) {
+    if (this.flags & NvConstant.ObjFlags.Lock) {
       knobConfig.fillColor = 'gray';
       knobConfig.locked = true;
       sideKnobs = false;
@@ -360,7 +360,7 @@ class SVGFragmentSymbol extends BaseSymbol {
 
     // Proportional knobs (corners)
     if (allowProportional) {
-      knobConfig.knobID = OptConstant.ActionTriggerType.TOPLEFT;
+      knobConfig.knobID = OptConstant.ActionTriggerType.TopLeft;
       knobConfig.cursorType = rotatedCursors[0];
       let knob = this.GenericKnob(knobConfig);
       groupShape.AddElement(knob);
@@ -368,21 +368,21 @@ class SVGFragmentSymbol extends BaseSymbol {
       knobConfig.x = width - adjustedKnobSize;
       knobConfig.y = 0;
       knobConfig.cursorType = rotatedCursors[2];
-      knobConfig.knobID = OptConstant.ActionTriggerType.TOPRIGHT;
+      knobConfig.knobID = OptConstant.ActionTriggerType.TopRight;
       knob = this.GenericKnob(knobConfig);
       groupShape.AddElement(knob);
 
       knobConfig.x = width - adjustedKnobSize;
       knobConfig.y = height - adjustedKnobSize;
       knobConfig.cursorType = rotatedCursors[4];
-      knobConfig.knobID = OptConstant.ActionTriggerType.BOTTOMRIGHT;
+      knobConfig.knobID = OptConstant.ActionTriggerType.BottomRight;
       knob = this.GenericKnob(knobConfig);
       groupShape.AddElement(knob);
 
       knobConfig.x = 0;
       knobConfig.y = height - adjustedKnobSize;
       knobConfig.cursorType = rotatedCursors[6];
-      knobConfig.knobID = OptConstant.ActionTriggerType.BOTTOMLEFT;
+      knobConfig.knobID = OptConstant.ActionTriggerType.BottomLeft;
       knob = this.GenericKnob(knobConfig);
       groupShape.AddElement(knob);
     }
@@ -392,14 +392,14 @@ class SVGFragmentSymbol extends BaseSymbol {
       knobConfig.x = width / 2 - adjustedKnobSize / 2;
       knobConfig.y = 0;
       knobConfig.cursorType = rotatedCursors[1];
-      knobConfig.knobID = OptConstant.ActionTriggerType.TOPCENTER;
+      knobConfig.knobID = OptConstant.ActionTriggerType.TopCenter;
       let knob = this.GenericKnob(knobConfig);
       groupShape.AddElement(knob);
 
       knobConfig.x = width / 2 - adjustedKnobSize / 2;
       knobConfig.y = height - adjustedKnobSize;
       knobConfig.cursorType = rotatedCursors[5];
-      knobConfig.knobID = OptConstant.ActionTriggerType.BOTTOMCENTER;
+      knobConfig.knobID = OptConstant.ActionTriggerType.BottomCenter;
       knob = this.GenericKnob(knobConfig);
       groupShape.AddElement(knob);
     }
@@ -409,14 +409,14 @@ class SVGFragmentSymbol extends BaseSymbol {
       knobConfig.x = 0;
       knobConfig.y = height / 2 - adjustedKnobSize / 2;
       knobConfig.cursorType = rotatedCursors[7];
-      knobConfig.knobID = OptConstant.ActionTriggerType.CENTERLEFT;
+      knobConfig.knobID = OptConstant.ActionTriggerType.CenterLeft;
       let knob = this.GenericKnob(knobConfig);
       groupShape.AddElement(knob);
 
       knobConfig.x = width - adjustedKnobSize;
       knobConfig.y = height / 2 - adjustedKnobSize / 2;
       knobConfig.cursorType = rotatedCursors[3];
-      knobConfig.knobID = OptConstant.ActionTriggerType.CENTERRIGHT;
+      knobConfig.knobID = OptConstant.ActionTriggerType.CenterRight;
       knob = this.GenericKnob(knobConfig);
       groupShape.AddElement(knob);
     }
@@ -426,7 +426,7 @@ class SVGFragmentSymbol extends BaseSymbol {
       let hook, result = null;
       if (obj.hooks.length) {
         hook = T3Gv.opt.GetObjectPtr(obj.hooks[0].objid, false);
-        if (hook && hook.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.CONNECTOR) {
+        if (hook && hook.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
           result = hook.Pr_GetShapeConnectorInfo(obj.hooks[0]);
         } else if (hook && hook instanceof Instance.Shape.ShapeContainer) {
           result = hook.Pr_GetShapeConnectorInfo(obj.hooks[0]);
@@ -457,8 +457,8 @@ class SVGFragmentSymbol extends BaseSymbol {
         iconConfig.cursorType = connectorData[index].cursorType;
         iconConfig.iconID = connectorData[index].knobID;
         iconConfig.imageURL = connectorData[index].polyType === 'vertical'
-          ? OptConstant.Defines.Connector_Move_Vertical_Path
-          : OptConstant.Defines.Connector_Move_Horizontal_Path;
+          ? OptConstant.Common.ConMoveVerticalPath
+          : OptConstant.Common.ConMoveHorizontalPath;
         iconConfig.userData = connectorData[index].knobData;
 
         knobIcon = this.GenericIcon(iconConfig);
@@ -474,7 +474,7 @@ class SVGFragmentSymbol extends BaseSymbol {
       sideObj.inside = $.extend(true, {}, sideObj.Frame);
       const polyPoints = T3Gv.opt
         .ShapeToPolyLine(this.BlockID, false, true, sideObj)
-        .GetPolyPoints(OptConstant.Defines.NPOLYPTS, true, true, false, []);
+        .GetPolyPoints(OptConstant.Common.MaxPolyPoints, true, true, false, []);
 
       if (polyPoints) {
         for (let i = 1, len = polyPoints.length; i < len; i++) {
@@ -496,7 +496,7 @@ class SVGFragmentSymbol extends BaseSymbol {
     const smallWidth = this.Frame.width < 44,
       hasHooks = this.hooks.length > 0 &&
         (T3Gv.opt.GetObjectPtr(this.hooks[0].objid, false) ?
-          T3Gv.opt.GetObjectPtr(this.hooks[0].objid, false).DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.CONNECTOR
+          T3Gv.opt.GetObjectPtr(this.hooks[0].objid, false).DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector
           : false);
     if (
       !(
@@ -509,13 +509,13 @@ class SVGFragmentSymbol extends BaseSymbol {
       )
     ) {
       const isTextGrowHorizontal = this.TextGrow === NvConstant.TextGrowBehavior.Horizontal &&
-        (this.flags & NvConstant.ObjFlags.SEDO_TextOnly) &&
-        ShapeUtil.TextAlignToWin(this.TextAlign).just === TextConstant.TextJust.TA_LEFT;
-      knobConfig.shapeType = OptConstant.CSType.OVAL;
+        (this.flags & NvConstant.ObjFlags.TextOnly) &&
+        ShapeUtil.TextAlignToWin(this.TextAlign).just === TextConstant.TextJust.Left;
+      knobConfig.shapeType = OptConstant.CSType.Oval;
       knobConfig.x = isTextGrowHorizontal ? width + adjustedRKnobSize : width - 3 * adjustedRKnobSize;
       knobConfig.y = height / 2 - adjustedRKnobSize / 2;
       knobConfig.cursorType = CursorConstant.CursorType.ROTATE;
-      knobConfig.knobID = OptConstant.ActionTriggerType.ROTATE;
+      knobConfig.knobID = OptConstant.ActionTriggerType.Rotate;
       knobConfig.fillColor = 'white';
       knobConfig.fillOpacity = 0.001;
       knobConfig.strokeSize = 1.5;
@@ -526,14 +526,14 @@ class SVGFragmentSymbol extends BaseSymbol {
 
     // Create dimension adjustment knobs if applicable
     if ((this.Dimensions & NvConstant.DimensionFlags.Standoff) && this.CanUseStandOffDimensionLines()) {
-      const svgObj = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
+      const svgObj = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
       this.CreateDimensionAdjustmentKnobs(groupShape, svgObj, knobConfig);
     }
 
     groupShape.SetSize(width, height);
     groupShape.SetPos(pos.x, pos.y);
     groupShape.isShape = true;
-    groupShape.SetID(OptConstant.Defines.Action + triggerId);
+    groupShape.SetID(OptConstant.Common.Action + triggerId);
 
     T3Util.Log("= S.SVGFragmentSymbol | BaseShape_CreateActionTriggers Output:", groupShape);
     return groupShape;

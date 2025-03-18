@@ -140,7 +140,7 @@ class DataOpt {
       storedObject.Data = tedSessionData;
     }
 
-    if (objectData.Type === 'BaseDrawingObject') {
+    if (objectData.Type === 'BaseDrawObject') {
       // SHAPE: 0, LINE: 1, CONNECTOR: 3
       if (objectData.DrawingObjectBaseClass === 1) {
         if (objectData?.T3Type === "PolyLineContainer") {

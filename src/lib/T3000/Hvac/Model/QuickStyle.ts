@@ -25,6 +25,8 @@ class QuickStyle {
   @Type(() => TextFormatData)
   public Text: TextFormatData;
 
+  public StyleRecord: any;
+
   constructor() {
     this.Name = 'Style7';
     this.Fill = new FillData();

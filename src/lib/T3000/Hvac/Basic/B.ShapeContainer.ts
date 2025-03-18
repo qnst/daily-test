@@ -74,11 +74,11 @@ class ShapeContainer extends Group {
    * @param useSuper - Whether to use parent class implementation
    * @returns The result of the remove operation
    */
-  RemoveElementByInternalID(internalID: string, useSuper: boolean) {
+  RemoveElementByInternalId(internalID: string, useSuper: boolean) {
     if (useSuper) {
-      return super.RemoveElementByInternalID(internalID);
+      return super.RemoveElementByInternalId(internalID);
     } else {
-      return this.shapeGroup ? this.shapeGroup.RemoveElementByInternalID(internalID) : undefined;
+      return this.shapeGroup ? this.shapeGroup.RemoveElementByInternalId(internalID) : undefined;
     }
   }
 
@@ -116,11 +116,11 @@ class ShapeContainer extends Group {
    * @param additionalParam - Additional parameters for the search
    * @returns The found element or null if not found
    */
-  GetElementByID(elementID: string, useSuper: boolean, additionalParam: any) {
+  GetElementById(elementID: string, useSuper: boolean, additionalParam: any) {
     if (useSuper) {
-      return super.GetElementByID(elementID, additionalParam);
+      return super.GetElementById(elementID, additionalParam);
     } else {
-      return this.shapeGroup ? this.shapeGroup.GetElementByID(elementID, additionalParam) : null;
+      return this.shapeGroup ? this.shapeGroup.GetElementById(elementID, additionalParam) : null;
     }
   }
 
@@ -130,11 +130,11 @@ class ShapeContainer extends Group {
    * @param useSuper - Whether to use parent class implementation
    * @returns The found element or null if not found
    */
-  GetElementByIDInGroup(elementID: string, useSuper: boolean) {
+  GetElementByIdInGroup(elementID: string, useSuper: boolean) {
     if (useSuper) {
-      return super.GetElementByIDInGroup(elementID);
+      return super.GetElementByIdInGroup(elementID);
     } else {
-      return this.shapeGroup ? this.shapeGroup.GetElementByIDInGroup(elementID) : null;
+      return this.shapeGroup ? this.shapeGroup.GetElementByIdInGroup(elementID) : null;
     }
   }
 
@@ -144,11 +144,11 @@ class ShapeContainer extends Group {
    * @param useSuper - Whether to use parent class implementation
    * @returns Array of elements matching the ID
    */
-  GetElementListWithID(elementID: string, useSuper: boolean) {
+  GetElementListWithId(elementID: string, useSuper: boolean) {
     if (useSuper) {
-      return super.GetElementListWithID(elementID);
+      return super.GetElementListWithId(elementID);
     } else {
-      return this.shapeGroup ? this.shapeGroup.GetElementListWithID(elementID) : [];
+      return this.shapeGroup ? this.shapeGroup.GetElementListWithId(elementID) : [];
     }
   }
 
@@ -158,11 +158,11 @@ class ShapeContainer extends Group {
    * @param useSuper - Whether to use parent class implementation
    * @returns The found element or null if not found
    */
-  GetElementByInternalID(internalID: string, useSuper: boolean) {
+  GetElementByInternalId(internalID: string, useSuper: boolean) {
     if (useSuper) {
-      return super.GetElementByInternalID(internalID);
+      return super.GetElementByInternalId(internalID);
     } else {
-      return this.shapeGroup ? this.shapeGroup.GetElementByInternalID(internalID) : null;
+      return this.shapeGroup ? this.shapeGroup.GetElementByInternalId(internalID) : null;
     }
   }
 

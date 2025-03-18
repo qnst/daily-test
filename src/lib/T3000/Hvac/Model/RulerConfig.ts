@@ -28,8 +28,8 @@ class RulerConfig {
     this.nGrid = 12;
     this.originx = 0;
     this.originy = 0;
-    this.major = OptConstant.Defines.DefaultRulerMajor;
-    this.metricConv = OptConstant.Defines.MetricConv;
+    this.major = OptConstant.Common.DefaultRulerMajor;
+    this.metricConv = OptConstant.Common.MetricConv;
     this.dp = 2;
     this.showpixels = false;
     this.fractionaldenominator = 1;

@@ -693,21 +693,6 @@ class DSConstant {
     2178: 'oTextureExtra'
   }
 
-  // static SDRColorFilters = {
-  //   SD_NOCOLOR_FILL: 1,
-  //   SD_NOCOLOR_TEXTURE: 2,
-  //   SD_NOCOLOR_LINE: 4,
-  //   SD_NOCOLOR_LINETHICK: 8,
-  //   SD_NOCOLOR_LINEPAT: 16,
-  //   SD_NOCOLOR_LINEARROW: 32,
-  //   SD_NOCOLOR_TEXT: 64,
-  //   SD_NOCOLOR_OUTSIDE: 128,
-  //   SD_NOCOLOR_EFFECT: 256,
-  //   SD_NOCOLOR_STYLE: 512,
-  //   SD_NOCOLOR_ALL: 1023,
-  //   SD_NOCOLOR_RESIZE: 1024
-  // }
-
   static SDRFillTypes = {
     Transparent: 0,
     Solid: 1,
@@ -735,61 +720,61 @@ class DSConstant {
     SED_Sh_FDrop: 5
   }
 
-  static SDRObjectFlags = {
-    SEDO_Select: 1,
-    SEDO_Hide: 2,
-    SEDO_Erase: 4,
-    SEDO_EraseOnGrow: 8,
-    SEDO_Lock: 16,
-    SEDO_Spare: 32,
-    SEDO_ImageShape: 64,
-    SEDO_Bounds: 128,
-    SEDO_ImageOnly: 256,
-    SEDO_TextOnly: 512,
-    SEDO_NoPen: 1024,
-    SEDO_IsTarget: 2048,
-    SEDO_InList: 4096,
-    SEDO_Assoc: 8192,
-    SEDO_Obj1: 16384,
-    SEDO_ContConn: 32768,
-    SEDO_HUnGroup: 65536,
-    SEDO_UseConnect: 131072,
-    SEDO_DropOnBorder: 262144,
-    SEDO_DropOnTable: 524288,
-    SEDO_LineHop: 1048576,
-    SEDO_LineMod: 2097152,
-    SEDO_LinkCenter: 4194304,
-    SEDO_MetaObject: 8388608,
-    SEDO_NoLinking: 16777216,
-    SEDO_PrintTrans: 33554432,
-    SEDO_HasTransImage: 67108864,
-    SEDO_AllowDropImage: 134217728,
-    SEDO_NotVisible: 268435456,
-    SEDO_NoMaintainLink: 536870912,
-    SEDO_AllowMetaColor: 1073741824,
-    SEDO_HideThumbnail: 2147483648
-  }
+  // static SDRObjectFlags = {
+  //   Select: 1,
+  //   Hide: 2,
+  //   Erase: 4,
+  //   EraseOnGrow: 8,
+  //   Lock: 16,
+  //   Spare: 32,
+  //   ImageShape: 64,
+  //   Bounds: 128,
+  //   ImageOnly: 256,
+  //   TextOnly: 512,
+  //   NoPen: 1024,
+  //   IsTarget: 2048,
+  //   InList: 4096,
+  //   Assoc: 8192,
+  //   Obj1: 16384,
+  //   ContConn: 32768,
+  //   HUnGroup: 65536,
+  //   UseConnect: 131072,
+  //   DropOnBorder: 262144,
+  //   DropOnTable: 524288,
+  //   LineHop: 1048576,
+  //   LineMod: 2097152,
+  //   SEDO_LinkCenter: 4194304,
+  //   MetaObject: 8388608,
+  //   NoLinking: 16777216,
+  //   PrintTrans: 33554432,
+  //   HasTransImage: 67108864,
+  //   AllowDropImage: 134217728,
+  //   NotVisible: 268435456,
+  //   NoMaintainLink: 536870912,
+  //   AllowMetaColor: 1073741824,
+  //   HideThumbnail: 2147483648
+  // }
 
-  static ObjectTypes = {
-    SED_Shape: 0,
-    SED_LineD: 1,
-    SED_SegL: 2,
-    SED_Array: 3,
-    SED_PolyL: 4,
-    SED_NURBS: 501,
-    SED_NURBSSEG: 502,
-    SED_ELLIPSE: 503,
-    SED_ELLIPSEEND: 504,
-    SED_QUADBEZ: 505,
-    SED_QUADBEZCON: 506,
-    SED_CUBEBEZ: 507,
-    SED_CUBEBEZCON: 508,
-    SED_SPLINE: 509,
-    SED_SPLINECON: 510,
-    SED_MOVETO: 600,
-    SED_MOVETO_NEWPOLY: 601,
-    SED_Freehand: 7
-  }
+  // static ObjectTypes = {
+  //   SED_Shape: 0,
+  //   SED_LineD: 1,
+  //   SED_SegL: 2,
+  //   SED_Array: 3,
+  //   SED_PolyL: 4,
+  //   SED_NURBS: 501,
+  //   SED_NURBSSEG: 502,
+  //   SED_ELLIPSE: 503,
+  //   SED_ELLIPSEEND: 504,
+  //   SED_QUADBEZ: 505,
+  //   SED_QUADBEZCON: 506,
+  //   SED_CUBEBEZ: 507,
+  //   SED_CUBEBEZCON: 508,
+  //   SED_SPLINE: 509,
+  //   SED_SPLINECON: 510,
+  //   SED_MOVETO: 600,
+  //   SED_MOVETO_NEWPOLY: 601,
+  //   SED_Freehand: 7
+  // }
 
   static v6FillTypes = {
     SEHollowIndex: 0,
@@ -806,28 +791,6 @@ class DSConstant {
     SED_LT_ERight: 2,
     SED_LT_EBottom: 3
   }
-
-  static LineSubclass = {
-    SED_LCH: 0,
-    SED_LCD: 1,
-    SED_LCV: 2
-  }
-
-
-
-  // static FillEffect = {
-  //   SDFILL_EFFECT_NONE: 0,
-  //   SDFILL_EFFECT_GLOSS: 1,
-  //   SDFILL_EFFECT_BEVEL: 2,
-  //   SDFILL_EFFECT_INSHADOW: 3,
-  //   SDFILL_EFFECT_INGLOW: 4
-  // }
-
-
-
-
-
-
 
   static Platforms = {
     SDF_WIN31: 1,

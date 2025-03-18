@@ -10,9 +10,8 @@ import Instance from '../Data/Instance/Instance';
 import NvConstant from '../Data/Constant/NvConstant'
 import PolySeg from '../Model/PolySeg'
 import HitResult from '../Model/HitResult'
-import ConstantData2 from '../Data/Constant/ConstantData2'
 import T3Constant from '../Data/Constant/T3Constant';
-import ShapeConstant from '../Opt/DS/DSConstant';
+import DSConstant from '../Opt/DS/DSConstant';
 import OptConstant from '../Data/Constant/OptConstant';
 import CursorConstant from '../Data/Constant/CursorConstant';
 import T3Util from '../Util/T3Util';
@@ -29,12 +28,12 @@ class PolyLineContainer extends PolyLine {
       params.Dimensions = NvConstant.DimensionFlags.Always;
     }
     if (params.objecttype === undefined) {
-      params.objecttype = NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL;
+      params.objecttype = NvConstant.FNObjectTypes.FlWall;
     }
     if (params.TextFlags === undefined) {
       params.TextFlags = 0;
     }
-    params.TextFlags = Utils2.SetFlag(params.TextFlags, NvConstant.TextFlags.SED_TF_None, true);
+    params.TextFlags = Utils2.SetFlag(params.TextFlags, NvConstant.TextFlags.None, true);
 
     super(params);
 
@@ -59,7 +58,7 @@ class PolyLineContainer extends PolyLine {
 
   GetKnobSize(event) {
     T3Util.Log("= S.PolyLineContainer: Input event:", event);
-    const knobSize = 2 * (1 * OptConstant.Defines.SED_KnobSize / 1);
+    const knobSize = 2 * (1 * OptConstant.Common.KnobSize / 1);
     T3Util.Log("= S.PolyLineContainer: Output knobSize:", knobSize);
     return knobSize;
   }
@@ -79,7 +78,7 @@ class PolyLineContainer extends PolyLine {
     let segmentCount, knobSize = 0, angle = 0, knob = null, actionTriggers = null, halfKnobSize = 0;
     const isFirefox = -1 != navigator.userAgent.toLowerCase().indexOf("firefox");
 
-    if (this.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL && (wallOpt && wallOpt.IsAddingWalls && wallOpt.IsAddingWalls() || T3Constant.DocContext.UsingWallTool)) {
+    if (this.objecttype === NvConstant.FNObjectTypes.FlWall && (wallOpt && wallOpt.IsAddingWalls && wallOpt.IsAddingWalls() || T3Constant.DocContext.UsingWallTool)) {
       return null;
     }
 
@@ -97,16 +96,16 @@ class PolyLineContainer extends PolyLine {
     halfKnobSize = knobSize / 2;
     const knobParams = {
       svgDoc: doc,
-      shapeType: OptConstant.CSType.IMAGE,
+      shapeType: OptConstant.CSType.Image,
       knobSize: knobSize,
       fillOpacity: 1,
       strokeSize: 0,
-      knobID: OptConstant.ActionTriggerType.MOVEPOLYSEG,
+      knobID: OptConstant.ActionTriggerType.MovePolySeg,
       cursorType: this.CalcCursorForSegment(this.StartPoint, this.EndPoint, !1),
       locked: !1
     };
 
-    if (this.flags & NvConstant.ObjFlags.SEDO_Lock) {
+    if (this.flags & NvConstant.ObjFlags.Lock) {
       knobParams.fillColor = "gray";
       knobParams.locked = !0;
     } else if (this.NoGrow()) {
@@ -116,7 +115,7 @@ class PolyLineContainer extends PolyLine {
     }
 
     if ((segmentCount = this.polylist.segs.length) !== 0) {
-      if (segmentCount > 2 && 0 == (this.flags & NvConstant.ObjFlags.SEDO_Lock)) {
+      if (segmentCount > 2 && 0 == (this.flags & NvConstant.ObjFlags.Lock)) {
         for (let i = 1; i < segmentCount; i++) {
           knobParams.cursorType = this.CalcCursorForAngle(this.GetSegmentAdjustAngle(i));
           if (this.NoGrow()) {
@@ -133,7 +132,7 @@ class PolyLineContainer extends PolyLine {
             case OptConstant.LineType.ARCLINE:
             case OptConstant.LineType.PARABOLA:
             case OptConstant.LineType.ARCSEGLINE:
-              const existingKnob = actionTriggers.GetElementByID(OptConstant.ActionTriggerType.POLYLADJ, i);
+              const existingKnob = actionTriggers.GetElementById(OptConstant.ActionTriggerType.PolyAdj, i);
               if (existingKnob) {
                 const existingKnobPos = existingKnob.GetPos();
                 const points = [
@@ -213,7 +212,7 @@ class PolyLineContainer extends PolyLine {
     let rotationAngle = 0;
     let containsPoint = false;
     const boundingBox = {};
-    const shapePoints = shape.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, false, false);
+    const shapePoints = shape.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, false, false);
 
     if (T3Gv.opt.ActiveVisibleZList().indexOf(shape.BlockID) < 0) {
       return false;
@@ -224,7 +223,7 @@ class PolyLineContainer extends PolyLine {
       Utils3.RotatePointsAboutCenter(shape.Frame, rotationAngle, shapePoints);
     }
 
-    const thisPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, false, false);
+    const thisPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, false, false);
     const numPoints = shapePoints.length;
 
     for (let i = 0; i < numPoints; i++) {
@@ -268,7 +267,7 @@ class PolyLineContainer extends PolyLine {
       const targetID = targetElement.GetTargetForEvent(event).GetID();
       const docCoords = T3Gv.opt.svgDoc.ConvertWindowToDocCoords(event.gesture.center.clientX, event.gesture.center.clientY);
 
-      if (targetID === OptConstant.SVGElementClass.DIMENSIONTEXT) return true;
+      if (targetID === OptConstant.SVGElementClass.DimText) return true;
 
       if (this.PolyHitSeg(docCoords) === -1) mostlyContainsFlag = true;
 
@@ -312,7 +311,7 @@ class PolyLineContainer extends PolyLine {
     T3Gv.opt.actionStoredObjectId = elementID;
     T3Gv.stdObj.PreserveBlock(elementID);
 
-    const actionTriggerType = OptConstant.ActionTriggerType.MOVEPOLYSEG;
+    const actionTriggerType = OptConstant.ActionTriggerType.MovePolySeg;
     T3Gv.opt.actionTriggerId = actionTriggerType;
     this.LM_ActionPreTrack(elementID, actionTriggerType);
     T3Gv.opt.actionSvgObject = svgElement;
@@ -481,8 +480,8 @@ class PolyLineContainer extends PolyLine {
     );
 
     if (adjusted) {
-      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Width, false);
-      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Height, false);
+      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.Width, false);
+      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.Height, false);
       T3Gv.opt.actionStartX = newX;
       T3Gv.opt.actionStartY = newY;
     }
@@ -493,14 +492,14 @@ class PolyLineContainer extends PolyLine {
   AfterModifyShape(event, triggerType) {
     T3Util.Log("= S.PolyLineContainer: Input parameters:", event, triggerType);
 
-    if (triggerType === OptConstant.ActionTriggerType.MOVEPOLYSEG) {
+    if (triggerType === OptConstant.ActionTriggerType.MovePolySeg) {
       const handleMovePolySeg = (segmentIndex) => {
         let segmentCount = 0;
         let firstSegmentIndex = -1;
         let segmentsModified = false;
         const lineThickness = this.StyleRecord.Line.Thickness;
         let moveAngle = T3Gv.opt.actionTriggerData.moveAngle;
-        const polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, true, false, null);
+        const polyPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, true, false, null);
         const totalPoints = polyPoints.length;
 
         if (moveAngle !== 0) {
@@ -544,7 +543,7 @@ class PolyLineContainer extends PolyLine {
             const newY = this.polylist.segs[0].pt.y + this.StartPoint.y;
             this.polylist.segs[0].pt.x = 0;
             this.polylist.segs[0].pt.y = 0;
-            this.AdjustLineStart(null, newX, newY, OptConstant.ActionTriggerType.LINESTART);
+            this.AdjustLineStart(null, newX, newY, OptConstant.ActionTriggerType.LineStart);
           }
         }
 
@@ -582,7 +581,7 @@ class PolyLineContainer extends PolyLine {
             const newY = this.polylist.segs[0].pt.y + this.StartPoint.y;
             this.polylist.segs[0].pt.x = 0;
             this.polylist.segs[0].pt.y = 0;
-            this.AdjustLineStart(null, newX, newY, OptConstant.ActionTriggerType.LINESTART);
+            this.AdjustLineStart(null, newX, newY, OptConstant.ActionTriggerType.LineStart);
           } else if (segmentIndex === totalPoints - 1) {
             const newX = polyPoints[segmentIndex].x;
             if (Utils2.IsEqual(polyPoints[1].x, newX, lineThickness) && Utils2.IsEqual(polyPoints[0].x, newX, lineThickness)) {
@@ -592,7 +591,7 @@ class PolyLineContainer extends PolyLine {
               const newY = this.polylist.segs[0].pt.y + this.StartPoint.y;
               this.polylist.segs[0].pt.x = 0;
               this.polylist.segs[0].pt.y = 0;
-              this.AdjustLineStart(null, newX, newY, OptConstant.ActionTriggerType.LINESTART);
+              this.AdjustLineStart(null, newX, newY, OptConstant.ActionTriggerType.LineStart);
             }
           } else if (segmentIndex === 2 && Utils2.IsEqual(polyPoints[1].x, newX, lineThickness) && Utils2.IsEqual(polyPoints[0].x, newX, lineThickness)) {
             this.polylist.segs.splice(1, 1);
@@ -616,7 +615,7 @@ class PolyLineContainer extends PolyLine {
     T3Util.Log("= S.PolyLineContainer: Input parameters:", event, triggerType);
 
     if (T3Gv.opt.actionSvgObject) {
-      const ellipseAxesElement = T3Gv.opt.actionSvgObject.GetElementByID(OptConstant.Defines.EllipseAxes);
+      const ellipseAxesElement = T3Gv.opt.actionSvgObject.GetElementById(OptConstant.Common.EllipseAxes);
       if (ellipseAxesElement != null) {
         T3Gv.opt.actionSvgObject.RemoveElement(ellipseAxesElement);
       }
@@ -628,11 +627,11 @@ class PolyLineContainer extends PolyLine {
     }
 
     if (this.rflags) {
-      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Width, false);
-      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Height, false);
+      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.Width, false);
+      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.Height, false);
     }
 
-    T3Gv.opt.SetLinkFlag(event, ShapeConstant.LinkFlags.SED_L_MOVE);
+    T3Gv.opt.SetLinkFlag(event, DSConstant.LinkFlags.SED_L_MOVE);
     T3Gv.opt.UpdateLinks();
 
     if (this.arcobj) {
@@ -691,7 +690,7 @@ class PolyLineContainer extends PolyLine {
     segmentAngle = 360 - hitSegmentData.moveAngle;
     angleInRadians = 2 * Math.PI * (segmentAngle / 360);
 
-    polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true, true, false, null);
+    polyPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, true, true, false, null);
     rotatedPoints = isClosed && this instanceof PolyLineContainer
       ? T3Gv.opt.InflateLine(polyPoints, this.StyleRecord.Line.BThick, isClosed, this.Dimensions & NvConstant.DimensionFlags.Exterior)
       : Utils1.DeepCopy(polyPoints);
@@ -736,26 +735,26 @@ class PolyLineContainer extends PolyLine {
     let newY = rotatedPoints[segmentIndex].y;
     this.AdjustPolySeg(event, adjustedX, adjustedY, newX, newY, hitSegmentData, true, 0);
 
-    T3Gv.opt.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
+    T3Gv.opt.SetLinkFlag(this.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
     for (let i = 0; i < this.hooks.length; i++) {
-      T3Gv.opt.SetLinkFlag(this.hooks[i].objid, ShapeConstant.LinkFlags.SED_L_MOVE);
+      T3Gv.opt.SetLinkFlag(this.hooks[i].objid, DSConstant.LinkFlags.SED_L_MOVE);
     }
 
     T3Gv.opt.ActionTriggerData = segmentIndex;
-    T3Gv.opt.MaintainLink(this.BlockID, this, originalState, OptConstant.ActionTriggerType.POLYLNODE);
+    T3Gv.opt.MaintainLink(this.BlockID, this, originalState, OptConstant.ActionTriggerType.PolyNode);
 
     let polyRectInfo = { wdDim: -1, htDim: -1 };
     if (this.GetPolyRectangularInfo(polyRectInfo)) {
       if (segmentIndex === polyRectInfo.wdDim || segmentIndex === polyRectInfo.wdDim + 2) {
         this.rwd = dimensionValue;
-        this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Width, true);
+        this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.Width, true);
       } else if (segmentIndex === polyRectInfo.htDim || segmentIndex === polyRectInfo.htDim + 2) {
         this.rht = dimensionValue;
-        this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Height, true);
+        this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.Height, true);
       }
     } else {
-      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Width, false);
-      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Height, false);
+      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.Width, false);
+      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.Height, false);
     }
 
     if (this.Frame.x < 0 || this.Frame.y < 0) {
@@ -767,7 +766,7 @@ class PolyLineContainer extends PolyLine {
       if (this.Frame.y < 0) {
         frameAdjustment.y = -this.Frame.y;
         if (this.Dimensions & NvConstant.DimensionFlags.Always || this.Dimensions & NvConstant.DimensionFlags.Select) {
-          frameAdjustment.y += OptConstant.Defines.DimensionDefaultStandoff;
+          frameAdjustment.y += OptConstant.Common.DimDefaultStandoff;
         }
         this.Frame.y += frameAdjustment.y;
       }
@@ -789,7 +788,7 @@ class PolyLineContainer extends PolyLine {
   GetDimensionsForDisplay() {
     T3Util.Log("= S.PolyLineContainer: Getting dimensions for display");
 
-    if (this.objecttype !== NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
+    if (this.objecttype !== NvConstant.FNObjectTypes.FlWall) {
       const dimensions = this.BaseLine_GetDimensions();
       T3Util.Log("= S.PolyLineContainer: Output dimensions:", dimensions);
       return dimensions;
@@ -856,12 +855,12 @@ class PolyLineContainer extends PolyLine {
   SetCursors() {
     T3Util.Log("= S.PolyLineContainer: Setting cursors");
 
-    const element = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
+    const element = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
     const currentOperation = T3Gv.opt.currentModalOperation;
 
-    if ((currentOperation === OptConstant.ModalOperations.SPLITWALL && this.polylist && this.polylist.segs.length >= 3) ||
-      currentOperation === OptConstant.ModalOperations.ADDCORNER) {
-      const slopElement = element.GetElementByID(OptConstant.SVGElementClass.SLOP);
+    if ((/*currentOperation === OptConstant.ModalOperations.SplitWall &&*/ false && this.polylist && this.polylist.segs.length >= 3) ||
+      currentOperation === OptConstant.ModalOperations.AddCorner) {
+      const slopElement = element.GetElementById(OptConstant.SVGElementClass.Slop);
       if (slopElement) {
         slopElement.SetCursor(CursorConstant.CursorType.CROSSHAIR);
       }
@@ -875,12 +874,12 @@ class PolyLineContainer extends PolyLine {
   BaseShape_SetCursors() {
     T3Util.Log("= S.PolyLineContainer: Setting cursors");
 
-    const svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
-    const isOneClick = (this.TextFlags & NvConstant.TextFlags.SED_TF_OneClick) > 0;
+    const svgElement = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
+    const isOneClick = (this.TextFlags & NvConstant.TextFlags.OneClick) > 0;
     const editMode = T3Gv.opt.GetEditMode();
 
     switch (editMode) {
-      case NvConstant.EditState.DEFAULT:
+      case NvConstant.EditState.Default:
         // const activeTableID = T3Gv.opt.Table_GetActiveID();
         // const table = this.GetTable(false);
 
@@ -894,21 +893,21 @@ class PolyLineContainer extends PolyLine {
           this.BaseDrawingObject_SetCursors();
 
           if (isOneClick) {
-            const shapeElement = svgElement.GetElementByID(OptConstant.SVGElementClass.SHAPE);
+            const shapeElement = svgElement.GetElementById(OptConstant.SVGElementClass.Shape);
             if (shapeElement) {
               shapeElement.SetCursor(CursorConstant.CursorType.TEXT);
             }
-            const slopElement = svgElement.GetElementByID(OptConstant.SVGElementClass.SLOP);
+            const slopElement = svgElement.GetElementById(OptConstant.SVGElementClass.Slop);
           }
         }
         break;
 
-      case NvConstant.EditState.FORMATPAINT:
-        const shapeElement = svgElement.GetElementByID(OptConstant.SVGElementClass.SHAPE);
+      case NvConstant.EditState.FormatPaint:
+        const shapeElement = svgElement.GetElementById(OptConstant.SVGElementClass.Shape);
         if (shapeElement) {
           shapeElement.SetCursor(CursorConstant.CursorType.PAINT);
         }
-        const slopElement = svgElement.GetElementByID(OptConstant.SVGElementClass.SLOP);
+        const slopElement = svgElement.GetElementById(OptConstant.SVGElementClass.Slop);
         if (slopElement) {
           slopElement.SetCursor(CursorConstant.CursorType.PAINT);
         }
@@ -924,14 +923,14 @@ class PolyLineContainer extends PolyLine {
   BaseDrawingObject_SetCursors() {
     T3Util.Log("= S.PolyLineContainer: Setting cursors");
 
-    const svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
+    const svgElement = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
     let isTextElementActive = false;
 
-    if (!(this.flags & NvConstant.ObjFlags.SEDO_Lock) && svgElement) {
-      if (T3Gv.opt.GetEditMode() === NvConstant.EditState.DEFAULT) {
-        const shapeElement = svgElement.GetElementByID(OptConstant.SVGElementClass.SHAPE);
+    if (!(this.flags & NvConstant.ObjFlags.Lock) && svgElement) {
+      if (T3Gv.opt.GetEditMode() === NvConstant.EditState.Default) {
+        const shapeElement = svgElement.GetElementById(OptConstant.SVGElementClass.Shape);
         if (shapeElement) {
-          if (this.objecttype === NvConstant.ObjectTypes.SD_OBJT_FRAME_CONTAINER) {
+          if (this.objecttype === NvConstant.FNObjectTypes.FrameContainer) {
             shapeElement.SetCursor(CursorConstant.CursorType.DEFAULT);
           } else {
             shapeElement.SetCursor(CursorConstant.CursorType.ADD);
@@ -939,22 +938,22 @@ class PolyLineContainer extends PolyLine {
         }
 
         const iconTypes = [
-          OptConstant.ShapeIconType.HYPERLINK,
-          OptConstant.ShapeIconType.NOTES,
-          OptConstant.ShapeIconType.EXPANDEDVIEW,
-          OptConstant.ShapeIconType.COMMENT,
-          OptConstant.ShapeIconType.ATTACHMENT,
-          OptConstant.ShapeIconType.FIELDDATA
+          OptConstant.ShapeIconType.HyperLink,
+          OptConstant.ShapeIconType.Notes,
+          OptConstant.ShapeIconType.ExpandedView,
+          OptConstant.ShapeIconType.Comment,
+          OptConstant.ShapeIconType.Attachment,
+          OptConstant.ShapeIconType.FieldData
         ];
 
         iconTypes.forEach(iconType => {
-          const iconElement = svgElement.GetElementByID(iconType);
+          const iconElement = svgElement.GetElementById(iconType);
           if (iconElement) {
             iconElement.SetCursor(CursorConstant.CursorType.POINTER);
           }
         });
 
-        const slopElement = svgElement.GetElementByID(OptConstant.SVGElementClass.SLOP);
+        const slopElement = svgElement.GetElementById(OptConstant.SVGElementClass.Slop);
         if (slopElement) {
           slopElement.SetCursor(CursorConstant.CursorType.ADD);
         }
@@ -963,17 +962,17 @@ class PolyLineContainer extends PolyLine {
         if (this.DataID && this.DataID >= 0 && svgElement.textElem) {
           if (svgElement.textElem === activeEditElement) {
             shapeElement.SetCursor(CursorConstant.CursorType.TEXT);
-            svgElement.textElem.SetCursorState(CursorConstant.CursorState.EDITLINK);
+            svgElement.textElem.SetCursorState(CursorConstant.CursorState.EditLink);
           } else {
-            svgElement.textElem.SetCursorState(CursorConstant.CursorState.LINKONLY);
+            svgElement.textElem.SetCursorState(CursorConstant.CursorState.LinkOnly);
           }
         }
 
         if (this.Dimensions & NvConstant.DimensionFlags.Always ||
           (this.Dimensions & NvConstant.DimensionFlags.Select && this.IsSelected())) {
-          const dimensionTextElements = svgElement.GetElementListWithID(OptConstant.SVGElementClass.DIMENSIONTEXT);
+          const dimensionTextElements = svgElement.GetElementListWithId(OptConstant.SVGElementClass.DimText);
           dimensionTextElements.forEach(dimensionTextElement => {
-            dimensionTextElement.SetCursorState(CursorConstant.CursorState.EDITONLY);
+            dimensionTextElement.SetCursorState(CursorConstant.CursorState.EditOnly);
             if (dimensionTextElement === activeEditElement) {
               isTextElementActive = true;
             }
@@ -1005,7 +1004,7 @@ class PolyLineContainer extends PolyLine {
       return enclosedObjects;
     }
 
-    this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, true, true, null);
+    this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, true, true, null);
 
     for (let i = 0; i < visibleZList.length; i++) {
       const obj = T3Gv.opt.GetObjectPtr(visibleZList[i], false);
@@ -1028,8 +1027,8 @@ class PolyLineContainer extends PolyLine {
     this.RotateAllInContainer(event, endRotation);
 
     if (this.rflags) {
-      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Width, false);
-      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Height, false);
+      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.Width, false);
+      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.Height, false);
     }
 
     T3Gv.opt.AddToDirtyList(event);
@@ -1080,7 +1079,7 @@ class PolyLineContainer extends PolyLine {
     selectedData = T3Gv.stdObj.GetObject(T3Gv.opt.theSelectedListBlockID).Data;
 
     let groupObject = T3Gv.opt.GetObjectPtr(groupID, true);
-    T3Gv.opt.svgObjectLayer.GetElementByID(groupObject.BlockID).SetRotation(rotationAngle);
+    T3Gv.opt.svgObjectLayer.GetElementById(groupObject.BlockID).SetRotation(rotationAngle);
     groupObject.RotationAngle = rotationAngle;
     T3Gv.opt.UngroupShape(groupID, true);
 
@@ -1102,7 +1101,7 @@ class PolyLineContainer extends PolyLine {
   GetPointsForAreaDimension() {
     T3Util.Log("= S.PolyLineContainer: Getting points for area dimension");
 
-    const polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, false, false, null);
+    const polyPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, false, false, null);
     const result = this.Dimensions & NvConstant.DimensionFlags.Exterior
       ? T3Gv.opt.InflateLine(polyPoints, this.StyleRecord.Line.BThick, this.polylist.closed, true)
       : T3Gv.opt.InflateLine(polyPoints, this.StyleRecord.Line.BThick, this.polylist.closed, false);
@@ -1127,7 +1126,7 @@ class PolyLineContainer extends PolyLine {
       dimensionPoints.push(new Point(this.StartPoint.x - this.Frame.x, this.StartPoint.y - this.Frame.y));
       dimensionPoints.push(new Point(this.EndPoint.x - this.Frame.x, this.EndPoint.y - this.Frame.y));
     } else if (!this.polylist.closed && this.Dimensions & NvConstant.DimensionFlags.Total) {
-      polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true, true, false, null);
+      polyPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, true, true, false, null);
       for (let i = 1; i < polyPoints.length; i++) {
         deltaX = Math.abs(polyPoints[i - 1].x - polyPoints[i].x);
         deltaY = Math.abs(polyPoints[i - 1].y - polyPoints[i].y);
@@ -1142,7 +1141,7 @@ class PolyLineContainer extends PolyLine {
       const angle = T3Gv.opt.SD_GetCounterClockwiseAngleBetween2Points(new Point(0, 0), new Point(this.Frame.width, this.Frame.height));
       Utils3.RotatePointsAboutPoint(center, angle, dimensionPoints);
     } else {
-      polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true, true, false, null);
+      polyPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, true, true, false, null);
       dimensionPoints = this.polylist.closed
         ? T3Gv.opt.InflateLine(polyPoints, this.StyleRecord.Line.BThick, this.polylist.closed, this.Dimensions & NvConstant.DimensionFlags.Exterior)
         : Utils1.DeepCopy(polyPoints);
@@ -1157,7 +1156,7 @@ class PolyLineContainer extends PolyLine {
 
     let closestX = 32768, closestY = 32768, snapX = 32768, snapY = 32768, hitSegment = -1;
     const zList = T3Gv.opt.ZList();
-    const polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true, true, false, null);
+    const polyPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, true, true, false, null);
 
     for (let i = 0; i < polyPoints.length; i++) {
       polyPoints[i].x += offsetX;
@@ -1202,7 +1201,7 @@ class PolyLineContainer extends PolyLine {
             }
 
             const segmentIndex = hitResult.segment + 1;
-            const objPolyPoints = obj.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, true, false, null);
+            const objPolyPoints = obj.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, true, false, null);
             const angle1 = Utils1.CalcAngleFromPoints(polyPoints[j - 1], polyPoints[j]);
             const angle2 = Utils1.CalcAngleFromPoints(objPolyPoints[segmentIndex - 1], objPolyPoints[segmentIndex]);
             const angleDiff = 90 - angle1 + angle2;
@@ -1302,8 +1301,8 @@ class PolyLineContainer extends PolyLine {
     }
 
     if (this.rflags) {
-      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Width, false);
-      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Height, false);
+      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.Width, false);
+      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.Height, false);
     }
 
     const result = super.SetSize(width, height, aspectRatio);
@@ -1419,7 +1418,7 @@ class PolyLineContainer extends PolyLine {
   MaintainDimensionThroughPolygonOpennessChange(isClosed: boolean) {
     T3Util.Log("= S.PolyLineContainer: Input isClosed:", isClosed);
 
-    let polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, true, false);
+    let polyPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, true, false);
     let isExterior = false;
 
     if (isClosed) {
@@ -1466,7 +1465,7 @@ class PolyLineContainer extends PolyLine {
         polyLine = instance;
       }
 
-      points = polyLine.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, true, false, segmentIndices);
+      points = polyLine.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, true, false, segmentIndices);
       if (segmentIndices.length > 0) {
         originalPoints.push(new Point(points[0].x, points[0].y));
         for (temp = 0; temp < segmentIndices.length; temp++) {
@@ -1534,7 +1533,7 @@ class PolyLineContainer extends PolyLine {
         polyLine = instance;
       }
 
-      points = polyLine.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, true, false, segmentIndices);
+      points = polyLine.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, true, false, segmentIndices);
       if (segmentIndices.length > 0) {
         originalPoints.push(new Point(points[0].x, points[0].y));
         for (temp = 0; temp < segmentIndices.length; temp++) {

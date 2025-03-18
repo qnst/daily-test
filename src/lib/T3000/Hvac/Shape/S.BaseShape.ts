@@ -1,7 +1,7 @@
 
 
 import T3Timer from '../Util/T3Timer'
-import BaseDrawingObject from './S.BaseDrawingObject'
+import BaseDrawObject from './S.BaseDrawObject'
 import T3Gv from '../Data/T3Gv'
 import Utils1 from '../Util/Utils1';
 import Utils2 from "../Util/Utils2";
@@ -19,7 +19,7 @@ import Rectangle from '../Model/Rectangle'
 import DynamicGuides from '../Model/DynamicGuides'
 import T3Constant from '../Data/Constant/T3Constant';
 import PolygonConstant from '../Opt/Polygon/PolygonConstant';
-import ShapeConstant from '../Opt/DS/DSConstant';
+import DSConstant from '../Opt/DS/DSConstant';
 import OptConstant from '../Data/Constant/OptConstant';
 import BConstant from '../Basic/B.Constant';
 import KeyboardConstant from '../Opt/Keyboard/KeyboardConstant';
@@ -28,7 +28,7 @@ import TextConstant from '../Data/Constant/TextConstant';
 import StyleConstant from '../Data/Constant/StyleConstant';
 import T3Util from '../Util/T3Util';
 
-class BaseShape extends BaseDrawingObject {
+class BaseShape extends BaseDrawObject {
 
   public ShapeType: any;
   public shapeparam: any;
@@ -53,18 +53,18 @@ class BaseShape extends BaseDrawingObject {
     shapeOptions = shapeOptions || {};
 
     // Set the base class type to SHAPE
-    shapeOptions.DrawingObjectBaseClass = OptConstant.DrawingObjectBaseClass.SHAPE;
+    shapeOptions.DrawingObjectBaseClass = OptConstant.DrawObjectBaseClass.Shape;
 
     // Configure hook flags if not explicitly set to zero
     if (shapeOptions.hookflags !== 0) {
-      shapeOptions.hookflags = NvConstant.HookFlags.SED_LC_Shape |
-        NvConstant.HookFlags.SED_LC_AttachToLine;
+      shapeOptions.hookflags = NvConstant.HookFlags.LcShape |
+        NvConstant.HookFlags.LcAttachToLine;
     }
 
     // Configure target flags if not explicitly set to zero
     if (shapeOptions.targflags !== 0) {
-      shapeOptions.targflags = NvConstant.HookFlags.SED_LC_Shape |
-        NvConstant.HookFlags.SED_LC_Line;
+      shapeOptions.targflags = NvConstant.HookFlags.LcShape |
+        NvConstant.HookFlags.LcLine;
     }
 
     // Call parent constructor with configured options
@@ -113,14 +113,14 @@ class BaseShape extends BaseDrawingObject {
     ];
 
     // Create a container group for all triggers
-    const triggerGroup = svgDocument.CreateShape(OptConstant.CSType.GROUP);
+    const triggerGroup = svgDocument.CreateShape(OptConstant.CSType.Group);
 
     // Configure knob dimensions based on document scale
-    const knobSize = OptConstant.Defines.SED_KnobSize;
-    const rotationKnobSize = OptConstant.Defines.SED_RKnobSize;
-    let enableSideKnobs = ((this.extraflags & OptConstant.ExtraFlags.SEDE_SideKnobs &&
+    const knobSize = OptConstant.Common.KnobSize;
+    const rotationKnobSize = OptConstant.Common.RKnobSize;
+    let enableSideKnobs = ((this.extraflags & OptConstant.ExtraFlags.SideKnobs &&
       this.dataclass === PolygonConstant.ShapeTypes.POLYGON) > 0);
-    const minimumSidePointLength = OptConstant.Defines.MinSidePointLength;
+    const minimumSidePointLength = OptConstant.Common.MinSidePointLength;
 
     // Adjust knob size based on current document scale
     let scaleFactor = svgDocument.docInfo.docToScreenScale;
@@ -161,12 +161,12 @@ class BaseShape extends BaseDrawingObject {
 
     // Adjust which knobs to show based on growth behavior
     switch (this.ObjGrow) {
-      case OptConstant.GrowBehavior.HCONSTRAIN: // Horizontal constraint
+      case OptConstant.GrowBehavior.Horiz: // Horizontal constraint
         showCornerKnobs = false;
         showHorizontalKnobs = false;
         break;
 
-      case OptConstant.GrowBehavior.VCONSTRAIN: // Vertical constraint
+      case OptConstant.GrowBehavior.Vertical: // Vertical constraint
         showCornerKnobs = false;
         showVerticalKnobs = false;
         break;
@@ -181,7 +181,7 @@ class BaseShape extends BaseDrawingObject {
     // Configure standard knob appearance
     const knobConfig = {
       svgDoc: svgDocument,
-      shapeType: OptConstant.CSType.RECT,
+      shapeType: OptConstant.CSType.Rect,
       x: 0,
       y: 0,
       knobSize: scaledKnobSize,
@@ -201,7 +201,7 @@ class BaseShape extends BaseDrawingObject {
     }
 
     // Apply special styling for locked or no-grow shapes
-    if (this.flags & NvConstant.ObjFlags.SEDO_Lock) {
+    if (this.flags & NvConstant.ObjFlags.Lock) {
       knobConfig.fillColor = 'gray';
       knobConfig.locked = true;
       enableSideKnobs = false;
@@ -221,7 +221,7 @@ class BaseShape extends BaseDrawingObject {
     // Create corner knobs if allowed
     if (showCornerKnobs) {
       // Top Left knob
-      knobConfig.knobID = OptConstant.ActionTriggerType.TOPLEFT;
+      knobConfig.knobID = OptConstant.ActionTriggerType.TopLeft;
       knobConfig.cursorType = rotatedCursorTypes[0];
       knobElement = this.GenericKnob(knobConfig);
       triggerGroup.AddElement(knobElement);
@@ -230,7 +230,7 @@ class BaseShape extends BaseDrawingObject {
       knobConfig.x = frameWithKnobsWidth - scaledKnobSize;
       knobConfig.y = 0;
       knobConfig.cursorType = rotatedCursorTypes[2];
-      knobConfig.knobID = OptConstant.ActionTriggerType.TOPRIGHT;
+      knobConfig.knobID = OptConstant.ActionTriggerType.TopRight;
       knobElement = this.GenericKnob(knobConfig);
       triggerGroup.AddElement(knobElement);
 
@@ -238,7 +238,7 @@ class BaseShape extends BaseDrawingObject {
       knobConfig.x = frameWithKnobsWidth - scaledKnobSize;
       knobConfig.y = frameWithKnobsHeight - scaledKnobSize;
       knobConfig.cursorType = rotatedCursorTypes[4];
-      knobConfig.knobID = OptConstant.ActionTriggerType.BOTTOMRIGHT;
+      knobConfig.knobID = OptConstant.ActionTriggerType.BottomRight;
       knobElement = this.GenericKnob(knobConfig);
       triggerGroup.AddElement(knobElement);
 
@@ -246,7 +246,7 @@ class BaseShape extends BaseDrawingObject {
       knobConfig.x = 0;
       knobConfig.y = frameWithKnobsHeight - scaledKnobSize;
       knobConfig.cursorType = rotatedCursorTypes[6];
-      knobConfig.knobID = OptConstant.ActionTriggerType.BOTTOMLEFT;
+      knobConfig.knobID = OptConstant.ActionTriggerType.BottomLeft;
       knobElement = this.GenericKnob(knobConfig);
       triggerGroup.AddElement(knobElement);
     }
@@ -257,7 +257,7 @@ class BaseShape extends BaseDrawingObject {
       knobConfig.x = frameWithKnobsWidth / 2 - scaledKnobSize / 2;
       knobConfig.y = 0;
       knobConfig.cursorType = rotatedCursorTypes[1];
-      knobConfig.knobID = OptConstant.ActionTriggerType.TOPCENTER;
+      knobConfig.knobID = OptConstant.ActionTriggerType.TopCenter;
       knobElement = this.GenericKnob(knobConfig);
       triggerGroup.AddElement(knobElement);
 
@@ -265,7 +265,7 @@ class BaseShape extends BaseDrawingObject {
       knobConfig.x = frameWithKnobsWidth / 2 - scaledKnobSize / 2;
       knobConfig.y = frameWithKnobsHeight - scaledKnobSize;
       knobConfig.cursorType = rotatedCursorTypes[5];
-      knobConfig.knobID = OptConstant.ActionTriggerType.BOTTOMCENTER;
+      knobConfig.knobID = OptConstant.ActionTriggerType.BottomCenter;
       knobElement = this.GenericKnob(knobConfig);
       triggerGroup.AddElement(knobElement);
     }
@@ -276,7 +276,7 @@ class BaseShape extends BaseDrawingObject {
       knobConfig.x = 0;
       knobConfig.y = frameWithKnobsHeight / 2 - scaledKnobSize / 2;
       knobConfig.cursorType = rotatedCursorTypes[7];
-      knobConfig.knobID = OptConstant.ActionTriggerType.CENTERLEFT;
+      knobConfig.knobID = OptConstant.ActionTriggerType.CenterLeft;
       knobElement = this.GenericKnob(knobConfig);
       triggerGroup.AddElement(knobElement);
 
@@ -284,7 +284,7 @@ class BaseShape extends BaseDrawingObject {
       knobConfig.x = frameWithKnobsWidth - scaledKnobSize;
       knobConfig.y = frameWithKnobsHeight / 2 - scaledKnobSize / 2;
       knobConfig.cursorType = rotatedCursorTypes[3];
-      knobConfig.knobID = OptConstant.ActionTriggerType.CENTERRIGHT;
+      knobConfig.knobID = OptConstant.ActionTriggerType.CenterRight;
       knobElement = this.GenericKnob(knobConfig);
       triggerGroup.AddElement(knobElement);
     }
@@ -294,7 +294,7 @@ class BaseShape extends BaseDrawingObject {
       let info = null;
       if (targetShape.hooks.length) {
         const hookedObject = T3Gv.opt.GetObjectPtr(targetShape.hooks[0].objid, false);
-        if (hookedObject && (hookedObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.CONNECTOR ||
+        if (hookedObject && (hookedObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector ||
           (hookedObject && hookedObject instanceof Instance.Shape.ShapeContainer))) {
           info = hookedObject.Pr_GetShapeConnectorInfo(targetShape.hooks[0]);
         }
@@ -331,8 +331,8 @@ class BaseShape extends BaseDrawingObject {
 
         // Choose icon based on connector orientation
         iconConfig.imageURL = (connectorInfo[i].polyType === 'vertical')
-          ? OptConstant.Defines.Connector_Move_Vertical_Path
-          : OptConstant.Defines.Connector_Move_Horizontal_Path;
+          ? OptConstant.Common.ConMoveVerticalPath
+          : OptConstant.Common.ConMoveHorizontalPath;
 
         iconConfig.userData = connectorInfo[i].knobData;
 
@@ -349,11 +349,11 @@ class BaseShape extends BaseDrawingObject {
 
       // Get polygon points from the shape
       const polyPoints = T3Gv.opt.ShapeToPolyLine(this.BlockID, false, true, polygonShape)
-        .GetPolyPoints(OptConstant.Defines.NPOLYPTS, true, true, false, []);
+        .GetPolyPoints(OptConstant.Common.MaxPolyPoints, true, true, false, []);
 
       if (polyPoints) {
-        knobConfig.shapeType = OptConstant.CSType.OVAL;
-        knobConfig.knobID = OptConstant.ActionTriggerType.MOVEPOLYSEG;
+        knobConfig.shapeType = OptConstant.CSType.Oval;
+        knobConfig.knobID = OptConstant.ActionTriggerType.MovePolySeg;
         knobConfig.fillColor = 'green';
         knobConfig.strokeColor = 'green';
 
@@ -388,7 +388,7 @@ class BaseShape extends BaseDrawingObject {
     if (hasConnectorHooks) {
       const hookObject = T3Gv.opt.GetObjectPtr(this.hooks[0].objid, false);
       // Only count hooks that are connectors
-      if (hookObject && hookObject.DrawingObjectBaseClass !== OptConstant.DrawingObjectBaseClass.CONNECTOR) {
+      if (hookObject && hookObject.DrawingObjectBaseClass !== OptConstant.DrawObjectBaseClass.Connector) {
         hasConnectorHooks = false;
       }
     }
@@ -400,10 +400,10 @@ class BaseShape extends BaseDrawingObject {
     if (canRotate) {
       // Special positioning for left-aligned text
       const isTextAlignedLeft = (this.TextGrow === NvConstant.TextGrowBehavior.Horizontal &&
-        (this.flags & NvConstant.ObjFlags.SEDO_TextOnly) &&
-        ShapeUtil.TextAlignToWin(this.TextAlign).just === TextConstant.TextJust.TA_LEFT);
+        (this.flags & NvConstant.ObjFlags.TextOnly) &&
+        ShapeUtil.TextAlignToWin(this.TextAlign).just === TextConstant.TextJust.Left);
 
-      knobConfig.shapeType = OptConstant.CSType.OVAL;
+      knobConfig.shapeType = OptConstant.CSType.Oval;
 
       // Position rotation knob according to text alignment
       knobConfig.x = isTextAlignedLeft
@@ -412,7 +412,7 @@ class BaseShape extends BaseDrawingObject {
 
       knobConfig.y = frameWithKnobsHeight / 2 - scaledRotationKnobSize / 2;
       knobConfig.cursorType = CursorConstant.CursorType.ROTATE;
-      knobConfig.knobID = OptConstant.ActionTriggerType.ROTATE;
+      knobConfig.knobID = OptConstant.ActionTriggerType.Rotate;
       knobConfig.fillColor = 'white';
       knobConfig.fillOpacity = 0.001;
       knobConfig.strokeSize = 1.5;
@@ -425,7 +425,7 @@ class BaseShape extends BaseDrawingObject {
     // Add dimension adjustment controls if shape uses standoff dimension lines
     if ((this.Dimensions & NvConstant.DimensionFlags.Standoff) &&
       this.CanUseStandOffDimensionLines()) {
-      const shapeElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
+      const shapeElement = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
       this.CreateDimensionAdjustmentKnobs(triggerGroup, shapeElement, knobConfig);
     }
 
@@ -433,7 +433,7 @@ class BaseShape extends BaseDrawingObject {
     triggerGroup.SetSize(frameWithKnobsWidth, frameWithKnobsHeight);
     triggerGroup.SetPos(expandedFrame.x, expandedFrame.y);
     triggerGroup.isShape = true;
-    triggerGroup.SetID(OptConstant.Defines.Action + triggerIdentifier);
+    triggerGroup.SetID(OptConstant.Common.Action + triggerIdentifier);
 
     T3Util.Log("= S.BaseShape - CreateActionTriggers output:", triggerGroup);
     return triggerGroup;
@@ -457,26 +457,26 @@ class BaseShape extends BaseDrawingObject {
     });
 
     // Create the main group shape for the connection highlights
-    const groupShape = svgDoc.CreateShape(OptConstant.CSType.GROUP);
+    const groupShape = svgDoc.CreateShape(OptConstant.CSType.Group);
     let screenScale = svgDoc.docInfo.docToScreenScale;
     if (svgDoc.docInfo.docScale <= 0.5) {
       screenScale *= 2;
     }
 
     // Calculate knob dimension based on scale
-    const connectDim = OptConstant.Defines.CONNECTPT_DIM / screenScale;
+    const connectDim = OptConstant.Common.ConnPointDim / screenScale;
     let targetPoints: any[] = [];
     // Using ConnectPoints if flag is set (though not used further)
-    if (this.flags & NvConstant.ObjFlags.SEDO_UseConnect && this.ConnectPoints) {
+    if (this.flags & NvConstant.ObjFlags.UseConnect && this.ConnectPoints) {
       // Code intentionally left empty if only referenced for side-effect
     }
 
     // Determine if continuous connector flag is set or a connection hint exists
-    const useContinuous = (this.flags & NvConstant.ObjFlags.SEDO_ContConn) || connectionHint != null;
+    const useContinuous = (this.flags & NvConstant.ObjFlags.ContConn) || connectionHint != null;
     if (useContinuous) {
       targetPoints.push(targetParam);
     } else {
-      targetPoints = this.GetTargetPoints(null, NvConstant.HookFlags.SED_LC_NoSnaps, null);
+      targetPoints = this.GetTargetPoints(null, NvConstant.HookFlags.LcNoSnaps, null);
       if (targetPoints == null) return;
     }
 
@@ -505,7 +505,7 @@ class BaseShape extends BaseDrawingObject {
     // Prepare knob configuration parameters
     const knobConfig = {
       svgDoc: svgDoc,
-      shapeType: OptConstant.CSType.OVAL,
+      shapeType: OptConstant.CSType.Oval,
       x: 0,
       y: 0,
       knobSize: connectDim,
@@ -543,7 +543,7 @@ class BaseShape extends BaseDrawingObject {
     }
 
     groupShape.isShape = true;
-    groupShape.SetEventBehavior(OptConstant.EventBehavior.NONE);
+    groupShape.SetEventBehavior(OptConstant.EventBehavior.None);
     groupShape.SetID("hilite_" + triggerId);
 
     T3Util.Log("= S.BaseShape - CreateConnectHilites output:", groupShape);
@@ -561,29 +561,29 @@ class BaseShape extends BaseDrawingObject {
     T3Util.Log("= S.BaseShape - SetCursors input, BlockID:", this.BlockID);
 
     // Retrieve the main SVG element for this shape
-    const svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
-    const isOneClickText = ((this.TextFlags & NvConstant.TextFlags.SED_TF_OneClick) > 0);
+    const svgElement = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
+    const isOneClickText = ((this.TextFlags & NvConstant.TextFlags.OneClick) > 0);
     const currentEditMode = T3Gv.opt.GetEditMode();
 
     switch (currentEditMode) {
-      case NvConstant.EditState.DEFAULT: {
+      case NvConstant.EditState.Default: {
         // Standard case - no table present
         // Call parent implementation to set default cursors
         super.SetCursors();
         break;
       }
 
-      case NvConstant.EditState.FORMATPAINT: {
+      case NvConstant.EditState.FormatPaint: {
         T3Util.Log("= S.BaseShape - SetCursors: FORMATPAINT mode");
 
         // For format painting mode, set the paint brush cursor
-        const shapeElement = svgElement.GetElementByID(OptConstant.SVGElementClass.SHAPE);
+        const shapeElement = svgElement.GetElementById(OptConstant.SVGElementClass.Shape);
         if (shapeElement) {
           shapeElement.SetCursor(CursorConstant.CursorType.PAINT);
         }
 
         // Also set paint cursor on the slop element (interactive area around the shape)
-        const slopElement = svgElement.GetElementByID(OptConstant.SVGElementClass.SLOP);
+        const slopElement = svgElement.GetElementById(OptConstant.SVGElementClass.Slop);
         if (slopElement) {
           slopElement.SetCursor(CursorConstant.CursorType.PAINT);
         }
@@ -619,9 +619,9 @@ class BaseShape extends BaseDrawingObject {
     if (graph) {
       // When a graph is present, use its selected text ID
       this.DataID = graph.selectedText;
-      const svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
+      const svgElement = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
       if (svgElement) {
-        svgElement.textElem = svgElement.GetElementByID(OptConstant.SVGElementClass.TEXT, this.DataID);
+        svgElement.textElem = svgElement.GetElementById(OptConstant.SVGElementClass.Text, this.DataID);
       }
     } else if (this.DataID >= 0 && T3Gv.opt.GetObjectPtr(this.DataID, false) == null) {
       // Reset DataID if it's invalid (doesn't exist in memory)
@@ -651,8 +651,8 @@ class BaseShape extends BaseDrawingObject {
     });
 
     const hasAttachFlag =
-      (this.TextFlags & NvConstant.TextFlags.SED_TF_AttachA) ||
-      (this.TextFlags & NvConstant.TextFlags.SED_TF_AttachB);
+      (this.TextFlags & NvConstant.TextFlags.AttachA) ||
+      (this.TextFlags & NvConstant.TextFlags.AttachB);
 
     const isTransparent =
       this.StyleRecord.Fill.Paint.FillType === NvConstant.FillTypes.Transparent;
@@ -681,7 +681,7 @@ class BaseShape extends BaseDrawingObject {
     T3Util.Log("= S.BaseShape - SetTextObject input:", newDataId);
 
     if (this.UseTextBlockColor()) {
-      const style = Utils3.FindStyle(OptConstant.Defines.TextBlockStyle);
+      const style = Utils3.FindStyle(OptConstant.Common.TextBlockStyle);
       if (style) {
         this.StyleRecord.Text.Paint = Utils1.DeepCopy(style.Text.Paint);
       }
@@ -771,7 +771,7 @@ class BaseShape extends BaseDrawingObject {
       this.TextGrow = textGrowBehavior;
 
       if (this.DataID >= 0) {
-        const shapeElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
+        const shapeElement = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
         if (shapeElement) {
           const textElement = shapeElement.textElem;
 
@@ -848,7 +848,7 @@ class BaseShape extends BaseDrawingObject {
         case PolygonConstant.ShapeTypes.ROUNDED_RECTANGLE:
           newShapeProps.shapeparam = sessionBlock.def.rrectparam;
           newShape = new Instance.Shape.RRect(newShapeProps);
-          newShape.moreflags = Utils2.SetFlag(newShape.moreflags, OptConstant.ObjMoreFlags.SED_MF_FixedRR, true);
+          newShape.moreflags = Utils2.SetFlag(newShape.moreflags, OptConstant.ObjMoreFlags.FixedRR, true);
           shapeParam = sessionBlock.def.rrectparam;
           break;
         case PolygonConstant.ShapeTypes.OVAL:
@@ -871,24 +871,24 @@ class BaseShape extends BaseDrawingObject {
       if (newShape.ImageURL === "") {
         newShape.extraflags = Utils2.SetFlag(
           newShape.extraflags,
-          OptConstant.ExtraFlags.SEDE_FlipHoriz | OptConstant.ExtraFlags.SEDE_FlipVert,
+          OptConstant.ExtraFlags.FlipHoriz | OptConstant.ExtraFlags.FlipVert,
           false
         );
       }
-      newShape.ObjGrow = preserveAspect ? OptConstant.GrowBehavior.ProPortional : OptConstant.GrowBehavior.ALL;
+      newShape.ObjGrow = preserveAspect ? OptConstant.GrowBehavior.ProPortional : OptConstant.GrowBehavior.All;
       newShape.BlockID = preservedBlock.Data.BlockID;
       newShape.left_sindent = 0;
       newShape.top_sindent = 0;
       newShape.right_sindent = 0;
       newShape.bottom_sindent = 0;
       preservedBlock.Data = newShape;
-      newShape.moreflags = Utils2.SetFlag(newShape.moreflags, OptConstant.ObjMoreFlags.SED_MF_FixedRR, false);
+      newShape.moreflags = Utils2.SetFlag(newShape.moreflags, OptConstant.ObjMoreFlags.FixedRR, false);
 
       // Handle table adjustments if a table exists for the new shape
       // tableResult = newShape.GetTable(true);
       // if (tableResult) {
-      //   if (this.hookflags & NvConstant.HookFlags.SED_LC_TableRows) {
-      //     newShape.hookflags = Utils2.SetFlag(newShape.hookflags, NvConstant.HookFlags.SED_LC_TableRows, true);
+      //   if (this.hookflags & NvConstant.HookFlags.LcTableRows) {
+      //     newShape.hookflags = Utils2.SetFlag(newShape.hookflags, NvConstant.HookFlags.LcTableRows, true);
       //   }
       //   newShape.UpdateFrame(newShape.Frame);
       //   rectCopy = Utils1.DeepCopy(newShape.trect);
@@ -938,7 +938,7 @@ class BaseShape extends BaseDrawingObject {
         newShape.UpdateFrame(newShape.Frame);
         newShape.sizedim.width = newShape.Frame.width;
         newShape.sizedim.height = newShape.Frame.height;
-        const svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
+        const svgElement = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
         let textElement;
         if (svgElement) {
           textElement = svgElement.textElem;
@@ -979,13 +979,13 @@ class BaseShape extends BaseDrawingObject {
       // Calling parent's SetShapeProperties
       super.SetShapeProperties(properties) &&
       (changed = true,
-        ((this.TextFlags & (textFlagConstants.SED_TF_AttachA + textFlagConstants.SED_TF_AttachB)) !== (currentTextFlags & (textFlagConstants.SED_TF_AttachA + textFlagConstants.SED_TF_AttachB)) &&
+        ((this.TextFlags & (textFlagConstants.AttachA + textFlagConstants.AttachB)) !== (currentTextFlags & (textFlagConstants.AttachA + textFlagConstants.AttachB)) &&
           this.DataID >= 0))
     ) {
       flagUpdated = true;
       let style;
-      if (this.TextFlags & (textFlagConstants.SED_TF_AttachA + textFlagConstants.SED_TF_AttachB)) {
-        style = Utils3.FindStyle(OptConstant.Defines.TextBlockStyle);
+      if (this.TextFlags & (textFlagConstants.AttachA + textFlagConstants.AttachB)) {
+        style = Utils3.FindStyle(OptConstant.Common.TextBlockStyle);
       } else {
         style = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false).def.style;
       }
@@ -1039,12 +1039,12 @@ class BaseShape extends BaseDrawingObject {
     // Update side connection flag for polygon shapes
     if (
       properties.SideConn != null &&
-      this.ShapeType === OptConstant.ShapeType.POLYGON &&
-      properties.AdjSides !== ((this.extraflags & OptConstant.ExtraFlags.SEDE_SideKnobs) > 0)
+      this.ShapeType === OptConstant.ShapeType.Polygon &&
+      properties.AdjSides !== ((this.extraflags & OptConstant.ExtraFlags.SideKnobs) > 0)
     ) {
       this.extraflags = Utils2.SetFlag(
         this.extraflags,
-        OptConstant.ExtraFlags.SEDE_SideKnobs,
+        OptConstant.ExtraFlags.SideKnobs,
         properties.SideConn
       );
       T3Gv.opt.AddToDirtyList(this.BlockID);
@@ -1094,7 +1094,7 @@ class BaseShape extends BaseDrawingObject {
     let backupLine: any = null;
 
     // Only adjust style if not a swimlane or shape container
-    if (/*!this.IsSwimlane() && */this.objecttype !== NvConstant.ObjectTypes.SD_OBJT_SHAPECONTAINER) {
+    if (/*!this.IsSwimlane() && */this.objecttype !== NvConstant.FNObjectTypes.ShapeContainer) {
       if (style && style.Line && style.Border) {
         backupLine = Utils1.DeepCopy(style.Line);
         style.Line = Utils1.DeepCopy(style.Border);
@@ -1130,7 +1130,7 @@ class BaseShape extends BaseDrawingObject {
       this.SetSize(
         this.Frame.width,
         this.Frame.height,
-        OptConstant.ActionTriggerType.LINE_THICKNESS
+        OptConstant.ActionTriggerType.LineThickness
       );
     }
 
@@ -1144,10 +1144,10 @@ class BaseShape extends BaseDrawingObject {
       T3Gv.opt.ClearImage(this.BlockID, false, true);
 
       if (
-        (this.flags & NvConstant.ObjFlags.SEDO_TextOnly) &&
+        (this.flags & NvConstant.ObjFlags.TextOnly) &&
         this.StyleRecord.Fill.Paint.FillType !== NvConstant.FillTypes.Transparent
       ) {
-        this.flags = Utils2.SetFlag(this.flags, NvConstant.ObjFlags.SEDO_TextOnly, false);
+        this.flags = Utils2.SetFlag(this.flags, NvConstant.ObjFlags.TextOnly, false);
       }
     }
 
@@ -1168,28 +1168,28 @@ class BaseShape extends BaseDrawingObject {
     }
 
     switch (connectionType) {
-      case NvConstant.ObjFlags.SEDO_ContConn:
+      case NvConstant.ObjFlags.ContConn:
         if ((this.flags & connectionType) === 0) {
-          this.flags = Utils2.SetFlag(this.flags, NvConstant.ObjFlags.SEDO_UseConnect, false);
-          this.flags = Utils2.SetFlag(this.flags, NvConstant.ObjFlags.SEDO_ContConn, true);
+          this.flags = Utils2.SetFlag(this.flags, NvConstant.ObjFlags.UseConnect, false);
+          this.flags = Utils2.SetFlag(this.flags, NvConstant.ObjFlags.ContConn, true);
           changed = true;
         }
         break;
 
-      case NvConstant.ObjFlags.SEDO_UseConnect:
-        this.flags = Utils2.SetFlag(this.flags, NvConstant.ObjFlags.SEDO_ContConn, false);
-        this.flags = Utils2.SetFlag(this.flags, NvConstant.ObjFlags.SEDO_UseConnect, true);
+      case NvConstant.ObjFlags.UseConnect:
+        this.flags = Utils2.SetFlag(this.flags, NvConstant.ObjFlags.ContConn, false);
+        this.flags = Utils2.SetFlag(this.flags, NvConstant.ObjFlags.UseConnect, true);
         this.ConnectPoints = Utils1.DeepCopy(connectionPoints);
         changed = true;
         break;
 
       default:
         if (
-          (this.flags & NvConstant.ObjFlags.SEDO_ContConn) ||
-          (this.flags & NvConstant.ObjFlags.SEDO_UseConnect)
+          (this.flags & NvConstant.ObjFlags.ContConn) ||
+          (this.flags & NvConstant.ObjFlags.UseConnect)
         ) {
-          this.flags = Utils2.SetFlag(this.flags, NvConstant.ObjFlags.SEDO_UseConnect, false);
-          this.flags = Utils2.SetFlag(this.flags, NvConstant.ObjFlags.SEDO_ContConn, false);
+          this.flags = Utils2.SetFlag(this.flags, NvConstant.ObjFlags.UseConnect, false);
+          this.flags = Utils2.SetFlag(this.flags, NvConstant.ObjFlags.ContConn, false);
           changed = true;
         }
     }
@@ -1202,10 +1202,10 @@ class BaseShape extends BaseDrawingObject {
     T3Util.Log("= S.BaseShape - GetClosestConnectPoint input:", point);
 
     // const table = this.GetTable(false);
-    const useTableRows = (this.hookflags & NvConstant.HookFlags.SED_LC_TableRows) && table;
-    const useConnect = (this.flags & NvConstant.ObjFlags.SEDO_UseConnect) && this.ConnectPoints;
+    // const useTableRows = (this.hookflags & NvConstant.HookFlags.LcTableRows) && table;
+    const useConnect = (this.flags & NvConstant.ObjFlags.UseConnect) && this.ConnectPoints;
     let connectPoints: Array<{ x: number; y: number }> = [];
-    const connectDimension = OptConstant.Defines.SED_CDim;
+    const connectDimension = OptConstant.Common.MaxDim;
 
     if (useConnect) {
       // Create a rect with the connection dimension
@@ -1216,23 +1216,24 @@ class BaseShape extends BaseDrawingObject {
         const rotationRadians = -this.RotationAngle / (180 / NvConstant.Geometry.PI);
         Utils3.RotatePointsAboutCenter(rect, rotationRadians, connectPoints);
       }
-    } else if (useTableRows) {
-      // connectPoints = T3Gv.opt.Table_GetRowConnectPoints(this, table);
-      if (point.x < 10) {
-        point.x = connectPoints[2].x;
-        point.y = connectPoints[2].y;
-        T3Util.Log("= S.BaseShape - GetClosestConnectPoint output:", point);
-        return true;
-      }
-      if (point.x > connectDimension - 10) {
-        point.x = connectPoints[2 + table.rows.length].x;
-        point.y = connectPoints[2 + table.rows.length].y;
-        T3Util.Log("= S.BaseShape - GetClosestConnectPoint output:", point);
-        return true;
-      }
     }
+    // else if (useTableRows) {
+    //   // connectPoints = T3Gv.opt.Table_GetRowConnectPoints(this, table);
+    //   if (point.x < 10) {
+    //     point.x = connectPoints[2].x;
+    //     point.y = connectPoints[2].y;
+    //     T3Util.Log("= S.BaseShape - GetClosestConnectPoint output:", point);
+    //     return true;
+    //   }
+    //   if (point.x > connectDimension - 10) {
+    //     point.x = connectPoints[2 + table.rows.length].x;
+    //     point.y = connectPoints[2 + table.rows.length].y;
+    //     T3Util.Log("= S.BaseShape - GetClosestConnectPoint output:", point);
+    //     return true;
+    //   }
+    // }
 
-    if (useConnect || useTableRows) {
+    if (useConnect /*|| useTableRows*/) {
       let bestDistanceSquared: number | undefined;
       let bestConnectPoint: { x: number; y: number };
 
@@ -1292,18 +1293,18 @@ class BaseShape extends BaseDrawingObject {
         seg = new PolySeg(lineTypes.LINE, this.inside.width - 2 * cornerSize, 0);
         polyList.segs.push(seg);
         seg = new PolySeg(lineTypes.ARCSEGLINE, this.inside.width - cornerSize, cornerSize);
-        seg.ShortRef = NvConstant.ArcQuad.SD_PLA_TL;
+        seg.ShortRef = OptConstant.ArcQuad.PLA_TL;
         seg.param = Math.PI / 2;
         polyList.segs.push(seg);
         seg = new PolySeg(lineTypes.LINE, this.inside.width - cornerSize, this.inside.height - cornerSize);
         polyList.segs.push(seg);
         seg = new PolySeg(lineTypes.ARCSEGLINE, this.inside.width - 2 * cornerSize, this.inside.height);
         polyList.segs.push(seg);
-        seg.ShortRef = NvConstant.ArcQuad.SD_PLA_BR;
+        seg.ShortRef = OptConstant.ArcQuad.SD_PLA_BR;
         seg = new PolySeg(lineTypes.LINE, 0, this.inside.height);
         polyList.segs.push(seg);
         seg = new PolySeg(lineTypes.ARCSEGLINE, -cornerSize, this.inside.height - cornerSize);
-        seg.ShortRef = NvConstant.ArcQuad.SD_PLA_BL;
+        seg.ShortRef = OptConstant.ArcQuad.PLA_BL;
         seg.param = Math.PI / 2;
         polyList.segs.push(seg);
         seg = new PolySeg(lineTypes.LINE, -cornerSize, cornerSize);
@@ -1320,18 +1321,18 @@ class BaseShape extends BaseDrawingObject {
         polyList.segs.push(seg);
         seg = new PolySeg(lineTypes.ARCSEGLINE, this.inside.width / 2, this.inside.height / 2);
         polyList.segs.push(seg);
-        seg.ShortRef = NvConstant.ArcQuad.SD_PLA_BR;
+        seg.ShortRef = OptConstant.ArcQuad.SD_PLA_BR;
         seg.param = -Math.PI / 2;
         seg = new PolySeg(lineTypes.ARCSEGLINE, 0, this.inside.height);
-        seg.ShortRef = NvConstant.ArcQuad.SD_PLA_BL;
+        seg.ShortRef = OptConstant.ArcQuad.PLA_BL;
         polyList.segs.push(seg);
         seg = new PolySeg(lineTypes.ARCSEGLINE, -this.inside.width / 2, this.inside.height / 2);
         polyList.segs.push(seg);
-        seg.ShortRef = NvConstant.ArcQuad.SD_PLA_TL;
+        seg.ShortRef = OptConstant.ArcQuad.PLA_TL;
         seg.param = -Math.PI / 2;
         seg = new PolySeg(lineTypes.ARCSEGLINE, 0, 0);
         polyList.segs.push(seg);
-        seg.ShortRef = NvConstant.ArcQuad.SD_PLA_TL;
+        seg.ShortRef = OptConstant.ArcQuad.PLA_TL;
         polyList.offset.x = this.inside.width / 2;
         polyList.offset.y = 0;
         break;
@@ -1362,42 +1363,42 @@ class BaseShape extends BaseDrawingObject {
           seg = new PolySeg(lineTypes.LINE, this.inside.width - 2 * cornerSize, 0);
           polyList.segs.push(seg);
           seg = new PolySeg(lineTypes.ARCSEGLINE, this.inside.width - cornerSize, cornerSize);
-          seg.ShortRef = NvConstant.ArcQuad.SD_PLA_TL;
+          seg.ShortRef = OptConstant.ArcQuad.PLA_TL;
           seg.param = Math.PI / 2;
           polyList.segs.push(seg);
           seg = new PolySeg(lineTypes.ARCSEGLINE, this.inside.width - 2 * cornerSize, this.inside.height);
           polyList.segs.push(seg);
-          seg.ShortRef = NvConstant.ArcQuad.SD_PLA_BR;
+          seg.ShortRef = OptConstant.ArcQuad.SD_PLA_BR;
           seg = new PolySeg(lineTypes.LINE, 0, this.inside.height);
           polyList.segs.push(seg);
           seg = new PolySeg(lineTypes.ARCSEGLINE, -cornerSize, this.inside.height - cornerSize);
-          seg.ShortRef = NvConstant.ArcQuad.SD_PLA_BL;
+          seg.ShortRef = OptConstant.ArcQuad.PLA_BL;
           seg.param = Math.PI / 2;
           polyList.segs.push(seg);
           seg = new PolySeg(lineTypes.ARCSEGLINE, 0, 0);
-          seg.ShortRef = NvConstant.ArcQuad.SD_PLA_TL;
+          seg.ShortRef = OptConstant.ArcQuad.PLA_TL;
           polyList.segs.push(seg);
         } else {
           cornerSize = this.inside.width / 2;
           seg = new PolySeg(lineTypes.LINE, 0, 0);
           polyList.segs.push(seg);
           seg = new PolySeg(lineTypes.ARCSEGLINE, this.inside.width - cornerSize, cornerSize);
-          seg.ShortRef = NvConstant.ArcQuad.SD_PLA_TL;
+          seg.ShortRef = OptConstant.ArcQuad.PLA_TL;
           seg.param = Math.PI / 2;
           polyList.segs.push(seg);
           seg = new PolySeg(lineTypes.LINE, this.inside.width - cornerSize, this.inside.height - cornerSize);
           polyList.segs.push(seg);
           seg = new PolySeg(lineTypes.ARCSEGLINE, this.inside.width - 2 * cornerSize, this.inside.height);
           polyList.segs.push(seg);
-          seg.ShortRef = NvConstant.ArcQuad.SD_PLA_BR;
+          seg.ShortRef = OptConstant.ArcQuad.SD_PLA_BR;
           seg = new PolySeg(lineTypes.ARCSEGLINE, -cornerSize, this.inside.height - cornerSize);
-          seg.ShortRef = NvConstant.ArcQuad.SD_PLA_BL;
+          seg.ShortRef = OptConstant.ArcQuad.PLA_BL;
           seg.param = Math.PI / 2;
           polyList.segs.push(seg);
           seg = new PolySeg(lineTypes.LINE, -cornerSize, cornerSize);
           polyList.segs.push(seg);
           seg = new PolySeg(lineTypes.ARCSEGLINE, 0, 0);
-          seg.ShortRef = NvConstant.ArcQuad.SD_PLA_TL;
+          seg.ShortRef = OptConstant.ArcQuad.PLA_TL;
           polyList.segs.push(seg);
         }
         polyList.offset.x = cornerSize;
@@ -1411,20 +1412,20 @@ class BaseShape extends BaseDrawingObject {
         seg = new PolySeg(lineTypes.LINE, this.inside.width - cornerSize, 0);
         polyList.segs.push(seg);
         seg = new PolySeg(lineTypes.ARCSEGLINE, this.inside.width - 2 * cornerSize, this.inside.height / 2);
-        seg.ShortRef = NvConstant.ArcQuad.SD_PLA_TL;
+        seg.ShortRef = OptConstant.ArcQuad.PLA_TL;
         seg.param = -Math.PI / 2;
         polyList.segs.push(seg);
         seg = new PolySeg(lineTypes.ARCSEGLINE, this.inside.width - cornerSize, this.inside.height);
         polyList.segs.push(seg);
-        seg.ShortRef = NvConstant.ArcQuad.SD_PLA_BL;
+        seg.ShortRef = OptConstant.ArcQuad.PLA_BL;
         seg = new PolySeg(lineTypes.LINE, 0, this.inside.height);
         polyList.segs.push(seg);
         seg = new PolySeg(lineTypes.ARCSEGLINE, -cornerSize, this.inside.height / 2);
-        seg.ShortRef = NvConstant.ArcQuad.SD_PLA_BL;
+        seg.ShortRef = OptConstant.ArcQuad.PLA_BL;
         seg.param = Math.PI / 2;
         polyList.segs.push(seg);
         seg = new PolySeg(lineTypes.ARCSEGLINE, 0, 0);
-        seg.ShortRef = NvConstant.ArcQuad.SD_PLA_TL;
+        seg.ShortRef = OptConstant.ArcQuad.PLA_TL;
         polyList.segs.push(seg);
         polyList.offset.x = cornerSize;
         polyList.offset.y = 0;
@@ -1437,12 +1438,12 @@ class BaseShape extends BaseDrawingObject {
         seg = new PolySeg(lineTypes.LINE, this.inside.width - cornerSize, 0);
         polyList.segs.push(seg);
         seg = new PolySeg(lineTypes.ARCSEGLINE, this.inside.width, this.inside.height / 2);
-        seg.ShortRef = NvConstant.ArcQuad.SD_PLA_TL;
+        seg.ShortRef = OptConstant.ArcQuad.PLA_TL;
         seg.param = Math.PI / 2;
         polyList.segs.push(seg);
         seg = new PolySeg(lineTypes.ARCSEGLINE, this.inside.width - cornerSize, this.inside.height);
         polyList.segs.push(seg);
-        seg.ShortRef = NvConstant.ArcQuad.SD_PLA_BR;
+        seg.ShortRef = OptConstant.ArcQuad.SD_PLA_BR;
         seg = new PolySeg(lineTypes.LINE, 0, this.inside.height);
         polyList.segs.push(seg);
         seg = new PolySeg(lineTypes.LINE, 0, 0);
@@ -1457,12 +1458,12 @@ class BaseShape extends BaseDrawingObject {
         seg = new PolySeg(lineTypes.LINE, this.inside.width - 2 * cornerSize, 0);
         polyList.segs.push(seg);
         seg = new PolySeg(lineTypes.ARCSEGLINE, this.inside.width - cornerSize, this.inside.height / 2);
-        seg.ShortRef = NvConstant.ArcQuad.SD_PLA_TL;
+        seg.ShortRef = OptConstant.ArcQuad.PLA_TL;
         seg.param = Math.PI / 2;
         polyList.segs.push(seg);
         seg = new PolySeg(lineTypes.ARCSEGLINE, this.inside.width - 2 * cornerSize, this.inside.height);
         polyList.segs.push(seg);
-        seg.ShortRef = NvConstant.ArcQuad.SD_PLA_BR;
+        seg.ShortRef = OptConstant.ArcQuad.SD_PLA_BR;
         seg = new PolySeg(lineTypes.LINE, 0, this.inside.height);
         polyList.segs.push(seg);
         seg = new PolySeg(lineTypes.LINE, -cornerSize, this.inside.height / 2);
@@ -1476,7 +1477,7 @@ class BaseShape extends BaseDrawingObject {
         // Default case: use poly points from GetPolyPoints
         const frameBackup = this.Frame;
         this.Frame = this.inside;
-        const polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true, true, false, null);
+        const polyPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, true, true, false, null);
         this.Frame = frameBackup;
         if (polyPoints.length > 0) {
           polyList.offset.x = polyPoints[0].x;
@@ -1515,7 +1516,7 @@ class BaseShape extends BaseDrawingObject {
       let polyRect: any = {};
       const visibleCount = visibleZList.length;
       let baseRect = this.trect;
-      let basePoly = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, true, false, null);
+      let basePoly = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, true, false, null);
 
       // If this shape is rotated, update the base polygon accordingly.
       if (this.RotationAngle !== 0) {
@@ -1557,7 +1558,7 @@ class BaseShape extends BaseDrawingObject {
         //     if (this.RotationAngle !== 0) {
         //       const originalFrame = $.extend(true, {}, this.Frame);
         //       this.Frame = newRect;
-        //       basePoly = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, true, false, null);
+        //       basePoly = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, true, false, null);
         //       this.Frame = originalFrame;
         //       const rotationRadians = -this.RotationAngle / (180 / NvConstant.Geometry.PI);
         //       Utils3.RotatePointsAboutCenter(this.Frame, rotationRadians, basePoly);
@@ -1589,7 +1590,7 @@ class BaseShape extends BaseDrawingObject {
           let candidateRect: any;
           // If candidate is rotated, compute its polygon points.
           if (candidateObj.RotationAngle !== 0) {
-            candidatePoly = candidateObj.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, true, false, null);
+            candidatePoly = candidateObj.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, true, false, null);
             const candidateRotation = -candidateObj.RotationAngle / (180 / NvConstant.Geometry.PI);
             Utils3.RotatePointsAboutCenter(candidateObj.Frame, candidateRotation, candidatePoly);
             Utils2.GetPolyRect(polyRect, candidatePoly);
@@ -1650,12 +1651,12 @@ class BaseShape extends BaseDrawingObject {
     T3Util.Log("= S.BaseShape PinProportional - Input:", actionRect);
 
     // Define knob size from constants
-    const knobSize = OptConstant.Defines.SED_KnobSize;
+    const knobSize = OptConstant.Common.KnobSize;
     let currentFrameRect: { x: number; y: number; width: number; height: number } = {} as any;
 
     // If the shape is rotated, compute the rotated bounding rectangle
     if (this.RotationAngle !== 0) {
-      const polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, false, true, null);
+      const polyPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, false, true, null);
       const rotationRadians = -this.RotationAngle / (180 / NvConstant.Geometry.PI);
       Utils3.RotatePointsAboutCenter(this.Frame, rotationRadians, polyPoints);
       Utils2.GetPolyRect(currentFrameRect, polyPoints);
@@ -1743,7 +1744,7 @@ class BaseShape extends BaseDrawingObject {
       if (Math.floor(effectiveBox.y) < 0) return true;
 
       // Check if box exceeds document dimensions
-      if (T3Gv.opt.contentHeader.flags & OptConstant.ContentHeaderFlags.CT_DA_NoAuto) {
+      if (T3Gv.opt.contentHeader.flags & OptConstant.CntHeaderFlags.NoAuto) {
         const sessionBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
         if (effectiveBox.x + effectiveBox.width > sessionBlock.dim.x) return true;
         if (effectiveBox.y + effectiveBox.height > sessionBlock.dim.y) return true;
@@ -1754,7 +1755,7 @@ class BaseShape extends BaseDrawingObject {
 
     // Process different actions based on the trigger type
     switch (T3Gv.opt.actionTriggerId) {
-      case OptConstant.ActionTriggerType.TOPLEFT:
+      case OptConstant.ActionTriggerType.TopLeft:
         // Handle top-left corner resize
         widthOffset = updatedBBox.x - mouseX;
         heightOffset = updatedBBox.y - mouseY;
@@ -1800,7 +1801,7 @@ class BaseShape extends BaseDrawingObject {
         this.HandleActionTriggerCallResize(T3Gv.opt.actionNewBBox, true, cursorPosition);
         break;
 
-      case OptConstant.ActionTriggerType.TOPCENTER:
+      case OptConstant.ActionTriggerType.TopCenter:
         // Handle top-center resize
         heightOffset = updatedBBox.y - mouseY;
         updatedBBox.y = mouseY;
@@ -1827,7 +1828,7 @@ class BaseShape extends BaseDrawingObject {
         this.HandleActionTriggerCallResize(T3Gv.opt.actionNewBBox, true, cursorPosition);
         break;
 
-      case OptConstant.ActionTriggerType.TOPRIGHT:
+      case OptConstant.ActionTriggerType.TopRight:
         // Handle top-right corner resize
         heightOffset = updatedBBox.y - mouseY;
         updatedBBox.y = mouseY;
@@ -1869,7 +1870,7 @@ class BaseShape extends BaseDrawingObject {
         this.HandleActionTriggerCallResize(T3Gv.opt.actionNewBBox, true, cursorPosition);
         break;
 
-      case OptConstant.ActionTriggerType.CENTERRIGHT:
+      case OptConstant.ActionTriggerType.CenterRight:
         // Handle center-right resize
         updatedBBox.width = mouseX - updatedBBox.x;
 
@@ -1894,7 +1895,7 @@ class BaseShape extends BaseDrawingObject {
         this.HandleActionTriggerCallResize(T3Gv.opt.actionNewBBox, true, cursorPosition);
         break;
 
-      case OptConstant.ActionTriggerType.BOTTOMRIGHT:
+      case OptConstant.ActionTriggerType.BottomRight:
         // Handle bottom-right corner resize
         updatedBBox.width = mouseX - updatedBBox.x;
         updatedBBox.height = mouseY - updatedBBox.y;
@@ -1931,7 +1932,7 @@ class BaseShape extends BaseDrawingObject {
         this.HandleActionTriggerCallResize(T3Gv.opt.actionNewBBox, true, cursorPosition);
         break;
 
-      case OptConstant.ActionTriggerType.BOTTOMCENTER:
+      case OptConstant.ActionTriggerType.BottomCenter:
         // Handle bottom-center resize
         updatedBBox.height = mouseY - updatedBBox.y;
 
@@ -1956,7 +1957,7 @@ class BaseShape extends BaseDrawingObject {
         this.HandleActionTriggerCallResize(T3Gv.opt.actionNewBBox, true, cursorPosition);
         break;
 
-      case OptConstant.ActionTriggerType.MOVEPOLYSEG:
+      case OptConstant.ActionTriggerType.MovePolySeg:
         // Handle polygon segment movement
         cursorPosition.x = mouseX;
         cursorPosition.y = mouseY;
@@ -2018,7 +2019,7 @@ class BaseShape extends BaseDrawingObject {
         T3Gv.opt.actionNewBBox = $.extend(true, {}, shapeObject.Frame);
         shapeObject.HandleActionTriggerCallResize(
           T3Gv.opt.actionNewBBox,
-          OptConstant.ActionTriggerType.MOVEPOLYSEG,
+          OptConstant.ActionTriggerType.MovePolySeg,
           cursorPosition
         );
 
@@ -2051,7 +2052,7 @@ class BaseShape extends BaseDrawingObject {
         }
         break;
 
-      case OptConstant.ActionTriggerType.BOTTOMLEFT:
+      case OptConstant.ActionTriggerType.BottomLeft:
         // Handle bottom-left corner resize
         updatedBBox.height = mouseY - updatedBBox.y;
         widthOffset = updatedBBox.x - mouseX;
@@ -2090,7 +2091,7 @@ class BaseShape extends BaseDrawingObject {
         this.HandleActionTriggerCallResize(T3Gv.opt.actionNewBBox, true, cursorPosition);
         break;
 
-      case OptConstant.ActionTriggerType.CENTERLEFT:
+      case OptConstant.ActionTriggerType.CenterLeft:
         // Handle center-left resize
         widthOffset = updatedBBox.x - mouseX;
         updatedBBox.x = mouseX;
@@ -2117,7 +2118,7 @@ class BaseShape extends BaseDrawingObject {
         this.HandleActionTriggerCallResize(T3Gv.opt.actionNewBBox, true, cursorPosition);
         break;
 
-      case OptConstant.ActionTriggerType.CONTAINER_ADJ:
+      case OptConstant.ActionTriggerType.ContainerAdj:
         // Handle container adjustment
         let elementCount, elementIndex, dragElement, dragBBox;
 
@@ -2150,7 +2151,7 @@ class BaseShape extends BaseDrawingObject {
         }
         break;
 
-      case OptConstant.ActionTriggerType.ROTATE:
+      case OptConstant.ActionTriggerType.Rotate:
         // Handle shape rotation
         let rotationAngle = 0;
         const pivotX = T3Gv.opt.rotatePivotX;
@@ -2181,7 +2182,7 @@ class BaseShape extends BaseDrawingObject {
         }
 
         // Get shape bounds after rotation to check validity
-        const polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, false, true, null);
+        const polyPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, false, true, null);
         const rotationRadians = -rotationAngle / (180 / NvConstant.Geometry.PI);
         const rotatedBounds = {};
 
@@ -2192,7 +2193,7 @@ class BaseShape extends BaseDrawingObject {
         if (rotatedBounds.x < 0) break;
         if (rotatedBounds.y < 0) break;
 
-        if (T3Gv.opt.contentHeader.flags & OptConstant.ContentHeaderFlags.CT_DA_NoAuto) {
+        if (T3Gv.opt.contentHeader.flags & OptConstant.CntHeaderFlags.NoAuto) {
           const sessionBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
           if (rotatedBounds.x + rotatedBounds.width > sessionBlock.dim.x) break;
           if (rotatedBounds.y + rotatedBounds.height > sessionBlock.dim.y) break;
@@ -2203,7 +2204,7 @@ class BaseShape extends BaseDrawingObject {
         this.Rotate(T3Gv.opt.actionSvgObject, rotationAngle);
         break;
 
-      case OptConstant.ActionTriggerType.DIMENSION_LINE_ADJ:
+      case OptConstant.ActionTriggerType.DimLineAdj:
         // Handle dimension line adjustment
         this.DimensionLineDeflectionAdjust(
           T3Gv.opt.actionSvgObject,
@@ -2244,22 +2245,22 @@ class BaseShape extends BaseDrawingObject {
     const originalFrame = $.extend(false, {}, this.Frame);
 
     // Enforce minimum dimensions
-    if (newBoundingBox.width < OptConstant.Defines.SED_MinDim) {
-      newBoundingBox.width = OptConstant.Defines.SED_MinDim;
+    if (newBoundingBox.width < OptConstant.Common.MinDim) {
+      newBoundingBox.width = OptConstant.Common.MinDim;
     }
-    if (newBoundingBox.height < OptConstant.Defines.SED_MinDim) {
-      newBoundingBox.height = OptConstant.Defines.SED_MinDim;
+    if (newBoundingBox.height < OptConstant.Common.MinDim) {
+      newBoundingBox.height = OptConstant.Common.MinDim;
     }
 
     // Update the frame with new dimensions
     this.UpdateFrame(newBoundingBox);
 
     // Handle special action types
-    if (actionType === OptConstant.ActionTriggerType.LINELENGTH) {
+    if (actionType === OptConstant.ActionTriggerType.LineLength) {
       actionType = 0;
       isLineLengthAction = true;
     }
-    if (actionType === OptConstant.ActionTriggerType.LINE_THICKNESS) {
+    if (actionType === OptConstant.ActionTriggerType.LineThickness) {
       actionType = 0;
       isLineThicknessAction = true;
     }
@@ -2282,10 +2283,12 @@ class BaseShape extends BaseDrawingObject {
     if (actionType === -1) {
       shouldUpdateTextFrame = false;
       actionType = true;
-    } else if (actionType === OptConstant.ActionTriggerType.TABLE_EDIT) {
-      shouldUpdateTextFrame = false;
-      actionType = false;
     }
+
+    // else if (actionType === OptConstant.ActionTriggerType.TABLE_EDIT) {
+    //   shouldUpdateTextFrame = false;
+    //   actionType = false;
+    // }
 
     // Handle table resizing
     if (tableObject && shouldUpdateTextFrame) {
@@ -2319,14 +2322,14 @@ class BaseShape extends BaseDrawingObject {
         targetHeight = this.trect.height;
       }
 
-      // Adjust dimensions based on action type
-      switch (actionType) {
-        case OptConstant.ActionTriggerType.TABLE_ROW:
-          targetHeight = null;
-          break;
-        case OptConstant.ActionTriggerType.TABLE_COL:
-          targetWidth = null;
-      }
+      // // Adjust dimensions based on action type
+      // switch (actionType) {
+      //   case OptConstant.ActionTriggerType.TableRow:
+      //     targetHeight = null;
+      //     break;
+      //   case OptConstant.ActionTriggerType.TableCol:
+      //     targetWidth = null;
+      // }
 
       // If either dimension needs updating, resize the table
       if (targetWidth || targetHeight) {
@@ -2377,10 +2380,10 @@ class BaseShape extends BaseDrawingObject {
     }
     // Handle text object resizing
     else if (this.DataID !== -1 &&
-      !(this.TextFlags & NvConstant.TextFlags.SED_TF_AttachA ||
-        this.TextFlags & NvConstant.TextFlags.SED_TF_AttachB)) {
+      !(this.TextFlags & NvConstant.TextFlags.AttachA ||
+        this.TextFlags & NvConstant.TextFlags.AttachB)) {
 
-      const svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
+      const svgElement = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
 
       if (svgElement) {
         let textFitResult;
@@ -2493,7 +2496,7 @@ class BaseShape extends BaseDrawingObject {
 
     // If we're not in rotation mode but the object has rotation applied,
     // transform the coordinates to account for object rotation
-    if (T3Gv.opt.actionTriggerId !== OptConstant.ActionTriggerType.ROTATE &&
+    if (T3Gv.opt.actionTriggerId !== OptConstant.ActionTriggerType.Rotate &&
       T3Gv.opt.rotateObjectRadians) {
 
       // Store original x and y coordinates
@@ -2586,12 +2589,12 @@ class BaseShape extends BaseDrawingObject {
   PinAction(coords) {
     T3Util.Log("= S.BaseShape - PinAction input:", coords);
 
-    const knobSize = OptConstant.Defines.SED_KnobSize;
+    const knobSize = OptConstant.Common.KnobSize;
     let frameRect = {};
     let rotatedRect = {};
 
     if (this.RotationAngle !== 0) {
-      const polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, false, true, null);
+      const polyPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, false, true, null);
       const rotationRadians = -this.RotationAngle / (180 / NvConstant.Geometry.PI);
       Utils3.RotatePointsAboutCenter(this.Frame, rotationRadians, polyPoints);
       Utils2.GetPolyRect(rotatedRect, polyPoints);
@@ -2611,7 +2614,7 @@ class BaseShape extends BaseDrawingObject {
       coords.y = frameRect.top;
     }
 
-    if (T3Gv.opt.contentHeader.flags & OptConstant.ContentHeaderFlags.CT_DA_NoAuto) {
+    if (T3Gv.opt.contentHeader.flags & OptConstant.CntHeaderFlags.NoAuto) {
       const sessionBlock = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
       if (coords.x > sessionBlock.dim.x - frameRect.right) {
         coords.x = sessionBlock.dim.x - frameRect.right;
@@ -2731,7 +2734,7 @@ class BaseShape extends BaseDrawingObject {
 
       if (snapApplied) {
         dynamicGuides = new DynamicGuides();
-        if (this.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.SHAPE) {
+        if (this.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape) {
           snapOffsets = T3Gv.opt.DynamicSnaps_GetSnapObjects(this.BlockID, adjustedRect, dynamicGuides, null, snapGuides);
           if (snapOffsets.x !== null) coords.x += snapOffsets.x;
           if (snapOffsets.y !== null) coords.y += snapOffsets.y;
@@ -2771,7 +2774,7 @@ class BaseShape extends BaseDrawingObject {
     targetObject = T3Gv.opt.GetObjectPtr(T3Gv.opt.actionStoredObjectId, false);
 
     // Hide dimension lines during drag if not rotating
-    if (T3Gv.opt.actionTriggerId != OptConstant.ActionTriggerType.ROTATE) {
+    if (T3Gv.opt.actionTriggerId != OptConstant.ActionTriggerType.Rotate) {
       targetObject.SetDimensionLinesVisibility(T3Gv.opt.actionSvgObject, false);
     }
 
@@ -2813,7 +2816,7 @@ class BaseShape extends BaseDrawingObject {
     let posY = documentCoordinates.y;
 
     // Transform coordinates if object is rotated and we're not in rotation mode
-    if (T3Gv.opt.actionTriggerId != OptConstant.ActionTriggerType.ROTATE && T3Gv.opt.rotateObjectRadians) {
+    if (T3Gv.opt.actionTriggerId != OptConstant.ActionTriggerType.Rotate && T3Gv.opt.rotateObjectRadians) {
       // Set up transformation points
       const clickPoint = { x: posX, y: posY };
       const centerPoint = { x: objectFrame.x + objectFrame.width / 2, y: objectFrame.y + objectFrame.height / 2 };
@@ -2837,7 +2840,7 @@ class BaseShape extends BaseDrawingObject {
       this.HandleActionTriggerTrackCommon(documentCoordinates.x, documentCoordinates.y, mouseEvent);
 
       // Show dimension lines while tracking if not rotating
-      if (T3Gv.opt.actionTriggerId != OptConstant.ActionTriggerType.ROTATE && targetObject) {
+      if (T3Gv.opt.actionTriggerId != OptConstant.ActionTriggerType.Rotate && targetObject) {
         targetObject.SetDimensionLinesVisibility(T3Gv.opt.actionSvgObject, true);
       }
 
@@ -2870,7 +2873,7 @@ class BaseShape extends BaseDrawingObject {
     T3Util.Log("S.BasicShape - LM_ActionRelease input:", { event, additionalData });
 
     try {
-      const isNgTimeline = this.objecttype === NvConstant.ObjectTypes.SD_OBJT_NG_TIMELINE;
+      // const isNgTimeline = false;// this.objecttype === NvConstant.FNObjectTypes.SD_OBJT_NG_TIMELINE;
       let needUpdateWidth = false;
       let isTableOperation = false;
 
@@ -2909,7 +2912,7 @@ class BaseShape extends BaseDrawingObject {
         // Handle different action trigger types
         let tableObject;
         switch (T3Gv.opt.actionTriggerId) {
-          // case OptConstant.ActionTriggerType.TABLE_ROW:
+          // case OptConstant.ActionTriggerType.TableRow:
           //   tableObject = actionObject.GetTable(false);
           //   if (tableObject) {
           //     const rowInfo = T3Gv.opt.Table_GetRowAndSegment(T3Gv.opt.actionTriggerData);
@@ -2918,13 +2921,13 @@ class BaseShape extends BaseDrawingObject {
           //   isTableOperation = true;
           //   break;
 
-          // case OptConstant.ActionTriggerType.TABLE_COL:
+          // case OptConstant.ActionTriggerType.TableCol:
           //   tableObject = actionObject.GetTable(false);
           //   if (tableObject) {
           //     const colInfo = T3Gv.opt.Table_GetColumnAndSegment(T3Gv.opt.actionTriggerData);
           //     let columnIndex = colInfo.column;
 
-          //     if (this.objecttype === NvConstant.ObjectTypes.SD_OBJT_SWIMLANE_COLS && this.RotationAngle) {
+          //     if (this.objecttype === NvConstant.FNObjectTypes.SD_OBJT_SWIMLANE_COLS && this.RotationAngle) {
           //       colInfo.column++;
           //     }
 
@@ -2952,7 +2955,7 @@ class BaseShape extends BaseDrawingObject {
           //   }
           //   break;
 
-          case OptConstant.ActionTriggerType.MOVEPOLYSEG:
+          case OptConstant.ActionTriggerType.MovePolySeg:
             isTableOperation = true;
             if (true) { // Previously Collab.AllowMessage()
               const shapeObject = T3Gv.opt.GetObjectPtr(this.BlockID, false);
@@ -2976,14 +2979,14 @@ class BaseShape extends BaseDrawingObject {
             }
             break;
 
-          case OptConstant.ActionTriggerType.DIMENSION_LINE_ADJ:
+          case OptConstant.ActionTriggerType.DimLineAdj:
             if (true) { // Previously Collab.AllowMessage()
               collaborationData.dimensionDeflectionH = this.dimensionDeflectionH;
               collaborationData.dimensionDeflectionV = this.dimensionDeflectionV;
             }
             break;
 
-          case OptConstant.ActionTriggerType.CONTAINER_ADJ:
+          case OptConstant.ActionTriggerType.ContainerAdj:
             if (true) { // Previously Collab.AllowMessage()
               collaborationData.actionTableLastY = T3Gv.opt.actionTableLastY;
             }
@@ -2995,12 +2998,12 @@ class BaseShape extends BaseDrawingObject {
           // Collab.BuildMessage(NvConstant.CollabMessages.Action_Shape, collaborationData, false);
         }
         actionObject.SetDimensionLinesVisibility(T3Gv.opt.actionSvgObject, false);
-      } else if (T3Gv.opt.actionTriggerId === OptConstant.ActionTriggerType.MOVEPOLYSEG) {
+      } else if (T3Gv.opt.actionTriggerId === OptConstant.ActionTriggerType.MovePolySeg) {
         isTableOperation = true;
       }
 
       // Handle container adjustment
-      if (T3Gv.opt.actionTriggerId === OptConstant.ActionTriggerType.CONTAINER_ADJ) {
+      if (T3Gv.opt.actionTriggerId === OptConstant.ActionTriggerType.ContainerAdj) {
         T3Gv.opt.moveList = [];
         T3Gv.opt.dragElementList.length = 0;
         T3Gv.opt.dragBBoxList.length = 0;
@@ -3008,7 +3011,7 @@ class BaseShape extends BaseDrawingObject {
         this.Pr_UpdateExtra(T3Gv.opt.actionTableLastY);
       }
       // Handle rotation
-      else if (T3Gv.opt.actionTriggerId === OptConstant.ActionTriggerType.ROTATE) {
+      else if (T3Gv.opt.actionTriggerId === OptConstant.ActionTriggerType.Rotate) {
         // Normalize rotation angle to 0-360
         T3Gv.opt.rotateEndRotation = T3Gv.opt.rotateEndRotation % 360;
 
@@ -3029,7 +3032,7 @@ class BaseShape extends BaseDrawingObject {
         T3Gv.opt.SetObjectFrame(T3Gv.opt.actionStoredObjectId, newFrame);
 
         // Scale polygon if needed
-        if (this.polylist && this.ShapeType === OptConstant.ShapeType.POLYGON) {
+        if (this.polylist && this.ShapeType === OptConstant.ShapeType.Polygon) {
           this.ScaleObject(0, 0, 0, 0, 0, 0);
         }
 
@@ -3074,8 +3077,8 @@ class BaseShape extends BaseDrawingObject {
   LM_ActionPreTrack(objectId, actionType) {
     // Reset width and height floating point dimension flags if they exist
     if (this.rflags) {
-      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Width, false);
-      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Height, false);
+      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.Width, false);
+      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.Height, false);
     }
   }
 
@@ -3099,7 +3102,7 @@ class BaseShape extends BaseDrawingObject {
   LM_ActionPostRelease(objectId) {
     // Handle format painter operations
     const applyFormatPainting = () => {
-      if (T3Gv.opt.currentModalOperation === OptConstant.ModalOperations.FORMATPAINTER) {
+      if (T3Gv.opt.currentModalOperation === OptConstant.ModalOperations.FormatPainter) {
         if (T3Gv.opt.formatPainterMode === TODO.formatPainterModes.OBJECT) {
           // Format painting logic for objects would go here
           // If table support is needed, uncomment:
@@ -3114,10 +3117,10 @@ class BaseShape extends BaseDrawingObject {
       }
     };
 
-    // Skip update links for special container cases
-    if (this.objecttype !== NvConstant.ObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER) {
-      T3Gv.opt.UpdateLinks();
-    }
+    // // Skip update links for special container cases
+    // if (this.objecttype !== NvConstant.FNObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER) {
+    //   T3Gv.opt.UpdateLinks();
+    // }
 
     // Clear link parameters
     T3Gv.opt.linkParams = null;
@@ -3126,33 +3129,33 @@ class BaseShape extends BaseDrawingObject {
     // const tableObject = this.GetTable(false);
 
     // Reset edit mode to default
-    T3Gv.opt.SetEditMode(NvConstant.EditState.DEFAULT);
+    T3Gv.opt.SetEditMode(NvConstant.EditState.Default);
 
     // Handle different actions based on trigger type
     switch (T3Gv.opt.actionTriggerId) {
       // Table-related cases (commented out as table support is disabled)
-      // case OptConstant.ActionTriggerType.TABLE_ROW:
+      // case OptConstant.ActionTriggerType.TableRow:
       //   if (T3Gv.opt.theActionTable && tableObject &&
       //       T3Gv.opt.theActionTable.ht != tableObject.ht) {
       //     this.sizedim.height = this.Frame.height;
       //   }
-      //   T3Gv.opt.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
+      //   T3Gv.opt.SetLinkFlag(this.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
       //   applyFormatPainting();
       //   break;
 
-      // case OptConstant.ActionTriggerType.TABLE_COL:
+      // case OptConstant.ActionTriggerType.TableCol:
       //   if (T3Gv.opt.theActionTable && tableObject &&
       //       T3Gv.opt.theActionTable.wd != tableObject.wd) {
       //     this.sizedim.width = this.Frame.width;
       //   }
-      //   T3Gv.opt.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
+      //   T3Gv.opt.SetLinkFlag(this.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
       //   applyFormatPainting();
       //   break;
 
       // case OptConstant.ActionTriggerType.TABLE_SELECT:
       // case OptConstant.ActionTriggerType.TABLE_ROWSELECT:
       // case OptConstant.ActionTriggerType.TABLE_COLSELECT:
-      //   if (T3Gv.opt.currentModalOperation === OptConstant.ModalOperations.FORMATPAINTER) {
+      //   if (T3Gv.opt.currentModalOperation === OptConstant.ModalOperations.FormatPainter) {
       //     if (T3Gv.opt.formatPainterMode === OptConstant.formatPainterModes.OBJECT) {
       //       var activeTableId = T3Gv.opt.Table_GetActiveID();
       //       T3Gv.opt.Table_PasteFormat(activeTableId, T3Gv.opt.formatPainterStyle, false);
@@ -3164,18 +3167,18 @@ class BaseShape extends BaseDrawingObject {
       //   break;
 
       // case OptConstant.ActionTriggerType.TABLE_EDIT:
-      //   T3Gv.opt.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
+      //   T3Gv.opt.SetLinkFlag(this.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
       //   break;
 
       // Width adjustment cases
-      case OptConstant.ActionTriggerType.CENTERLEFT:
-      case OptConstant.ActionTriggerType.CENTERRIGHT:
+      case OptConstant.ActionTriggerType.CenterLeft:
+      case OptConstant.ActionTriggerType.CenterRight:
         this.sizedim.width = this.Frame.width;
         break;
 
       // Height adjustment cases
-      case OptConstant.ActionTriggerType.TOPCENTER:
-      case OptConstant.ActionTriggerType.BOTTOMCENTER:
+      case OptConstant.ActionTriggerType.TopCenter:
+      case OptConstant.ActionTriggerType.BottomCenter:
         this.sizedim.height = this.Frame.height;
         break;
 
@@ -3235,33 +3238,33 @@ class BaseShape extends BaseDrawingObject {
 
       // Set appropriate cursor based on action type and rotation
       switch (actionType) {
-        case OptConstant.ActionTriggerType.TABLE_ROW:
-          if (isRotated) {
-            T3Gv.opt.SetEditMode(
-              NvConstant.EditState.DRAGCONTROL,
-              CursorConstant.CursorType.COL_RESIZE
-            );
-          } else {
-            T3Gv.opt.SetEditMode(
-              NvConstant.EditState.DRAGCONTROL,
-              CursorConstant.CursorType.ROW_RESIZE
-            );
-          }
-          break;
+        // case OptConstant.ActionTriggerType.TableRow:
+        //   if (isRotated) {
+        //     T3Gv.opt.SetEditMode(
+        //       NvConstant.EditState.DragControl,
+        //       CursorConstant.CursorType.COL_RESIZE
+        //     );
+        //   } else {
+        //     T3Gv.opt.SetEditMode(
+        //       NvConstant.EditState.DragControl,
+        //       CursorConstant.CursorType.ROW_RESIZE
+        //     );
+        //   }
+        //   break;
 
-        case OptConstant.ActionTriggerType.TABLE_COL:
-          if (isRotated) {
-            T3Gv.opt.SetEditMode(
-              NvConstant.EditState.DRAGCONTROL,
-              CursorConstant.CursorType.ROW_RESIZE
-            );
-          } else {
-            T3Gv.opt.SetEditMode(
-              NvConstant.EditState.DRAGCONTROL,
-              CursorConstant.CursorType.COL_RESIZE
-            );
-          }
-          break;
+        // case OptConstant.ActionTriggerType.TableCol:
+        //   if (isRotated) {
+        //     T3Gv.opt.SetEditMode(
+        //       NvConstant.EditState.DragControl,
+        //       CursorConstant.CursorType.ROW_RESIZE
+        //     );
+        //   } else {
+        //     T3Gv.opt.SetEditMode(
+        //       NvConstant.EditState.DragControl,
+        //       CursorConstant.CursorType.COL_RESIZE
+        //     );
+        //   }
+        //   break;
       }
     } else {
       // Handle case when trigger element is provided
@@ -3271,7 +3274,7 @@ class BaseShape extends BaseDrawingObject {
       // Extract object ID from element ID
       const elementId = overlayElement.GetID();
       objectId = parseInt(
-        elementId.substring(OptConstant.Defines.Action.length, elementId.length),
+        elementId.substring(OptConstant.Common.Action.length, elementId.length),
         10
       );
 
@@ -3311,7 +3314,7 @@ class BaseShape extends BaseDrawingObject {
     }
 
     // Special handling for polygon segment movement
-    if (actionType === OptConstant.ActionTriggerType.MOVEPOLYSEG) {
+    if (actionType === OptConstant.ActionTriggerType.MovePolySeg) {
       T3Gv.opt.actionTriggerData = {
         hitSegment: userData,
         moveAngle: 9999
@@ -3319,7 +3322,7 @@ class BaseShape extends BaseDrawingObject {
     }
 
     // Get SVG object and hide dimension lines
-    T3Gv.opt.actionSvgObject = T3Gv.opt.svgObjectLayer.GetElementByID(objectId);
+    T3Gv.opt.actionSvgObject = T3Gv.opt.svgObjectLayer.GetElementById(objectId);
     targetObject.SetDimensionLinesVisibility(T3Gv.opt.actionSvgObject, false);
 
     // Perform pre-tracking setup
@@ -3368,7 +3371,7 @@ class BaseShape extends BaseDrawingObject {
     T3Gv.opt.rotateObjectRadians = -this.RotationAngle / (180 / NvConstant.Geometry.PI);
 
     // Handle container adjustment
-    if (T3Gv.opt.actionTriggerId === OptConstant.ActionTriggerType.CONTAINER_ADJ) {
+    if (T3Gv.opt.actionTriggerId === OptConstant.ActionTriggerType.ContainerAdj) {
       // Store starting position
       const startPoint = { x: posX, y: posY };
       T3Gv.opt.actionStartX = startPoint.x;
@@ -3387,7 +3390,7 @@ class BaseShape extends BaseDrawingObject {
       T3Gv.opt.theActionContainerArrangement = shapesList.arrangement;
     }
     // Handle rotation
-    else if (T3Gv.opt.actionTriggerId === OptConstant.ActionTriggerType.ROTATE) {
+    else if (T3Gv.opt.actionTriggerId === OptConstant.ActionTriggerType.Rotate) {
       // Set up rotation parameters
       T3Gv.opt.rotateKnobCenterDivisor = this.RotateKnobCenterDivisor();
       T3Gv.opt.rotateStartRotation = this.RotationAngle;
@@ -3452,7 +3455,7 @@ class BaseShape extends BaseDrawingObject {
       const baseObject = T3Gv.opt.GetObjectPtr(blockID, false);
 
       // Validate that the base object is a valid drawing object
-      if (!(baseObject && baseObject instanceof BaseDrawingObject)) {
+      if (!(baseObject && baseObject instanceof BaseDrawObject)) {
         T3Util.Log("= S.BaseShape - BaseLine_LM_ActionClick output: base object not valid");
         return false;
       }
@@ -3509,7 +3512,7 @@ class BaseShape extends BaseDrawingObject {
     try {
       const blockId = this.BlockID;
       const drawingObject = T3Gv.opt.GetObjectPtr(blockId, false);
-      if (!(drawingObject && drawingObject instanceof BaseDrawingObject)) {
+      if (!(drawingObject && drawingObject instanceof BaseDrawObject)) {
         T3Util.Log("= S.BaseShape - LM_ActionClick output: Invalid drawing object");
         return false;
       }
@@ -3739,7 +3742,7 @@ class BaseShape extends BaseDrawingObject {
         if (childShape) {
           const childLinkFlag = linkFlags ? linkFlags[childShape.BlockID] : null;
           childShape.OffsetShape(offsetX, offsetY, childLinkFlag);
-          T3Gv.opt.SetLinkFlag(childShapeId, ShapeConstant.LinkFlags.SED_L_MOVE);
+          T3Gv.opt.SetLinkFlag(childShapeId, DSConstant.LinkFlags.SED_L_MOVE);
           T3Gv.opt.AddToDirtyList(childShapeId);
         }
       }
@@ -3818,7 +3821,7 @@ class BaseShape extends BaseDrawingObject {
     Utils2.CopyRect(this.r, this.Frame);
 
     if (this.StyleRecord) {
-      if (this.objecttype !== NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
+      if (this.objecttype !== NvConstant.FNObjectTypes.FlWall) {
         this.StyleRecord.Line.BThick = 0;
       }
 
@@ -3879,7 +3882,7 @@ class BaseShape extends BaseDrawingObject {
     const snapRect = {};
 
     if (this.RotationAngle !== 0) {
-      const polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, false, true, null);
+      const polyPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, false, true, null);
       const rotationRadians = -this.RotationAngle / (180 / NvConstant.Geometry.PI);
       Utils3.RotatePointsAboutCenter(this.Frame, rotationRadians, polyPoints);
       Utils2.GetPolyRect(snapRect, polyPoints);
@@ -3894,16 +3897,16 @@ class BaseShape extends BaseDrawingObject {
   CanSnapToShapes() {
     T3Util.Log("= S.BaseShape - CanSnapToShapes input");
 
-    const objectTypes = NvConstant.ObjectTypes;
+    const objectTypes = NvConstant.FNObjectTypes;
     let result;
 
     switch (this.objecttype) {
-      case objectTypes.SD_OBJT_SWIMLANE_ROWS:
-      case objectTypes.SD_OBJT_SWIMLANE_COLS:
-      case objectTypes.SD_OBJT_SWIMLANE_GRID:
-      case objectTypes.SD_OBJT_BPMN_POOL:
-      case objectTypes.SD_OBJT_SHAPECONTAINER:
-      case objectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER:
+      // case objectTypes.SwimLaneRows:
+      // case objectTypes.SD_OBJT_SWIMLANE_COLS:
+      // case objectTypes.SD_OBJT_SWIMLANE_GRID:
+      // case objectTypes.SD_OBJT_BPMN_POOL:
+      case objectTypes.ShapeContainer:
+        // case objectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER:
         result = -1;
         break;
       default:
@@ -3917,16 +3920,16 @@ class BaseShape extends BaseDrawingObject {
   IsSnapTarget() {
     T3Util.Log("= S.BaseShape - IsSnapTarget input");
 
-    const objectTypes = NvConstant.ObjectTypes;
+    const objectTypes = NvConstant.FNObjectTypes;
     let result;
 
     switch (this.objecttype) {
-      case objectTypes.SD_OBJT_SWIMLANE_ROWS:
-      case objectTypes.SD_OBJT_SWIMLANE_COLS:
-      case objectTypes.SD_OBJT_SWIMLANE_GRID:
-      case objectTypes.SD_OBJT_BPMN_POOL:
-      case objectTypes.SD_OBJT_SHAPECONTAINER:
-      case objectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER:
+      // case objectTypes.SwimLaneRows:
+      // case objectTypes.SD_OBJT_SWIMLANE_COLS:
+      // case objectTypes.SD_OBJT_SWIMLANE_GRID:
+      // case objectTypes.SD_OBJT_BPMN_POOL:
+      case objectTypes.ShapeContainer:
+        // case objectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER:
         result = false;
         break;
       default:
@@ -3943,7 +3946,7 @@ class BaseShape extends BaseDrawingObject {
     const alignRect = $.extend(true, {}, this.Frame);
 
     if (this.RotationAngle !== 0) {
-      const polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, false, true, null);
+      const polyPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, false, true, null);
       const rotationRadians = -this.RotationAngle / (180 / NvConstant.Geometry.PI);
       Utils3.RotatePointsAboutCenter(this.Frame, rotationRadians, polyPoints);
       Utils2.GetPolyRect(alignRect, polyPoints);
@@ -3959,14 +3962,14 @@ class BaseShape extends BaseDrawingObject {
     let closestIndex = -1;
     let closestDistance: number | null = null;
     let currentDistance: number;
-    let connectPoints = this.flags & NvConstant.ObjFlags.SEDO_UseConnect && this.ConnectPoints;
+    let connectPoints = this.flags & NvConstant.ObjFlags.UseConnect && this.ConnectPoints;
     let targetPoints = this.GetTargetPoints(
       null,
-      NvConstant.HookFlags.SED_LC_NoSnaps | NvConstant.HookFlags.SED_LC_ForceEnd,
+      NvConstant.HookFlags.LcNoSnaps | NvConstant.HookFlags.LcForceEnd,
       null
     );
     let topCount = 1, bottomCount = 1, leftCount = 1, rightCount = 1;
-    const dimension = OptConstant.Defines.SED_CDim;
+    const dimension = OptConstant.Common.MaxDim;
     let isSinglePoint = false;
     const ActionArrow = OptConstant.ActionArrow;
     let boundingRect = { x: 0, y: 0, width: dimension, height: dimension };
@@ -4015,32 +4018,32 @@ class BaseShape extends BaseDrawingObject {
         for (let i = 0; i < pointCount; i++) {
           if (targetPoints[i].y < boundingRect.height / 6) {
             topCount++;
-            if (direction === ActionArrow.UP) updateClosestIndex(targetPoints[i].x, i);
+            if (direction === ActionArrow.Up) updateClosestIndex(targetPoints[i].x, i);
           } else if (targetPoints[i].y >= 5 * boundingRect.height / 6) {
             bottomCount++;
-            if (direction === ActionArrow.DOWN) updateClosestIndex(targetPoints[i].x, i);
+            if (direction === ActionArrow.Down) updateClosestIndex(targetPoints[i].x, i);
           } else if (targetPoints[i].x < boundingRect.width / 6) {
             leftCount++;
-            if (direction === ActionArrow.LEFT) updateClosestIndex(targetPoints[i].y, i);
+            if (direction === ActionArrow.Left) updateClosestIndex(targetPoints[i].y, i);
           } else if (targetPoints[i].x >= 5 * boundingRect.width / 6) {
             rightCount++;
-            if (direction === ActionArrow.RIGHT) updateClosestIndex(targetPoints[i].y, i);
+            if (direction === ActionArrow.Right) updateClosestIndex(targetPoints[i].y, i);
           }
         }
       } else {
         for (let i = 0; i < pointCount; i++) {
           if (targetPoints[i].x < boundingRect.width / 6) {
             leftCount++;
-            if (direction === ActionArrow.LEFT) updateClosestIndex(targetPoints[i].y, i);
+            if (direction === ActionArrow.Left) updateClosestIndex(targetPoints[i].y, i);
           } else if (targetPoints[i].x >= 5 * boundingRect.width / 6) {
             rightCount++;
-            if (direction === ActionArrow.RIGHT) updateClosestIndex(targetPoints[i].y, i);
+            if (direction === ActionArrow.Right) updateClosestIndex(targetPoints[i].y, i);
           } else if (targetPoints[i].y < boundingRect.height / 6) {
             topCount++;
-            if (direction === ActionArrow.UP) updateClosestIndex(targetPoints[i].x, i);
+            if (direction === ActionArrow.Up) updateClosestIndex(targetPoints[i].x, i);
           } else if (targetPoints[i].y >= 5 * boundingRect.height / 6) {
             bottomCount++;
-            if (direction === ActionArrow.DOWN) updateClosestIndex(targetPoints[i].x, i);
+            if (direction === ActionArrow.Down) updateClosestIndex(targetPoints[i].x, i);
           }
         }
       }
@@ -4061,10 +4064,10 @@ class BaseShape extends BaseDrawingObject {
   AdjustAutoInsertShape(event, isVertical, isRotated) {
     T3Util.Log("= S.BaseShape - AdjustAutoInsertShape input:", { event, isVertical, isRotated });
 
-    let connectPoints = this.flags & NvConstant.ObjFlags.SEDO_UseConnect && this.ConnectPoints;
+    let connectPoints = this.flags & NvConstant.ObjFlags.UseConnect && this.ConnectPoints;
     let topCount = 0, bottomCount = 0, leftCount = 0, rightCount = 0;
     let singlePoint = false;
-    let targetPoints = this.GetTargetPoints(null, NvConstant.HookFlags.SED_LC_NoSnaps | NvConstant.HookFlags.SED_LC_ForceEnd, null);
+    let targetPoints = this.GetTargetPoints(null, NvConstant.HookFlags.LcNoSnaps | NvConstant.HookFlags.LcForceEnd, null);
     let isSinglePoint = targetPoints.length < 2;
     let shouldRotate = false;
     let blockIDs = [this.BlockID];
@@ -4136,7 +4139,7 @@ class BaseShape extends BaseDrawingObject {
             if (this.RotationAngle !== 0 && this.RotationAngle !== 180) {
               if (!isRotated) {
                 T3Gv.opt.RotateShapes(0, blockIDs);
-                let svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
+                let svgElement = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
                 svgElement && this.Rotate(svgElement, 0);
               }
               shouldRotate = true;
@@ -4144,7 +4147,7 @@ class BaseShape extends BaseDrawingObject {
           } else if (this.RotationAngle !== -90 && this.RotationAngle !== 90) {
             if (!isRotated) {
               T3Gv.opt.RotateShapes(-90, blockIDs);
-              let svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
+              let svgElement = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
               svgElement && this.Rotate(svgElement, -90);
             }
             shouldRotate = true;
@@ -4153,7 +4156,7 @@ class BaseShape extends BaseDrawingObject {
           if (this.RotationAngle !== -90 && this.RotationAngle !== 90) {
             if (!isRotated) {
               T3Gv.opt.RotateShapes(-90, blockIDs);
-              let svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
+              let svgElement = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
               svgElement && this.Rotate(svgElement, -90);
             }
             shouldRotate = true;
@@ -4161,7 +4164,7 @@ class BaseShape extends BaseDrawingObject {
         } else if (this.RotationAngle !== 0 && this.RotationAngle !== 180) {
           if (!isRotated) {
             T3Gv.opt.RotateShapes(0, blockIDs);
-            let svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
+            let svgElement = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
             svgElement && this.Rotate(svgElement, 0);
           }
           shouldRotate = true;
@@ -4256,7 +4259,7 @@ class BaseShape extends BaseDrawingObject {
       T3Gv.opt.actionBBox = prevActionBBox;
       T3Gv.opt.actionNewBBox = newActionBBox;
 
-      if (actionType !== OptConstant.ActionTriggerType.TABLE_EDIT && actionType !== OptConstant.ActionTriggerType.LINE_THICKNESS) {
+      if (/*actionType !== OptConstant.ActionTriggerType.TABLE_EDIT &&*/ actionType !== OptConstant.ActionTriggerType.LineThickness) {
         if (newWidth) {
           this.sizedim.width = this.Frame.width;
           sizeChanged = true;
@@ -4267,10 +4270,10 @@ class BaseShape extends BaseDrawingObject {
         }
       }
 
-      T3Gv.opt.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
+      T3Gv.opt.SetLinkFlag(this.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
 
       for (let i = 0; i < this.hooks.length; i++) {
-        T3Gv.opt.SetLinkFlag(this.hooks[i].objid, ShapeConstant.LinkFlags.SED_L_MOVE);
+        T3Gv.opt.SetLinkFlag(this.hooks[i].objid, DSConstant.LinkFlags.SED_L_MOVE);
       }
 
       if (this instanceof Instance.Shape.Polygon) {
@@ -4278,7 +4281,7 @@ class BaseShape extends BaseDrawingObject {
         if (newVertexArray) {
           this.VertexArray = newVertexArray;
         }
-        if (this.polylist && this.ShapeType === OptConstant.ShapeType.POLYGON) {
+        if (this.polylist && this.ShapeType === OptConstant.ShapeType.Polygon) {
           this.ScaleObject(0, 0, 0, 0, 0, 0);
         }
       }
@@ -4288,10 +4291,10 @@ class BaseShape extends BaseDrawingObject {
 
       if (this.rflags) {
         if (newWidth) {
-          this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Width, false);
+          this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.Width, false);
         }
         if (newHeight) {
-          this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Height, false);
+          this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.Height, false);
         }
       }
     }
@@ -4325,9 +4328,9 @@ class BaseShape extends BaseDrawingObject {
   GetHookFlags() {
     T3Util.Log("= S.BaseShape - GetHookFlags input");
 
-    const hookFlags = NvConstant.HookFlags.SED_LC_Shape |
-      NvConstant.HookFlags.SED_LC_ArrayMod |
-      NvConstant.HookFlags.SED_LC_AttachToLine;
+    const hookFlags = NvConstant.HookFlags.LcShape |
+      NvConstant.HookFlags.LcArrayMod |
+      NvConstant.HookFlags.LcAttachToLine;
 
     T3Util.Log("= S.BaseShape - GetHookFlags output:", hookFlags);
     return hookFlags;
@@ -4337,12 +4340,12 @@ class BaseShape extends BaseDrawingObject {
     T3Util.Log("= S.BaseShape - AllowLink input");
 
     let sessionObject = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
-    let dropOnTableFlag = this.flags & NvConstant.ObjFlags.SEDO_DropOnTable;
+    let dropOnTableFlag = this.flags & NvConstant.ObjFlags.DropOnTable;
     let result;
 
     if (sessionObject) {
-      result = (sessionObject.flags & OptConstant.SessionFlags.SEDS_SLink) ||
-        (sessionObject.flags & OptConstant.SessionFlags.SEDS_AttLink) ||
+      result = (sessionObject.flags & OptConstant.SessionFlags.SLink) ||
+        (sessionObject.flags & OptConstant.SessionFlags.AttLink) ||
         dropOnTableFlag;
     }
 
@@ -4353,14 +4356,14 @@ class BaseShape extends BaseDrawingObject {
   // IsSwimlane() {
   //   T3Util.Log("= S.BaseShape - IsSwimlane input");
 
-  //   const objectTypes = NvConstant.ObjectTypes;
+  //   const objectTypes = NvConstant.FNObjectTypes;
   //   let result;
 
   //   switch (this.objecttype) {
   //     // case objectTypes.SD_OBJT_SWIMLANE_COLS:
-  //     // case objectTypes.SD_OBJT_SWIMLANE_ROWS:
+  //     // case objectTypes.SwimLaneRows:
   //     // case objectTypes.SD_OBJT_SWIMLANE_GRID:
-  //     case objectTypes.SD_OBJT_FRAME_CONTAINER:
+  //     case objectTypes.FrameContainer:
   //       result = true;
   //       break;
   //     default:
@@ -4377,7 +4380,7 @@ class BaseShape extends BaseDrawingObject {
   //   const object = T3Gv.opt.GetObjectPtr(objectID, false);
   //   let result: number;
 
-  //   if (object && (object.flags & NvConstant.ObjFlags.SEDO_TextOnly || object.IsSwimlane())) {
+  //   if (object && (object.flags & NvConstant.ObjFlags.TextOnly || object.IsSwimlane())) {
   //     result = 0;
   //   } else {
   //     result = objectID;
@@ -4399,9 +4402,9 @@ class BaseShape extends BaseDrawingObject {
   GetHookPoints() {
     T3Util.Log("= S.BaseShape - GetHookPoints input");
 
-    let connectPoints = this.flags & NvConstant.ObjFlags.SEDO_UseConnect && this.ConnectPoints;
+    let connectPoints = this.flags & NvConstant.ObjFlags.UseConnect && this.ConnectPoints;
     // let table = this.GetTable(false);
-    // let isTableRows = this.hookflags & NvConstant.HookFlags.SED_LC_TableRows && table;
+    // let isTableRows = this.hookflags & NvConstant.HookFlags.LcTableRows && table;
 
     if (connectPoints /*|| isTableRows*/) {
       let points = connectPoints ? this.ConnectPoints : this.ConnectPoints;//T3Gv.opt.Table_GetRowConnectPoints(this, table);
@@ -4411,7 +4414,7 @@ class BaseShape extends BaseDrawingObject {
         hookPoints.push({
           x: points[i].x,
           y: points[i].y,
-          id: OptConstant.HookPts.SED_CustomBase + i
+          id: OptConstant.HookPts.CustomBase + i
         });
       }
 
@@ -4420,10 +4423,10 @@ class BaseShape extends BaseDrawingObject {
     }
 
     let defaultHookPoints = [
-      { x: OptConstant.Defines.SED_CDim / 2, y: 0, id: OptConstant.HookPts.SED_KTC },
-      { x: OptConstant.Defines.SED_CDim, y: OptConstant.Defines.SED_CDim / 2, id: OptConstant.HookPts.SED_KRC },
-      { x: OptConstant.Defines.SED_CDim / 2, y: OptConstant.Defines.SED_CDim, id: OptConstant.HookPts.SED_KBC },
-      { x: 0, y: OptConstant.Defines.SED_CDim / 2, id: OptConstant.HookPts.SED_KLC }
+      { x: OptConstant.Common.MaxDim / 2, y: 0, id: OptConstant.HookPts.KTC },
+      { x: OptConstant.Common.MaxDim, y: OptConstant.Common.MaxDim / 2, id: OptConstant.HookPts.KRC },
+      { x: OptConstant.Common.MaxDim / 2, y: OptConstant.Common.MaxDim, id: OptConstant.HookPts.KBC },
+      { x: 0, y: OptConstant.Common.MaxDim / 2, id: OptConstant.HookPts.KLC }
     ];
 
     T3Util.Log("= S.BaseShape - GetHookPoints output:", defaultHookPoints);
@@ -4436,13 +4439,13 @@ class BaseShape extends BaseDrawingObject {
     let childArrayIndex, childObject, isFlowConnection;
 
     switch (hookPoint) {
-      case OptConstant.HookPts.SED_AKCL:
+      case OptConstant.HookPts.AKCL:
         childArrayIndex = T3Gv.opt.FindChildArray(this.BlockID, -1);
         if (childArrayIndex >= 0) {
           childObject = T3Gv.opt.GetObjectPtr(childArrayIndex, false);
           if (childObject) {
-            isFlowConnection = childObject.arraylist.styleflags & OptConstant.SEDA_Styles.SEDA_FlowConn &&
-              !(childObject.arraylist.styleflags & OptConstant.SEDA_Styles.SEDA_Linear);
+            isFlowConnection = childObject.arraylist.styleflags & OptConstant.AStyles.FlowConn &&
+              !(childObject.arraylist.styleflags & OptConstant.AStyles.Linear);
             if (childObject.hooks.length && childObject.hooks[0].connect.x === 0 && !isFlowConnection) {
               childObject._SetDirection(true, false, false);
             }
@@ -4450,14 +4453,14 @@ class BaseShape extends BaseDrawingObject {
         }
         break;
 
-      case OptConstant.HookPts.SED_AKCR:
+      case OptConstant.HookPts.AKCR:
         childArrayIndex = T3Gv.opt.FindChildArray(this.BlockID, -1);
         if (childArrayIndex >= 0) {
           childObject = T3Gv.opt.GetObjectPtr(childArrayIndex, false);
           if (childObject) {
-            isFlowConnection = childObject.arraylist.styleflags & OptConstant.SEDA_Styles.SEDA_FlowConn &&
-              !(childObject.arraylist.styleflags & OptConstant.SEDA_Styles.SEDA_Linear);
-            if (childObject.hooks.length && childObject.hooks[0].connect.x === OptConstant.Defines.SED_CDim && !isFlowConnection) {
+            isFlowConnection = childObject.arraylist.styleflags & OptConstant.AStyles.FlowConn &&
+              !(childObject.arraylist.styleflags & OptConstant.AStyles.Linear);
+            if (childObject.hooks.length && childObject.hooks[0].connect.x === OptConstant.Common.MaxDim && !isFlowConnection) {
               childObject._SetDirection(true, false, false);
             }
           }
@@ -4478,66 +4481,66 @@ class BaseShape extends BaseDrawingObject {
     let isCustomHook = false;
     let connectionFlags = 0;
     const HookPts = OptConstant.HookPts;
-    const SED_CDim = OptConstant.Defines.SED_CDim;
+    const SED_CDim = OptConstant.Common.MaxDim;
     const HookFlags = NvConstant.HookFlags;
 
-    if (this.flags & NvConstant.ObjFlags.SEDO_Obj1 && this.Pr_Format && this.Pr_Format(this.BlockID)) {
+    if (this.flags & NvConstant.ObjFlags.Obj1 && this.Pr_Format && this.Pr_Format(this.BlockID)) {
       // Custom formatting logic
     }
 
-    if (hookId === HookPts.SED_KAT) {
+    if (hookId === HookPts.KAT) {
       point[0].x = this.attachpoint.x;
       point[0].y = this.attachpoint.y;
-      if (this.extraflags & OptConstant.ExtraFlags.SEDE_FlipHoriz) {
+      if (this.extraflags & OptConstant.ExtraFlags.FlipHoriz) {
         point[0].x = SED_CDim - point[0].x;
       }
-      if (this.extraflags & OptConstant.ExtraFlags.SEDE_FlipVert) {
+      if (this.extraflags & OptConstant.ExtraFlags.FlipVert) {
         point[0].y = SED_CDim - point[0].y;
       }
-    } else if (hookId === HookPts.SED_KATD) {
+    } else if (hookId === HookPts.KATD) {
       point[0].x = this.attachpoint.x;
       point[0].y = this.attachpoint.y;
     } else {
       switch (hookId) {
-        case HookPts.SED_KCTL:
+        case HookPts.KCTL:
           point[0].x = 0;
           point[0].y = 0;
           break;
-        case HookPts.SED_KCTR:
+        case HookPts.KCTR:
           point[0].x = SED_CDim;
           point[0].y = 0;
           break;
-        case HookPts.SED_KCBL:
+        case HookPts.KCBL:
           point[0].x = 0;
           point[0].y = SED_CDim;
           break;
-        case HookPts.SED_KCBR:
+        case HookPts.KCBR:
           point[0].x = SED_CDim;
           point[0].y = SED_CDim;
           break;
-        case HookPts.SED_KCT:
+        case HookPts.KCT:
           point[0].x = SED_CDim / 2;
           point[0].y = 0;
-          connectionFlags = HookFlags.SED_LC_VOnly;
+          connectionFlags = HookFlags.LcVOnly;
           break;
-        case HookPts.SED_KCB:
+        case HookPts.KCB:
           point[0].x = SED_CDim / 2;
           point[0].y = SED_CDim;
-          connectionFlags = HookFlags.SED_LC_VOnly;
+          connectionFlags = HookFlags.LcVOnly;
           break;
-        case HookPts.SED_KCL:
+        case HookPts.KCL:
           point[0].x = 0;
           point[0].y = SED_CDim / 2;
-          connectionFlags = HookFlags.SED_LC_HOnly;
+          connectionFlags = HookFlags.LcHOnly;
           break;
-        case HookPts.SED_KCC:
+        case HookPts.KCC:
           point[0].x = SED_CDim / 2;
           point[0].y = SED_CDim / 2;
           break;
-        case HookPts.SED_KCR:
+        case HookPts.KCR:
           point[0].x = SED_CDim;
           point[0].y = SED_CDim / 2;
-          connectionFlags = HookFlags.SED_LC_HOnly;
+          connectionFlags = HookFlags.LcHOnly;
           break;
         default:
           hookPoints = this.GetHookPoints();
@@ -4579,7 +4582,7 @@ class BaseShape extends BaseDrawingObject {
     }
 
     if (
-      (this.RotationAngle || this.extraflags & (OptConstant.ExtraFlags.SEDE_FlipHoriz | OptConstant.ExtraFlags.SEDE_FlipVert)) &&
+      (this.RotationAngle || this.extraflags & (OptConstant.ExtraFlags.FlipHoriz | OptConstant.ExtraFlags.FlipVert)) &&
       isCustomHook
     ) {
       perimeterPoints = this.GetPerimPts(-1, point, hookId, true, null, -1);
@@ -4589,7 +4592,7 @@ class BaseShape extends BaseDrawingObject {
 
     perimeterPoints = this.GetPerimPts(-1, point, hookId, false, null, -1);
 
-    if (hookId === HookPts.SED_KATD) {
+    if (hookId === HookPts.KATD) {
       {
         perimeterPoints[0].x -= this.hookdisp.x;
         perimeterPoints[0].y -= this.hookdisp.y;
@@ -4606,7 +4609,7 @@ class BaseShape extends BaseDrawingObject {
     let isCoManager = false;
     if (this.hooks && this.hooks.length) {
       const hookedObject = T3Gv.opt.GetObjectPtr(this.hooks[0].objid, false);
-      if (hookedObject && hookedObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.CONNECTOR) {
+      if (hookedObject && hookedObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
         isCoManager = hookedObject.IsCoManager(e);
       }
     }
@@ -4630,8 +4633,8 @@ class BaseShape extends BaseDrawingObject {
       minDimension = customSize;
     }
 
-    if (this.moreflags & OptConstant.ObjMoreFlags.SED_MF_FixedRR) {
-      let fixedSize = OptConstant.Defines.RRectFixedDim * this.shapeparam;
+    if (this.moreflags & OptConstant.ObjMoreFlags.FixedRR) {
+      let fixedSize = OptConstant.Common.RRectFixedDim * this.shapeparam;
       let maxSize = 0.4 * minDimension;
 
       if (fixedSize > maxSize) {
@@ -4656,14 +4659,14 @@ class BaseShape extends BaseDrawingObject {
     let isCoManager = false;
     let tablePoints = null;
 
-    if (this.ShapeType === OptConstant.ShapeType.RECT) {
+    if (this.ShapeType === OptConstant.ShapeType.Rect) {
       cornerSize = this.RRect_GetCornerSize();
       if (cornerSize > 0) {
         return this.RRect_GetPerimPts(points, targetPoints, hookId, rotate, table, needRotate);
       }
     }
 
-    if (targetPoints.length === 1 && targetPoints[0].y === -OptConstant.SEDA_Styles.SEDA_CoManager && this.IsCoManager(coManagerPoint)) {
+    if (targetPoints.length === 1 && targetPoints[0].y === -OptConstant.AStyles.CoManager && this.IsCoManager(coManagerPoint)) {
       perimeterPoints.push(new Point(coManagerPoint.x, coManagerPoint.y));
       if (targetPoints[0].id != null) {
         perimeterPoints[0].id = targetPoints[0].id;
@@ -4684,8 +4687,8 @@ class BaseShape extends BaseDrawingObject {
     if (!isCoManager) {
       for (let i = 0; i < targetPoints.length; i++) {
         perimeterPoints[i] = {
-          x: targetPoints[i].x / OptConstant.Defines.SED_CDim * this.Frame.width + this.Frame.x,
-          y: targetPoints[i].y / OptConstant.Defines.SED_CDim * this.Frame.height + this.Frame.y,
+          x: targetPoints[i].x / OptConstant.Common.MaxDim * this.Frame.width + this.Frame.x,
+          y: targetPoints[i].y / OptConstant.Common.MaxDim * this.Frame.height + this.Frame.y,
           id: targetPoints[i].id != null ? targetPoints[i].id : 0
         };
       }
@@ -4704,11 +4707,11 @@ class BaseShape extends BaseDrawingObject {
     T3Util.Log("= S.BaseShape - RRect_GetPerimPts input:", { e, targetPoints, hookId, rotate, table, needRotate });
 
     let cornerSize, polyPoints, intersectCount, intersectPoints = [0, 0];
-    const dimension = OptConstant.Defines.SED_CDim;
+    const dimension = OptConstant.Common.MaxDim;
     let perimeterPoints = [];
     let coManagerPoint = {};
 
-    if (targetPoints.length === 1 && targetPoints[0].y === -OptConstant.SEDA_Styles.SEDA_CoManager && this.IsCoManager(coManagerPoint)) {
+    if (targetPoints.length === 1 && targetPoints[0].y === -OptConstant.AStyles.CoManager && this.IsCoManager(coManagerPoint)) {
       perimeterPoints.push(new Point(coManagerPoint.x, coManagerPoint.y));
       if (targetPoints[0].id != null) {
         perimeterPoints[0].id = targetPoints[0].id;
@@ -4717,8 +4720,8 @@ class BaseShape extends BaseDrawingObject {
       return perimeterPoints;
     }
 
-    if (hookId === OptConstant.HookPts.SED_KAT && table == null) {
-      perimeterPoints = new BaseDrawingObject(this).GetPerimPts(e, targetPoints, hookId, false, table, needRotate);
+    if (hookId === OptConstant.HookPts.KAT && table == null) {
+      perimeterPoints = new BaseDrawObject(this).GetPerimPts(e, targetPoints, hookId, false, table, needRotate);
       T3Util.Log("= S.BaseShape - RRect_GetPerimPts output:", perimeterPoints);
       return perimeterPoints;
     }
@@ -4737,10 +4740,10 @@ class BaseShape extends BaseDrawingObject {
     //   }
     // }
 
-    const useConnect = this.flags & NvConstant.ObjFlags.SEDO_UseConnect;
-    const tableRows = this.hookflags & NvConstant.HookFlags.SED_LC_TableRows && tableObject;
+    const useConnect = this.flags & NvConstant.ObjFlags.UseConnect;
+    // const tableRows = this.hookflags & NvConstant.HookFlags.LcTableRows && tableObject;
 
-    if (useConnect || tableRows) {
+    if (useConnect /*|| tableRows*/) {
       for (let i = 0; i < targetPoints.length; i++) {
         perimeterPoints[i] = {
           x: targetPoints[i].x / dimension * this.Frame.width + this.Frame.x,
@@ -4749,9 +4752,9 @@ class BaseShape extends BaseDrawingObject {
         };
       }
     } else {
-      perimeterPoints = new BaseDrawingObject(this).GetPerimPts(e, targetPoints, hookId, true, table, needRotate);
-      cornerSize = this.GetCornerSize() * OptConstant.Defines.SED_RoundFactor;
-      polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, false, false, null);
+      perimeterPoints = new BaseDrawObject(this).GetPerimPts(e, targetPoints, hookId, true, table, needRotate);
+      cornerSize = this.GetCornerSize() * OptConstant.Common.RoundFactor;
+      polyPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, false, false, null);
 
       for (let i = 0; i < perimeterPoints.length; i++) {
         if (targetPoints[i].x === 0 && targetPoints[i].y === 0) {
@@ -4836,31 +4839,31 @@ class BaseShape extends BaseDrawingObject {
 
     const defaultPoints = [
       { x: 0, y: 0 },
-      { x: OptConstant.Defines.SED_CDim / 4, y: 0 },
-      { x: OptConstant.Defines.SED_CDim / 2, y: 0 },
-      { x: 3 * OptConstant.Defines.SED_CDim / 4, y: 0 },
-      { x: OptConstant.Defines.SED_CDim, y: 0 },
-      { x: OptConstant.Defines.SED_CDim, y: OptConstant.Defines.SED_CDim / 4 },
-      { x: OptConstant.Defines.SED_CDim, y: OptConstant.Defines.SED_CDim / 2 },
-      { x: OptConstant.Defines.SED_CDim, y: 3 * OptConstant.Defines.SED_CDim / 4 },
-      { x: OptConstant.Defines.SED_CDim, y: OptConstant.Defines.SED_CDim },
-      { x: 3 * OptConstant.Defines.SED_CDim / 4, y: OptConstant.Defines.SED_CDim },
-      { x: OptConstant.Defines.SED_CDim / 2, y: OptConstant.Defines.SED_CDim },
-      { x: OptConstant.Defines.SED_CDim / 4, y: OptConstant.Defines.SED_CDim },
-      { x: 0, y: OptConstant.Defines.SED_CDim },
-      { x: 0, y: 3 * OptConstant.Defines.SED_CDim / 4 },
-      { x: 0, y: OptConstant.Defines.SED_CDim / 2 },
-      { x: 0, y: OptConstant.Defines.SED_CDim / 4 }
+      { x: OptConstant.Common.MaxDim / 4, y: 0 },
+      { x: OptConstant.Common.MaxDim / 2, y: 0 },
+      { x: 3 * OptConstant.Common.MaxDim / 4, y: 0 },
+      { x: OptConstant.Common.MaxDim, y: 0 },
+      { x: OptConstant.Common.MaxDim, y: OptConstant.Common.MaxDim / 4 },
+      { x: OptConstant.Common.MaxDim, y: OptConstant.Common.MaxDim / 2 },
+      { x: OptConstant.Common.MaxDim, y: 3 * OptConstant.Common.MaxDim / 4 },
+      { x: OptConstant.Common.MaxDim, y: OptConstant.Common.MaxDim },
+      { x: 3 * OptConstant.Common.MaxDim / 4, y: OptConstant.Common.MaxDim },
+      { x: OptConstant.Common.MaxDim / 2, y: OptConstant.Common.MaxDim },
+      { x: OptConstant.Common.MaxDim / 4, y: OptConstant.Common.MaxDim },
+      { x: 0, y: OptConstant.Common.MaxDim },
+      { x: 0, y: 3 * OptConstant.Common.MaxDim / 4 },
+      { x: 0, y: OptConstant.Common.MaxDim / 2 },
+      { x: 0, y: OptConstant.Common.MaxDim / 4 }
     ];
 
     let targetPoints = [];
-    const isContinuousConnection = this.flags & NvConstant.ObjFlags.SEDO_ContConn && event !== null;
-    const useConnectPoints = this.flags & NvConstant.ObjFlags.SEDO_UseConnect && this.ConnectPoints;
+    const isContinuousConnection = this.flags & NvConstant.ObjFlags.ContConn && event !== null;
+    const useConnectPoints = this.flags & NvConstant.ObjFlags.UseConnect && this.ConnectPoints;
     // const table = this.GetTable(false);
-    // const isTableRows = this.hookflags & NvConstant.HookFlags.SED_LC_TableRows && table;
+    // const isTableRows = this.hookflags & NvConstant.HookFlags.LcTableRows && table;
     let customTargetPoint = {};
     let hasCustomTargetPoint = false;
-    const dimension = OptConstant.Defines.SED_CDim;
+    const dimension = OptConstant.Common.MaxDim;
 
     if (objectID >= 0) {
       const targetObject = T3Gv.opt.GetObjectPtr(objectID, false);
@@ -4884,7 +4887,7 @@ class BaseShape extends BaseDrawingObject {
         targetPoints.push({ x: connectPoints[i].x, y: connectPoints[i].y });
       }
 
-      if (this.extraflags & (OptConstant.ExtraFlags.SEDE_FlipHoriz | OptConstant.ExtraFlags.SEDE_FlipVert)) {
+      if (this.extraflags & (OptConstant.ExtraFlags.FlipHoriz | OptConstant.ExtraFlags.FlipVert)) {
         const rect = new Rectangle(0, 0, dimension, dimension);
         T3Gv.opt.FlipPoints(rect, this.extraflags, targetPoints);
       }
@@ -4900,7 +4903,7 @@ class BaseShape extends BaseDrawingObject {
   GetSegLFace(point: { x: number; y: number }, table: any, hookFlags: any) {
     T3Util.Log("= S.BaseShape - GetSegLFace input:", { point, table, hookFlags });
 
-    const m = OptConstant.Defines.SED_CDim;
+    const m = OptConstant.Common.MaxDim;
     const distanceSquared = (p1: { x: number; y: number }, p2: { x: number; y: number }) => {
       const dx = p1.x - p2.x;
       const dy = p1.y - p2.y;
@@ -4915,8 +4918,8 @@ class BaseShape extends BaseDrawingObject {
       Utils3.RotatePointsAboutCenter(frame, rotationRadians, [rotatedPoint]);
     }
 
-    const useConnectPoints = this.flags & NvConstant.ObjFlags.SEDO_UseConnect;
-    // const isTableRows = this.hookflags & NvConstant.HookFlags.SED_LC_TableRows && table;
+    const useConnectPoints = this.flags & NvConstant.ObjFlags.UseConnect;
+    // const isTableRows = this.hookflags & NvConstant.HookFlags.LcTableRows && table;
     let connectPoints = [];
 
     if (useConnectPoints /*|| isTableRows*/) {
@@ -4956,7 +4959,7 @@ class BaseShape extends BaseDrawingObject {
         }
       }
 
-      const result = OptConstant.HookPts.SED_KTC + closestPointIndex;
+      const result = OptConstant.HookPts.KTC + closestPointIndex;
       T3Util.Log("= S.BaseShape - GetSegLFace output:", result);
       return result;
     }
@@ -4968,25 +4971,25 @@ class BaseShape extends BaseDrawingObject {
       bottom: m - rotatedPoint.y
     };
 
-    let result = NvConstant.SegLDir.SED_KLC;
+    let result = NvConstant.SegLDir.Klc;
     if (distances.right < distances.left) {
-      result = NvConstant.SegLDir.SED_KRC;
+      result = NvConstant.SegLDir.Krc;
       if (distances.top < distances.right) {
-        result = NvConstant.SegLDir.SED_KTC;
+        result = NvConstant.SegLDir.Ktc;
         if (distances.bottom < distances.top) {
-          result = NvConstant.SegLDir.SED_KBC;
+          result = NvConstant.SegLDir.Kbc;
         }
       } else if (distances.bottom < distances.right) {
-        result = NvConstant.SegLDir.SED_KBC;
+        result = NvConstant.SegLDir.Kbc;
       }
     } else {
       if (distances.top < distances.left) {
-        result = NvConstant.SegLDir.SED_KTC;
+        result = NvConstant.SegLDir.Ktc;
         if (distances.bottom < distances.top) {
-          result = NvConstant.SegLDir.SED_KBC;
+          result = NvConstant.SegLDir.Kbc;
         }
       } else if (distances.bottom < distances.left) {
-        result = NvConstant.SegLDir.SED_KBC;
+        result = NvConstant.SegLDir.Kbc;
       }
     }
 
@@ -5011,7 +5014,7 @@ class BaseShape extends BaseDrawingObject {
       };
 
       // Double
-      // Collab.SendSVGEvent(this.BlockID, OptConstant.CollabSVGEventTypes.Shape_Grow, newSize, eventDetails);
+      // Collab.SendSVGEvent(this.BlockID, OptConstant.CollabSVGEventTypes.ShapeGrow, newSize, eventDetails);
 
       const originalBBox = $.extend(true, {}, previousBBox);
       const updatedBBox = $.extend(true, {}, newSize);
@@ -5022,24 +5025,24 @@ class BaseShape extends BaseDrawingObject {
         Utils2.InflateRect(inflatedBBox, this.StyleRecord.Line.BThick, this.StyleRecord.Line.BThick);
       }
 
-      if (actionType !== OptConstant.ActionTriggerType.MOVEPOLYSEG) {
+      if (actionType !== OptConstant.ActionTriggerType.MovePolySeg) {
         element.SetSize(inflatedBBox.width, inflatedBBox.height);
         element.SetPos(inflatedBBox.x + offset.x, inflatedBBox.y + offset.y);
 
         let cornerSize = 0;
-        if (this.ShapeType === OptConstant.ShapeType.RECT) {
+        if (this.ShapeType === OptConstant.ShapeType.Rect) {
           cornerSize = this.RRect_GetCornerSize();
         }
 
-        const shapeElement = element.GetElementByID(OptConstant.SVGElementClass.SHAPE);
+        const shapeElement = element.GetElementById(OptConstant.SVGElementClass.Shape);
         shapeElement.SetSize(inflatedBBox.width, inflatedBBox.height);
 
-        const slopElement = element.GetElementByID(OptConstant.SVGElementClass.SLOP);
+        const slopElement = element.GetElementById(OptConstant.SVGElementClass.Slop);
         if (slopElement) {
           slopElement.SetSize(inflatedBBox.width, inflatedBBox.height);
         }
 
-        const hatchElement = element.GetElementByID(OptConstant.SVGElementClass.HATCH);
+        const hatchElement = element.GetElementById(OptConstant.SVGElementClass.Hatch);
         if (hatchElement) {
           hatchElement.SetSize(inflatedBBox.width, inflatedBBox.height);
         }
@@ -5098,16 +5101,16 @@ class BaseShape extends BaseDrawingObject {
     element.SetPos(inflatedFrame.x + offset.x, inflatedFrame.y + offset.y);
 
     let cornerSize = 0;
-    if (this.ShapeType === OptConstant.ShapeType.RECT) {
+    if (this.ShapeType === OptConstant.ShapeType.Rect) {
       cornerSize = this.RRect_GetCornerSize();
     }
 
-    const shapeElement = element.GetElementByID(OptConstant.SVGElementClass.SHAPE);
+    const shapeElement = element.GetElementById(OptConstant.SVGElementClass.Shape);
     if (shapeElement) {
       shapeElement.SetSize(inflatedFrame.width, inflatedFrame.height);
     }
 
-    const slopElement = element.GetElementByID(OptConstant.SVGElementClass.SLOP);
+    const slopElement = element.GetElementById(OptConstant.SVGElementClass.Slop);
     if (slopElement) {
       slopElement.SetSize(inflatedFrame.width, inflatedFrame.height);
     }
@@ -5117,7 +5120,7 @@ class BaseShape extends BaseDrawingObject {
     //   T3Gv.opt.Table_ResizeSVGTableObject(element, this, newSize, true);
     // }
 
-    const hatchElement = element.GetElementByID(OptConstant.SVGElementClass.HATCH);
+    const hatchElement = element.GetElementById(OptConstant.SVGElementClass.Hatch);
     if (hatchElement) {
       hatchElement.SetSize(newSize.width, newSize.height);
     }
@@ -5182,9 +5185,9 @@ class BaseShape extends BaseDrawingObject {
             cropRect.height = this.ImageHeader.croprect.bottom - this.ImageHeader.croprect.top;
           }
           if (this.ImageHeader.imageflags !== undefined) {
-            if (this.ImageHeader.imageflags === NvConstant.ImageScales.SDIMAGE_ALWAYS_FIT) {
+            if (this.ImageHeader.imageflags === NvConstant.ImageScales.AlwaysFit) {
               scaleType = 'NOPROP';
-            } else if (this.ImageHeader.imageflags === NvConstant.ImageScales.SDIMAGE_PROP_FIT) {
+            } else if (this.ImageHeader.imageflags === NvConstant.ImageScales.PropFit) {
               scaleType = 'PROPFIT';
             }
           }
@@ -5192,7 +5195,7 @@ class BaseShape extends BaseDrawingObject {
 
         if (this.BlobBytesID !== -1) {
           const blob = T3Gv.opt.GetObjectPtr(this.BlobBytesID, false);
-          if (blob && blob.ImageDir === StyleConstant.ImageDir.dir_svg) {
+          if (blob && blob.ImageDir === StyleConstant.ImageDir.Svg) {
             if (this.SVGDim.width == null) {
               this.SVGDim = Utils2.ParseSVGDimensions(blob.Bytes);
             }
@@ -5218,8 +5221,8 @@ class BaseShape extends BaseDrawingObject {
           }
         }
 
-        const flipHorizontally = (this.extraflags & OptConstant.ExtraFlags.SEDE_FlipHoriz) > 0;
-        const flipVertically = (this.extraflags & OptConstant.ExtraFlags.SEDE_FlipVert) > 0;
+        const flipHorizontally = (this.extraflags & OptConstant.ExtraFlags.FlipHoriz) > 0;
+        const flipVertically = (this.extraflags & OptConstant.ExtraFlags.FlipVert) > 0;
         if (flipHorizontally) {
           element.SetMirror(flipHorizontally);
         }
@@ -5377,7 +5380,7 @@ class BaseShape extends BaseDrawingObject {
     const frameWithThickness = {};
     const borderThickness = this.StyleRecord.Line.Thickness / 2;
 
-    if (this.flags & NvConstant.ObjFlags.SEDO_UseConnect && this.ConnectPoints) {
+    if (this.flags & NvConstant.ObjFlags.UseConnect && this.ConnectPoints) {
       isBorderOnly = false;
     }
 
@@ -5390,19 +5393,19 @@ class BaseShape extends BaseDrawingObject {
     Utils2.CopyRect(frameWithThickness, this.Frame);
     Utils2.InflateRect(frameWithThickness, borderThickness, borderThickness);
 
-    hitCode = Utils2.pointInRect(frameWithThickness, transformedCoords) ? NvConstant.HitCodes.SED_Border : 0;
+    hitCode = Utils2.pointInRect(frameWithThickness, transformedCoords) ? NvConstant.HitCodes.Border : 0;
 
     if (hitCode) {
-      polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, false, true, null);
+      polyPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, false, true, null);
       if (T3Gv.opt.fromOverlayLayer || T3Gv.opt.PolyPtInPolygon(polyPoints, transformedCoords)) {
-        hitCode = NvConstant.HitCodes.SED_Inside;
+        hitCode = NvConstant.HitCodes.Inside;
         if (this.IsTransparent() || isBorderOnly) {
           hitCode = 0;
           isBorderOnly = true;
         }
-        polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, false, false, null);
+        polyPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, false, false, null);
         if (isBorderOnly && Utils3.LineDStyleHit(polyPoints, transformedCoords, borderThickness, 0, null)) {
-          hitCode = NvConstant.HitCodes.SED_Border;
+          hitCode = NvConstant.HitCodes.Border;
         }
       } else {
         hitCode = 0;
@@ -5422,7 +5425,7 @@ class BaseShape extends BaseDrawingObject {
 
     const result = !!(
       this instanceof Instance.Shape.Polygon &&
-      this.hookflags & NvConstant.HookFlags.SED_LC_AttachToLine
+      this.hookflags & NvConstant.HookFlags.LcAttachToLine
     );
 
     T3Util.Log("= S.BaseShape - AllowMaintainLink output:", result);
@@ -5432,7 +5435,7 @@ class BaseShape extends BaseDrawingObject {
   PolyGetTargetPointList(rotationAngle: number) {
     T3Util.Log("= S.BaseShape - PolyGetTargetPointList input:", { rotationAngle });
 
-    let polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, false, true, null);
+    let polyPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, false, true, null);
     let angleInRadians = 0;
 
     if (rotationAngle !== 0) {
@@ -5448,7 +5451,7 @@ class BaseShape extends BaseDrawingObject {
     T3Util.Log("= S.BaseShape - PolyGetTargets input:", { event, hookFlags, frame });
 
     let closestPointIndex = -1;
-    let minDistance = OptConstant.Defines.LongIntMax;
+    let minDistance = OptConstant.Common.LongIntMax;
     const targetPoints = [{ x: 0, y: 0 }];
     const resultPoints = [];
     const rotatedEvent = { x: event.x, y: event.y };
@@ -5457,7 +5460,7 @@ class BaseShape extends BaseDrawingObject {
 
     if (!event) return null;
 
-    if (T3Gv.docUtil.docConfig.enableSnap && !(hookFlags & NvConstant.HookFlags.SED_LC_NoSnaps)) {
+    if (T3Gv.docUtil.docConfig.enableSnap && !(hookFlags & NvConstant.HookFlags.LcNoSnaps)) {
       rotatedEvent.x = T3Gv.docUtil.SnapToGrid(rotatedEvent).x;
       rotatedEvent.y = T3Gv.docUtil.SnapToGrid(rotatedEvent).y;
       rotatedEvent.y = Math.max(rotatedEvent.y, frame.y);
@@ -5504,8 +5507,8 @@ class BaseShape extends BaseDrawingObject {
         Utils3.RotatePointsAboutCenter(rotatedFrame, rotationRadians, targetPoints);
       }
 
-      const normalizedX = (targetPoints[0].x - frame.x) / frame.width * OptConstant.Defines.SED_CDim;
-      const normalizedY = (targetPoints[0].y - frame.y) / frame.height * OptConstant.Defines.SED_CDim;
+      const normalizedX = (targetPoints[0].x - frame.x) / frame.width * OptConstant.Common.MaxDim;
+      const normalizedY = (targetPoints[0].y - frame.y) / frame.height * OptConstant.Common.MaxDim;
       resultPoints.push(new Point(normalizedX, normalizedY));
 
       T3Util.Log("= S.BaseShape - PolyGetTargets output:", resultPoints);
@@ -5542,9 +5545,9 @@ class BaseShape extends BaseDrawingObject {
     }
     var S = T3Gv.stdObj.GetObject(this.DataID);
     if (null != S) {
-      var c = e.CreateShape(OptConstant.CSType.TEXT);
+      var c = e.CreateShape(OptConstant.CSType.Text);
       c.SetRenderingEnabled(!1),
-        c.SetID(OptConstant.SVGElementClass.TEXT),
+        c.SetID(OptConstant.SVGElementClass.Text),
         c.SetUserData(n);
       var u = this.StyleRecord;
       u.Line.BThick &&
@@ -5556,8 +5559,8 @@ class BaseShape extends BaseDrawingObject {
           this.fieldDataElemID,
           this.dataStyleOverride
         ),
-        this.TextFlags & NvConstant.TextFlags.SED_TF_AttachA ||
-        this.TextFlags & NvConstant.TextFlags.SED_TF_AttachB ||
+        this.TextFlags & NvConstant.TextFlags.AttachA ||
+        this.TextFlags & NvConstant.TextFlags.AttachB ||
         (c.SetPos(i.x - r.x, i.y - r.y), c.SetSize(i.width, i.height)),
         t &&
         (t.AddElement(c), t.isText = !0, t.textElem = c),
@@ -5572,7 +5575,7 @@ class BaseShape extends BaseDrawingObject {
       if (
         this.bInGroup &&
         c.DisableHyperlinks(!0),
-        this.TextFlags & NvConstant.TextFlags.SED_TF_AttachA
+        this.TextFlags & NvConstant.TextFlags.AttachA
       ) switch (
         c.SetRenderingEnabled(!0),
         c.SetConstraints(T3Gv.opt.contentHeader.MaxWorkDim.x, 0, 0),
@@ -5580,48 +5583,48 @@ class BaseShape extends BaseDrawingObject {
         p.height,
         this.TextAlign
         ) {
-          case TextConstant.TextAlign.TOPLEFT:
-          case TextConstant.TextAlign.LEFT:
-          case TextConstant.TextAlign.BOTTOMLEFT:
+          case TextConstant.TextAlign.TopLeft:
+          case TextConstant.TextAlign.Left:
+          case TextConstant.TextAlign.BottomLeft:
             c.SetPos(0, - p.height - this.TMargins.top),
-              c.SetParagraphAlignment(TextConstant.TextAlign.LEFT);
+              c.SetParagraphAlignment(TextConstant.TextAlign.Left);
             break;
-          case TextConstant.TextAlign.TOPRIGHT:
-          case TextConstant.TextAlign.RIGHT:
-          case TextConstant.TextAlign.BOTTOMRIGHT:
+          case TextConstant.TextAlign.TopRight:
+          case TextConstant.TextAlign.Right:
+          case TextConstant.TextAlign.BottomRight:
             c.SetPos(this.Frame.width - p.width, - p.height - this.TMargins.top),
-              c.SetParagraphAlignment(TextConstant.TextAlign.RIGHT);
+              c.SetParagraphAlignment(TextConstant.TextAlign.Right);
             break;
           default:
             c.SetPos(this.Frame.width / 2 - p.width / 2, - p.height - this.TMargins.top),
-              c.SetParagraphAlignment(TextConstant.TextAlign.CENTER)
-        } else if (this.TextFlags & NvConstant.TextFlags.SED_TF_AttachB) switch (
+              c.SetParagraphAlignment(TextConstant.TextAlign.Center)
+        } else if (this.TextFlags & NvConstant.TextFlags.AttachB) switch (
           c.SetRenderingEnabled(!0),
           c.SetConstraints(T3Gv.opt.contentHeader.MaxWorkDim.x, 0, 0),
           (p = c.GetTextMinDimensions()).width,
           this.TextAlign
         ) {
-            case TextConstant.TextAlign.TOPLEFT:
-            case TextConstant.TextAlign.LEFT:
-            case TextConstant.TextAlign.BOTTOMLEFT:
+            case TextConstant.TextAlign.TopLeft:
+            case TextConstant.TextAlign.Left:
+            case TextConstant.TextAlign.BottomLeft:
               c.SetPos(0, this.Frame.height + this.TMargins.bottom),
-                c.SetParagraphAlignment(TextConstant.TextAlign.LEFT);
+                c.SetParagraphAlignment(TextConstant.TextAlign.Left);
               break;
-            case TextConstant.TextAlign.TOPRIGHT:
-            case TextConstant.TextAlign.RIGHT:
-            case TextConstant.TextAlign.BOTTOMRIGHT:
+            case TextConstant.TextAlign.TopRight:
+            case TextConstant.TextAlign.Right:
+            case TextConstant.TextAlign.BottomRight:
               c.SetPos(
                 this.Frame.width - p.width,
                 this.Frame.height + this.TMargins.bottom
               ),
-                c.SetParagraphAlignment(TextConstant.TextAlign.RIGHT);
+                c.SetParagraphAlignment(TextConstant.TextAlign.Right);
               break;
             default:
               c.SetPos(
                 this.Frame.width / 2 - p.width / 2,
                 this.Frame.height + this.TMargins.bottom
               ),
-                c.SetParagraphAlignment(TextConstant.TextAlign.CENTER)
+                c.SetParagraphAlignment(TextConstant.TextAlign.Center)
           } else this.TextGrow == NvConstant.TextGrowBehavior.Horizontal ? c.SetConstraints(T3Gv.opt.contentHeader.MaxWorkDim.x, i.width, i.height) : c.SetConstraints(i.width, i.width, i.height);
       c.SetRenderingEnabled(!0),
         c.SetEditCallback(T3Gv.opt.TextCallback, t)
@@ -5630,46 +5633,46 @@ class BaseShape extends BaseDrawingObject {
 
   LM_ResizeSVGTextObject(e, t, a) {
     if (- 1 != t.DataID) {
-      var r = e.GetElementByID(OptConstant.SVGElementClass.TEXT);
+      var r = e.GetElementById(OptConstant.SVGElementClass.Text);
       if (r) {
         var i = t.trect,
           n = null;
-        if (this.TextFlags & NvConstant.TextFlags.SED_TF_AttachA) {
+        if (this.TextFlags & NvConstant.TextFlags.AttachA) {
           switch ((n = r.GetTextMinDimensions()).width, n.height, this.TextAlign) {
-            case TextConstant.TextAlign.TOPLEFT:
-            case TextConstant.TextAlign.LEFT:
-            case TextConstant.TextAlign.BOTTOMLEFT:
+            case TextConstant.TextAlign.TopLeft:
+            case TextConstant.TextAlign.Left:
+            case TextConstant.TextAlign.BottomLeft:
               r.SetPos(0, - n.height - this.TMargins.top),
-                r.SetParagraphAlignment(TextConstant.TextAlign.LEFT);
+                r.SetParagraphAlignment(TextConstant.TextAlign.Left);
               break;
-            case TextConstant.TextAlign.TOPRIGHT:
-            case TextConstant.TextAlign.RIGHT:
-            case TextConstant.TextAlign.BOTTOMRIGHT:
+            case TextConstant.TextAlign.TopRight:
+            case TextConstant.TextAlign.Right:
+            case TextConstant.TextAlign.BottomRight:
               r.SetPos(a.width - n.width, - n.height - this.TMargins.top),
-                r.SetParagraphAlignment(TextConstant.TextAlign.RIGHT);
+                r.SetParagraphAlignment(TextConstant.TextAlign.Right);
               break;
             default:
               r.SetPos(a.width / 2 - n.width / 2, - n.height - this.TMargins.top),
-                r.SetParagraphAlignment(TextConstant.TextAlign.CENTER)
+                r.SetParagraphAlignment(TextConstant.TextAlign.Center)
           }
           r.SetConstraints(T3Gv.opt.contentHeader.MaxWorkDim.x, 0, 0)
-        } else if (this.TextFlags & NvConstant.TextFlags.SED_TF_AttachB) {
+        } else if (this.TextFlags & NvConstant.TextFlags.AttachB) {
           switch ((n = r.GetTextMinDimensions()).width, this.TextAlign) {
-            case TextConstant.TextAlign.TOPLEFT:
-            case TextConstant.TextAlign.LEFT:
-            case TextConstant.TextAlign.BOTTOMLEFT:
+            case TextConstant.TextAlign.TopLeft:
+            case TextConstant.TextAlign.Left:
+            case TextConstant.TextAlign.BottomLeft:
               r.SetPos(0, a.height + this.TMargins.bottom),
-                r.SetParagraphAlignment(TextConstant.TextAlign.LEFT);
+                r.SetParagraphAlignment(TextConstant.TextAlign.Left);
               break;
-            case TextConstant.TextAlign.TOPRIGHT:
-            case TextConstant.TextAlign.RIGHT:
-            case TextConstant.TextAlign.BOTTOMRIGHT:
+            case TextConstant.TextAlign.TopRight:
+            case TextConstant.TextAlign.Right:
+            case TextConstant.TextAlign.BottomRight:
               r.SetPos(a.width - n.width, a.height + this.TMargins.bottom),
-                r.SetParagraphAlignment(TextConstant.TextAlign.RIGHT);
+                r.SetParagraphAlignment(TextConstant.TextAlign.Right);
               break;
             default:
               r.SetPos(a.width / 2 - n.width / 2, a.height + this.TMargins.bottom),
-                r.SetParagraphAlignment(TextConstant.TextAlign.CENTER)
+                r.SetParagraphAlignment(TextConstant.TextAlign.Center)
           }
           r.SetConstraints(T3Gv.opt.contentHeader.MaxWorkDim.x, 0, 0)
         } else {
@@ -5699,8 +5702,8 @@ class BaseShape extends BaseDrawingObject {
 
     // Check if we should skip writing text data ID
     if (
-      (this.TextFlags & NvConstant.TextFlags.SED_TF_AttachB ||
-        this.TextFlags & NvConstant.TextFlags.SED_TF_AttachA) && !options.WriteBlocks
+      (this.TextFlags & NvConstant.TextFlags.AttachB ||
+        this.TextFlags & NvConstant.TextFlags.AttachA) && !options.WriteBlocks
     ) {
       textDataId = -1;
     }
@@ -5712,7 +5715,7 @@ class BaseShape extends BaseDrawingObject {
     // if (table) {
     //   const isTableWithShapeContainer =
     //     options.WriteGroupBlock &&
-    //     this.objecttype === NvConstant.ObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER;
+    //     this.objecttype === NvConstant.FNObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER;
 
     //   if (options.noTables || options.WriteBlocks || (options.WriteGroupBlock && !isTableWithShapeContainer)) {
     //     // Only write table ID if writing blocks or group blocks
@@ -5743,7 +5746,7 @@ class BaseShape extends BaseDrawingObject {
       ShapeUtil.WriteString8(
         outputStream,
         this.EMFHash,
-        ShapeConstant.OpNameCode.cEmfHash,
+        DSConstant.OpNameCode.cEmfHash,
         options
       );
       hasWrittenEMFHash = true;
@@ -5759,28 +5762,28 @@ class BaseShape extends BaseDrawingObject {
         ShapeUtil.WriteString8(
           outputStream,
           this.EMFHash,
-          ShapeConstant.OpNameCode.cEmfHash,
+          DSConstant.OpNameCode.cEmfHash,
           options
         );
       }
 
       // Write EMF blob bytes or ID depending on options
       if (options.WriteBlocks || options.WriteGroupBlock) {
-        ShapeUtil.WriteEMFBlobBytesID(outputStream, this.EMFBlobBytesID, StyleConstant.ImageDir.dir_meta, options);
+        ShapeUtil.WriteEMFBlobBytesID(outputStream, this.EMFBlobBytesID, StyleConstant.ImageDir.Meta, options);
       } else {
-        ShapeUtil.WriteBlob(outputStream, emfBlobBytes.Bytes, ShapeConstant.OpNameCode.cDrawMeta);
+        ShapeUtil.WriteBlob(outputStream, emfBlobBytes.Bytes, DSConstant.OpNameCode.cDrawMeta);
       }
 
       // Handle preview blob bytes
       blobBytes = this.GetBlobBytes();
       if (blobBytes) {
         if (options.WriteBlocks || options.WriteGroupBlock) {
-          ShapeUtil.WriteBlobBytesID(outputStream, this.BlobBytesID, StyleConstant.ImageDir.dir_png, options);
+          ShapeUtil.WriteBlobBytesID(outputStream, this.BlobBytesID, StyleConstant.ImageDir.Png, options);
         } else {
           ShapeUtil.WriteBlob(
             outputStream,
             blobBytes.Bytes,
-            ShapeConstant.OpNameCode.cDrawPreviewPng
+            DSConstant.OpNameCode.cDrawPreviewPng
           );
         }
       }
@@ -5792,30 +5795,30 @@ class BaseShape extends BaseDrawingObject {
 
         // Handle different image formats
         switch (blobBytes.ImageDir) {
-          case StyleConstant.ImageDir.dir_jpg:
+          case StyleConstant.ImageDir.Jpg:
             ShapeUtil.WriteImageHeader(outputStream, this, options);
             if (options.WriteBlocks || options.WriteGroupBlock) {
-              ShapeUtil.WriteBlobBytesID(outputStream, this.BlobBytesID, StyleConstant.ImageDir.dir_jpg, options);
+              ShapeUtil.WriteBlobBytesID(outputStream, this.BlobBytesID, StyleConstant.ImageDir.Jpg, options);
             } else {
-              ShapeUtil.WriteBlob(outputStream, blobBytes.Bytes, ShapeConstant.OpNameCode.cDrawJpg);
+              ShapeUtil.WriteBlob(outputStream, blobBytes.Bytes, DSConstant.OpNameCode.cDrawJpg);
             }
             break;
 
-          case StyleConstant.ImageDir.dir_png:
+          case StyleConstant.ImageDir.Png:
             ShapeUtil.WriteImageHeader(outputStream, this, options);
             if (options.WriteBlocks || options.WriteGroupBlock) {
-              ShapeUtil.WriteBlobBytesID(outputStream, this.BlobBytesID, StyleConstant.ImageDir.dir_png, options);
+              ShapeUtil.WriteBlobBytesID(outputStream, this.BlobBytesID, StyleConstant.ImageDir.Png, options);
             } else {
-              ShapeUtil.WriteBlob(outputStream, blobBytes.Bytes, ShapeConstant.OpNameCode.cDrawPng);
+              ShapeUtil.WriteBlob(outputStream, blobBytes.Bytes, DSConstant.OpNameCode.cDrawPng);
             }
             break;
 
-          case StyleConstant.ImageDir.dir_svg:
+          case StyleConstant.ImageDir.Svg:
             ShapeUtil.WriteImageHeader(outputStream, this, options);
             if (options.WriteBlocks) {
-              ShapeUtil.WriteBlobBytesID(outputStream, this.BlobBytesID, StyleConstant.ImageDir.dir_svg, options);
+              ShapeUtil.WriteBlobBytesID(outputStream, this.BlobBytesID, StyleConstant.ImageDir.Svg, options);
             } else {
-              ShapeUtil.WriteBlob(outputStream, blobBytes.Bytes, ShapeConstant.OpNameCode.cDrawSvg);
+              ShapeUtil.WriteBlob(outputStream, blobBytes.Bytes, DSConstant.OpNameCode.cDrawSvg);
             }
             break;
         }
@@ -5823,13 +5826,13 @@ class BaseShape extends BaseDrawingObject {
         this.ImageID != null &&
         this.ImageID.length > 0 &&
         !options.noTables &&
-        this.ImageDir === StyleConstant.ImageDir.dir_svg
+        this.ImageDir === StyleConstant.ImageDir.Svg
       ) {
         // Write SVG Image ID
         ShapeUtil.WriteString(
           outputStream,
           this.ImageID,
-          ShapeConstant.OpNameCode.cSvgImageId,
+          DSConstant.OpNameCode.cSvgImageId,
           options
         );
         hasWrittenEMFHash = true;
@@ -5841,7 +5844,7 @@ class BaseShape extends BaseDrawingObject {
       ShapeUtil.WriteString8(
         outputStream,
         this.EMFHash,
-        ShapeConstant.OpNameCode.cEmfHash,
+        DSConstant.OpNameCode.cEmfHash,
         options
       );
       hasWrittenEMFHash = true;
@@ -5855,9 +5858,9 @@ class BaseShape extends BaseDrawingObject {
     if (this.OleBlobBytesID >= 0) {
       blobBytes = this.GetOleBlobBytes();
       if (options.WriteBlocks) {
-        ShapeUtil.WriteOleBlobBytesID(outputStream, this.OleBlobBytesID, StyleConstant.ImageDir.dir_store, options);
+        ShapeUtil.WriteOleBlobBytesID(outputStream, this.OleBlobBytesID, StyleConstant.ImageDir.Store, options);
       } else {
-        ShapeUtil.WriteBlob(outputStream, blobBytes.Bytes, ShapeConstant.OpNameCode.cOleStorage);
+        ShapeUtil.WriteBlob(outputStream, blobBytes.Bytes, DSConstant.OpNameCode.cOleStorage);
       }
     }
 
@@ -5868,8 +5871,8 @@ class BaseShape extends BaseDrawingObject {
       } else {
         const nativeObject = T3Gv.opt.GetObjectPtr(this.NativeID, false);
         if (nativeObject) {
-          const codePosition = ShapeUtil.WriteCode(outputStream, ShapeConstant.OpNameCode.cNativeStorage);
-          ShapeConstant.writeNativeSdfBuffer(outputStream, nativeObject);
+          const codePosition = ShapeUtil.WriteCode(outputStream, DSConstant.OpNameCode.cNativeStorage);
+          DSConstant.writeNativeSdfBuffer(outputStream, nativeObject);
           ShapeUtil.WriteLength(outputStream, codePosition);
         }
       }
@@ -6099,24 +6102,24 @@ class BaseShape extends BaseDrawingObject {
     // For segment 1, adjust width; otherwise adjust height
     if (segment === 1) {
       computedWidth = this.MaintainProportions(dimensionLength, null);
-      this.SetSize(dimensionLength, computedWidth, OptConstant.ActionTriggerType.LINELENGTH);
+      this.SetSize(dimensionLength, computedWidth, OptConstant.ActionTriggerType.LineLength);
       if (this.GetDimensionsForDisplay().width === dimensionLength) {
         this.rwd = dimensionValue;
-        this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Width, true);
+        this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.Width, true);
       }
     } else {
       computedHeight = this.MaintainProportions(null, dimensionLength);
-      this.SetSize(computedHeight, dimensionLength, OptConstant.ActionTriggerType.LINELENGTH);
+      this.SetSize(computedHeight, dimensionLength, OptConstant.ActionTriggerType.LineLength);
       if (this.GetDimensionsForDisplay().height === dimensionLength) {
         this.rht = dimensionValue;
-        this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Height, true);
+        this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.Height, true);
       }
     }
 
     // Set link flags for this shape and all connected hook objects
-    T3Gv.opt.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
+    T3Gv.opt.SetLinkFlag(this.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
     for (let i = 0, hooksCount = this.hooks.length; i < hooksCount; i++) {
-      T3Gv.opt.SetLinkFlag(this.hooks[i].objid, ShapeConstant.LinkFlags.SED_L_MOVE);
+      T3Gv.opt.SetLinkFlag(this.hooks[i].objid, DSConstant.LinkFlags.SED_L_MOVE);
     }
 
     T3Gv.opt.AddToDirtyList(this.BlockID);
@@ -6252,11 +6255,11 @@ class BaseShape extends BaseDrawingObject {
       // If there is at least one hook, check the hook point condition:
       // It returns true if the first hook's hook point is not SED_KAT and not greater than SED_AK.
       canRotate =
-        this.hooks[0].hookpt !== OptConstant.HookPts.SED_KAT &&
-        !(this.hooks[0].hookpt > OptConstant.HookPts.SED_AK);
+        this.hooks[0].hookpt !== OptConstant.HookPts.KAT &&
+        !(this.hooks[0].hookpt > OptConstant.HookPts.AK);
     } else {
       // If there are no hooks, defer to the extra flags check
-      canRotate = Boolean(this.extraflags & OptConstant.ExtraFlags.SEDE_NoRotate);
+      canRotate = Boolean(this.extraflags & OptConstant.ExtraFlags.NoRotate);
     }
 
     T3Util.Log("= S.BaseShape - NoFlip output:", canRotate);
@@ -6273,21 +6276,21 @@ class BaseShape extends BaseDrawingObject {
     }
 
     // If the flipFlags indicate a horizontal flip, flip horizontally.
-    if (flipFlags & OptConstant.ExtraFlags.SEDE_FlipHoriz) {
-      const isCurrentlyFlippedHoriz = (this.extraflags & OptConstant.ExtraFlags.SEDE_FlipHoriz) !== 0;
+    if (flipFlags & OptConstant.ExtraFlags.FlipHoriz) {
+      const isCurrentlyFlippedHoriz = (this.extraflags & OptConstant.ExtraFlags.FlipHoriz) !== 0;
       this.extraflags = Utils2.SetFlag(
         this.extraflags,
-        OptConstant.ExtraFlags.SEDE_FlipHoriz,
+        OptConstant.ExtraFlags.FlipHoriz,
         !isCurrentlyFlippedHoriz
       );
     }
 
     // If the flipFlags indicate a vertical flip, flip vertically.
-    if (flipFlags & OptConstant.ExtraFlags.SEDE_FlipVert) {
-      const isCurrentlyFlippedVert = (this.extraflags & OptConstant.ExtraFlags.SEDE_FlipVert) !== 0;
+    if (flipFlags & OptConstant.ExtraFlags.FlipVert) {
+      const isCurrentlyFlippedVert = (this.extraflags & OptConstant.ExtraFlags.FlipVert) !== 0;
       this.extraflags = Utils2.SetFlag(
         this.extraflags,
-        OptConstant.ExtraFlags.SEDE_FlipVert,
+        OptConstant.ExtraFlags.FlipVert,
         !isCurrentlyFlippedVert
       );
     }
@@ -6307,21 +6310,21 @@ class BaseShape extends BaseDrawingObject {
       return true;
     }
 
-    // If the shape is a table with a shape container, do not rotate.
-    if (this.objecttype === NvConstant.ObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER) {
-      T3Util.Log("= S.BaseShape: NoRotate output: true (object type is TABLE_WITH_SHAPECONTAINER)");
-      return true;
-    }
+    // // If the shape is a table with a shape container, do not rotate.
+    // if (this.objecttype === NvConstant.FNObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER) {
+    //   T3Util.Log("= S.BaseShape: NoRotate output: true (object type is TABLE_WITH_SHAPECONTAINER)");
+    //   return true;
+    // }
 
     // If the first hook's object is a shape container, do not rotate.
     if (this.hooks.length && (childObject = T3Gv.opt.GetObjectPtr(this.hooks[0].objid, false)) &&
-      childObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_SHAPECONTAINER) {
+      childObject.objecttype === NvConstant.FNObjectTypes.ShapeContainer) {
       T3Util.Log("= S.BaseShape: NoRotate output: true (hook object is a SHAPECONTAINER)");
       return true;
     }
 
     // If extra flags indicate no rotation, do not rotate.
-    if (this.extraflags & OptConstant.ExtraFlags.SEDE_NoRotate) {
+    if (this.extraflags & OptConstant.ExtraFlags.NoRotate) {
       T3Util.Log("= S.BaseShape: NoRotate output: true (extraflags SEDE_NoRotate set)");
       return true;
     }
@@ -6331,7 +6334,7 @@ class BaseShape extends BaseDrawingObject {
     const connectorCount = childConnectors.length;
     for (let i = 0; i < connectorCount; i++) {
       childObject = T3Gv.opt.GetObjectPtr(childConnectors[i], false);
-      if (!childObject._IsFlowChartConnector() && (childObject.arraylist.hook.length - OptConstant.ConnectorDefines.SEDA_NSkip) > 0) {
+      if (!childObject._IsFlowChartConnector() && (childObject.arraylist.hook.length - OptConstant.ConnectorDefines.NSkip) > 0) {
         T3Util.Log("= S.BaseShape: NoRotate output: true (child connector condition met at index " + i + ")");
         return true;
       }
@@ -6380,13 +6383,13 @@ class BaseShape extends BaseDrawingObject {
 
     // Check if the session disallows action buttons
     const sessionBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
-    if (sessionBlock.moreflags & NvConstant.SessionMoreFlags.SEDSM_NoActionButton) {
+    if (sessionBlock.moreflags & NvConstant.SessionMoreFlags.NoActionButton) {
       T3Util.Log("= S.BaseShape - GetActionButtons output:", null);
       return null;
     }
 
     // If the shape is locked, no action buttons are allowed
-    if (this.flags & NvConstant.ObjFlags.SEDO_Lock) {
+    if (this.flags & NvConstant.ObjFlags.Lock) {
       T3Util.Log("= S.BaseShape - GetActionButtons output:", null);
       return null;
     }
@@ -6462,19 +6465,19 @@ class BaseShape extends BaseDrawingObject {
     // Get the base object for this shape
     const baseShapeObj = T3Gv.opt.GetObjectPtr(this.BlockID, false);
 
-    if (baseShapeObj && baseShapeObj instanceof BaseDrawingObject) {
-      const objectTypes = NvConstant.ObjectTypes;
+    if (baseShapeObj && baseShapeObj instanceof BaseDrawObject) {
+      const objectTypes = NvConstant.FNObjectTypes;
       switch (this.objecttype) {
-        case objectTypes.SD_OBJT_SWIMLANE_ROWS:
-        case objectTypes.SD_OBJT_SWIMLANE_COLS:
-        case objectTypes.SD_OBJT_SWIMLANE_GRID:
-        case objectTypes.SD_OBJT_FRAME_CONTAINER:
+        // case objectTypes.SwimLaneRows:
+        // case objectTypes.SD_OBJT_SWIMLANE_COLS:
+        // case objectTypes.SD_OBJT_SWIMLANE_GRID:
+        case objectTypes.FrameContainer:
           if (domEvent) {
             // Get the rollover target from the DOM event's currentTarget element
             const rolloverTarget = T3Gv.opt.svgObjectLayer
               .FindElementByDOMElement(domEvent.currentTarget)
               .GetTargetForEvent(domEvent);
-            if (rolloverTarget.GetID() === OptConstant.SVGElementClass.SLOP) {
+            if (rolloverTarget.GetID() === OptConstant.SVGElementClass.Slop) {
               // Delegate to the parent method
               super.SetRolloverActions(svgEvent, rolloverTarget);
             }
@@ -6484,11 +6487,11 @@ class BaseShape extends BaseDrawingObject {
           T3Util.Log("S.BaseShape - SetRolloverActions output:", "Handled SWIMLANE/FRAME_CONTAINER rollover");
           return;
 
-        case objectTypes.SD_OBJT_SHAPECONTAINER:
+        case objectTypes.ShapeContainer:
           // If the shape container is in a table cell, delegate rollover to the cell object
           const containerCell = T3Gv.opt.ContainerIsInCell(this);
           if (containerCell) {
-            const cellElement = T3Gv.opt.svgObjectLayer.GetElementByID(containerCell.obj.BlockID);
+            const cellElement = T3Gv.opt.svgObjectLayer.GetElementById(containerCell.obj.BlockID);
             containerCell.obj.SetRolloverActions(svgEvent, cellElement);
             T3Util.Log("S.BaseShape - SetRolloverActions output:", "Delegated rollover to contained cell object");
             return;
@@ -6518,7 +6521,7 @@ class BaseShape extends BaseDrawingObject {
           actionButtons.right || actionButtons.custom);
         // For text only objects or if no directional arrow buttons exist,
         // simply use the base rollover actions.
-        if (this.flags & NvConstant.ObjFlags.SEDO_TextOnly || noDirectionalButtons) {
+        if (this.flags & NvConstant.ObjFlags.TextOnly || noDirectionalButtons) {
           super.SetRolloverActions(svgEvent, rolloverElement);
         } else {
           const currentBlockId = this.BlockID;
@@ -6533,12 +6536,12 @@ class BaseShape extends BaseDrawingObject {
           if (svgEvent.docInfo.docScale <= 0.5) {
             screenScale *= 2;
           }
-          const baseArrowSlop = OptConstant.Defines.baseArrowSlop / screenScale;
-          const connectorArrowSlop = OptConstant.Defines.connectorArrowSlop / screenScale;
+          const baseArrowSlop = OptConstant.Common.BaseArrowSlop / screenScale;
+          const connectorArrowSlop = OptConstant.Common.ConnectorArrowSlop / screenScale;
           let knobSizeOffset = 0;
           const selectedList = T3Gv.opt.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
           if (selectedList && selectedList.indexOf(currentBlockId) !== -1) {
-            knobSizeOffset = OptConstant.Defines.SED_KnobSize / 2;
+            knobSizeOffset = OptConstant.Common.KnobSize / 2;
           }
           let horizontalOffset = 0;
           let verticalOffset = 0;
@@ -6565,28 +6568,28 @@ class BaseShape extends BaseDrawingObject {
             // Iterate as long as there are child hooks
             while (T3Gv.opt.FindChildArrayByIndex(this.BlockID, childHookData) > 0) {
               childObj = T3Gv.opt.GetObjectPtr(childHookData.id, false);
-              const isCoManager = ((childObj.arraylist.styleflags & OptConstant.SEDA_Styles.SEDA_CoManager) > 0);
+              const isCoManager = ((childObj.arraylist.styleflags & OptConstant.AStyles.CoManager) > 0);
               const isAssistantChild = childObj._IsChildOfAssistant();
               const isFlowConnector = childObj._IsFlowChartConnector();
-              let hookCount = childObj.arraylist.hook.length - OptConstant.ConnectorDefines.SEDA_NSkip;
+              let hookCount = childObj.arraylist.hook.length - OptConstant.ConnectorDefines.NSkip;
               if (hookCount < 0) {
                 hookCount = 0;
               }
               if (hookCount !== 0 && !isFlowConnector && !isCoManager && !isAssistantChild && childHookData.hookpt) {
                 switch (childHookData.hookpt) {
-                  case OptConstant.HookPts.SED_LL:
+                  case OptConstant.HookPts.LL:
                     rightAdjustment = connectorArrowSlop;
                     horizontalOffset += connectorArrowSlop - baseArrowSlop;
                     break;
-                  case OptConstant.HookPts.SED_LR:
+                  case OptConstant.HookPts.LR:
                     leftAdjustment = connectorArrowSlop;
                     horizontalOffset -= connectorArrowSlop - baseArrowSlop;
                     break;
-                  case OptConstant.HookPts.SED_LT:
+                  case OptConstant.HookPts.LT:
                     bottomAdjustment = connectorArrowSlop;
                     verticalOffset += connectorArrowSlop - baseArrowSlop;
                     break;
-                  case OptConstant.HookPts.SED_LB:
+                  case OptConstant.HookPts.LB:
                     topAdjustment = connectorArrowSlop;
                     verticalOffset -= connectorArrowSlop - baseArrowSlop;
                     break;
@@ -6595,12 +6598,12 @@ class BaseShape extends BaseDrawingObject {
             }
 
             // Create a group element for the action arrows
-            const arrowGroup = svgEvent.CreateShape(OptConstant.CSType.GROUP);
+            const arrowGroup = svgEvent.CreateShape(OptConstant.CSType.Group);
             arrowGroup.SetID(arrowGroupId);
             arrowGroup.SetUserData(currentBlockId);
 
-            const arrowSizeVertical = OptConstant.Defines.ActionArrowSizeV / screenScale;
-            const arrowSizeHorizontal = OptConstant.Defines.ActionArrowSizeH / screenScale;
+            const arrowSizeVertical = OptConstant.Common.ActionArrowSizeV / screenScale;
+            const arrowSizeHorizontal = OptConstant.Common.ActionArrowSizeH / screenScale;
 
             let parentFrame;
             // Expand parent frame to include arrow buttons and any knob offset
@@ -6621,7 +6624,7 @@ class BaseShape extends BaseDrawingObject {
                 const frameClone = $.extend(true, {}, this.Frame);
                 for (let idx = 0; idx < customButtons.length; idx++) {
                   const button = customButtons[idx];
-                  button.SetID(OptConstant.ActionArrow.CUSTOM + idx);
+                  button.SetID(OptConstant.ActionArrow.Custom + idx);
                   button.SetUserData(currentBlockId);
                   arrowGroup.AddElement(button);
                   arrowElements.push(button.DOMElement());
@@ -6634,7 +6637,7 @@ class BaseShape extends BaseDrawingObject {
               let leftArrow = gBusinessController.CreateActionButton(svgEvent, rightAdjustment, centerY, this.BlockID);
               if (leftArrow == null) {
                 // If not created, draw a simple path as fallback
-                leftArrow = svgEvent.CreateShape(OptConstant.CSType.PATH);
+                leftArrow = svgEvent.CreateShape(OptConstant.CSType.Path);
                 const pathCreator = leftArrow.PathCreator();
                 pathCreator.BeginPath();
                 pathCreator.MoveTo(0, centerY);
@@ -6647,7 +6650,7 @@ class BaseShape extends BaseDrawingObject {
                 leftArrow.SetStrokeWidth(0);
                 leftArrow.SetCursor(CursorConstant.CursorType.ADD_LEFT);
               }
-              leftArrow.SetID(OptConstant.ActionArrow.LEFT);
+              leftArrow.SetID(OptConstant.ActionArrow.Left);
               leftArrow.SetUserData(currentBlockId);
               arrowGroup.AddElement(leftArrow);
               arrowElements.push(leftArrow.DOMElement());
@@ -6656,7 +6659,7 @@ class BaseShape extends BaseDrawingObject {
             if (actionButtons.up) {
               let upArrow = gBusinessController.CreateActionButton(svgEvent, centerX, topAdjustment, this.BlockID);
               if (upArrow == null) {
-                upArrow = svgEvent.CreateShape(OptConstant.CSType.PATH);
+                upArrow = svgEvent.CreateShape(OptConstant.CSType.Path);
                 const pathCreator = upArrow.PathCreator();
                 pathCreator.BeginPath();
                 pathCreator.MoveTo(centerX, 0);
@@ -6669,7 +6672,7 @@ class BaseShape extends BaseDrawingObject {
                 upArrow.SetStrokeWidth(0);
                 upArrow.SetCursor(CursorConstant.CursorType.ADD_UP);
               }
-              upArrow.SetID(OptConstant.ActionArrow.UP);
+              upArrow.SetID(OptConstant.ActionArrow.Up);
               upArrow.SetUserData(currentBlockId);
               arrowGroup.AddElement(upArrow);
               arrowElements.push(upArrow.DOMElement());
@@ -6678,7 +6681,7 @@ class BaseShape extends BaseDrawingObject {
             if (actionButtons.right) {
               let rightArrow = gBusinessController.CreateActionButton(svgEvent, parentFrame.width - rightAdjustment, centerY, this.BlockID);
               if (rightArrow == null) {
-                rightArrow = svgEvent.CreateShape(OptConstant.CSType.PATH);
+                rightArrow = svgEvent.CreateShape(OptConstant.CSType.Path);
                 const pathCreator = rightArrow.PathCreator();
                 pathCreator.BeginPath();
                 pathCreator.MoveTo(parentFrame.width, centerY);
@@ -6691,7 +6694,7 @@ class BaseShape extends BaseDrawingObject {
                 rightArrow.SetStrokeWidth(0);
                 rightArrow.SetCursor(CursorConstant.CursorType.ADD_RIGHT);
               }
-              rightArrow.SetID(OptConstant.ActionArrow.RIGHT);
+              rightArrow.SetID(OptConstant.ActionArrow.Right);
               rightArrow.SetUserData(currentBlockId);
               arrowGroup.AddElement(rightArrow);
               arrowElements.push(rightArrow.DOMElement());
@@ -6700,7 +6703,7 @@ class BaseShape extends BaseDrawingObject {
             if (actionButtons.down) {
               let downArrow = gBusinessController.CreateActionButton(svgEvent, centerX, parentFrame.height - topAdjustment, this.BlockID);
               if (downArrow == null) {
-                downArrow = svgEvent.CreateShape(OptConstant.CSType.PATH);
+                downArrow = svgEvent.CreateShape(OptConstant.CSType.Path);
                 const pathCreator = downArrow.PathCreator();
                 pathCreator.BeginPath();
                 pathCreator.MoveTo(centerX, parentFrame.height);
@@ -6713,7 +6716,7 @@ class BaseShape extends BaseDrawingObject {
                 downArrow.SetStrokeWidth(0);
                 downArrow.SetCursor(CursorConstant.CursorType.ADD_DOWN);
               }
-              downArrow.SetID(OptConstant.ActionArrow.DOWN);
+              downArrow.SetID(OptConstant.ActionArrow.Down);
               downArrow.SetUserData(currentBlockId);
               arrowGroup.AddElement(downArrow);
               arrowElements.push(downArrow.DOMElement());
@@ -6735,7 +6738,7 @@ class BaseShape extends BaseDrawingObject {
                   const targetId = targetForEvt.GetID();
                   const userData = overlayElement.GetUserData();
                   const targetObj = T3Gv.opt.GetObjectPtr(userData, false);
-                  if (targetObj && targetObj instanceof BaseDrawingObject && targetId != null && userData != null) {
+                  if (targetObj && targetObj instanceof BaseDrawObject && targetId != null && userData != null) {
                     gBusinessController.ActionClick(evt, userData, targetId, null);
                   }
                 }
@@ -6758,28 +6761,28 @@ class BaseShape extends BaseDrawingObject {
                 const targetForEvt = overlayElement.GetTargetForEvent(evt);
                 if (targetForEvt) {
                   if (T3Gv.opt.isMobilePlatform) {
-                    temporaryElem = T3Gv.opt.svgOverlayLayer.GetElementByID("actionArrow" + self.BlockID);
+                    temporaryElem = T3Gv.opt.svgOverlayLayer.GetElementById("actionArrow" + self.BlockID);
                   }
                   const targetId = targetForEvt.GetID();
                   const userData = overlayElement.GetUserData();
                   const targetObj = T3Gv.opt.GetObjectPtr(userData, false);
-                  if (!(targetObj && targetObj instanceof BaseDrawingObject)) return false;
+                  if (!(targetObj && targetObj instanceof BaseDrawObject)) return false;
                   switch (targetId) {
-                    case OptConstant.ActionArrow.UP:
+                    case OptConstant.ActionArrow.Up:
                       gBusinessController.AddAbove(evt, userData);
                       break;
-                    case OptConstant.ActionArrow.LEFT:
+                    case OptConstant.ActionArrow.Left:
                       gBusinessController.AddLeft(evt, userData);
                       break;
-                    case OptConstant.ActionArrow.DOWN:
+                    case OptConstant.ActionArrow.Down:
                       gBusinessController.AddBelow(evt, userData);
                       break;
-                    case OptConstant.ActionArrow.RIGHT:
+                    case OptConstant.ActionArrow.Right:
                       gBusinessController.AddRight(evt, userData);
                       break;
                     default:
-                      if (targetId >= OptConstant.ActionArrow.CUSTOM) {
-                        gBusinessController.AddCustom(evt, userData, targetId - OptConstant.ActionArrow.CUSTOM);
+                      if (targetId >= OptConstant.ActionArrow.Custom) {
+                        gBusinessController.AddCustom(evt, userData, targetId - OptConstant.ActionArrow.Custom);
                       }
                   }
                   if (T3Gv.opt.isMobilePlatform) {
@@ -6790,7 +6793,7 @@ class BaseShape extends BaseDrawingObject {
                       if (zList.length) {
                         T3Gv.opt.SelectObjects([zList[zList.length - 1]], false, false);
                         const lastObj = T3Gv.opt.GetObjectPtr(zList[zList.length - 1], false);
-                        const svgElem = T3Gv.opt.svgObjectLayer.GetElementByID(lastObj.BlockID);
+                        const svgElem = T3Gv.opt.svgObjectLayer.GetElementById(lastObj.BlockID);
                         lastObj.SetRolloverActions(T3Gv.opt.svgDoc, svgElem);
                       }
                     }, 0);
@@ -6898,8 +6901,8 @@ class BaseShape extends BaseDrawingObject {
         if (deltaYDirect) {
           newHeight = this.Frame.height + deltaYDirect;
         }
-        this.SetSize(newWidth, newHeight, OptConstant.ActionTriggerType.LINELENGTH);
-        if (this.objecttype === NvConstant.ObjectTypes.SD_OBJT_ANNOTATION) {
+        this.SetSize(newWidth, newHeight, OptConstant.ActionTriggerType.LineLength);
+        if (this.objecttype === NvConstant.FNObjectTypes.Annotation) {
           // For annotation, adjust the vertical offset
           offsetY = frameBottom - (this.Frame.y + this.Frame.height);
           offsetX = 0;
@@ -6938,8 +6941,8 @@ class BaseShape extends BaseDrawingObject {
               containerList.List[index].extra = 0;
             }
             // Update link flag for containerShape and mark it as an object type
-            T3Gv.opt.SetLinkFlag(containerShape.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
-            containerShape.flags = Utils2.SetFlag(containerShape.flags, NvConstant.ObjFlags.SEDO_Obj1, true);
+            T3Gv.opt.SetLinkFlag(containerShape.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
+            containerShape.flags = Utils2.SetFlag(containerShape.flags, NvConstant.ObjFlags.Obj1, true);
 
             // Log output with updated extra value and return
             T3Util.Log("S.BaseShape - prUpdateExtra output:", { updatedExtra: containerList.List[index].extra });
@@ -7026,7 +7029,7 @@ class BaseShape extends BaseDrawingObject {
       this.zListIndex != null &&
       this.zListIndex >= 0
     ) {
-      const svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(elementId);
+      const svgElement = T3Gv.opt.svgObjectLayer.GetElementById(elementId);
       if (svgElement) {
         T3Gv.opt.svgObjectLayer.RemoveElement(svgElement);
         T3Gv.opt.svgObjectLayer.AddElement(svgElement, this.zListIndex);

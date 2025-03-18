@@ -534,7 +534,7 @@ class Formatter {
       const start = wordList.list[i].start;
       const end = wordList.list[i].end;
 
-      if (wordList.list[i].status === BConstant.WordState.WRONG && !this.IsDataFieldInRange(start, end)) {
+      if (wordList.list[i].status === BConstant.WordState.Wrong && !this.IsDataFieldInRange(start, end)) {
         this.SetFormat({ spError: true }, start, wordList.list[i].word.length, true);
       }
     }
@@ -562,7 +562,7 @@ class Formatter {
 
       if (!needsSpellCheck) {
         for (let i = 0; i < wordList.list.length; i++) {
-          if (wordList.list[i].status === BConstant.WordState.NOTPROCESSED) {
+          if (wordList.list[i].status === BConstant.WordState.NotProcessed) {
             spellCheckRequired = true;
             break;
           }
@@ -828,51 +828,6 @@ class Formatter {
 
     T3Util.Log("B.Text.Formatter: GetHitInfo output:", hitInfo);
     return hitInfo;
-  }
-
-  static FindPrevNextWord(text: string, position: number, isPrevious: boolean): number {
-    T3Util.Log("B.Text.Formatter: FindPrevNextWord input:", { text, position, isPrevious });
-
-    const length = text.length;
-    const whitespace = /[ \f\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]/;
-    const punctuation = /[`~!@#$%\^&?*()_\-+={}\[\]|\\;:'",.<>\/]/;
-    const wordChar = /[^\s`~!@#$%\^&?*()_\-+={}\[\]|\\;:'",.<>\/]/;
-
-    const getCharType = (char: string) => {
-      if (whitespace.test(char)) return whitespace;
-      if (punctuation.test(char)) return punctuation;
-      if (wordChar.test(char)) return wordChar;
-      return null;
-    };
-
-    let charType;
-
-    if (isPrevious && position > 0) {
-      position--;
-      while (whitespace.test(text[position]) && position > 0) {
-        position--;
-      }
-      charType = getCharType(text[position]);
-      if (charType && position > 0) {
-        while (charType.test(text[position - 1]) && position > 0) {
-          position--;
-        }
-      }
-    } else if (position < length) {
-      charType = getCharType(text[position]);
-      while (charType && charType.test(text[position]) && position < length) {
-        position++;
-      }
-      if (!charType && position < length) {
-        position++;
-      }
-      while (whitespace.test(text[position]) && position < length) {
-        position++;
-      }
-    }
-
-    T3Util.Log("B.Text.Formatter: FindPrevNextWord output:", position);
-    return position;
   }
 
   GetAdjacentChar(index: number, line: number, direction: string, event: KeyboardEvent) {
@@ -1319,7 +1274,7 @@ class Formatter {
         word: word,
         start: match.index,
         end: match.index + match[0].length,
-        status: BConstant.WordState.NOTPROCESSED,
+        status: BConstant.WordState.NotProcessed,
         auto: false,
         needSuggest: true,
         suggestions: null
@@ -2114,23 +2069,23 @@ class Formatter {
 
     switch (bulletInfo.bullet) {
       case 'hround':
-        shape = this.parent.doc.CreateShape(OptConstant.CSType.OVAL).SetSize(halfIndent, halfIndent);
+        shape = this.parent.doc.CreateShape(OptConstant.CSType.Oval).SetSize(halfIndent, halfIndent);
         isStroked = true;
         break;
       case 'sround':
-        shape = this.parent.doc.CreateShape(OptConstant.CSType.OVAL).SetSize(halfIndent, halfIndent);
+        shape = this.parent.doc.CreateShape(OptConstant.CSType.Oval).SetSize(halfIndent, halfIndent);
         isFilled = true;
         break;
       case 'hsquare':
-        shape = this.parent.doc.CreateShape(OptConstant.CSType.RECT).SetSize(halfIndent, halfIndent);
+        shape = this.parent.doc.CreateShape(OptConstant.CSType.Rect).SetSize(halfIndent, halfIndent);
         isStroked = true;
         break;
       case 'ssquare':
-        shape = this.parent.doc.CreateShape(OptConstant.CSType.RECT).SetSize(halfIndent, halfIndent);
+        shape = this.parent.doc.CreateShape(OptConstant.CSType.Rect).SetSize(halfIndent, halfIndent);
         isFilled = true;
         break;
       case 'diamond':
-        shape = this.parent.doc.CreateShape(OptConstant.CSType.POLYGON).SetPoints([
+        shape = this.parent.doc.CreateShape(OptConstant.CSType.Polygon).SetPoints([
           { x: halfIndent / 2, y: 0 },
           { x: halfIndent, y: halfIndent / 2 },
           { x: halfIndent / 2, y: halfIndent },
@@ -2139,7 +2094,7 @@ class Formatter {
         isFilled = true;
         break;
       case 'chevron':
-        shape = this.parent.doc.CreateShape(OptConstant.CSType.POLYGON).SetPoints([
+        shape = this.parent.doc.CreateShape(OptConstant.CSType.Polygon).SetPoints([
           { x: 0, y: 0 },
           { x: halfIndent, y: halfIndent / 2 },
           { x: 0, y: halfIndent },
@@ -2148,7 +2103,7 @@ class Formatter {
         isFilled = true;
         break;
       case 'check':
-        shape = this.parent.doc.CreateShape(OptConstant.CSType.POLYLINE).SetPoints([
+        shape = this.parent.doc.CreateShape(OptConstant.CSType.Polyline).SetPoints([
           { x: 0, y: halfIndent - halfIndent / 4 },
           { x: halfIndent / 4, y: halfIndent },
           { x: halfIndent, y: 0 }
@@ -2156,7 +2111,7 @@ class Formatter {
         isStroked = true;
         break;
       case 'plus':
-        path = this.parent.doc.CreateShape(OptConstant.CSType.PATH).PathCreator();
+        path = this.parent.doc.CreateShape(OptConstant.CSType.Path).PathCreator();
         path.MoveTo(0, halfIndent / 2).LineTo(halfIndent, halfIndent / 2);
         path.MoveTo(halfIndent / 2, 0).LineTo(halfIndent / 2, halfIndent);
         path.Apply();
@@ -2965,109 +2920,6 @@ class Formatter {
     T3Util.Log("B.Text.Formatter: BuildRuntimeRuns output:", runtimeData.styleRuns);
   }
 
-  static GetRunPositionForChar(element, charIndex?, isStart?, cache?, offset?) {
-    T3Util.Log("B.Text.Formatter: GetRunPositionForChar input:", { element, charIndex, isStart, cache, offset });
-
-    if (charIndex < 0) return -1;
-
-    let position;
-    offset = offset || 0;
-
-    if (cache && cache.startOffsets && cache.endOffsets && cache.startOffsets.length > charIndex) {
-      const offsets = isStart ? cache.startOffsets : cache.endOffsets;
-      position = offsets[charIndex];
-    }
-
-    if (position === undefined) {
-      position = -1;
-      try {
-        position = (isStart ? element.getStartPositionOfChar(charIndex) : element.getEndPositionOfChar(charIndex)).x - offset;
-        if (cache) {
-          const offsets = isStart ? cache.startOffsets : cache.endOffsets;
-          offsets[charIndex] = position;
-        }
-      } catch (error) {
-        throw error;
-      }
-    }
-
-    T3Util.Log("B.Text.Formatter: GetRunPositionForChar output:", position);
-    return position;
-  }
-
-  static CalcStyleMetrics(style, doc) {
-    T3Util.Log("B.Text.Formatter: CalcStyleMetrics input:", { style, doc });
-
-    let tempStyle = null;
-    const metrics = { height: 0, width: 0, ascent: 0, descent: 0, extraYOffset: 0 };
-    let isSubscript = false;
-    let isSuperscript = false;
-    const textContainer = new T3Svg.Container(T3Svg.create('text'));
-
-    textContainer.attr('xml:space', 'preserve');
-    textContainer.attr('text-anchor', 'start');
-
-    const textRunElement = Formatter.CreateTextRunElem(' .', style, doc, false, null);
-    textContainer.add(textRunElement);
-    textContainer.attr('fill-opacity', 0);
-
-    const formattingLayer = doc.GetFormattingLayer();
-    formattingLayer.svgObj.add(textContainer);
-
-    const extent = textContainer.node.getExtentOfChar(0);
-    formattingLayer.svgObj.remove(textContainer);
-
-    metrics.height = extent.height;
-    metrics.width = extent.width;
-    metrics.ascent = -extent.y;
-    metrics.descent = metrics.height - metrics.ascent;
-    metrics.extraYOffset = 0;
-
-    if (style) {
-      isSubscript = style.baseOffset === 'sub';
-      isSuperscript = style.baseOffset === 'super';
-    }
-
-    if (isSubscript || isSuperscript) {
-      tempStyle = Utils1.CopyObj(style);
-      tempStyle.baseOffset = undefined;
-      const baseMetrics = doc.CalcStyleMetrics(tempStyle);
-
-      if (isSuperscript) {
-        const offset = baseMetrics.ascent / 2;
-        const totalHeight = offset + metrics.ascent + baseMetrics.descent;
-        if (totalHeight > baseMetrics.height) {
-          baseMetrics.height = totalHeight;
-        }
-        metrics.height = baseMetrics.height;
-        metrics.ascent = baseMetrics.height - baseMetrics.descent;
-        metrics.descent = baseMetrics.descent;
-        metrics.extraYOffset = -offset;
-      } else {
-        const offset = metrics.ascent / 2;
-        if (baseMetrics.descent < metrics.descent + offset) {
-          baseMetrics.descent = metrics.descent + offset;
-        }
-        metrics.height = baseMetrics.ascent + baseMetrics.descent;
-        metrics.ascent = baseMetrics.ascent;
-        metrics.descent = baseMetrics.descent;
-        metrics.extraYOffset = offset;
-      }
-    }
-
-    T3Util.Log("B.Text.Formatter: CalcStyleMetrics output:", metrics);
-    return metrics;
-  }
-
-  static MakeIDFromStyle(style) {
-    T3Util.Log("B.Text.Formatter: MakeIDFromStyle input:", style);
-
-    const id = (style.font + '_' + style.size + '_' + style.weight + '_' + style.style + '_' + style.baseOffset).replace(/ /g, '');
-
-    T3Util.Log("B.Text.Formatter: MakeIDFromStyle output:", id);
-    return id;
-  }
-
   GetBulletPIndex() {
     T3Util.Log("B.Text.Formatter: GetBulletPIndex input");
 
@@ -3120,104 +2972,6 @@ class Formatter {
 
     T3Util.Log("B.Text.Formatter: GetBulletStyle output:", bulletStyle);
     return bulletStyle;
-  }
-
-  static CreateTextRunElem(text: string, style: any, doc: any, linksDisabled: boolean, fieldStyleOverride: any) {
-    T3Util.Log("B.Text.Formatter: CreateTextRunElem input:", { text, style, doc, linksDisabled, fieldStyleOverride });
-
-    let fontSizeMultiplier = 1;
-    const tspanElement = new T3Svg.Container(T3Svg.create('tspan'));
-    let processedText = String(text).replace(/\n/g, '');
-    if (!processedText.length) {
-      processedText = '.';
-    }
-    tspanElement.node.textContent = processedText.replace(/ /g, ' ');
-    tspanElement.attr('xml:space', 'preserve');
-    tspanElement.attr('text-rendering', 'optimizeSpeed');
-
-    let color = style.color;
-    let fontWeight = style.weight;
-    let fontStyle = style.style;
-    let textDecoration = style.decoration;
-    const isHyperlink = style.hyperlink >= 0;
-
-    if (fieldStyleOverride) {
-      if (fieldStyleOverride.textColor) {
-        color = fieldStyleOverride.textColor;
-      }
-      if (fieldStyleOverride._curFieldStyle) {
-        const fieldStyle = fieldStyleOverride._curFieldStyle;
-        for (let i = 0; i < fieldStyle.length; i++) {
-          switch (fieldStyle[i].name) {
-            case 'color':
-              color = fieldStyle[i].val;
-              break;
-            case 'font-weight':
-              fontWeight = fieldStyle[i].val;
-              break;
-            case 'font-style':
-              fontStyle = fieldStyle[i].val;
-              break;
-            case 'text-decoration':
-              if (fieldStyle[i].val === 'underline') {
-                fieldStyleOverride._curFieldDecoration = fieldStyle[i].val;
-                textDecoration = null;
-              } else {
-                textDecoration = fieldStyle[i].val;
-              }
-              break;
-          }
-        }
-      }
-    }
-
-    if (style) {
-      if (style.baseOffset === 'sub' || style.baseOffset === 'super') {
-        fontSizeMultiplier = 0.8;
-      }
-      for (const key in style) {
-        switch (key) {
-          case 'font':
-            if (!style.mappedFont) {
-              style.mappedFont = [];// doc.MapFont(style.font, style.type);
-            }
-            $(tspanElement.node).css('font-family', style.mappedFont);
-            break;
-          case 'size':
-            let fontSize = style[key];
-            if (!isNaN(fontSize)) {
-              fontSize *= fontSizeMultiplier;
-              tspanElement.attr('font-size', fontSize);
-            }
-            break;
-          case 'weight':
-            tspanElement.attr('font-weight', fontWeight);
-            break;
-          case 'style':
-            tspanElement.attr('font-style', fontStyle);
-            break;
-          case 'decoration':
-            if (textDecoration) {
-              tspanElement.attr('text-decoration', textDecoration);
-            }
-            break;
-          case 'color':
-            if (!isHyperlink || linksDisabled) {
-              tspanElement.attr('fill', color);
-            }
-            break;
-          case 'colorTrans':
-            tspanElement.attr('opacity', style[key]);
-            break;
-        }
-      }
-      if (isHyperlink && !linksDisabled) {
-        tspanElement.attr('fill', '#0000FF');
-      }
-    }
-
-    T3Util.Log("B.Text.Formatter: CreateTextRunElem output:", tspanElement);
-    return tspanElement;
   }
 
   FindAddStyle(style, skipAdd?) {
@@ -3542,26 +3296,6 @@ class Formatter {
     T3Util.Log("B.Text.Formatter: RebuildFromData output");
   }
 
-  static FormatDataFieldID(fieldID, generateUnique) {
-    T3Util.Log("B.Text.Formatter: FormatDataFieldID input:", { fieldID, generateUnique });
-
-    let formattedID = fieldID;
-    const hasUnderscore = formattedID.indexOf('_') > 0;
-
-    if (generateUnique) {
-      if (!hasUnderscore) {
-        formattedID += '_' + Utils3.MakeShortUniqueID();
-      }
-    } else {
-      if (hasUnderscore) {
-        formattedID = formattedID.split('_')[0];
-      }
-    }
-
-    T3Util.Log("B.Text.Formatter: FormatDataFieldID output:", formattedID);
-    return formattedID;
-  }
-
   RemapDataFields(mapping) {
     T3Util.Log("B.Text.Formatter: RemapDataFields input:", mapping);
 
@@ -3616,6 +3350,272 @@ class Formatter {
     }
 
     T3Util.Log("B.Text.Formatter: RemapDataFields output");
+  }
+
+  static CreateTextRunElem(text: string, style: any, doc: any, linksDisabled: boolean, fieldStyleOverride: any) {
+    T3Util.Log("B.Text.Formatter: CreateTextRunElem input:", { text, style, doc, linksDisabled, fieldStyleOverride });
+
+    let fontSizeMultiplier = 1;
+    const tspanElement = new T3Svg.Container(T3Svg.create('tspan'));
+    let processedText = String(text).replace(/\n/g, '');
+    if (!processedText.length) {
+      processedText = '.';
+    }
+    tspanElement.node.textContent = processedText.replace(/ /g, ' ');
+    tspanElement.attr('xml:space', 'preserve');
+    tspanElement.attr('text-rendering', 'optimizeSpeed');
+
+    let color = style.color;
+    let fontWeight = style.weight;
+    let fontStyle = style.style;
+    let textDecoration = style.decoration;
+    const isHyperlink = style.hyperlink >= 0;
+
+    if (fieldStyleOverride) {
+      if (fieldStyleOverride.textColor) {
+        color = fieldStyleOverride.textColor;
+      }
+      if (fieldStyleOverride._curFieldStyle) {
+        const fieldStyle = fieldStyleOverride._curFieldStyle;
+        for (let i = 0; i < fieldStyle.length; i++) {
+          switch (fieldStyle[i].name) {
+            case 'color':
+              color = fieldStyle[i].val;
+              break;
+            case 'font-weight':
+              fontWeight = fieldStyle[i].val;
+              break;
+            case 'font-style':
+              fontStyle = fieldStyle[i].val;
+              break;
+            case 'text-decoration':
+              if (fieldStyle[i].val === 'underline') {
+                fieldStyleOverride._curFieldDecoration = fieldStyle[i].val;
+                textDecoration = null;
+              } else {
+                textDecoration = fieldStyle[i].val;
+              }
+              break;
+          }
+        }
+      }
+    }
+
+    if (style) {
+      if (style.baseOffset === 'sub' || style.baseOffset === 'super') {
+        fontSizeMultiplier = 0.8;
+      }
+      for (const key in style) {
+        switch (key) {
+          case 'font':
+            if (!style.mappedFont) {
+              style.mappedFont = [];// doc.MapFont(style.font, style.type);
+            }
+            $(tspanElement.node).css('font-family', style.mappedFont);
+            break;
+          case 'size':
+            let fontSize = style[key];
+            if (!isNaN(fontSize)) {
+              fontSize *= fontSizeMultiplier;
+              tspanElement.attr('font-size', fontSize);
+            }
+            break;
+          case 'weight':
+            tspanElement.attr('font-weight', fontWeight);
+            break;
+          case 'style':
+            tspanElement.attr('font-style', fontStyle);
+            break;
+          case 'decoration':
+            if (textDecoration) {
+              tspanElement.attr('text-decoration', textDecoration);
+            }
+            break;
+          case 'color':
+            if (!isHyperlink || linksDisabled) {
+              tspanElement.attr('fill', color);
+            }
+            break;
+          case 'colorTrans':
+            tspanElement.attr('opacity', style[key]);
+            break;
+        }
+      }
+      if (isHyperlink && !linksDisabled) {
+        tspanElement.attr('fill', '#0000FF');
+      }
+    }
+
+    T3Util.Log("B.Text.Formatter: CreateTextRunElem output:", tspanElement);
+    return tspanElement;
+  }
+
+  static GetRunPositionForChar(element, charIndex?, isStart?, cache?, offset?) {
+    T3Util.Log("B.Text.Formatter: GetRunPositionForChar input:", { element, charIndex, isStart, cache, offset });
+
+    if (charIndex < 0) return -1;
+
+    let position;
+    offset = offset || 0;
+
+    if (cache && cache.startOffsets && cache.endOffsets && cache.startOffsets.length > charIndex) {
+      const offsets = isStart ? cache.startOffsets : cache.endOffsets;
+      position = offsets[charIndex];
+    }
+
+    if (position === undefined) {
+      position = -1;
+      try {
+        position = (isStart ? element.getStartPositionOfChar(charIndex) : element.getEndPositionOfChar(charIndex)).x - offset;
+        if (cache) {
+          const offsets = isStart ? cache.startOffsets : cache.endOffsets;
+          offsets[charIndex] = position;
+        }
+      } catch (error) {
+        throw error;
+      }
+    }
+
+    T3Util.Log("B.Text.Formatter: GetRunPositionForChar output:", position);
+    return position;
+  }
+
+  static CalcStyleMetrics(style, doc) {
+    T3Util.Log("B.Text.Formatter: CalcStyleMetrics input:", { style, doc });
+
+    let tempStyle = null;
+    const metrics = { height: 0, width: 0, ascent: 0, descent: 0, extraYOffset: 0 };
+    let isSubscript = false;
+    let isSuperscript = false;
+    const textContainer = new T3Svg.Container(T3Svg.create('text'));
+
+    textContainer.attr('xml:space', 'preserve');
+    textContainer.attr('text-anchor', 'start');
+
+    const textRunElement = Formatter.CreateTextRunElem(' .', style, doc, false, null);
+    textContainer.add(textRunElement);
+    textContainer.attr('fill-opacity', 0);
+
+    const formattingLayer = doc.GetFormattingLayer();
+    formattingLayer.svgObj.add(textContainer);
+
+    const extent = textContainer.node.getExtentOfChar(0);
+    formattingLayer.svgObj.remove(textContainer);
+
+    metrics.height = extent.height;
+    metrics.width = extent.width;
+    metrics.ascent = -extent.y;
+    metrics.descent = metrics.height - metrics.ascent;
+    metrics.extraYOffset = 0;
+
+    if (style) {
+      isSubscript = style.baseOffset === 'sub';
+      isSuperscript = style.baseOffset === 'super';
+    }
+
+    if (isSubscript || isSuperscript) {
+      tempStyle = Utils1.CopyObj(style);
+      tempStyle.baseOffset = undefined;
+      const baseMetrics = doc.CalcStyleMetrics(tempStyle);
+
+      if (isSuperscript) {
+        const offset = baseMetrics.ascent / 2;
+        const totalHeight = offset + metrics.ascent + baseMetrics.descent;
+        if (totalHeight > baseMetrics.height) {
+          baseMetrics.height = totalHeight;
+        }
+        metrics.height = baseMetrics.height;
+        metrics.ascent = baseMetrics.height - baseMetrics.descent;
+        metrics.descent = baseMetrics.descent;
+        metrics.extraYOffset = -offset;
+      } else {
+        const offset = metrics.ascent / 2;
+        if (baseMetrics.descent < metrics.descent + offset) {
+          baseMetrics.descent = metrics.descent + offset;
+        }
+        metrics.height = baseMetrics.ascent + baseMetrics.descent;
+        metrics.ascent = baseMetrics.ascent;
+        metrics.descent = baseMetrics.descent;
+        metrics.extraYOffset = offset;
+      }
+    }
+
+    T3Util.Log("B.Text.Formatter: CalcStyleMetrics output:", metrics);
+    return metrics;
+  }
+
+  static MakeIDFromStyle(style) {
+    T3Util.Log("B.Text.Formatter: MakeIDFromStyle input:", style);
+
+    const id = (style.font + '_' + style.size + '_' + style.weight + '_' + style.style + '_' + style.baseOffset).replace(/ /g, '');
+
+    T3Util.Log("B.Text.Formatter: MakeIDFromStyle output:", id);
+    return id;
+  }
+
+  static FindPrevNextWord(text: string, position: number, isPrevious: boolean): number {
+    T3Util.Log("B.Text.Formatter: FindPrevNextWord input:", { text, position, isPrevious });
+
+    const length = text.length;
+    const whitespace = /[ \f\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]/;
+    const punctuation = /[`~!@#$%\^&?*()_\-+={}\[\]|\\;:'",.<>\/]/;
+    const wordChar = /[^\s`~!@#$%\^&?*()_\-+={}\[\]|\\;:'",.<>\/]/;
+
+    const getCharType = (char: string) => {
+      if (whitespace.test(char)) return whitespace;
+      if (punctuation.test(char)) return punctuation;
+      if (wordChar.test(char)) return wordChar;
+      return null;
+    };
+
+    let charType;
+
+    if (isPrevious && position > 0) {
+      position--;
+      while (whitespace.test(text[position]) && position > 0) {
+        position--;
+      }
+      charType = getCharType(text[position]);
+      if (charType && position > 0) {
+        while (charType.test(text[position - 1]) && position > 0) {
+          position--;
+        }
+      }
+    } else if (position < length) {
+      charType = getCharType(text[position]);
+      while (charType && charType.test(text[position]) && position < length) {
+        position++;
+      }
+      if (!charType && position < length) {
+        position++;
+      }
+      while (whitespace.test(text[position]) && position < length) {
+        position++;
+      }
+    }
+
+    T3Util.Log("B.Text.Formatter: FindPrevNextWord output:", position);
+    return position;
+  }
+
+  static FormatDataFieldID(fieldID, generateUnique) {
+    T3Util.Log("B.Text.Formatter: FormatDataFieldID input:", { fieldID, generateUnique });
+
+    let formattedID = fieldID;
+    const hasUnderscore = formattedID.indexOf('_') > 0;
+
+    if (generateUnique) {
+      if (!hasUnderscore) {
+        formattedID += '_' + Utils3.MakeShortUniqueID();
+      }
+    } else {
+      if (hasUnderscore) {
+        formattedID = formattedID.split('_')[0];
+      }
+    }
+
+    T3Util.Log("B.Text.Formatter: FormatDataFieldID output:", formattedID);
+    return formattedID;
   }
 
 }

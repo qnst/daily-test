@@ -10,9 +10,8 @@ import $ from 'jquery'
 import Effects from '../Basic/B.Element.Effects'
 import Instance from '../Data/Instance/Instance'
 import NvConstant from '../Data/Constant/NvConstant'
-import ConstantData2 from '../Data/Constant/ConstantData2'
 import PolygonConstant from '../Opt/Polygon/PolygonConstant';
-import ShapeConstant from '../Opt/DS/DSConstant';
+import DSConstant from '../Opt/DS/DSConstant';
 import OptConstant from '../Data/Constant/OptConstant';
 import T3Constant from '../Data/Constant/T3Constant';
 import BConstant from '../Basic/B.Constant';
@@ -28,8 +27,8 @@ class GroupSymbol extends BaseSymbol {
 
   constructor(options) {
     options = options || {};
-    options.ShapeType = OptConstant.ShapeType.GROUPSYMBOL;
-    options.flags = NvConstant.ObjFlags.SEDO_ImageOnly;
+    options.ShapeType = OptConstant.ShapeType.GroupSymbol;
+    options.flags = NvConstant.ObjFlags.ImageOnly;
     T3Util.Log('S.GroupSymbol - Input options:', options);
     super(options);
     T3Util.Log('S.GroupSymbol - GroupSymbol created');
@@ -37,13 +36,13 @@ class GroupSymbol extends BaseSymbol {
 
   CreateShape(svgDocument, shapeOptions) {
     T3Util.Log("S.GroupSymbol - CreateShape input:", { svgDocument, shapeOptions });
-    if (this.flags & NvConstant.ObjFlags.SEDO_NotVisible) {
+    if (this.flags & NvConstant.ObjFlags.NotVisible) {
       T3Util.Log("S.GroupSymbol - CreateShape output:", null);
       return null;
     }
     // Retrieve any style override if present
     this.GetFieldDataStyleOverride();
-    const shapeContainer = svgDocument.CreateShape(OptConstant.CSType.SHAPECONTAINER);
+    const shapeContainer = svgDocument.CreateShape(OptConstant.CSType.ShapeContainer);
     T3Util.Log("S.GroupSymbol - CreateShape output:", shapeContainer);
     return shapeContainer;
   }
@@ -56,9 +55,9 @@ class GroupSymbol extends BaseSymbol {
       extraFlags
     });
 
-    if (!(this.flags & NvConstant.ObjFlags.SEDO_NotVisible)) {
-      let groupContainer = svgDocument.CreateShape(OptConstant.CSType.GROUP);
-      groupContainer.SetID(OptConstant.SVGElementClass.SHAPE);
+    if (!(this.flags & NvConstant.ObjFlags.NotVisible)) {
+      let groupContainer = svgDocument.CreateShape(OptConstant.CSType.Group);
+      groupContainer.SetID(OptConstant.SVGElementClass.Shape);
       groupElement.AddElement(groupContainer);
 
       let currentFrame = this.Frame;
@@ -69,21 +68,21 @@ class GroupSymbol extends BaseSymbol {
 
       let shapeObj, totalShapes = this.ShapesInGroup.length;
       let originalDimensions = null, currentShapeInstance = null, rotationAngle = 0, textElement = null;
-      let isFlipHorizontally = (this.extraflags & OptConstant.ExtraFlags.SEDE_FlipHoriz) > 0;
-      let isFlipVertically = (this.extraflags & OptConstant.ExtraFlags.SEDE_FlipVert) > 0;
+      let isFlipHorizontally = (this.extraflags & OptConstant.ExtraFlags.FlipHoriz) > 0;
+      let isFlipVertically = (this.extraflags & OptConstant.ExtraFlags.FlipVert) > 0;
       let updatedFlipHoriz = isFlipHorizontally, updatedFlipVert = isFlipVertically;
       let flagValue = 0;
 
       if (extraFlags != null) {
-        if ((extraFlags & OptConstant.ExtraFlags.SEDE_FlipHoriz) > 0) {
+        if ((extraFlags & OptConstant.ExtraFlags.FlipHoriz) > 0) {
           updatedFlipHoriz = !updatedFlipHoriz;
         }
-        if ((extraFlags & OptConstant.ExtraFlags.SEDE_FlipVert) > 0) {
+        if ((extraFlags & OptConstant.ExtraFlags.FlipVert) > 0) {
           updatedFlipVert = !updatedFlipVert;
         }
       }
-      flagValue = Utils2.SetFlag(flagValue, OptConstant.ExtraFlags.SEDE_FlipHoriz, updatedFlipHoriz);
-      flagValue = Utils2.SetFlag(flagValue, OptConstant.ExtraFlags.SEDE_FlipVert, updatedFlipVert);
+      flagValue = Utils2.SetFlag(flagValue, OptConstant.ExtraFlags.FlipHoriz, updatedFlipHoriz);
+      flagValue = Utils2.SetFlag(flagValue, OptConstant.ExtraFlags.FlipVert, updatedFlipVert);
 
       for (let idx = 0; idx < totalShapes; ++idx) {
         let shapeId = this.ShapesInGroup[idx];
@@ -105,7 +104,7 @@ class GroupSymbol extends BaseSymbol {
             currentShapeInstance.SetRotation(rotationAngle);
           }
           if (shapeObj.DataID >= 0 && (updatedFlipHoriz || updatedFlipVert)) {
-            textElement = currentShapeInstance.GetElementByID(OptConstant.SVGElementClass.TEXT);
+            textElement = currentShapeInstance.GetElementById(OptConstant.SVGElementClass.Text);
             if (textElement) {
               if (updatedFlipHoriz) {
                 textElement.SetMirror(updatedFlipHoriz);
@@ -121,20 +120,20 @@ class GroupSymbol extends BaseSymbol {
       groupContainer.SetSize(width, height);
       groupElement.isShape = true;
 
-      let slopRect = svgDocument.CreateShape(OptConstant.CSType.RECT);
+      let slopRect = svgDocument.CreateShape(OptConstant.CSType.Rect);
       slopRect.SetStrokeColor('white');
       slopRect.SetFillColor('none');
       slopRect.SetOpacity(0);
       slopRect.SetStrokeWidth(5);
 
       if (eventSettings) {
-        slopRect.SetEventBehavior(OptConstant.EventBehavior.HIDDEN_ALL);
+        slopRect.SetEventBehavior(OptConstant.EventBehavior.HiddenAll);
       } else {
-        slopRect.SetEventBehavior(OptConstant.EventBehavior.NONE);
+        slopRect.SetEventBehavior(OptConstant.EventBehavior.None);
       }
 
       groupElement.AddElement(slopRect);
-      slopRect.SetID(OptConstant.SVGElementClass.SLOP);
+      slopRect.SetID(OptConstant.SVGElementClass.Slop);
       slopRect.ExcludeFromExport(true);
       slopRect.SetSize(width, height);
       groupContainer.SetScale(
@@ -200,12 +199,12 @@ class GroupSymbol extends BaseSymbol {
       if (parentElementOverride) {
         svgElement = parentElementOverride;
       } else {
-        svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
+        svgElement = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
       }
 
       let shapeElement;
       if (svgElement) {
-        shapeElement = svgElement.GetElementByID(OptConstant.SVGElementClass.SHAPE);
+        shapeElement = svgElement.GetElementById(OptConstant.SVGElementClass.Shape);
       }
       if (shapeElement != null) {
         // If text editing is allowed, call the base ChangeTextAttributes function
@@ -246,8 +245,8 @@ class GroupSymbol extends BaseSymbol {
 
         for (let index = 0; index < shapesCount; ++index) {
           let shapeObject = T3Gv.opt.GetObjectPtr(shapesGroup[index], true);
-          if (shapeObject && (shapeObject.colorfilter & StyleConstant.SDRColorFilters.SD_NOCOLOR_TEXT) === 0) {
-            let childShapeElement = shapeElement.GetElementByID(shapeObject.BlockID);
+          if (shapeObject && (shapeObject.colorfilter & StyleConstant.ColorFilters.NCText) === 0) {
+            let childShapeElement = shapeElement.GetElementById(shapeObject.BlockID);
             // Remember current dimensions to check for changes after update
             shapeHeightBefore = shapeObject.Frame.height;
             shapeWidthBefore = shapeObject.Frame.width;
@@ -309,14 +308,14 @@ class GroupSymbol extends BaseSymbol {
     svgElement.SetSize(newDimensions.width, newDimensions.height);
     svgElement.SetPos(newDimensions.x + offset.x, newDimensions.y + offset.y);
 
-    const shapeElement = svgElement.GetElementByID(OptConstant.SVGElementClass.SHAPE);
+    const shapeElement = svgElement.GetElementById(OptConstant.SVGElementClass.Shape);
     shapeElement.SetSize(newDimensions.width, newDimensions.height);
     shapeElement.SetScale(
       newDimensions.width / this.InitialGroupBounds.width,
       newDimensions.height / this.InitialGroupBounds.height
     );
 
-    const slopElement = svgElement.GetElementByID(OptConstant.SVGElementClass.SLOP);
+    const slopElement = svgElement.GetElementById(OptConstant.SVGElementClass.Slop);
     slopElement.SetSize(newDimensions.width, newDimensions.height);
 
     this.LM_ResizeSVGTextObject(svgElement, resizeInfo, newDimensions);
@@ -355,12 +354,12 @@ class GroupSymbol extends BaseSymbol {
     //   return null;
     // }
 
-    let actionTriggerGroup = svgDocument.CreateShape(OptConstant.CSType.GROUP);
-    const knobSize = OptConstant.Defines.SED_KnobSize;
-    const smallKnobSize = OptConstant.Defines.SED_RKnobSize;
-    let useSideKnobs = ((this.extraflags & OptConstant.ExtraFlags.SEDE_SideKnobs) &&
+    let actionTriggerGroup = svgDocument.CreateShape(OptConstant.CSType.Group);
+    const knobSize = OptConstant.Common.KnobSize;
+    const smallKnobSize = OptConstant.Common.RKnobSize;
+    let useSideKnobs = ((this.extraflags & OptConstant.ExtraFlags.SideKnobs) &&
       this.dataclass === PolygonConstant.ShapeTypes.POLYGON) > 0;
-    const minSidePointLength = OptConstant.Defines.MinSidePointLength;
+    const minSidePointLength = OptConstant.Common.MinSidePointLength;
     let docScale = svgDocument.docInfo.docToScreenScale;
     if (svgDocument.docInfo.docScale <= 0.5) {
       docScale *= 2;
@@ -393,11 +392,11 @@ class GroupSymbol extends BaseSymbol {
     let allowHorizontal = !useSideKnobs;
     let allowVertical = !useSideKnobs;
     switch (this.ObjGrow) {
-      case OptConstant.GrowBehavior.HCONSTRAIN:
+      case OptConstant.GrowBehavior.Horiz:
         allowGrow = false;
         allowVertical = false;
         break;
-      case OptConstant.GrowBehavior.VCONSTRAIN:
+      case OptConstant.GrowBehavior.Vertical:
         allowGrow = false;
         allowHorizontal = false;
         break;
@@ -409,7 +408,7 @@ class GroupSymbol extends BaseSymbol {
 
     let knobProps = {
       svgDoc: svgDocument,
-      shapeType: OptConstant.CSType.RECT,
+      shapeType: OptConstant.CSType.Rect,
       x: 0,
       y: 0,
       knobSize: adjustedKnobSize,
@@ -427,7 +426,7 @@ class GroupSymbol extends BaseSymbol {
       knobProps.fillOpacity = '0.0';
     }
 
-    if (this.flags & NvConstant.ObjFlags.SEDO_Lock) {
+    if (this.flags & NvConstant.ObjFlags.Lock) {
       knobProps.fillColor = 'gray';
       knobProps.locked = true;
       useSideKnobs = false;
@@ -449,7 +448,7 @@ class GroupSymbol extends BaseSymbol {
 
     // Add corner knobs if growing is allowed
     if (allowGrow) {
-      knobProps.knobID = OptConstant.ActionTriggerType.TOPLEFT;
+      knobProps.knobID = OptConstant.ActionTriggerType.TopLeft;
       knobProps.cursorType = orderedCursorList[0];
       let newKnob = this.GenericKnob(knobProps);
       actionTriggerGroup.AddElement(newKnob);
@@ -457,21 +456,21 @@ class GroupSymbol extends BaseSymbol {
       knobProps.x = frameWidth - adjustedKnobSize;
       knobProps.y = 0;
       knobProps.cursorType = orderedCursorList[2];
-      knobProps.knobID = OptConstant.ActionTriggerType.TOPRIGHT;
+      knobProps.knobID = OptConstant.ActionTriggerType.TopRight;
       newKnob = this.GenericKnob(knobProps);
       actionTriggerGroup.AddElement(newKnob);
 
       knobProps.x = frameWidth - adjustedKnobSize;
       knobProps.y = frameHeight - adjustedKnobSize;
       knobProps.cursorType = orderedCursorList[4];
-      knobProps.knobID = OptConstant.ActionTriggerType.BOTTOMRIGHT;
+      knobProps.knobID = OptConstant.ActionTriggerType.BottomRight;
       newKnob = this.GenericKnob(knobProps);
       actionTriggerGroup.AddElement(newKnob);
 
       knobProps.x = 0;
       knobProps.y = frameHeight - adjustedKnobSize;
       knobProps.cursorType = orderedCursorList[6];
-      knobProps.knobID = OptConstant.ActionTriggerType.BOTTOMLEFT;
+      knobProps.knobID = OptConstant.ActionTriggerType.BottomLeft;
       newKnob = this.GenericKnob(knobProps);
       actionTriggerGroup.AddElement(newKnob);
     }
@@ -481,14 +480,14 @@ class GroupSymbol extends BaseSymbol {
       knobProps.x = frameWidth / 2 - adjustedKnobSize / 2;
       knobProps.y = 0;
       knobProps.cursorType = orderedCursorList[1];
-      knobProps.knobID = OptConstant.ActionTriggerType.TOPCENTER;
+      knobProps.knobID = OptConstant.ActionTriggerType.TopCenter;
       let centerKnob = this.GenericKnob(knobProps);
       actionTriggerGroup.AddElement(centerKnob);
 
       knobProps.x = frameWidth / 2 - adjustedKnobSize / 2;
       knobProps.y = frameHeight - adjustedKnobSize;
       knobProps.cursorType = orderedCursorList[5];
-      knobProps.knobID = OptConstant.ActionTriggerType.BOTTOMCENTER;
+      knobProps.knobID = OptConstant.ActionTriggerType.BottomCenter;
       centerKnob = this.GenericKnob(knobProps);
       actionTriggerGroup.AddElement(centerKnob);
     }
@@ -498,14 +497,14 @@ class GroupSymbol extends BaseSymbol {
       knobProps.x = 0;
       knobProps.y = frameHeight / 2 - adjustedKnobSize / 2;
       knobProps.cursorType = orderedCursorList[7];
-      knobProps.knobID = OptConstant.ActionTriggerType.CENTERLEFT;
+      knobProps.knobID = OptConstant.ActionTriggerType.CenterLeft;
       let sideKnob = this.GenericKnob(knobProps);
       actionTriggerGroup.AddElement(sideKnob);
 
       knobProps.x = frameWidth - adjustedKnobSize;
       knobProps.y = frameHeight / 2 - adjustedKnobSize / 2;
       knobProps.cursorType = orderedCursorList[3];
-      knobProps.knobID = OptConstant.ActionTriggerType.CENTERRIGHT;
+      knobProps.knobID = OptConstant.ActionTriggerType.CenterRight;
       sideKnob = this.GenericKnob(knobProps);
       actionTriggerGroup.AddElement(sideKnob);
     }
@@ -515,7 +514,7 @@ class GroupSymbol extends BaseSymbol {
       let hookInfo = null;
       if (currentObject.hooks.length) {
         const hookTarget = T3Gv.opt.GetObjectPtr(currentObject.hooks[0].objid, false);
-        if ((hookTarget && hookTarget.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.CONNECTOR) ||
+        if ((hookTarget && hookTarget.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) ||
           (hookTarget && hookTarget instanceof Instance.Shape.ShapeContainer)) {
           hookInfo = hookTarget.Pr_GetShapeConnectorInfo(currentObject.hooks[0]);
         }
@@ -544,8 +543,8 @@ class GroupSymbol extends BaseSymbol {
         iconProps.cursorType = connectorInfo[i].cursorType;
         iconProps.iconID = connectorInfo[i].knobID;
         iconProps.imageURL = connectorInfo[i].polyType === 'vertical' ?
-          OptConstant.Defines.Connector_Move_Vertical_Path :
-          OptConstant.Defines.Connector_Move_Horizontal_Path;
+          OptConstant.Common.ConMoveVerticalPath :
+          OptConstant.Common.ConMoveHorizontalPath;
         iconProps.userData = connectorInfo[i].knobData;
         let newIcon = this.GenericIcon(iconProps);
         actionTriggerGroup.AddElement(newIcon);
@@ -558,7 +557,7 @@ class GroupSymbol extends BaseSymbol {
       let copyOfThis = Utils1.DeepCopy(this);
       copyOfThis.inside = $.extend(true, {}, copyOfThis.Frame);
       let polyPoints = T3Gv.opt.ShapeToPolyLine(this.BlockID, false, true, copyOfThis)
-        .GetPolyPoints(OptConstant.Defines.NPOLYPTS, true, true, false, []);
+        .GetPolyPoints(OptConstant.Common.MaxPolyPoints, true, true, false, []);
       if (polyPoints) {
         for (let k = 1, len = polyPoints.length; k < len; k++) {
           const deltaX = polyPoints[k].x - polyPoints[k - 1].x;
@@ -581,20 +580,20 @@ class GroupSymbol extends BaseSymbol {
     let hasConnectorHook = this.hooks.length > 0;
     if (hasConnectorHook) {
       const hookObject = T3Gv.opt.GetObjectPtr(this.hooks[0].objid, false);
-      if (hookObject && hookObject.DrawingObjectBaseClass !== OptConstant.DrawingObjectBaseClass.CONNECTOR) {
+      if (hookObject && hookObject.DrawingObjectBaseClass !== OptConstant.DrawObjectBaseClass.Connector) {
         hasConnectorHook = false;
       }
     }
 
     if (!disableRotation && !isNarrow && !hasConnectorHook) {
       const isTextGrowHorizontal = this.TextGrow === NvConstant.TextGrowBehavior.Horizontal &&
-        (this.flags & NvConstant.ObjFlags.SEDO_TextOnly) &&
-        ShapeUtil.TextAlignToWin(this.TextAlign).just === TextConstant.TextJust.TA_LEFT;
-      knobProps.shapeType = OptConstant.CSType.OVAL;
+        (this.flags & NvConstant.ObjFlags.TextOnly) &&
+        ShapeUtil.TextAlignToWin(this.TextAlign).just === TextConstant.TextJust.Left;
+      knobProps.shapeType = OptConstant.CSType.Oval;
       knobProps.x = isTextGrowHorizontal ? frameWidth + adjustedSmallKnobSize : frameWidth - 3 * adjustedSmallKnobSize;
       knobProps.y = frameHeight / 2 - adjustedSmallKnobSize / 2;
       knobProps.cursorType = CursorConstant.CursorType.ROTATE;
-      knobProps.knobID = OptConstant.ActionTriggerType.ROTATE;
+      knobProps.knobID = OptConstant.ActionTriggerType.Rotate;
       knobProps.fillColor = 'white';
       knobProps.fillOpacity = 0.001;
       knobProps.strokeSize = 1.5;
@@ -605,14 +604,14 @@ class GroupSymbol extends BaseSymbol {
 
     // Create dimension adjustment knobs if applicable
     if (this.Dimensions & NvConstant.DimensionFlags.Standoff && this.CanUseStandOffDimensionLines()) {
-      const svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
+      const svgElement = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
       this.CreateDimensionAdjustmentKnobs(actionTriggerGroup, svgElement, knobProps);
     }
 
     actionTriggerGroup.SetSize(frameWidth, frameHeight);
     actionTriggerGroup.SetPos(groupPosition.x, groupPosition.y);
     actionTriggerGroup.isShape = true;
-    actionTriggerGroup.SetID(OptConstant.Defines.Action + triggerType);
+    actionTriggerGroup.SetID(OptConstant.Common.Action + triggerType);
 
     T3Util.Log("S.GroupSymbol - BaseShape_CreateActionTriggers output:", actionTriggerGroup);
     return actionTriggerGroup;
@@ -707,8 +706,8 @@ class GroupSymbol extends BaseSymbol {
     let dataId = this.DataID;
 
     // Modify dataId if text attachment flags are set and we are not writing blocks
-    if ((this.TextFlags & NvConstant.TextFlags.SED_TF_AttachB ||
-      this.TextFlags & NvConstant.TextFlags.SED_TF_AttachA) &&
+    if ((this.TextFlags & NvConstant.TextFlags.AttachB ||
+      this.TextFlags & NvConstant.TextFlags.AttachA) &&
       !writeOptions.WriteBlocks) {
       dataId = -1;
     }
@@ -747,8 +746,8 @@ class GroupSymbol extends BaseSymbol {
       nativeStorageResult.docDpi = T3Gv.docUtil.svgDoc.docInfo.docDpi;
 
       buffer = ShapeUtil.WriteBuffer(nativeStorageResult, true, true, true);
-      codeLength = ShapeUtil.WriteCode(outputStream, ShapeConstant.OpNameCode.cNativeStorage);
-      ShapeConstant.writeNativeBuffer(outputStream, buffer);
+      codeLength = ShapeUtil.WriteCode(outputStream, DSConstant.OpNameCode.cNativeStorage);
+      DSConstant.writeNativeBuffer(outputStream, buffer);
       ShapeUtil.WriteLength(outputStream, codeLength);
     }
 
@@ -851,10 +850,10 @@ class GroupSymbol extends BaseSymbol {
     // Update hooked object's dimension lines if applicable
     if (this.hooks.length) {
       hookObject = T3Gv.opt.GetObjectPtr(this.hooks[0].objid, false);
-      if (hookObject && hookObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL && !(hookObject.Dimensions & NvConstant.DimensionFlags.HideHookedObjDimensions)) {
+      if (hookObject && hookObject.objecttype === NvConstant.FNObjectTypes.FlWall && !(hookObject.Dimensions & NvConstant.DimensionFlags.HideHookedObjDimensions)) {
         hooksBackup = Utils1.DeepCopy(this.hooks);
         this.hooks = [];
-        tempHookElement = T3Gv.opt.svgObjectLayer.GetElementByID(hookObject.BlockID);
+        tempHookElement = T3Gv.opt.svgObjectLayer.GetElementById(hookObject.BlockID);
         hookObject.UpdateDimensionLines(tempHookElement);
         this.hooks = hooksBackup;
       }
@@ -935,7 +934,7 @@ class GroupSymbol extends BaseSymbol {
   ApplyEffects(svgElement, isHighlighted, extraParam) {
     T3Util.Log("S.GroupSymbol - ApplyEffects input:", { svgElement, isHighlighted, extraParam });
 
-    svgElement = svgElement || T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
+    svgElement = svgElement || T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
     if (!svgElement) {
       T3Util.Log("S.GroupSymbol - ApplyEffects output: No SVG element found");
       return;
@@ -979,9 +978,9 @@ class GroupSymbol extends BaseSymbol {
   AllowTextEdit(): boolean {
     T3Util.Log("S.GroupSymbol - AllowTextEdit input:", {});
     const canEdit = Boolean(
-      (this.TextFlags & NvConstant.TextFlags.SED_TF_AttachB) ||
-      (this.TextFlags & NvConstant.TextFlags.SED_TF_AttachA) ||
-      (this.TextFlags & NvConstant.TextFlags.SED_TF_AttachD) ||
+      (this.TextFlags & NvConstant.TextFlags.AttachB) ||
+      (this.TextFlags & NvConstant.TextFlags.AttachA) ||
+      (this.TextFlags & NvConstant.TextFlags.AttachD) ||
       (this.DataID >= 0)
     );
     T3Util.Log("S.GroupSymbol - AllowTextEdit output:", canEdit);

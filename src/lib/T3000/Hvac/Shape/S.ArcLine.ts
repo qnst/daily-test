@@ -11,7 +11,7 @@ import Point from '../Model/Point'
 import $ from 'jquery'
 import Instance from '../Data/Instance/Instance'
 import T3Constant from '../Data/Constant/T3Constant'
-import ShapeConstant from '../Opt/DS/DSConstant'
+import DSConstant from '../Opt/DS/DSConstant'
 import OptConstant from '../Data/Constant/OptConstant'
 import CursorConstant from '../Data/Constant/CursorConstant'
 import T3Util from '../Util/T3Util'
@@ -55,7 +55,7 @@ class ArcLine extends BaseLine {
 
     // Other properties initialization
     this.FixedPoint = options.FixedPoint || [0, 0];
-    this.LineOrientation = options.LineOrientation || OptConstant.LineOrientation.NONE;
+    this.LineOrientation = options.LineOrientation || OptConstant.LineOrientation.None;
     this.hoplist = options.hoplist || { nhops: 0, hops: [] };
     this.ArrowheadData = options.ArrowheadData || [];
     this.StartArrowID = options.StartArrowID || 0;
@@ -162,12 +162,12 @@ class ArcLine extends BaseLine {
 
     let frame = Utils2.Pt2Rect(this.StartPoint, this.EndPoint);
 
-    if (frame.width < OptConstant.Defines.SED_SegDefLen) {
-      frame.width = OptConstant.Defines.SED_SegDefLen;
+    if (frame.width < OptConstant.Common.SegDefLen) {
+      frame.width = OptConstant.Common.SegDefLen;
     }
 
-    if (frame.height < OptConstant.Defines.SED_SegDefLen) {
-      frame.height = OptConstant.Defines.SED_SegDefLen;
+    if (frame.height < OptConstant.Common.SegDefLen) {
+      frame.height = OptConstant.Common.SegDefLen;
     }
 
     T3Util.Log("= S.ArcLine GetLineChangeFrame output:", frame);
@@ -177,21 +177,21 @@ class ArcLine extends BaseLine {
   CreateArcShapeForHops(svgDoc, isTouch) {
     T3Util.Log("= S.ArcLine CreateArcShapeForHops input:", { svgDoc, isTouch });
 
-    if (this.flags & NvConstant.ObjFlags.SEDO_NotVisible) {
+    if (this.flags & NvConstant.ObjFlags.NotVisible) {
       T3Util.Log("= S.ArcLine CreateArcShapeForHops output:", null);
       return null;
     }
 
     // Create container shape
-    const container = svgDoc.CreateShape(OptConstant.CSType.SHAPECONTAINER);
+    const container = svgDoc.CreateShape(OptConstant.CSType.ShapeContainer);
 
     // Create the primary polyline shape
-    const shapePolyline = svgDoc.CreateShape(OptConstant.CSType.POLYLINE);
-    shapePolyline.SetID(OptConstant.SVGElementClass.SHAPE);
+    const shapePolyline = svgDoc.CreateShape(OptConstant.CSType.Polyline);
+    shapePolyline.SetID(OptConstant.SVGElementClass.Shape);
 
     // Create the auxiliary slop polyline shape
-    const slopPolyline = svgDoc.CreateShape(OptConstant.CSType.POLYLINE);
-    slopPolyline.SetID(OptConstant.SVGElementClass.SLOP);
+    const slopPolyline = svgDoc.CreateShape(OptConstant.CSType.Polyline);
+    slopPolyline.SetID(OptConstant.SVGElementClass.Slop);
     slopPolyline.ExcludeFromExport(true);
 
     // Calculate frame based on start and end points
@@ -211,7 +211,7 @@ class ArcLine extends BaseLine {
     container.SetPos(frame.x, frame.y);
 
     // Generate polyline points and adjust for hops
-    let polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true);
+    let polyPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, true);
     const hopsInfo = T3Gv.opt.InsertHops(this, polyPoints, polyPoints.length);
     polyPoints = polyPoints.slice(0, hopsInfo.npts);
 
@@ -231,11 +231,11 @@ class ArcLine extends BaseLine {
     slopPolyline.SetFillColor('none');
     slopPolyline.SetOpacity(0);
     if (isTouch) {
-      slopPolyline.SetEventBehavior(OptConstant.EventBehavior.HIDDEN_OUT);
+      slopPolyline.SetEventBehavior(OptConstant.EventBehavior.HiddenOut);
     } else {
-      slopPolyline.SetEventBehavior(OptConstant.EventBehavior.NONE);
+      slopPolyline.SetEventBehavior(OptConstant.EventBehavior.None);
     }
-    slopPolyline.SetStrokeWidth(strokeWidth + OptConstant.Defines.SED_Slop);
+    slopPolyline.SetStrokeWidth(strokeWidth + OptConstant.Common.Slop);
 
     // Add elements to the container and apply styles/effects
     container.AddElement(shapePolyline);
@@ -252,19 +252,19 @@ class ArcLine extends BaseLine {
   CreateShape(svgDoc, isTouch) {
     T3Util.Log("= S.ArcLine CreateShape input:", { svgDoc, isTouch });
 
-    if (this.flags & NvConstant.ObjFlags.SEDO_NotVisible) {
+    if (this.flags & NvConstant.ObjFlags.NotVisible) {
       T3Util.Log("= S.ArcLine CreateShape output:", null);
       return null;
     }
 
     // When there are no hops, generate a standard arc shape.
     if (0 === this.hoplist.nhops) {
-      const container = svgDoc.CreateShape(OptConstant.CSType.SHAPECONTAINER);
-      const shapePath = svgDoc.CreateShape(OptConstant.CSType.PATH);
-      shapePath.SetID(OptConstant.SVGElementClass.SHAPE);
+      const container = svgDoc.CreateShape(OptConstant.CSType.ShapeContainer);
+      const shapePath = svgDoc.CreateShape(OptConstant.CSType.Path);
+      shapePath.SetID(OptConstant.SVGElementClass.Shape);
 
-      const slopPath = svgDoc.CreateShape(OptConstant.CSType.PATH);
-      slopPath.SetID(OptConstant.SVGElementClass.SLOP);
+      const slopPath = svgDoc.CreateShape(OptConstant.CSType.Path);
+      slopPath.SetID(OptConstant.SVGElementClass.Slop);
       slopPath.ExcludeFromExport(true);
 
       this.CalcFrame();
@@ -296,11 +296,11 @@ class ArcLine extends BaseLine {
       slopPath.SetFillColor('none');
       slopPath.SetOpacity(0);
       if (isTouch) {
-        slopPath.SetEventBehavior(OptConstant.EventBehavior.HIDDEN_OUT);
+        slopPath.SetEventBehavior(OptConstant.EventBehavior.HiddenOut);
       } else {
-        slopPath.SetEventBehavior(OptConstant.EventBehavior.NONE);
+        slopPath.SetEventBehavior(OptConstant.EventBehavior.None);
       }
-      slopPath.SetStrokeWidth(strokeWidth + OptConstant.Defines.SED_Slop);
+      slopPath.SetStrokeWidth(strokeWidth + OptConstant.Common.Slop);
 
       container.AddElement(shapePath);
       container.AddElement(slopPath);
@@ -341,11 +341,11 @@ class ArcLine extends BaseLine {
     T3Util.Log("= S.ArcLine CreateActionTriggers input:", { svgDoc, targetId, triggerType, compareId });
 
     // Create a group container for the action triggers.
-    let group = svgDoc.CreateShape(OptConstant.CSType.GROUP);
+    let group = svgDoc.CreateShape(OptConstant.CSType.Group);
 
     // Calculate knob sizes based on document scale.
-    let knobSize = OptConstant.Defines.SED_KnobSize;
-    let reducedKnobSize = OptConstant.Defines.SED_RKnobSize;
+    let knobSize = OptConstant.Common.KnobSize;
+    let reducedKnobSize = OptConstant.Common.RKnobSize;
     let allowKnob = true;
     let docScale = svgDoc.docInfo.docToScreenScale;
     if (svgDoc.docInfo.docScale <= 0.5) {
@@ -354,7 +354,7 @@ class ArcLine extends BaseLine {
     let adjustedKnobSize = knobSize / docScale;
     let adjustedReducedKnobSize = reducedKnobSize / docScale;
 
-    if (this.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
+    if (this.objecttype === NvConstant.FNObjectTypes.FlWall) {
       adjustedKnobSize *= 2;
     }
 
@@ -376,7 +376,7 @@ class ArcLine extends BaseLine {
     // Prepare knob configuration.
     let knobConfig = {
       svgDoc: svgDoc,
-      shapeType: OptConstant.CSType.RECT,
+      shapeType: OptConstant.CSType.Rect,
       knobSize: adjustedKnobSize,
       fillColor: 'black',
       fillOpacity: 1,
@@ -386,7 +386,7 @@ class ArcLine extends BaseLine {
       locked: false,
       x: 0,
       y: 0,
-      knobID: OptConstant.ActionTriggerType.LINESTART
+      knobID: OptConstant.ActionTriggerType.LineStart
     };
 
     // When targetId is different from compareId, adjust colors.
@@ -400,23 +400,23 @@ class ArcLine extends BaseLine {
     // Set knob position for LINESTART.
     knobConfig.x = this.StartPoint.x - rect.x;
     knobConfig.y = this.StartPoint.y - rect.y;
-    knobConfig.knobID = OptConstant.ActionTriggerType.LINESTART;
+    knobConfig.knobID = OptConstant.ActionTriggerType.LineStart;
 
     // If there is a hook for SED_KTL, override knob shape.
     if (targetObject && targetObject.hooks) {
       for (let i = 0; i < targetObject.hooks.length; i++) {
-        if (targetObject.hooks[i].hookpt === OptConstant.HookPts.SED_KTL) {
-          knobConfig.shapeType = OptConstant.CSType.OVAL;
+        if (targetObject.hooks[i].hookpt === OptConstant.HookPts.KTL) {
+          knobConfig.shapeType = OptConstant.CSType.Oval;
           allowKnob = false;
           break;
         }
       }
     }
-    if (this.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
-      knobConfig.shapeType = OptConstant.CSType.IMAGE;
+    if (this.objecttype === NvConstant.FNObjectTypes.FlWall) {
+      knobConfig.shapeType = OptConstant.CSType.Image;
     }
     let knob = this.GenericKnob(knobConfig);
-    if (this.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL && knob.SetURL) {
+    if (this.objecttype === NvConstant.FNObjectTypes.FlWall && knob.SetURL) {
       knob.SetURL(
         knobConfig.cursorType === CursorConstant.CursorType.NWSE_RESIZE
           ? CursorConstant.Knob.Path + CursorConstant.Knob.DiagonLeft
@@ -427,24 +427,24 @@ class ArcLine extends BaseLine {
     group.AddElement(knob);
 
     // Configure knob for LINEEND.
-    knobConfig.shapeType = OptConstant.CSType.RECT;
+    knobConfig.shapeType = OptConstant.CSType.Rect;
     knobConfig.x = this.EndPoint.x - rect.x;
     knobConfig.y = this.EndPoint.y - rect.y;
-    knobConfig.knobID = OptConstant.ActionTriggerType.LINEEND;
+    knobConfig.knobID = OptConstant.ActionTriggerType.LineEnd;
     if (targetObject && targetObject.hooks) {
       for (let i = 0; i < targetObject.hooks.length; i++) {
-        if (targetObject.hooks[i].hookpt === OptConstant.HookPts.SED_KTR) {
-          knobConfig.shapeType = OptConstant.CSType.OVAL;
+        if (targetObject.hooks[i].hookpt === OptConstant.HookPts.KTR) {
+          knobConfig.shapeType = OptConstant.CSType.Oval;
           allowKnob = false;
           break;
         }
       }
     }
-    if (this.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
-      knobConfig.shapeType = OptConstant.CSType.IMAGE;
+    if (this.objecttype === NvConstant.FNObjectTypes.FlWall) {
+      knobConfig.shapeType = OptConstant.CSType.Image;
     }
     knob = this.GenericKnob(knobConfig);
-    if (this.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL && knob.SetURL) {
+    if (this.objecttype === NvConstant.FNObjectTypes.FlWall && knob.SetURL) {
       knob.SetURL(
         knobConfig.cursorType === CursorConstant.CursorType.NWSE_RESIZE
           ? CursorConstant.Knob.Path + CursorConstant.Knob.DiagonLeft
@@ -455,7 +455,7 @@ class ArcLine extends BaseLine {
     group.AddElement(knob);
 
     // Configure knob for MODIFYSHAPE.
-    knobConfig.shapeType = OptConstant.CSType.RECT;
+    knobConfig.shapeType = OptConstant.CSType.Rect;
     knobConfig.cursorType = this.CalcCursorForSegment(this.StartPoint, this.EndPoint, true);
     if (this.NoGrow()) {
       knobConfig.cursorType = CursorConstant.CursorType.DEFAULT;
@@ -467,7 +467,7 @@ class ArcLine extends BaseLine {
     let radiusInfo = this.CalcRadiusAndCenter(centerX, centerY, endX, endY, this.CurveAdjust, this.IsReversed);
     knobConfig.x = radiusInfo.actionX - rect.x;
     knobConfig.y = radiusInfo.actionY - rect.y;
-    knobConfig.knobID = OptConstant.ActionTriggerType.MODIFYSHAPE;
+    knobConfig.knobID = OptConstant.ActionTriggerType.ModifyShape;
     knob = this.GenericKnob(knobConfig);
     group.AddElement(knob);
 
@@ -476,7 +476,7 @@ class ArcLine extends BaseLine {
       allowKnob = false;
     }
     if (allowKnob && !knobConfig.locked && !this.NoGrow()) {
-      knobConfig.shapeType = OptConstant.CSType.OVAL;
+      knobConfig.shapeType = OptConstant.CSType.Oval;
       let angle = Math.atan((this.EndPoint.y - this.StartPoint.y) / (this.EndPoint.x - this.StartPoint.x));
       if (angle < 0) {
         angle = -angle;
@@ -489,7 +489,7 @@ class ArcLine extends BaseLine {
         knobConfig.y = this.StartPoint.y - 2 * adjustedReducedKnobSize * Math.sin(angle) - rect.y;
       }
       knobConfig.cursorType = CursorConstant.CursorType.ROTATE;
-      knobConfig.knobID = OptConstant.ActionTriggerType.ROTATE;
+      knobConfig.knobID = OptConstant.ActionTriggerType.Rotate;
       knobConfig.fillColor = 'white';
       knobConfig.fillOpacity = 0.001;
       knobConfig.strokeSize = 1.5;
@@ -502,14 +502,14 @@ class ArcLine extends BaseLine {
 
     // Create dimension adjustment knobs if standoff dimensions are enabled.
     if (this.Dimensions & NvConstant.DimensionFlags.Standoff && this.CanUseStandOffDimensionLines()) {
-      let svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
+      let svgElement = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
       this.CreateDimensionAdjustmentKnobs(group, svgElement, knobConfig);
     }
 
     group.SetSize(width, height);
     group.SetPos(adjustedRect.x, adjustedRect.y);
     group.isShape = true;
-    group.SetID(OptConstant.Defines.Action + targetId);
+    group.SetID(OptConstant.Common.Action + targetId);
 
     T3Util.Log("= S.ArcLine CreateActionTriggers output:", group);
     return group;
@@ -533,9 +533,9 @@ class ArcLine extends BaseLine {
 
     // Adjust parameters based on TextAlign options
     switch (this.TextAlign) {
-      case TextConstant.TextAlign.TOPCENTER:
-      case TextConstant.TextAlign.CENTER:
-      case TextConstant.TextAlign.BOTTOMCENTER: {
+      case TextConstant.TextAlign.TopCenter:
+      case TextConstant.TextAlign.Center:
+      case TextConstant.TextAlign.BottomCenter: {
         const angle = T3Gv.opt.SD_GetClockwiseAngleBetween2PointsInRadians(
           result.StartPoint,
           result.EndPoint
@@ -591,8 +591,8 @@ class ArcLine extends BaseLine {
       endArrow = null;
     }
 
-    const shapeElement = svgDoc.GetElementByID(OptConstant.SVGElementClass.SHAPE);
-    const slopElement = svgDoc.GetElementByID(OptConstant.SVGElementClass.SLOP);
+    const shapeElement = svgDoc.GetElementById(OptConstant.SVGElementClass.Shape);
+    const slopElement = svgDoc.GetElementById(OptConstant.SVGElementClass.Slop);
 
     if (shapeElement !== null && shapeElement.PathCreator !== undefined) {
       const pathCreator = shapeElement.PathCreator();
@@ -666,11 +666,11 @@ class ArcLine extends BaseLine {
     }
 
     // Get primary shape and slop elements from the svgDoc
-    const shapeElement = svgDoc.GetElementByID(OptConstant.SVGElementClass.SHAPE);
-    const slopElement = svgDoc.GetElementByID(OptConstant.SVGElementClass.SLOP);
+    const shapeElement = svgDoc.GetElementById(OptConstant.SVGElementClass.Shape);
+    const slopElement = svgDoc.GetElementById(OptConstant.SVGElementClass.Slop);
 
     // Generate polyline points and adjust for hops
-    let polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true);
+    let polyPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, true);
     const hopsInfo = T3Gv.opt.InsertHops(this, polyPoints, polyPoints.length);
     polyPoints = polyPoints.slice(0, hopsInfo.npts);
     const numPoints = polyPoints.length;
@@ -827,7 +827,7 @@ class ArcLine extends BaseLine {
     T3Gv.opt.ob = Utils1.DeepCopy(this);
 
     // Flip vertically if flag is set
-    if (flipFlag & OptConstant.ExtraFlags.SEDE_FlipVert) {
+    if (flipFlag & OptConstant.ExtraFlags.FlipVert) {
       temp.y = this.StartPoint.y;
       this.StartPoint.y = this.EndPoint.y;
       this.EndPoint.y = temp.y;
@@ -836,7 +836,7 @@ class ArcLine extends BaseLine {
     }
 
     // Flip horizontally if flag is set
-    if (flipFlag & OptConstant.ExtraFlags.SEDE_FlipHoriz) {
+    if (flipFlag & OptConstant.ExtraFlags.FlipHoriz) {
       temp.x = this.StartPoint.x;
       this.StartPoint.x = this.EndPoint.x;
       this.EndPoint.x = temp.x;
@@ -848,7 +848,7 @@ class ArcLine extends BaseLine {
       this.IsReversed = !this.IsReversed;
       T3Util.Log("= S.ArcLine Flip: Toggled IsReversed to", this.IsReversed);
 
-      const svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
+      const svgElement = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
       if (svgElement) {
         this.UpdateDimensionLines(svgElement);
         if (this.DataID !== -1) {
@@ -861,10 +861,10 @@ class ArcLine extends BaseLine {
           this.BlockID,
           this,
           T3Gv.opt.ob,
-          OptConstant.ActionTriggerType.ROTATE
+          OptConstant.ActionTriggerType.Rotate
         );
       }
-      T3Gv.opt.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
+      T3Gv.opt.SetLinkFlag(this.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
     }
 
     // Reset the backup object
@@ -1083,7 +1083,7 @@ class ArcLine extends BaseLine {
       T3Gv.opt.actionSvgObject,
       drawX,
       drawY,
-      OptConstant.ActionTriggerType.LINEEND
+      OptConstant.ActionTriggerType.LineEnd
     );
 
     T3Util.Log("= S.ArcLine StartNewObjectDrawTrackCommon output:", { CurveAdjust: this.CurveAdjust, IsReversed: this.IsReversed });
@@ -1323,7 +1323,7 @@ class ArcLine extends BaseLine {
     if (
       targetId != null &&
       targetId >= 0 &&
-      T3Gv.opt.GetObjectPtr(targetId, false).DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.SHAPE
+      T3Gv.opt.GetObjectPtr(targetId, false).DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape
     ) {
       switch (hookElement.id) {
         case hookPts.SED_KTC:
@@ -1356,7 +1356,7 @@ class ArcLine extends BaseLine {
 
     let offsetX, offsetY;
     // Choose chord calculation based on slope or specific hook flag.
-    if (Math.abs(slope) > 1 || (hookFlags & NvConstant.HookFlags.SED_LC_HOnly)) {
+    if (Math.abs(slope) > 1 || (hookFlags & NvConstant.HookFlags.LcHOnly)) {
       // Calculate chord and determine offsets.
       chordResult = T3Gv.opt.ArcToChord(startPt, endPt, hookElement, connectLine, this);
       offsetY = chordResult.y - startPt.y;
@@ -1374,19 +1374,19 @@ class ArcLine extends BaseLine {
     // Calculate the target point coordinates scaled to a standard dimension.
     targetPoints[0].y =
       Math.abs(segDeltaY) > 1
-        ? (offsetY / segDeltaY) * OptConstant.Defines.SED_CDim
-        : OptConstant.Defines.SED_CDim;
+        ? (offsetY / segDeltaY) * OptConstant.Common.MaxDim
+        : OptConstant.Common.MaxDim;
     targetPoints[0].x =
       Math.abs(segDeltaX) > 1
-        ? (offsetX / segDeltaX) * OptConstant.Defines.SED_CDim
-        : OptConstant.Defines.SED_CDim;
+        ? (offsetX / segDeltaX) * OptConstant.Common.MaxDim
+        : OptConstant.Common.MaxDim;
 
     // Clamp the values between 0 and the defined dimension.
-    if (targetPoints[0].x > OptConstant.Defines.SED_CDim) {
-      targetPoints[0].x = OptConstant.Defines.SED_CDim;
+    if (targetPoints[0].x > OptConstant.Common.MaxDim) {
+      targetPoints[0].x = OptConstant.Common.MaxDim;
     }
-    if (targetPoints[0].y > OptConstant.Defines.SED_CDim) {
-      targetPoints[0].y = OptConstant.Defines.SED_CDim;
+    if (targetPoints[0].y > OptConstant.Common.MaxDim) {
+      targetPoints[0].y = OptConstant.Common.MaxDim;
     }
     if (targetPoints[0].x < 0) {
       targetPoints[0].x = 0;
@@ -1422,8 +1422,8 @@ class ArcLine extends BaseLine {
     if (
       hooks &&
       hooks.length === 2 &&
-      hooks[0].id && hooks[0].id === OptConstant.HookPts.SED_KTL &&
-      hooks[1].id && hooks[1].id === OptConstant.HookPts.SED_KTR
+      hooks[0].id && hooks[0].id === OptConstant.HookPts.KTL &&
+      hooks[1].id && hooks[1].id === OptConstant.HookPts.KTR
     ) {
       const ptStart = new Point(this.StartPoint.x, this.StartPoint.y);
       ptStart.id = hooks[0].id;
@@ -1436,12 +1436,12 @@ class ArcLine extends BaseLine {
 
     // Retrieve the target object, then delegate if it is of a specific type.
     const refObject = T3Gv.opt.GetObjectPtr(targetId, false);
-    if (refObject && refObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_MULTIPLICITY) {
+    if (refObject && refObject.objecttype === NvConstant.FNObjectTypes.Multiplicity) {
       resultPoints = super.GetPerimPts(event, hooks, param3, param4, param5, targetId);
       T3Util.Log("= S.ArcLine GetPerimPts output (Multiplicity):", resultPoints);
       return resultPoints;
     }
-    if (refObject && refObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_EXTRATEXTLABEL && hooks.length === 1) {
+    if (refObject && refObject.objecttype === NvConstant.FNObjectTypes.ExtraTextLable && hooks.length === 1) {
       resultPoints = super.GetPerimPts(event, hooks, param3, param4, param5, targetId);
       T3Util.Log("= S.ArcLine GetPerimPts output (ExtraTextLabel):", resultPoints);
       return resultPoints;
@@ -1499,7 +1499,7 @@ class ArcLine extends BaseLine {
     let newDrawingObject: any = {};
 
     switch (drawingObject.DrawingObjectBaseClass) {
-      case OptConstant.DrawingObjectBaseClass.LINE:
+      case OptConstant.DrawObjectBaseClass.Line:
         switch (drawingObject.LineType) {
           case OptConstant.LineType.SEGLINE:
           case OptConstant.LineType.ARCSEGLINE:
@@ -1535,7 +1535,7 @@ class ArcLine extends BaseLine {
         T3Gv.opt.Lines_MaintainDist(this, maintainDistParam, extraParam, event);
         break;
 
-      case OptConstant.DrawingObjectBaseClass.SHAPE:
+      case OptConstant.DrawObjectBaseClass.Shape:
         T3Gv.opt.Lines_MaintainDist(this, maintainDistParam, extraParam, event);
         break;
     }

@@ -84,7 +84,7 @@ class SEDSession {
 
     this.Type = StateConstant.StoredObjectType.SedSessionObject;
     this.dim = { x: 1000, y: 750 };
-    this.flags = OptConstant.SessionFlags.SEDS_LLink | OptConstant.SessionFlags.SEDS_FreeHand | OptConstant.SessionFlags.SEDS_NoTreeOverlap;
+    this.flags = OptConstant.SessionFlags.LLink | OptConstant.SessionFlags.FreeHand | OptConstant.SessionFlags.NoTreeOverlap;
     this.tselect = -1;
     this.dupdisp = { x: 0, y: 0 };
     this.def = new SEDDefault();
@@ -98,7 +98,7 @@ class SEDSession {
     this.centersnapalign = true;
     this.hopdimindex = 1;
     this.hopdim = { x: NvConstant.HopDimX[1], y: NvConstant.HopDimY[1] };
-    this.hopstyle = NvConstant.HopStyle.SDH_Arc;
+    this.hopstyle = NvConstant.HopStyle.Arc;
 
     // Double change it to Select: 8 | Always: 16
     this.dimensions = NvConstant.DimensionFlags.Total;

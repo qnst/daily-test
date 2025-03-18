@@ -20,7 +20,7 @@ class TEDSession {
     this.theActiveTextEditObjectID = -1;
     this.theTEWasResized = false;
     this.theTEWasEdited = false;
-    this.theTELastOp = NvConstant.TELastOp.INIT;
+    this.theTELastOp = NvConstant.TextElemLastOpt.Init;
     this.theActiveTableObjectID = -1;
     this.theActiveTableObjectIndex = -1;
     this.theActiveOutlineObjectID = -1;

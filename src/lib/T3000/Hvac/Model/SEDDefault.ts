@@ -40,7 +40,7 @@ class SEDDefault {
     this.textflags = 0;
     this.textgrow = NvConstant.TextGrowBehavior.ProPortional;
     this.fsize_min = 8;
-    this.tmargins = { left: OptConstant.Defines.SED_DefTMargin, top: OptConstant.Defines.SED_DefTMargin, right: OptConstant.Defines.SED_DefTMargin, bottom: OptConstant.Defines.SED_DefTMargin };
+    this.tmargins = { left: OptConstant.Common.DefTextMargin, top: OptConstant.Common.DefTextMargin, right: OptConstant.Common.DefTextMargin, bottom: OptConstant.Common.DefTextMargin };
     this.flags = 0;
     this.h_arraywidth = 50;
     this.v_arraywidth = 50;
@@ -49,7 +49,7 @@ class SEDDefault {
     this.arraywd = 25;
     this.wallThickness = 0;
     this.curveparam = 0;
-    this.rrectparam = OptConstant.Defines.DefFixedRRect;
+    this.rrectparam = OptConstant.Common.DefFixedRRect;
     this.pen = {};
     this.highlighter = {};
   }

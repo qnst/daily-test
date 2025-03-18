@@ -13,7 +13,7 @@ import $ from 'jquery'
 import ShapeUtil from '../Opt/Shape/ShapeUtil'
 import T3Constant from '../Data/Constant/T3Constant'
 import Instance from '../Data/Instance/Instance';
-import ShapeConstant from '../Opt/DS/DSConstant';
+import DSConstant from '../Opt/DS/DSConstant';
 import OptConstant from '../Data/Constant/OptConstant';
 import CursorConstant from '../Data/Constant/CursorConstant';
 import T3Util from '../Util/T3Util';
@@ -50,7 +50,7 @@ class SegmentedLine extends BaseLine {
     this.EndPoint = e.EndPoint || { x: 0, y: 0 };
 
     // Format segmented line and calculate frame based on end point
-    this.SegLFormat(this.EndPoint, OptConstant.ActionTriggerType.LINEEND, 0);
+    this.SegLFormat(this.EndPoint, OptConstant.ActionTriggerType.LineEnd, 0);
     this.CalcFrame();
 
     // Initialize hoplist and arrowhead data
@@ -82,15 +82,15 @@ class SegmentedLine extends BaseLine {
 
   CreateShape(svgDoc, isHidden) {
     T3Util.Log("= S.SegmentedLine: CreateShape input", { svgDoc, isHidden });
-    if (this.flags & NvConstant.ObjFlags.SEDO_NotVisible) return null;
+    if (this.flags & NvConstant.ObjFlags.NotVisible) return null;
 
     let polyPoints = [];
-    const container = svgDoc.CreateShape(OptConstant.CSType.SHAPECONTAINER);
-    const shapeLine = svgDoc.CreateShape(OptConstant.CSType.POLYLINE);
-    shapeLine.SetID(OptConstant.SVGElementClass.SHAPE);
+    const container = svgDoc.CreateShape(OptConstant.CSType.ShapeContainer);
+    const shapeLine = svgDoc.CreateShape(OptConstant.CSType.Polyline);
+    shapeLine.SetID(OptConstant.SVGElementClass.Shape);
 
-    const slopLine = svgDoc.CreateShape(OptConstant.CSType.POLYLINE);
-    slopLine.SetID(OptConstant.SVGElementClass.SLOP);
+    const slopLine = svgDoc.CreateShape(OptConstant.CSType.Polyline);
+    slopLine.SetID(OptConstant.SVGElementClass.Slop);
     slopLine.ExcludeFromExport(true);
 
     this.CalcFrame();
@@ -122,7 +122,7 @@ class SegmentedLine extends BaseLine {
     container.SetPos(frameRect.x, frameRect.y);
     shapeLine.SetSize(width, height);
 
-    polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true, false, false, null);
+    polyPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, true, false, false, null);
     if (this.hoplist.nhops !== 0) {
       const hopsResult = T3Gv.opt.InsertHops(this, polyPoints, polyPoints.length);
       polyPoints = polyPoints.slice(0, hopsResult.npts);
@@ -143,11 +143,11 @@ class SegmentedLine extends BaseLine {
     slopLine.SetFillColor("none");
     slopLine.SetOpacity(0);
     if (isHidden) {
-      slopLine.SetEventBehavior(OptConstant.EventBehavior.HIDDEN_OUT);
+      slopLine.SetEventBehavior(OptConstant.EventBehavior.HiddenOut);
     } else {
-      slopLine.SetEventBehavior(OptConstant.EventBehavior.NONE);
+      slopLine.SetEventBehavior(OptConstant.EventBehavior.None);
     }
-    slopLine.SetStrokeWidth(strokeThickness + OptConstant.Defines.SED_Slop);
+    slopLine.SetStrokeWidth(strokeThickness + OptConstant.Common.Slop);
 
     container.AddElement(shapeLine);
     container.AddElement(slopLine);
@@ -200,25 +200,25 @@ class SegmentedLine extends BaseLine {
       const diffX = Math.abs(comparePoint.x - basePoint.x);
       const diffY = Math.abs(comparePoint.y - basePoint.y);
       switch (currentDir) {
-        case NvConstant.SegLDir.SED_KTC:
+        case NvConstant.SegLDir.Ktc:
           direction = comparePoint.y < basePoint.y
-            ? (diffY >= diffX ? SegLDir.SED_KBC : (comparePoint.x < basePoint.x ? SegLDir.SED_KRC : SegLDir.SED_KLC))
-            : SegLDir.SED_KTC;
+            ? (diffY >= diffX ? SegLDir.Kbc : (comparePoint.x < basePoint.x ? SegLDir.Krc : SegLDir.Klc))
+            : SegLDir.Ktc;
           break;
-        case NvConstant.SegLDir.SED_KBC:
+        case NvConstant.SegLDir.Kbc:
           direction = comparePoint.y >= basePoint.y
-            ? (diffY >= diffX ? SegLDir.SED_KTC : (comparePoint.x < basePoint.x ? SegLDir.SED_KRC : SegLDir.SED_KLC))
-            : SegLDir.SED_KBC;
+            ? (diffY >= diffX ? SegLDir.Ktc : (comparePoint.x < basePoint.x ? SegLDir.Krc : SegLDir.Klc))
+            : SegLDir.Kbc;
           break;
-        case NvConstant.SegLDir.SED_KLC:
+        case NvConstant.SegLDir.Klc:
           direction = comparePoint.x < basePoint.x
-            ? (diffY <= diffX ? SegLDir.SED_KRC : (comparePoint.y < basePoint.y ? SegLDir.SED_KBC : SegLDir.SED_KTC))
-            : SegLDir.SED_KLC;
+            ? (diffY <= diffX ? SegLDir.Krc : (comparePoint.y < basePoint.y ? SegLDir.Kbc : SegLDir.Ktc))
+            : SegLDir.Klc;
           break;
-        case NvConstant.SegLDir.SED_KRC:
+        case NvConstant.SegLDir.Krc:
           direction = comparePoint.x > basePoint.x
-            ? (diffY < diffX ? SegLDir.SED_KLC : (comparePoint.y < basePoint.y ? SegLDir.SED_KBC : SegLDir.SED_KTC))
-            : SegLDir.SED_KRC;
+            ? (diffY < diffX ? SegLDir.Klc : (comparePoint.y < basePoint.y ? SegLDir.Kbc : SegLDir.Ktc))
+            : SegLDir.Krc;
           break;
         default:
           direction = currentDir;
@@ -229,12 +229,12 @@ class SegmentedLine extends BaseLine {
     if (this.segl != null) {
       // Update StartPoint or EndPoint based on action type.
       switch (action) {
-        case OptConstant.ActionTriggerType.LINESTART:
+        case OptConstant.ActionTriggerType.LineStart:
           this.StartPoint.x = point.x;
           this.StartPoint.y = point.y;
           break;
-        case OptConstant.ActionTriggerType.SEGL_PRESERVE:
-        case OptConstant.ActionTriggerType.LINEEND:
+        case OptConstant.ActionTriggerType.SeglPreserve:
+        case OptConstant.ActionTriggerType.LineEnd:
           this.EndPoint.x = point.x;
           this.EndPoint.y = point.y;
           break;
@@ -243,13 +243,13 @@ class SegmentedLine extends BaseLine {
       if (this.segl.firstdir !== 0 || this.segl.lastdir !== 0) {
         if (this.segl.lastdir === 0) {
           switch (action) {
-            case OptConstant.ActionTriggerType.LINESTART:
-            case OptConstant.ActionTriggerType.SEGL_ONE:
-            case OptConstant.ActionTriggerType.SEGL_TWO:
-            case OptConstant.ActionTriggerType.SEGL_THREE:
+            case OptConstant.ActionTriggerType.LineStart:
+            case OptConstant.ActionTriggerType.SeglOne:
+            case OptConstant.ActionTriggerType.SeglTwo:
+            case OptConstant.ActionTriggerType.SeglThree:
               providedDir = determineDirection(this.segl.firstdir, point, this.EndPoint);
               break;
-            case OptConstant.ActionTriggerType.SEGL_PRESERVE:
+            case OptConstant.ActionTriggerType.SeglPreserve:
               providedDir = determineDirection(this.segl.firstdir, this.StartPoint, this.EndPoint);
               break;
             default:
@@ -261,13 +261,13 @@ class SegmentedLine extends BaseLine {
         }
         if (this.segl.firstdir === 0) {
           switch (action) {
-            case OptConstant.ActionTriggerType.LINEEND:
-            case OptConstant.ActionTriggerType.SEGL_ONE:
-            case OptConstant.ActionTriggerType.SEGL_TWO:
-            case OptConstant.ActionTriggerType.SEGL_THREE:
+            case OptConstant.ActionTriggerType.LineEnd:
+            case OptConstant.ActionTriggerType.SeglOne:
+            case OptConstant.ActionTriggerType.SeglTwo:
+            case OptConstant.ActionTriggerType.SeglThree:
               providedDir = determineDirection(this.segl.lastdir, point, this.StartPoint);
               break;
-            case OptConstant.ActionTriggerType.SEGL_PRESERVE:
+            case OptConstant.ActionTriggerType.SeglPreserve:
               providedDir = determineDirection(this.segl.lastdir, this.EndPoint, this.StartPoint);
               break;
             default:
@@ -280,66 +280,66 @@ class SegmentedLine extends BaseLine {
 
         // Execute segmentation based on the first direction.
         switch (this.segl.firstdir) {
-          case NvConstant.SegLDir.SED_KTC:
+          case NvConstant.SegLDir.Ktc:
             switch (this.segl.lastdir) {
-              case NvConstant.SegLDir.SED_KTC:
+              case NvConstant.SegLDir.Ktc:
                 this.SegLTopToTop(action, point, 1, false, isDirectionModified);
                 break;
-              case NvConstant.SegLDir.SED_KBC:
+              case NvConstant.SegLDir.Kbc:
                 this.SegLTopToBottom(action, point, 1, false);
                 break;
-              case NvConstant.SegLDir.SED_KLC:
+              case NvConstant.SegLDir.Klc:
                 this.SegLTopToLeft(action, point, 1, 1, false, isDirectionModified);
                 break;
-              case NvConstant.SegLDir.SED_KRC:
+              case NvConstant.SegLDir.Krc:
                 this.SegLTopToLeft(action, point, 1, -1, false, isDirectionModified);
                 break;
             }
             break;
-          case NvConstant.SegLDir.SED_KBC:
+          case NvConstant.SegLDir.Kbc:
             switch (this.segl.lastdir) {
-              case NvConstant.SegLDir.SED_KTC:
+              case NvConstant.SegLDir.Ktc:
                 this.SegLTopToBottom(action, point, -1, false);
                 break;
-              case NvConstant.SegLDir.SED_KBC:
+              case NvConstant.SegLDir.Kbc:
                 this.SegLTopToTop(action, point, -1, false, isDirectionModified);
                 break;
-              case NvConstant.SegLDir.SED_KLC:
+              case NvConstant.SegLDir.Klc:
                 this.SegLTopToLeft(action, point, -1, 1, false, isDirectionModified);
                 break;
-              case NvConstant.SegLDir.SED_KRC:
+              case NvConstant.SegLDir.Krc:
                 this.SegLTopToLeft(action, point, -1, -1, false, isDirectionModified);
                 break;
             }
             break;
-          case NvConstant.SegLDir.SED_KLC:
+          case NvConstant.SegLDir.Klc:
             switch (this.segl.lastdir) {
-              case NvConstant.SegLDir.SED_KTC:
+              case NvConstant.SegLDir.Ktc:
                 this.SegLTopToLeft(action, point, 1, 1, true, isDirectionModified);
                 break;
-              case NvConstant.SegLDir.SED_KBC:
+              case NvConstant.SegLDir.Kbc:
                 this.SegLTopToLeft(action, point, 1, -1, true, isDirectionModified);
                 break;
-              case NvConstant.SegLDir.SED_KLC:
+              case NvConstant.SegLDir.Klc:
                 this.SegLTopToTop(action, point, 1, true, isDirectionModified);
                 break;
-              case NvConstant.SegLDir.SED_KRC:
+              case NvConstant.SegLDir.Krc:
                 this.SegLTopToBottom(action, point, 1, true);
                 break;
             }
             break;
-          case NvConstant.SegLDir.SED_KRC:
+          case NvConstant.SegLDir.Krc:
             switch (this.segl.lastdir) {
-              case NvConstant.SegLDir.SED_KTC:
+              case NvConstant.SegLDir.Ktc:
                 this.SegLTopToLeft(action, point, -1, 1, true, isDirectionModified);
                 break;
-              case NvConstant.SegLDir.SED_KBC:
+              case NvConstant.SegLDir.Kbc:
                 this.SegLTopToLeft(action, point, -1, -1, true, isDirectionModified);
                 break;
-              case NvConstant.SegLDir.SED_KLC:
+              case NvConstant.SegLDir.Klc:
                 this.SegLTopToBottom(action, point, -1, true);
                 break;
-              case NvConstant.SegLDir.SED_KRC:
+              case NvConstant.SegLDir.Krc:
                 this.SegLTopToTop(action, point, -1, true, isDirectionModified);
                 break;
             }
@@ -361,13 +361,13 @@ class SegmentedLine extends BaseLine {
         if ((absDeltaY >= 1 || absDeltaX >= 1)) {
           if (providedDir === 0) {
             providedDir = (absDeltaX - absDeltaY > 0.01)
-              ? OptConstant.Defines.SED_HorizOnly
-              : OptConstant.Defines.SED_VertOnly;
+              ? OptConstant.Common.HorizOnly
+              : OptConstant.Common.VertOnly;
           }
           // Clear previous segmentation array.
           this.segl.pts.splice(0);
           this.segl.lengths.splice(0);
-          if (providedDir === OptConstant.Defines.SED_HorizOnly) {
+          if (providedDir === OptConstant.Common.HorizOnly) {
             if (absDeltaY < 1) {
               this.segl.pts.push(new Point(this.StartPoint.x, this.StartPoint.y));
               this.segl.pts.push(new Point(this.EndPoint.x, this.EndPoint.y));
@@ -382,7 +382,7 @@ class SegmentedLine extends BaseLine {
               this.segl.lengths.push(deltaY);
               this.segl.lengths.push(half);
             }
-          } else if (providedDir === OptConstant.Defines.SED_VertOnly) {
+          } else if (providedDir === OptConstant.Common.VertOnly) {
             if (absDeltaX < 1) {
               this.segl.pts.push(new Point(this.StartPoint.x, this.StartPoint.y));
               this.segl.pts.push(new Point(this.EndPoint.x, this.EndPoint.y));
@@ -497,7 +497,7 @@ class SegmentedLine extends BaseLine {
     let adjustmentValue: number;
     let hookAdjustmentNeeded = 0;
     let preserve = false;
-    const SEG_DIM = OptConstant.Defines.SED_CDim;
+    const SEG_DIM = OptConstant.Common.MaxDim;
 
     // Temporary max dimension placeholder
     let maxDim: Point = { x: 0, y: 0 };
@@ -547,7 +547,7 @@ class SegmentedLine extends BaseLine {
             : this.StartPoint.y < this.EndPoint.y)
       ) {
         for (let j = 0; j < this.hooks.length; j++) {
-          if (this.hooks[j].hookpt === OptConstant.HookPts.SED_KTL) {
+          if (this.hooks[j].hookpt === OptConstant.HookPts.KTL) {
             const hookObj = T3Gv.opt.GetObjectPtr(
               this.hooks[j].objid,
               false
@@ -559,13 +559,13 @@ class SegmentedLine extends BaseLine {
                   this.StartPoint.y +
                   hookObjRect.height *
                   ((SEG_DIM - this.hooks[j].connect.y) / SEG_DIM) +
-                  OptConstant.Defines.SED_SegDefLen;
+                  OptConstant.Common.SegDefLen;
               } else {
                 adjustmentValue =
                   this.StartPoint.x +
                   hookObjRect.width *
                   ((SEG_DIM - this.hooks[j].connect.x) / SEG_DIM) +
-                  OptConstant.Defines.SED_SegDefLen;
+                  OptConstant.Common.SegDefLen;
               }
               break;
             }
@@ -573,7 +573,7 @@ class SegmentedLine extends BaseLine {
         }
       } else {
         for (let j = 0; j < this.hooks.length; j++) {
-          if (this.hooks[j].hookpt === OptConstant.HookPts.SED_KTR) {
+          if (this.hooks[j].hookpt === OptConstant.HookPts.KTR) {
             const hookObj = T3Gv.opt.GetObjectPtr(
               this.hooks[j].objid,
               false
@@ -585,13 +585,13 @@ class SegmentedLine extends BaseLine {
                   this.EndPoint.y +
                   hookObjRect.height *
                   ((SEG_DIM - this.hooks[j].connect.y) / SEG_DIM) +
-                  OptConstant.Defines.SED_SegDefLen;
+                  OptConstant.Common.SegDefLen;
               } else {
                 adjustmentValue =
                   this.EndPoint.x +
                   hookObjRect.width *
                   ((SEG_DIM - this.hooks[j].connect.x) / SEG_DIM) +
-                  OptConstant.Defines.SED_SegDefLen;
+                  OptConstant.Common.SegDefLen;
               }
               break;
             }
@@ -600,20 +600,20 @@ class SegmentedLine extends BaseLine {
       }
       if (hookObjRect) {
         hookAdjustmentNeeded = isVertical
-          ? verticalDiff < hookObjRect.height / 2 + OptConstant.Defines.SED_SegMinLen
+          ? verticalDiff < hookObjRect.height / 2 + OptConstant.Common.SegMinLen
             ? 1
             : 0
-          : verticalDiff < hookObjRect.width / 2 + OptConstant.Defines.SED_SegMinLen
+          : verticalDiff < hookObjRect.width / 2 + OptConstant.Common.SegMinLen
             ? 1
             : 0;
       }
     }
 
-    if (horizontalDiff < OptConstant.Defines.SED_SegMinSeg) {
+    if (horizontalDiff < OptConstant.Common.SegMinSeg) {
       horizontalDiff = 0;
     }
 
-    if (action === OptConstant.ActionTriggerType.SEGL_PRESERVE) {
+    if (action === OptConstant.ActionTriggerType.SeglPreserve) {
       preserve = totalPoints === 4;
     }
 
@@ -623,8 +623,8 @@ class SegmentedLine extends BaseLine {
 
     if (
       !preserve &&
-      ((verticalDiff > OptConstant.Defines.SED_SegMinLen ||
-        horizontalDiff < OptConstant.Defines.SED_SegMinLen) &&
+      ((verticalDiff > OptConstant.Common.SegMinLen ||
+        horizontalDiff < OptConstant.Common.SegMinLen) &&
         !hookAdjustmentNeeded)
     ) {
       if (totalPoints !== 4) {
@@ -636,11 +636,11 @@ class SegmentedLine extends BaseLine {
         this.segl.pts.push(new Point(startPrimary - boundingRect.x, startSecondary - boundingRect.y));
       }
       if (this.segl.lengths.length < 1) {
-        this.segl.lengths.push(OptConstant.Defines.SED_SegDefLen);
+        this.segl.lengths.push(OptConstant.Common.SegDefLen);
       }
       let firstLength = this.segl.lengths[0];
       let computedLength: number;
-      if (action === OptConstant.ActionTriggerType.SEGL_ONE) {
+      if (action === OptConstant.ActionTriggerType.SeglOne) {
         if (isVertical) {
           this.segl.lengths[0] = factor * (startSecondary - point.x);
           computedLength = factor * (endSecondary - point.x);
@@ -648,17 +648,17 @@ class SegmentedLine extends BaseLine {
           this.segl.lengths[0] = factor * (startSecondary - point.y);
           computedLength = factor * (endSecondary - point.y);
         }
-        if (this.segl.lengths[0] < OptConstant.Defines.SED_SegMinLen) {
-          this.segl.lengths[0] = OptConstant.Defines.SED_SegMinLen;
+        if (this.segl.lengths[0] < OptConstant.Common.SegMinLen) {
+          this.segl.lengths[0] = OptConstant.Common.SegMinLen;
         }
-        if (computedLength < OptConstant.Defines.SED_SegMinLen) {
-          computedLength = OptConstant.Defines.SED_SegMinLen;
+        if (computedLength < OptConstant.Common.SegMinLen) {
+          computedLength = OptConstant.Common.SegMinLen;
         }
         if (computedLength < firstLength) {
           firstLength = computedLength;
         }
-      } else if (firstLength > OptConstant.Defines.SED_SegDefLen) {
-        firstLength = OptConstant.Defines.SED_SegDefLen;
+      } else if (firstLength > OptConstant.Common.SegDefLen) {
+        firstLength = OptConstant.Common.SegDefLen;
       }
       let coordU = startSecondary - factor * this.segl.lengths[0];
       if (coordU < 0) {
@@ -702,16 +702,16 @@ class SegmentedLine extends BaseLine {
         this.segl.pts.push(new Point(startPrimary - boundingRect.x, startSecondary - boundingRect.y));
       }
       if (this.segl.lengths.length < 1) {
-        this.segl.lengths.push(OptConstant.Defines.SED_SegDefLen);
+        this.segl.lengths.push(OptConstant.Common.SegDefLen);
       }
-      if (action === OptConstant.ActionTriggerType.SEGL_ONE) {
+      if (action === OptConstant.ActionTriggerType.SeglOne) {
         if (isVertical) {
           this.segl.lengths[0] = factor * (startSecondary - point.x);
         } else {
           this.segl.lengths[0] = factor * (startSecondary - point.y);
         }
-        if (this.segl.lengths[0] < OptConstant.Defines.SED_SegMinLen) {
-          this.segl.lengths[0] = OptConstant.Defines.SED_SegMinLen;
+        if (this.segl.lengths[0] < OptConstant.Common.SegMinLen) {
+          this.segl.lengths[0] = OptConstant.Common.SegMinLen;
         }
       }
       let coordU = startSecondary - factor * this.segl.lengths[0];
@@ -727,16 +727,16 @@ class SegmentedLine extends BaseLine {
         this.segl.pts.push(new Point(startPrimary - boundingRect.x, coordU - boundingRect.y));
       }
       if (this.segl.lengths.length < 2) {
-        this.segl.lengths.push(OptConstant.Defines.SED_SegDefLen);
+        this.segl.lengths.push(OptConstant.Common.SegDefLen);
       }
-      if (action === OptConstant.ActionTriggerType.SEGL_TWO) {
+      if (action === OptConstant.ActionTriggerType.SeglTwo) {
         if (isVertical) {
           this.segl.lengths[1] = point.y - startPrimary;
         } else {
           this.segl.lengths[1] = point.x - startPrimary;
         }
-        if (this.segl.lengths[1] < OptConstant.Defines.SED_SegMinLen) {
-          this.segl.lengths[1] = OptConstant.Defines.SED_SegMinLen;
+        if (this.segl.lengths[1] < OptConstant.Common.SegMinLen) {
+          this.segl.lengths[1] = OptConstant.Common.SegMinLen;
         }
       } else if (hookAdjustmentNeeded) {
         const lengthToHook = adjustmentValue - startPrimary;
@@ -757,16 +757,16 @@ class SegmentedLine extends BaseLine {
         this.segl.pts.push(new Point(coordD - boundingRect.x, coordU - boundingRect.y));
       }
       if (this.segl.lengths.length < 3) {
-        this.segl.lengths.push(OptConstant.Defines.SED_SegDefLen);
+        this.segl.lengths.push(OptConstant.Common.SegDefLen);
       }
-      if (action === OptConstant.ActionTriggerType.SEGL_THREE) {
+      if (action === OptConstant.ActionTriggerType.SeglThree) {
         if (isVertical) {
           this.segl.lengths[2] = factor * (endSecondary - point.x);
         } else {
           this.segl.lengths[2] = factor * (endSecondary - point.y);
         }
-        if (this.segl.lengths[2] < OptConstant.Defines.SED_SegMinLen) {
-          this.segl.lengths[2] = OptConstant.Defines.SED_SegMinLen;
+        if (this.segl.lengths[2] < OptConstant.Common.SegMinLen) {
+          this.segl.lengths[2] = OptConstant.Common.SegMinLen;
         }
       }
       let coordP = endSecondary - factor * this.segl.lengths[2];
@@ -809,7 +809,7 @@ class SegmentedLine extends BaseLine {
     // Temporary variables for later use
     let tempPoint: number;
     let hookAdjustLength: number = 0;
-    const segDim: number = OptConstant.Defines.SED_CDim;
+    const segDim: number = OptConstant.Common.MaxDim;
 
     // Depending on orientation, calculate geometry variables
     if (isVertical) {
@@ -843,14 +843,14 @@ class SegmentedLine extends BaseLine {
     }
 
     // Determine hook condition based on factor and segment minimum length constraints
-    hookCondition = (factor === -1 ? (endSecondary - 2 * OptConstant.Defines.SED_SegMinLen > startSecondary)
-      : (endSecondary + 2 * OptConstant.Defines.SED_SegMinLen < startSecondary));
+    hookCondition = (factor === -1 ? (endSecondary - 2 * OptConstant.Common.SegMinLen > startSecondary)
+      : (endSecondary + 2 * OptConstant.Common.SegMinLen < startSecondary));
     // Store current point segment count and clear points
     ptsCount = this.segl.pts.length;
     this.segl.pts.splice(0);
 
     // When preserving, override hookCondition based on a segment count check
-    if (actionType === OptConstant.ActionTriggerType.SEGL_PRESERVE) {
+    if (actionType === OptConstant.ActionTriggerType.SeglPreserve) {
       hookCondition = (ptsCount !== 6);
     }
 
@@ -877,19 +877,19 @@ class SegmentedLine extends BaseLine {
           this.segl.pts.push(new Point(startPrimary - rect.x, startSecondary - rect.y));
         }
         if (this.segl.lengths.length < 1) {
-          this.segl.lengths.push(OptConstant.Defines.SED_SegDefLen);
+          this.segl.lengths.push(OptConstant.Common.SegDefLen);
         }
-        if (actionType === OptConstant.ActionTriggerType.SEGL_ONE) {
+        if (actionType === OptConstant.ActionTriggerType.SeglOne) {
           this.segl.lengths[0] = isVertical ? factor * (startSecondary - pt.x) : factor * (startSecondary - pt.y);
-          if (this.segl.lengths[0] < OptConstant.Defines.SED_SegMinLen) {
-            this.segl.lengths[0] = OptConstant.Defines.SED_SegMinLen;
+          if (this.segl.lengths[0] < OptConstant.Common.SegMinLen) {
+            this.segl.lengths[0] = OptConstant.Common.SegMinLen;
           }
         } else {
-          if (actionType !== OptConstant.ActionTriggerType.SEGL_PRESERVE && this.segl.lengths[0] < OptConstant.Defines.SED_SegDefLen) {
-            this.segl.lengths[0] = OptConstant.Defines.SED_SegDefLen;
+          if (actionType !== OptConstant.ActionTriggerType.SeglPreserve && this.segl.lengths[0] < OptConstant.Common.SegDefLen) {
+            this.segl.lengths[0] = OptConstant.Common.SegDefLen;
           }
-          if (this.segl.lengths[0] > SDim - OptConstant.Defines.SED_SegMinLen) {
-            this.segl.lengths[0] = SDim - OptConstant.Defines.SED_SegMinLen;
+          if (this.segl.lengths[0] > SDim - OptConstant.Common.SegMinLen) {
+            this.segl.lengths[0] = SDim - OptConstant.Common.SegMinLen;
           }
         }
         // Calculate new intermediate coordinate i based on factor and segment length
@@ -901,7 +901,7 @@ class SegmentedLine extends BaseLine {
           tempPoint = maxDim.y;
         }
         // Calculate another coordinate n using minimum segment length
-        let nCoord = endSecondary + factor * OptConstant.Defines.SED_SegMinLen;
+        let nCoord = endSecondary + factor * OptConstant.Common.SegMinLen;
         if (nCoord < 0) {
           nCoord = 0;
         }
@@ -910,15 +910,15 @@ class SegmentedLine extends BaseLine {
         }
         // Adjust coordinates based on factor polarity
         if (factor === -1) {
-          if (nCoord < startSecondary + OptConstant.Defines.SED_SegMinLen) {
-            nCoord = startSecondary + OptConstant.Defines.SED_SegMinLen;
+          if (nCoord < startSecondary + OptConstant.Common.SegMinLen) {
+            nCoord = startSecondary + OptConstant.Common.SegMinLen;
           }
           if (nCoord < tempPoint) {
             tempPoint = nCoord;
           }
         } else {
-          if (nCoord > startSecondary - OptConstant.Defines.SED_SegMinLen) {
-            nCoord = startSecondary - OptConstant.Defines.SED_SegMinLen;
+          if (nCoord > startSecondary - OptConstant.Common.SegMinLen) {
+            nCoord = startSecondary - OptConstant.Common.SegMinLen;
           }
           if (nCoord > tempPoint) {
             tempPoint = nCoord;
@@ -940,18 +940,18 @@ class SegmentedLine extends BaseLine {
       // Try to calculate hook adjustment from available hooks
       if (this.hooks && this.hooks.length > 0) {
         for (let h = 0; h < this.hooks.length; h++) {
-          if (this.hooks[h].hookpt === OptConstant.HookPts.SED_KTL) {
+          if (this.hooks[h].hookpt === OptConstant.HookPts.KTL) {
             const hookObj = T3Gv.opt.GetObjectPtr(this.hooks[h].objid, false);
             if (hookObj) {
               const hookRect = hookObj.GetTargetRect();
               if (isVertical) {
                 hookAdjustLength = startPrimary <= endPrimary
-                  ? this.StartPoint.y + hookRect.height * ((segDim - this.hooks[h].connect.y) / segDim) + OptConstant.Defines.SED_SegDefLen
-                  : this.StartPoint.y + hookRect.height * (this.hooks[h].connect.y / segDim) + OptConstant.Defines.SED_SegDefLen;
+                  ? this.StartPoint.y + hookRect.height * ((segDim - this.hooks[h].connect.y) / segDim) + OptConstant.Common.SegDefLen
+                  : this.StartPoint.y + hookRect.height * (this.hooks[h].connect.y / segDim) + OptConstant.Common.SegDefLen;
               } else {
                 hookAdjustLength = startPrimary <= endPrimary
-                  ? this.StartPoint.x + hookRect.width * ((segDim - this.hooks[h].connect.x) / segDim) + OptConstant.Defines.SED_SegDefLen
-                  : this.StartPoint.x + hookRect.width * (this.hooks[h].connect.x / segDim) + OptConstant.Defines.SED_SegDefLen;
+                  ? this.StartPoint.x + hookRect.width * ((segDim - this.hooks[h].connect.x) / segDim) + OptConstant.Common.SegDefLen
+                  : this.StartPoint.x + hookRect.width * (this.hooks[h].connect.x / segDim) + OptConstant.Common.SegDefLen;
               }
               break;
             }
@@ -968,12 +968,12 @@ class SegmentedLine extends BaseLine {
         this.segl.pts.push(new Point(startPrimary - rect.x, startSecondary - rect.y));
       }
       if (this.segl.lengths.length < 1) {
-        this.segl.lengths.push(OptConstant.Defines.SED_SegDefLen);
+        this.segl.lengths.push(OptConstant.Common.SegDefLen);
       }
-      if (actionType === OptConstant.ActionTriggerType.SEGL_ONE) {
+      if (actionType === OptConstant.ActionTriggerType.SeglOne) {
         this.segl.lengths[0] = isVertical ? factor * (startSecondary - pt.x) : factor * (startSecondary - pt.y);
-        if (this.segl.lengths[0] < OptConstant.Defines.SED_SegMinLen) {
-          this.segl.lengths[0] = OptConstant.Defines.SED_SegMinLen;
+        if (this.segl.lengths[0] < OptConstant.Common.SegMinLen) {
+          this.segl.lengths[0] = OptConstant.Common.SegMinLen;
         }
       }
       tempPoint = startSecondary - factor * this.segl.lengths[0];
@@ -989,9 +989,9 @@ class SegmentedLine extends BaseLine {
         this.segl.pts.push(new Point(startPrimary - rect.x, tempPoint - rect.y));
       }
       if (this.segl.lengths.length < 2) {
-        this.segl.lengths.push(OptConstant.Defines.SED_SegDefLen);
+        this.segl.lengths.push(OptConstant.Common.SegDefLen);
       }
-      if (actionType === OptConstant.ActionTriggerType.SEGL_TWO) {
+      if (actionType === OptConstant.ActionTriggerType.SeglTwo) {
         this.segl.lengths[1] = startPrimary <= endPrimary
           ? (isVertical ? pt.y - startPrimary : pt.x - startPrimary)
           : (isVertical ? -(pt.y - startPrimary) : -(pt.x - startPrimary));
@@ -1005,13 +1005,13 @@ class SegmentedLine extends BaseLine {
       let oCoord: number;
       if (startPrimary <= endPrimary) {
         oCoord = startPrimary + this.segl.lengths[1];
-        if (Math.abs(endPrimary - oCoord) < OptConstant.Defines.SED_SegMinLen) {
-          oCoord = oCoord < endPrimary ? endPrimary - OptConstant.Defines.SED_SegMinLen : endPrimary + OptConstant.Defines.SED_SegMinLen;
+        if (Math.abs(endPrimary - oCoord) < OptConstant.Common.SegMinLen) {
+          oCoord = oCoord < endPrimary ? endPrimary - OptConstant.Common.SegMinLen : endPrimary + OptConstant.Common.SegMinLen;
         }
       } else {
         oCoord = startPrimary - this.segl.lengths[1];
-        if (Math.abs(oCoord - endPrimary) < OptConstant.Defines.SED_SegMinLen) {
-          oCoord = oCoord < endPrimary ? endPrimary - OptConstant.Defines.SED_SegMinLen : endPrimary + OptConstant.Defines.SED_SegMinLen;
+        if (Math.abs(oCoord - endPrimary) < OptConstant.Common.SegMinLen) {
+          oCoord = oCoord < endPrimary ? endPrimary - OptConstant.Common.SegMinLen : endPrimary + OptConstant.Common.SegMinLen;
         }
       }
       if (oCoord < 0) {
@@ -1026,12 +1026,12 @@ class SegmentedLine extends BaseLine {
         this.segl.pts.push(new Point(oCoord - rect.x, tempPoint - rect.y));
       }
       if (this.segl.lengths.length < 3) {
-        this.segl.lengths.push(OptConstant.Defines.SED_SegDefLen);
+        this.segl.lengths.push(OptConstant.Common.SegDefLen);
       }
-      if (actionType === OptConstant.ActionTriggerType.SEGL_THREE) {
+      if (actionType === OptConstant.ActionTriggerType.SeglThree) {
         this.segl.lengths[2] = isVertical ? -factor * (endSecondary - pt.x) : -factor * (endSecondary - pt.y);
-        if (this.segl.lengths[2] < OptConstant.Defines.SED_SegMinLen) {
-          this.segl.lengths[2] = OptConstant.Defines.SED_SegMinLen;
+        if (this.segl.lengths[2] < OptConstant.Common.SegMinLen) {
+          this.segl.lengths[2] = OptConstant.Common.SegMinLen;
         }
       }
       tempPoint = endSecondary + factor * this.segl.lengths[2];
@@ -1101,7 +1101,7 @@ class SegmentedLine extends BaseLine {
         y: 0
       };
 
-    const segmentDimension = OptConstant.Defines.SED_CDim;
+    const segmentDimension = OptConstant.Common.MaxDim;
 
     // Check if auto-insert is allowed
     T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
@@ -1145,15 +1145,15 @@ class SegmentedLine extends BaseLine {
 
     // Calculate conditions for format decisions
     isPrimaryLessThanSecondary = secondaryFactor == -1 ?
-      startPrimary - 2 * OptConstant.Defines.SED_SegMinLen > endPrimary :
-      startPrimary + 2 * OptConstant.Defines.SED_SegMinLen < endPrimary;
+      startPrimary - 2 * OptConstant.Common.SegMinLen > endPrimary :
+      startPrimary + 2 * OptConstant.Common.SegMinLen < endPrimary;
 
     isShortcutNeeded = primaryFactor == -1 ?
-      endSecondary - 2 * OptConstant.Defines.SED_SegMinLen > startSecondary && isPrimaryLessThanSecondary :
-      endSecondary + 2 * OptConstant.Defines.SED_SegMinLen < startSecondary && isPrimaryLessThanSecondary;
+      endSecondary - 2 * OptConstant.Common.SegMinLen > startSecondary && isPrimaryLessThanSecondary :
+      endSecondary + 2 * OptConstant.Common.SegMinLen < startSecondary && isPrimaryLessThanSecondary;
 
     // Override format based on action type or flag
-    if (actionType === OptConstant.ActionTriggerType.SEGL_PRESERVE) {
+    if (actionType === OptConstant.ActionTriggerType.SeglPreserve) {
       isShortcutNeeded = totalPoints !== 5;
     }
 
@@ -1192,25 +1192,25 @@ class SegmentedLine extends BaseLine {
           if (secondaryFactor === -1) {
             // Calculate hook start adjustment
             hookStartAdjustment = isVertical ?
-              this.EndPoint.y + OptConstant.Defines.SED_SegDefLen :
-              this.EndPoint.x + OptConstant.Defines.SED_SegDefLen;
+              this.EndPoint.y + OptConstant.Common.SegDefLen :
+              this.EndPoint.x + OptConstant.Common.SegDefLen;
 
             // Look for hook at KTR point
             for (loopIndex = 0; loopIndex < this.hooks.length; loopIndex++) {
-              if (this.hooks[loopIndex].hookpt === OptConstant.HookPts.SED_KTR) {
+              if (this.hooks[loopIndex].hookpt === OptConstant.HookPts.KTR) {
                 hookObj = T3Gv.opt.GetObjectPtr(this.hooks[loopIndex].objid, false);
                 if (hookObj) {
                   const hookRect = hookObj.GetTargetRect();
                   const heightDiff = startSecondary - (hookRect.y + hookRect.height);
 
                   // Determine hook end adjustment based on connection point and space
-                  hookEndAdjustment = heightDiff < OptConstant.Defines.SED_SegDefLen + OptConstant.Defines.SED_SegMinLen ?
+                  hookEndAdjustment = heightDiff < OptConstant.Common.SegDefLen + OptConstant.Common.SegMinLen ?
                     isVertical ?
-                      this.EndPoint.x - hookRect.width * (this.hooks[loopIndex].connect.x / segmentDimension) - OptConstant.Defines.SED_SegDefLen :
-                      this.EndPoint.y - hookRect.height * (this.hooks[loopIndex].connect.y / segmentDimension) - OptConstant.Defines.SED_SegDefLen
+                      this.EndPoint.x - hookRect.width * (this.hooks[loopIndex].connect.x / segmentDimension) - OptConstant.Common.SegDefLen :
+                      this.EndPoint.y - hookRect.height * (this.hooks[loopIndex].connect.y / segmentDimension) - OptConstant.Common.SegDefLen
                     : isVertical ?
-                      this.EndPoint.x + hookRect.width * ((segmentDimension - this.hooks[loopIndex].connect.x) / segmentDimension) + OptConstant.Defines.SED_SegDefLen :
-                      this.EndPoint.y + hookRect.height * ((segmentDimension - this.hooks[loopIndex].connect.y) / segmentDimension) + OptConstant.Defines.SED_SegDefLen;
+                      this.EndPoint.x + hookRect.width * ((segmentDimension - this.hooks[loopIndex].connect.x) / segmentDimension) + OptConstant.Common.SegDefLen :
+                      this.EndPoint.y + hookRect.height * ((segmentDimension - this.hooks[loopIndex].connect.y) / segmentDimension) + OptConstant.Common.SegDefLen;
                 }
                 break;
               }
@@ -1218,13 +1218,13 @@ class SegmentedLine extends BaseLine {
           } else {
             // Handle other factor cases
             for (loopIndex = 0; loopIndex < this.hooks.length; loopIndex++) {
-              if (this.hooks[loopIndex].hookpt === OptConstant.HookPts.SED_KTR) {
+              if (this.hooks[loopIndex].hookpt === OptConstant.HookPts.KTR) {
                 hookObj = T3Gv.opt.GetObjectPtr(this.hooks[loopIndex].objid, false);
                 if (hookObj) {
                   const hookRect = hookObj.GetTargetRect();
                   hookStartAdjustment = isVertical ?
-                    this.StartPoint.y + hookRect.height / 2 + OptConstant.Defines.SED_SegDefLen :
-                    this.StartPoint.x + hookRect.width / 2 + OptConstant.Defines.SED_SegDefLen;
+                    this.StartPoint.y + hookRect.height / 2 + OptConstant.Common.SegDefLen :
+                    this.StartPoint.x + hookRect.width / 2 + OptConstant.Common.SegDefLen;
                 }
                 break;
               }
@@ -1233,13 +1233,13 @@ class SegmentedLine extends BaseLine {
         } else {
           // Handle the case where primary is greater than or equal to secondary
           for (loopIndex = 0; loopIndex < this.hooks.length; loopIndex++) {
-            if (this.hooks[loopIndex].hookpt === OptConstant.HookPts.SED_KTR) {
+            if (this.hooks[loopIndex].hookpt === OptConstant.HookPts.KTR) {
               hookObj = T3Gv.opt.GetObjectPtr(this.hooks[loopIndex].objid, false);
               if (hookObj) {
                 const hookRect = hookObj.GetTargetRect();
                 hookEndAdjustment = isVertical ?
-                  this.EndPoint.x - hookRect.width / 2 - OptConstant.Defines.SED_SegDefLen :
-                  this.EndPoint.y - hookRect.height / 2 - OptConstant.Defines.SED_SegDefLen;
+                  this.EndPoint.x - hookRect.width / 2 - OptConstant.Common.SegDefLen :
+                  this.EndPoint.y - hookRect.height / 2 - OptConstant.Common.SegDefLen;
               }
               break;
             }
@@ -1262,18 +1262,18 @@ class SegmentedLine extends BaseLine {
 
       // Ensure we have at least one length
       if (this.segl.lengths.length < 1) {
-        this.segl.lengths.push(OptConstant.Defines.SED_SegDefLen);
+        this.segl.lengths.push(OptConstant.Common.SegDefLen);
       }
 
       // Handle SEGL_ONE action type
-      if (actionType === OptConstant.ActionTriggerType.SEGL_ONE) {
+      if (actionType === OptConstant.ActionTriggerType.SeglOne) {
         this.segl.lengths[0] = isVertical ?
           primaryFactor * (startSecondary - point.x) :
           primaryFactor * (startSecondary - point.y);
 
         // Ensure minimum length
-        if (this.segl.lengths[0] < OptConstant.Defines.SED_SegMinLen) {
-          this.segl.lengths[0] = OptConstant.Defines.SED_SegMinLen;
+        if (this.segl.lengths[0] < OptConstant.Common.SegMinLen) {
+          this.segl.lengths[0] = OptConstant.Common.SegMinLen;
         }
       }
 
@@ -1284,8 +1284,8 @@ class SegmentedLine extends BaseLine {
       if (isPrimaryLessThanSecondary) {
         if (hookEndAdjustment) {
           distance = startSecondary - hookEndAdjustment;
-          if (distance < OptConstant.Defines.SED_SegDefLen) {
-            distance = OptConstant.Defines.SED_SegDefLen;
+          if (distance < OptConstant.Common.SegDefLen) {
+            distance = OptConstant.Common.SegDefLen;
           }
           if (distance < this.segl.lengths[0]) {
             distance = primaryFactor * this.segl.lengths[0];
@@ -1295,11 +1295,11 @@ class SegmentedLine extends BaseLine {
         if (hookEndAdjustment) {
           distance = startSecondary - hookEndAdjustment;
           if (primaryFactor === -1) {
-            if (-distance < OptConstant.Defines.SED_SegDefLen) {
-              distance = -OptConstant.Defines.SED_SegDefLen;
+            if (-distance < OptConstant.Common.SegDefLen) {
+              distance = -OptConstant.Common.SegDefLen;
             }
-          } else if (distance < OptConstant.Defines.SED_SegDefLen) {
-            distance = OptConstant.Defines.SED_SegDefLen;
+          } else if (distance < OptConstant.Common.SegDefLen) {
+            distance = OptConstant.Common.SegDefLen;
           }
 
           if (this.segl.lengths[0] < primaryFactor * distance) {
@@ -1331,30 +1331,30 @@ class SegmentedLine extends BaseLine {
 
       // Ensure we have at least two lengths
       if (this.segl.lengths.length < 2) {
-        this.segl.lengths.push(OptConstant.Defines.SED_SegDefLen);
+        this.segl.lengths.push(OptConstant.Common.SegDefLen);
       }
 
       // Handle SEGL_TWO action type (adjust second segment)
-      if (actionType === OptConstant.ActionTriggerType.SEGL_TWO) {
+      if (actionType === OptConstant.ActionTriggerType.SeglTwo) {
         if (isPrimaryLessThanSecondary) {
           if (isVertical) {
             // Adjust point y for vertical orientation
             if (secondaryFactor === -1) {
-              if (point.y < endPrimary + OptConstant.Defines.SED_SegDefLen) {
-                point.y = endPrimary + OptConstant.Defines.SED_SegDefLen;
+              if (point.y < endPrimary + OptConstant.Common.SegDefLen) {
+                point.y = endPrimary + OptConstant.Common.SegDefLen;
               }
-            } else if (point.y > endPrimary - OptConstant.Defines.SED_SegDefLen) {
-              point.y = endPrimary - OptConstant.Defines.SED_SegDefLen;
+            } else if (point.y > endPrimary - OptConstant.Common.SegDefLen) {
+              point.y = endPrimary - OptConstant.Common.SegDefLen;
             }
             this.segl.lengths[1] = Math.abs(point.y - startPrimary);
           } else {
             // Adjust point x for horizontal orientation
             if (secondaryFactor === -1) {
-              if (point.x < endPrimary + OptConstant.Defines.SED_SegDefLen) {
-                point.x = endPrimary + OptConstant.Defines.SED_SegDefLen;
+              if (point.x < endPrimary + OptConstant.Common.SegDefLen) {
+                point.x = endPrimary + OptConstant.Common.SegDefLen;
               }
-            } else if (point.x > endPrimary - OptConstant.Defines.SED_SegDefLen) {
-              point.x = endPrimary - OptConstant.Defines.SED_SegDefLen;
+            } else if (point.x > endPrimary - OptConstant.Common.SegDefLen) {
+              point.x = endPrimary - OptConstant.Common.SegDefLen;
             }
             this.segl.lengths[1] = Math.abs(point.x - startPrimary);
           }
@@ -1362,17 +1362,17 @@ class SegmentedLine extends BaseLine {
           if (isVertical) {
             // Different constraints for reversed direction
             if (secondaryFactor === -1) {
-              if (point.y < endPrimary - OptConstant.Defines.SED_SegMinLen) {
-                point.y = endPrimary - OptConstant.Defines.SED_SegMinLen;
+              if (point.y < endPrimary - OptConstant.Common.SegMinLen) {
+                point.y = endPrimary - OptConstant.Common.SegMinLen;
               }
-            } else if (point.y > endPrimary + OptConstant.Defines.SED_SegMinLen) {
-              point.y = endPrimary + OptConstant.Defines.SED_SegMinLen;
+            } else if (point.y > endPrimary + OptConstant.Common.SegMinLen) {
+              point.y = endPrimary + OptConstant.Common.SegMinLen;
             }
             this.segl.lengths[1] = Math.abs(point.y - startPrimary);
           } else {
             // Ensure minimum segment length for horizontal
-            if (point.x > startPrimary - OptConstant.Defines.SED_SegMinLen) {
-              point.x = startPrimary - OptConstant.Defines.SED_SegMinLen;
+            if (point.x > startPrimary - OptConstant.Common.SegMinLen) {
+              point.x = startPrimary - OptConstant.Common.SegMinLen;
             }
             this.segl.lengths[1] = Math.abs(point.x - startPrimary);
           }
@@ -1395,8 +1395,8 @@ class SegmentedLine extends BaseLine {
         }
       } else {
         coordP = startPrimary - this.segl.lengths[1];
-        const tempCoord = endPrimary - secondaryFactor * OptConstant.Defines.SED_SegDefLen;
-        if (secondaryFactor == -1 && this.segl.lengths[1] != OptConstant.Defines.SED_SegDefLen) {
+        const tempCoord = endPrimary - secondaryFactor * OptConstant.Common.SegDefLen;
+        if (secondaryFactor == -1 && this.segl.lengths[1] != OptConstant.Common.SegDefLen) {
           if (tempCoord > coordP) {
             coordP = tempCoord;
           }
@@ -1581,8 +1581,8 @@ class SegmentedLine extends BaseLine {
 
     let shapeElem, slopElem;
     if (svgDoc) {
-      shapeElem = svgDoc.GetElementByID(OptConstant.SVGElementClass.SHAPE);
-      slopElem = svgDoc.GetElementByID(OptConstant.SVGElementClass.SLOP);
+      shapeElem = svgDoc.GetElementById(OptConstant.SVGElementClass.Shape);
+      slopElem = svgDoc.GetElementById(OptConstant.SVGElementClass.Slop);
     }
 
     const newPoint = new Point(x, y);
@@ -1591,7 +1591,7 @@ class SegmentedLine extends BaseLine {
 
     const frameRect = Utils2.Pt2Rect(this.StartPoint, this.EndPoint);
     // Get the updated polyline points with readable parameters
-    const polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true, false, false, null);
+    const polyPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, true, false, false, null);
 
     if (svgDoc) {
       svgDoc.SetSize(this.Frame.width, this.Frame.height);
@@ -1655,7 +1655,7 @@ class SegmentedLine extends BaseLine {
     }
 
     // Adjust the line using the svg document and the new endpoint values
-    this.AdjustLine(svgDoc, newX, newY, OptConstant.ActionTriggerType.LINEEND);
+    this.AdjustLine(svgDoc, newX, newY, OptConstant.ActionTriggerType.LineEnd);
 
     T3Util.Log("= S.SegmentedLine: AdjustLineEnd output", { EndPoint: this.EndPoint, segl: this.segl });
   }
@@ -1670,7 +1670,7 @@ class SegmentedLine extends BaseLine {
     };
 
     // Minimum allowed dimension value
-    const minDim = OptConstant.Defines.SED_MinDim;
+    const minDim = OptConstant.Common.MinDim;
 
     // Temporarily update StartPoint to the new position and enforce minimum dimensions
     this.StartPoint.x = newX;
@@ -1716,7 +1716,7 @@ class SegmentedLine extends BaseLine {
     }
 
     // Adjust the line using the updated parameters
-    this.AdjustLine(svgDoc, adjustedX, adjustedY, OptConstant.ActionTriggerType.LINESTART);
+    this.AdjustLine(svgDoc, adjustedX, adjustedY, OptConstant.ActionTriggerType.LineStart);
 
     T3Util.Log("= S.SegmentedLine: AdjustLineStart output", {
       originalStartPoint,
@@ -1752,11 +1752,11 @@ class SegmentedLine extends BaseLine {
 
   UpdateDimensions(offsetElement, offsetX, offsetY) {
     T3Util.Log("= S.SegmentedLine: UpdateDimensions input", { offsetElement, offsetX, offsetY });
-    const svgObject = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
+    const svgObject = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
     const newX = offsetX ? this.StartPoint.x + offsetX : this.EndPoint.x;
     const newY = offsetY ? this.StartPoint.y + offsetY : this.EndPoint.y;
     T3Util.Log("= S.SegmentedLine: UpdateDimensions computed", { newX, newY });
-    this.AdjustLineEnd(svgObject, newX, newY, OptConstant.ActionTriggerType.LINEEND);
+    this.AdjustLineEnd(svgObject, newX, newY, OptConstant.ActionTriggerType.LineEnd);
     T3Util.Log("= S.SegmentedLine: UpdateDimensions output", { EndPoint: this.EndPoint });
   }
 
@@ -1777,8 +1777,8 @@ class SegmentedLine extends BaseLine {
 
     // Clear floating point dimension flags if present
     if (this.rflags) {
-      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Width, false);
-      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Height, false);
+      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.Width, false);
+      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.Height, false);
     }
 
     // Determine adjustment mode based on StartPoint and EndPoint ordering
@@ -1789,7 +1789,7 @@ class SegmentedLine extends BaseLine {
       isEndAdjusted = true;
     }
 
-    const svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
+    const svgElement = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
 
     // Adjust line end or start based on order
     if (isEndAdjusted) {
@@ -1798,7 +1798,7 @@ class SegmentedLine extends BaseLine {
       this.AdjustLineStart(svgElement, this.StartPoint.x + deltaWidth, this.StartPoint.y + deltaHeight, 0);
     }
 
-    T3Gv.opt.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
+    T3Gv.opt.SetLinkFlag(this.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
     T3Util.Log("= S.SegmentedLine: SetSize output", { deltaWidth, deltaHeight, isEndAdjusted });
   }
 
@@ -1815,7 +1815,7 @@ class SegmentedLine extends BaseLine {
     T3Gv.opt.ob = Utils1.DeepCopy(this);
 
     // Process vertical flip if flag is set
-    if (flipFlags & OptConstant.ExtraFlags.SEDE_FlipVert) {
+    if (flipFlags & OptConstant.ExtraFlags.FlipVert) {
       isFlipped = true;
 
       // Flip first directional flag vertically
@@ -1870,7 +1870,7 @@ class SegmentedLine extends BaseLine {
     }
 
     // Process horizontal flip if flag is set
-    if (flipFlags & OptConstant.ExtraFlags.SEDE_FlipHoriz) {
+    if (flipFlags & OptConstant.ExtraFlags.FlipHoriz) {
       isFlipped = true;
 
       // Flip first directional flag horizontally
@@ -1926,7 +1926,7 @@ class SegmentedLine extends BaseLine {
 
     // If any flip occurred, update the text object and maintain links
     if (isFlipped) {
-      const svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
+      const svgElement = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
       if (this.DataID !== -1) {
         this.LM_ResizeSVGTextObject(svgElement, this, this.Frame);
       }
@@ -1935,10 +1935,10 @@ class SegmentedLine extends BaseLine {
           this.BlockID,
           this,
           T3Gv.opt.ob,
-          OptConstant.ActionTriggerType.ROTATE
+          OptConstant.ActionTriggerType.Rotate
         );
       }
-      T3Gv.opt.SetLinkFlag(this.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
+      T3Gv.opt.SetLinkFlag(this.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
     }
 
     T3Gv.opt.ob = {};
@@ -1952,7 +1952,7 @@ class SegmentedLine extends BaseLine {
   GetFrameIntersects(intersectFrame: any, shapeDoc: any, outputPoints: Point[], resultContext: any): boolean {
     T3Util.Log("= S.SegmentedLine: GetFrameIntersects input", { intersectFrame, shapeDoc, outputPoints, resultContext });
 
-    const minThreshold = 2 * OptConstant.Defines.SED_SegMinLen;
+    const minThreshold = 2 * OptConstant.Common.SegMinLen;
     // Get the bounding rect of the entire segmented line object
     const segRect = Utils2.Pt2Rect(this.StartPoint, this.EndPoint);
     // Translate the given frame by subtracting the segmented line's origin
@@ -2156,7 +2156,7 @@ class SegmentedLine extends BaseLine {
 
     // Set text growth behavior and update text flags.
     textParams.TextGrow = NvConstant.TextGrowBehavior.Vertical;
-    this.TextFlags = Utils2.SetFlag(this.TextFlags, NvConstant.TextFlags.SED_TF_HorizText, true);
+    this.TextFlags = Utils2.SetFlag(this.TextFlags, NvConstant.TextFlags.HorizText, true);
 
     T3Util.Log("= S.SegmentedLine: CalcTextPosition output", {
       LineTextX: this.LineTextX,
@@ -2291,9 +2291,9 @@ class SegmentedLine extends BaseLine {
 
       // Adjust start and end points based on TextAlign property
       switch (this.TextAlign) {
-        case TextConstant.TextAlign.TOPLEFT:
-        case TextConstant.TextAlign.LEFT:
-        case TextConstant.TextAlign.BOTTOMLEFT:
+        case TextConstant.TextAlign.TopLeft:
+        case TextConstant.TextAlign.Left:
+        case TextConstant.TextAlign.BottomLeft:
           // Left alignment: use the leftmost segment
           if (isReverseAlignment) {
             positionParams.EndPoint.x = this.Frame.x + segmentPoints[segmentStartIndex].x;
@@ -2307,9 +2307,9 @@ class SegmentedLine extends BaseLine {
             positionParams.EndPoint.y = this.Frame.y + segmentPoints[segmentStartIndex + 1].y;
           }
           break;
-        case TextConstant.TextAlign.TOPRIGHT:
-        case TextConstant.TextAlign.RIGHT:
-        case TextConstant.TextAlign.BOTTOMRIGHT:
+        case TextConstant.TextAlign.TopRight:
+        case TextConstant.TextAlign.Right:
+        case TextConstant.TextAlign.BottomRight:
           // Right alignment: use the rightmost segment
           if (isReverseAlignment) {
             positionParams.EndPoint.x = this.Frame.x + segmentPoints[segmentEndIndex].x;
@@ -2357,8 +2357,8 @@ class SegmentedLine extends BaseLine {
       relatedId
     });
 
-    const groupShape = svgDoc.CreateShape(OptConstant.CSType.GROUP);
-    const knobSizeDef = OptConstant.Defines.SED_KnobSize;
+    const groupShape = svgDoc.CreateShape(OptConstant.CSType.Group);
+    const knobSizeDef = OptConstant.Common.KnobSize;
 
     let docToScreenScale = svgDoc.docInfo.docToScreenScale;
     if (svgDoc.docInfo.docScale <= 0.5) {
@@ -2381,7 +2381,7 @@ class SegmentedLine extends BaseLine {
 
     let knobConfig: any = {
       svgDoc: svgDoc,
-      shapeType: OptConstant.CSType.RECT,
+      shapeType: OptConstant.CSType.Rect,
       knobSize: knobSize,
       fillColor: "black",
       fillOpacity: 1,
@@ -2398,7 +2398,7 @@ class SegmentedLine extends BaseLine {
       knobConfig.strokeColor = "black";
       knobConfig.fillOpacity = 0;
     }
-    if (this.flags & NvConstant.ObjFlags.SEDO_Lock) {
+    if (this.flags & NvConstant.ObjFlags.Lock) {
       knobConfig.fillColor = "gray";
       knobConfig.locked = true;
     } else if (this.NoGrow()) {
@@ -2410,12 +2410,12 @@ class SegmentedLine extends BaseLine {
     // Set knob position for start knob
     knobConfig.x = this.StartPoint.x - this.Frame.x;
     knobConfig.y = this.StartPoint.y - this.Frame.y;
-    knobConfig.knobID = OptConstant.ActionTriggerType.LINESTART;
+    knobConfig.knobID = OptConstant.ActionTriggerType.LineStart;
 
     if (hookObj && hookObj.hooks) {
       for (let d = 0; d < hookObj.hooks.length; d++) {
-        if (hookObj.hooks[d].hookpt === OptConstant.HookPts.SED_KTL) {
-          knobConfig.shapeType = OptConstant.CSType.OVAL;
+        if (hookObj.hooks[d].hookpt === OptConstant.HookPts.KTL) {
+          knobConfig.shapeType = OptConstant.CSType.Oval;
           break;
         }
       }
@@ -2424,24 +2424,24 @@ class SegmentedLine extends BaseLine {
     groupShape.AddElement(startKnob);
 
     // Set knob configuration for end knob
-    knobConfig.shapeType = OptConstant.CSType.RECT;
+    knobConfig.shapeType = OptConstant.CSType.Rect;
     if (hookObj && hookObj.hooks) {
       for (let d = 0; d < hookObj.hooks.length; d++) {
-        if (hookObj.hooks[d].hookpt === OptConstant.HookPts.SED_KTR) {
-          knobConfig.shapeType = OptConstant.CSType.OVAL;
+        if (hookObj.hooks[d].hookpt === OptConstant.HookPts.KTR) {
+          knobConfig.shapeType = OptConstant.CSType.Oval;
           break;
         }
       }
     }
     knobConfig.x = this.EndPoint.x - this.Frame.x;
     knobConfig.y = this.EndPoint.y - this.Frame.y;
-    knobConfig.knobID = OptConstant.ActionTriggerType.LINEEND;
+    knobConfig.knobID = OptConstant.ActionTriggerType.LineEnd;
 
     let endKnob = this.GenericKnob(knobConfig);
     groupShape.AddElement(endKnob);
 
     // Create additional knobs along the segmented line if available
-    knobConfig.shapeType = OptConstant.CSType.RECT;
+    knobConfig.shapeType = OptConstant.CSType.Rect;
     if (this.segl && this.segl.pts && this.segl.firstdir > 0) {
       const ptsCount = this.segl.pts.length;
       for (let d = 2; d < ptsCount - 1; d++) {
@@ -2464,7 +2464,7 @@ class SegmentedLine extends BaseLine {
           true
         );
         knobConfig.knobID =
-          OptConstant.ActionTriggerType.SEGL_ONE + d - 2;
+          OptConstant.ActionTriggerType.SeglOne + d - 2;
         if (this.NoGrow()) {
           knobConfig.cursorType = CursorConstant.CursorType.DEFAULT;
         }
@@ -2476,7 +2476,7 @@ class SegmentedLine extends BaseLine {
     groupShape.SetSize(frameWidth, frameHeight);
     groupShape.SetPos(adjustedFrame.x, adjustedFrame.y);
     groupShape.isShape = true;
-    groupShape.SetID(OptConstant.Defines.Action + triggerId);
+    groupShape.SetID(OptConstant.Common.Action + triggerId);
 
     T3Util.Log("= S.SegmentedLine: CreateActionTriggers output", {
       groupShape,
@@ -2498,8 +2498,8 @@ class SegmentedLine extends BaseLine {
     });
 
     // Get the main shape and slop elements
-    const shapeElem = svgDoc.GetElementByID(OptConstant.SVGElementClass.SHAPE);
-    const slopElem = svgDoc.GetElementByID(OptConstant.SVGElementClass.SLOP);
+    const shapeElem = svgDoc.GetElementById(OptConstant.SVGElementClass.Shape);
+    const slopElem = svgDoc.GetElementById(OptConstant.SVGElementClass.Slop);
 
     // Create a new point from the provided coordinates
     const newPoint = new Point(newX, newY);
@@ -2509,7 +2509,7 @@ class SegmentedLine extends BaseLine {
     this.CalcFrame();
 
     // Get updated polyline points for the shape
-    const polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true, false, null);
+    const polyPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, true, false, null);
 
     // Calculate frame rectangle based on StartPoint and EndPoint
     const frameRect = Utils2.Pt2Rect(this.StartPoint, this.EndPoint);
@@ -2550,20 +2550,20 @@ class SegmentedLine extends BaseLine {
 
     let xCoord, yCoord;
     let actionTrigger = 0;
-    const svgDoc = T3Gv.opt.svgObjectLayer.GetElementByID(svgElementId);
+    const svgDoc = T3Gv.opt.svgObjectLayer.GetElementById(svgElementId);
 
     switch (hookPoint) {
-      case OptConstant.HookPts.SED_KTL:
+      case OptConstant.HookPts.KTL:
         // Update first directional face based on connection point at the end of the line
         this.segl.firstdir = connectObj.GetSegLFace(T3Gv.opt.linkParams.ConnectPt, this.EndPoint, connectionCoord);
-        actionTrigger = OptConstant.ActionTriggerType.LINEEND;
+        actionTrigger = OptConstant.ActionTriggerType.LineEnd;
         xCoord = this.EndPoint.x;
         yCoord = this.EndPoint.y;
         break;
-      case OptConstant.HookPts.SED_KTR:
+      case OptConstant.HookPts.KTR:
         // Update last directional face based on connection point at the start of the line
         this.segl.lastdir = connectObj.GetSegLFace(T3Gv.opt.linkParams.ConnectPt, this.StartPoint, connectionCoord);
-        actionTrigger = OptConstant.ActionTriggerType.LINESTART;
+        actionTrigger = OptConstant.ActionTriggerType.LineStart;
         xCoord = this.StartPoint.x;
         yCoord = this.StartPoint.y;
         break;
@@ -2585,7 +2585,7 @@ class SegmentedLine extends BaseLine {
     let xCoord: number = 0;
     let yCoord: number = 0;
     let actionTrigger: number = 0;
-    const svgDoc = T3Gv.opt.svgObjectLayer.GetElementByID(elementId);
+    const svgDoc = T3Gv.opt.svgObjectLayer.GetElementById(elementId);
 
     // If the current object is active, update directional properties from the global object
     if (T3Gv.opt.ob && T3Gv.opt.ob.BlockID === this.BlockID) {
@@ -2594,8 +2594,8 @@ class SegmentedLine extends BaseLine {
     }
 
     switch (hookType) {
-      case OptConstant.HookPts.SED_KTL:
-        actionTrigger = OptConstant.ActionTriggerType.LINEEND;
+      case OptConstant.HookPts.KTL:
+        actionTrigger = OptConstant.ActionTriggerType.LineEnd;
         xCoord = this.EndPoint.x;
         yCoord = this.EndPoint.y;
         this.segl.firstdir = 0;
@@ -2603,8 +2603,8 @@ class SegmentedLine extends BaseLine {
           T3Gv.opt.ob.segl.firstdir = 0;
         }
         break;
-      case OptConstant.HookPts.SED_KTR:
-        actionTrigger = OptConstant.ActionTriggerType.LINESTART;
+      case OptConstant.HookPts.KTR:
+        actionTrigger = OptConstant.ActionTriggerType.LineStart;
         xCoord = this.StartPoint.x;
         yCoord = this.StartPoint.y;
         this.segl.lastdir = 0;
@@ -2633,24 +2633,24 @@ class SegmentedLine extends BaseLine {
     });
 
     switch (hookType) {
-      case OptConstant.HookPts.SED_KTL:
+      case OptConstant.HookPts.KTL:
         if (
           !(
             Utils2.IsEqual(point.x, this.StartPoint.x) &&
             Utils2.IsEqual(point.y, this.StartPoint.y)
           )
         ) {
-          this.SegLFormat(point, OptConstant.ActionTriggerType.LINESTART, 0);
+          this.SegLFormat(point, OptConstant.ActionTriggerType.LineStart, 0);
         }
         break;
-      case OptConstant.HookPts.SED_KTR:
+      case OptConstant.HookPts.KTR:
         if (
           !(
             Utils2.IsEqual(point.x, this.EndPoint.x) &&
             Utils2.IsEqual(point.y, this.EndPoint.y)
           )
         ) {
-          this.SegLFormat(point, OptConstant.ActionTriggerType.LINEEND, 0);
+          this.SegLFormat(point, OptConstant.ActionTriggerType.LineEnd, 0);
         }
         break;
       default:
@@ -2659,7 +2659,7 @@ class SegmentedLine extends BaseLine {
     }
 
     this.CalcFrame(true);
-    T3Gv.opt.SetLinkFlag(elementId, ShapeConstant.LinkFlags.SED_L_MOVE);
+    T3Gv.opt.SetLinkFlag(elementId, DSConstant.LinkFlags.SED_L_MOVE);
     T3Gv.opt.AddToDirtyList(elementId);
 
     T3Util.Log("= S.SegmentedLine: LinkGrow output", {
@@ -2677,7 +2677,7 @@ class SegmentedLine extends BaseLine {
     let rectData: any = {};
 
     switch (hookId) {
-      case stData.HookPts.SED_KTL:
+      case stData.HookPts.KTL:
         resultPoint.x = this.StartPoint.x;
         resultPoint.y = this.StartPoint.y;
         if (outRect) {
@@ -2690,7 +2690,7 @@ class SegmentedLine extends BaseLine {
           outRect.height = rectData.height;
         }
         break;
-      case stData.HookPts.SED_KTR:
+      case stData.HookPts.KTR:
       default:
         resultPoint.x = this.EndPoint.x;
         resultPoint.y = this.EndPoint.y;
@@ -2715,7 +2715,7 @@ class SegmentedLine extends BaseLine {
     T3Util.Log("= S.SegmentedLine: GetTargetPoints input", { hook, flags, connectedObjectId });
 
     const hookPts = OptConstant.HookPts;
-    const sedDim = OptConstant.Defines.SED_CDim;
+    const sedDim = OptConstant.Common.MaxDim;
     let targetPoints = [
       { x: 0, y: 0, id: hookPts.SED_KTL },
       { x: sedDim, y: sedDim, id: hookPts.SED_KTR }
@@ -2725,7 +2725,7 @@ class SegmentedLine extends BaseLine {
     if (
       connectedObjectId != null &&
       connectedObjectId >= 0 &&
-      T3Gv.opt.GetObjectPtr(connectedObjectId, false).DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.SHAPE
+      T3Gv.opt.GetObjectPtr(connectedObjectId, false).DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape
     ) {
       // Determine a normalized hook id value
       let normalizedId = hook.id;
@@ -2810,7 +2810,7 @@ class SegmentedLine extends BaseLine {
     // Initialize variables
     const candidatePoints: Point[] = [{ x: 0, y: 0 }];
     const targetPoints: Point[] = [];
-    let closestDistance = OptConstant.Defines.LongIntMax;
+    let closestDistance = OptConstant.Common.LongIntMax;
     const candidatePoint: { x: number; y: number } = { x: 0, y: 0 };
     const referencePoint: { x: number; y: number } = { x: inputPoint.x, y: inputPoint.y };
     const temporaryPoint: { x: number; y: number } = { x: inputPoint.x, y: inputPoint.y };
@@ -2820,7 +2820,7 @@ class SegmentedLine extends BaseLine {
 
     // Prepare the snapping point if enabled
     let snapPoint = { x: inputPoint.x, y: inputPoint.y };
-    if (T3Gv.docUtil.docConfig.enableSnap && (hookFlags & NvConstant.HookFlags.SED_LC_NoSnaps) === 0) {
+    if (T3Gv.docUtil.docConfig.enableSnap && (hookFlags & NvConstant.HookFlags.LcNoSnaps) === 0) {
       snapPoint = T3Gv.docUtil.SnapToGrid(snapPoint);
       // Clamp snap point within the boundingRect
       if (snapPoint.y < boundingRect.y) { snapPoint.y = boundingRect.y; }
@@ -2866,13 +2866,13 @@ class SegmentedLine extends BaseLine {
         const minX = Math.min(segmentStart.x, segmentEnd.x);
         const maxX = Math.max(segmentStart.x, segmentEnd.x);
         if (projectedX < minX || projectedX > maxX) {
-          distanceToSegment = OptConstant.Defines.LongIntMax;
+          distanceToSegment = OptConstant.Common.LongIntMax;
         } else {
           // Create a slightly inflated rectangle around the segment for tolerance
           segmentRect = Utils2.Pt2Rect(segmentStart, segmentEnd);
           Utils2.InflateRect(segmentRect, 1, 1);
           if (!Utils2.pointInRect(segmentRect, temporaryPoint)) {
-            distanceToSegment = OptConstant.Defines.LongIntMax;
+            distanceToSegment = OptConstant.Common.LongIntMax;
           }
         }
 
@@ -2896,12 +2896,12 @@ class SegmentedLine extends BaseLine {
         const minY = Math.min(segmentStart.y, segmentEnd.y);
         const maxY = Math.max(segmentStart.y, segmentEnd.y);
         if (projectedY < minY || projectedY > maxY) {
-          distanceToSegment = OptConstant.Defines.LongIntMax;
+          distanceToSegment = OptConstant.Common.LongIntMax;
         } else {
           segmentRect = Utils2.Pt2Rect(segmentStart, segmentEnd);
           Utils2.InflateRect(segmentRect, 1, 1);
           if (!Utils2.pointInRect(segmentRect, temporaryPoint)) {
-            distanceToSegment = OptConstant.Defines.LongIntMax;
+            distanceToSegment = OptConstant.Common.LongIntMax;
           }
         }
 
@@ -2937,8 +2937,8 @@ class SegmentedLine extends BaseLine {
 
       // Scale the normalized coordinates to the standard coordinate system
       targetPoints.push(new Point(
-        normalizedX * OptConstant.Defines.SED_CDim,
-        normalizedY * OptConstant.Defines.SED_CDim
+        normalizedX * OptConstant.Common.MaxDim,
+        normalizedY * OptConstant.Common.MaxDim
       ));
 
       T3Util.Log("= S.SegmentedLine: BaseShape_PolyGetTargets output", { targets: targetPoints });
@@ -2958,16 +2958,16 @@ class SegmentedLine extends BaseLine {
     let index = 0;
     let numHooks = 0;
 
-    // Quick reference to NvConstant.ObjectTypes (unused, but kept as in original)
-    NvConstant.ObjectTypes;
+    // Quick reference to NvConstant.FNObjectTypes (unused, but kept as in original)
+    NvConstant.FNObjectTypes;
 
     if (hooks) {
       // Special case: exactly 2 hooks with SED_KTL and SED_KTR
       numHooks = hooks.length;
       if (
         numHooks === 2 &&
-        hooks[0].id && hooks[0].id === OptConstant.HookPts.SED_KTL &&
-        hooks[1].id && hooks[1].id === OptConstant.HookPts.SED_KTR
+        hooks[0].id && hooks[0].id === OptConstant.HookPts.KTL &&
+        hooks[1].id && hooks[1].id === OptConstant.HookPts.KTR
       ) {
         if (hooks[0].skip == null) {
           resultPoints.push(new Point(this.StartPoint.x, this.StartPoint.y));
@@ -2987,7 +2987,7 @@ class SegmentedLine extends BaseLine {
         const connectedObj = T3Gv.opt.GetObjectPtr(connectedObjectId, false);
         if (connectedObj) {
           // Case for multiplicity object
-          if (connectedObj.objecttype === NvConstant.ObjectTypes.SD_OBJT_MULTIPLICITY && numHooks === 1) {
+          if (connectedObj.objecttype === NvConstant.FNObjectTypes.Multiplicity && numHooks === 1) {
             let offsetX = 5, offsetY = 5;
             offsetX += connectedObj.Frame.width / 2;
 
@@ -2995,14 +2995,14 @@ class SegmentedLine extends BaseLine {
               const ptStart = this.segl.pts[0];
               const ptNext = this.segl.pts[1];
               if (ptStart.x === ptNext.x) {
-                if (connectedObj.subtype === NvConstant.ObjectSubTypes.SD_SUBT_MULTIPLICITY_FLIPPED) {
+                if (connectedObj.subtype === NvConstant.ObjectSubTypes.SubtMultiplicityFilpped) {
                   offsetX = -offsetX;
                 }
                 offsetY = ptStart.y > ptNext.y ? -offsetY : offsetY + connectedObj.Frame.height;
                 resultPoints.push(new Point(this.StartPoint.x + offsetX, this.StartPoint.y + offsetY));
                 resultPoints[0].id = hooks[0].id;
               } else {
-                if (connectedObj.subtype === NvConstant.ObjectSubTypes.SD_SUBT_MULTIPLICITY_FLIPPED) {
+                if (connectedObj.subtype === NvConstant.ObjectSubTypes.SubtMultiplicityFilpped) {
                   offsetY = -connectedObj.Frame.height - 5;
                 }
                 offsetY = -offsetY;
@@ -3017,17 +3017,17 @@ class SegmentedLine extends BaseLine {
               const ptPrev = this.segl.pts[ptsLength - 2];
               const ptLast = this.segl.pts[ptsLength - 1];
               if (ptPrev.x === ptLast.x) {
-                if (connectedObj.subtype === NvConstant.ObjectSubTypes.SD_SUBT_MULTIPLICITY_FLIPPED) {
+                if (connectedObj.subtype === NvConstant.ObjectSubTypes.SubtMultiplicityFilpped) {
                   offsetX = -offsetX;
                 }
                 offsetY = ptPrev.y < ptLast.y ? -offsetY : offsetY + connectedObj.Frame.height;
-                if (hookType === OptConstant.HookPts.SED_KCBR) {
+                if (hookType === OptConstant.HookPts.KCBR) {
                   offsetX = -offsetX;
                 }
                 resultPoints.push(new Point(this.EndPoint.x + offsetX, this.EndPoint.y + offsetY));
                 resultPoints[0].id = hooks[0].id;
               } else {
-                if (connectedObj.subtype === NvConstant.ObjectSubTypes.SD_SUBT_MULTIPLICITY_FLIPPED) {
+                if (connectedObj.subtype === NvConstant.ObjectSubTypes.SubtMultiplicityFilpped) {
                   offsetY = -connectedObj.Frame.height - 5;
                 }
                 offsetY = -offsetY;
@@ -3042,7 +3042,7 @@ class SegmentedLine extends BaseLine {
             return resultPoints;
           }
           // Case for extra text label object
-          if (connectedObj.objecttype === NvConstant.ObjectTypes.SD_OBJT_EXTRATEXTLABEL && numHooks === 1) {
+          if (connectedObj.objecttype === NvConstant.FNObjectTypes.ExtraTextLable && numHooks === 1) {
             const extraLabelPoints = super.GetPerimPts(input, hooks, hookType, paramR, paramI, connectedObjectId);
             T3Util.Log("= S.SegmentedLine: GetPerimPts output", extraLabelPoints);
             return extraLabelPoints;
@@ -3058,8 +3058,8 @@ class SegmentedLine extends BaseLine {
       resultPoints[C] = { x: 0, y: 0, id: 0 };
       const frameWidth = frame.width;
       const frameHeight = frame.height;
-      resultPoints[C].x = (hooks[C].x / OptConstant.Defines.SED_CDim) * frameWidth + frame.x;
-      resultPoints[C].y = (hooks[C].y / OptConstant.Defines.SED_CDim) * frameHeight + frame.y;
+      resultPoints[C].x = (hooks[C].x / OptConstant.Common.MaxDim) * frameWidth + frame.x;
+      resultPoints[C].y = (hooks[C].y / OptConstant.Common.MaxDim) * frameHeight + frame.y;
       if (hooks[C].id != null) {
         resultPoints[C].id = hooks[C].id;
       }
@@ -3093,7 +3093,7 @@ class SegmentedLine extends BaseLine {
     // Recalculate the segmented line with preserved format and update frame values
     this.SegLFormat(
       this.EndPoint,
-      OptConstant.ActionTriggerType.SEGL_PRESERVE,
+      OptConstant.ActionTriggerType.SeglPreserve,
       0
     );
     this.CalcFrame();
@@ -3119,7 +3119,7 @@ class SegmentedLine extends BaseLine {
     T3Util.Log("= S.SegmentedLine: GetSegLFace input", { hookPoint, referencePoint, testPoint });
 
     // Get the polyline points with curves skipped (third parameter true)
-    const polylinePoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, true, null);
+    const polylinePoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, true, null);
     let hookDirection = 0;
     let segmentRect = null;
 
@@ -3138,13 +3138,13 @@ class SegmentedLine extends BaseLine {
       if (segmentRect.width >= segmentRect.height) {
         // For horizontal segments, use top or bottom connection
         hookDirection = (referencePoint.y >= testPoint.y) ?
-          OptConstant.HookPts.SED_KBC :  // Bottom connection
-          OptConstant.HookPts.SED_KTC;   // Top connection
+          OptConstant.HookPts.KBC :  // Bottom connection
+          OptConstant.HookPts.KTC;   // Top connection
       } else {
         // For vertical segments, use left or right connection
         hookDirection = (referencePoint.x >= testPoint.x) ?
-          OptConstant.HookPts.SED_KRC :  // Right connection
-          OptConstant.HookPts.SED_KLC;   // Left connection
+          OptConstant.HookPts.KRC :  // Right connection
+          OptConstant.HookPts.KLC;   // Left connection
       }
     }
 
@@ -3232,11 +3232,11 @@ class SegmentedLine extends BaseLine {
     let resultRight: { x?: number; y?: number } = {};
     let lastDirection = this.segl.lastdir;
     let firstDirection = this.segl.firstdir;
-    const shapeDim = OptConstant.Defines.SED_CDim;
+    const shapeDim = OptConstant.Common.MaxDim;
     const ptsLength = this.segl.pts.length;
 
     // Choose endpoints based on the hook parameter:
-    if (inputHook === OptConstant.HookPts.SED_KTL) {
+    if (inputHook === OptConstant.HookPts.KTL) {
       pt1 = this.segl.pts[0];
       pt2 = this.segl.pts[1];
     } else {
@@ -3252,13 +3252,13 @@ class SegmentedLine extends BaseLine {
       if (pt2.y > pt1.y) {
         resultLeft.y = 0;
         resultRight.y = shapeDim;
-        lastDirection = OptConstant.HookPts.SED_KTC;
-        firstDirection = OptConstant.HookPts.SED_KBC;
+        lastDirection = OptConstant.HookPts.KTC;
+        firstDirection = OptConstant.HookPts.KBC;
       } else {
         resultLeft.y = shapeDim;
         resultRight.y = 0;
-        lastDirection = OptConstant.HookPts.SED_KBC;
-        firstDirection = OptConstant.HookPts.SED_KTC;
+        lastDirection = OptConstant.HookPts.KBC;
+        firstDirection = OptConstant.HookPts.KTC;
       }
     } else {
       // Horizontal segment:
@@ -3267,19 +3267,19 @@ class SegmentedLine extends BaseLine {
       if (pt2.x > pt1.x) {
         resultLeft.x = 0;
         resultRight.x = shapeDim;
-        lastDirection = OptConstant.HookPts.SED_KLC;
-        firstDirection = OptConstant.HookPts.SED_KRC;
+        lastDirection = OptConstant.HookPts.KLC;
+        firstDirection = OptConstant.HookPts.KRC;
       } else {
         resultLeft.x = shapeDim;
         resultRight.x = 0;
-        lastDirection = OptConstant.HookPts.SED_KRC;
-        firstDirection = OptConstant.HookPts.SED_KLC;
+        lastDirection = OptConstant.HookPts.KRC;
+        firstDirection = OptConstant.HookPts.KLC;
       }
     }
 
     // Set output and update directional properties:
     let outputPoint: { x?: number; y?: number };
-    if (inputHook === OptConstant.HookPts.SED_KTL) {
+    if (inputHook === OptConstant.HookPts.KTL) {
       this.segl.firstdir = firstDirection;
       outputPoint = resultRight;
     } else {
@@ -3296,10 +3296,10 @@ class SegmentedLine extends BaseLine {
 
     let resultHook = hookType;
     if (ShapeUtil.LineIsReversed(this, null, false)) {
-      if (resultHook === OptConstant.HookPts.SED_KTL) {
-        resultHook = OptConstant.HookPts.SED_KTR;
-      } else if (resultHook === OptConstant.HookPts.SED_KTR) {
-        resultHook = OptConstant.HookPts.SED_KTL;
+      if (resultHook === OptConstant.HookPts.KTL) {
+        resultHook = OptConstant.HookPts.KTR;
+      } else if (resultHook === OptConstant.HookPts.KTR) {
+        resultHook = OptConstant.HookPts.KTL;
       }
     }
 
@@ -3311,7 +3311,7 @@ class SegmentedLine extends BaseLine {
     T3Util.Log("= S.SegmentedLine: GetBestHook input", { objectId, inputHook, pt });
 
     // Define constants and extract hook points from constant data.
-    const sedCDim: number = OptConstant.Defines.SED_CDim;
+    const sedCDim: number = OptConstant.Common.MaxDim;
     // Call Pt2Rect for side-effect (if needed) and get hook points.
     Utils2.Pt2Rect(this.StartPoint, this.EndPoint);
     const hookPts = OptConstant.HookPts;
@@ -3351,7 +3351,7 @@ class SegmentedLine extends BaseLine {
     // Retrieve the object pointer for the given objectId.
     const shapeObj = T3Gv.opt.GetObjectPtr(objectId, false);
     let bestHook = inputHook;
-    if (shapeObj && shapeObj.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.SHAPE) {
+    if (shapeObj && shapeObj.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape) {
       switch (inputHook) {
         case hookPts.SED_KTC:
         case hookPts.SED_KBC:
@@ -3390,7 +3390,7 @@ class SegmentedLine extends BaseLine {
     let tempCopy: any = {};
 
     switch (obj.DrawingObjectBaseClass) {
-      case OptConstant.DrawingObjectBaseClass.LINE:
+      case OptConstant.DrawObjectBaseClass.Line:
         switch (obj.LineType) {
           case OptConstant.LineType.SEGLINE:
           case OptConstant.LineType.ARCSEGLINE:
@@ -3420,7 +3420,7 @@ class SegmentedLine extends BaseLine {
             break;
         }
         break;
-      case OptConstant.DrawingObjectBaseClass.SHAPE:
+      case OptConstant.DrawObjectBaseClass.Shape:
         T3Gv.opt.Lines_MaintainDist(this, paramA, paramI, point);
         T3Util.Log("= S.SegmentedLine: MaintainPoint processed for SHAPE, returning true");
         T3Util.Log("= S.SegmentedLine: MaintainPoint output", true);
@@ -3428,7 +3428,7 @@ class SegmentedLine extends BaseLine {
     }
 
     // Get the polyline points without translation and with curves skipped
-    const polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, true, null);
+    const polyPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, true, null);
     const totalPoints = polyPoints.length;
 
     for (let idx = 1; idx < totalPoints; idx++) {
@@ -3588,11 +3588,11 @@ class SegmentedLine extends BaseLine {
     }
     T3Util.Log("= S.SegmentedLine: Padded segmentation rectangles", { lsegr: sdfData.lsegr });
 
-    const code = ShapeUtil.WriteCode(outputStream, ShapeConstant.OpNameCode.cDrawSegl);
+    const code = ShapeUtil.WriteCode(outputStream, DSConstant.OpNameCode.cDrawSegl);
     if (options.WriteWin32) {
-      outputStream.writeStruct(ShapeConstant.SegLineStruct, sdfData);
+      outputStream.writeStruct(DSConstant.SegLineStruct, sdfData);
     } else {
-      outputStream.writeStruct(ShapeConstant.SegLineStruct210, sdfData);
+      outputStream.writeStruct(DSConstant.SegLineStruct210, sdfData);
     }
     ShapeUtil.WriteLength(outputStream, code);
 

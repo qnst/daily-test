@@ -25,7 +25,6 @@ import Rectangle from '../../Model/Rectangle'
 import Layer from '../../Model/Layer'
 import TextureList from '../../Model/TextureList'
 import PolygonConstant from '../Polygon/PolygonConstant'
-import ShapeConstant from '../DS/DSConstant'
 import TextureScale from '../../Model/TextureScale'
 import WindowSettings from '../../Model/WindowSettings'
 import WResult from '../../Model/WResult'
@@ -39,6 +38,7 @@ import DSStruct from '../DS/DSStruct'
 import DSUtil from '../DS/DSUtil'
 import TextObject from '../../Model/TextObject'
 import DSConstant from '../DS/DSConstant'
+import ShapeConstant from '../../Data/Constant/ShapeConstant'
 
 class ShapeUtil {
 
@@ -52,7 +52,7 @@ class ShapeUtil {
   static LineIsReversed(drawingObject, drawOptions, ignoreSegments) {
     if (drawingObject == null) return false;
 
-    if (drawingObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.LINE) {
+    if (drawingObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Line) {
       switch (drawingObject.LineType) {
         case OptConstant.LineType.ARCLINE:
         case OptConstant.LineType.LINE:
@@ -94,38 +94,38 @@ class ShapeUtil {
    */
   static TextAlignToWin(textAlign) {
     const winJustification = {
-      just: TextConstant.TextJust.TA_CENTER,
-      vjust: TextConstant.TextJust.TA_CENTER
+      just: TextConstant.TextJust.Center,
+      vjust: TextConstant.TextJust.Center
     };
 
     switch (textAlign) {
-      case TextConstant.TextAlign.LEFT:
-        winJustification.just = TextConstant.TextJust.TA_LEFT;
+      case TextConstant.TextAlign.Left:
+        winJustification.just = TextConstant.TextJust.Left;
         break;
-      case TextConstant.TextAlign.RIGHT:
-        winJustification.just = TextConstant.TextJust.TA_RIGHT;
+      case TextConstant.TextAlign.Right:
+        winJustification.just = TextConstant.TextJust.Right;
         break;
-      case TextConstant.TextAlign.TOPLEFT:
-        winJustification.just = TextConstant.TextJust.TA_LEFT;
-        winJustification.vjust = TextConstant.TextJust.TA_TOP;
+      case TextConstant.TextAlign.TopLeft:
+        winJustification.just = TextConstant.TextJust.Left;
+        winJustification.vjust = TextConstant.TextJust.Top;
         break;
-      case TextConstant.TextAlign.TOPCENTER:
-        winJustification.vjust = TextConstant.TextJust.TA_TOP;
+      case TextConstant.TextAlign.TopCenter:
+        winJustification.vjust = TextConstant.TextJust.Top;
         break;
-      case TextConstant.TextAlign.TOPRIGHT:
-        winJustification.just = TextConstant.TextJust.TA_RIGHT;
-        winJustification.vjust = TextConstant.TextJust.TA_TOP;
+      case TextConstant.TextAlign.TopRight:
+        winJustification.just = TextConstant.TextJust.Right;
+        winJustification.vjust = TextConstant.TextJust.Top;
         break;
-      case TextConstant.TextAlign.BOTTOMLEFT:
-        winJustification.just = TextConstant.TextJust.TA_LEFT;
-        winJustification.vjust = TextConstant.TextJust.TA_BOTTOM;
+      case TextConstant.TextAlign.BottomLeft:
+        winJustification.just = TextConstant.TextJust.Left;
+        winJustification.vjust = TextConstant.TextJust.Bottom;
         break;
-      case TextConstant.TextAlign.BOTTOMCENTER:
-        winJustification.vjust = TextConstant.TextJust.TA_BOTTOM;
+      case TextConstant.TextAlign.BottomCenter:
+        winJustification.vjust = TextConstant.TextJust.Bottom;
         break;
-      case TextConstant.TextAlign.BOTTOMRIGHT:
-        winJustification.just = TextConstant.TextJust.TA_RIGHT;
-        winJustification.vjust = TextConstant.TextJust.TA_BOTTOM;
+      case TextConstant.TextAlign.BottomRight:
+        winJustification.just = TextConstant.TextJust.Right;
+        winJustification.vjust = TextConstant.TextJust.Bottom;
     }
 
     return winJustification;
@@ -281,7 +281,7 @@ class ShapeUtil {
     // For shapes with border thickness, create a copy with adjusted frame
     if (
       drawingObject.StyleRecord.Line.BThick &&
-      drawingObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.SHAPE
+      drawingObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape
     ) {
       // Create a deep copy of the frame
       const adjustedFrame = $.extend(true, {}, drawingObject.Frame);
@@ -312,7 +312,7 @@ class ShapeUtil {
     }
 
     // Write the text code and reserve space for length
-    const lengthPosition = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cDrawText);
+    const lengthPosition = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cDrawText);
 
     // Determine which struct format to write based on options
     if (options.WriteWin32) {
@@ -362,7 +362,7 @@ class ShapeUtil {
       };
 
       // Write the parameters using the Win32/Visio struct format
-      dataStream.writeStruct(ShapeConstant.DrawTextStruct110, textParams);
+      dataStream.writeStruct(DSConstant.DrawTextStruct110, textParams);
     } else {
       // Create text parameters object for default format
       const textParams = {
@@ -403,7 +403,7 @@ class ShapeUtil {
       };
 
       // Write the parameters using the default struct format
-      dataStream.writeStruct(ShapeConstant.DrawTextStruct182, textParams);
+      dataStream.writeStruct(DSConstant.DrawTextStruct182, textParams);
     }
 
     // Write the length of the text data block
@@ -574,7 +574,7 @@ class ShapeUtil {
     ShapeUtil.FragmentLoad_RefCount = 0;
 
     if (libraryFlags) {
-      if ((libraryFlags.ObjectAttributeFlags & ShapeConstant.LibraryFlags.SEDL_NoColor) === 0) {
+      if ((libraryFlags.ObjectAttributeFlags & DSConstant.LibraryFlags.SEDL_NoColor) === 0) {
         result.SetColorChanges = true;
         result.ColorFilter = libraryFlags.ColorFilter;
       }
@@ -616,9 +616,9 @@ class ShapeUtil {
       for (index = 0; index < objectCount; index++) {
         object = T3Gv.opt.GetObjectPtr(result.zList[index], false);
 
-        if (object.objecttype === NvConstant.ObjectTypes.SD_OBJT_BPMN_POOL) {
-          DSUtil.ConvertBPMNPool(object);
-        }
+        // if (object.objecttype === NvConstant.FNObjectTypes.SD_OBJT_BPMN_POOL) {
+        //   DSUtil.ConvertBPMNPool(object);
+        // }
 
         let tableID = -1;
         if (object.datasetID >= 0) {
@@ -627,7 +627,7 @@ class ShapeUtil {
 
         let targetLayer;
         if (isPlanningDocument && object.Layer != null &&
-          (tableID >= 0 /*|| object.objecttype === NvConstant.ObjectTypes.SD_OBJT_MINDMAP_CONNECTOR*/)) {
+          (tableID >= 0 /*|| object.objecttype === NvConstant.FNObjectTypes.SD_OBJT_MINDMAP_CONNECTOR*/)) {
           targetLayer = layersManager.layers[object.Layer].zList;
         } else {
           targetLayer = layersManager.layers[layersManager.activelayer].zList;
@@ -636,14 +636,14 @@ class ShapeUtil {
 
         targetLayer.push(result.zList[index]);
 
-        // if (result.IsVisio && object && object.ShapeType === OptConstant.ShapeType.GROUPSYMBOL &&
+        // if (result.IsVisio && object && object.ShapeType === OptConstant.ShapeType.GroupSymbol &&
         //   object.InitialGroupBounds.x < 0) {
         //   object.InitialGroupBounds.x = 1;
         // }
 
         T3Gv.opt.AddToDirtyList(result.zList[index]);
 
-        if (object && (object.flags & NvConstant.ObjFlags.SEDO_NotVisible) === 0) {
+        if (object && (object.flags & NvConstant.ObjFlags.NotVisible) === 0) {
           selectedObjects.selectedList.push(result.zList[index]);
         }
 
@@ -680,7 +680,7 @@ class ShapeUtil {
       let objectWithBoundsCount = 0;
       for (index = 0; index < objectCount; index++) {
         object = T3Gv.opt.GetObjectPtr(result.zList[index], false);
-        if (object && (object.flags & NvConstant.ObjFlags.SEDO_NotVisible) === 0) {
+        if (object && (object.flags & NvConstant.ObjFlags.NotVisible) === 0) {
           if (objectWithBoundsCount === 0) {
             boundingRect = new Rectangle(object.r.x, object.r.y, object.r.width, object.r.height);
           } else {
@@ -703,7 +703,7 @@ class ShapeUtil {
         if (offsetX || offsetY) {
           for (index = 0; index < objectCount; index++) {
             object = T3Gv.opt.GetObjectPtr(result.zList[index], false);
-            if (object && (object.flags & NvConstant.ObjFlags.SEDO_NotVisible) === 0) {
+            if (object && (object.flags & NvConstant.ObjFlags.NotVisible) === 0) {
               object.OffsetShape(offsetX, offsetY);
             }
           }
@@ -724,7 +724,7 @@ class ShapeUtil {
 
           // Check if we need to adjust document size
           if (boundingRect.x + boundingRect.width > sessionBlock.dim.x) {
-            if (T3Gv.opt.contentHeader.flags & OptConstant.ContentHeaderFlags.CT_DA_NoAuto) {
+            if (T3Gv.opt.contentHeader.flags & OptConstant.CntHeaderFlags.NoAuto) {
               offsetX = boundingRect.x + boundingRect.width - sessionBlock.dim.x;
               newWidth = 0;
             } else {
@@ -734,7 +734,7 @@ class ShapeUtil {
           }
 
           if (boundingRect.y + boundingRect.height > sessionBlock.dim.y) {
-            if (T3Gv.opt.contentHeader.flags & OptConstant.ContentHeaderFlags.CT_DA_NoAuto) {
+            if (T3Gv.opt.contentHeader.flags & OptConstant.CntHeaderFlags.NoAuto) {
               offsetY = boundingRect.y + boundingRect.height - sessionBlock.dim.y;
             } else {
               newHeight = boundingRect.y + boundingRect.height;
@@ -770,7 +770,7 @@ class ShapeUtil {
             // If we need to shift objects to stay within bounds
             for (index = 0; index < objectCount; index++) {
               object = T3Gv.opt.GetObjectPtr(result.zList[index], false);
-              if (object && (object.flags & NvConstant.ObjFlags.SEDO_NotVisible) === 0) {
+              if (object && (object.flags & NvConstant.ObjFlags.NotVisible) === 0) {
                 object.OffsetShape(-offsetX, -offsetY);
               }
             }
@@ -803,13 +803,13 @@ class ShapeUtil {
    */
   static ReadBuffer(buffer, result, offset, ignoreErrors, callback) {
     // Initialize a data stream from the buffer
-    const opCodes = ShapeConstant.OpNameCode;
+    const opCodes = DSConstant.OpNameCode;
     let dataStream = new T3DataStream(buffer);
-    let minimumFileVersion = ShapeConstant.SDF_MINFVERSION;
+    let minimumFileVersion = DSConstant.SDF_MINFVERSION;
 
     // Symbol files require a higher minimum version
     if (result.isSymbol) {
-      minimumFileVersion = ShapeConstant.SDF_MINSVERSION;
+      minimumFileVersion = DSConstant.SDF_MINSVERSION;
     }
 
     // Set endianness and handle offset
@@ -844,13 +844,13 @@ class ShapeUtil {
     }
 
     // Check for version code
-    if (fileHeader.codes[0].code !== ShapeConstant.OpNameCode.cVersion) {
+    if (fileHeader.codes[0].code !== DSConstant.OpNameCode.cVersion) {
       result.error = ShapeUtil.Errors.UnknownFile;
       return result.error;
     }
 
     // Check minimum version compatibility
-    if (fileHeader.codes[0].data.MinVer > ShapeConstant.SDF_FVERSION) {
+    if (fileHeader.codes[0].data.MinVer > DSConstant.SDF_FVERSION) {
       result.error = ShapeUtil.Errors.Version;
       return result.error;
     }
@@ -862,9 +862,9 @@ class ShapeUtil {
     }
 
     // Set conversion flags based on file version
-    if (fileHeader.codes[0].data.FVersion < ShapeConstant.SDF_FVERSION) {
+    if (fileHeader.codes[0].data.FVersion < DSConstant.SDF_FVERSION) {
       result.ConvertOnSave = true;
-      if (fileHeader.codes[0].data.FVersion <= ShapeConstant.FVERSIONVSM &&
+      if (fileHeader.codes[0].data.FVersion <= DSConstant.FVERSIONVSM &&
         (!result.isTemplate && !result.isSymbol || result.AllowAddEMFHash)) {
         result.AddEMFHash = true;
       }
@@ -872,14 +872,14 @@ class ShapeUtil {
 
     // Handle different source platform formats
     switch (fileHeader.codes[0].data.Platform) {
-      case ShapeConstant.Platforms.SDF_SDJSBLOCK:
-      case ShapeConstant.Platforms.SDF_SDJS:
+      case DSConstant.Platforms.SDF_SDJSBLOCK:
+      case DSConstant.Platforms.SDF_SDJS:
         // Native format, no special handling needed
         break;
-      case ShapeConstant.Platforms.SDF_VISIO:
+      case DSConstant.Platforms.SDF_VISIO:
         result.IsVisio = true;
         break;
-      case ShapeConstant.Platforms.SDF_VISIOLUCID:
+      case DSConstant.Platforms.SDF_VISIOLUCID:
         result.IsVisio = true;
         result.IsLucid = true;
         break;
@@ -901,14 +901,14 @@ class ShapeUtil {
     result.FVersion = fileHeader.codes[0].data.FVersion;
 
     // Calculate coordinate scale factor based on resolution
-    if (result.FVersion < ShapeConstant.SDF_FVERSION2022) {
+    if (result.FVersion < DSConstant.SDF_FVERSION2022) {
       result.coordScaleFactor = T3Gv.docUtil.svgDoc.docInfo.docDpi / fileHeader.codes[0].data.drawres;
     } else {
       result.coordScaleFactor = 1;
     }
 
     // Set block reading flag for block format
-    if (fileHeader.codes[0].data.Platform === ShapeConstant.Platforms.SDF_SDJSBLOCK) {
+    if (fileHeader.codes[0].data.Platform === DSConstant.Platforms.SDF_SDJSBLOCK) {
       result.ReadBlocks = true;
     }
 
@@ -954,9 +954,9 @@ class ShapeUtil {
    */
   static ReadSymbolFromBufferComplete(parsedData, result, ignoreErrors) {
     try {
-      const opCodes = ShapeConstant.OpNameCode;
-      const CDim = OptConstant.Defines.SED_CDim;
-      const minConnectorSegments = OptConstant.ConnectorDefines.SEDA_NSkip;
+      const opCodes = DSConstant.OpNameCode;
+      const CDim = OptConstant.Common.MaxDim;
+      const minConnectorSegments = OptConstant.ConnectorDefines.NSkip;
       let dataBlockLoaded = false;
       let codeIndex, objectCount, objectIndex, segmentIndex, objectId, object, layer;
       let hookLength, hookCount, textParent, svgElement, ganttInfo;
@@ -985,7 +985,7 @@ class ShapeUtil {
 
           // Process 64-bit data block if version supports it
           case opCodes.cSdData64:
-            if (!dataBlockLoaded && result.PVersion >= ShapeConstant.SDF_PVERSION861) {
+            if (!dataBlockLoaded && result.PVersion >= DSConstant.SDF_PVERSION861) {
               TODO.SDData.LoadDataSets(parsedData.codes[codeIndex].data.bytes, true, false, result);
               dataBlockLoaded = true;
             }
@@ -1031,11 +1031,11 @@ class ShapeUtil {
 
           // Process any other blocks with begin/end structure
           default:
-            if (parsedData.codes[codeIndex].code & ShapeConstant.SDF_BEGIN) {
+            if (parsedData.codes[codeIndex].code & DSConstant.SDF_BEGIN) {
               codeIndex = ShapeUtil.ReadFrame(
                 parsedData,
                 codeIndex,
-                (parsedData.codes[codeIndex].code & ShapeConstant.SDF_MASK) | ShapeConstant.SDF_END
+                (parsedData.codes[codeIndex].code & DSConstant.SDF_MASK) | DSConstant.SDF_END
               );
             }
         }
@@ -1064,22 +1064,22 @@ class ShapeUtil {
 
         // Determine object base class, handling special case for closed polylines
         let baseClass = object.DrawingObjectBaseClass;
-        if (baseClass === OptConstant.DrawingObjectBaseClass.LINE &&
+        if (baseClass === OptConstant.DrawObjectBaseClass.Line &&
           object.LineType === OptConstant.LineType.POLYLINE &&
           object.polylist && object.polylist.closed) {
-          baseClass = OptConstant.DrawingObjectBaseClass.SHAPE;
+          baseClass = OptConstant.DrawObjectBaseClass.Shape;
         }
 
         // // Check for Gantt chart with incompatible version
         // if (result.PVersion < ShapeUtil.SDF_PVERSION861 &&
-        //   object.objecttype === NvConstant.ObjectTypes.SD_OBJT_GANTT_CHART) {
+        //   object.objecttype === NvConstant.FNObjectTypes.SD_OBJT_GANTT_CHART) {
         //   result.error = ShapeUtil.Errors.MinVersionProjectChart;
         //   return -1;
         // }
 
         // Process objects based on their base class
         switch (baseClass) {
-          case OptConstant.DrawingObjectBaseClass.LINE:
+          case OptConstant.DrawObjectBaseClass.Line:
             // Handle different line types
             switch (object.LineType) {
               case OptConstant.LineType.POLYLINE:
@@ -1099,7 +1099,7 @@ class ShapeUtil {
 
                 object.SegLFormat(
                   object.EndPoint,
-                  OptConstant.ActionTriggerType.SEGL_PRESERVE,
+                  OptConstant.ActionTriggerType.SeglPreserve,
                   0
                 );
 
@@ -1111,12 +1111,12 @@ class ShapeUtil {
             }
 
             // Set text object for older versions
-            if (object.DataID >= 0 && result.PVersion < ShapeConstant.SDF_PVERSION859 && result.ReadBlocks) {
+            if (object.DataID >= 0 && result.PVersion < DSConstant.SDF_PVERSION859 && result.ReadBlocks) {
               object.SetTextObject(object.DataID);
             }
             break;
 
-          case OptConstant.DrawingObjectBaseClass.CONNECTOR:
+          case OptConstant.DrawObjectBaseClass.Connector:
             // Clean up connectors with no hooks
             if (object.hooks.length === 0) {
               hookLength = object.arraylist.hook.length;
@@ -1140,7 +1140,7 @@ class ShapeUtil {
             }
             break;
 
-          case OptConstant.DrawingObjectBaseClass.SHAPE:
+          case OptConstant.DrawObjectBaseClass.Shape:
             // Handle shapes with line thickness (border)
             if (object.StyleRecord.Line.BThick &&
               object.polylist &&
@@ -1167,7 +1167,7 @@ class ShapeUtil {
                 polygonLine = object;
               }
 
-              const points = polygonLine.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, true, false, vertices);
+              const points = polygonLine.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, true, false, vertices);
               let polyPoints = [];
 
               // Extract vertices from points
@@ -1257,7 +1257,7 @@ class ShapeUtil {
         // if (textTable) {
         //   if (object.subtype !== NvConstant.ObjectSubTypes.SD_SUBT_MEETINGTASK &&
         //     object.subtype !== NvConstant.ObjectSubTypes.SD_SUBT_MEETINGPERSON &&
-        //     object.objecttype !== NvConstant.ObjectTypes.SD_OBJT_TIMELINE) {
+        //     object.objecttype !== NvConstant.FNObjectTypes.SD_OBJT_TIMELINE) {
         //     T3Gv.opt.Table_Format(object, textTable, object.TextGrow, false);
         //   }
         // }
@@ -1266,7 +1266,7 @@ class ShapeUtil {
 
         if (object.DataID >= 0 && result.updatetext) {
           if (result.IsVisio) {
-            object.StyleRecord.name = OptConstant.Defines.TextBlockStyle;
+            object.StyleRecord.name = OptConstant.Common.TextBlockStyle;
 
             if (object.moreflags & OptConstant.ObjMoreFlags.SED_MF_VisioText && !result.ReadingGroup) {
               object.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.Transparent;
@@ -1284,13 +1284,13 @@ class ShapeUtil {
                   object.hookdisp.y === 0 &&
                   object.hooks[0].connect.x === CDim / 2 &&
                   object.hooks[0].connect.y === CDim / 2 &&
-                  textParent.ShapeType !== OptConstant.ShapeType.GROUPSYMBOL &&
-                  textParent.DrawingObjectBaseClass !== OptConstant.DrawingObjectBaseClass.LINE) {
+                  textParent.ShapeType !== OptConstant.ShapeType.GroupSymbol &&
+                  textParent.DrawingObjectBaseClass !== OptConstant.DrawObjectBaseClass.Line) {
                   object.sizedim.width = object.trect.width;
                   object.sizedim.height = object.trect.height;
                 }
 
-                if (textParent.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.LINE) {
+                if (textParent.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Line) {
                   textParent.TextDirection = false;
                 }
               }
@@ -1300,18 +1300,18 @@ class ShapeUtil {
           // Render and resize text
           T3Gv.opt.AddSVGObject(null, objectId, true, false);
           T3Gv.opt.TextResizeCommon(objectId, false, true);
-          svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(objectId);
+          svgElement = T3Gv.opt.svgObjectLayer.GetElementById(objectId);
 
           if (svgElement) {
             // Special handling for Visio line text
             if (result.IsVisio &&
-              object.DrawingObjectBaseClass == OptConstant.DrawingObjectBaseClass.LINE) {
+              object.DrawingObjectBaseClass == OptConstant.DrawObjectBaseClass.Line) {
               const textAlignment = ShapeUtil.TextAlignToJust(object.TextAlign);
 
               if (svgElement.textElem.formatter.renderedLines.length === 1 &&
-                textAlignment.just === TextConstant.TextAlign.CENTER) {
+                textAlignment.just === TextConstant.TextAlign.Center) {
                 object.TextGrow = NvConstant.TextGrowBehavior.Horizontal;
-                object.sizedim.width = OptConstant.Defines.SED_MinDim;
+                object.sizedim.width = OptConstant.Common.MinDim;
                 T3Gv.opt.TextResizeCommon(objectId, false, true);
               }
             }
@@ -1400,10 +1400,10 @@ class ShapeUtil {
     let linksBlock;
     let tableObject;
     let connectorsToProcess = [];
-    let linkFlags = ShapeConstant.LinkFlags.SED_L_MOVE;
-    let skipCount = OptConstant.ConnectorDefines.SEDA_NSkip;
+    let linkFlags = DSConstant.LinkFlags.SED_L_MOVE;
+    let skipCount = OptConstant.ConnectorDefines.NSkip;
     let textData = {};
-    let coordinateDimension = OptConstant.Defines.SED_CDim;
+    let coordinateDimension = OptConstant.Common.MaxDim;
     idMapLength = idMap.length;
 
     // /**
@@ -1454,13 +1454,13 @@ class ShapeUtil {
                 if (linksBlock == null) {
                   linksBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.linksBlockId, true);
                 }
-                T3Gv.opt.InsertLink(linksBlock, objectId, currentHook, ShapeConstant.LinkFlags.SED_L_MOVE);
+                T3Gv.opt.InsertLink(linksBlock, objectId, currentHook, DSConstant.LinkFlags.SED_L_MOVE);
               }
 
               // Special handling for Visio segmented lines
               if (resultObject.IsVisio &&
                 currentObject &&
-                currentObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.LINE &&
+                currentObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Line &&
                 currentObject.LineType === OptConstant.LineType.SEGLINE &&
                 currentObject.segl) {
 
@@ -1483,10 +1483,10 @@ class ShapeUtil {
 
                 // Handle edge connections for shapes
                 if (targetObject &&
-                  targetObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.SHAPE &&
+                  targetObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape &&
                   ShapeUtil.ConnectedToEdge(currentObject.hooks[currentHook].connect)) {
 
-                  if (currentObject.hooks[currentHook].hookpt === OptConstant.HookPts.SED_KTL) {
+                  if (currentObject.hooks[currentHook].hookpt === OptConstant.HookPts.KTL) {
                     currentObject.segl.firstdir = targetObject.GetSegLFace(
                       currentObject.hooks[currentHook].connect,
                       currentObject.StartPoint,
@@ -1506,7 +1506,7 @@ class ShapeUtil {
               currentObject.hooks.splice(currentHook, 1);
               currentObject.moreflags = Utils2.SetFlag(
                 currentObject.moreflags,
-                OptConstant.ObjMoreFlags.SED_MF_ContainerChild,
+                OptConstant.ObjMoreFlags.ContainerChild,
                 false
               );
             }
@@ -1524,12 +1524,12 @@ class ShapeUtil {
 
         // Process connector objects
         if (currentObject &&
-          currentObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.CONNECTOR &&
+          currentObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector &&
           currentObject.arraylist) {
 
           hookCount = currentObject.arraylist.hook.length;
-          let isLinearConnector = currentObject.arraylist.styleflags & OptConstant.SEDA_Styles.SEDA_Linear;
-          skipCount = OptConstant.ConnectorDefines.SEDA_NSkip;
+          let isLinearConnector = currentObject.arraylist.styleflags & OptConstant.AStyles.Linear;
+          skipCount = OptConstant.ConnectorDefines.NSkip;
 
           // For linear connectors, shift text IDs
           if (isLinearConnector) {
@@ -1568,22 +1568,22 @@ class ShapeUtil {
           // Queue connector for formatting if not ignoring errors
           if (!ignoreErrors) {
             connectorsToProcess.push(currentObject);
-            currentObject.flags = Utils2.SetFlag(currentObject.flags, NvConstant.ObjFlags.SEDO_Obj1, true);
+            currentObject.flags = Utils2.SetFlag(currentObject.flags, NvConstant.ObjFlags.Obj1, true);
           }
         }
 
-        // Update container references in tables
-        if (currentObject &&
-          currentObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.SHAPE &&
-          currentObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER &&
-          (tableObject = currentObject.GetTable(false))) {
+        // // Update container references in tables
+        // if (currentObject &&
+        //   currentObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape &&
+        //   currentObject.objecttype === NvConstant.FNObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER &&
+        //   (tableObject = currentObject.GetTable(false))) {
 
-          updateTableContainers(tableObject);
-        }
+        //   updateTableContainers(tableObject);
+        // }
 
         // Update container list references
         if (currentObject &&
-          currentObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.SHAPE &&
+          currentObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape &&
           currentObject.ContainerList) {
 
           hookCount = currentObject.ContainerList.List.length;
@@ -1776,7 +1776,7 @@ class ShapeUtil {
         case opCodes.cHatch:
           // Set hatch pattern if it's a valid hatch style
           if (codeData.codes[codeIndex].data.hatch >= 0 &&
-            codeData.codes[codeIndex].data.hatch < ShapeConstant.SDGHatchStyleTotal) {
+            codeData.codes[codeIndex].data.hatch < DSConstant.SDGHatchStyleTotal) {
             fillObject.Hatch = codeData.codes[codeIndex].data.hatch;
           }
           break;
@@ -1791,11 +1791,11 @@ class ShapeUtil {
 
         default:
           // Handle nested structures by recursively reading frames
-          if (codeData.codes[codeIndex].code & ShapeUtil.SDF_BEGIN) {
+          if (codeData.codes[codeIndex].code & DSConstant.SDF_BEGIN) {
             codeIndex = ShapeUtil.ReadFrame(
               codeData,
               codeIndex,
-              codeData.codes[codeIndex].code & ShapeUtil.SDF_MASK | ShapeUtil.SDF_END
+              codeData.codes[codeIndex].code & DSConstant.SDF_MASK | DSConstant.SDF_END
             );
           }
       }
@@ -1815,7 +1815,7 @@ class ShapeUtil {
    * @returns Updated code index position after processing
    */
   static ReadSDLine(lineStyleObject, codeData, codeIndex, resultObject, opCodes) {
-    const linePatterns = ShapeConstant.WinLinePatterns;
+    const linePatterns = DSConstant.WinLinePatterns;
     let linePattern, colorValue;
 
     // Process line thickness with scale factor
@@ -1855,7 +1855,7 @@ class ShapeUtil {
       case linePatterns.SEP_DDashed:
       case linePatterns.SEP_DDDashed:
         // Use predefined pattern data
-        lineStyleObject.LinePattern = ShapeConstant.LinePatternData[
+        lineStyleObject.LinePattern = DSConstant.LinePatternData[
           linePattern - linePatterns.SEP_Solid
         ];
         break;
@@ -1955,11 +1955,11 @@ class ShapeUtil {
 
         default:
           // Handle nested structures by recursively reading frames
-          if (codeData.codes[codeIndex].code & ShapeUtil.SDF_BEGIN) {
+          if (codeData.codes[codeIndex].code & DSConstant.SDF_BEGIN) {
             codeIndex = ShapeUtil.ReadFrame(
               codeData,
               codeIndex,
-              codeData.codes[codeIndex].code & ShapeUtil.SDF_MASK | ShapeUtil.SDF_END
+              codeData.codes[codeIndex].code & DSConstant.SDF_MASK | DSConstant.SDF_END
             );
           }
       }
@@ -2023,7 +2023,7 @@ class ShapeUtil {
 
         case opCodes.cRichGradient:
           // Create a rich gradient with specified type and angle
-          richGradient = new ShapeConstant.SDRichGradient(
+          richGradient = new DSUtil.SDRichGradient(
             codeData.codes[codeIndex].data.gradienttype,
             codeData.codes[codeIndex].data.angle
           );
@@ -2035,7 +2035,7 @@ class ShapeUtil {
             stopColor = ShapeUtil.WinColorToHTML(codeData.codes[codeIndex].data.color);
             stopOpacity = ShapeUtil.WinColorToAlpha(codeData.codes[codeIndex].data.color);
 
-            gradientStop = new ShapeConstant.SDRichGradientStop(
+            gradientStop = new DSUtil.SDRichGradientStop(
               stopColor,
               stopOpacity,
               codeData.codes[codeIndex].data.stop
@@ -2072,11 +2072,11 @@ class ShapeUtil {
 
         default:
           // Handle nested structures by recursively reading frames
-          if (codeData.codes[codeIndex].code & ShapeUtil.SDF_BEGIN) {
+          if (codeData.codes[codeIndex].code & DSConstant.SDF_BEGIN) {
             codeIndex = ShapeUtil.ReadFrame(
               codeData,
               codeIndex,
-              (codeData.codes[codeIndex].code & ShapeUtil.SDF_MASK) | ShapeUtil.SDF_END
+              (codeData.codes[codeIndex].code & DSConstant.SDF_MASK) | DSConstant.SDF_END
             );
           }
       }
@@ -2152,11 +2152,11 @@ class ShapeUtil {
 
         default:
           // Handle nested structures by recursively reading frames
-          if (codeData.codes[codeIndex].code & ShapeUtil.SDF_BEGIN) {
+          if (codeData.codes[codeIndex].code & DSConstant.SDF_BEGIN) {
             codeIndex = ShapeUtil.ReadFrame(
               codeData,
               codeIndex,
-              (codeData.codes[codeIndex].code & ShapeUtil.SDF_MASK) | ShapeUtil.SDF_END
+              (codeData.codes[codeIndex].code & DSConstant.SDF_MASK) | DSConstant.SDF_END
             );
           }
       }
@@ -2211,11 +2211,11 @@ class ShapeUtil {
 
         default:
           // Handle nested structures by recursively reading frames
-          if (codeData.codes[codeIndex].code & ShapeUtil.SDF_BEGIN) {
+          if (codeData.codes[codeIndex].code & DSConstant.SDF_BEGIN) {
             codeIndex = ShapeUtil.ReadFrame(
               codeData,
               codeIndex,
-              (codeData.codes[codeIndex].code & ShapeUtil.SDF_MASK) | ShapeUtil.SDF_END
+              (codeData.codes[codeIndex].code & DSConstant.SDF_MASK) | DSConstant.SDF_END
             );
           }
       }
@@ -2247,12 +2247,12 @@ class ShapeUtil {
         styleObject = new QuickStyle();
         codeIndex = ShapeUtil.ReadStyle(styleObject, codeData, codeIndex, resultObject, opCodes);
         styleArray.push(styleObject);
-      } else if (codeData.codes[codeIndex].code & ShapeUtil.SDF_BEGIN) {
+      } else if (codeData.codes[codeIndex].code & DSConstant.SDF_BEGIN) {
         // Handle nested structures by recursively reading frames
         codeIndex = ShapeUtil.ReadFrame(
           codeData,
           codeIndex,
-          (codeData.codes[codeIndex].code & ShapeUtil.SDF_MASK) | ShapeUtil.SDF_END
+          (codeData.codes[codeIndex].code & DSConstant.SDF_MASK) | DSConstant.SDF_END
         );
       }
       codeIndex++;
@@ -2291,7 +2291,7 @@ class ShapeUtil {
       resultObject.PVersion < ShapeUtil.SDF_PVERSION864) {
 
       // Define fixed round rectangle parameter
-      const roundRectParam = OptConstant.Defines.DefFixedRRect;
+      const roundRectParam = OptConstant.Common.DefFixedRRect;
 
       // Set curvature parameter (scaled by 100)
       sessionObject.def.curveparam = 100 * roundRectParam;
@@ -2303,14 +2303,14 @@ class ShapeUtil {
 
   static TextFaceToWeight(e) {
     var t = 'normal';
-    return e & TextConstant.STTextFace.St_Bold &&
+    return e & TextConstant.TextFace.Bold &&
       (t = 'bold'),
       t
   }
 
   static TextFaceToStyle(e) {
     var t = 'normal';
-    return e & TextConstant.STTextFace.St_Italic &&
+    return e & TextConstant.TextFace.Italic &&
       (t = 'italic'),
       t
   }
@@ -2326,7 +2326,7 @@ class ShapeUtil {
 
   static TextFaceToDecoration(e) {
     var t = 'none';
-    return e & TextConstant.STTextFace.St_Under ? t = 'underline' : e & TextConstant.STTextFace.St_Strike &&
+    return e & TextConstant.TextFace.Under ? t = 'underline' : e & TextConstant.TextFace.Strike &&
       (t = 'line-through'),
       t
   }
@@ -2337,31 +2337,31 @@ class ShapeUtil {
       vjust: 'middle'
     };
     switch (e) {
-      case TextConstant.TextAlign.LEFT:
+      case TextConstant.TextAlign.Left:
         t.just = 'left';
         break;
-      case TextConstant.TextAlign.RIGHT:
+      case TextConstant.TextAlign.Right:
         t.just = 'right';
         break;
-      case TextConstant.TextAlign.TOPLEFT:
+      case TextConstant.TextAlign.TopLeft:
         t.just = 'left',
           t.vjust = 'top';
         break;
-      case TextConstant.TextAlign.TOPCENTER:
+      case TextConstant.TextAlign.TopCenter:
         t.vjust = 'top';
         break;
-      case TextConstant.TextAlign.TOPRIGHT:
+      case TextConstant.TextAlign.TopRight:
         t.just = 'right',
           t.vjust = 'top';
         break;
-      case TextConstant.TextAlign.BOTTOMLEFT:
+      case TextConstant.TextAlign.BottomLeft:
         t.just = 'left',
           t.vjust = 'bottom';
         break;
-      case TextConstant.TextAlign.BOTTOMCENTER:
+      case TextConstant.TextAlign.BottomCenter:
         t.vjust = 'bottom';
         break;
-      case TextConstant.TextAlign.BOTTOMRIGHT:
+      case TextConstant.TextAlign.BottomRight:
         t.just = 'right',
           t.vjust = 'bottom'
     }
@@ -2393,46 +2393,46 @@ class ShapeUtil {
         for (C = !1, c = t.runs[l].op.length, s = 0; s < c; s++) {
           var y = t.runs[l].op[s];
           switch (y.code) {
-            case TextConstant.TextStyleCodes.SDF_T_FONT:
+            case TextConstant.TextStyleCodes.Font:
               u = ShapeUtil.FontIDtoFontRec(y.value, a),
                 r.font = u.fontName,
                 r.type = u.fontType,
                 C = !0;
               break;
-            case TextConstant.TextStyleCodes.SDF_T_SIZE:
+            case TextConstant.TextStyleCodes.Size:
               r.size = ShapeUtil.PointSizeToFontSize(y.value),
                 C = !0;
               break;
-            case TextConstant.TextStyleCodes.SDF_T_SIZE_FLOAT:
+            case TextConstant.TextStyleCodes.SizeFloat:
               r.size = y.value,
                 C = !0;
               break;
-            case TextConstant.TextStyleCodes.SDF_T_FACE:
+            case TextConstant.TextStyleCodes.Face:
               r.weight = ShapeUtil.TextFaceToWeight(y.value),
                 r.style = ShapeUtil.TextFaceToStyle(y.value),
                 r.decoration = ShapeUtil.TextFaceToDecoration(y.value),
                 C = !0;
               break;
-            case TextConstant.TextStyleCodes.SDF_T_EXTRA:
+            case TextConstant.TextStyleCodes.Extra:
               r.baseOffset = ShapeUtil.TextExtraToBaseLine(y.value),
                 C = !0;
               break;
-            case TextConstant.TextStyleCodes.SDF_T_COLOR:
+            case TextConstant.TextStyleCodes.Color:
               r.color = ShapeUtil.WinColorToHTML(y.value),
                 r.colorTrans = ShapeUtil.WinColorToAlpha(y.value),
                 C = !0;
               break;
-            case TextConstant.TextStyleCodes.SDF_T_FLAGS:
-              r.spError = 0 != (y.value & TextConstant.TextFlags.TEN_F_BADSPELL),
+            case TextConstant.TextStyleCodes.Flags:
+              r.spError = 0 != (y.value & TextConstant.TextFlags.BadSpell),
                 C = !0;
               break;
-            case TextConstant.TextStyleCodes.SDF_T_STYLEID:
+            case TextConstant.TextStyleCodes.StyleId:
               i.push({
                 offset: h,
                 pStyleIndex: y.value
               });
               break;
-            case TextConstant.TextStyleCodes.SDF_T_LINKID:
+            case TextConstant.TextStyleCodes.LinkId:
               p = DSUtil.ToInt32(y.value),
                 D = null,
                 n.curLinkIndex >= 0 &&
@@ -2449,7 +2449,7 @@ class ShapeUtil {
                 }),
                 n.curLinkIndex = p;
               break;
-            case TextConstant.TextStyleCodes.SDF_T_DATAID:
+            case TextConstant.TextStyleCodes.DataId:
               d = DSUtil.ToInt32(y.value),
                 D = null,
                 o.length > 0 &&
@@ -2503,37 +2503,37 @@ class ShapeUtil {
       i,
       n = StyleConstant.ParaStyleCodes;
     for (i = t.codes.length, r = 0; r < i; r++) switch (t.codes[r].code) {
-      case n.SDF_S_JUST:
+      case n.Just:
         e.just = ShapeUtil.W32JustToJS(t.codes[r].value, !1);
         break;
-      case n.SDF_S_LEADING:
+      case n.Leading:
         e.leading = ShapeUtil.ToSDJSCoords(t.codes[r].value, a.coordScaleFactor);
         break;
-      case n.SDF_S_SPACING:
+      case n.Spacing:
         t.codes[r].value < 0 ? e.spacing = ShapeUtil.ToSDJSCoords(t.codes[r].value, a.coordScaleFactor) : e.spacing = t.codes[r].value / 100;
         break;
-      case n.SDF_S_TRACKING:
+      case n.Tracking:
         e.tracking = ShapeUtil.ToSDJSCoords(t.codes[r].value, a.coordScaleFactor);
         break;
-      case n.SDF_S_LINDENT:
+      case n.Lindent:
         e.lindent = ShapeUtil.ToSDJSCoords(t.codes[r].value, a.coordScaleFactor);
         break;
-      case n.SDF_S_RINDENT:
+      case n.Rindent:
         e.rindent = ShapeUtil.ToSDJSCoords(t.codes[r].value, a.coordScaleFactor);
         break;
-      case n.SDF_S_PINDENT:
+      case n.Pindent:
         e.pindent = ShapeUtil.ToSDJSCoords(t.codes[r].value, a.coordScaleFactor);
         break;
-      case n.SDF_S_BINDENT:
+      case n.Bindent:
         e.bindent = ShapeUtil.ToSDJSCoords(t.codes[r].value, a.coordScaleFactor);
         break;
-      case n.SDF_S_BULLET:
+      case n.Bullet:
         e.bullet = ShapeUtil.W32BulletToJS(t.codes[r].value);
         break;
-      case n.SDF_S_TABSPACE:
+      case n.TabSpace:
         e.tabspace = ShapeUtil.ToSDJSCoords(t.codes[r].value, a.coordScaleFactor);
         break;
-      case n.SDF_S_HYPHEN:
+      case n.Hyphen:
         e.hyphen = t.codes[r].value
     }
   }
@@ -2566,7 +2566,7 @@ class ShapeUtil {
 
     // Create text formatting object if it doesn't exist
     if (!T3Gv.gFmtTextObj) {
-      T3Gv.gFmtTextObj = T3Gv.opt.svgDoc.CreateShape(OptConstant.CSType.TEXT);
+      T3Gv.gFmtTextObj = T3Gv.opt.svgDoc.CreateShape(OptConstant.CSType.Text);
     }
 
     // Initialize variables
@@ -2616,7 +2616,7 @@ class ShapeUtil {
     // Use target object's alignment if available
     if (targetObject) {
       textJust = isComment
-        ? ShapeUtil.TextAlignToJust(TextConstant.TextAlign.LEFT)
+        ? ShapeUtil.TextAlignToJust(TextConstant.TextAlign.Left)
         : ShapeUtil.TextAlignToJust(targetObject.TextAlign);
 
       defaultAlignment = textJust.just;
@@ -2786,7 +2786,7 @@ class ShapeUtil {
     if (!resultObject.NoTextBlocks) {
       if (containerObject) {
         // Create a new base drawing object for the text
-        let textObject = new Instance.Shape.BaseDrawingObject();
+        let textObject = new Instance.Shape.BaseDrawObject();
 
         if (isComment) {
           textObject.SetNoteContent(processedText);
@@ -2936,7 +2936,7 @@ class ShapeUtil {
         case opCodes.cDrawObj8:
           // Process version 8 drawing object
           codeIndex = ShapeUtil.ReadObject(codeData, codeIndex, resultObject, opCodes,
-            ShapeConstant.OpNameCode.cDrawObj8End);
+            DSConstant.OpNameCode.cDrawObj8End);
 
           if (codeIndex < 0) {
             return -1; // Error occurred while reading object
@@ -2946,7 +2946,7 @@ class ShapeUtil {
         case opCodes.cDrawObj:
           // Process standard drawing object
           codeIndex = ShapeUtil.ReadObject(codeData, codeIndex, resultObject, opCodes,
-            ShapeConstant.OpNameCode.cDrawObjEnd);
+            DSConstant.OpNameCode.cDrawObjEnd);
 
           if (codeIndex < 0) {
             return -1; // Error occurred while reading object
@@ -3133,53 +3133,53 @@ class ShapeUtil {
    * top-left, top-center, top-right, middle-left, middle-center, middle-right,
    * bottom-left, bottom-center, and bottom-right.
    *
-   * @param horizontalAlignment - The horizontal alignment value from Windows (TA_LEFT, TA_RIGHT, etc.)
-   * @param verticalAlignment - The vertical alignment value from Windows (TA_TOP, TA_BOTTOM, etc.)
+   * @param horizontalAlignment - The horizontal alignment value from Windows (Left, Right, etc.)
+   * @param verticalAlignment - The vertical alignment value from Windows (Top, Bottom, etc.)
    * @returns A combined text alignment constant from TextConstant.TextAlign
    */
   static W32JustToTextAlign(horizontalAlignment, verticalAlignment) {
-    let textAlignment = TextConstant.TextAlign.CENTER;
+    let textAlignment = TextConstant.TextAlign.Center;
 
     switch (verticalAlignment) {
-      case TextConstant.TextJust.TA_TOP:
+      case TextConstant.TextJust.Top:
         // Handle top alignment combined with horizontal alignment
         switch (horizontalAlignment) {
-          case TextConstant.TextJust.TA_LEFT:
-            textAlignment = TextConstant.TextAlign.TOPLEFT;
+          case TextConstant.TextJust.Left:
+            textAlignment = TextConstant.TextAlign.TopLeft;
             break;
-          case TextConstant.TextJust.TA_RIGHT:
-            textAlignment = TextConstant.TextAlign.TOPRIGHT;
+          case TextConstant.TextJust.Right:
+            textAlignment = TextConstant.TextAlign.TopRight;
             break;
           default:
-            textAlignment = TextConstant.TextAlign.TOPCENTER;
+            textAlignment = TextConstant.TextAlign.TopCenter;
         }
         break;
 
-      case TextConstant.TextJust.TA_BOTTOM:
+      case TextConstant.TextJust.Bottom:
         // Handle bottom alignment combined with horizontal alignment
         switch (horizontalAlignment) {
-          case TextConstant.TextJust.TA_LEFT:
-            textAlignment = TextConstant.TextAlign.BOTTOMLEFT;
+          case TextConstant.TextJust.Left:
+            textAlignment = TextConstant.TextAlign.BottomLeft;
             break;
-          case TextConstant.TextJust.TA_RIGHT:
-            textAlignment = TextConstant.TextAlign.BOTTOMRIGHT;
+          case TextConstant.TextJust.Right:
+            textAlignment = TextConstant.TextAlign.BottomRight;
             break;
           default:
-            textAlignment = TextConstant.TextAlign.BOTTOMCENTER;
+            textAlignment = TextConstant.TextAlign.BottomCenter;
         }
         break;
 
       default:
         // Handle middle vertical alignment (default) with horizontal alignment
         switch (horizontalAlignment) {
-          case TextConstant.TextJust.TA_LEFT:
-            textAlignment = TextConstant.TextAlign.LEFT;
+          case TextConstant.TextJust.Left:
+            textAlignment = TextConstant.TextAlign.Left;
             break;
-          case TextConstant.TextJust.TA_RIGHT:
-            textAlignment = TextConstant.TextAlign.RIGHT;
+          case TextConstant.TextJust.Right:
+            textAlignment = TextConstant.TextAlign.Right;
             break;
           default:
-            textAlignment = TextConstant.TextAlign.CENTER;
+            textAlignment = TextConstant.TextAlign.Center;
         }
     }
 
@@ -3226,11 +3226,11 @@ class ShapeUtil {
     sessionObject.dupdisp.y = ShapeUtil.ToSDJSCoords(displacement.y, resultObject.coordScaleFactor);
 
     // Process arrow properties
-    sessionObject.d_sarrow = sourceData.d_sarrow & ShapeConstant.ArrowMasks.ARROW_T_MASK;
-    sessionObject.d_sarrowdisp = !!(sourceData.d_sarrow & ShapeConstant.ArrowMasks.ARROW_DISP);
+    sessionObject.d_sarrow = sourceData.d_sarrow & DSConstant.ArrowMasks.ARROW_T_MASK;
+    sessionObject.d_sarrowdisp = !!(sourceData.d_sarrow & DSConstant.ArrowMasks.ARROW_DISP);
     sessionObject.d_arrowsize = sourceData.d_arrowsize;
-    sessionObject.d_earrow = sourceData.d_earrow & ShapeConstant.ArrowMasks.ARROW_T_MASK;
-    sessionObject.d_earrowdisp = !!(sourceData.d_earrow & ShapeConstant.ArrowMasks.ARROW_DISP);
+    sessionObject.d_earrow = sourceData.d_earrow & DSConstant.ArrowMasks.ARROW_T_MASK;
+    sessionObject.d_earrowdisp = !!(sourceData.d_earrow & DSConstant.ArrowMasks.ARROW_DISP);
 
     // Set text justification/alignment
     sessionObject.def.just = ShapeUtil.W32JustToJS(sourceData.just, false);
@@ -3298,16 +3298,16 @@ class ShapeUtil {
 
     // Set more flags with defaults
     sessionObject.moreflags = sourceData.moreflags ? sourceData.moreflags : 0;
-    sessionObject.moreflags = Utils2.SetFlag(
-      sessionObject.moreflags,
-      NvConstant.SessionMoreFlags.SEDSM_Swimlane_Rows,
-      true
-    );
-    sessionObject.moreflags = Utils2.SetFlag(
-      sessionObject.moreflags,
-      NvConstant.SessionMoreFlags.SEDSM_Swimlane_Cols,
-      true
-    );
+    // sessionObject.moreflags = Utils2.SetFlag(
+    //   sessionObject.moreflags,
+    //   NvConstant.SessionMoreFlags.SEDSM_Swimlane_Rows,
+    //   true
+    // );
+    // sessionObject.moreflags = Utils2.SetFlag(
+    //   sessionObject.moreflags,
+    //   NvConstant.SessionMoreFlags.SwimlaneCols,
+    //   true
+    // );
 
     // Set field mask
     sessionObject.fieldmask = sourceData.fieldmask ? sourceData.fieldmask : 0;
@@ -3317,7 +3317,7 @@ class ShapeUtil {
 
     // Set curve parameters for rounded shapes
     sessionObject.def.curveparam = (sourceData.curveparam != null) ? sourceData.curveparam : 0;
-    sessionObject.def.rrectparam = (sourceData.rrectparam != null) ? sourceData.rrectparam : OptConstant.Defines.DefFixedRRect;
+    sessionObject.def.rrectparam = (sourceData.rrectparam != null) ? sourceData.rrectparam : OptConstant.Common.DefFixedRRect;
 
     return sessionObject;
   }
@@ -3490,7 +3490,7 @@ class ShapeUtil {
 
     // If object class is directly defined, check if it's a group symbol
     if (codeData.codes[codeIndex].data.objclass) {
-      return codeData.codes[codeIndex].data.objclass === NvConstant.ShapeClass.GROUPSYMBOL;
+      return codeData.codes[codeIndex].data.objclass === NvConstant.ShapeClass.GroupSymbol;
     }
 
     // Search through object properties for group indicators
@@ -3567,7 +3567,7 @@ class ShapeUtil {
 
     // If object class is directly defined, check if it's an SVG fragment symbol
     if (codeData.codes[codeIndex].data.objclass) {
-      return codeData.codes[codeIndex].data.objclass === NvConstant.ShapeClass.SVGFRAGMENTSYMBOL;
+      return codeData.codes[codeIndex].data.objclass === NvConstant.ShapeClass.SvgFragmentSymbol;
     }
 
     // Move past initial code
@@ -3669,7 +3669,7 @@ class ShapeUtil {
     // If both conditions are met, set association flags
     if (hasHook && hasText) {
       objectData.associd = associatedObjectId;
-      objectData.flags = Utils2.SetFlag(objectData.flags, NvConstant.ObjFlags.SEDO_Assoc, true);
+      objectData.flags = Utils2.SetFlag(objectData.flags, NvConstant.ObjFlags.Assoc, true);
     }
 
     return hasHook && hasText;
@@ -3691,7 +3691,7 @@ class ShapeUtil {
    */
   static ObjectIsExternalTextLabel(codeData, codeIndex, opCodes, endCodeMarker, resultObject) {
     const objectData = codeData.codes[codeIndex].data;
-    const coordinateDimension = OptConstant.Defines.SED_CDim;
+    const coordinateDimension = OptConstant.Common.MaxDim;
 
     codeIndex++;
 
@@ -3712,7 +3712,7 @@ class ShapeUtil {
           }
 
           // Check for specific attachment point (tied directly)
-          if (hookData.hookpt === OptConstant.HookPts.SED_KATD) {
+          if (hookData.hookpt === OptConstant.HookPts.KATD) {
             hasValidHook = true;
 
             // If not a Visio callout, perform additional check
@@ -3724,15 +3724,15 @@ class ShapeUtil {
 
               // If the target is a line, this isn't an external text label
               if (targetObject &&
-                targetObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.LINE) {
+                targetObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Line) {
                 return false;
               }
             }
           }
           // Check for corner connection points
           else if (hookData.connecty === 0 && hookData.connectx === 0) {
-            if (hookData.hookpt === OptConstant.HookPts.SED_KCR ||
-              hookData.hookpt === OptConstant.HookPts.SED_KCB ||
+            if (hookData.hookpt === OptConstant.HookPts.KCR ||
+              hookData.hookpt === OptConstant.HookPts.KCB ||
               isVisioCallout) {
               hasValidHook = true;
               hasText = true;
@@ -3741,8 +3741,8 @@ class ShapeUtil {
           // Check for opposite corner connection points
           else if (hookData.connecty === coordinateDimension &&
             hookData.connectx === coordinateDimension) {
-            if (hookData.hookpt === OptConstant.HookPts.SED_KCL ||
-              hookData.hookpt === OptConstant.HookPts.SED_KCT ||
+            if (hookData.hookpt === OptConstant.HookPts.KCL ||
+              hookData.hookpt === OptConstant.HookPts.KCT ||
               isVisioCallout) {
               hasValidHook = true;
               hasText = true;
@@ -3785,15 +3785,15 @@ class ShapeUtil {
    * @returns 0 if successful
    */
   static ReadArrow(drawingObject, arrowData) {
-    if (drawingObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.LINE ||
-      drawingObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.CONNECTOR) {
+    if (drawingObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Line ||
+      drawingObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
 
       let tempArrowId, tempArrowDisp;
       const arrowTableLength = T3Gv.ArrowheadLookupTable.length;
 
       // Process start arrow properties
-      drawingObject.StartArrowID = arrowData.sarrow & ShapeConstant.ArrowMasks.ARROW_T_MASK;
-      drawingObject.StartArrowDisp = !!(arrowData.sarrow & ShapeConstant.ArrowMasks.ARROW_DISP);
+      drawingObject.StartArrowID = arrowData.sarrow & DSConstant.ArrowMasks.ARROW_T_MASK;
+      drawingObject.StartArrowDisp = !!(arrowData.sarrow & DSConstant.ArrowMasks.ARROW_DISP);
 
       // Reset invalid arrow IDs to default (0)
       if (drawingObject.StartArrowID === 24 || drawingObject.StartArrowID >= arrowTableLength) {
@@ -3802,8 +3802,8 @@ class ShapeUtil {
       }
 
       // Process end arrow properties
-      drawingObject.EndArrowID = arrowData.earrow & ShapeConstant.ArrowMasks.ARROW_T_MASK;
-      drawingObject.EndArrowDisp = !!(arrowData.earrow & ShapeConstant.ArrowMasks.ARROW_DISP);
+      drawingObject.EndArrowID = arrowData.earrow & DSConstant.ArrowMasks.ARROW_T_MASK;
+      drawingObject.EndArrowDisp = !!(arrowData.earrow & DSConstant.ArrowMasks.ARROW_DISP);
 
       // Reset invalid arrow IDs to default (0)
       if (drawingObject.EndArrowID === 24 || drawingObject.EndArrowID >= arrowTableLength) {
@@ -3857,7 +3857,7 @@ class ShapeUtil {
 
     // Set coordinates based on line class (horizontal, diagonal, or vertical)
     switch (sourceData.dataclass) {
-      case ShapeConstant.LineSubclass.SED_LCH:  // Horizontal line
+      case OptConstant.LineSubclass.LCH:  // Horizontal line
         // Adjust for group offset if present
         if (resultObject.GroupOffset.y) {
           fixedPoint += resultObject.GroupOffset.y;
@@ -3869,15 +3869,15 @@ class ShapeUtil {
         configObject.EndPoint.y = fixedPoint;
         break;
 
-      case ShapeConstant.LineSubclass.SED_LCD:  // Diagonal line
-        if (sourceData.flags & NvConstant.ObjFlags.SEDO_Obj1) {
+      case OptConstant.LineSubclass.LCD:  // Diagonal line
+        if (sourceData.flags & NvConstant.ObjFlags.Obj1) {
           // Bottom-left to top-right diagonal
           configObject.StartPoint.x = configObject.Frame.x;
           configObject.StartPoint.y = configObject.Frame.y + configObject.Frame.height;
           configObject.EndPoint.x = configObject.Frame.x + configObject.Frame.width;
           configObject.EndPoint.y = configObject.Frame.y;
           // Clear the flag after processing
-          sourceData.flags = Utils2.SetFlag(sourceData.flags, NvConstant.ObjFlags.SEDO_Obj1, false);
+          sourceData.flags = Utils2.SetFlag(sourceData.flags, NvConstant.ObjFlags.Obj1, false);
         } else {
           // Top-left to bottom-right diagonal
           configObject.StartPoint.x = configObject.Frame.x;
@@ -3887,7 +3887,7 @@ class ShapeUtil {
         }
         break;
 
-      case ShapeConstant.LineSubclass.SED_LCV:  // Vertical line
+      case OptConstant.LineSubclass.LCV:  // Vertical line
         // Adjust for group offset if present
         if (resultObject.GroupOffset.x) {
           fixedPoint += resultObject.GroupOffset.x;
@@ -3902,22 +3902,22 @@ class ShapeUtil {
 
     // Create appropriate line object based on line type (straight or arc)
     switch (sourceData.ShortRef) {
-      case OptConstant.LineTypes.SedLsNone:
-      case OptConstant.LineTypes.SedLsComm:
-      case OptConstant.LineTypes.SedLsDigi:
-      case OptConstant.LineTypes.SedLsWall:
-      case OptConstant.LineTypes.SedLsMeasuringTape:
+      case OptConstant.LineTypes.LsNone:
+      case OptConstant.LineTypes.LsComm:
+      case OptConstant.LineTypes.LsDigi:
+      case OptConstant.LineTypes.LsWall:
+      case OptConstant.LineTypes.LsMeasuringTape:
         // Standard line types
         configObject.ShortRef = sourceData.ShortRef;
         lineObject = new Instance.Shape.Line(configObject);
         break;
 
-      case OptConstant.LineTypes.SedLsChord:
+      case OptConstant.LineTypes.LsChord:
         // Arc line with curve adjustment
         configObject.CurveAdjust = ShapeUtil.ToSDJSCoords(configObject.shapeparam, resultObject.coordScaleFactor);
 
         // Invert curve adjustment for vertical lines
-        if (sourceData.dataclass === ShapeConstant.LineSubclass.SED_LCV) {
+        if (sourceData.dataclass === OptConstant.LineSubclass.LCV) {
           configObject.CurveAdjust = -configObject.CurveAdjust;
         }
 
@@ -3974,30 +3974,31 @@ class ShapeUtil {
         (_ = !1),
         u = e.codes[t].data.EMFHash
       ),
-      e.codes[t].data.objclass === NvConstant.ShapeClass.MISSINGEMF &&
+      e.codes[t].data.objclass === NvConstant.ShapeClass.MissingMf &&
       (E = !0),
       o = ShapeUtil.ObjectIsGroup(a, e, t, r, i),
       p = (
-        e.codes[t].data.colorfilter & StyleConstant.SDRColorFilters.SD_NOCOLOR_ALL
-      ) === StyleConstant.SDRColorFilters.SD_NOCOLOR_ALL,
+        e.codes[t].data.colorfilter & StyleConstant.ColorFilters.NCAll
+      ) === StyleConstant.ColorFilters.NCAll,
       o ||
       p ||
       A ||
       (d = ShapeUtil.ObjectIsSymbol(a, e, t, r, i)),
-      e.codes[t].data.otype === ShapeConstant.ObjectTypes.SED_Shape &&
+      e.codes[t].data.otype === ShapeConstant.ObjectTypes.Shape &&
       (
         0 == (
-          e.codes[t].data.moreflags & OptConstant.ObjMoreFlags.SED_MF_ContainerChild
+          e.codes[t].data.moreflags & OptConstant.ObjMoreFlags.ContainerChild
         ) &&
         ShapeUtil.ObjectIsConnectorTextLabel(e, t, r, i) ||
         (
-          e.codes[t].data.objecttype === NvConstant.ObjectTypes.SD_OBJT_NG_EVENT_LABEL ||
-            e.codes[t].data.objecttype === NvConstant.ObjectTypes.SD_OBJT_MULTIPLICITY ||
-            e.codes[t].data.objecttype === NvConstant.ObjectTypes.SD_OBJT_MANUAL_EVENT_LABEL ? m = !0 : (m = ShapeUtil.ObjectIsExternalTextLabel(e, t, r, i, a)) &&
-            0 === e.codes[t].data.objecttype &&
+          e.codes[t].data.objecttype === NvConstant.FNObjectTypes.NgEventLabel ||
+            e.codes[t].data.objecttype === NvConstant.FNObjectTypes.Multiplicity /*||
+            e.codes[t].data.objecttype === NvConstant.FNObjectTypes.SD_OBJT_MANUAL_EVENT_LABEL*/ ? m = !0 : (m = ShapeUtil.ObjectIsExternalTextLabel(e, t, r, i, a)) &&
+            0 === e.codes[t].data.objecttype
+          /*&&
           (
-            e.codes[t].data.objecttype = NvConstant.ObjectTypes.SD_OBJT_MANUAL_EVENT_LABEL
-          )
+            e.codes[t].data.objecttype = NvConstant.FNObjectTypes.SD_OBJT_MANUAL_EVENT_LABEL
+          )*/
         )
       ),
       !(
@@ -4009,7 +4010,7 @@ class ShapeUtil {
           o,
           d,
           m,
-          i != ShapeConstant.OpNameCode.cDrawObjEnd
+          i != DSConstant.OpNameCode.cDrawObjEnd
         )
       )
     ) {
@@ -4030,13 +4031,13 @@ class ShapeUtil {
         a.LineTextObject = !1
     } else {
       if (!a.ReadBlocks || a.BlockzList.indexOf(n.UniqueID) >= 0) {
-        var N = T3Gv.stdObj.CreateBlock(StateConstant.StoredObjectType.BaseDrawingObject, n);
+        var N = T3Gv.stdObj.CreateBlock(StateConstant.StoredObjectType.BaseDrawObject, n);
         n = N.Data,
           a.zList.push(N.ID),
           a.objectcount = n.UniqueID,
           a.IDMap[n.UniqueID] = N.ID
       }
-      n.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.LINE &&
+      n.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Line &&
         (
           b = {},
           (c = ShapeUtil.GetLineText(a, a.objectcount, null, b)) >= 0 &&
@@ -4097,10 +4098,10 @@ class ShapeUtil {
           break;
         case r.cDrawText:
           ShapeUtil.ReadTextParams(n, e.codes[t].data, a),
-            n.DrawingObjectBaseClass !== OptConstant.DrawingObjectBaseClass.LINE &&
-            n.DrawingObjectBaseClass !== OptConstant.DrawingObjectBaseClass.CONNECTOR ||
+            n.DrawingObjectBaseClass !== OptConstant.DrawObjectBaseClass.Line &&
+            n.DrawingObjectBaseClass !== OptConstant.DrawObjectBaseClass.Connector ||
             (
-              n.TextDirection = 0 == (n.TextFlags & NvConstant.TextFlags.SED_TF_HorizText),
+              n.TextDirection = 0 == (n.TextFlags & NvConstant.TextFlags.HorizText),
               b &&
               b.TextGrow &&
               (n.TextGrow = b.TextGrow, n.TextWrapWidth = b.TextWrapWidth)
@@ -4112,12 +4113,12 @@ class ShapeUtil {
           if (a.textonline >= 0) if (a.textonline < a.objectcount) {
             if ((S = a.IDMap[a.textonline]) >= 0) if (
               (l = T3Gv.opt.GetObjectPtr(S, !1)) &&
-              l.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.CONNECTOR
+              l.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector
             ) l = n;
             else {
               if (
                 l &&
-                l.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.LINE
+                l.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Line
               ) {
                 if (
                   a.IsVisio &&
@@ -4132,7 +4133,7 @@ class ShapeUtil {
                   ),
                   l.StyleRecord.Fill.Paint = $.extend(!0, {
                   }, n.StyleRecord.Fill.Paint),
-                  l.TextDirection = 0 == (l.TextFlags & NvConstant.TextFlags.SED_TF_HorizText),
+                  l.TextDirection = 0 == (l.TextFlags & NvConstant.TextFlags.HorizText),
                   a.IsVisio &&
                   l.TextDirection
                 ) {
@@ -4144,7 +4145,7 @@ class ShapeUtil {
                     0 != n.RotationAngle ||
                     Utils2.IsEqual(k, 0) ||
                     (
-                      l.TextFlags = Utils2.SetFlag(l.TextFlags, NvConstant.TextFlags.SED_TF_HorizText, !0),
+                      l.TextFlags = Utils2.SetFlag(l.TextFlags, NvConstant.TextFlags.HorizText, !0),
                       l.TextDirection = !1
                     ),
                     l.VisioRotationDiff %= 180,
@@ -4160,8 +4161,8 @@ class ShapeUtil {
                     M = l.Frame.width,
                     P = l.Frame.height;
                   var U = Utils2.sqrt(M * M + P * P) - 40;
-                  U < OptConstant.Defines.SED_MinDim &&
-                    (U = OptConstant.Defines.SED_MinDim),
+                  U < OptConstant.Common.MinDim &&
+                    (U = OptConstant.Common.MinDim),
                     l.TextWrapWidth > U &&
                     (l.TextWrapWidth = U),
                     a.IsVisio &&
@@ -4192,17 +4193,17 @@ class ShapeUtil {
               a.textonline = - 1,
               a.textonlineid = - 1
             ),
-            n.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.SHAPE &&
+            n.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape &&
             (
-              n.TextFlags & NvConstant.TextFlags.SED_TF_AttachB &&
+              n.TextFlags & NvConstant.TextFlags.AttachB &&
               (
-                n.TextFlags = Utils2.SetFlag(n.TextFlags, NvConstant.TextFlags.SED_TF_AttachB, !1),
-                n.TextFlags = Utils2.SetFlag(n.TextFlags, NvConstant.TextFlags.SED_TF_None, !0)
+                n.TextFlags = Utils2.SetFlag(n.TextFlags, NvConstant.TextFlags.AttachB, !1),
+                n.TextFlags = Utils2.SetFlag(n.TextFlags, NvConstant.TextFlags.None, !0)
               ),
-              n.TextFlags & NvConstant.TextFlags.SED_TF_AttachA &&
+              n.TextFlags & NvConstant.TextFlags.AttachA &&
               (
-                n.TextFlags = Utils2.SetFlag(n.TextFlags, NvConstant.TextFlags.SED_TF_AttachA, !1),
-                n.TextFlags = Utils2.SetFlag(n.TextFlags, NvConstant.TextFlags.SED_TF_None, !0)
+                n.TextFlags = Utils2.SetFlag(n.TextFlags, NvConstant.TextFlags.AttachA, !1),
+                n.TextFlags = Utils2.SetFlag(n.TextFlags, NvConstant.TextFlags.None, !0)
               )
             );
           break;
@@ -4319,7 +4320,7 @@ class ShapeUtil {
           break;
         case r.cEmfHash:
           n.EMFHash = e.codes[t].data.name,
-            n.ShapeType === OptConstant.ShapeType.SVGFRAGMENTSYMBOL &&
+            n.ShapeType === OptConstant.ShapeType.SVGFragmentSymbol &&
               null == n.SVGFragment ? ShapeUtil.GetSVGFragment(a, n, n.EMFHash) : (
               n.SymbolURL = Constants.FilePath_HashSVG + n.EMFHash,
               n.SymbolURL = n.SymbolURL + '.svg'
@@ -4327,23 +4328,23 @@ class ShapeUtil {
           break;
         case r.cDrawJpg:
           n.ImageURL = e.codes[t].data.URL,
-            n.SetBlobBytes(e.codes[t].data.BlobBytes, ShapeConstant.Image_Dir.dir_jpg);
+            n.SetBlobBytes(e.codes[t].data.BlobBytes, DSConstant.Image_Dir.dir_jpg);
           break;
         case r.cDrawPng:
         case r.cDrawPreviewPng:
           n.ImageURL = e.codes[t].data.URL,
-            n.SetBlobBytes(e.codes[t].data.BlobBytes, ShapeConstant.Image_Dir.dir_png);
+            n.SetBlobBytes(e.codes[t].data.BlobBytes, DSConstant.Image_Dir.dir_png);
           break;
         case r.cOleStorage:
           n.SetOleBlobBytes(
             e.codes[t].data.BlobBytes,
-            ShapeConstant.Image_Dir.dir_store
+            DSConstant.Image_Dir.dir_store
           );
           break;
         case r.cDrawSvg:
           n.ImageURL = e.codes[t].data.URL;
           var J = e.codes[t].data.BlobBytes;
-          n.SetBlobBytes(J, ShapeConstant.Image_Dir.dir_svg),
+          n.SetBlobBytes(J, DSConstant.Image_Dir.dir_svg),
             n.SVGDim = Utils2.ParseSVGDimensions(J);
           break;
         case r.cDrawMeta:
@@ -4368,7 +4369,7 @@ class ShapeUtil {
               n.EMFHash &&
               n.EMFHash.length &&
               (
-                n.ShapeType === OptConstant.ShapeType.SVGFRAGMENTSYMBOL ? null == n.SVGFragment &&
+                n.ShapeType === OptConstant.ShapeType.SVGFragmentSymbol ? null == n.SVGFragment &&
                   v &&
                   ShapeUtil.GetSVGFragment(a, n, n.EMFHash) : _ ? (
                     n.SymbolURL = Constants.FilePath_HashSVG + n.EMFHash,
@@ -4381,10 +4382,10 @@ class ShapeUtil {
                 ),
 
                 (
-                  SDUI.Builder.bBuilderRunning ? n.ShapeType != OptConstant.ShapeType.SVGFRAGMENTSYMBOL ? SDUI.Builder.CheckSymbolURL('\\Symbols\\Hashes\\SVG\\' + n.EMFHash.toUpperCase() + '.svg') : SDUI.Builder.CheckSymbolURL(
+                  SDUI.Builder.bBuilderRunning ? n.ShapeType != OptConstant.ShapeType.SVGFragmentSymbol ? SDUI.Builder.CheckSymbolURL('\\Symbols\\Hashes\\SVG\\' + n.EMFHash.toUpperCase() + '.svg') : SDUI.Builder.CheckSymbolURL(
                     '\\Symbols\\Hashes\\SVGColor\\' + n.EMFHash.toUpperCase() + '.svg'
                   ) : SDUI.Builder.gInTemplateValidator &&
-                  n.ShapeType != OptConstant.ShapeType.SVGFRAGMENTSYMBOL &&
+                  n.ShapeType != OptConstant.ShapeType.SVGFragmentSymbol &&
                   SDUI.Builder.gCheckSymbolURL('\\Symbols\\Hashes\\SVG\\' + n.EMFHash.toUpperCase() + '.svg')
                 )
               )
@@ -4444,10 +4445,10 @@ class ShapeUtil {
       }
       t++
     }
-    return n.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.SHAPE &&
+    return n.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape &&
       (
-        n.TextFlags & NvConstant.TextFlags.SED_TF_AttachB ||
-        n.TextFlags & NvConstant.TextFlags.SED_TF_AttachA
+        n.TextFlags & NvConstant.TextFlags.AttachB ||
+        n.TextFlags & NvConstant.TextFlags.AttachA
       ) &&
       (c = ShapeUtil.GetLineText(a, a.objectcount, null, null)) >= 0 &&
       (n.DataID = c),
@@ -4472,13 +4473,13 @@ class ShapeUtil {
 
       if (isLineObject) {
         // For lines, set curve parameter directly
-        targetObject.curveparam = 100 * OptConstant.Defines.DefFixedRRect;
+        targetObject.curveparam = 100 * OptConstant.Common.DefFixedRRect;
       } else {
         // For shapes, set shape parameter and fixed rounded rectangle flag
-        targetObject.shapeparam = OptConstant.Defines.DefFixedRRect;
+        targetObject.shapeparam = OptConstant.Common.DefFixedRRect;
         targetObject.moreflags = Utils2.SetFlag(
           targetObject.moreflags,
-          OptConstant.ObjMoreFlags.SED_MF_FixedRR,
+          OptConstant.ObjMoreFlags.FixedRR,
           true
         );
       }
@@ -4504,7 +4505,7 @@ class ShapeUtil {
 
     // Set text growth behavior
     targetObject.TextGrow = sessionObject.def.textgrow;
-    targetObject.ObjGrow = OptConstant.GrowBehavior.ALL;
+    targetObject.ObjGrow = OptConstant.GrowBehavior.All;
 
     // Set text direction (left-to-right)
     targetObject.TextDirection = true;
@@ -4515,8 +4516,8 @@ class ShapeUtil {
     // Set form carriage return flag if present in session defaults
     targetObject.TextFlags = Utils2.SetFlag(
       targetObject.TextFlags,
-      NvConstant.TextFlags.SED_TF_FormCR,
-      (sessionObject.def.textflags & NvConstant.TextFlags.SED_TF_FormCR) > 0
+      NvConstant.TextFlags.FormCR,
+      (sessionObject.def.textflags & NvConstant.TextFlags.FormCR) > 0
     );
 
     // Copy text margins from session defaults
@@ -4567,10 +4568,10 @@ class ShapeUtil {
     targetObject.TextFlags = sourceData.textflags;
 
     // Special handling for floor plan wall objects
-    if (targetObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
+    if (targetObject.objecttype === NvConstant.FNObjectTypes.FlWall) {
       targetObject.TextFlags = Utils2.SetFlag(
         targetObject.TextFlags,
-        NvConstant.TextFlags.SED_TF_HorizText,
+        NvConstant.TextFlags.HorizText,
         true
       );
     }
@@ -4622,11 +4623,11 @@ class ShapeUtil {
 
           // Handle different object types differently
           switch (objectPtr.DrawingObjectBaseClass) {
-            case OptConstant.DrawingObjectBaseClass.CONNECTOR:
+            case OptConstant.DrawObjectBaseClass.Connector:
               // No special handling for connectors
               break;
 
-            case OptConstant.DrawingObjectBaseClass.SHAPE:
+            case OptConstant.DrawObjectBaseClass.Shape:
               // Transfer the text to the shape and clear it from the current object
               objectPtr.DataID = targetObject.DataID;
               targetObject.DataID = -1;
@@ -4639,7 +4640,7 @@ class ShapeUtil {
               objectPtr.DataID = targetObject.DataID;
               targetObject.DataID = -1;
               targetObject = objectPtr;
-              objectPtr.TextDirection = (objectPtr.TextFlags & NvConstant.TextFlags.SED_TF_HorizText) == 0;
+              objectPtr.TextDirection = (objectPtr.TextFlags & NvConstant.TextFlags.HorizText) == 0;
               resultObject.textonline = -1;
           }
         }
@@ -4679,7 +4680,7 @@ class ShapeUtil {
   static LineTypeToWin32Type(lineType, dataClass, shortReference, paramValue, weightValue, resultObject) {
     // Initialize with default object type of a direct line
     const win32TypeInfo = {
-      otype: ShapeConstant.ObjectTypes.SED_LineD,
+      otype: ShapeConstant.ObjectTypes.LineD,
       dataClass: dataClass,
       shortReference: shortReference,
       param: paramValue,
@@ -4690,87 +4691,87 @@ class ShapeUtil {
     switch (lineType) {
       case OptConstant.LineType.ARCLINE:
         // Arc line is a special type of chord
-        win32TypeInfo.shortReference = OptConstant.LineTypes.SedLsChord;
+        win32TypeInfo.shortReference = OptConstant.LineTypes.LsChord;
         win32TypeInfo.param = ShapeUtil.ToSDJSCoords(paramValue, resultObject.coordScaleFactor);
         break;
 
       case OptConstant.LineType.SEGLINE:
         // Segmented straight line
-        win32TypeInfo.otype = OptConstant.ObjectTypes.SED_SegL;
-        win32TypeInfo.dataClass = OptConstant.SeglTypes.SED_L_Line;
+        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SegL;
+        win32TypeInfo.dataClass = OptConstant.SeglTypes.Line;
         break;
 
       case OptConstant.LineType.ARCSEGLINE:
         // Segmented arc line
-        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SED_SegL;
-        win32TypeInfo.dataClass = OptConstant.SeglTypes.SED_L_Arc;
+        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SegL;
+        win32TypeInfo.dataClass = OptConstant.SeglTypes.Arc;
         break;
 
       case OptConstant.LineType.PARABOLA:
         // Parabolic curve
-        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SED_PolyL;
+        win32TypeInfo.otype = ShapeConstant.ObjectTypes.PolyL;
         win32TypeInfo.param = ShapeUtil.ToSDJSCoords(paramValue, resultObject.coordScaleFactor);
         win32TypeInfo.shortReference = ShapeUtil.ToSDJSCoords(shortReference, resultObject.coordScaleFactor);
         break;
 
       case OptConstant.LineType.NURBS:
         // Non-Uniform Rational B-Spline
-        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SED_NURBS;
+        win32TypeInfo.otype = ShapeConstant.ObjectTypes.Nurbs;
         break;
 
       case OptConstant.LineType.NURBSSEG:
         // Segmented NURBS
-        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SED_NURBSSEG;
+        win32TypeInfo.otype = ShapeConstant.ObjectTypes.NurbsSeg;
         break;
 
       case OptConstant.LineType.ELLIPSE:
         // Elliptical curve
-        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SED_ELLIPSE;
+        win32TypeInfo.otype = ShapeConstant.ObjectTypes.Ellipse;
         break;
 
       case OptConstant.LineType.ELLIPSEEND:
         // End segment of elliptical curve
-        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SED_ELLIPSEEND;
+        win32TypeInfo.otype = ShapeConstant.ObjectTypes.EllipseEnd;
         break;
 
       case OptConstant.LineType.QUADBEZ:
         // Quadratic Bezier curve
-        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SED_QUADBEZ;
+        win32TypeInfo.otype = ShapeConstant.ObjectTypes.Quadbez;
         break;
 
       case OptConstant.LineType.QUADBEZCON:
         // Connected quadratic Bezier curve
-        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SED_QUADBEZCON;
+        win32TypeInfo.otype = ShapeConstant.ObjectTypes.QuadbezCon;
         break;
 
       case OptConstant.LineType.CUBEBEZ:
         // Cubic Bezier curve
-        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SED_CUBEBEZ;
+        win32TypeInfo.otype = ShapeConstant.ObjectTypes.Cubebez;
         break;
 
       case OptConstant.LineType.CUBEBEZCON:
         // Connected cubic Bezier curve
-        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SED_CUBEBEZCON;
+        win32TypeInfo.otype = ShapeConstant.ObjectTypes.CubebezCon;
         break;
 
       case OptConstant.LineType.SPLINE:
         // Spline curve
-        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SED_SPLINE;
+        win32TypeInfo.otype = ShapeConstant.ObjectTypes.Spline;
         break;
 
       case OptConstant.LineType.SPLINECON:
         // Connected spline curve
-        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SED_SPLINECON;
+        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SplineCon;
         break;
 
       case OptConstant.LineType.MOVETO:
         // Move to point (without drawing)
-        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SED_MOVETO;
+        win32TypeInfo.otype = ShapeConstant.ObjectTypes.MoveTo;
         break;
 
       case OptConstant.LineType.MOVETO_NEWPOLY:
         // Move to point and start a new polygon
-        win32TypeInfo.otype = ShapeConstant.ObjectTypes.SED_MOVETO_NEWPOLY;
+        win32TypeInfo.otype = ShapeConstant.ObjectTypes.MoveToNewPoly;
         break;
     }
 
@@ -4977,7 +4978,7 @@ class ShapeUtil {
     }
 
     // Apply flipping to vertex array if needed
-    const flipFlags = OptConstant.ExtraFlags.SEDE_FlipHoriz | OptConstant.ExtraFlags.SEDE_FlipVert;
+    const flipFlags = OptConstant.ExtraFlags.FlipHoriz | OptConstant.ExtraFlags.FlipVert;
     if ((extraFlags & flipFlags) && vertexArray) {
       vertexArray = T3Gv.opt.FlipVertexArray(vertexArray, extraFlags);
     }
@@ -5077,8 +5078,8 @@ class ShapeUtil {
     // Handle text on line objects
     if (!skipAssociationCheck &&
       sourceData.associd >= 0 &&
-      sourceData.flags & NvConstant.ObjFlags.SEDO_Assoc &&
-      sourceData.otype === ShapeConstant.ObjectTypes.SED_Shape &&
+      sourceData.flags & NvConstant.ObjFlags.Assoc &&
+      sourceData.otype === ShapeConstant.ObjectTypes.Shape &&
       (sourceData.moreflags & OptConstant.ObjMoreFlags.SED_MF_VisioText) == 0) {
 
       skipTextLink = true;
@@ -5135,7 +5136,7 @@ class ShapeUtil {
 
     // Create appropriate shape instance based on object type
     switch (sourceData.otype) {
-      case ShapeConstant.ObjectTypes.SED_Shape:
+      case ShapeConstant.ObjectTypes.Shape:
         // Handle shape objects (rectangle, oval, polygon, etc.)
         initialBounds = sourceData.hgframe ?
           ShapeUtil.ToSDJSRect(sourceData.hgframe, resultObject.coordScaleFactor) :
@@ -5150,13 +5151,13 @@ class ShapeUtil {
         // Create appropriate shape instance based on object type
         if (isGroup) {
           shapeInstance = new Instance.Shape.GroupSymbol(objectConfig);
-        } else if (objectConfig.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
+        } else if (objectConfig.objecttype === NvConstant.FNObjectTypes.FlWall) {
           shapeInstance = new Instance.Shape.PolyLineContainer(objectConfig);
         } else if (isSymbol) {
           shapeInstance = new Instance.Shape.SVGFragmentSymbol(objectConfig);
-        } else if (objectConfig.objecttype === NvConstant.ObjectTypes.SD_OBJT_D3SYMBOL) {
+        } else if (objectConfig.objecttype === NvConstant.FNObjectTypes.D3Symbol) {
           shapeInstance = new Instance.Shape.D3Symbol(objectConfig);
-        } else if (objectConfig.objecttype === NvConstant.ObjectTypes.SD_OBJT_SHAPECONTAINER) {
+        } else if (objectConfig.objecttype === NvConstant.FNObjectTypes.ShapeContainer) {
           shapeInstance = new Instance.Shape.ShapeContainer(objectConfig);
         } else {
           shapeInstance = ShapeUtil.CreateShapeObject(objectConfig, sourceData, resultObject, sourceData.extraflags);
@@ -5165,19 +5166,19 @@ class ShapeUtil {
         shapeInstance.ResizeAspectConstrain = sourceData.objgrow === OptConstant.GrowBehavior.ProPortional;
         break;
 
-      case ShapeConstant.ObjectTypes.SED_LineD:
+      case ShapeConstant.ObjectTypes.LineD:
         // Handle direct line objects
         shapeInstance = ShapeUtil.CreateLineObject(objectConfig, sourceData, resultObject);
         break;
 
-      case ShapeConstant.ObjectTypes.SED_SegL:
+      case ShapeConstant.ObjectTypes.SegL:
         // Handle segmented line objects
-        shapeInstance = sourceData.dataclass === OptConstant.SeglTypes.SED_L_Arc ?
+        shapeInstance = sourceData.dataclass === OptConstant.SeglTypes.Arc ?
           new Instance.Shape.ArcSegmentedLine(objectConfig) :
           new Instance.Shape.SegmentedLine(objectConfig);
         break;
 
-      case ShapeConstant.ObjectTypes.SED_Array:
+      case ShapeConstant.ObjectTypes.Array:
         // Handle connector array objects
         objectConfig.fixedpoint = sourceData.lfixedpoint ?
           ShapeUtil.ToSDJSCoords(sourceData.lfixedpoint, resultObject.coordScaleFactor) :
@@ -5186,7 +5187,7 @@ class ShapeUtil {
         objectConfig.StartPoint = {};
         objectConfig.EndPoint = {};
 
-        if (sourceData.dataclass === ShapeConstant.LineSubclass.SED_LCV) {
+        if (sourceData.dataclass === OptConstant.LineSubclass.LCV) {
           // Vertical connector
           if (resultObject.GroupOffset.x) {
             objectConfig.fixedpoint += resultObject.GroupOffset.x;
@@ -5214,14 +5215,14 @@ class ShapeUtil {
         shapeInstance = new Instance.Shape.Connector(objectConfig);
         break;
 
-      case ShapeConstant.ObjectTypes.SED_PolyL:
+      case ShapeConstant.ObjectTypes.PolyL:
         // Handle polyline objects
-        shapeInstance = objectConfig.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL ?
+        shapeInstance = objectConfig.objecttype === NvConstant.FNObjectTypes.FlWall ?
           new Instance.Shape.PolyLineContainer(objectConfig) :
           new Instance.Shape.PolyLine(objectConfig);
         break;
 
-      case ShapeConstant.ObjectTypes.SED_Freehand:
+      case ShapeConstant.ObjectTypes.Freehand:
         // Handle freehand line objects
         shapeInstance = new Instance.Shape.FreehandLine(objectConfig);
         break;
@@ -5257,7 +5258,7 @@ class ShapeUtil {
 
       // Handle flags for older file versions
       if (resultObject.PVersion < ShapeUtil.SDF_PVERSION849) {
-        shapeInstance.flags = Utils2.SetFlag(shapeInstance.flags, NvConstant.ObjFlags.SEDO_NoTableLink, false);
+        shapeInstance.flags = Utils2.SetFlag(shapeInstance.flags, NvConstant.ObjFlags.NoTableLink, false);
       }
 
       shapeInstance.extraflags = sourceData.extraflags;
@@ -5266,7 +5267,7 @@ class ShapeUtil {
       shapeInstance.ObjGrow = sourceData.objgrow;
 
       // Set hook properties for non-array objects
-      if (sourceData.otype !== ShapeConstant.ObjectTypes.SED_Array) {
+      if (sourceData.otype !== ShapeConstant.ObjectTypes.Array) {
         shapeInstance.hookflags = sourceData.hookflags;
         shapeInstance.targflags = sourceData.targflags;
       }
@@ -5317,17 +5318,17 @@ class ShapeUtil {
         // Apply special handling for specific object types
         if (shapeInstance.objecttype) {
           switch (shapeInstance.objecttype) {
-            case NvConstant.ObjectTypes.SD_OBJT_SWIMLANE_ROWS:
-            case NvConstant.ObjectTypes.SD_OBJT_SWIMLANE_COLS:
-              // Set auto container flag for older file versions
-              if (resultObject.PVersion < ShapeUtil.SDF_PVERSION864) {
-                shapeInstance.moreflags = Utils2.SetFlag(
-                  shapeInstance.moreflags,
-                  OptConstant.ObjMoreFlags.SED_MF_AutoContainer,
-                  true
-                );
-              }
-              break;
+            // case NvConstant.FNObjectTypes.SwimLaneRows:
+            // case NvConstant.FNObjectTypes.SD_OBJT_SWIMLANE_COLS:
+            //   // Set auto container flag for older file versions
+            //   if (resultObject.PVersion < ShapeUtil.SDF_PVERSION864) {
+            //     shapeInstance.moreflags = Utils2.SetFlag(
+            //       shapeInstance.moreflags,
+            //       OptConstant.ObjMoreFlags.AutoContainer,
+            //       true
+            //     );
+            //   }
+            //   break;
           }
         }
 
@@ -5376,7 +5377,7 @@ class ShapeUtil {
         shapeInstance.StyleRecord = Utils1.DeepCopy(resultObject.sdp.def.style);
 
         // For shape objects, copy border style to line style
-        if (sourceData.otype === ShapeConstant.ObjectTypes.SED_Shape) {
+        if (sourceData.otype === ShapeConstant.ObjectTypes.Shape) {
           shapeInstance.StyleRecord.Line = Utils1.DeepCopy(resultObject.sdp.def.style.Border);
         }
       }
@@ -5408,7 +5409,7 @@ class ShapeUtil {
     resultObject.tLMB.layers = [];
 
     // Process layer data until we reach the end marker
-    while (codeData.codes[codeIndex].code != ShapeConstant.OpNameCode.cEndLayer) {
+    while (codeData.codes[codeIndex].code != DSConstant.OpNameCode.cEndLayer) {
       switch (codeData.codes[codeIndex].code) {
         case opCodes.cLayerFlags:
           // Create a new layer when we encounter layer flags
@@ -5453,7 +5454,7 @@ class ShapeUtil {
 
     // Rename default layer to use proper constant name
     if (resultObject.tLMB.nlayers === 1 && resultObject.tLMB.layers[0].name === 'Default') {
-      resultObject.tLMB.layers[0].name = OptConstant.Defines.DefaultLayerName;
+      resultObject.tLMB.layers[0].name = OptConstant.Common.DefaultLayerName;
     }
 
     return codeIndex;
@@ -5530,12 +5531,12 @@ class ShapeUtil {
 
     // Handle special file format versions and set coordinate scale factor
     if (resultObject.WriteWin32) {
-      ShapeUtil.WriteCVersion(dataStream, ShapeConstant.Platforms.SDF_SDJS, ShapeUtil.FVERSION2015);
+      ShapeUtil.WriteCVersion(dataStream, DSConstant.Platforms.SDF_SDJS, ShapeUtil.FVERSION2015);
       resultObject.coordScaleFactor = ShapeUtil.DRAWRES / T3Gv.docUtil.svgDoc.docInfo.docDpi;
     } else {
       ShapeUtil.WriteCVersion(
         dataStream,
-        ShapeConstant.Platforms.SDF_SDJS,
+        DSConstant.Platforms.SDF_SDJS,
         T3Gv.opt.FileVersion
       );
     }
@@ -5566,7 +5567,7 @@ class ShapeUtil {
       return null;
     } else {
       // Write end of file marker
-      dataStream.writeUint16(ShapeConstant.OpNameCode.cEndFile);
+      dataStream.writeUint16(DSConstant.OpNameCode.cEndFile);
 
       // Return raw buffer or Blob based on parameters
       return (isSelectOnly || returnRawBuffer) ? dataStream.buffer : new Blob([dataStream.buffer]);
@@ -5658,10 +5659,10 @@ class ShapeUtil {
     };
 
     // Write version code to the data stream
-    const codeOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cVersion);
+    const codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cVersion);
 
     // Write the version structure and its length
-    dataStream.writeStruct(ShapeConstant.VersionStruct, versionInfo);
+    dataStream.writeStruct(DSConstant.VersionStruct, versionInfo);
     ShapeUtil.WriteLength(dataStream, codeOffset);
   }
 
@@ -5677,7 +5678,7 @@ class ShapeUtil {
    * @param skipCodes - Array of codes to skip during header writing (optional)
    */
   static WriteHeader(dataStream, resultObject, skipCodes) {
-    const opCodes = ShapeConstant.OpNameCode;
+    const opCodes = DSConstant.OpNameCode;
     const exportPath = "";
 
     // Write basic header information
@@ -5831,7 +5832,7 @@ class ShapeUtil {
    */
   static WriteSelectHeader(dataStream, resultObject) {
     if (!resultObject.WriteGroupBlock) {
-      dataStream.writeUint16(ShapeConstant.OpNameCode.cHeaderEnd);
+      dataStream.writeUint16(DSConstant.OpNameCode.cHeaderEnd);
     }
   }
 
@@ -5846,7 +5847,7 @@ class ShapeUtil {
    * @param resultObject - The object containing window settings and configuration data
    */
   static WriteCHeader(dataStream, resultObject) {
-    const codeOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cHeader);
+    const codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cHeader);
 
     const headerData = {
       flags: 0,
@@ -5865,7 +5866,7 @@ class ShapeUtil {
       dateformat: resultObject.ctp.dateformat
     };
 
-    dataStream.writeStruct(ShapeConstant.HeaderStruct, headerData);
+    dataStream.writeStruct(DSConstant.HeaderStruct, headerData);
     ShapeUtil.WriteLength(dataStream, codeOffset);
   }
 
@@ -5880,12 +5881,12 @@ class ShapeUtil {
    * @param resultObject - The object containing page configuration and document settings
    */
   static WriteCPage(dataStream, resultObject) {
-    const codeOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cPage);
+    const codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cPage);
 
     // Calculate minimum size dimensions
     const minSizeDimensions = {
-      x: resultObject.ctp.Page.papersize.x - 2 * OptConstant.Defines.DefMargin,
-      y: resultObject.ctp.Page.papersize.y - 2 * OptConstant.Defines.DefMargin
+      x: resultObject.ctp.Page.papersize.x - 2 * OptConstant.Common.DefMargin,
+      y: resultObject.ctp.Page.papersize.y - 2 * OptConstant.Common.DefMargin
     };
 
     // Use actual minimum size if defined
@@ -5909,10 +5910,10 @@ class ShapeUtil {
         bottom: ShapeUtil.ToSDWinCoords(resultObject.ctp.Page.margins.bottom, resultObject.coordScaleFactor)
       },
       minmarg: {
-        left: OptConstant.Defines.DefMargin * resultObject.coordScaleFactor,
-        right: OptConstant.Defines.DefMargin * resultObject.coordScaleFactor,
-        top: OptConstant.Defines.DefMargin * resultObject.coordScaleFactor,
-        bottom: OptConstant.Defines.DefMargin * resultObject.coordScaleFactor
+        left: OptConstant.Common.DefMargin * resultObject.coordScaleFactor,
+        right: OptConstant.Common.DefMargin * resultObject.coordScaleFactor,
+        top: OptConstant.Common.DefMargin * resultObject.coordScaleFactor,
+        bottom: OptConstant.Common.DefMargin * resultObject.coordScaleFactor
       },
       landscape: resultObject.ctp.Page.landscape,
       wpapersize: 1,
@@ -5942,10 +5943,10 @@ class ShapeUtil {
         bottom: ShapeUtil.ToSDWinCoords(resultObject.ctp.Page.margins.bottom, resultObject.coordScaleFactor)
       },
       minmarg: {
-        left: OptConstant.Defines.DefMargin * resultObject.coordScaleFactor,
-        right: OptConstant.Defines.DefMargin * resultObject.coordScaleFactor,
-        top: OptConstant.Defines.DefMargin * resultObject.coordScaleFactor,
-        bottom: OptConstant.Defines.DefMargin * resultObject.coordScaleFactor
+        left: OptConstant.Common.DefMargin * resultObject.coordScaleFactor,
+        right: OptConstant.Common.DefMargin * resultObject.coordScaleFactor,
+        top: OptConstant.Common.DefMargin * resultObject.coordScaleFactor,
+        bottom: OptConstant.Common.DefMargin * resultObject.coordScaleFactor
       },
       landscape: resultObject.ctp.Page.landscape,
       printflags: resultObject.ctp.Page.printflags,
@@ -5966,9 +5967,9 @@ class ShapeUtil {
 
     // Write appropriate structure based on format
     if (resultObject.WriteWin32) {
-      dataStream.writeStruct(ShapeConstant.PageStruct62, fullPageData);
+      dataStream.writeStruct(DSConstant.PageStruct62, fullPageData);
     } else {
-      dataStream.writeStruct(ShapeConstant.PageStruct126, standardPageData);
+      dataStream.writeStruct(DSConstant.PageStruct126, standardPageData);
     }
 
     ShapeUtil.WriteLength(dataStream, codeOffset);
@@ -5993,7 +5994,7 @@ class ShapeUtil {
     }
 
     // Special handling for PolyLine tool
-    if (windowsLineIndex === SDUI.WindowsLineTools.indexOf(ShapeConstant.LineToolTypes.PolyLine)) {
+    if (windowsLineIndex === SDUI.WindowsLineTools.indexOf(DSConstant.LineToolTypes.PolyLine)) {
       windowsLineIndex++;
     }
 
@@ -6034,7 +6035,7 @@ class ShapeUtil {
   static WriteUIInfo(dataStream, resultObject) {
     let codeOffset;
     if (dataStream) {
-      codeOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cHeadUiInfo);
+      codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cHeadUiInfo);
     }
 
     // Initialize flags
@@ -6086,7 +6087,7 @@ class ShapeUtil {
     }
 
     // Write UI info data to the stream
-    dataStream.writeStruct(ShapeConstant.UIInfoStruct60, uiInfoData);
+    dataStream.writeStruct(DSConstant.UIInfoStruct60, uiInfoData);
     ShapeUtil.WriteLength(dataStream, codeOffset);
   }
 
@@ -6113,14 +6114,14 @@ class ShapeUtil {
     ShapeUtil.WriteString(
       dataStream,
       library.ItemId,
-      ShapeConstant.OpNameCode.cSearchLib,
+      DSConstant.OpNameCode.cSearchLib,
       resultObject
     );
 
     ShapeUtil.WriteString(
       dataStream,
       library.ContentTitle,
-      ShapeConstant.OpNameCode.cSearchLibName,
+      DSConstant.OpNameCode.cSearchLibName,
       resultObject
     );
 
@@ -6131,20 +6132,20 @@ class ShapeUtil {
       ShapeUtil.WriteString(
         dataStream,
         currentItem.ItemId,
-        ShapeConstant.OpNameCode.cSearchLibSymbolId,
+        DSConstant.OpNameCode.cSearchLibSymbolId,
         resultObject
       );
 
       ShapeUtil.WriteString(
         dataStream,
         currentItem.ContentTitle,
-        ShapeConstant.OpNameCode.cSearchLibSymbolName,
+        DSConstant.OpNameCode.cSearchLibSymbolName,
         resultObject
       );
     }
 
     // Write library end marker
-    dataStream.writeUint16(ShapeConstant.OpNameCode.cSearchLibEnd);
+    dataStream.writeUint16(DSConstant.OpNameCode.cSearchLibEnd);
   }
 
   /**
@@ -6159,11 +6160,11 @@ class ShapeUtil {
    * @param resultObject - Object containing context information for serialization
    */
   static WriteNativeID(dataStream, nativeId, resultObject) {
-    const codeOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cNativeId);
+    const codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cNativeId);
     const nativeIdData = {
       value: nativeId
     };
-    dataStream.writeStruct(ShapeConstant.LongValueStruct, nativeIdData);
+    dataStream.writeStruct(DSConstant.LongValueStruct, nativeIdData);
     ShapeUtil.WriteLength(dataStream, codeOffset);
   }
 
@@ -6180,11 +6181,11 @@ class ShapeUtil {
   //  * @param resultObject - Object containing context information for serialization
   //  */
   // static WriteTableID(dataStream, tableId, resultObject) {
-  //   const codeOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cTableId);
+  //   const codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cTableId);
   //   const tableIdData = {
   //     value: tableId
   //   };
-  //   dataStream.writeStruct(ShapeConstant.LongValueStruct, tableIdData);
+  //   dataStream.writeStruct(DSConstant.LongValueStruct, tableIdData);
   //   ShapeUtil.WriteLength(dataStream, codeOffset);
   // }
 
@@ -6205,7 +6206,7 @@ class ShapeUtil {
     const longValueData = {
       value: longValue
     };
-    dataStream.writeStruct(ShapeConstant.LongValueStruct, longValueData);
+    dataStream.writeStruct(DSConstant.LongValueStruct, longValueData);
     ShapeUtil.WriteLength(dataStream, codeOffset);
   }
 
@@ -6221,11 +6222,11 @@ class ShapeUtil {
    * @param resultObject - Object containing context information for serialization
    */
   static WriteGraphID(dataStream, graphId, resultObject) {
-    const codeOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cGraphId);
+    const codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cGraphId);
     const graphIdData = {
       value: graphId
     };
-    dataStream.writeStruct(ShapeConstant.LongValueStruct, graphIdData);
+    dataStream.writeStruct(DSConstant.LongValueStruct, graphIdData);
     ShapeUtil.WriteLength(dataStream, codeOffset);
   }
 
@@ -6241,11 +6242,11 @@ class ShapeUtil {
    * @param resultObject - Object containing context information for serialization
    */
   static WriteExpandedViewID(dataStream, expandedViewId, resultObject) {
-    const codeOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cExpandedViewId);
+    const codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cExpandedViewId);
     const expandedViewData = {
       value: expandedViewId
     };
-    dataStream.writeStruct(ShapeConstant.LongValueStruct, expandedViewData);
+    dataStream.writeStruct(DSConstant.LongValueStruct, expandedViewData);
     ShapeUtil.WriteLength(dataStream, codeOffset);
   }
 
@@ -6261,11 +6262,11 @@ class ShapeUtil {
    * @param resultObject - Object containing context information for serialization
    */
   static WriteGanttInfoID(dataStream, ganttInfoId, resultObject) {
-    const codeOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cGanttInfoId);
+    const codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cGanttInfoId);
     const ganttInfoData = {
       value: ganttInfoId
     };
-    dataStream.writeStruct(ShapeConstant.LongValueStruct, ganttInfoData);
+    dataStream.writeStruct(DSConstant.LongValueStruct, ganttInfoData);
     ShapeUtil.WriteLength(dataStream, codeOffset);
   }
 
@@ -6281,11 +6282,11 @@ class ShapeUtil {
    * @param resultObject - Object containing context information for serialization
    */
   static WriteCellNoteID(dataStream, cellNoteId, resultObject) {
-    const codeOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cNoteId);
+    const codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cNoteId);
     const cellNoteData = {
       value: cellNoteId
     };
-    dataStream.writeStruct(ShapeConstant.LongValueStruct, cellNoteData);
+    dataStream.writeStruct(DSConstant.LongValueStruct, cellNoteData);
     ShapeUtil.WriteLength(dataStream, codeOffset);
   }
 
@@ -6302,12 +6303,12 @@ class ShapeUtil {
    * @param resultObject - Object containing context information for serialization
    */
   static WriteBlobBytesID(dataStream, blobBytesId, blobType, resultObject) {
-    const codeOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cImageId);
+    const codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cImageId);
     const blobBytesData = {
       value: blobBytesId,
       type: blobType
     };
-    dataStream.writeStruct(ShapeConstant.LongValue2Struct, blobBytesData);
+    dataStream.writeStruct(DSConstant.LongValue2Struct, blobBytesData);
     ShapeUtil.WriteLength(dataStream, codeOffset);
   }
 
@@ -6324,12 +6325,12 @@ class ShapeUtil {
    * @param resultObject - Object containing context information for serialization
    */
   static WriteEMFBlobBytesID(dataStream, emfBlobBytesId, emfBlobType, resultObject) {
-    const codeOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cEmfId);
+    const codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cEmfId);
     const emfBlobData = {
       value: emfBlobBytesId,
       type: emfBlobType
     };
-    dataStream.writeStruct(ShapeConstant.LongValue2Struct, emfBlobData);
+    dataStream.writeStruct(DSConstant.LongValue2Struct, emfBlobData);
     ShapeUtil.WriteLength(dataStream, codeOffset);
   }
 
@@ -6346,12 +6347,12 @@ class ShapeUtil {
    * @param resultObject - Object containing context information for serialization
    */
   static WriteOleBlobBytesID(dataStream, oleBlobBytesId, oleBlobType, resultObject) {
-    const codeOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cOleStorageId);
+    const codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cOleStorageId);
     const oleBlobData = {
       value: oleBlobBytesId,
       type: oleBlobType
     };
-    dataStream.writeStruct(ShapeConstant.LongValue2Struct, oleBlobData);
+    dataStream.writeStruct(DSConstant.LongValue2Struct, oleBlobData);
     ShapeUtil.WriteLength(dataStream, codeOffset);
   }
 
@@ -6389,13 +6390,13 @@ class ShapeUtil {
    * @param resultObject - The result object whose fontlist will be populated
    */
   static BuildBlockFontList(resultObject) {
-    const fontCount = ShapeConstant.WebFonts.length;
+    const fontCount = DSConstant.WebFonts.length;
 
     for (let fontIndex = 0; fontIndex < fontCount; fontIndex++) {
       const fontRecord = new ShapeUtil.FontRecord(
         fontIndex,
-        ShapeConstant.WebFonts[fontIndex].Name,
-        ShapeConstant.WebFonts[fontIndex].Category
+        DSConstant.WebFonts[fontIndex].Name,
+        DSConstant.WebFonts[fontIndex].Category
       );
 
       resultObject.fontlist.push(fontRecord);
@@ -6421,19 +6422,19 @@ class ShapeUtil {
     // Map font type to Windows font family constants
     switch (fontRecord.fontType) {
       case 'serif':
-        fontFamilyValue = ShapeConstant.FontFamily.FF_ROMAN;
+        fontFamilyValue = DSConstant.FontFamily.FF_ROMAN;
         break;
       case 'sanserif':
-        fontFamilyValue = ShapeConstant.FontFamily.FF_SWISS;
+        fontFamilyValue = DSConstant.FontFamily.FF_SWISS;
         break;
       case 'fixed':
-        fontFamilyValue = ShapeConstant.FontFamily.FF_MODERN;
+        fontFamilyValue = DSConstant.FontFamily.FF_MODERN;
         break;
       case 'script':
-        fontFamilyValue = ShapeConstant.FontFamily.FF_SCRIPT;
+        fontFamilyValue = DSConstant.FontFamily.FF_SCRIPT;
         break;
       case 'decorative':
-        fontFamilyValue = ShapeConstant.FontFamily.FF_DECORATIVE;
+        fontFamilyValue = DSConstant.FontFamily.FF_DECORATIVE;
         break;
     }
 
@@ -6492,19 +6493,19 @@ class ShapeUtil {
 
     switch (justificationValue) {
       case 'top':
-        windowsJustValue = TextConstant.TextJust.TA_TOP;
+        windowsJustValue = TextConstant.TextJust.Top;
         break;
       case 'left':
-        windowsJustValue = TextConstant.TextJust.TA_LEFT;
+        windowsJustValue = TextConstant.TextJust.Left;
         break;
       case 'bottom':
-        windowsJustValue = TextConstant.TextJust.TA_BOTTOM;
+        windowsJustValue = TextConstant.TextJust.Bottom;
         break;
       case 'right':
-        windowsJustValue = TextConstant.TextJust.TA_RIGHT;
+        windowsJustValue = TextConstant.TextJust.Right;
         break;
       default:
-        windowsJustValue = TextConstant.TextJust.TA_CENTER;
+        windowsJustValue = TextConstant.TextJust.Center;
     }
 
     return windowsJustValue;
@@ -6528,7 +6529,7 @@ class ShapeUtil {
       return;
     }
 
-    const opCodes = ShapeConstant.OpNameCode;
+    const opCodes = DSConstant.OpNameCode;
 
     // Write texture list header
     const listCodeOffset = ShapeUtil.WriteCode(dataStream, opCodes.oTextureList);
@@ -6583,7 +6584,7 @@ class ShapeUtil {
 
       // Write texture properties
       let codeOffset = ShapeUtil.WriteCode(dataStream, opCodes.oTexture);
-      dataStream.writeStruct(ShapeConstant.TextureStruct, textureData);
+      dataStream.writeStruct(DSConstant.TextureStruct, textureData);
       ShapeUtil.WriteLength(dataStream, codeOffset);
 
       // Write texture scaling information
@@ -6597,14 +6598,14 @@ class ShapeUtil {
       };
 
       codeOffset = ShapeUtil.WriteCode(dataStream, opCodes.oTextureExtra);
-      dataStream.writeStruct(ShapeConstant.TextureExtraStruct, textureScaleData);
+      dataStream.writeStruct(DSConstant.TextureExtraStruct, textureScaleData);
       ShapeUtil.WriteLength(dataStream, codeOffset);
 
       // Write texture name
       ShapeUtil.WriteString(dataStream, texture.name, opCodes.oTextureName, resultObject);
 
       // Write binary data for custom textures
-      if (!(texture.flags & ShapeConstant.TextureFlags.SD_Tx_Std) && texture.BlobBytes) {
+      if (!(texture.flags & DSConstant.TextureFlags.SD_Tx_Std) && texture.BlobBytes) {
         ShapeUtil.WriteBlob(dataStream, texture.BlobBytes, opCodes.oTextureData);
       }
     }
@@ -6638,7 +6639,7 @@ class ShapeUtil {
     let lastConnectorIndex = -1;
     let connectorBlockId = -1;
     let textObject = {};
-    let skipCount = OptConstant.ConnectorDefines.SEDA_NSkip;
+    let skipCount = OptConstant.ConnectorDefines.NSkip;
 
     // Build style list for all objects to be written
     ShapeUtil.BuildStyleList(resultObject);
@@ -6653,7 +6654,7 @@ class ShapeUtil {
       dataStream,
       sessionData.def.style.Line,
       resultObject,
-      ShapeConstant.OpNameCode.cBeginLine,
+      DSConstant.OpNameCode.cBeginLine,
       null
     );
     ShapeUtil.WriteSDFill(dataStream, sessionData.background, resultObject);
@@ -6675,8 +6676,8 @@ class ShapeUtil {
 
       let rectObject = new Instance.Shape.Rect(textObject);
       rectObject.tstyleindex = resultObject.TextStyleIndex;
-      rectObject.flags = Utils2.SetFlag(rectObject.flags, NvConstant.ObjFlags.SEDO_Assoc, true);
-      rectObject.flags = Utils2.SetFlag(rectObject.flags, NvConstant.ObjFlags.SEDO_TextOnly, true);
+      rectObject.flags = Utils2.SetFlag(rectObject.flags, NvConstant.ObjFlags.Assoc, true);
+      rectObject.flags = Utils2.SetFlag(rectObject.flags, NvConstant.ObjFlags.TextOnly, true);
       rectObject.TextGrow = NvConstant.TextGrowBehavior.Horizontal;
       rectObject.hooks.push(new Hook(0, null, -1, 0, {
         x: 0,
@@ -6706,7 +6707,7 @@ class ShapeUtil {
           rectObject.associd = connectorBlockId;
           connectorObject = T3Gv.opt.GetObjectPtr(resultObject.UniqueMap[lastConnectorIndex], false);
 
-          let isLinearConnector = connectorObject.arraylist.styleflags & OptConstant.SEDA_Styles.SEDA_Linear;
+          let isLinearConnector = connectorObject.arraylist.styleflags & OptConstant.AStyles.Linear;
           textAlign = ShapeUtil.TextAlignToWin(connectorObject.TextAlign);
           hookData = ShapeUtil.SetHookByJust(textAlign.just, textAlign.vjust, rectObject.hooks[0].connect);
 
@@ -6733,7 +6734,7 @@ class ShapeUtil {
           }
 
           // Set fill type based on vertical justification
-          if (textAlign.vjust === TextConstant.TextJust.TA_CENTER) {
+          if (textAlign.vjust === TextConstant.TextJust.Center) {
             rectObject.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.Solid;
           } else {
             rectObject.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.Transparent;
@@ -6742,7 +6743,7 @@ class ShapeUtil {
           // Handle text for non-connector objects
           currentObject = T3Gv.opt.GetObjectPtr(resultObject.UniqueMap[uniqueMapIndex - 1], false);
 
-          if (currentObject && currentObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.LINE) {
+          if (currentObject && currentObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Line) {
             // Handle line text
             textAlign = ShapeUtil.TextAlignToWin(currentObject.TextAlign);
             hookData = ShapeUtil.SetHookByJust(textAlign.just, textAlign.vjust, rectObject.hooks[0].connect);
@@ -6757,19 +6758,19 @@ class ShapeUtil {
               rectObject.trect.width = currentObject.TextWrapWidth;
               rectObject.r.width = currentObject.TextWrapWidth;
             }
-          } else if (currentObject && currentObject.TextFlags & NvConstant.TextFlags.SED_TF_AttachB) {
+          } else if (currentObject && currentObject.TextFlags & NvConstant.TextFlags.AttachB) {
             // Handle bottom-attached text
-            rectObject.hooks[0].hookpt = OptConstant.HookPts.SED_KTC;
+            rectObject.hooks[0].hookpt = OptConstant.HookPts.KTC;
             rectObject.hooks[0].connect = new Point(
-              OptConstant.Defines.SED_CDim / 2,
-              OptConstant.Defines.SED_CDim
+              OptConstant.Common.MaxDim / 2,
+              OptConstant.Common.MaxDim
             );
             rectObject.hooks[0].objid = resultObject.UniqueMap[uniqueMapIndex - 1];
             rectObject.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.Transparent;
-          } else if (currentObject && currentObject.TextFlags & NvConstant.TextFlags.SED_TF_AttachA) {
+          } else if (currentObject && currentObject.TextFlags & NvConstant.TextFlags.AttachA) {
             // Handle top-attached text
-            rectObject.hooks[0].hookpt = OptConstant.HookPts.SED_KBC;
-            rectObject.hooks[0].connect = new Point(OptConstant.Defines.SED_CDim / 2, 0);
+            rectObject.hooks[0].hookpt = OptConstant.HookPts.KBC;
+            rectObject.hooks[0].connect = new Point(OptConstant.Common.MaxDim / 2, 0);
             rectObject.hooks[0].objid = resultObject.UniqueMap[uniqueMapIndex - 1];
             rectObject.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.Transparent;
           }
@@ -6781,7 +6782,7 @@ class ShapeUtil {
         currentObject = T3Gv.opt.GetObjectPtr(objectId, false);
 
         if (currentObject) {
-          if (currentObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.CONNECTOR) {
+          if (currentObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
             lastConnectorIndex = uniqueMapIndex;
             connectorBlockId = currentObject.BlockID;
           } else {
@@ -6803,7 +6804,7 @@ class ShapeUtil {
     }
 
     // Write the drawing end marker
-    dataStream.writeUint16(ShapeConstant.OpNameCode.cDraw12End);
+    dataStream.writeUint16(DSConstant.OpNameCode.cDraw12End);
   }
 
   /**
@@ -6831,8 +6832,8 @@ class ShapeUtil {
       fractionaldenominator: resultObject.rulerConfig.fractionaldenominator
     };
 
-    const codeOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.oRuler);
-    dataStream.writeStruct(ShapeConstant.RulerStruct52, rulerData);
+    const codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.oRuler);
+    dataStream.writeStruct(DSConstant.RulerStruct52, rulerData);
     ShapeUtil.WriteLength(dataStream, codeOffset);
   }
 
@@ -6854,7 +6855,7 @@ class ShapeUtil {
       resultObject.WriteGroupBlock === 0
     ) {
       // Write list begin marker
-      const codeOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cRecentSymbolsBegin);
+      const codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cRecentSymbolsBegin);
       ShapeUtil.WriteLength(dataStream, codeOffset);
 
       const symbolCount = resultObject.sdp.RecentSymbols.length;
@@ -6867,7 +6868,7 @@ class ShapeUtil {
         ShapeUtil.WriteString(
           dataStream,
           symbolItem.ItemId,
-          ShapeConstant.OpNameCode.cRecentSymbolId,
+          DSConstant.OpNameCode.cRecentSymbolId,
           resultObject
         );
 
@@ -6876,7 +6877,7 @@ class ShapeUtil {
         ShapeUtil.WriteString(
           dataStream,
           menuVisibilitySetting,
-          ShapeConstant.OpNameCode.cRecentSymbolNoMenu,
+          DSConstant.OpNameCode.cRecentSymbolNoMenu,
           resultObject
         );
 
@@ -6884,13 +6885,13 @@ class ShapeUtil {
         ShapeUtil.WriteString(
           dataStream,
           symbolItem.ContentTitle,
-          ShapeConstant.OpNameCode.cRecentSymbolName,
+          DSConstant.OpNameCode.cRecentSymbolName,
           resultObject
         );
       }
 
       // Write list end marker
-      dataStream.writeUint16(ShapeConstant.OpNameCode.cRecentSymbolsEnd);
+      dataStream.writeUint16(DSConstant.OpNameCode.cRecentSymbolsEnd);
     }
   }
 
@@ -6914,7 +6915,7 @@ class ShapeUtil {
     };
 
     // Write layer begin marker
-    const beginCodeOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cBeginLayer);
+    const beginCodeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cBeginLayer);
     ShapeUtil.WriteLength(dataStream, beginCodeOffset);
 
     // Write each layer definition
@@ -6922,7 +6923,7 @@ class ShapeUtil {
       currentLayer = layerArray[layerIndex];
 
       // Write layer flags
-      const flagsCodeOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cLayerFlags);
+      const flagsCodeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cLayerFlags);
       dataStream.writeUint32(currentLayer.flags);
       ShapeUtil.WriteLength(dataStream, flagsCodeOffset);
 
@@ -6930,12 +6931,12 @@ class ShapeUtil {
       ShapeUtil.WriteString(
         dataStream,
         currentLayer.name,
-        ShapeConstant.OpNameCode.cLayerName,
+        DSConstant.OpNameCode.cLayerName,
         resultObject
       );
 
       // Write layer type
-      const typeCodeOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cLayerType);
+      const typeCodeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cLayerType);
       dataStream.writeUint32(currentLayer.layertype);
       ShapeUtil.WriteLength(dataStream, typeCodeOffset);
 
@@ -6944,14 +6945,14 @@ class ShapeUtil {
         layerListData.n = currentLayer.zList.length;
         layerListData.zList = currentLayer.zList;
 
-        const listCodeOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cLayerList);
-        dataStream.writeStruct(ShapeConstant.LayerListStruct, layerListData);
+        const listCodeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cLayerList);
+        dataStream.writeStruct(DSConstant.LayerListStruct, layerListData);
         ShapeUtil.WriteLength(dataStream, listCodeOffset);
       }
     }
 
     // Write layer end marker
-    dataStream.writeUint16(ShapeConstant.OpNameCode.cEndLayer);
+    dataStream.writeUint16(DSConstant.OpNameCode.cEndLayer);
   }
 
   /**
@@ -6989,7 +6990,7 @@ class ShapeUtil {
         // Use SED_DNULL if cellId is null
         cellId = standardLinks[linkIndex].cellid;
         if (cellId == null) {
-          cellId = OptConstant.Defines.SED_DNULL;
+          cellId = OptConstant.Common.DNull;
         }
 
         // Create link data structure for this link
@@ -7009,7 +7010,7 @@ class ShapeUtil {
       // Process text links
       for (let linkIndex = 0; linkIndex < textLinkCount; linkIndex++) {
         // Text links always use SED_DNULL for cellId
-        cellId = OptConstant.Defines.SED_DNULL;
+        cellId = OptConstant.Common.DNull;
 
         // Create link data structure for this text link
         linkData = {
@@ -7026,8 +7027,8 @@ class ShapeUtil {
       }
 
       // Write the links to the data stream
-      const codeOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cDrawLink);
-      dataStream.writeStruct(ShapeConstant.LinkListStruct, linkListData);
+      const codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cDrawLink);
+      dataStream.writeStruct(DSConstant.LinkListStruct, linkListData);
       ShapeUtil.WriteLength(dataStream, codeOffset);
     }
   }
@@ -7085,7 +7086,7 @@ class ShapeUtil {
     objectCount = resultObject.zList.length;
 
     // Get default text block style and create variants for text objects
-    const defaultTextStyle = new QuickStyle();//ShapeConstant.FindStyle(OptConstant.Defines.TextBlockStyle);
+    const defaultTextStyle = new QuickStyle();//DSConstant.FindStyle(OptConstant.Common.TextBlockStyle);
     const transparentTextStyle = Utils1.DeepCopy(defaultTextStyle);
     const tableCellStyle = Utils1.DeepCopy(defaultTextStyle);
 
@@ -7132,9 +7133,9 @@ class ShapeUtil {
       objectsProcessed++;
 
       // Handle text objects associated with lines or with attachment points
-      if ((currentObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.LINE ||
-        currentObject.TextFlags & NvConstant.TextFlags.SED_TF_AttachB ||
-        currentObject.TextFlags & NvConstant.TextFlags.SED_TF_AttachA) &&
+      if ((currentObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Line ||
+        currentObject.TextFlags & NvConstant.TextFlags.AttachB ||
+        currentObject.TextFlags & NvConstant.TextFlags.AttachA) &&
         currentObject.DataID > 0) {
 
         // Add text object ID (negative to indicate it's a text object)
@@ -7208,12 +7209,12 @@ class ShapeUtil {
     // Process arrow styles and flags
     let startArrow = sessionData.d_sarrow;
     if (sessionData.d_sarrowdisp) {
-      startArrow += ShapeConstant.ArrowMasks.ARROW_DISP;
+      startArrow += DSConstant.ArrowMasks.ARROW_DISP;
     }
 
     let endArrow = sessionData.d_earrow;
     if (sessionData.d_earrowdisp) {
-      endArrow += ShapeConstant.ArrowMasks.ARROW_DISP;
+      endArrow += DSConstant.ArrowMasks.ARROW_DISP;
     }
 
     // Create default graph settings
@@ -7288,11 +7289,11 @@ class ShapeUtil {
     };
 
     // Write appropriate structure based on format
-    const codeOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cDraw12);
+    const codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cDraw12);
     if (resultObject.WriteWin32) {
-      dataStream.writeStruct(ShapeConstant.CDraw12Struct364, drawingData);
+      dataStream.writeStruct(DSConstant.CDraw12Struct364, drawingData);
     } else {
-      dataStream.writeStruct(ShapeConstant.CDraw12Struct440, drawingData);
+      dataStream.writeStruct(DSConstant.CDraw12Struct440, drawingData);
     }
 
     ShapeUtil.WriteLength(dataStream, codeOffset);
@@ -7314,7 +7315,7 @@ class ShapeUtil {
    */
   static WriteStyle(dataStream, styleRecord, useBorder, resultObject, styleObject) {
     // Write style begin code and name
-    const codeOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cBeginStyle);
+    const codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cBeginStyle);
     dataStream.writeUCS2String(styleRecord.Name, T3DataStream.LITTLE_ENDIAN, styleRecord.Name.length + 1);
     ShapeUtil.WriteLength(dataStream, codeOffset);
 
@@ -7329,7 +7330,7 @@ class ShapeUtil {
         dataStream,
         styleRecord.Border,
         resultObject,
-        ShapeConstant.OpNameCode.cBeginLine,
+        DSConstant.OpNameCode.cBeginLine,
         styleObject
       );
     } else {
@@ -7337,7 +7338,7 @@ class ShapeUtil {
         dataStream,
         styleRecord.Line,
         resultObject,
-        ShapeConstant.OpNameCode.cBeginLine,
+        DSConstant.OpNameCode.cBeginLine,
         styleObject
       );
     }
@@ -7349,7 +7350,7 @@ class ShapeUtil {
     ShapeUtil.WriteOutside(dataStream, styleRecord.OutsideEffect);
 
     // Write style end marker
-    dataStream.writeUint16(ShapeConstant.OpNameCode.cEndStyle);
+    dataStream.writeUint16(DSConstant.OpNameCode.cEndStyle);
   }
 
   /**
@@ -7369,7 +7370,7 @@ class ShapeUtil {
     let styleIndex;
 
     // Write style list begin marker
-    ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cBeginStyleList);
+    ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cBeginStyleList);
 
     // Write each style in the array
     styleCount = styleArray.length;
@@ -7378,7 +7379,7 @@ class ShapeUtil {
     }
 
     // Write style list end marker
-    dataStream.writeUint16(ShapeConstant.OpNameCode.cEndStyleList);
+    dataStream.writeUint16(DSConstant.OpNameCode.cEndStyleList);
   }
 
   /**
@@ -7394,14 +7395,14 @@ class ShapeUtil {
    */
   static WriteSDFill(dataStream, fillData, resultObject) {
     // Write fill begin marker
-    ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cBeginFill);
+    ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cBeginFill);
 
     // Write paint properties with white as default color
     ShapeUtil.WritePaint(dataStream, fillData.Paint, NvConstant.Colors.White, resultObject);
 
     // Write hatch pattern if present
     if (fillData.Hatch) {
-      const codeOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cHatch);
+      const codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cHatch);
       dataStream.writeUint32(fillData.Hatch);
       ShapeUtil.WriteLength(dataStream, codeOffset);
     }
@@ -7412,7 +7413,7 @@ class ShapeUtil {
     }
 
     // Write fill end marker
-    dataStream.writeUint16(ShapeConstant.OpNameCode.cEndFill);
+    dataStream.writeUint16(DSConstant.OpNameCode.cEndFill);
   }
 
   /**
@@ -7446,31 +7447,31 @@ class ShapeUtil {
     }
 
     // Special handling for Gantt bars - use filled line
-    if (styleObject && styleObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_GANTT_BAR) {
+    if (styleObject && styleObject.objecttype === NvConstant.FNObjectTypes.SD_OBJT_GANTT_BAR) {
       fillLineThickness = lineThickness / 2;
       lineThickness = 0;
       linePattern = resultObject.WriteWin32
-        ? ShapeConstant.WinLinePatterns.SEP_FilledLine
-        : ShapeConstant.LinePatternData.indexOf(lineData.LinePattern) + 1;
+        ? DSConstant.WinLinePatterns.SEP_FilledLine
+        : DSConstant.LinePatternData.indexOf(lineData.LinePattern) + 1;
     }
     // Normal line pattern handling
     else {
-      linePattern = ShapeConstant.LinePatternData.indexOf(lineData.LinePattern) + 1;
+      linePattern = DSConstant.LinePatternData.indexOf(lineData.LinePattern) + 1;
       if (linePattern < 1) {
         linePattern = 1;  // Default to solid line if pattern not found
       }
     }
 
     // Special handling for floor plan walls
-    if (styleObject && styleObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL &&
+    if (styleObject && styleObject.objecttype === NvConstant.FNObjectTypes.FlWall &&
       fillLineThickness === 0 &&
-      (styleObject.StyleRecord.Line.LinePattern === ShapeConstant.WinLinePatterns.SEP_Solid ||
-        styleObject.StyleRecord.Line.LinePattern === ShapeConstant.WinLinePatterns.SEP_None)) {
+      (styleObject.StyleRecord.Line.LinePattern === DSConstant.WinLinePatterns.SEP_Solid ||
+        styleObject.StyleRecord.Line.LinePattern === DSConstant.WinLinePatterns.SEP_None)) {
       fillLineThickness = lineThickness / 2;
       lineThickness = 0;
       linePattern = resultObject.WriteWin32
-        ? ShapeConstant.WinLinePatterns.SEP_FilledLine
-        : ShapeConstant.LinePatternData.indexOf(lineData.LinePattern) + 1;
+        ? DSConstant.WinLinePatterns.SEP_FilledLine
+        : DSConstant.LinePatternData.indexOf(lineData.LinePattern) + 1;
     }
 
     // Create and write line data structure
@@ -7481,9 +7482,9 @@ class ShapeUtil {
 
     // Write appropriate structure based on format
     if (resultObject.WriteWin32) {
-      dataStream.writeStruct(ShapeConstant.BeginLineStruct8, lineStruct);
+      dataStream.writeStruct(DSConstant.BeginLineStruct8, lineStruct);
     } else {
-      dataStream.writeStruct(ShapeConstant.BeginLineStruct14, lineStruct);
+      dataStream.writeStruct(DSConstant.BeginLineStruct14, lineStruct);
     }
 
     ShapeUtil.WriteLength(dataStream, codeOffset);
@@ -7498,14 +7499,14 @@ class ShapeUtil {
         color: ShapeUtil.HTMLColorToWin(lineData.Paint.Color)
       };
 
-      const filledLineOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cFilledLine);
-      dataStream.writeStruct(ShapeConstant.FilledLineStruct, filledLineData);
+      const filledLineOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cFilledLine);
+      dataStream.writeStruct(DSConstant.FilledLineStruct, filledLineData);
       ShapeUtil.WriteLength(dataStream, filledLineOffset);
     }
 
     // Write hatch pattern if present
     if (lineData.Hatch) {
-      const hatchOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cHatch);
+      const hatchOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cHatch);
       dataStream.writeUint32(lineData.Hatch);
       ShapeUtil.WriteLength(dataStream, hatchOffset);
     }
@@ -7516,7 +7517,7 @@ class ShapeUtil {
     }
 
     // Write line end marker
-    dataStream.writeUint16(ShapeConstant.OpNameCode.cEndLine);
+    dataStream.writeUint16(DSConstant.OpNameCode.cEndLine);
   }
 
   /**
@@ -7531,7 +7532,7 @@ class ShapeUtil {
    * @param resultObject - Object containing font lists, coordinate scale factors, and context information
    */
   static WriteSDTxf(dataStream, textFormatting, resultObject) {
-    const codeOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cBeginTextf);
+    const codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cBeginTextf);
 
     const textFormattingData = {
       fontid: ShapeUtil.GetFontID(textFormatting.FontName, resultObject.fontlist),
@@ -7539,7 +7540,7 @@ class ShapeUtil {
       face: textFormatting.Face
     };
 
-    dataStream.writeStruct(ShapeConstant.BeginTextfStruct, textFormattingData);
+    dataStream.writeStruct(DSConstant.BeginTextfStruct, textFormattingData);
     ShapeUtil.WriteLength(dataStream, codeOffset);
 
     // Write text color properties
@@ -7551,7 +7552,7 @@ class ShapeUtil {
     }
 
     // Write text formatting end marker
-    dataStream.writeUint16(ShapeConstant.OpNameCode.cEndTextf);
+    dataStream.writeUint16(DSConstant.OpNameCode.cEndTextf);
   }
 
   /**
@@ -7565,7 +7566,7 @@ class ShapeUtil {
    * @param outsideEffect - The outside effect properties to serialize
    */
   static WriteOutside(dataStream, outsideEffect) {
-    const codeOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cOutSide);
+    const codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cOutSide);
 
     // Ensure color is properly formatted
     if (typeof outsideEffect.Color !== 'string') {
@@ -7592,7 +7593,7 @@ class ShapeUtil {
     };
 
     // Write the effect data and length
-    dataStream.writeStruct(ShapeConstant.OutSideEffectStruct, outsideEffectData);
+    dataStream.writeStruct(DSConstant.OutSideEffectStruct, outsideEffectData);
     ShapeUtil.WriteLength(dataStream, codeOffset);
   }
 
@@ -7610,7 +7611,7 @@ class ShapeUtil {
    */
   static WritePaint(dataStream, paintData, defaultColor, resultObject) {
     // Write paint begin marker
-    const codeOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cBeginPaint);
+    const codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cBeginPaint);
 
     // Use default color if none provided
     if (paintData.Color == null) {
@@ -7624,7 +7625,7 @@ class ShapeUtil {
     };
 
     // Write paint properties and length
-    dataStream.writeStruct(ShapeConstant.BeginPaintStruct, paintStruct);
+    dataStream.writeStruct(DSConstant.BeginPaintStruct, paintStruct);
     ShapeUtil.WriteLength(dataStream, codeOffset);
 
     // Set default end color if none provided
@@ -7641,8 +7642,8 @@ class ShapeUtil {
           gradientflags: paintData.GradientFlags
         };
 
-        const gradientOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cGradient);
-        dataStream.writeStruct(ShapeConstant.GradientStruct, gradientData);
+        const gradientOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cGradient);
+        dataStream.writeStruct(DSConstant.GradientStruct, gradientData);
         ShapeUtil.WriteLength(dataStream, gradientOffset);
         break;
 
@@ -7660,8 +7661,8 @@ class ShapeUtil {
             nstops: stopCount
           };
 
-          const richGradientOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cRichGradient);
-          dataStream.writeStruct(ShapeConstant.RichGradientStruct, richGradientData);
+          const richGradientOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cRichGradient);
+          dataStream.writeStruct(DSConstant.RichGradientStruct, richGradientData);
           ShapeUtil.WriteLength(dataStream, richGradientOffset);
 
           // Write each gradient stop
@@ -7671,8 +7672,8 @@ class ShapeUtil {
               stop: richGradient.stops[stopIndex].stop
             };
 
-            const stopOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cRichGradientStop);
-            dataStream.writeStruct(ShapeConstant.RichGradientStopStruct, stopData);
+            const stopOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cRichGradientStop);
+            dataStream.writeStruct(DSConstant.RichGradientStopStruct, stopData);
             ShapeUtil.WriteLength(dataStream, stopOffset);
           }
         }
@@ -7680,7 +7681,7 @@ class ShapeUtil {
 
       case NvConstant.FillTypes.Texture:
         // Write texture fill
-        const textureOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cTexture);
+        const textureOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cTexture);
         let textureId = paintData.Texture;
 
         // Convert texture name to index if not in block-writing mode
@@ -7697,7 +7698,7 @@ class ShapeUtil {
     }
 
     // Write paint end marker
-    dataStream.writeUint16(ShapeConstant.OpNameCode.cEndPaint);
+    dataStream.writeUint16(DSConstant.OpNameCode.cEndPaint);
   }
 
   /**
@@ -7790,9 +7791,9 @@ class ShapeUtil {
         width: 0,
         height: 0
       },
-      y = ShapeUtil.WriteCode(e, ShapeConstant.OpNameCode.cDrawObj8),
+      y = ShapeUtil.WriteCode(e, DSConstant.OpNameCode.cDrawObj8),
       f = - 1,
-      L = ShapeConstant.OpNameCode,
+      L = DSConstant.OpNameCode,
       I = NvConstant.ShapeClass,
       T = I.PLAIN;
     switch (
@@ -7807,28 +7808,28 @@ class ShapeUtil {
     l = r.WriteBlocks ? a.BlockID : t + 1,
     S = a.DrawingObjectBaseClass,
     c = a.ShapeType,
-    a.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.LINE &&
+    a.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Line &&
     a.LineType === OptConstant.LineType.POLYLINE &&
     a.polylist.closed &&
     (
-      S = OptConstant.DrawingObjectBaseClass.SHAPE,
+      S = OptConstant.DrawObjectBaseClass.Shape,
       c = 'CLOSEDPOLY'
     ),
-    a.objecttype === NvConstant.ObjectTypes.SD_OBJT_GANTT_BAR &&
-    a.flags & NvConstant.ObjFlags.SEDO_NotVisible &&
+    a.objecttype === NvConstant.FNObjectTypes.SD_OBJT_GANTT_BAR &&
+    a.flags & NvConstant.ObjFlags.NotVisible &&
     (
-      o = Utils2.SetFlag(o, NvConstant.ObjFlags.SEDO_NotVisible, !1)
+      o = Utils2.SetFlag(o, NvConstant.ObjFlags.NotVisible, !1)
     ),
     S
     ) {
-      case OptConstant.DrawingObjectBaseClass.LINE:
+      case OptConstant.DrawObjectBaseClass.Line:
         switch (a.DataID >= 0 && !r.WriteBlocks && (f = t + 2), a.LineType) {
           case OptConstant.LineType.ARCLINE:
           case OptConstant.LineType.LINE:
             a.LineType == OptConstant.LineType.ARCLINE &&
               (
                 s = Utils2.Pt2Rect(a.EndPoint, a.StartPoint),
-                i = OptConstant.LineTypes.SedLsChord,
+                i = OptConstant.LineTypes.LsChord,
                 n = ShapeUtil.ToSDWinCoords(a.CurveAdjust, r.coordScaleFactor),
                 a.IsReversed &&
                 (n = - n),
@@ -7841,15 +7842,15 @@ class ShapeUtil {
                 (n = - n)
               ),
               s = Utils2.Pt2Rect(a.EndPoint, a.StartPoint),
-              g = OptConstant.ObjectTypes.SED_LineD,
-              Math.abs(a.StartPoint.x - a.EndPoint.x) < OptConstant.Defines.MinLineDistanceForDeterminingOrientation ? (
+              g = ShapeConstant.ObjectTypes.LineD,
+              Math.abs(a.StartPoint.x - a.EndPoint.x) < OptConstant.Common.MinLineDisDeterminOri ? (
                 d = ShapeUtil.ToSDWinCoords(a.StartPoint.x + r.GroupOffset.x, r.coordScaleFactor),
-                D = OptConstant.LineSubclass.SED_LCV
-              ) : Math.abs(a.StartPoint.y - a.EndPoint.y) < OptConstant.Defines.MinLineDistanceForDeterminingOrientation ? (
+                D = OptConstant.LineSubclass.LCV
+              ) : Math.abs(a.StartPoint.y - a.EndPoint.y) < OptConstant.Common.MinLineDisDeterminOri ? (
                 d = ShapeUtil.ToSDWinCoords(a.StartPoint.y + r.GroupOffset.y, r.coordScaleFactor),
-                D = OptConstant.LineSubclass.SED_LCH
+                D = OptConstant.LineSubclass.LCH
               ) : (
-                D = OptConstant.LineSubclass.SED_LCD,
+                D = OptConstant.LineSubclass.LCD,
                 (
                   Math.abs(a.StartPoint.x - (s.x + s.width)) < 0.01 &&
                   Math.abs(a.StartPoint.y - s.y) < 0.01 ||
@@ -7857,32 +7858,32 @@ class ShapeUtil {
                   Math.abs(a.StartPoint.x - s.x) < 0.01
                 ) &&
                 (
-                  o = Utils2.SetFlag(o, NvConstant.ObjFlags.SEDO_Obj1, !0)
+                  o = Utils2.SetFlag(o, NvConstant.ObjFlags.Obj1, !0)
                 )
               );
             break;
           case OptConstant.LineType.ARCSEGLINE:
-            g = OptConstant.ObjectTypes.SED_SegL,
-              D = OptConstant.SeglTypes.SED_L_Arc;
+            g = ShapeConstant.ObjectTypes.SegL,
+              D = OptConstant.SeglTypes.Arc;
             break;
           case OptConstant.LineType.SEGLINE:
-            g = OptConstant.ObjectTypes.SED_SegL,
-              D = OptConstant.SeglTypes.SED_L_Line;
+            g = ShapeConstant.ObjectTypes.SegL,
+              D = OptConstant.SeglTypes.Line;
             break;
           case OptConstant.LineType.POLYLINE:
-            g = OptConstant.ObjectTypes.SED_PolyL,
+            g = ShapeConstant.ObjectTypes.PolyL,
               D = PolygonConstant.ShapeTypes.POLYGON;
             break;
           case OptConstant.LineType.FREEHAND:
-            g = OptConstant.ObjectTypes.SED_Freehand
+            g = ShapeConstant.ObjectTypes.Freehand
         }
         break;
-      case OptConstant.DrawingObjectBaseClass.SHAPE:
+      case OptConstant.DrawObjectBaseClass.Shape:
         if (
-          g = OptConstant.ObjectTypes.SED_Shape,
+          g = ShapeConstant.ObjectTypes.Shape,
           (
-            a.TextFlags & NvConstant.TextFlags.SED_TF_AttachB ||
-            a.TextFlags & NvConstant.TextFlags.SED_TF_AttachA
+            a.TextFlags & NvConstant.TextFlags.AttachB ||
+            a.TextFlags & NvConstant.TextFlags.AttachA
           ) &&
           a.DataID >= 0 &&
           !r.WriteBlocks &&
@@ -7903,7 +7904,7 @@ class ShapeUtil {
               M = [],
               P = [];
             if (
-              b = u.GetPolyPoints(OptConstant.Defines.NPOLYPTS, !1, !1, !1, P),
+              b = u.GetPolyPoints(OptConstant.Common.MaxPolyPoints, !1, !1, !1, P),
               P.length > 0
             ) for (
                 M.push(new Point(b[0].x, b[0].y)),
@@ -7944,7 +7945,7 @@ class ShapeUtil {
           x: 0,
           y: 0
         }),
-        a.ShapeType === OptConstant.ShapeType.GROUPSYMBOL &&
+        a.ShapeType === OptConstant.ShapeType.GroupSymbol &&
         (
           a.InitialGroupBounds.x > 0 ||
           a.InitialGroupBounds.y > 0 ||
@@ -7962,17 +7963,17 @@ class ShapeUtil {
         (T = I.MISSINGEMF),
         c
         ) {
-          case OptConstant.ShapeType.RECT:
+          case OptConstant.ShapeType.Rect:
             D = PolygonConstant.ShapeTypes.RECTANGLE;
             break;
-          case OptConstant.ShapeType.RRECT:
+          case OptConstant.ShapeType.RRect:
             D = PolygonConstant.ShapeTypes.ROUNDED_RECTANGLE;
             break;
-          case OptConstant.ShapeType.OVAL:
+          case OptConstant.ShapeType.Oval:
             D = Math.abs(a.Frame.x - a.Frame.y) < 0.2 &&
               a.ObjGrow === OptConstant.GrowBehavior.ProPortional ? PolygonConstant.ShapeTypes.CIRCLE : PolygonConstant.ShapeTypes.OVAL;
             break;
-          case OptConstant.ShapeType.POLYGON:
+          case OptConstant.ShapeType.Polygon:
             a.dataclass ? (D = a.dataclass, n = ShapeUtil.ShapeParamToSDR(a, r)) : (
               a.dataclass = PolygonConstant.ShapeTypes.POLYGON,
               D = a.dataclass
@@ -7981,11 +7982,11 @@ class ShapeUtil {
           case 'CLOSEDPOLY':
             D = PolygonConstant.ShapeTypes.POLYGON;
             break;
-          case OptConstant.ShapeType.GROUPSYMBOL:
+          case OptConstant.ShapeType.GroupSymbol:
             D = PolygonConstant.ShapeTypes.RECTANGLE,
               T = I.GROUPSYMBOL;
             break;
-          case OptConstant.ShapeType.SVGFRAGMENTSYMBOL:
+          case OptConstant.ShapeType.SVGFragmentSymbol:
             D = PolygonConstant.ShapeTypes.RECTANGLE,
               T = I.SVGFRAGMENTSYMBOL;
             break;
@@ -7993,14 +7994,14 @@ class ShapeUtil {
             D = PolygonConstant.ShapeTypes.RECTANGLE
         }
         break;
-      case OptConstant.DrawingObjectBaseClass.CONNECTOR:
-        g = OptConstant.ObjectTypes.SED_Array,
+      case OptConstant.DrawObjectBaseClass.Connector:
+        g = ShapeConstant.ObjectTypes.Array,
           a.vertical ? (
             d = ShapeUtil.ToSDWinCoords(a.StartPoint.x + r.GroupOffset.x, r.coordScaleFactor),
-            D = OptConstant.LineSubclass.SED_LCV
+            D = OptConstant.LineSubclass.LCV
           ) : (
             d = ShapeUtil.ToSDWinCoords(a.StartPoint.y + r.GroupOffset.y, r.coordScaleFactor),
-            D = OptConstant.LineSubclass.SED_LCH
+            D = OptConstant.LineSubclass.LCH
           )
     }
     a.attachpoint &&
@@ -8008,7 +8009,7 @@ class ShapeUtil {
     var A = a.extraflags;
     r.selectonly &&
       (
-        A = Utils2.SetFlag(A, OptConstant.ExtraFlags.SEDE_NoDelete, !1)
+        A = Utils2.SetFlag(A, OptConstant.ExtraFlags.NoDelete, !1)
       );
     var _ = {
       otype: g,
@@ -8066,7 +8067,7 @@ class ShapeUtil {
       extendedSnapRect: ShapeUtil.ToSDWinRect(a.Frame, r.coordScaleFactor, r.GroupOffset),
       dimensionDeflectionH: a.dimensionDeflectionH ? ShapeUtil.ToSDWinCoords(a.dimensionDeflectionH, r.coordScaleFactor) : 0,
       dimensionDeflectionV: a.dimensionDeflectionV ? ShapeUtil.ToSDWinCoords(a.dimensionDeflectionV, r.coordScaleFactor) : 0,
-      commentdir: ShapeConstant.SDWFileDir.dir_text,
+      commentdir: DSConstant.SDWFileDir.dir_text,
       sequence: 0,
       hookdisp_x: ShapeUtil.ToSDWinCoords(a.hookdisp.x, r.coordScaleFactor),
       hookdisp_y: ShapeUtil.ToSDWinCoords(a.hookdisp.y, r.coordScaleFactor),
@@ -8078,7 +8079,7 @@ class ShapeUtil {
     };
     if (
       r.WriteVisio ||
-        r.WriteWin32 ? e.writeStruct(ShapeConstant.DrawObj8Struct316, _) : e.writeStruct(ShapeConstant.DrawObj8Struct448, _),
+        r.WriteWin32 ? e.writeStruct(DSConstant.DrawObj8Struct316, _) : e.writeStruct(DSConstant.DrawObj8Struct448, _),
       ShapeUtil.WriteLength(e, y),
       ShapeUtil.WriteHooks(e, a, r),
       ShapeUtil.WriteObjData(e, a, r),
@@ -8087,13 +8088,13 @@ class ShapeUtil {
       r.WriteBlocks ||
       r.WriteGroupBlock ||
       ShapeUtil.WriteNotes(e, a, r),
-      a.flags & NvConstant.ObjFlags.SEDO_UseConnect &&
+      a.flags & NvConstant.ObjFlags.UseConnect &&
       ShapeUtil.WriteConnectPoints(e, a),
       a.StyleRecord
     ) {
       var E = a.StyleRecord.Fill.Paint.FillType;
       r.WriteVisio &&
-        a.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.LINE &&
+        a.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Line &&
         (
           a.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.Transparent
         ),
@@ -8103,7 +8104,7 @@ class ShapeUtil {
     a.BusinessName &&
       ShapeUtil.WriteString(e, a.BusinessName, L.cBusinessNameStr, r),
       a.WriteShapeData(e, r),
-      e.writeUint16(ShapeConstant.OpNameCode.cDrawObj8End)
+      e.writeUint16(DSConstant.OpNameCode.cDrawObj8End)
   }
 
   /**
@@ -8145,13 +8146,13 @@ class ShapeUtil {
     let isLineReversed = false;
     let connectPoint = {};
     let isReverseColumn = false;
-    const centerDimension = OptConstant.Defines.SED_CDim;
+    const centerDimension = OptConstant.Common.MaxDim;
 
     // Check if the line or connector is reversed (affects hook point direction)
-    if (drawingObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.LINE) {
+    if (drawingObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Line) {
       isLineReversed = ShapeUtil.LineIsReversed(drawingObject, resultObject, false);
-    } else if (drawingObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.CONNECTOR) {
-      isReverseColumn = (drawingObject.arraylist.styleflags & OptConstant.SEDA_Styles.SEDA_ReverseCol) &&
+    } else if (drawingObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
+      isReverseColumn = (drawingObject.arraylist.styleflags & OptConstant.AStyles.ReverseCol) &&
         drawingObject.vertical;
     }
 
@@ -8165,21 +8166,21 @@ class ShapeUtil {
         if (isLineReversed) {
           // Adjust hook points for reversed lines
           switch (hookPoint) {
-            case OptConstant.HookPts.SED_KTL:
-              hookPoint = OptConstant.HookPts.SED_KTR;
+            case OptConstant.HookPts.KTL:
+              hookPoint = OptConstant.HookPts.KTR;
               break;
-            case OptConstant.HookPts.SED_KTR:
-              hookPoint = OptConstant.HookPts.SED_KTL;
+            case OptConstant.HookPts.KTR:
+              hookPoint = OptConstant.HookPts.KTL;
               break;
           }
         } else if (isReverseColumn) {
           // Adjust hook points for reversed columns
           switch (hookPoint) {
-            case OptConstant.HookPts.SED_LL:
-              hookPoint = OptConstant.HookPts.SED_LR;
+            case OptConstant.HookPts.LL:
+              hookPoint = OptConstant.HookPts.LR;
               break;
-            case OptConstant.HookPts.SED_LT:
-              hookPoint = OptConstant.HookPts.SED_LB;
+            case OptConstant.HookPts.LT:
+              hookPoint = OptConstant.HookPts.LB;
               break;
           }
         }
@@ -8197,11 +8198,11 @@ class ShapeUtil {
 
         // Get cell ID or use default if null
         cellId = (drawingObject.hooks[hookIndex].cellid == null) ?
-          OptConstant.Defines.SED_DNULL :
+          OptConstant.Common.DNull :
           drawingObject.hooks[hookIndex].cellid;
 
         // Write hook data to stream
-        codeOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cDrawHook);
+        codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cDrawHook);
         hookData = {
           objid: ShapeUtil.BlockIDtoUniqueID(drawingObject.hooks[hookIndex].objid, resultObject),
           index: -1,
@@ -8211,7 +8212,7 @@ class ShapeUtil {
           cellid: cellId
         };
 
-        dataStream.writeStruct(ShapeConstant.DrawHookStruct, hookData);
+        dataStream.writeStruct(DSConstant.DrawHookStruct, hookData);
         ShapeUtil.WriteLength(dataStream, codeOffset);
       }
     }
@@ -8251,8 +8252,8 @@ class ShapeUtil {
     // }
 
     // Write object data structure to stream
-    const codeOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cObjData);
-    dataStream.writeStruct(ShapeConstant.ObjDataStruct32, objectDataInfo);
+    const codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cObjData);
+    dataStream.writeStruct(DSConstant.ObjDataStruct32, objectDataInfo);
     ShapeUtil.WriteLength(dataStream, codeOffset);
   }
 
@@ -8269,16 +8270,16 @@ class ShapeUtil {
    * @param resultObject - Object containing style list references and context information
    */
   static WriteStyleOverrides(dataStream, drawingObject, resultObject) {
-    const matchFlags = ShapeConstant.MatchFlags;
+    const matchFlags = DSConstant.MatchFlags;
     const styleCount = resultObject.lpStyles.length;
 
     // For other formats, check if the object has a valid style index and isn't a floor plan wall
     if (drawingObject.tstyleindex >= 0 &&
       drawingObject.tstyleindex < styleCount &&
-      drawingObject.objecttype !== NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
+      drawingObject.objecttype !== NvConstant.FNObjectTypes.FlWall) {
 
       // Compare the object's style to the reference style to find differences
-      // const styleDifferences = ShapeConstant.SD_CompareStyles(
+      // const styleDifferences = DSConstant.SD_CompareStyles(
       //   drawingObject.StyleRecord,
       //   resultObject.lpStyles[drawingObject.tstyleindex],
       //   true
@@ -8301,7 +8302,7 @@ class ShapeUtil {
       //     dataStream,
       //     drawingObject.StyleRecord.Line,
       //     resultObject,
-      //     ShapeConstant.OpNameCode.cBeginLine,
+      //     DSConstant.OpNameCode.cBeginLine,
       //     drawingObject
       //   );
       // }
@@ -8347,11 +8348,11 @@ class ShapeUtil {
 
     // Add display flags to arrows if they should be displayed
     if (drawingObject.StartArrowDisp) {
-      startArrowId += ShapeConstant.ArrowMasks.ARROW_DISP;
+      startArrowId += DSConstant.ArrowMasks.ARROW_DISP;
     }
 
     if (drawingObject.EndArrowDisp) {
-      endArrowId += ShapeConstant.ArrowMasks.ARROW_DISP;
+      endArrowId += DSConstant.ArrowMasks.ARROW_DISP;
     }
 
     // For reversed lines, swap start and end arrowheads
@@ -8371,8 +8372,8 @@ class ShapeUtil {
     };
 
     // Write the arrow data to the stream
-    const codeOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cDrawArrow);
-    dataStream.writeStruct(ShapeConstant.DrawArrowStruct, arrowheadData);
+    const codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cDrawArrow);
+    dataStream.writeStruct(DSConstant.DrawArrowStruct, arrowheadData);
     ShapeUtil.WriteLength(dataStream, codeOffset);
   }
 
@@ -8445,7 +8446,7 @@ class ShapeUtil {
    * @param stateId - The state identifier to save from
    * @param deltaState - The delta state information
    */
-  static SaveAllBlocks(stateId, deltaState) {
+  static SaveAllBlocks(stateId?, deltaState?) {
     if (true) {
       if (false) {
         const pendingActionCount = T3Gv.opt.socketAction.length;
@@ -8495,7 +8496,7 @@ class ShapeUtil {
     const objectTypes = StateConstant.StoredObjectType;
 
     switch (storedObject.Type) {
-      case objectTypes.BaseDrawingObject:
+      case objectTypes.BaseDrawObject:
         blockName = ShapeUtil.BlockNames.LMObject + storedObject.ID;
         if (blockMetadata) {
           blockMetadata.id = storedObject.ID;
@@ -8620,7 +8621,7 @@ class ShapeUtil {
     const objectTypes = StateConstant.StoredObjectType;
 
     switch (storedObject.Type) {
-      case objectTypes.BaseDrawingObject:
+      case objectTypes.BaseDrawObject:
         // Handle base drawing objects
         objectInstance = T3Gv.stdObj.GetObject(storedObject.ID);
         if (objectInstance && !objectInstance.Data.bInGroup) {
@@ -8699,7 +8700,7 @@ class ShapeUtil {
           if (countOnly) return true;
           serializedBlock = ShapeUtil.WriteNativeBlock(
             objectInstance,
-            ShapeConstant.OpNameCode.cNativeBlock,
+            DSConstant.OpNameCode.cNativeBlock,
             resultObject,
             blockIndex
           );
@@ -8713,7 +8714,7 @@ class ShapeUtil {
           if (countOnly) return true;
           serializedBlock = ShapeUtil.WriteNativeBlock(
             objectInstance,
-            ShapeConstant.OpNameCode.cNativeWinBlock,
+            DSConstant.OpNameCode.cNativeWinBlock,
             resultObject,
             blockIndex
           );
@@ -8767,7 +8768,7 @@ class ShapeUtil {
    * @param targetStateId - Optional target state ID (defaults to source state if not provided)
    * @param customStoredObjects - Optional specific objects to save instead of all from the state
    */
-  static SaveChangedBlocks(stateId, deltaState, targetStateId, customStoredObjects) {
+  static SaveChangedBlocks(stateId, deltaState, targetStateId?, customStoredObjects?) {
     try {
 
       // Prepare result object and track deleted objects
@@ -8819,43 +8820,43 @@ class ShapeUtil {
       // Update content header flags with current configuration
       T3Gv.opt.contentHeader.flags = Utils2.SetFlag(
         T3Gv.opt.contentHeader.flags,
-        OptConstant.ContentHeaderFlags.CT_ShowGrid,
+        OptConstant.CntHeaderFlags.ShowGrid,
         T3Gv.docUtil.docConfig.showGrid
       );
 
       T3Gv.opt.contentHeader.flags = Utils2.SetFlag(
         T3Gv.opt.contentHeader.flags,
-        OptConstant.ContentHeaderFlags.CT_ShowRulers,
+        OptConstant.CntHeaderFlags.ShowRulers,
         T3Gv.docUtil.docConfig.showRulers
       );
 
       T3Gv.opt.contentHeader.flags = Utils2.SetFlag(
         T3Gv.opt.contentHeader.flags,
-        OptConstant.ContentHeaderFlags.CT_SnapToGridC,
+        OptConstant.CntHeaderFlags.SnapToGridC,
         T3Gv.docUtil.docConfig.centerSnap && T3Gv.docUtil.docConfig.enableSnap
       );
 
       T3Gv.opt.contentHeader.flags = Utils2.SetFlag(
         T3Gv.opt.contentHeader.flags,
-        OptConstant.ContentHeaderFlags.CT_SnapToGridTL,
+        OptConstant.CntHeaderFlags.SnapToGridTL,
         !T3Gv.docUtil.docConfig.centerSnap && T3Gv.docUtil.docConfig.enableSnap
       );
 
       T3Gv.opt.contentHeader.flags = Utils2.SetFlag(
         T3Gv.opt.contentHeader.flags,
-        OptConstant.ContentHeaderFlags.CT_ShowPageDividers,
+        OptConstant.CntHeaderFlags.ShowPageDividers,
         T3Gv.docUtil.docConfig.showPageDivider
       );
 
       T3Gv.opt.contentHeader.flags = Utils2.SetFlag(
         T3Gv.opt.contentHeader.flags,
-        OptConstant.ContentHeaderFlags.CT_SnapToShapes_Off,
+        OptConstant.CntHeaderFlags.SnapToShapesOff,
         T3Gv.docUtil.docConfig.snapToShapes == 0
       );
 
       T3Gv.opt.contentHeader.flags = Utils2.SetFlag(
         T3Gv.opt.contentHeader.flags,
-        OptConstant.ContentHeaderFlags.CT_ShowRulers,
+        OptConstant.CntHeaderFlags.ShowRulers,
         T3Gv.docUtil.docConfig.showRulers
       );
 
@@ -9049,7 +9050,7 @@ class ShapeUtil {
   static WriteBlockWrapper(dataStream, stateId, delta, blockType, blockId, blockIndex, totalBlocks, actionType) {
     const blockHeader = new BlockHeader(stateId, delta, blockType, blockId, blockIndex, totalBlocks);
     blockHeader.action = actionType;
-    dataStream.writeStruct(ShapeConstant.BlockHeaderStruct, blockHeader);
+    dataStream.writeStruct(DSConstant.BlockHeaderStruct, blockHeader);
   }
 
   /**
@@ -9125,7 +9126,7 @@ class ShapeUtil {
       dataStream,
       resultObject.sdp.def.style.Line,
       resultObject,
-      ShapeConstant.OpNameCode.cBeginLine,
+      DSConstant.OpNameCode.cBeginLine,
       null
     );
 
@@ -9314,10 +9315,10 @@ class ShapeUtil {
     const idData = {
       value: nativeObject.ID
     };
-    dataStream.writeStruct(ShapeConstant.LongValueStruct, idData);
+    dataStream.writeStruct(DSConstant.LongValueStruct, idData);
 
     // Write native binary data to the block
-    ShapeConstant.writeNativeByteArray(dataStream, nativeObject.Data);
+    ShapeUtil.writeNativeByteArray(dataStream, nativeObject.Data);
 
     // Finalize the block
     ShapeUtil.WriteLength(dataStream, codeOffset);
@@ -9440,7 +9441,7 @@ class ShapeUtil {
         bottom: 0
       };
       scaleValue = 1;
-      imageFlags = NvConstant.ImageScales.SDIMAGE_ALWAYS_FIT;
+      imageFlags = NvConstant.ImageScales.AlwaysFit;
     }
 
     // Create the image header structure
@@ -9454,13 +9455,13 @@ class ShapeUtil {
     };
 
     // Write image header to the data stream
-    const codeOffset = ShapeUtil.WriteCode(dataStream, ShapeConstant.OpNameCode.cDrawImage8);
+    const codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cDrawImage8);
 
     // Write the appropriate structure based on format settings
     if (resultObject.WriteWin32) {
-      dataStream.writeStruct(ShapeConstant.DrawImage8Struct50, imageHeaderData);
+      dataStream.writeStruct(DSConstant.DrawImage8Struct50, imageHeaderData);
     } else {
-      dataStream.writeStruct(ShapeConstant.DrawImage8Struct82, imageHeaderData);
+      dataStream.writeStruct(DSConstant.DrawImage8Struct82, imageHeaderData);
     }
 
     ShapeUtil.WriteLength(dataStream, codeOffset);
@@ -9507,7 +9508,7 @@ class ShapeUtil {
     }
 
     // Initialize polylist for different object types if needed
-    if (drawingObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.LINE &&
+    if (drawingObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Line &&
       drawingObject.LineType !== OptConstant.LineType.POLYLINE) {
       isConvertedLine = true;
 
@@ -9516,8 +9517,8 @@ class ShapeUtil {
       }
     }
 
-    if (drawingObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.SHAPE &&
-      drawingObject.ShapeType === OptConstant.ShapeType.POLYGON) {
+    if (drawingObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape &&
+      drawingObject.ShapeType === OptConstant.ShapeType.Polygon) {
       isPolygon = true;
 
       if (drawingObject.polylist == null) {
@@ -9526,7 +9527,7 @@ class ShapeUtil {
     }
 
     // Process polyline data if object has a polylist
-    if ((drawingObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.LINE &&
+    if ((drawingObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Line &&
       drawingObject.LineType === OptConstant.LineType.POLYLINE ||
       isPolygon ||
       isConvertedLine) &&
@@ -9560,7 +9561,7 @@ class ShapeUtil {
       codeIndex++;
 
       // Process all polyline segments until we reach the end marker
-      while (codeData.codes[codeIndex].code != ShapeConstant.OpNameCode.cDrawPolyEnd) {
+      while (codeData.codes[codeIndex].code != DSConstant.OpNameCode.cDrawPolyEnd) {
         switch (codeData.codes[codeIndex].code) {
           case opCodes.cDrawPolySeg://SDF_C_DRAWPOLYSEG:
             // Process a single polyline segment
@@ -9647,7 +9648,7 @@ class ShapeUtil {
               case OptConstant.LineType.MOVETO:
                 drawingObject.polylist.flags = Utils2.SetFlag(
                   drawingObject.polylist.flags,
-                  ShapeConstant.PolyListFlags.SD_PLF_HasMoveTo,
+                  DSConstant.PolyListFlags.SD_PLF_HasMoveTo,
                   true
                 );
                 polySegment.param = segmentData.param;
@@ -9658,7 +9659,7 @@ class ShapeUtil {
               case OptConstant.LineType.MOVETO_NEWPOLY:
                 drawingObject.polylist.flags = Utils2.SetFlag(
                   drawingObject.polylist.flags,
-                  ShapeConstant.PolyListFlags.SD_PLF_HasPolyPoly,
+                  DSConstant.PolyListFlags.SD_PLF_HasPolyPoly,
                   true
                 );
                 polySegment.param = segmentData.param;
@@ -9691,7 +9692,7 @@ class ShapeUtil {
             // Mark polylist as using explicit points
             drawingObject.polylist.flags = Utils2.SetFlag(
               drawingObject.polylist.flags,
-              ShapeConstant.PolyListFlags.SD_PLF_WasExplict,
+              DSConstant.PolyListFlags.SD_PLF_WasExplict,
               true
             );
 
@@ -9733,11 +9734,11 @@ class ShapeUtil {
 
           default:
             // Handle nested structures by recursively reading frames
-            if (codeData.codes[codeIndex].code & ShapeConstant.SDF_BEGIN) {
+            if (codeData.codes[codeIndex].code & DSConstant.SDF_BEGIN) {
               codeIndex = ShapeUtil.ReadFrame(
                 codeData,
                 codeIndex,
-                (codeData.codes[codeIndex].code & ShapeConstant.SDF_MASK) | ShapeConstant.SDF_END
+                (codeData.codes[codeIndex].code & DSConstant.SDF_MASK) | DSConstant.SDF_END
               );
             }
         }
@@ -9746,7 +9747,7 @@ class ShapeUtil {
       }
 
       // Convert polyline format if needed
-      if ((drawingObject.polylist.flags & ShapeConstant.PolyListFlags.SD_PLF_FreeHand) === 0) {
+      if ((drawingObject.polylist.flags & DSConstant.PolyListFlags.SD_PLF_FreeHand) === 0) {
         ShapeUtil.ConvertToPolyL(drawingObject);
       }
 
@@ -9833,79 +9834,79 @@ class ShapeUtil {
     let lineType = OptConstant.LineType.LINE;
 
     switch (objectType) {
-      case OptConstant.ObjectTypes.SED_LineD:
+      case ShapeConstant.ObjectTypes.LineD:
         // Direct line: either straight line or arc chord
-        lineType = shortReference === OptConstant.LineTypes.SedLsChord
+        lineType = shortReference === OptConstant.LineTypes.LsChord
           ? OptConstant.LineType.ARCLINE
           : OptConstant.LineType.LINE;
         break;
 
-      case OptConstant.ObjectTypes.SED_SegL:
+      case ShapeConstant.ObjectTypes.SegL:
         // Segmented line (typically arc segments)
         lineType = OptConstant.LineType.ARCSEGLINE;
         break;
 
-      case OptConstant.ObjectTypes.SED_PolyL:
+      case ShapeConstant.ObjectTypes.PolyL:
         // Polyline with parabola segments
         lineType = OptConstant.LineType.PARABOLA;
         break;
 
-      case OptConstant.ObjectTypes.SED_NURBS:
+      case ShapeConstant.ObjectTypes.Nurbs:
         // Non-Uniform Rational B-Spline
         lineType = OptConstant.LineType.NURBS;
         break;
 
-      case OptConstant.ObjectTypes.SED_NURBSSEG:
+      case ShapeConstant.ObjectTypes.NurbsSeg:
         // Segmented NURBS curve
         lineType = OptConstant.LineType.NURBSSEG;
         break;
 
-      case OptConstant.ObjectTypes.SED_ELLIPSE:
+      case ShapeConstant.ObjectTypes.Ellipse:
         // Elliptical arc
         lineType = OptConstant.LineType.ELLIPSE;
         break;
 
-      case OptConstant.ObjectTypes.SED_ELLIPSEEND:
+      case ShapeConstant.ObjectTypes.EllipseEnd:
         // End of elliptical arc
         lineType = OptConstant.LineType.ELLIPSEEND;
         break;
 
-      case OptConstant.ObjectTypes.SED_QUADBEZ:
+      case ShapeConstant.ObjectTypes.Quadbez:
         // Quadratic Bezier curve
         lineType = OptConstant.LineType.QUADBEZ;
         break;
 
-      case OptConstant.ObjectTypes.SED_QUADBEZCON:
+      case ShapeConstant.ObjectTypes.QuadbezCon:
         // Connected quadratic Bezier curve
         lineType = OptConstant.LineType.QUADBEZCON;
         break;
 
-      case OptConstant.ObjectTypes.SED_CUBEBEZ:
+      case ShapeConstant.ObjectTypes.Cubebez:
         // Cubic Bezier curve
         lineType = OptConstant.LineType.CUBEBEZ;
         break;
 
-      case OptConstant.ObjectTypes.SED_CUBEBEZCON:
+      case ShapeConstant.ObjectTypes.CubebezCon:
         // Connected cubic Bezier curve
         lineType = OptConstant.LineType.CUBEBEZCON;
         break;
 
-      case OptConstant.ObjectTypes.SED_SPLINE:
+      case ShapeConstant.ObjectTypes.Spline:
         // Spline curve
         lineType = OptConstant.LineType.SPLINE;
         break;
 
-      case OptConstant.ObjectTypes.SED_SPLINECON:
+      case ShapeConstant.ObjectTypes.SplineCon:
         // Connected spline curve
         lineType = OptConstant.LineType.SPLINECON;
         break;
 
-      case OptConstant.ObjectTypes.SED_MOVETO:
+      case ShapeConstant.ObjectTypes.MoveTo:
         // Move operation without drawing
         lineType = OptConstant.LineType.MOVETO;
         break;
 
-      case OptConstant.ObjectTypes.SED_MOVETO_NEWPOLY:
+      case ShapeConstant.ObjectTypes.MoveToNewPoly:
         // Move operation that starts a new polygon
         lineType = OptConstant.LineType.MOVETO_NEWPOLY;
     }
@@ -9932,17 +9933,17 @@ class ShapeUtil {
 
     // Map special end markers to standard ones for consistency
     switch (endCodeMarker) {
-      case ShapeConstant.OpNameCode.cLongText8End:
-        endCodeMarker = ShapeConstant.OpNameCode.cTextEnd;
+      case DSConstant.OpNameCode.cLongText8End:
+        endCodeMarker = DSConstant.OpNameCode.cTextEnd;
         break;
 
       case 16565:
       case 16566:
-        endCodeMarker = ShapeConstant.OpNameCode.cEndLine;
+        endCodeMarker = DSConstant.OpNameCode.cEndLine;
         break;
 
       case 16567:
-        endCodeMarker = ShapeConstant.OpNameCode.cEndTextf;
+        endCodeMarker = DSConstant.OpNameCode.cEndTextf;
         break;
 
       case 18550:
@@ -9952,11 +9953,11 @@ class ShapeUtil {
     // Process all codes until we reach the end marker
     while (codeData.codes[codeIndex].code != endCodeMarker) {
       // If this is the beginning of a nested frame, process it recursively
-      if (codeData.codes[codeIndex].code & ShapeConstant.SDF_BEGIN) {
+      if (codeData.codes[codeIndex].code & DSConstant.SDF_BEGIN) {
         codeIndex = ShapeUtil.ReadFrame(
           codeData,
           codeIndex,
-          (codeData.codes[codeIndex].code & ShapeConstant.SDF_MASK) | ShapeConstant.SDF_END
+          (codeData.codes[codeIndex].code & DSConstant.SDF_MASK) | DSConstant.SDF_END
         );
       }
 
@@ -9979,7 +9980,7 @@ class ShapeUtil {
    */
   static ConvertToPolyL(drawingObject) {
     if (drawingObject.polylist &&
-      (drawingObject.polylist.flags & ShapeConstant.PolyListFlags.SD_PLF_FreeHand) === 0) {
+      (drawingObject.polylist.flags & DSConstant.PolyListFlags.SD_PLF_FreeHand) === 0) {
 
       const lineTypes = OptConstant.LineType;
       const arcQuadrants = OptConstant.ArcQuad;
@@ -9993,7 +9994,7 @@ class ShapeUtil {
         switch (currentSegment.LineType) {
           case lineTypes.ARCLINE:
             // Invert arc direction for chord lines
-            if (currentSegment.ShortRef === OptConstant.LineTypes.SedLsChord) {
+            if (currentSegment.ShortRef === OptConstant.LineTypes.LsChord) {
               currentSegment.param = -currentSegment.param;
             }
             break;
@@ -10035,7 +10036,7 @@ class ShapeUtil {
       // Mark polyline as processed with freehand flag
       drawingObject.polylist.flag = Utils2.SetFlag(
         drawingObject.polylist.flags,
-        ShapeConstant.PolyListFlags.SD_PLF_FreeHand,
+        DSConstant.PolyListFlags.SD_PLF_FreeHand,
         true
       );
     }
@@ -10087,14 +10088,14 @@ class ShapeUtil {
     }
 
     // Get the points from the polyline
-    let polyPoints = polyLine.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true, false, false, segmentMarkers);
+    let polyPoints = polyLine.GetPolyPoints(OptConstant.Common.MaxPolyPoints, true, false, false, segmentMarkers);
     pointsCount = polyPoints.length;
 
     // Handle complex geometry with holes or multiple parts
     let geometryModels = [];
     let currentGeometry, geometryStartSegment;
-    const polyFlags = ShapeConstant.PolyListFlags;
-    const segmentFlags = ShapeConstant.PolySegFlags;
+    const polyFlags = DSConstant.PolyListFlags;
+    const segmentFlags = DSConstant.PolySegFlags;
     const lineTypeEnum = OptConstant.LineType;
 
     if (drawingObject.polylist.flags & polyFlags.SD_PLF_HasMoveTo ||
@@ -10232,7 +10233,7 @@ class ShapeUtil {
       if (!b) {
         if (!r)
           return;
-        b = T3Gv.opt.svgDoc.CreateShape(OptConstant.CSType.TEXT).GetRuntimeText()
+        b = T3Gv.opt.svgDoc.CreateShape(OptConstant.CSType.Text).GetRuntimeText()
       }
       for (C = [],
         0,
@@ -10282,7 +10283,7 @@ class ShapeUtil {
           nlinkchar: 0,
           markupobjid: -1
         }
-          , A = ShapeConstant.LongText8Struct;
+          , A = DSConstant.LongText8Struct;
         for (R.nlinks = b.hyperlinks.length,
           l = 0; l < b.hyperlinks.length; l++)
           R.nlinkchar += b.hyperlinks[l].length + 1
@@ -10291,21 +10292,21 @@ class ShapeUtil {
           InstID: s,
           nstyles: C.length
         },
-          A = ShapeConstant.SDF_LONGTEXT8_Struct_8;
-      for (i ? (p = ShapeUtil.WriteCode(e, ShapeConstant.OpNameCode.cComment),
+          A = DSConstant.SDF_LONGTEXT8_Struct_8;
+      for (i ? (p = ShapeUtil.WriteCode(e, DSConstant.OpNameCode.cComment),
         e.writeStruct(A, R),
-        ShapeUtil.WriteLength(e, p)) : (p = ShapeUtil.WriteCode(e, ShapeConstant.OpNameCode.cLongText8),
+        ShapeUtil.WriteLength(e, p)) : (p = ShapeUtil.WriteCode(e, DSConstant.OpNameCode.cLongText8),
           e.writeStruct(A, R),
           ShapeUtil.WriteLength(e, p)),
-        p = ShapeUtil.WriteCode(e, ShapeConstant.OpNameCode.cTextChar),
+        p = ShapeUtil.WriteCode(e, DSConstant.OpNameCode.cTextChar),
         h = String(b.text).replace(/\n/g, "\r"),
         e.writeUCS2String(h, T3DataStream.LITTLE_ENDIAN),
         ShapeUtil.WriteLength(e, p),
-        p = ShapeUtil.WriteCode(e, ShapeConstant.OpNameCode.cTextRun),
+        p = ShapeUtil.WriteCode(e, DSConstant.OpNameCode.cTextRun),
         y = {
           nruns: m.length
         },
-        e.writeStruct(ShapeConstant.SDF_TEXTRUNS_Header, y),
+        e.writeStruct(DSConstant.SDF_TEXTRUNS_Header, y),
         l = 0; l < m.length; l++)
         f = {
           ncodes: 9,
@@ -10314,91 +10315,91 @@ class ShapeUtil {
           u = b.styles[m[l].style],
           D = m[l].para,
           u.dataField && f.ncodes++,
-          e.writeStruct(ShapeConstant.TextChangeHeader, f),
+          e.writeStruct(DSConstant.TextChangeHeader, f),
           L = {
-            code: TextConstant.TextStyleCodes.SDF_T_FONT,
+            code: TextConstant.TextStyleCodes.Font,
             value: ShapeUtil.GetFontID(u.font, n.fontlist)
           },
-          e.writeStruct(ShapeConstant.TextCodeStruct, L),
+          e.writeStruct(DSConstant.TextCodeStruct, L),
           n.WriteVisio || n.WriteWin32 ? (L = {
-            code: TextConstant.TextStyleCodes.SDF_T_SIZE,
+            code: TextConstant.TextStyleCodes.Size,
             value: ShapeUtil.TextSizeToPointSize(u.size, n)
           },
-            e.writeStruct(ShapeConstant.TextCodeStruct, L)) : (L = {
-              code: TextConstant.TextStyleCodes.SDF_T_SIZE_FLOAT,
+            e.writeStruct(DSConstant.TextCodeStruct, L)) : (L = {
+              code: TextConstant.TextStyleCodes.SizeFloat,
               value: u.size
             },
-              e.writeStruct(ShapeConstant.TextCodeStructFloat, L)),
+              e.writeStruct(DSConstant.TextCodeStructFloat, L)),
           L = {
-            code: TextConstant.TextStyleCodes.SDF_T_FACE,
+            code: TextConstant.TextStyleCodes.Face,
             value: 0
           },
-          "bold" == u.weight && (L.value += TextConstant.STTextFace.St_Bold),
-          "italic" == u.style && (L.value += TextConstant.STTextFace.St_Italic),
-          "underline" == u.decoration ? L.value += TextConstant.STTextFace.St_Under : "line-through" == u.decoration && (L.value += TextConstant.STTextFace.St_Strike),
-          e.writeStruct(ShapeConstant.TextCodeStruct, L),
+          "bold" == u.weight && (L.value += TextConstant.TextFace.Bold),
+          "italic" == u.style && (L.value += TextConstant.TextFace.Italic),
+          "underline" == u.decoration ? L.value += TextConstant.TextFace.Under : "line-through" == u.decoration && (L.value += TextConstant.TextFace.Strike),
+          e.writeStruct(DSConstant.TextCodeStruct, L),
           L = {
-            code: TextConstant.TextStyleCodes.SDF_T_EXTRA,
+            code: TextConstant.TextStyleCodes.Extra,
             value: 0
           },
-          "sub" == u.baseOffset ? L.value = ShapeConstant.ToUInt32(-1) : "super" == u.baseOffset && (L.value = 1),
-          e.writeStruct(ShapeConstant.TextCodeStruct, L),
+          "sub" == u.baseOffset ? L.value = DSConstant.ToUInt32(-1) : "super" == u.baseOffset && (L.value = 1),
+          e.writeStruct(DSConstant.TextCodeStruct, L),
           L = {
-            code: TextConstant.TextStyleCodes.SDF_T_PAINTTYPE,
+            code: TextConstant.TextStyleCodes.PaintType,
             value: 1
           },
-          e.writeStruct(ShapeConstant.TextCodeStruct, L),
+          e.writeStruct(DSConstant.TextCodeStruct, L),
           L = {
-            code: TextConstant.TextStyleCodes.SDF_T_COLOR,
+            code: TextConstant.TextStyleCodes.Color,
             value: ShapeUtil.HTMLColorToWin(u.color, u.colorTrans)
           },
-          e.writeStruct(ShapeConstant.TextCodeStruct, L),
+          e.writeStruct(DSConstant.TextCodeStruct, L),
           L = {
-            code: TextConstant.TextStyleCodes.SDF_T_FLAGS,
-            value: u.spError ? TextConstant.TextFlags.TEN_F_BADSPELL : 0
+            code: TextConstant.TextStyleCodes.Flags,
+            value: u.spError ? TextConstant.TextFlags.BadSpell : 0
           },
-          e.writeStruct(ShapeConstant.TextCodeStruct, L),
+          e.writeStruct(DSConstant.TextCodeStruct, L),
           L = {
-            code: TextConstant.TextStyleCodes.SDF_T_STYLEID,
+            code: TextConstant.TextStyleCodes.StyleId,
             value: D
           },
-          e.writeStruct(ShapeConstant.TextCodeStruct, L),
+          e.writeStruct(DSConstant.TextCodeStruct, L),
           L = {
-            code: TextConstant.TextStyleCodes.SDF_T_LINKID,
+            code: TextConstant.TextStyleCodes.LinkId,
             value: ShapeUtil.ToUInt32(u.hyperlink)
           },
-          e.writeStruct(ShapeConstant.TextCodeStruct, L),
+          e.writeStruct(DSConstant.TextCodeStruct, L),
           u.dataField && ((g = P.indexOf(u.dataField)) < 0 && (g = P.length,
             P.push(u.dataField)),
             L = {
-              code: TextConstant.TextStyleCodes.SDF_T_DATAID,
+              code: TextConstant.TextStyleCodes.DataId,
               value: g
             },
-            e.writeStruct(ShapeConstant.TextCodeStruct, L));
+            e.writeStruct(DSConstant.TextCodeStruct, L));
       for (ShapeUtil.WriteLength(e, p),
         l = 0; l < C.length; l++) {
-        switch (p = ShapeUtil.WriteCode(e, ShapeConstant.OpNameCode.cTextStyle),
+        switch (p = ShapeUtil.WriteCode(e, DSConstant.OpNameCode.cTextStyle),
         I = {
           index: l,
           ncodes: 7
         },
-        e.writeStruct(ShapeConstant.SDF_TEXTSTYLE_Header, I),
+        e.writeStruct(DSConstant.SDF_TEXTSTYLE_Header, I),
         T = {
-          code: StyleConstant.ParaStyleCodes.SDF_S_JUST,
+          code: StyleConstant.ParaStyleCodes.Just,
           value: 0
         },
         C[l].just) {
           case "left":
-            T.value = TextConstant.TextJust.TA_LEFT;
+            T.value = TextConstant.TextJust.Left;
             break;
           case "right":
-            T.value = TextConstant.TextJust.TA_RIGHT;
+            T.value = TextConstant.TextJust.Right;
             break;
           default:
-            T.value = TextConstant.TextJust.TA_CENTER
+            T.value = TextConstant.TextJust.Center
         }
-        switch (e.writeStruct(ShapeConstant.StyleCodeStruct, T),
-        T.code = StyleConstant.ParaStyleCodes.SDF_S_BULLET,
+        switch (e.writeStruct(DSConstant.StyleCodeStruct, T),
+        T.code = StyleConstant.ParaStyleCodes.Bullet,
         C[l].bullet) {
           case "hround":
             T.value = 1;
@@ -10427,39 +10428,39 @@ class ShapeUtil {
           default:
             T.value = 0
         }
-        e.writeStruct(ShapeConstant.StyleCodeStruct, T),
-          T.code = StyleConstant.ParaStyleCodes.SDF_S_SPACING,
+        e.writeStruct(DSConstant.StyleCodeStruct, T),
+          T.code = StyleConstant.ParaStyleCodes.Spacing,
           C[l].spacing < 0 ? T.value = ShapeUtil.ToSDWinCoords(C[l].spacing, n.coordScaleFactor) : T.value = Math.round(100 * C[l].spacing),
-          e.writeStruct(ShapeConstant.StyleCodeStruct, T),
-          T.code = StyleConstant.ParaStyleCodes.SDF_S_PINDENT,
+          e.writeStruct(DSConstant.StyleCodeStruct, T),
+          T.code = StyleConstant.ParaStyleCodes.Pindent,
           T.value = ShapeUtil.ToSDWinCoords(C[l].pindent, n.coordScaleFactor),
-          e.writeStruct(ShapeConstant.StyleCodeStruct, T),
+          e.writeStruct(DSConstant.StyleCodeStruct, T),
           ShapeUtil.WriteLength(e, p),
-          T.code = StyleConstant.ParaStyleCodes.SDF_S_LINDENT,
+          T.code = StyleConstant.ParaStyleCodes.Lindent,
           T.value = ShapeUtil.ToSDWinCoords(C[l].bindent ? C[l].bindent : C[l].lindent, n.coordScaleFactor),
-          e.writeStruct(ShapeConstant.StyleCodeStruct, T),
+          e.writeStruct(DSConstant.StyleCodeStruct, T),
           ShapeUtil.WriteLength(e, p),
-          T.code = StyleConstant.ParaStyleCodes.SDF_S_RINDENT,
+          T.code = StyleConstant.ParaStyleCodes.Rindent,
           T.value = ShapeUtil.ToSDWinCoords(C[l].rindent, n.coordScaleFactor),
-          e.writeStruct(ShapeConstant.StyleCodeStruct, T),
+          e.writeStruct(DSConstant.StyleCodeStruct, T),
           ShapeUtil.WriteLength(e, p),
-          T.code = StyleConstant.ParaStyleCodes.SDF_S_TABSPACE,
+          T.code = StyleConstant.ParaStyleCodes.TabSpace,
           T.value = ShapeUtil.ToSDWinCoords(C[l].tabspace, n.coordScaleFactor),
-          e.writeStruct(ShapeConstant.StyleCodeStruct, T),
+          e.writeStruct(DSConstant.StyleCodeStruct, T),
           ShapeUtil.WriteLength(e, p)
       }
       for (l = 0; l < b.hyperlinks.length; l++)
-        p = ShapeUtil.WriteCode(e, ShapeConstant.OpNameCode.cTextLink),
+        p = ShapeUtil.WriteCode(e, DSConstant.OpNameCode.cTextLink),
           e.writeUint16(l),
           e.writeUint16(2),
           e.writeUCS2String(b.hyperlinks[l], T3DataStream.LITTLE_ENDIAN, b.hyperlinks[l].length + 1),
           ShapeUtil.WriteLength(e, p);
       for (l = 0; l < P.length; l++)
-        p = ShapeUtil.WriteCode(e, ShapeConstant.OpNameCode.cTextData),
+        p = ShapeUtil.WriteCode(e, DSConstant.OpNameCode.cTextData),
           e.writeUint16(l),
           e.writeUCS2String(P[l], T3DataStream.LITTLE_ENDIAN, P[l].length + 1),
           ShapeUtil.WriteLength(e, p);
-      i ? e.writeUint16(ShapeConstant.OpNameCode.cCommentEnd) : e.writeUint16(ShapeConstant.OpNameCode.cTextEnd)
+      i ? e.writeUint16(DSConstant.OpNameCode.cCommentEnd) : e.writeUint16(DSConstant.OpNameCode.cTextEnd)
     }
   }
 

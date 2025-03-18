@@ -2,10 +2,18 @@
 
 class HvConstant {
 
+  /**
+   * Default application settings
+   * Contains environment configuration values
+   */
   static Default = {
     Environment: "dev",
   }
 
+  /**
+   * Document area layout model
+   * Defines constants for UI layout dimensions and element IDs
+   */
   static DocumentAreaModel = {
     LEFT_PANEL_ID: "left-panel",
     LEFT_PANEL_WIDTH: 105,

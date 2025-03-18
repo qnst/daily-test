@@ -44,13 +44,13 @@ class ToolOpt {
           return;
         case 'lines':
           T3Gv.opt.SelectAllObjects([
-            OptConstant.DrawingObjectBaseClass.LINE,
-            OptConstant.DrawingObjectBaseClass.CONNECTOR
+            OptConstant.DrawObjectBaseClass.Line,
+            OptConstant.DrawObjectBaseClass.Connector
           ]);
           T3Util.Log('O.ToolOpt.SelectAct - Output: Selected all line objects');
           break;
         case 'shapes':
-          T3Gv.opt.SelectAllObjects([OptConstant.DrawingObjectBaseClass.SHAPE]);
+          T3Gv.opt.SelectAllObjects([OptConstant.DrawObjectBaseClass.Shape]);
           T3Util.Log('O.ToolOpt.SelectAct - Output: Selected all shape objects');
           break;
       }

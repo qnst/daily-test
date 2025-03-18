@@ -94,7 +94,7 @@ class ToolUtil {
 
     var conversionFactor = 1;
     if (!T3Gv.docUtil.rulerConfig.useInches) {
-      conversionFactor = OptConstant.Defines.MetricConv;
+      conversionFactor = OptConstant.Common.MetricConv;
     }
 
     if (wallObj) {
@@ -132,17 +132,12 @@ class ToolUtil {
 
     var wallObject;
     var isTargetValid = target != null;
-    var businessManager = null;
+    var wallOpt = T3Gv.wallOpt;
 
-    if (businessManager == null) {
-      businessManager = T3Gv.wallOpt;
-    }
-
-    if (businessManager && businessManager.AddWall) {
+    if (wallOpt && wallOpt.AddWall) {
       T3Gv.opt.CloseEdit();
-      businessManager.ToggleAddingWalls(true);
-      wallObject = businessManager.AddWall(isTargetValid, target);
-      // NvConstant.DocumentContext.UsingWallTool = true;
+      wallOpt.ToggleAddingWalls(true);
+      wallObject = wallOpt.AddWall(isTargetValid, target);
     }
 
     if (isTargetValid) {
@@ -254,7 +249,7 @@ class ToolUtil {
     T3Util.Log("O.ToolOpt DrawNewLine input:", event, lineType, isDrawing, referenceObject);
 
     const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
-    const isVerticalText = 0 == (sessionData.def.textflags & NvConstant.TextFlags.SED_TF_HorizText);
+    const isVerticalText = 0 == (sessionData.def.textflags & NvConstant.TextFlags.HorizText);
     let startArrowID = sessionData.d_sarrow;
     let endArrowID = sessionData.d_earrow;
     let startArrowDisplay = sessionData.d_sarrowdisp;
@@ -263,8 +258,8 @@ class ToolUtil {
 
     // Set shape parameter based on line type
     switch (lineType) {
-      case OptConstant.LineTypes.SedLsComm:
-      case OptConstant.LineTypes.SedLsDigi:
+      case OptConstant.LineTypes.LsComm:
+      case OptConstant.LineTypes.LsDigi:
         shapeParameter = 0.25;
         break;
     }
@@ -323,15 +318,15 @@ class ToolUtil {
       referenceObject.Data.attributes && referenceObject.Data.attributes.StyleRecord) {
       lineStyle = Utils1.DeepCopy(referenceObject.Data.attributes.StyleRecord);
     } else {
-      const textBlockStyle = Utils3.FindStyle(OptConstant.Defines.TextBlockStyle);
+      const textBlockStyle = Utils3.FindStyle(OptConstant.Common.TextBlockStyle);
       lineStyle.Text.Paint.Color = '#000000';
     }
 
     lineShape.StyleRecord = lineStyle;
 
     // Set line hopping if allowed
-    if (sessionData.flags & OptConstant.SessionFlags.SEDS_AllowHops) {
-      lineShape.flags = Utils2.SetFlag(lineShape.flags, NvConstant.ObjFlags.SEDO_LineHop, true);
+    if (sessionData.flags & OptConstant.SessionFlags.AllowHops) {
+      lineShape.flags = Utils2.SetFlag(lineShape.flags, NvConstant.ObjFlags.LineHop, true);
     }
 
     // Return shape if in drawing mode, otherwise draw it
@@ -408,11 +403,11 @@ class ToolUtil {
 
     // Set dimensions based on whether we want a square or rectangle
     if (isSquare) {
-      width = OptConstant.Defines.Shape_Square;
-      height = OptConstant.Defines.Shape_Square;
+      width = OptConstant.Common.ShapeSquare;
+      height = OptConstant.Common.ShapeSquare;
     } else {
-      width = OptConstant.Defines.Shape_Width;
-      height = OptConstant.Defines.Shape_Height;
+      width = OptConstant.Common.ShapeWidth;
+      height = OptConstant.Common.ShapeHeight;
     }
 
     // Create shape attributes
@@ -425,8 +420,8 @@ class ToolUtil {
       },
       TextGrow: NvConstant.TextGrowBehavior.ProPortional,
       shapeparam: sessionBlock.def.rrectparam,
-      moreflags: OptConstant.ObjMoreFlags.SED_MF_FixedRR,
-      ObjGrow: OptConstant.GrowBehavior.ALL
+      moreflags: OptConstant.ObjMoreFlags.FixedRR,
+      ObjGrow: OptConstant.GrowBehavior.All
     };
 
     // Add proportional growth behavior if it's a square
@@ -457,11 +452,11 @@ class ToolUtil {
 
     // Set dimensions based on whether we want a square or rectangle
     if (isSquare) {
-      width = OptConstant.Defines.Shape_Square;
-      height = OptConstant.Defines.Shape_Square;
+      width = OptConstant.Common.ShapeSquare;
+      height = OptConstant.Common.ShapeSquare;
     } else {
-      width = OptConstant.Defines.Shape_Width;
-      height = OptConstant.Defines.Shape_Height;
+      width = OptConstant.Common.ShapeWidth;
+      height = OptConstant.Common.ShapeHeight;
     }
 
     // Create shape attributes
@@ -474,8 +469,8 @@ class ToolUtil {
       },
       TextGrow: NvConstant.TextGrowBehavior.ProPortional,
       shapeparam: sessionBlock.def.rrectparam,
-      moreflags: OptConstant.ObjMoreFlags.SED_MF_FixedRR,
-      ObjGrow: OptConstant.GrowBehavior.ALL
+      moreflags: OptConstant.ObjMoreFlags.FixedRR,
+      ObjGrow: OptConstant.GrowBehavior.All
     };
 
     // Add proportional growth behavior if it's a square
@@ -505,11 +500,11 @@ class ToolUtil {
 
     // Set dimensions based on whether we want a circle or oval
     if (isCircle) {
-      width = OptConstant.Defines.Shape_Square;
-      height = OptConstant.Defines.Shape_Square;
+      width = OptConstant.Common.ShapeSquare;
+      height = OptConstant.Common.ShapeSquare;
     } else {
-      width = OptConstant.Defines.Shape_Width;
-      height = OptConstant.Defines.Shape_Height;
+      width = OptConstant.Common.ShapeWidth;
+      height = OptConstant.Common.ShapeHeight;
     }
 
     // Initial position off-screen
@@ -570,7 +565,7 @@ class ToolUtil {
         if (targetID >= 0) {
           var targetObject = T3Gv.opt.GetObjectPtr(targetID, false);
           if (targetObject && targetObject.AllowTextEdit()) {
-            var svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(targetID);
+            var svgElement = T3Gv.opt.svgObjectLayer.GetElementById(targetID);
             T3Gv.opt.ActivateTextEdit(svgElement);
             T3Util.Log("O.ToolOpt StampTextLabel output: void - activated edit on existing text");
             return;
@@ -583,7 +578,7 @@ class ToolUtil {
 
     // Get session data and default text style
     var sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
-    var defaultTextStyle = Utils3.FindStyle(OptConstant.Defines.TextBlockStyle);
+    var defaultTextStyle = Utils3.FindStyle(OptConstant.Common.TextBlockStyle);
 
     if (defaultTextStyle == null) {
       defaultTextStyle = sessionData.def.style;
@@ -605,8 +600,8 @@ class ToolUtil {
         right: 0
       },
       TextGrow: NvConstant.TextGrowBehavior.Horizontal,
-      TextAlign: TextConstant.TextAlign.LEFT,
-      flags: NvConstant.ObjFlags.SEDO_TextOnly
+      TextAlign: TextConstant.TextAlign.Left,
+      flags: NvConstant.ObjFlags.TextOnly
     };
 
     // Ensure Line style exists and set thickness to 0 (no border)
@@ -663,8 +658,8 @@ class ToolUtil {
     const defaultFrame = {
       x: -1000,
       y: -1000,
-      width: OptConstant.Defines.Shape_Width,
-      height: OptConstant.Defines.Shape_Height
+      width: OptConstant.Common.ShapeWidth,
+      height: OptConstant.Common.ShapeHeight
     };
 
     // Get shape parameters for the specified shape type
@@ -964,7 +959,7 @@ class ToolUtil {
 
     try {
       T3Gv.opt.CloseEdit();
-      T3Gv.opt.FlipShapes(OptConstant.ExtraFlags.SEDE_FlipHoriz);
+      T3Gv.opt.FlipShapes(OptConstant.ExtraFlags.FlipHoriz);
     } catch (error) {
       T3Gv.opt.ExceptionCleanup(error);
       throw error;
@@ -982,7 +977,7 @@ class ToolUtil {
 
     try {
       T3Gv.opt.CloseEdit();
-      T3Gv.opt.FlipShapes(OptConstant.ExtraFlags.SEDE_FlipVert);
+      T3Gv.opt.FlipShapes(OptConstant.ExtraFlags.FlipVert);
     } catch (error) {
       T3Gv.opt.ExceptionCleanup(error);
       throw error;
@@ -1207,8 +1202,8 @@ class ToolUtil {
       Frame: {
         x: 1000,// initialX,
         y: 1000,// initialY,
-        width: 40, //OptConstant.Defines.Shape_Width,
-        height: 40,// OptConstant.Defines.Shape_Height
+        width: 40, //OptConstant.Common.ShapeWidth,
+        height: 40,// OptConstant.Common.ShapeHeight
       },
       TextGrow: NvConstant.TextGrowBehavior.ProPortional,
       ObjGrow: OptConstant.GrowBehavior.ProPortional,
@@ -1240,7 +1235,7 @@ class ToolUtil {
 
     let attributes;
     const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
-    const isVerticalText = 0 == (sessionData.def.textflags & NvConstant.TextFlags.SED_TF_HorizText);
+    const isVerticalText = 0 == (sessionData.def.textflags & NvConstant.TextFlags.HorizText);
     let startArrowID = sessionData.d_sarrow;
     let endArrowID = sessionData.d_earrow;
     let startArrowDisplay = sessionData.d_sarrowdisp;
@@ -1299,15 +1294,15 @@ class ToolUtil {
       referenceObject.Data.attributes && referenceObject.Data.attributes.StyleRecord) {
       lineStyle = Utils1.DeepCopy(referenceObject.Data.attributes.StyleRecord);
     } else {
-      const textBlockStyle = Utils3.FindStyle(OptConstant.Defines.TextBlockStyle);
+      const textBlockStyle = Utils3.FindStyle(OptConstant.Common.TextBlockStyle);
       lineStyle.Text.Paint.Color = textBlockStyle.Text.Paint.Color;
     }
 
     segmentedLineShape.StyleRecord = lineStyle;
 
     // Set line hopping if allowed
-    if (sessionData.flags & OptConstant.SessionFlags.SEDS_AllowHops) {
-      segmentedLineShape.flags = Utils2.SetFlag(segmentedLineShape.flags, NvConstant.ObjFlags.SEDO_LineHop, true);
+    if (sessionData.flags & OptConstant.SessionFlags.AllowHops) {
+      segmentedLineShape.flags = Utils2.SetFlag(segmentedLineShape.flags, NvConstant.ObjFlags.LineHop, true);
     }
 
     // Return shape if in drawing mode, otherwise draw it
@@ -1332,7 +1327,7 @@ class ToolUtil {
 
     let attributes;
     const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
-    const isVerticalText = 0 == (sessionData.def.textflags & NvConstant.TextFlags.SED_TF_HorizText);
+    const isVerticalText = 0 == (sessionData.def.textflags & NvConstant.TextFlags.HorizText);
     let startArrowID = sessionData.d_sarrow;
     let endArrowID = sessionData.d_earrow;
     let startArrowDisplay = sessionData.d_sarrowdisp;
@@ -1390,15 +1385,15 @@ class ToolUtil {
       referenceObject.Data.attributes && referenceObject.Data.attributes.StyleRecord) {
       lineStyle = Utils1.DeepCopy(referenceObject.Data.attributes.StyleRecord);
     } else {
-      const textBlockStyle = Utils3.FindStyle(OptConstant.Defines.TextBlockStyle);
+      const textBlockStyle = Utils3.FindStyle(OptConstant.Common.TextBlockStyle);
       lineStyle.Text.Paint.Color = textBlockStyle.Text.Paint.Color;
     }
 
     arcSegmentedLineShape.StyleRecord = lineStyle;
 
     // Set line hopping if allowed
-    if (sessionData.flags & OptConstant.SessionFlags.SEDS_AllowHops) {
-      arcSegmentedLineShape.flags = Utils2.SetFlag(arcSegmentedLineShape.flags, NvConstant.ObjFlags.SEDO_LineHop, true);
+    if (sessionData.flags & OptConstant.SessionFlags.AllowHops) {
+      arcSegmentedLineShape.flags = Utils2.SetFlag(arcSegmentedLineShape.flags, NvConstant.ObjFlags.LineHop, true);
     }
 
     // Return shape if in drawing mode, otherwise draw it
@@ -1423,7 +1418,7 @@ class ToolUtil {
 
     let attributes;
     const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
-    const isVerticalText = 0 == (sessionData.def.textflags & NvConstant.TextFlags.SED_TF_HorizText);
+    const isVerticalText = 0 == (sessionData.def.textflags & NvConstant.TextFlags.HorizText);
     let startArrowID = sessionData.d_sarrow;
     let endArrowID = sessionData.d_earrow;
     let startArrowDisplay = sessionData.d_sarrowdisp;
@@ -1469,7 +1464,7 @@ class ToolUtil {
         TextAlign: T3Constant.DocContext.CurrentTextAlignment,
         TextDirection: isVerticalText,
         Dimensions: sessionData.dimensions,
-        extraflags: OptConstant.ExtraFlags.SEDE_SideKnobs,
+        extraflags: OptConstant.ExtraFlags.SideKnobs,
         bOverrideDefaultStyleOnDraw: true
       };
 
@@ -1491,7 +1486,7 @@ class ToolUtil {
       referenceObject.Data.attributes && referenceObject.Data.attributes.StyleRecord) {
       lineStyle = Utils1.DeepCopy(referenceObject.Data.attributes.StyleRecord);
     } else {
-      const textBlockStyle = Utils3.FindStyle(OptConstant.Defines.TextBlockStyle);
+      const textBlockStyle = Utils3.FindStyle(OptConstant.Common.TextBlockStyle);
       lineStyle.Text.Paint.Color = textBlockStyle.Text.Paint.Color;
     }
 
@@ -1520,7 +1515,7 @@ class ToolUtil {
     let attributes;
     const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
     const sessionBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
-    const isVerticalText = 0 == (sessionData.def.textflags & NvConstant.TextFlags.SED_TF_HorizText);
+    const isVerticalText = 0 == (sessionData.def.textflags & NvConstant.TextFlags.HorizText);
 
     // Create attributes from reference or defaults
     if (referenceObject) {
@@ -1651,7 +1646,7 @@ class ToolUtil {
 
     let attributes;
     const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
-    const isVerticalText = 0 == (sessionData.def.textflags & NvConstant.TextFlags.SED_TF_HorizText);
+    const isVerticalText = 0 == (sessionData.def.textflags & NvConstant.TextFlags.HorizText);
     let startArrowID = sessionData.d_sarrow;
     let endArrowID = sessionData.d_earrow;
     let startArrowDisplay = sessionData.d_sarrowdisp;
@@ -1709,15 +1704,15 @@ class ToolUtil {
       referenceObject.Data.attributes && referenceObject.Data.attributes.StyleRecord) {
       lineStyle = Utils1.DeepCopy(referenceObject.Data.attributes.StyleRecord);
     } else {
-      const textBlockStyle = Utils3.FindStyle(OptConstant.Defines.TextBlockStyle);
+      const textBlockStyle = Utils3.FindStyle(OptConstant.Common.TextBlockStyle);
       lineStyle.Text.Paint.Color = textBlockStyle.Text.Paint.Color;
     }
 
     arcLineShape.StyleRecord = lineStyle;
 
     // Set line hopping if allowed
-    if (sessionData.flags & OptConstant.SessionFlags.SEDS_AllowHops) {
-      arcLineShape.flags = Utils2.SetFlag(arcLineShape.flags, NvConstant.ObjFlags.SEDO_LineHop, true);
+    if (sessionData.flags & OptConstant.SessionFlags.AllowHops) {
+      arcLineShape.flags = Utils2.SetFlag(arcLineShape.flags, NvConstant.ObjFlags.LineHop, true);
     }
 
     // Return shape if in drawing mode, otherwise draw it

@@ -3,7 +3,7 @@
 import T3Gv from '../Data/T3Gv';
 import Utils2 from '../Util/Utils2';
 import $ from 'jquery';
-import BaseDrawingObject from '../Shape/S.BaseDrawingObject'
+import BaseDrawObject from '../Shape/S.BaseDrawObject'
 import Instance from '../Data/Instance/Instance'
 import NvConstant from '../Data/Constant/NvConstant'
 import RightClickData from '../Model/RightClickData'
@@ -158,7 +158,7 @@ class EvtUtil {
     T3Gv.opt.WorkAreaHammer.off("dragend");
 
     // Restore default edit mode
-    T3Gv.opt.SetEditMode(NvConstant.EditState.DEFAULT);
+    T3Gv.opt.SetEditMode(NvConstant.EditState.Default);
 
     T3Util.Log("E.Evt WorkAreaHammerPanEnd output: pan state reset, edit mode restored to default");
     return false;
@@ -462,14 +462,14 @@ class EvtUtil {
 
       // Handle tap based on current modal operation
       switch (T3Gv.opt.currentModalOperation) {
-        case OptConstant.ModalOperations.NONE:
+        case OptConstant.ModalOperations.None:
           // Check for hyperlink hits or process normal tap
           if (!T3Gv.opt.CheckTextHyperlinkHit(shape, tapEvent)) {
             T3Gv.opt.LM_TestIconClick(tapEvent);
 
             // Handle rollover actions if not in read-only mode
             if (T3Gv.opt.GetUIAdaptation(tapEvent) && !T3Gv.docUtil.IsReadOnly()) {
-              shapeElement = T3Gv.opt.svgObjectLayer.GetElementByID(shape.tag);
+              shapeElement = T3Gv.opt.svgObjectLayer.GetElementById(shape.tag);
               shape.SetRolloverActions(T3Gv.opt.svgDoc, shapeElement);
             }
           }
@@ -477,19 +477,19 @@ class EvtUtil {
           T3Util.Log("E.Evt ShapeTap output: normal tap processed");
           return false;
 
-        case OptConstant.ModalOperations.DRAW:
-        case OptConstant.ModalOperations.DRAWPOLYLINE:
+        case OptConstant.ModalOperations.Draw:
+        case OptConstant.ModalOperations.DrawPolyline:
           T3Util.Log("E.Evt ShapeTap output: ignored in draw mode");
           return false;
 
-        case OptConstant.ModalOperations.STAMPTEXTONTAP:
+        case OptConstant.ModalOperations.StampTextOnTap:
           // Handle text editing in stamp text mode
           if (!T3Gv.opt.stampSticky) {
             T3Gv.opt.CancelObjectStampTextOnTap(true);
           }
 
           if (shape.AllowTextEdit()) {
-            shapeElement = T3Gv.opt.svgObjectLayer.GetElementByID(shape.tag);
+            shapeElement = T3Gv.opt.svgObjectLayer.GetElementById(shape.tag);
             T3Gv.opt.ActivateTextEdit(shapeElement.svgObj.SDGObj, tapEvent, false);
           }
 
@@ -513,13 +513,13 @@ class EvtUtil {
       T3Util.Log("E.Evt ShapeDragStart input:", event);
 
       // Check if we're in drawing mode - prevent drag start
-      if (T3Gv.opt.currentModalOperation === OptConstant.ModalOperations.DRAW) {
+      if (T3Gv.opt.currentModalOperation === OptConstant.ModalOperations.Draw) {
         T3Util.Log("E.Evt ShapeDragStart output: prevented in draw mode");
         return false;
       }
 
       // Check if we're in stamp mode - prevent drag start and stop propagation
-      if (T3Gv.opt.currentModalOperation === OptConstant.ModalOperations.STAMP) {
+      if (T3Gv.opt.currentModalOperation === OptConstant.ModalOperations.Stamp) {
         event.stopPropagation();
         event.gesture.stopPropagation();
         T3Util.Log("E.Evt ShapeDragStart output: prevented in stamp mode");
@@ -541,21 +541,21 @@ class EvtUtil {
 
       // Process based on current modal operation state
       switch (T3Gv.opt.currentModalOperation) {
-        case OptConstant.ModalOperations.NONE:
-        case OptConstant.ModalOperations.FORMATPAINTER:
+        case OptConstant.ModalOperations.None:
+        case OptConstant.ModalOperations.FormatPainter:
           // Normal drag operation - start movement
           Utils2.StopPropagationAndDefaults(event);
           T3Gv.opt.LM_MoveClick(event);
           T3Util.Log("E.Evt ShapeDragStart output: move operation started");
           return false;
 
-        case OptConstant.ModalOperations.DRAW:
+        case OptConstant.ModalOperations.Draw:
           // Forward to draw handler if in draw mode
           T3Util.Log("E.Evt ShapeDragStart output: forwarded to draw handler");
           return EvtUtil.Evt_WorkAreaHammerDrawStart(event);
 
-        case OptConstant.ModalOperations.DRAWPOLYLINE:
-        case OptConstant.ModalOperations.STAMPTEXTONTAP:
+        case OptConstant.ModalOperations.DrawPolyline:
+        case OptConstant.ModalOperations.StampTextOnTap:
           // Prevent drag in these modes
           T3Util.Log("E.Evt ShapeDragStart output: prevented in special mode");
           return false;
@@ -577,7 +577,7 @@ class EvtUtil {
       T3Util.Log("E.Evt ShapeHold input:", event);
 
       switch (T3Gv.opt.currentModalOperation) {
-        case OptConstant.ModalOperations.NONE:
+        case OptConstant.ModalOperations.None:
           // Stop the gesture detection and prevent default behavior
           event.gesture.stopDetect();
           Utils2.StopPropagationAndDefaults(event);
@@ -599,9 +599,9 @@ class EvtUtil {
           T3Util.Log("E.Evt ShapeHold output: context menu displayed");
           return false;
 
-        case OptConstant.ModalOperations.DRAW:
-        case OptConstant.ModalOperations.DRAWPOLYLINE:
-        case OptConstant.ModalOperations.STAMPTEXTONTAP:
+        case OptConstant.ModalOperations.Draw:
+        case OptConstant.ModalOperations.DrawPolyline:
+        case OptConstant.ModalOperations.StampTextOnTap:
           // Prevent hold actions in these modes
           T3Util.Log("E.Evt ShapeHold output: prevented in special mode");
           return false;
@@ -627,7 +627,7 @@ class EvtUtil {
       const objectPtr = T3Gv.opt.GetObjectPtr(shapeBlockId, false);
 
       // Validate that we have a valid drawing object
-      if (!(objectPtr && objectPtr instanceof BaseDrawingObject)) {
+      if (!(objectPtr && objectPtr instanceof BaseDrawObject)) {
         T3Util.Log("E.Evt ShapeDoubleTap output: invalid object");
         return false;
       }
@@ -637,7 +637,7 @@ class EvtUtil {
 
       // Process based on current modal operation state
       switch (T3Gv.opt.currentModalOperation) {
-        case OptConstant.ModalOperations.NONE:
+        case OptConstant.ModalOperations.None:
           // Don't process if already editing a note
           if (T3Gv.opt.bInNoteEdit) {
             T3Util.Log("E.Evt ShapeDoubleTap output: prevented during note edit");
@@ -649,7 +649,7 @@ class EvtUtil {
           const isGraph = shape.GetGraph(false);
 
           // // Handle special D3 symbol types (gauges and charts)
-          // if (shape.objecttype === NvConstant.ObjectTypes.SD_OBJT_D3SYMBOL) {
+          // if (shape.objecttype === NvConstant.FNObjectTypes.D3Symbol) {
           //   switch (shape.codeLibID) {
           //     case 'RadialGauge':
           //     case 'LinearGauge':
@@ -679,7 +679,7 @@ class EvtUtil {
           //   T3Gv.opt.Table_SetupAction(
           //     event,
           //     shape.BlockID,
-          //     OptConstant.Defines.TableCellHit,
+          //     OptConstant.Common.TableCellHit,
           //     -1
           //   );
           //   T3Util.Log("E.Evt ShapeDoubleTap output: table action setup");
@@ -691,7 +691,7 @@ class EvtUtil {
           //   T3Gv.opt.Graph_SetupAction(
           //     event,
           //     shape.BlockID,
-          //     OptConstant.Defines.GraphTextHit,
+          //     OptConstant.Common.GraphTextHit,
           //     -1
           //   );
           //   T3Util.Log("E.Evt ShapeDoubleTap output: graph action setup");
@@ -699,14 +699,14 @@ class EvtUtil {
           // }
 
           // Default behavior: activate text editing
-          const shapeElement = T3Gv.opt.svgObjectLayer.GetElementByID(shape.tag);
+          const shapeElement = T3Gv.opt.svgObjectLayer.GetElementById(shape.tag);
           T3Gv.opt.ActivateTextEdit(shapeElement.svgObj.SDGObj, event);
           T3Util.Log("E.Evt ShapeDoubleTap output: text editor activated");
           return false;
 
-        case OptConstant.ModalOperations.DRAW:
-        case OptConstant.ModalOperations.DRAWPOLYLINE:
-        case OptConstant.ModalOperations.STAMPTEXTONTAP:
+        case OptConstant.ModalOperations.Draw:
+        case OptConstant.ModalOperations.DrawPolyline:
+        case OptConstant.ModalOperations.StampTextOnTap:
           // Prevent double-tap actions in these modes
           T3Util.Log("E.Evt ShapeDoubleTap output: prevented in special mode");
           return false;
@@ -998,7 +998,7 @@ class EvtUtil {
     }
 
     // Set edit mode to indicate grabbing/panning
-    T3Gv.opt.SetEditMode(NvConstant.EditState.GRAB);
+    T3Gv.opt.SetEditMode(NvConstant.EditState.Grab);
 
     // Prevent default browser behavior
     Utils2.StopPropagationAndDefaults(event);
@@ -1161,8 +1161,8 @@ class EvtUtil {
 
       let textElement, elementCount;
 
-      if (T3Gv.opt.currentModalOperation == OptConstant.ModalOperations.NONE) {
-        const shapeElement = T3Gv.opt.svgObjectLayer.GetElementByID(shape.BlockID);
+      if (T3Gv.opt.currentModalOperation == OptConstant.ModalOperations.None) {
+        const shapeElement = T3Gv.opt.svgObjectLayer.GetElementById(shape.BlockID);
 
         if (shapeElement != null) {
           elementCount = shapeElement.ElementCount();
@@ -1170,7 +1170,7 @@ class EvtUtil {
           for (let i = 0; i < elementCount; ++i) {
             textElement = shapeElement.GetElementByIndex(i);
 
-            if (textElement.GetID() == OptConstant.SVGElementClass.DIMENSIONTEXT &&
+            if (textElement.GetID() == OptConstant.SVGElementClass.DimText &&
               textElement.GetUserData() == textId) {
 
               T3Gv.opt.bInDimensionEdit = true;
@@ -1215,9 +1215,9 @@ class EvtUtil {
       T3Util.Log("E.Evt DimensionTextTap input:", event);
 
       // Only process in default mode (no modal operations active)
-      if (T3Gv.opt.currentModalOperation == OptConstant.ModalOperations.NONE) {
+      if (T3Gv.opt.currentModalOperation == OptConstant.ModalOperations.None) {
         // Find the shape element
-        const shapeElement = T3Gv.opt.svgObjectLayer.GetElementByID(shape.BlockID);
+        const shapeElement = T3Gv.opt.svgObjectLayer.GetElementById(shape.BlockID);
 
         if (shapeElement != null) {
           // Look through all child elements to find the specific dimension text
@@ -1225,7 +1225,7 @@ class EvtUtil {
             const textElement = shapeElement.GetElementByIndex(i);
 
             // Check if this is the dimension text we're looking for
-            if (textElement.GetID() == OptConstant.SVGElementClass.DIMENSIONTEXT &&
+            if (textElement.GetID() == OptConstant.SVGElementClass.DimText &&
               textElement.GetUserData() == textId) {
 
               // If already editing this dimension text, just stop propagation

@@ -11,7 +11,7 @@ class BitmapSymbol extends BaseSymbol {
    * @param options - Configuration options for the bitmap symbol
    */
   constructor(options = {}) {
-    options.ShapeType = OptConstant.ShapeType.BITMAPSYMBOL;
+    options.ShapeType = OptConstant.ShapeType.BitmapSymbol;
 
     super(options);
   }
@@ -22,18 +22,18 @@ class BitmapSymbol extends BaseSymbol {
    * @returns The container shape with the bitmap symbol or null if not visible
    */
   CreateShape(drawingContext) {
-    if (this.flags & NvConstant.ObjFlags.SEDO_NotVisible) {
+    if (this.flags & NvConstant.ObjFlags.NotVisible) {
       return null;
     }
 
-    const containerShape = drawingContext.CreateShape(OptConstant.CSType.SHAPECONTAINER);
-    const imageShape = drawingContext.CreateShape(OptConstant.CSType.IMAGE);
+    const containerShape = drawingContext.CreateShape(OptConstant.CSType.ShapeContainer);
+    const imageShape = drawingContext.CreateShape(OptConstant.CSType.Image);
 
-    imageShape.SetID(OptConstant.SVGElementClass.SHAPE);
+    imageShape.SetID(OptConstant.SVGElementClass.Shape);
     imageShape.SetURL(this.SymbolURL);
 
-    const isFlippedHorizontally = (this.extraflags & OptConstant.ExtraFlags.SEDE_FlipHoriz) > 0;
-    const isFlippedVertically = (this.extraflags & OptConstant.ExtraFlags.SEDE_FlipVert) > 0;
+    const isFlippedHorizontally = (this.extraflags & OptConstant.ExtraFlags.FlipHoriz) > 0;
+    const isFlippedVertically = (this.extraflags & OptConstant.ExtraFlags.FlipVert) > 0;
 
     if (isFlippedHorizontally) {
       imageShape.SetMirror(isFlippedHorizontally);

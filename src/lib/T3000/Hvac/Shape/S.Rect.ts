@@ -20,8 +20,8 @@ class Rect extends BaseShape {
   constructor(options: any) {
     T3Util.Log("= S.Rect Input:", options);
     options = options || {};
-    options.ShapeType = OptConstant.ShapeType.RECT;
-    options.moreflags |= OptConstant.ObjMoreFlags.SED_MF_FixedRR;
+    options.ShapeType = OptConstant.ShapeType.Rect;
+    options.moreflags |= OptConstant.ObjMoreFlags.FixedRR;
 
     super(options);
 
@@ -40,10 +40,10 @@ class Rect extends BaseShape {
    */
   CreateShape(renderer, enableEvents) {
     // Don't render if the shape is marked as not visible
-    if (this.flags & NvConstant.ObjFlags.SEDO_NotVisible) return null;
+    if (this.flags & NvConstant.ObjFlags.NotVisible) return null;
 
     // Create the main shape container
-    const shapeContainer = renderer.CreateShape(OptConstant.CSType.SHAPECONTAINER);
+    const shapeContainer = renderer.CreateShape(OptConstant.CSType.ShapeContainer);
 
     // Clone the frame and apply necessary adjustments
     const adjustedFrame = $.extend(true, {}, this.Frame);
@@ -75,14 +75,14 @@ class Rect extends BaseShape {
 
     // Handle symbol URL case (using image)
     if (this.SymbolURL) {
-      const imageRect = renderer.CreateShape(OptConstant.CSType.RECT);
-      imageRect.SetID(OptConstant.SVGElementClass.SHAPE);
+      const imageRect = renderer.CreateShape(OptConstant.CSType.Rect);
+      imageRect.SetID(OptConstant.SVGElementClass.Shape);
       imageRect.SetSize(width, height);
       imageRect.SetImageFill(this.SymbolURL, { scaleType: 'NOPROP' });
 
       // Apply flip transformations if needed
-      const isFlipHorizontal = (this.extraflags & OptConstant.ExtraFlags.SEDE_FlipHoriz) > 0;
-      const isFlipVertical = (this.extraflags & OptConstant.ExtraFlags.SEDE_FlipVert) > 0;
+      const isFlipHorizontal = (this.extraflags & OptConstant.ExtraFlags.FlipHoriz) > 0;
+      const isFlipVertical = (this.extraflags & OptConstant.ExtraFlags.FlipVert) > 0;
 
       if (isFlipHorizontal) {
         imageRect.SetMirror(isFlipHorizontal);
@@ -97,10 +97,10 @@ class Rect extends BaseShape {
     // Otherwise create a regular rectangle or rounded rectangle
     else {
       if (cornerRadius > 0) {
-        mainShape = renderer.CreateShape(OptConstant.CSType.RRECT);
+        mainShape = renderer.CreateShape(OptConstant.CSType.RRect);
         mainShape.SetRRectSize(width, height, cornerRadius, cornerRadius);
       } else {
-        mainShape = renderer.CreateShape(OptConstant.CSType.RECT);
+        mainShape = renderer.CreateShape(OptConstant.CSType.Rect);
       }
 
       // Apply stroke styling
@@ -112,7 +112,7 @@ class Rect extends BaseShape {
         mainShape.SetStrokePattern(strokePattern);
       }
 
-      mainShape.SetID(OptConstant.SVGElementClass.SHAPE);
+      mainShape.SetID(OptConstant.SVGElementClass.Shape);
       mainShape.SetSize(width, height);
       shapeContainer.AddElement(mainShape);
     }
@@ -123,21 +123,21 @@ class Rect extends BaseShape {
 
     // Create interactive slop area for better user interaction
     if (!(this instanceof Instance.Shape.ShapeContainer)) {
-      let slopSize = OptConstant.Defines.SED_Slop;
+      let slopSize = OptConstant.Common.Slop;
       const slopHeight = height;
       const slopWidth = width;
 
-      // Increase slop size for certain shape types
-      if ((this.objecttype === NvConstant.ObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER)) {
-        slopSize *= 3;
-      }
+      // // Increase slop size for certain shape types
+      // if ((this.objecttype === NvConstant.FNObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER)) {
+      //   slopSize *= 3;
+      // }
 
       let slopShape;
       if (cornerRadius > 0) {
-        slopShape = renderer.CreateShape(OptConstant.CSType.RRECT);
+        slopShape = renderer.CreateShape(OptConstant.CSType.RRect);
         slopShape.SetRRectSize(slopWidth, slopHeight, cornerRadius, cornerRadius);
       } else {
-        slopShape = renderer.CreateShape(OptConstant.CSType.RECT);
+        slopShape = renderer.CreateShape(OptConstant.CSType.Rect);
       }
 
       // Configure slop area (invisible interactive area)
@@ -152,13 +152,13 @@ class Rect extends BaseShape {
           (processedStyle.Fill.Paint.FillType === NvConstant.FillTypes.Transparent && this.DataID >= 0);
 
         slopShape.SetEventBehavior(isTransparentFillWithData ?
-          OptConstant.EventBehavior.HIDDEN_ALL :
-          OptConstant.EventBehavior.HIDDEN_OUT);
+          OptConstant.EventBehavior.HiddenAll :
+          OptConstant.EventBehavior.HiddenOut);
       } else {
-        slopShape.SetEventBehavior(OptConstant.EventBehavior.NONE);
+        slopShape.SetEventBehavior(OptConstant.EventBehavior.None);
       }
 
-      slopShape.SetID(OptConstant.SVGElementClass.SLOP);
+      slopShape.SetID(OptConstant.SVGElementClass.Slop);
       slopShape.ExcludeFromExport(true);
       slopShape.SetSize(slopWidth || 1, slopHeight);
       shapeContainer.AddElement(slopShape);
@@ -169,13 +169,13 @@ class Rect extends BaseShape {
     if (hatchPattern && hatchPattern !== 0) {
       let hatchShape;
       if (cornerRadius > 0) {
-        hatchShape = renderer.CreateShape(OptConstant.CSType.RRECT);
+        hatchShape = renderer.CreateShape(OptConstant.CSType.RRect);
         hatchShape.SetRRectSize(width, height, cornerRadius, cornerRadius);
       } else {
-        hatchShape = renderer.CreateShape(OptConstant.CSType.RECT);
+        hatchShape = renderer.CreateShape(OptConstant.CSType.Rect);
       }
 
-      hatchShape.SetID(OptConstant.SVGElementClass.HATCH);
+      hatchShape.SetID(OptConstant.SVGElementClass.Hatch);
       hatchShape.SetSize(width, height);
       hatchShape.SetStrokeWidth(0);
       this.SetFillHatch(hatchShape, hatchPattern);
@@ -222,8 +222,8 @@ class Rect extends BaseShape {
       minDimension = inputSize;
     }
 
-    if (this.moreflags & OptConstant.ObjMoreFlags.SED_MF_FixedRR) {
-      let fixedSize = OptConstant.Defines.RRectFixedDim * this.shapeparam;
+    if (this.moreflags & OptConstant.ObjMoreFlags.FixedRR) {
+      let fixedSize = OptConstant.Common.RRectFixedDim * this.shapeparam;
       let maxSize = 0.4 * minDimension;
       if (fixedSize > maxSize) {
         fixedSize = maxSize;
@@ -414,16 +414,16 @@ class Rect extends BaseShape {
     let minDimension = width < height ? width : height;
     let shapeParam = this.shapeparam;
 
-    if (this.moreflags & OptConstant.ObjMoreFlags.SED_MF_FixedRR) {
+    if (this.moreflags & OptConstant.ObjMoreFlags.FixedRR) {
       let adjustedDimension = minDimension;
       if (indentOptions) {
-        adjustedDimension += 2 * (this.GetCornerSize() * OptConstant.Defines.SED_RoundFactor);
-        adjustedDimension = minDimension + 2 * (this.GetCornerSize(adjustedDimension) * OptConstant.Defines.SED_RoundFactor);
+        adjustedDimension += 2 * (this.GetCornerSize() * OptConstant.Common.RoundFactor);
+        adjustedDimension = minDimension + 2 * (this.GetCornerSize(adjustedDimension) * OptConstant.Common.RoundFactor);
       }
       shapeParam = this.GetCornerSize(adjustedDimension) / adjustedDimension;
     }
 
-    this.left_sindent = shapeParam * OptConstant.Defines.SED_RoundFactor;
+    this.left_sindent = shapeParam * OptConstant.Common.RoundFactor;
     this.top_sindent = this.left_sindent;
     this.right_sindent = this.left_sindent;
     this.bottom_sindent = this.left_sindent;
@@ -450,7 +450,7 @@ class Rect extends BaseShape {
   SetShapeProperties(properties) {
     T3Util.Log("= S.Rect SetShapeProperties Input:", properties);
     let updated = false;
-    const fixedRRectFlag = OptConstant.ObjMoreFlags.SED_MF_FixedRR;
+    const fixedRRectFlag = OptConstant.ObjMoreFlags.FixedRR;
 
     if (properties.hasrrectselected) {
       const isFixedRRectChanged = (this.moreflags & fixedRRectFlag) > 0 !== properties.rrectfixed;
@@ -472,7 +472,7 @@ class Rect extends BaseShape {
           this.tindent.bottom = 0;
         }
 
-        this.SetSize(this.Frame.width, 0, OptConstant.ActionTriggerType.LINELENGTH);
+        this.SetSize(this.Frame.width, 0, OptConstant.ActionTriggerType.LineLength);
 
         if (this.shapeparam === 0) {
           this.ExtendLines(true);

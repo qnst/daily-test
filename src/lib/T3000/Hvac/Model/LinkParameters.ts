@@ -90,7 +90,7 @@ class LinkParameters {
     this.cpt = [];
     this.ContainerPt = [];
     this.AllowJoin = 0;
-    this.savedEditState = NvConstant.EditState.DEFAULT;
+    this.savedEditState = NvConstant.EditState.Default;
 
     //#endregion
   }

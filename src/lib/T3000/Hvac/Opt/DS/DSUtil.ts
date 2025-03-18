@@ -16,16 +16,16 @@ class DSUtil {
     var dirCode = 0;
     switch (fileType) {
       case 'image/jpeg':
-        dirCode = StyleConstant.ImageDir.dir_jpg;
+        dirCode = StyleConstant.ImageDir.Jpg;
         break;
       case 'image/png':
-        dirCode = StyleConstant.ImageDir.dir_png;
+        dirCode = StyleConstant.ImageDir.Png;
         break;
       case 'image/svg+xml':
-        dirCode = StyleConstant.ImageDir.dir_svg;
+        dirCode = StyleConstant.ImageDir.Svg;
         break;
       case 'image/wmf':
-        dirCode = StyleConstant.ImageDir.dir_meta;
+        dirCode = StyleConstant.ImageDir.Meta;
     }
     return dirCode;
   }
@@ -38,16 +38,16 @@ class DSUtil {
      */
     var mimeType = '';
     switch (dirCode) {
-      case StyleConstant.ImageDir.dir_jpg:
+      case StyleConstant.ImageDir.Jpg:
         mimeType = 'image/jpeg';
         break;
-      case StyleConstant.ImageDir.dir_png:
+      case StyleConstant.ImageDir.Png:
         mimeType = 'image/png';
         break;
-      case StyleConstant.ImageDir.dir_svg:
+      case StyleConstant.ImageDir.Svg:
         mimeType = 'image/svg+xml';
         break;
-      case StyleConstant.ImageDir.dir_meta:
+      case StyleConstant.ImageDir.Meta:
         mimeType = 'image/wmf';
     }
     return mimeType;
@@ -1638,7 +1638,7 @@ class DSUtil {
               const codeData = stream.readStruct(DSConstant.TextCodeStructCode);
 
               // Handle float values specially
-              const valueData = codeData.code === TextConstant.TextStyleCodes.SDF_T_SIZE_FLOAT
+              const valueData = codeData.code === TextConstant.TextStyleCodes.SizeFloat
                 ? stream.readStruct(DSConstant.TextCodeStructValueFloat)
                 : stream.readStruct(DSConstant.TextCodeStructValue);
 
@@ -2096,13 +2096,13 @@ class DSUtil {
       .readStruct(DSConstant.TextureStruct);
 
     switch (textureData.imagetype) {
-      case StyleConstant.ImageDir.dir_meta:
+      case StyleConstant.ImageDir.Meta:
         DSConstant.TextureFormat = 'image/meta';
         break;
-      case StyleConstant.ImageDir.dir_jpg:
+      case StyleConstant.ImageDir.Jpg:
         DSConstant.TextureFormat = 'image/jpeg';
         break;
-      case StyleConstant.ImageDir.dir_png:
+      case StyleConstant.ImageDir.Png:
         DSConstant.TextureFormat = 'image/png';
         break;
     }

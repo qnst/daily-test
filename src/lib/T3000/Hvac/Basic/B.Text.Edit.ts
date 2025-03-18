@@ -90,11 +90,11 @@ class Edit {
     this.selStart = -1;
     this.selEnd = -1;
     this.selAnchor = -1;
-    this.parent.decorationAreaElem.attr('pointer-events', OptConstant.EventBehavior.NONE);
-    this.parent.clickAreaElem.attr('pointer-events', OptConstant.EventBehavior.HIDDEN_ALL);
+    this.parent.decorationAreaElem.attr('pointer-events', OptConstant.EventBehavior.None);
+    this.parent.clickAreaElem.attr('pointer-events', OptConstant.EventBehavior.HiddenAll);
     this.parent.CallEditCallback('activate');
     this.savedCursorState = this.parent.cursorState;
-    this.parent.cursorState = CursorConstant.CursorState.NONE;
+    this.parent.cursorState = CursorConstant.CursorState.None;
     this.activateInit = true;
     this.lastKeyProcessed = false;
 
@@ -130,7 +130,7 @@ class Edit {
       this.parent.DoSpellCheck();
     }
 
-    this.parent.SetCursorState(CursorConstant.CursorState.EDITLINK);
+    this.parent.SetCursorState(CursorConstant.CursorState.EditLink);
     this.UpdateTextEntryField(false);
     this.parent.RenderDataFieldHilites();
   }
@@ -154,7 +154,7 @@ class Edit {
 
     this.parent.clickAreaElem.node.removeAttribute('pointer-events');
 
-    if (this.parent.cursorState === CursorConstant.CursorState.EDITLINK) {
+    if (this.parent.cursorState === CursorConstant.CursorState.EditLink) {
       this.parent.SetCursorState(this.savedCursorState);
     }
 
@@ -312,7 +312,7 @@ class Edit {
       const clientY = event.gesture.center.clientY;
       const coords = this.parent.doc.ConvertWindowToElemCoords(clientX, clientY, this.parent.textElem.node);
 
-      if (!this.parent.linksDisabled && (this.parent.cursorState === CursorConstant.CursorState.EDITLINK || this.parent.cursorState === CursorConstant.CursorState.LINKONLY)) {
+      if (!this.parent.linksDisabled && (this.parent.cursorState === CursorConstant.CursorState.EditLink || this.parent.cursorState === CursorConstant.CursorState.LinkOnly)) {
         const hyperlink = this.parent.formatter.GetHyperlinkAtPoint(coords);
         if (hyperlink) {
           this.parent.CallEditCallback('hyperlink', hyperlink.url);
@@ -725,17 +725,6 @@ class Edit {
   }
 
   /**
-   * Sets the selection range in an input element
-   * @param inputElement - The DOM input element
-   * @param start - The start position of the selection
-   * @param end - The end position of the selection
-   */
-  static SetInputSelection(inputElement, start, end) {
-    inputElement.selectionStart = start;
-    inputElement.selectionEnd = end;
-  }
-
-  /**
    * Updates the text entry field with current selection
    * @param updateText - Whether to update the text content in addition to selection
    */
@@ -844,6 +833,16 @@ class Edit {
     }
   }
 
+  /**
+   * Sets the selection range in an input element
+   * @param inputElement - The DOM input element
+   * @param start - The start position of the selection
+   * @param end - The end position of the selection
+   */
+  static SetInputSelection(inputElement, start, end) {
+    inputElement.selectionStart = start;
+    inputElement.selectionEnd = end;
+  }
 }
 
 export default Edit

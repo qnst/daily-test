@@ -23,7 +23,7 @@ import BaseLine from '../../Shape/S.BaseLine';
 import '../../Util/T3Hammer'
 import PolyLine from '../../Shape/S.PolyLine';
 import PolyLineContainer from '../../Shape/S.PolyLineContainer';
-import BaseDrawingObject from '../../Shape/S.BaseDrawingObject';
+import BaseDrawObject from '../../Shape/S.BaseDrawObject';
 import OptAhUtil from './OptAhUtil';
 import GroupSymbol from '../../Shape/S.GroupSymbol';
 import Connector from '../../Shape/S.Connector';
@@ -54,7 +54,7 @@ import DynamicGuides from "../../Model/DynamicGuides"
 import T3Constant from "../../Data/Constant/T3Constant";
 import PolygonConstant from "../Polygon/PolygonConstant";
 import PolygonUtil from "../Polygon/PolygonUtil";
-import ShapeConstant from "../DS/DSConstant";
+import DSConstant from "../DS/DSConstant";
 import StateConstant from "../../Data/State/StateConstant";
 import OptConstant from "../../Data/Constant/OptConstant";
 import KeyboardConstant from "../Keyboard/KeyboardConstant";
@@ -62,6 +62,8 @@ import CursorConstant from "../../Data/Constant/CursorConstant";
 import TextConstant from "../../Data/Constant/TextConstant";
 import StyleConstant from "../../Data/Constant/StyleConstant";
 import T3Util from "../../Util/T3Util";
+import ShapeConstant from "../../Data/Constant/ShapeConstant";
+import BConstant from "../../Basic/B.Constant";
 
 class OptUtil {
 
@@ -357,6 +359,8 @@ class OptUtil {
   public oldFileMetaData: any;           // Previous file metadata
   public selectionState: any;            // Current selection state
 
+  public forcedotted: any;
+
   //#endregion
 
   /**
@@ -447,7 +451,7 @@ class OptUtil {
     this.actionAspectRatioHeight = 0;           // Original height for aspect ratio
 
     // Modal state
-    this.currentModalOperation = OptConstant.ModalOperations.NONE;  // Current modal operation type
+    this.currentModalOperation = OptConstant.ModalOperations.None;  // Current modal operation type
     // #endregion
 
     // #region Drawing State
@@ -565,7 +569,7 @@ class OptUtil {
      * Initialize properties for format painter functionality
      * These track state during format painting operations
      */
-    this.formatPainterMode = StyleConstant.FormatPainterModes.NONE;  // Format painter mode
+    this.formatPainterMode = StyleConstant.FormatPainterModes.None;  // Format painter mode
     this.formatPainterStyle = new QuickStyle();  // Style info for format painter
     this.formatPainterSticky = false;            // Whether format painter persists
     this.formatPainterText = new QuickStyle();   // Text style for format painter
@@ -727,8 +731,8 @@ class OptUtil {
     // Create session data block
     const sedSession = new SEDSession();
     sedSession.def.style = new QuickStyle();
-    sedSession.def.pen = Utils1.DeepCopy(OptConstant.Defines.PenStylingDefault);
-    sedSession.def.highlighter = Utils1.DeepCopy(OptConstant.Defines.HighlighterStylingDefault);
+    sedSession.def.pen = Utils1.DeepCopy(OptConstant.Common.PenStylingDefault);
+    sedSession.def.highlighter = Utils1.DeepCopy(OptConstant.Common.HighlighterStylingDefault);
     sedSession.d_sarrow = 0;
     sedSession.d_sarrowdisp = false;
     sedSession.d_earrow = 0;
@@ -745,7 +749,7 @@ class OptUtil {
     // Create layers manager block
     const layersManager = new LayersManager();
     const defaultLayer = new Layer();
-    defaultLayer.name = OptConstant.Defines.DefaultLayerName;
+    defaultLayer.name = OptConstant.Common.DefaultLayerName;
     layersManager.layers.push(defaultLayer);
     layersManager.nlayers = 1;
     layersManager.activelayer = 0;
@@ -778,7 +782,7 @@ class OptUtil {
     this.sVGroot = this.svgDoc.svgObj.node;
     this.UpdateSelectionAttributes(null);
     this.BuildArrowheadLookupTables();
-    this.SetEditMode(NvConstant.EditState.DEFAULT);
+    this.SetEditMode(NvConstant.EditState.Default);
   }
 
   /**
@@ -919,6 +923,18 @@ class OptUtil {
     return denominator;
   }
 
+  /**
+   * Converts pixel values to point values for font size calculations
+   * This function is used when displaying font sizes that are stored in pixels but need to be shown in points.
+   * The conversion uses the standard DPI relationship between pixels and points (72 points per inch).
+   *
+   * @param pixelValue - The font size in pixels to convert
+   * @returns The equivalent font size in points, rounded to the nearest 0.5
+   */
+  PixelstoPoints(pixelValue) {
+    return Math.floor(100 * pixelValue / 72 + 0.5);
+  }
+
   UpdateSelectionAttributes(selectedObjects) {
     T3Util.Log('O.Opt UpdateSelectionAttributes - Input:', selectedObjects);
 
@@ -928,9 +944,9 @@ class OptUtil {
     }
 
     // Constants for better readability
-    const DRAWING_OBJECT_CLASS = OptConstant.DrawingObjectBaseClass;
+    const DRAWING_OBJECT_CLASS = OptConstant.DrawObjectBaseClass;
     const TEXT_FACE = TextConstant.TextFace;
-    const OBJECT_TYPES = NvConstant.ObjectTypes;
+    const OBJECT_TYPES = NvConstant.FNObjectTypes;
     const SHAPE_TYPE = OptConstant.ShapeType;
     const DIMENSION_FLAGS = NvConstant.DimensionFlags;
     const TEXT_FLAGS = NvConstant.TextFlags;
@@ -1007,7 +1023,7 @@ class OptUtil {
     // Validate target object
     if (targetObjectId >= 0) {
       targetObject = this.GetObjectPtr(targetObjectId, false);
-      if (!(targetObject && targetObject instanceof BaseDrawingObject)) {
+      if (!(targetObject && targetObject instanceof BaseDrawObject)) {
         targetObjectId = -1;
         sessionData.tselect = -1;
       }
@@ -1041,7 +1057,7 @@ class OptUtil {
 
       // Get and process the current object
       currentObject = this.GetObjectPtr(objectId, false);
-      if (!(currentObject instanceof BaseDrawingObject)) continue;
+      if (!(currentObject instanceof BaseDrawObject)) continue;
 
       const objectToProcess = currentObject;
       // Process the object based on its type and properties
@@ -1135,7 +1151,7 @@ class OptUtil {
     this.selectionState.bold = (T3Gv.opt.contentHeader.DimensionFont.face & TEXT_FACE.Bold) > 0;
     this.selectionState.italic = (T3Gv.opt.contentHeader.DimensionFont.face & TEXT_FACE.Italic) > 0;
     this.selectionState.underline = (T3Gv.opt.contentHeader.DimensionFont.face & TEXT_FACE.Underline) > 0;
-    this.selectionState.superscript = (T3Gv.opt.contentHeader.DimensionFont.face & TEXT_FACE.Subscript) > 0;
+    this.selectionState.superscript = (T3Gv.opt.contentHeader.DimensionFont.face & TEXT_FACE.Superscript) > 0;
     this.selectionState.subscript = (T3Gv.opt.contentHeader.DimensionFont.face & TEXT_FACE.Subscript) > 0;
     this.selectionState.CurrentSelectionBusinessManager = null;
 
@@ -1153,9 +1169,9 @@ class OptUtil {
     this.selectionState.bold = (sessionData.def.style.Text.Face & TEXT_FACE.Bold) > 0;
     this.selectionState.italic = (sessionData.def.style.Text.Face & TEXT_FACE.Italic) > 0;
     this.selectionState.underline = (sessionData.def.style.Text.Face & TEXT_FACE.Underline) > 0;
-    this.selectionState.superscript = (sessionData.def.style.Text.Face & TEXT_FACE.Subscript) > 0;
+    this.selectionState.superscript = (sessionData.def.style.Text.Face & TEXT_FACE.Superscript) > 0;
     this.selectionState.subscript = (sessionData.def.style.Text.Face & TEXT_FACE.Subscript) > 0;
-    this.selectionState.TextDirection = (sessionData.def.textflags & NvConstant.TextFlags.SED_TF_HorizText) === 0;
+    this.selectionState.TextDirection = (sessionData.def.textflags & NvConstant.TextFlags.HorizText) === 0;
     this.selectionState.dimensions =
       (sessionData.dimensions & NvConstant.DimensionFlags.Always) ||
       (sessionData.dimensions & NvConstant.DimensionFlags.Select);
@@ -1198,7 +1214,7 @@ class OptUtil {
       this.selectionState.height = dimensions.height;
 
       // Handle wall objects
-      if (targetObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
+      if (targetObject.objecttype === NvConstant.FNObjectTypes.FlWall) {
         this.selectionState.WallThickness = targetObject.StyleRecord.Line.Thickness;
       }
 
@@ -1239,7 +1255,7 @@ class OptUtil {
     T3Util.Log('O.Opt ProcessSelectedObject - Input:', { object, textObject, objectIndex });
 
     const TEXT_FACE = TextConstant.TextFace;
-    const DRAWING_OBJECT_CLASS = OptConstant.DrawingObjectBaseClass;
+    const DRAWING_OBJECT_CLASS = OptConstant.DrawObjectBaseClass;
 
     // Handle image URLs
     if (object.ImageURL && object.ImageURL.length) {
@@ -1259,8 +1275,8 @@ class OptUtil {
     //     this.selectionState.lockedTableSelected = true;
     //   }
 
-    //   if (SDUI.AppSettings.Application !== ShapeConstant.Application.Builder &&
-    //     object.objecttype === NvConstant.ObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER) {
+    //   if (SDUI.AppSettings.Application !== DSConstant.Application.Builder &&
+    //     object.objecttype === NvConstant.FNObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER) {
     //     this.selectionState.lockedTableSelected = true;
     //   }
 
@@ -1270,28 +1286,28 @@ class OptUtil {
     // }
 
     // Handle wall objects
-    if (object.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
+    if (object.objecttype === NvConstant.FNObjectTypes.FlWall) {
       this.selectionState.iswallselected = true;
     }
 
     // Get base class, handling special cases
     let objectClass = object.DrawingObjectBaseClass;
     if (object instanceof PolyLineContainer) {
-      objectClass = DRAWING_OBJECT_CLASS.SHAPE;
+      objectClass = DRAWING_OBJECT_CLASS.Shape;
     }
 
     // Process object based on its class
     switch (objectClass) {
-      case DRAWING_OBJECT_CLASS.SHAPE:
+      case DRAWING_OBJECT_CLASS.Shape:
         // this.ProcessShapeObject(object, table);
         this.ProcessShapeObject(object, null);
         break;
 
-      case DRAWING_OBJECT_CLASS.CONNECTOR:
+      case DRAWING_OBJECT_CLASS.Connector:
         this.ProcessConnectorObject(object);
       // Fall through to LINE case
 
-      case DRAWING_OBJECT_CLASS.LINE:
+      case DRAWING_OBJECT_CLASS.Line:
         this.ProcessLineObject(object);
         break;
     }
@@ -1320,9 +1336,9 @@ class OptUtil {
       this.selectionState.npolylinecontainerselected++;
     }
 
-    if (object.subtype === NvConstant.ObjectSubTypes.SD_SUBT_TASK) {
-      this.selectionState.projectTableSelected = true;
-    }
+    // if (object.subtype === NvConstant.ObjectSubTypes.SD_SUBT_TASK) {
+    //   this.selectionState.projectTableSelected = true;
+    // }
 
     // Handle polyline objects
     if (object instanceof PolyLine && object.polylist && object.polylist.segs) {
@@ -1348,8 +1364,8 @@ class OptUtil {
     // }
 
     // Handle rectangle corner radius
-    if (shape.ShapeType === OptConstant.ShapeType.RECT || shape.ShapeType === OptConstant.ShapeType.RRECT) {
-      if (shape.moreflags & OptConstant.ObjMoreFlags.SED_MF_FixedRR) {
+    if (shape.ShapeType === OptConstant.ShapeType.Rect || shape.ShapeType === OptConstant.ShapeType.RRect) {
+      if (shape.moreflags & OptConstant.ObjMoreFlags.FixedRR) {
         if (this.selectionState.fixedCornerRadius === -2) {
           this.selectionState.fixedCornerRadius = 100 * shape.shapeparam;
         } else if (this.selectionState.fixedCornerRadius !== 100 * shape.shapeparam) {
@@ -1421,10 +1437,10 @@ class OptUtil {
     T3Util.Log('O.Opt HandleTextFormatAttributes - Input:', { textObject, objectIndex });
 
     const TEXT_FACE = TextConstant.TextFace;
-    const textData = {};
+    const textData = { hasText: false };
 
     const textFormat = textObject.GetTextFormat(true, textData);
-    if (textData.hastext) {
+    if (textData.hasText) {
       this.selectionState.selectionhastext = true;
     }
 
@@ -1465,7 +1481,7 @@ class OptUtil {
     T3Util.Log('O.Opt HandleTextFormatAttributes - Output: Text format attributes processed');
   }
 
-  GetObjectPtr(blockId, isPreserveBlock) {
+  GetObjectPtr(blockId, isPreserveBlock?) {
     // T3Util.Log('O.Opt GetObjectPtr - Input:', { blockId, isPreserveBlock });
 
     const object = T3Gv.stdObj.GetObject(blockId);
@@ -1550,7 +1566,7 @@ class OptUtil {
     // Verify the selected object is valid
     if (sessionData.tselect >= 0) {
       const selectedObject = T3Gv.opt.GetObjectPtr(sessionData.tselect, false);
-      if (selectedObject && selectedObject instanceof BaseDrawingObject) {
+      if (selectedObject && selectedObject instanceof BaseDrawObject) {
         targetSelectId = sessionData.tselect;
       }
     }
@@ -1609,31 +1625,31 @@ class OptUtil {
     // If no cursor type provided, determine it based on state mode
     if (!actualCursorType) {
       switch (stateMode) {
-        case NvConstant.EditState.STAMP:
+        case NvConstant.EditState.Stamp:
           actualCursorType = CursorConstant.CursorType.STAMP;
           break;
-        case NvConstant.EditState.TEXT:
+        case NvConstant.EditState.Text:
           actualCursorType = CursorConstant.CursorType.TEXT;
           break;
-        case NvConstant.EditState.FORMATPAINT:
+        case NvConstant.EditState.FormatPaint:
           actualCursorType = CursorConstant.CursorType.PAINT;
           break;
-        case NvConstant.EditState.LINKCONNECT:
+        case NvConstant.EditState.LinkConnect:
           actualCursorType = CursorConstant.CursorType.ANCHOR;
           break;
-        case NvConstant.EditState.LINKJOIN:
+        case NvConstant.EditState.LinkJoin:
           actualCursorType = CursorConstant.CursorType.EDIT_CLOSE;
           break;
-        case NvConstant.EditState.EDIT:
+        case NvConstant.EditState.Edit:
           actualCursorType = CursorConstant.CursorType.EDIT;
           break;
-        case NvConstant.EditState.DRAGCONTROL:
+        case NvConstant.EditState.DragControl:
           actualCursorType = CursorConstant.CursorType.NESW_RESIZE;
           break;
-        case NvConstant.EditState.DRAGSHAPE:
+        case NvConstant.EditState.DragShape:
           actualCursorType = CursorConstant.CursorType.MOVE;
           break;
-        case NvConstant.EditState.GRAB:
+        case NvConstant.EditState.Grab:
           actualCursorType = CursorConstant.CursorType.GRAB;
           break;
         default:
@@ -1714,7 +1730,7 @@ class OptUtil {
       if (useFeet) {
         showFractionalInches = showFeetAsInches = NvConstant.DimensionFlags.ShowFractionalInches;
         if (drawingObject) {
-          showFeetAsInches = Utils.SetFlag(
+          showFeetAsInches = Utils2.SetFlag(
             showFractionalInches,
             NvConstant.DimensionFlags.ShowFeetAsInches,
             (drawingObject.Dimensions & NvConstant.DimensionFlags.ShowFeetAsInches) > 0
@@ -1915,7 +1931,7 @@ class OptUtil {
     T3Util.Log('O.Opt ClearSelectionClick: output');
   }
 
-  CloseEdit(skipShapeClose: boolean, closeOption?: any, skipTooltipProcessing?: boolean) {
+  CloseEdit(skipShapeClose?: boolean, closeOption?: any, skipTooltipProcessing?: boolean) {
     T3Util.Log("O.Opt CloseEdit - Input:", { skipShapeClose, closeOption, skipTooltipProcessing });
 
     const isProcessingMessage = false;
@@ -1924,7 +1940,7 @@ class OptUtil {
       let isNudgeActive = false;
       if (this.nudgeOpen) {
         isNudgeActive = true;
-        T3Gv.opt.CloseOpenNudge();
+        // T3Gv.opt.CloseOpenNudge();
       }
       if (!skipTooltipProcessing) {
         this.HandleDataTooltipClose(true);
@@ -1932,7 +1948,7 @@ class OptUtil {
       this.SetFormatPainter(true, false);
       this.DeactivateAllTextEdit(false, !skipShapeClose);
       if (this.bInNoteEdit) {
-        this.Note_CloseEdit();
+        // this.Note_CloseEdit();
       }
       if (!skipShapeClose) {
         this.CloseShapeEdit(closeOption);
@@ -1959,7 +1975,7 @@ class OptUtil {
     let dimensions: any = null;
     if (targetId > 0) {
       const drawingObject = this.GetObjectPtr(targetId, false);
-      if (drawingObject && drawingObject instanceof BaseDrawingObject) {
+      if (drawingObject && drawingObject instanceof BaseDrawObject) {
         dimensions = drawingObject.GetDimensionsForDisplay();
       } else {
         targetId = -1;
@@ -1990,7 +2006,6 @@ class OptUtil {
     T3Util.Log('O.Opt ShowFrame - Output: Frame visibility set to', isShowFrame);
   }
 
-
   StartRubberBandSelect(event: any) {
     T3Util.Log('O.Opt StartRubberBandSelect - Input event:', event);
     try {
@@ -1999,25 +2014,25 @@ class OptUtil {
         return;
       }
 
-      if (this.cachedWidth) {
-        try {
-          T3Gv.opt.CloseEdit();
-          T3Gv.opt.ChangeWidth(this.cachedWidth);
-        } catch (error) {
-          T3Gv.opt.ExceptionCleanup(error);
-          throw error;
-        }
-      }
-      if (this.cachedHeight) {
-        try {
-          T3Gv.opt.CloseEdit();
-          T3Gv.opt.ChangeHeight(this.cachedHeight);
-        } catch (error) {
-          T3Gv.opt.ExceptionCleanup(error);
-          throw error;
-        }
-      }
-      if (this.currentModalOperation === OptConstant.ModalOperations.FORMATPAINTER) {
+      // if (this.cachedWidth) {
+      //   try {
+      //     T3Gv.opt.CloseEdit();
+      //     T3Gv.opt.ChangeWidth(this.cachedWidth);
+      //   } catch (error) {
+      //     T3Gv.opt.ExceptionCleanup(error);
+      //     throw error;
+      //   }
+      // }
+      // if (this.cachedHeight) {
+      //   try {
+      //     T3Gv.opt.CloseEdit();
+      //     T3Gv.opt.ChangeHeight(this.cachedHeight);
+      //   } catch (error) {
+      //     T3Gv.opt.ExceptionCleanup(error);
+      //     throw error;
+      //   }
+      // }
+      if (this.currentModalOperation === OptConstant.ModalOperations.FormatPainter) {
         if (this.formatPainterSticky) {
           T3Util.Log('O.Opt StartRubberBandSelect - formatPainterSticky active; aborting.');
           return;
@@ -2030,12 +2045,14 @@ class OptUtil {
       T3Gv.opt.CloseEdit();
 
       // Create the rubber band shape as a rectangle
-      const rubberBandShape = this.svgDoc.CreateShape(OptConstant.CSType.RECT);
+      const rubberBandShape = this.svgDoc.CreateShape(OptConstant.CSType.Rect);
       rubberBandShape.SetStrokeColor('black');
-      if (T3Gv.opt.isAndroid) {
-        rubberBandShape.SetFillColor('none');
-        rubberBandShape.SetFillOpacity(0);
-      } else {
+      // if (T3Gv.opt.isAndroid) {
+      //   rubberBandShape.SetFillColor('none');
+      //   rubberBandShape.SetFillOpacity(0);
+      // } else
+
+      {
         rubberBandShape.SetFillColor('black');
         rubberBandShape.SetFillOpacity(0.03);
       }
@@ -2043,7 +2060,7 @@ class OptUtil {
       const zoomFactorInverse = 1 / T3Gv.docUtil.GetZoomFactor();
       rubberBandShape.SetStrokeWidth(1 * zoomFactorInverse);
 
-      if (!T3Gv.opt.isAndroid) {
+      if (/*!T3Gv.opt.isAndroid*/ true) {
         const strokePattern = 2 * zoomFactorInverse + ',' + zoomFactorInverse;
         rubberBandShape.SetStrokePattern(strokePattern);
       }
@@ -2077,31 +2094,29 @@ class OptUtil {
   }
 
   HandleDataTooltipClose(isCompleteOperation) {
-    T3Util.Log('O.Opt HandleDataTooltipClose - Input:', { isCompleteOperation });
+    // T3Util.Log('O.Opt HandleDataTooltipClose - Input:', { isCompleteOperation });
 
-    this.ClearFieldDataDatePicker();
+    // this.ClearFieldDataDatePicker();
 
-    if (this.ActiveDataTT && this.ActiveDataTT.dataChanged) {
-      this.CompleteOperation(null, isCompleteOperation);
-      this.ActiveDataTT.dataChanged = false;
-    }
+    // if (this.ActiveDataTT && this.ActiveDataTT.dataChanged) {
+    //   this.CompleteOperation(null, isCompleteOperation);
+    //   this.ActiveDataTT.dataChanged = false;
+    // }
 
-    T3Util.Log('O.Opt HandleDataTooltipClose - Output: done');
+    // T3Util.Log('O.Opt HandleDataTooltipClose - Output: done');
   }
 
   ClearFieldDataDatePicker() {
-    T3Util.Log('O.Opt ClearFieldDataDatePicker - Input:');
+    // T3Util.Log('O.Opt ClearFieldDataDatePicker - Input:');
 
-    if (this._curDatePickerElem && this._curDatePickerElem.datepicker) {
-      this._curDatePickerElem.datepicker('hide');
-    }
+    // if (this._curDatePickerElem && this._curDatePickerElem.datepicker) {
+    //   this._curDatePickerElem.datepicker('hide');
+    // }
 
-    this._curDatePickerElem = null;
+    // this._curDatePickerElem = null;
 
-    T3Util.Log('O.Opt ClearFieldDataDatePicker - Output: DatePicker cleared');
+    // T3Util.Log('O.Opt ClearFieldDataDatePicker - Output: DatePicker cleared');
   }
-
-
 
   ClearAllActionArrowTimers() {
     T3Util.Log('O.Opt ClearAllActionArrowTimers: input');
@@ -2163,19 +2178,19 @@ class OptUtil {
 
     // List of dimension element types to check for visibility
     const dimensionElementTypes = [
-      OptConstant.SVGElementClass.DIMENSIONLINE,
-      OptConstant.SVGElementClass.DIMENSIONTEXT,
-      OptConstant.SVGElementClass.AREADIMENSIONLINE,
-      OptConstant.SVGElementClass.DIMENSIONTEXTNOEDIT
+      OptConstant.SVGElementClass.DimLine,
+      OptConstant.SVGElementClass.DimText,
+      OptConstant.SVGElementClass.AreaDimLine,
+      OptConstant.SVGElementClass.DimTextNoEdit
     ];
 
     // Create action click handler factory
     const createActionClickHandler = function (drawingObject) {
       return function (event) {
-        if (T3Constant.DocContext.HTMLFocusControl &&
-          T3Constant.DocContext.HTMLFocusControl.blur) {
-          T3Constant.DocContext.HTMLFocusControl.blur();
-        }
+        // if (T3Constant.DocContext.HTMLFocusControl &&
+        //   T3Constant.DocContext.HTMLFocusControl.blur) {
+        //   T3Constant.DocContext.HTMLFocusControl.blur();
+        // }
         drawingObject.LM_ActionClick(event);
         return false;
       };
@@ -2189,15 +2204,15 @@ class OptUtil {
       indexInSelectedList = selectedList.indexOf(objectId);
       if (indexInSelectedList < 0 ||
         (drawingObject = T3Gv.opt.GetObjectPtr(objectId, false)) === null ||
-        drawingObject.flags & NvConstant.ObjFlags.SEDO_NotVisible ||
-        (svgElement = this.svgObjectLayer.GetElementByID(objectId)) === null ||
-        svgElement.GetElementByID(OptConstant.SVGElementClass.SHAPE) === null) {
+        drawingObject.flags & NvConstant.ObjFlags.NotVisible ||
+        (svgElement = this.svgObjectLayer.GetElementById(objectId)) === null ||
+        svgElement.GetElementById(OptConstant.SVGElementClass.Shape) === null) {
         continue;
       }
 
       // Handle action triggers
-      actionTriggerId = OptConstant.Defines.Action + objectId;
-      actionTriggerElement = this.svgOverlayLayer.GetElementByID(actionTriggerId);
+      actionTriggerId = OptConstant.Common.Action + objectId;
+      actionTriggerElement = this.svgOverlayLayer.GetElementById(actionTriggerId);
 
       if (actionTriggerElement === null &&
         (actionTriggerElement = drawingObject.CreateActionTriggers(this.svgDoc, objectId, svgElement, targetSelectedId)) !== null) {
@@ -2211,7 +2226,7 @@ class OptUtil {
         }
 
         // Add interaction events if object is not locked
-        if ((drawingObject.flags & NvConstant.ObjFlags.SEDO_Lock) === 0 &&
+        if ((drawingObject.flags & NvConstant.ObjFlags.Lock) === 0 &&
           !T3Gv.docUtil.IsReadOnly() &&
           !drawingObject.NoGrow()) {
 
@@ -2251,7 +2266,6 @@ class OptUtil {
     T3Util.Log('O.Opt RenderAllSVGSelectionStates - Output: Selection states rendered');
   }
 
-
   ActiveVisibleZList() {
     T3Util.Log('O.Opt ActiveVisibleZList: input');
 
@@ -2271,8 +2285,6 @@ class OptUtil {
     T3Util.Log('O.Opt ActiveVisibleZList: output', visibleZList);
     return visibleZList;
   }
-
-
 
   UpdateFieldDataTooltipPos = function (e, t) {
     // if (this.FieldedDataTooltipVisible() && (e || t)) {
@@ -2305,9 +2317,9 @@ class OptUtil {
     let tableCol;
 
     // If format painter is already active, disable it
-    if (this.currentModalOperation === OptConstant.ModalOperations.FORMATPAINTER) {
-      this.currentModalOperation = OptConstant.ModalOperations.NONE;
-      this.SetEditMode(NvConstant.EditState.DEFAULT);
+    if (this.currentModalOperation === OptConstant.ModalOperations.FormatPainter) {
+      this.currentModalOperation = OptConstant.ModalOperations.None;
+      this.SetEditMode(NvConstant.EditState.Default);
       this.formatPainterSticky = false;
       T3Util.Log("O.Opt SetFormatPainter - Output: Format painter disabled");
       return;
@@ -2324,19 +2336,17 @@ class OptUtil {
 
       // CASE 1: If text is being edited, set up text format painter
       if (activeTextEdit != null) {
-        this.currentModalOperation = OptConstant.ModalOperations.FORMATPAINTER;
-        this.formatPainterMode = StyleConstant.FormatPainterModes.TEXT;
+        this.currentModalOperation = OptConstant.ModalOperations.FormatPainter;
+        this.formatPainterMode = StyleConstant.FormatPainterModes.Text;
         this.formatPainterSticky = makeSticky;
 
         const activeEdit = this.svgDoc.GetActiveEdit();
         if (activeEdit) {
           this.formatPainterText = activeEdit.GetSelectedFormat();
-          this.formatPainterStyle = {
-            StyleRecord: {}
-          };
+          this.formatPainterStyle = { StyleRecord: {} };
           this.formatPainterStyle.Text = new TextFormatData();
           this.TextStyleToSDText(this.formatPainterStyle.Text, this.formatPainterText);
-          this.SetEditMode(NvConstant.EditState.FORMATPAINT);
+          this.SetEditMode(NvConstant.EditState.FormatPaint);
         }
       }
       // // CASE 2: If a table is active, set up table format painter
@@ -2346,9 +2356,9 @@ class OptUtil {
 
       //     // If a cell is selected
       //     if (tableCell.select >= 0) {
-      //       this.currentModalOperation = OptConstant.ModalOperations.FORMATPAINTER;
+      //       this.currentModalOperation = OptConstant.ModalOperations.FormatPainter;
       //       this.formatPainterSticky = makeSticky;
-      //       this.formatPainterMode = StyleConstant.FormatPainterModes.TABLE;
+      //       this.formatPainterMode = StyleConstant.FormatPainterModes.Table;
       //       this.formatPainterStyle = {
       //         StyleRecord: {}
       //       };
@@ -2367,16 +2377,16 @@ class OptUtil {
       //       paraFormat.bullet = 'none';
       //       paraFormat.spacing = 0;
 
-      //       const tableElement = this.svgObjectLayer.GetElementByID(tableObject.BlockID);
+      //       const tableElement = this.svgObjectLayer.GetElementById(tableObject.BlockID);
       //       this.Table_GetTextParaFormat(tableCell, paraFormat, tableElement, false, false, tableCell.select);
       //       this.formatPainterParaFormat = paraFormat;
-      //       this.SetEditMode(NvConstant.EditState.FORMATPAINT);
+      //       this.SetEditMode(NvConstant.EditState.FormatPaint);
       //     }
       //     // If a row is selected
       //     else if (tableCell.rselect >= 0) {
-      //       this.currentModalOperation = OptConstant.ModalOperations.FORMATPAINTER;
+      //       this.currentModalOperation = OptConstant.ModalOperations.FormatPainter;
       //       this.formatPainterSticky = makeSticky;
-      //       this.formatPainterMode = StyleConstant.FormatPainterModes.TABLE;
+      //       this.formatPainterMode = StyleConstant.FormatPainterModes.Table;
       //       this.formatPainterStyle = {
       //         StyleRecord: {}
       //       };
@@ -2384,20 +2394,20 @@ class OptUtil {
       //       tableRow = tableCell.rows[tableCell.rselect];
       //       const firstCell = tableCell.cells[tableRow.start + tableRow.segments[0].start];
       //       this.formatPainterStyle.hline = Utils1.DeepCopy(firstCell.hline);
-      //       this.SetEditMode(NvConstant.EditState.FORMATPAINT);
+      //       this.SetEditMode(NvConstant.EditState.FormatPaint);
       //     }
       //     // If a column is selected
       //     else if (tableCell.cselect >= 0) {
-      //       this.currentModalOperation = OptConstant.ModalOperations.FORMATPAINTER;
+      //       this.currentModalOperation = OptConstant.ModalOperations.FormatPainter;
       //       this.formatPainterSticky = makeSticky;
-      //       this.formatPainterMode = StyleConstant.FormatPainterModes.TABLE;
+      //       this.formatPainterMode = StyleConstant.FormatPainterModes.Table;
       //       this.formatPainterStyle = {
       //         StyleRecord: {}
       //       };
 
       //       tableCol = tableCell.cols[tableCell.cselect];
       //       this.formatPainterStyle.vline = Utils1.DeepCopy(tableCol.vline);
-      //       this.SetEditMode(NvConstant.EditState.FORMATPAINT);
+      //       this.SetEditMode(NvConstant.EditState.FormatPaint);
       //     }
       //   }
       // }
@@ -2405,9 +2415,9 @@ class OptUtil {
       else if ((targetObject = this.GetTargetSelect()) >= 0 &&
         (tableObject = this.GetObjectPtr(targetObject, false))) {
 
-        this.currentModalOperation = OptConstant.ModalOperations.FORMATPAINTER;
+        this.currentModalOperation = OptConstant.ModalOperations.FormatPainter;
         this.formatPainterSticky = makeSticky;
-        this.formatPainterMode = StyleConstant.FormatPainterModes.OBJECT;
+        this.formatPainterMode = StyleConstant.FormatPainterModes.Object;
         this.formatPainterStyle = Utils1.DeepCopy(tableObject.StyleRecord);
         this.formatPainterStyle.Border = Utils1.DeepCopy(tableObject.StyleRecord.Line);
 
@@ -2435,7 +2445,7 @@ class OptUtil {
 
         this.formatPainterParaFormat = tableObject.GetTextParaFormat(false);
         this.formatPainterArrows = tableObject.GetArrowheadFormat();
-        this.SetEditMode(NvConstant.EditState.FORMATPAINT);
+        this.SetEditMode(NvConstant.EditState.FormatPaint);
       }
     }
 
@@ -2446,7 +2456,7 @@ class OptUtil {
     });
   }
 
-  DeactivateAllTextEdit(skipShapeClose: boolean, closeOption: any) {
+  DeactivateAllTextEdit(skipShapeClose: boolean, closeOption?: any) {
     T3Util.Log('O.Opt DeactivateAllTextEdit - Input:', { skipShapeClose, closeOption });
 
     const tedSession = this.GetObjectPtr(this.tedSessionBlockId, false);
@@ -2454,7 +2464,7 @@ class OptUtil {
       this.DeactivateTextEdit(skipShapeClose, closeOption);
     } else {
       const activeEdit = this.svgDoc.GetActiveEdit();
-      if (activeEdit != null && activeEdit.ID === OptConstant.SVGElementClass.DIMENSIONTEXT) {
+      if (activeEdit != null && activeEdit.ID === OptConstant.SVGElementClass.DimText) {
         this.TEUnregisterEvents();
       }
     }
@@ -2462,7 +2472,7 @@ class OptUtil {
     T3Util.Log('O.Opt DeactivateAllTextEdit - Output: done');
   }
 
-  TEUnregisterEvents(event) {
+  TEUnregisterEvents(event?) {
     T3Util.Log('O.Opt TEUnregisterEvents - Input:', event);
 
     this.svgDoc.ClearActiveEdit(event);
@@ -2500,7 +2510,7 @@ class OptUtil {
     T3Util.Log('O.Opt TEUnregisterEvents - Output: done');
   }
 
-  CloseShapeEdit(providedOutlineId, useAlternate, alternateOutlineId) {
+  CloseShapeEdit(providedOutlineId, useAlternate?, alternateOutlineId?) {
     T3Util.Log("O.Opt CloseShapeEdit - Input:", { providedOutlineId, useAlternate, alternateOutlineId });
 
     let sessionData = this.GetObjectPtr(this.tedSessionBlockId, false);
@@ -2523,7 +2533,7 @@ class OptUtil {
       }
       let shapeObject = this.GetObjectPtr(activeOutlineId, false);
       if (shapeObject) {
-        if (shapeObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
+        if (shapeObject.objecttype === NvConstant.FNObjectTypes.FlWall) {
           T3Util.Log("O.Opt CloseShapeEdit - Output: Active outline is a wall opt wall, skipping close");
           return;
         }
@@ -2532,7 +2542,7 @@ class OptUtil {
 
         shapeObject = this.GetObjectPtr(activeOutlineId, false);
         if (
-          shapeObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.LINE &&
+          shapeObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Line &&
           shapeObject.LineType === OptConstant.LineType.POLYLINE &&
           shapeObject.polylist.closed &&
           (this.PolyLineToShape(activeOutlineId)/*, Collab.AllowMessage()*/)
@@ -2551,11 +2561,119 @@ class OptUtil {
     T3Util.Log("O.Opt CloseShapeEdit - Output: Operation complete");
   }
 
+  /**
+   * Converts a PolyLine object to a Polygon shape
+   * This function takes a polyline with multiple points and converts it to a closed
+   * polygon shape, preserving its position, rotation, and other properties.
+   * The polyline's points are normalized to the shape's dimensions.
+   *
+   * @param polyLineId - ID of the polyline object to convert
+   * @param skipRendering - If true, skips rendering the object after conversion
+   * @returns Boolean indicating whether a shape was successfully converted from polyline
+   */
+  PolyLineToShape(polyLineId, skipRendering?) {
+    let polyLineObject;
+    let polygonShape;
+    let vertexIndex;
+    let polyPoints;
+    let normalizedPoint;
+    let pointCount;
+    let width;
+    let height;
+    let boundingRect = { x: 0, y: 0, width: 0, height: 0 };
+
+    // Get and preserve the polyline block
+    const polyLineBlock = T3Gv.stdObj.PreserveBlock(polyLineId);
+
+    if (polyLineBlock != null) {
+      // Get the polyline object from the block
+      polyLineObject = polyLineBlock.Data;
+
+      // Get the points that make up the polyline
+      polyPoints = polyLineObject.GetPolyPoints(
+        OptConstant.Common.MaxPolyPoints,
+        true,
+        false,
+        false,
+        null
+      );
+
+      pointCount = polyPoints.length;
+
+      // Set dimension and offset data
+      polyLineObject.polylist.dim.x = polyLineObject.inside.width;
+      polyLineObject.polylist.dim.y = polyLineObject.inside.height;
+      polyLineObject.polylist.offset.x = polyLineObject.StartPoint.x - polyLineObject.Frame.x;
+      polyLineObject.polylist.offset.y = polyLineObject.StartPoint.y - polyLineObject.Frame.y;
+
+      // Ensure minimum dimensions
+      width = polyLineObject.inside.width;
+      if (width < 1) {
+        width = 1;
+      }
+
+      height = polyLineObject.inside.height;
+      if (height < 1) {
+        height = 1;
+      }
+
+      // Create new polygon shape and copy properties from polyline
+      polygonShape = new Instance.Shape.Polygon(polyLineObject);
+      polygonShape.NeedsSIndentCount = true;
+      polygonShape.polylist = polyLineObject.polylist;
+      polygonShape.BlockID = polyLineObject.BlockID;
+      polygonShape.StartPoint = polyLineObject.StartPoint;
+      polygonShape.EndPoint = polyLineObject.EndPoint;
+      polygonShape.RotationAngle = polyLineObject.polylist.Shape_Rotation;
+      polygonShape.DataID = polyLineObject.polylist.Shape_DataID;
+
+      // Calculate bounding rectangle of points
+      Utils2.GetPolyRect(boundingRect, polyPoints);
+
+      // Process each vertex, normalizing to shape dimensions
+      for (vertexIndex = 0; vertexIndex < pointCount; vertexIndex++) {
+        // Skip duplicate consecutive points
+        if (vertexIndex > 0 &&
+          polyPoints[vertexIndex].x === polyPoints[vertexIndex - 1].x &&
+          polyPoints[vertexIndex].y === polyPoints[vertexIndex - 1].y) {
+          continue;
+        }
+
+        // Adjust point relative to bounding rectangle
+        polyPoints[vertexIndex].x -= boundingRect.x;
+        polyPoints[vertexIndex].y -= boundingRect.y;
+
+        // Normalize point coordinates to shape dimensions
+        normalizedPoint = new Point(
+          polyPoints[vertexIndex].x / width,
+          polyPoints[vertexIndex].y / height
+        );
+
+        // Add normalized vertex to the polygon
+        polygonShape.VertexArray.push(normalizedPoint);
+      }
+
+      // Update frame and replace the original object with the new polygon
+      polygonShape.UpdateFrame(polyLineObject.Frame);
+      polyLineBlock.Data = polygonShape;
+
+      // Render the changes if not skipped
+      if (!skipRendering) {
+        this.AddToDirtyList(polyLineId);
+        this.RenderDirtySVGObjects();
+      }
+
+      return true;
+    }
+
+    return false;
+  }
+
   EndStampSession() {
     T3Util.Log('O.Opt EndStampSession - Input');
 
     const editMode = T3Gv.opt.GetEditMode();
-    if (editMode === NvConstant.EditState.STAMP) {
+    if (editMode === NvConstant.EditState.Stamp) {
       this.actionStoredObjectId = -1;
       this.CancelObjectDragDrop(true);
 
@@ -2571,7 +2689,7 @@ class OptUtil {
     T3Util.Log('O.Opt GetEditMode - Input');
 
     const editModeList = this.editModeList || [];
-    let currentEditMode = NvConstant.EditState.DEFAULT;
+    let currentEditMode = NvConstant.EditState.Default;
 
     if (editModeList.length) {
       currentEditMode = editModeList[editModeList.length - 1].mode;
@@ -2679,7 +2797,7 @@ class OptUtil {
       // Unlock and unblock collaboration messages, and reset undo state.
       // Collab.UnLockMessages();
       // Collab.UnBlockMessages();
-      T3Gv.opt.InUndo = false;
+      T3Gv.opt.noUndo = false;
     } catch (cleanupError) {
       console.error("O.Opt RubberBandSelectExceptionCleanup - Cleanup Error:", cleanupError);
       throw cleanupError;
@@ -2834,7 +2952,7 @@ class OptUtil {
     const visibleObjects = this.ActiveVisibleZList();
     const filteredObjects = this.RemoveNotVisible(visibleObjects);
     const objectCount = filteredObjects.length;
-    const shapeContainerType = NvConstant.ObjectTypes.SD_OBJT_SHAPECONTAINER;
+    const shapeContainerType = NvConstant.FNObjectTypes.ShapeContainer;
 
     if (objectCount !== 0) {
       // Create a clean copy of the selection rectangle
@@ -2853,7 +2971,7 @@ class OptUtil {
           const objectData = object.Data;
 
           // Skip shape containers that are in cells
-          if (objectData.objecttype !== shapeContainerType || !this.ContainerIsInCell(objectData)) {
+          if (objectData.objecttype !== shapeContainerType /*|| !this.ContainerIsInCell(objectData)*/) {
             let objectFrame = objectData.Frame;
 
             // If the object is rotated, calculate its actual bounding box
@@ -2895,7 +3013,7 @@ class OptUtil {
   RemoveNotVisible(objects) {
     T3Util.Log('O.Opt RemoveNotVisible - Input:', objects);
 
-    const notVisibleFlag = NvConstant.ObjFlags.SEDO_NotVisible;
+    const notVisibleFlag = NvConstant.ObjFlags.NotVisible;
     const visibleObjects = [];
 
     for (let i = 0; i < objects.length; i++) {
@@ -2980,11 +3098,11 @@ class OptUtil {
     this.RenderDirtySVGObjects();
     this.FitDocumentWorkArea(false, false, false, fitOption);
 
-    if (T3Gv.gTestException) {
-      const error = new Error("in-complete operation");
-      error.name = '1';
-      throw error;
-    }
+    // if (T3Gv.gTestException) {
+    //   const error = new Error("in-complete operation");
+    //   error.name = '1';
+    //   throw error;
+    // }
 
     if (selectionObjects /*&& Collab.AllowSelectionChange()*/) {
       this.SelectObjects(selectionObjects, false, true);
@@ -3016,14 +3134,14 @@ class OptUtil {
   DrawNewObject(newShape, clearExistingSection) {
     T3Util.Log("O.Opt DrawNewObject - Input:", { newShape, clearExistingSection });
 
-    this.SetModalOperation(OptConstant.ModalOperations.DRAW);
+    this.SetModalOperation(OptConstant.ModalOperations.Draw);
     this.GetObjectPtr(this.tedSessionBlockId, false);
     this.CloseEdit();
 
     this.lineDrawId = -1;
     this.drawShape = newShape;
     this.ClearAnySelection(!clearExistingSection);
-    this.SetEditMode(NvConstant.EditState.EDIT);
+    this.SetEditMode(NvConstant.EditState.Edit);
     this.WorkAreaHammer.on('dragstart', EvtUtil.Evt_WorkAreaHammerDrawStart);
 
     T3Util.Log("O.Opt DrawNewObject - Output: Draw new object initialized");
@@ -3033,8 +3151,8 @@ class OptUtil {
     T3Util.Log("O.Opt SetModalOperation - Input:", { operation });
 
     if (
-      operation !== OptConstant.ModalOperations.NONE &&
-      this.currentModalOperation !== OptConstant.ModalOperations.NONE &&
+      operation !== OptConstant.ModalOperations.None &&
+      this.currentModalOperation !== OptConstant.ModalOperations.None &&
       this.currentModalOperation !== operation
     ) {
       this.CancelModalOperation();
@@ -3138,7 +3256,7 @@ class OptUtil {
     }
 
     // Get the corresponding SVG object for the new object
-    this.actionSvgObject = this.svgObjectLayer.GetElementByID(this.actionStoredObjectId);
+    this.actionSvgObject = this.svgObjectLayer.GetElementById(this.actionStoredObjectId);
 
     // Handle connection highlights if there is a connect index
     if (this.linkParams && this.linkParams.SConnectIndex >= 0) {
@@ -3186,7 +3304,7 @@ class OptUtil {
     let lineClassFilters = [];
     let objectClassesToFind = null;
     let sessionFlags = 0;
-    let connectHookFlag = NvConstant.HookFlags.SED_LC_HookNoExtra;
+    let connectHookFlag = NvConstant.HookFlags.LcHookNoExtra;
     let hookPointTypes = OptConstant.HookPts;
     let isContainerHit = false;
     let targetObject;
@@ -3195,21 +3313,21 @@ class OptUtil {
     // Helper function to check if a hook point is a center type
     const isCenterHookPoint = (hookType) => {
       switch (hookType) {
-        case hookPointTypes.SED_KTC:
-        case hookPointTypes.SED_KBC:
-        case hookPointTypes.SED_KRC:
-        case hookPointTypes.SED_KLC:
+        case hookPointTypes.KTC:
+        case hookPointTypes.KBC:
+        case hookPointTypes.KRC:
+        case hookPointTypes.KLC:
           return true;
         default:
-          if (hookType >= hookPointTypes.SED_CustomBase &&
-            hookType < hookPointTypes.SED_CustomBase + 100) {
+          if (hookType >= hookPointTypes.CustomBase &&
+            hookType < hookPointTypes.CustomBase + 100) {
             return true;
           }
       }
       return false;
     };
 
-    const isLineObject = drawingObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.LINE;
+    const isLineObject = drawingObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Line;
 
     // Input validation
     if (hookPoints == null) {
@@ -3230,7 +3348,7 @@ class OptUtil {
 
     // Get hook flags and clear attachment flag
     hookFlags = drawingObject.hookflags;
-    hookFlags = Utils2.SetFlag(hookFlags, NvConstant.HookFlags.SED_LC_AttachToLine, false);
+    hookFlags = Utils2.SetFlag(hookFlags, NvConstant.HookFlags.LcAttachToLine, false);
 
     // Get session data and flags
     const sessionData = this.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
@@ -3241,18 +3359,18 @@ class OptUtil {
     // Set up class filters based on mode
     if (isAttachMode) {
       // In attach mode, only consider line objects
-      classFilters.push(OptConstant.DrawingObjectBaseClass.LINE);
+      classFilters.push(OptConstant.DrawObjectBaseClass.Line);
       objectClassesToFind = classFilters;
     } else if (this.linkParams.ArraysOnly) {
       // In arrays-only mode, filter based on object type
-      if (drawingObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.CONNECTOR) {
-        classFilters.push(OptConstant.DrawingObjectBaseClass.SHAPE);
+      if (drawingObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
+        classFilters.push(OptConstant.DrawObjectBaseClass.Shape);
         objectClassesToFind = classFilters;
-      } else if (drawingObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.SHAPE) {
-        classFilters.push(OptConstant.DrawingObjectBaseClass.CONNECTOR);
+      } else if (drawingObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape) {
+        classFilters.push(OptConstant.DrawObjectBaseClass.Connector);
 
-        if (sessionFlags & OptConstant.SessionFlags.SEDS_LLink) {
-          classFilters.push(OptConstant.DrawingObjectBaseClass.LINE);
+        if (sessionFlags & OptConstant.SessionFlags.LLink) {
+          classFilters.push(OptConstant.DrawObjectBaseClass.Line);
         }
 
         objectClassesToFind = classFilters;
@@ -3263,12 +3381,12 @@ class OptUtil {
 
     // In join mode, include line objects in the filter
     if (allowJoin) {
-      lineClassFilters.push(OptConstant.DrawingObjectBaseClass.LINE);
+      lineClassFilters.push(OptConstant.DrawObjectBaseClass.Line);
     }
 
     // When drawing from overlay layer, include shapes in the filter
     if (T3Gv.opt.fromOverlayLayer) {
-      classFilters.push(OptConstant.DrawingObjectBaseClass.SHAPE);
+      classFilters.push(OptConstant.DrawObjectBaseClass.Shape);
       objectClassesToFind = classFilters;
     }
 
@@ -3290,7 +3408,7 @@ class OptUtil {
           (hitResult = new HitResult(-1, 0, null),
             drawingObject.ClosePolygon(targetObjectId, hookPoints, hitResult) ||
             (hitResult = this.FindObject(hookPoints[pointIndex], circularList, lineClassFilters, false, true, null)),
-            hitResult && hitResult.hitcode === NvConstant.HitCodes.SED_PLApp)) {
+            hitResult && hitResult.hitcode === NvConstant.HitCodes.PLApp)) {
 
           // Found a valid polygon join point
           this.linkParams.JoinIndex = hitResult.objectid;
@@ -3304,12 +3422,12 @@ class OptUtil {
           this.dragDeltaY = deltaY;
 
           // Set connection point based on join data
-          if (this.linkParams.JoinData === OptConstant.HookPts.SED_KTL) {
+          if (this.linkParams.JoinData === OptConstant.HookPts.KTL) {
             this.linkParams.ConnectPt.x = 0;
             this.linkParams.ConnectPt.y = 0;
           } else {
-            this.linkParams.ConnectPt.x = OptConstant.Defines.SED_CDim;
-            this.linkParams.ConnectPt.y = OptConstant.Defines.SED_CDim;
+            this.linkParams.ConnectPt.x = OptConstant.Common.MaxDim;
+            this.linkParams.ConnectPt.y = OptConstant.Common.MaxDim;
           }
 
           break;
@@ -3326,7 +3444,7 @@ class OptUtil {
             const hitTestFrame = prevConnectObject.GetHitTestFrame(drawingObject);
             if (Utils2.pointInRect(hitTestFrame, containerPoint)) {
               hitResult.objectid = this.linkParams.PrevConnect;
-              hitResult.hitcode = NvConstant.HitCodes.SED_InContainer;
+              hitResult.hitcode = NvConstant.HitCodes.InContainer;
               hitResult.cellid = null;
             }
           }
@@ -3366,7 +3484,7 @@ class OptUtil {
         }
 
         // Handle container hit
-        if (hitResult.hitcode === NvConstant.HitCodes.SED_InContainer) {
+        if (hitResult.hitcode === NvConstant.HitCodes.InContainer) {
           isContainerHit = true;
           containerPoint = hitResult.theContainerPt;
         }
@@ -3377,7 +3495,7 @@ class OptUtil {
           if (isAttachMode) {
             if (this.linkParams.AutoInsert) {
               // Only shapes can be auto-inserted
-              if (drawingObject.DrawingObjectBaseClass !== OptConstant.DrawingObjectBaseClass.SHAPE) {
+              if (drawingObject.DrawingObjectBaseClass !== OptConstant.DrawObjectBaseClass.Shape) {
                 continue;
               }
 
@@ -3400,7 +3518,7 @@ class OptUtil {
             }
 
             // Only allow attaching to lines with the proper flag
-            if ((targetObject.targflags & NvConstant.HookFlags.SED_LC_AttachToLine) === 0) {
+            if ((targetObject.targflags & NvConstant.HookFlags.LcAttachToLine) === 0) {
               continue;
             }
           }
@@ -3410,15 +3528,15 @@ class OptUtil {
 
             // Adjust flags based on mode
             if (this.linkParams.ArraysOnly ||
-              (sessionFlags & OptConstant.SessionFlags.SEDS_SLink) !== 0) {
+              (sessionFlags & OptConstant.SessionFlags.SLink) !== 0) {
               // In arrays-only mode, allow attaching shapes to lines
               if (this.linkParams.ArraysOnly &&
-                targetObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.LINE) {
-                targetFlags = Utils2.SetFlag(targetFlags, NvConstant.HookFlags.SED_LC_Shape, true);
+                targetObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Line) {
+                targetFlags = Utils2.SetFlag(targetFlags, NvConstant.HookFlags.LcShape, true);
               }
             } else {
               // In normal mode, don't allow attaching shapes to other objects
-              targetFlags = Utils2.SetFlag(targetFlags, NvConstant.HookFlags.SED_LC_Shape, false);
+              targetFlags = Utils2.SetFlag(targetFlags, NvConstant.HookFlags.LcShape, false);
             }
 
             // Check if hook flags are compatible
@@ -3429,11 +3547,11 @@ class OptUtil {
         }
 
         // Set up the appropriate flags for target points calculation
-        hookFlags = Utils2.SetFlag(hookFlags, NvConstant.HookFlags.SED_LC_ShapeOnLine, isAttachMode);
+        hookFlags = Utils2.SetFlag(hookFlags, NvConstant.HookFlags.LcShapeOnLine, isAttachMode);
 
         // Special handling for wall opt walls
-        if (drawingObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
-          hookFlags = Utils2.SetFlag(hookFlags, NvConstant.HookFlags.SED_LC_NoSnaps, true);
+        if (drawingObject.objecttype === NvConstant.FNObjectTypes.FlWall) {
+          hookFlags = Utils2.SetFlag(hookFlags, NvConstant.HookFlags.LcNoSnaps, true);
         }
 
         // Get target connection points
@@ -3580,12 +3698,12 @@ class OptUtil {
 
         // Set appropriate hook flag
         if (this.linkParams.AutoInsert && isAttachMode && !T3Gv.opt.linkParams.AutoSinglePoint) {
-          this.linkParams.ConnectHookFlag = NvConstant.HookFlags.SED_LC_AutoInsert;
+          this.linkParams.ConnectHookFlag = NvConstant.HookFlags.LcAutoInsert;
         } else if (this.linkParams.ArraysOnly &&
-          targetObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.LINE &&
-          drawingObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.SHAPE &&
+          targetObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Line &&
+          drawingObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape &&
           isCenterHookPoint(hookIndex)) {
-          this.linkParams.ConnectHookFlag = NvConstant.HookFlags.SED_LC_HookReverse;
+          this.linkParams.ConnectHookFlag = NvConstant.HookFlags.LcHookReverse;
         } else {
           this.linkParams.ConnectHookFlag = 0;
         }
@@ -3626,8 +3744,8 @@ class OptUtil {
       // Update join highlights
       if (this.linkParams.JoinIndex >= 0 && this.linkParams.HiliteJoin < 0) {
         // Show join mode if not already active
-        if (this.GetEditMode() != NvConstant.EditState.LINKJOIN) {
-          this.SetEditMode(NvConstant.EditState.LINKJOIN, null, true);
+        if (this.GetEditMode() != NvConstant.EditState.LinkJoin) {
+          this.SetEditMode(NvConstant.EditState.LinkJoin, null, true);
         }
       } else if (this.linkParams.JoinIndex < 0 && this.linkParams.HiliteJoin >= 0) {
         this.UndoEditMode();
@@ -3660,8 +3778,8 @@ class OptUtil {
         this.linkParams.HiliteJoin = this.linkParams.JoinIndex;
 
         // Set edit mode to join if not already
-        if (this.GetEditMode() != NvConstant.EditState.LINKJOIN) {
-          this.SetEditMode(NvConstant.EditState.LINKJOIN, null, true);
+        if (this.GetEditMode() != NvConstant.EditState.LinkJoin) {
+          this.SetEditMode(NvConstant.EditState.LinkJoin, null, true);
         }
       }
     }
@@ -3704,8 +3822,8 @@ class OptUtil {
       // Update connection mode based on current state
       if (this.linkParams.ConnectIndex >= 0 && this.linkParams.HiliteConnect < 0) {
         // Show connect mode if not already active
-        if (this.GetEditMode() != NvConstant.EditState.LINKCONNECT) {
-          this.SetEditMode(NvConstant.EditState.LINKCONNECT, null, true);
+        if (this.GetEditMode() != NvConstant.EditState.LinkConnect) {
+          this.SetEditMode(NvConstant.EditState.LinkConnect, null, true);
         }
       } else if (this.linkParams.ConnectIndex < 0 && this.linkParams.HiliteConnect >= 0) {
         // Handle disconnection if needed
@@ -3757,8 +3875,8 @@ class OptUtil {
         );
 
         // Set edit mode to connect if not already
-        if (this.GetEditMode() != NvConstant.EditState.LINKCONNECT) {
-          this.SetEditMode(NvConstant.EditState.LINKCONNECT, null, true);
+        if (this.GetEditMode() != NvConstant.EditState.LinkConnect) {
+          this.SetEditMode(NvConstant.EditState.LinkConnect, null, true);
         }
       }
     }
@@ -3805,15 +3923,15 @@ class OptUtil {
           // If containerObject is provided and is a ShapeContainer type, skip connectors.
           if (
             containerObject &&
-            (containerObject instanceof ShapeContainer ||
-              containerObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER) &&
-            currentObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.CONNECTOR
+            (containerObject instanceof ShapeContainer /*||
+              containerObject.objecttype === NvConstant.FNObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER*/) &&
+            currentObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector
           ) {
             continue;
           }
           if (
-            currentObject.flags & NvConstant.ObjFlags.SEDO_Lock ||
-            currentObject.flags & NvConstant.ObjFlags.SEDO_NoLinking
+            currentObject.flags & NvConstant.ObjFlags.Lock ||
+            currentObject.flags & NvConstant.ObjFlags.NoLinking
           ) {
             currentObject = null;
           }
@@ -3821,11 +3939,11 @@ class OptUtil {
 
         if (currentObject != null) {
           // Skip if the object is not visible or is not meant for connection‐to‐connection linking.
-          if (currentObject.flags & NvConstant.ObjFlags.SEDO_NotVisible) continue;
-          if (currentObject.extraflags & OptConstant.ExtraFlags.SEDE_ConnToConn) continue;
+          if (currentObject.flags & NvConstant.ObjFlags.NotVisible) continue;
+          if (currentObject.extraflags & OptConstant.ExtraFlags.ConnToConn) continue;
           if (
             containerObject &&
-            containerObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.CONNECTOR &&
+            containerObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector &&
             T3Gv.opt.FindChildArray(visibleObjects[idx], -1) >= 0
           ) {
             continue;
@@ -3838,13 +3956,13 @@ class OptUtil {
 
           // Get and adjust the hit-test frame for the object.
           const hitTestFrame = currentObject.GetHitTestFrame(containerObject);
-          if (hitTestFrame.width < OptConstant.Defines.FindObjectMinHitSpot) {
-            hitTestFrame.width = OptConstant.Defines.FindObjectMinHitSpot;
-            hitTestFrame.x -= OptConstant.Defines.FindObjectMinHitSpot / 2;
+          if (hitTestFrame.width < OptConstant.Common.FindObjectMinHitSpot) {
+            hitTestFrame.width = OptConstant.Common.FindObjectMinHitSpot;
+            hitTestFrame.x -= OptConstant.Common.FindObjectMinHitSpot / 2;
           }
-          if (hitTestFrame.height < OptConstant.Defines.FindObjectMinHitSpot) {
-            hitTestFrame.height = OptConstant.Defines.FindObjectMinHitSpot;
-            hitTestFrame.y -= OptConstant.Defines.FindObjectMinHitSpot / 2;
+          if (hitTestFrame.height < OptConstant.Common.FindObjectMinHitSpot) {
+            hitTestFrame.height = OptConstant.Common.FindObjectMinHitSpot;
+            hitTestFrame.y -= OptConstant.Common.FindObjectMinHitSpot / 2;
           }
 
           // If the object is a ShapeContainer, check if the point is inside its container point.
@@ -3852,7 +3970,7 @@ class OptUtil {
             const containerPoint = Utils1.DeepCopy(T3Gv.opt.linkParams.ContainerPt[0]);
             if (currentObject.IsShapeContainer(containerObject, containerPoint) && Utils2.pointInRect(hitTestFrame, containerPoint)) {
               hitResult.objectid = visibleObjects[idx];
-              hitResult.hitcode = NvConstant.HitCodes.SED_InContainer;
+              hitResult.hitcode = NvConstant.HitCodes.InContainer;
               hitResult.theContainerPt = containerPoint;
               T3Util.Log("O.Opt FindObject - Output:", hitResult);
               return hitResult;
@@ -3883,8 +4001,7 @@ class OptUtil {
     return null;
   }
 
-
-  InitializeAutoGrowDrag(actionType, shouldCloseEdit) {
+  InitializeAutoGrowDrag(actionType?, shouldCloseEdit?) {
     T3Util.Log('O.Opt InitializeAutoGrowDrag - Input:', { actionType, shouldCloseEdit });
 
     this.dragGotAutoResizeRight = false;
@@ -3894,14 +4011,6 @@ class OptUtil {
 
     T3Util.Log('O.Opt InitializeAutoGrowDrag - Output: Auto grow drag initialized');
   }
-
-
-
-
-
-
-
-
 
   UnbindActionClickHammerEvents() {
     T3Util.Log('O.Opt UnbindActionClickHammerEvents - Input:');
@@ -3916,16 +4025,63 @@ class OptUtil {
     T3Util.Log('O.Opt UnbindActionClickHammerEvents - Output: Events unbound');
   }
 
+  /**
+   * Creates a text block for a drawing object and associates it with the appropriate text style and formatting
+   * @param drawingObject - The drawing object that will contain the text
+   * @param textContent - The text content to be added to the block
+   * @param outputDimensions - Optional output parameter to receive calculated text dimensions
+   * @param unused - Unused parameter (kept for compatibility)
+   * @returns The ID of the newly created text block, or -1 if creation failed
+   */
+  CreateTextBlock(drawingObject, textContent, outputDimensions?, unused?) {
+    // Initialize paragraph style object
+    const paragraphStyle = {};
 
+    // Get text default settings from drawing object
+    const textDefault = drawingObject.GetTextDefault(paragraphStyle);
+    if (!textDefault) {
+      return -1;
+    }
 
+    // Calculate default text style and create text shape
+    const textStyle = this.CalcDefaultInitialTextStyle(textDefault);
+    const textShape = this.svgDoc.CreateShape(OptConstant.CSType.Text);
 
+    // Configure the text shape
+    textShape.SetText(textContent);
+    textShape.SetFormat(textStyle);
+    textShape.SetParagraphStyle(paragraphStyle);
 
+    // Handle vertical justification for shapes
+    if (drawingObject instanceof Instance.Shape.BaseShape) {
+      if (drawingObject.vjust === null) {
+        const justification = ShapeUtil.TextAlignToJust(drawingObject.TextAlign);
+        drawingObject.vjust = justification.vjust;
+      }
+      textShape.SetVerticalAlignment(drawingObject.vjust);
+    }
 
+    // Calculate and output text dimensions if requested
+    if (outputDimensions) {
+      const textFit = textShape.CalcTextFit(32000);
+      outputDimensions.height = textFit.height;
+      outputDimensions.width = textFit.width;
+    }
 
+    // Get runtime text and selection range
+    const runtimeText = textShape.GetRuntimeText();
+    const selectionRange = textShape.GetSelectedRange();
 
+    // Create text object and store in block
+    const textObject = new TextObject({});
+    textObject.runtimeText = runtimeText;
+    textObject.selrange = selectionRange;
 
+    // Create block and return its ID
+    return T3Gv.stdObj.CreateBlock(StateConstant.StoredObjectType.TextObject, textObject).ID;
+  }
 
-  AddNewObject(drawingObject, shouldStyleCopy, renderSelection, textContent) {
+  AddNewObject(drawingObject, shouldStyleCopy, renderSelection?, textContent?) {
     T3Util.Log("O.Opt AddNewObject - Input:", { drawingObject, shouldStyleCopy, renderSelection, textContent });
 
     let nativeSymbolResult;
@@ -3951,13 +4107,13 @@ class OptUtil {
     // Copy default style if required.
     if (shouldStyleCopy) {
       drawingObject.StyleRecord = Utils1.DeepCopy(sessionData.def.style);
-      if (drawingObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.SHAPE) {
+      if (drawingObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape) {
         drawingObject.StyleRecord.Line = Utils1.DeepCopy(drawingObject.StyleRecord.Border);
         drawingObject.TMargins = Utils1.DeepCopy(sessionData.def.tmargins);
         drawingObject.TextFlags = Utils2.SetFlag(
           drawingObject.TextFlags,
-          NvConstant.TextFlags.SED_TF_FormCR,
-          (sessionData.def.textflags & NvConstant.TextFlags.SED_TF_FormCR) > 0
+          NvConstant.TextFlags.FormCR,
+          (sessionData.def.textflags & NvConstant.TextFlags.FormCR) > 0
         );
       }
       let justification = sessionData.def.just;
@@ -3978,14 +4134,14 @@ class OptUtil {
     drawingObject.sizedim.height = drawingObject.Frame.height;
     drawingObject.UniqueID = this.uniqueId++;
 
-    if (drawingObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
+    if (drawingObject.objecttype === NvConstant.FNObjectTypes.FlWall) {
       layerFlag = NvConstant.LayerFlags.UseEdges;
     }
 
     drawingObject.DataID = textContent ? T3Gv.opt.CreateTextBlock(drawingObject, textContent) : -1;
 
     // Create new graphics block.
-    const newBlock = T3Gv.stdObj.CreateBlock(StateConstant.StoredObjectType.BaseDrawingObject, drawingObject);
+    const newBlock = T3Gv.stdObj.CreateBlock(StateConstant.StoredObjectType.BaseDrawObject, drawingObject);
     if (newBlock == null) {
       throw new Error('AddNewObject got a null new graphics block allocation');
     }
@@ -4012,143 +4168,44 @@ class OptUtil {
     return newBlock.ID;
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  /**
+   * Marks all objects in visible layers above the active layer as dirty
+   * This function iterates through layers with indices lower than the active layer
+   * (which appear visually above the active layer) and marks all their objects as dirty
+   * so they will be re-rendered. This ensures proper z-ordering of objects when
+   * changes are made to the active layer.
+   */
+  MarkAllAllVisibleHigherLayerObjectsDirty() {
+    let layerIndex, objectIndex;
+    const layersManager = T3Gv.opt.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
+
+    // Iterate from the layer just above the active one (lower index) up to the top-most layer
+    for (layerIndex = layersManager.activelayer - 1; layerIndex >= 0; layerIndex--) {
+      // Check if this layer is visible
+      if (layersManager.layers[layerIndex].flags & NvConstant.LayerFlags.Visible) {
+        // Mark all objects in this visible layer as dirty
+        for (objectIndex = 0; objectIndex < layersManager.layers[layerIndex].zList.length; objectIndex++) {
+          T3Gv.opt.AddToDirtyList(layersManager.layers[layerIndex].zList[objectIndex]);
+        }
+      }
+    }
+  }
+
+  /**
+   * Renders dirty SVG objects without updating mouse position indicators
+   * This function calls the common rendering function with a parameter indicating
+   * that selection states should not be rendered. This is useful when only the
+   * visual appearance of objects needs to be updated without changing interactive
+   * elements like selection handles or cursors.
+   */
+  RenderDirtySVGObjectsNoSetMouse() {
+    this.RenderDirtySVGObjectsCommon(false);
+  }
 
   AllowAddToRecent(item) {
     T3Util.Log('O.Opt allowAddToRecent - Input:', item);
     if (item) {
-      if (item.flags & NvConstant.ObjFlags.SEDO_TextOnly) {
+      if (item.flags & NvConstant.ObjFlags.TextOnly) {
         T3Util.Log('O.Opt allowAddToRecent - Output:', false);
         return false;
       }
@@ -4161,6 +4218,22 @@ class OptUtil {
     return true;
   }
 
+  /**
+   * Marks all objects in a specific layer as dirty so they will be re-rendered
+   * This function iterates through all objects in the given layer and adds them to the
+   * dirty list, which causes them to be redrawn in the next rendering cycle.
+   *
+   * @param layerIndex - Index of the layer containing objects to mark dirty
+   * @param layerData - The layer object containing the z-ordered list of objects
+   */
+  DirtyObjectsOnLayer(layerIndex, layerData) {
+    const objectList = layerData.zList;
+    const objectCount = objectList.length;
+
+    for (let objectIndex = 0; objectIndex < objectCount; ++objectIndex) {
+      this.AddToDirtyList(objectList[objectIndex]);
+    }
+  }
 
   ZListPreserve(additionalLayerFlag) {
     T3Util.Log('O.Opt zListPreserve - Input:', additionalLayerFlag);
@@ -4207,7 +4280,6 @@ class OptUtil {
     T3Util.Log('O.Opt getTopMostVisibleLayer - Output:', -1);
     return -1;
   }
-
 
   RenderLastSVGObject(shouldRenderSelectionStates) {
 
@@ -4256,7 +4328,7 @@ class OptUtil {
       shapeContainer.SetID(objectId);
 
       if (removeExisting) {
-        existingSvgElement = this.svgObjectLayer.GetElementByID(objectId);
+        existingSvgElement = this.svgObjectLayer.GetElementById(objectId);
         if (shapeContainer) {
           this.svgObjectLayer.AddElement(shapeContainer, containerElement);
         }
@@ -4294,10 +4366,10 @@ class OptUtil {
             T3Gv.Evt_ShapeDragStart = EvtUtil.Evt_ShapeDragStartFactory(drawingData);
             hammerInstance.on('dragstart', T3Gv.Evt_ShapeDragStart);
 
-            if (this.isMobilePlatform) {
-              T3Gv.Evt_LM_ShapeHold = EvtUtil.Evt_ShapeHoldFactory(drawingData);
-              hammerInstance.on('hold', T3Gv.Evt_LM_ShapeHold);
-            }
+            // if (this.isMobilePlatform) {
+            //   T3Gv.Evt_LM_ShapeHold = EvtUtil.Evt_ShapeHoldFactory(drawingData);
+            //   hammerInstance.on('hold', T3Gv.Evt_LM_ShapeHold);
+            // }
 
             if (drawingData.AllowTextEdit() || drawingData.AllowDoubleClick()) {
               T3Gv.Evt_LM_ShapeDoubleTap = EvtUtil.Evt_ShapeDoubleTapFactory(drawingData);
@@ -4307,7 +4379,7 @@ class OptUtil {
             shapeContainer.SetEventProxy(hammerInstance);
           }
 
-          if (!this.isMobilePlatform && !T3Gv.docUtil.IsReadOnly()) {
+          if (/*!this.isMobilePlatform &&*/ !T3Gv.docUtil.IsReadOnly()) {
             shapeContainer.svgObj.mouseover(function (event) {
               let elementId = this.SDGObj.GetID();
               let drawingObj = T3Gv.opt.GetObjectPtr(elementId, false);
@@ -4319,7 +4391,7 @@ class OptUtil {
 
           drawingData.RegisterForDataDrop(shapeContainer);
         } else {
-          shapeContainer.SetEventBehavior(OptConstant.EventBehavior.NONE);
+          shapeContainer.SetEventBehavior(OptConstant.EventBehavior.None);
         }
       }
     }
@@ -4333,13 +4405,13 @@ class OptUtil {
     let isShowing = false;
 
     if (this.curNoteShape === noteShapeId) {
-      if (noteTableCell) {
-        if (this.curNoteTableCell && this.curNoteTableCell.uniqueid === noteTableCell.uniqueid) {
-          isShowing = true;
-        }
-      } else if (this.curNoteTableCell == null) {
-        isShowing = true;
-      }
+      // if (noteTableCell) {
+      //   if (this.curNoteTableCell && this.curNoteTableCell.uniqueid === noteTableCell.uniqueid) {
+      //     isShowing = true;
+      //   }
+      // } else if (this.curNoteTableCell == null) {
+      //   isShowing = true;
+      // }
     }
 
     T3Util.Log('O.Opt NoteIsShowing - Output:', isShowing);
@@ -4360,7 +4432,7 @@ class OptUtil {
     let sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
 
     // If auto-grow is disabled by content header flags, constrain coordinates to session dimensions
-    if (T3Gv.opt.contentHeader.flags & OptConstant.ContentHeaderFlags.CT_DA_NoAuto) {
+    if (T3Gv.opt.contentHeader.flags & OptConstant.CntHeaderFlags.NoAuto) {
       if (dragPoint.x > sessionData.dim.x) {
         dragPoint.x = sessionData.dim.x;
       }
@@ -4463,7 +4535,6 @@ class OptUtil {
     }
   }
 
-
   IsRectangleFullyEnclosed(outerRect: { x: number; y: number; width: number; height: number }, innerRect: { x: number; y: number; width: number; height: number }): boolean {
     T3Util.Log("O.Opt IsRectangleFullyEnclosed - Input:", { outerRect, innerRect });
     const isEnclosed = innerRect.x >= outerRect.x &&
@@ -4508,7 +4579,7 @@ class OptUtil {
     if (offset) {
       offset *= 100;
       if (!T3Gv.docUtil.rulerConfig.useInches) {
-        offset /= OptConstant.Defines.MetricConv;
+        offset /= OptConstant.Common.MetricConv;
       }
       lengthInUnits -= offset;
     }
@@ -4601,7 +4672,6 @@ class OptUtil {
     return result;
   }
 
-
   GetToUnits(): number {
     T3Util.Log("O.Opt GetToUnits - Input");
     let dpi = T3Gv.docUtil.DocObject().GetWorkArea().docDpi;
@@ -4618,34 +4688,34 @@ class OptUtil {
   CancelModalOperation(): void {
     T3Util.Log("O.Opt CancelModalOperation - Input: currentModalOperation =", this.currentModalOperation);
     switch (this.currentModalOperation) {
-      case OptConstant.ModalOperations.NONE:
+      case OptConstant.ModalOperations.None:
         break;
-      case OptConstant.ModalOperations.STAMP:
+      case OptConstant.ModalOperations.Stamp:
         this.CancelObjectStamp(true);
         break;
-      case OptConstant.ModalOperations.STAMPTEXTONTAP:
+      case OptConstant.ModalOperations.StampTextOnTap:
         this.CancelObjectStampTextOnTap(true);
         break;
-      case OptConstant.ModalOperations.DRAGDROP:
+      case OptConstant.ModalOperations.DragDrop:
         this.CancelObjectDragDrop(true);
         break;
-      case OptConstant.ModalOperations.DRAW:
+      case OptConstant.ModalOperations.Draw:
         this.CancelObjectDraw();
         break;
-      case OptConstant.ModalOperations.FORMATPAINTER:
+      case OptConstant.ModalOperations.FormatPainter:
         this.SetFormatPainter(true, false);
         break;
-      case OptConstant.ModalOperations.ADDCORNER:
+      case OptConstant.ModalOperations.AddCorner:
         if (T3Gv.wallOpt && T3Gv.wallOpt.AddCorner) {
           this.ResetHammerGesture('dragstart', T3Gv.wallOpt.AddCorner, T3Gv.Evt_ShapeDragStart);
         }
         break;
-      case OptConstant.ModalOperations.SPLITWALL:
-        if (T3Gv.wallOpt && T3Gv.wallOpt.SplitWall) {
-          this.ResetHammerGesture('dragstart', T3Gv.wallOpt.SplitWall, T3Gv.Evt_ShapeDragStart);
-          T3Gv.opt.SetEditMode(NvConstant.EditState.DEFAULT);
-        }
-        break;
+      // case OptConstant.ModalOperations.SplitWall:
+      //   if (T3Gv.wallOpt && T3Gv.wallOpt.SplitWall) {
+      //     this.ResetHammerGesture('dragstart', T3Gv.wallOpt.SplitWall, T3Gv.Evt_ShapeDragStart);
+      //     T3Gv.opt.SetEditMode(NvConstant.EditState.Default);
+      //   }
+      //   break;
     }
     T3Util.Log("O.Opt CancelModalOperation - Output: completed");
   }
@@ -4657,7 +4727,7 @@ class OptUtil {
     const isPolyLineOrContainer = actionObject instanceof PolyLine || actionObject instanceof PolyLineContainer;
 
     // Clear modal operation and release stamp if needed.
-    this.SetModalOperation(OptConstant.ModalOperations.NONE);
+    this.SetModalOperation(OptConstant.ModalOperations.None);
     this.LM_StampPostRelease(false);
 
     if (this.actionStoredObjectId >= 0 && !isPolyLineOrContainer) {
@@ -4673,7 +4743,7 @@ class OptUtil {
     }
 
     // Reset to default edit mode
-    this.SetEditMode(NvConstant.EditState.DEFAULT);
+    this.SetEditMode(NvConstant.EditState.Default);
 
     // Unbind drag/drop or stamp events.
     T3Gv.opt.UnbindDragDropOrStamp();
@@ -4733,7 +4803,7 @@ class OptUtil {
     }
 
     // Reset edit mode to default
-    this.SetEditMode(NvConstant.EditState.DEFAULT);
+    this.SetEditMode(NvConstant.EditState.Default);
 
     if (completeOperation) {
       if (this.linkParams && this.linkParams.JoinIndex >= 0) {
@@ -4757,9 +4827,9 @@ class OptUtil {
         //   );
         // }
         if (!flowHookResult) {
-          if (this.linkParams.ConnectHookFlag === NvConstant.HookFlags.SED_LC_AutoInsert) {
+          if (this.linkParams.ConnectHookFlag === NvConstant.HookFlags.LcAutoInsert) {
             this.SD_AutoInsertShape(this.actionStoredObjectId, this.linkParams.ConnectIndex);
-          } else if (this.linkParams.ConnectHookFlag === NvConstant.HookFlags.SED_LC_HookReverse) {
+          } else if (this.linkParams.ConnectHookFlag === NvConstant.HookFlags.LcHookReverse) {
             this.LM_ReverseHook(this.actionStoredObjectId);
           } else {
             hookUpdateStatus = this.UpdateHook(
@@ -4771,7 +4841,7 @@ class OptUtil {
               this.linkParams.ConnectInside
             );
             if ((hookUpdateStatus !== 0 && hookUpdateStatus !== undefined) === false) {
-              this.SetLinkFlag(this.linkParams.ConnectIndex, ShapeConstant.LinkFlags.SED_L_MOVE);
+              this.SetLinkFlag(this.linkParams.ConnectIndex, DSConstant.LinkFlags.SED_L_MOVE);
             }
           }
         }
@@ -4784,13 +4854,13 @@ class OptUtil {
     T3Util.Log("O.Opt LM_StampPostRelease - Output: Operation completed");
   }
 
-  Undo(restoreSequence: boolean, cancelModalOperation: boolean): boolean {
+  Undo(restoreSequence: boolean, cancelModalOperation?: boolean): boolean {
     T3Util.Log("O.Opt Undo - Input:", { restoreSequence, cancelModalOperation });
 
     // Cancel modal operation if required
     if (cancelModalOperation) {
       T3Gv.opt.CancelModalOperation();
-    } else if (this.currentModalOperation !== OptConstant.ModalOperations.NONE) {
+    } else if (this.currentModalOperation !== OptConstant.ModalOperations.None) {
       T3Util.Log("O.Opt Undo - Output:", false);
       return false;
     }
@@ -4818,9 +4888,9 @@ class OptUtil {
 
     // Check if text editing is active; flush text and preserve undo state if necessary
     const isTextEditingActive = tedSession.theActiveTextEditObjectID !== -1 &&
-      tedSession.theTELastOp !== NvConstant.TELastOp.INIT &&
-      tedSession.theTELastOp !== NvConstant.TELastOp.TIMEOUT &&
-      tedSession.theTELastOp !== NvConstant.TELastOp.SELECT;
+      tedSession.theTELastOp !== NvConstant.TextElemLastOpt.Init &&
+      tedSession.theTELastOp !== NvConstant.TextElemLastOpt.Timeout &&
+      tedSession.theTELastOp !== NvConstant.TextElemLastOpt.Select;
     if (isTextEditingActive) {
       this.FlushTextToLMBlock();
       this.PreserveUndoState(false);
@@ -4873,9 +4943,9 @@ class OptUtil {
 
     // Unregister text editor events, render objects and restore active text edit if necessary
     this.TEUnregisterEvents(true);
-    T3Gv.opt.InUndo = true;
+    T3Gv.opt.noUndo = true;
     this.RenderAllSVGObjects();
-    T3Gv.opt.InUndo = false;
+    T3Gv.opt.noUndo = false;
 
     if (tedSessionAfter.theActiveTextEditObjectID !== -1) {
       this.ResetActiveTextEditAfterUndo();
@@ -4932,7 +5002,7 @@ class OptUtil {
       const storedObject = nextState.StoredObjects[i];
 
       // Handle drawing objects
-      if (storedObject.Type === StateConstant.StoredObjectType.BaseDrawingObject) {
+      if (storedObject.Type === StateConstant.StoredObjectType.BaseDrawObject) {
         // If the object is being deleted in this state
         if (storedObject.StateOperationTypeID === StateConstant.StateOperationType.DELETE) {
           const objectBlock = T3Gv.stdObj.GetObject(storedObject.ID);
@@ -5001,6 +5071,29 @@ class OptUtil {
     T3Util.Log('O.Opt UnbindDragDropOrStamp - Output: DragDrop or Stamp unbound');
   }
 
+  /**
+   * Recursively finds the ultimate target node by following object hooks
+   * This function traverses a chain of connected objects to identify the final target node.
+   * It follows the first hook of each object until it reaches an object without hooks,
+   * which is considered the ultimate target.
+   *
+   * @param objectId - ID of the starting object to check
+   * @returns The ID of the ultimate target node (object without hooks or end of chain)
+   */
+  GetTargetNode(objectId) {
+    // Get the object from the object store
+    const object = this.GetObjectPtr(objectId, false);
+
+    // If the object exists and has hooks, recursively follow the first hook
+    if (object && object.hooks.length) {
+      // Call recursively with the ID of the object connected to the first hook
+      objectId = this.GetTargetNode(object.hooks[0].objid);
+    }
+
+    // Return the final target node ID
+    return objectId;
+  }
+
   UpdateLinks() {
     T3Util.Log("O.Opt UpdateLinks - Input: No parameters");
 
@@ -5038,7 +5131,7 @@ class OptUtil {
         y: 0
       }
     ];
-    let moveBounds = {};
+    let moveBounds = { x: 0, y: 0, width: 0, height: 0 };
     const constantData = OptConstant;
     let links = this.GetObjectPtr(this.linksBlockId, false);
     let isLinksModified = false;
@@ -5063,7 +5156,7 @@ class OptUtil {
     // First pass: Delete marked links
     for (linkIndex = links.length - 1; linkIndex >= 0 && !(linkIndex >= links.length); linkIndex--) {
       // Handle links marked for deletion
-      if (links[linkIndex].flags & ShapeConstant.LinkFlags.SED_L_DELT) {
+      if (links[linkIndex].flags & DSConstant.LinkFlags.SED_L_DELT) {
         // Ensure we're working with a modifiable copy of links
         if (!isLinksModified) {
           links = this.GetObjectPtr(this.linksBlockId, true);
@@ -5075,8 +5168,8 @@ class OptUtil {
       }
       // Handle links with missing or broken hook objects
       else if (
-        links[linkIndex].flags & ShapeConstant.LinkFlags.SED_L_DELL ||
-        links[linkIndex].flagss & ShapeConstant.LinkFlags.SED_L_BREAK ||
+        links[linkIndex].flags & DSConstant.LinkFlags.SED_L_DELL ||
+        links[linkIndex].flagss & DSConstant.LinkFlags.SED_L_BREAK ||
         (hookObject = this.GetObjectPtr(links[linkIndex].hookid, false)) == null
       ) {
         if (!isLinksModified) {
@@ -5099,8 +5192,8 @@ class OptUtil {
 
     // Special handling for tree and flowchart layouts
     if (
-      sessionData.flags & constantData.SessionFlags.SEDS_NoTreeOverlap ||
-      sessionData.flags & constantData.SessionFlags.SEDS_IsFlowChart
+      sessionData.flags & constantData.SessionFlags.NoTreeOverlap ||
+      sessionData.flags & constantData.SessionFlags.IsFlowChart
     ) {
       let linkHasMoveFlag;
       linkCount = links.length;
@@ -5112,7 +5205,7 @@ class OptUtil {
       };
 
       for (linkIndex = 0; linkIndex < linkCount; linkIndex++) {
-        linkHasMoveFlag = links[linkIndex].flags & ShapeConstant.LinkFlags.SED_L_MOVE;
+        linkHasMoveFlag = links[linkIndex].flags & DSConstant.LinkFlags.SED_L_MOVE;
 
         if (linkHasMoveFlag) {
           targetObject = this.GetObjectPtr(links[linkIndex].targetid, false);
@@ -5122,7 +5215,7 @@ class OptUtil {
             treeTopInfo.topshape >= 0) {
             T3Gv.opt.SetLinkFlag(
               treeTopInfo.topshape,
-              ShapeConstant.LinkFlags.SED_L_MOVE
+              DSConstant.LinkFlags.SED_L_MOVE
             );
           }
 
@@ -5138,7 +5231,7 @@ class OptUtil {
       continueProcessing = false;
 
       for (linkIndex = 0; linkIndex < links.length; linkIndex++) {
-        if (links[linkIndex].flags & ShapeConstant.LinkFlags.SED_L_MOVE) {
+        if (links[linkIndex].flags & DSConstant.LinkFlags.SED_L_MOVE) {
           // Ensure we're working with a modifiable copy of links
           if (!isLinksModified) {
             links = this.GetObjectPtr(this.linksBlockId, true);
@@ -5151,12 +5244,12 @@ class OptUtil {
           if (hookObject == null) {
             links[linkIndex].flags = Utils2.SetFlag(
               links[linkIndex].flags,
-              ShapeConstant.LinkFlags.SED_L_DELL,
+              DSConstant.LinkFlags.SED_L_DELL,
               true
             );
             links[linkIndex].flags = Utils2.SetFlag(
               links[linkIndex].flags,
-              ShapeConstant.LinkFlags.SED_L_MOVE,
+              DSConstant.LinkFlags.SED_L_MOVE,
               false
             );
             hasDeletedLinks = true;
@@ -5172,24 +5265,24 @@ class OptUtil {
             hookTargetObject = this.GetObjectPtr(links[linkIndex].targetid, false);
 
             // Special handling for multiplicity objects
-            if (hookObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_MULTIPLICITY) {
+            if (hookObject.objecttype === NvConstant.FNObjectTypes.Multiplicity) {
               links[linkIndex].flags = Utils2.SetFlag(
                 links[linkIndex].flags,
-                ShapeConstant.LinkFlags.SED_L_CHANGE,
+                DSConstant.LinkFlags.SED_L_CHANGE,
                 false
               );
             }
 
             // If the link has the change flag set, update connection points
-            if (links[linkIndex].flags & ShapeConstant.LinkFlags.SED_L_CHANGE) {
+            if (links[linkIndex].flags & DSConstant.LinkFlags.SED_L_CHANGE) {
               hookPoint = hookObject.HookToPoint(hookObject.hooks[hookIndex].hookpt, null);
 
-              hookFlags = NvConstant.HookFlags.SED_LC_NoSnaps |
-                NvConstant.HookFlags.SED_LC_ForceEnd;
+              hookFlags = NvConstant.HookFlags.LcNoSnaps |
+                NvConstant.HookFlags.LcForceEnd;
 
               hookFlags = Utils2.SetFlag(
                 hookFlags,
-                NvConstant.HookFlags.SED_LC_ShapeOnLine,
+                NvConstant.HookFlags.LcShapeOnLine,
                 !(hookObject instanceof BaseLine)
               );
 
@@ -5220,7 +5313,7 @@ class OptUtil {
                 if (bestPointIndex != null) {
                   hookObject.hooks[hookIndex].connect.x = targetPoints[bestPointIndex].x;
 
-                  if (hookObject.DrawingObjectBaseClass != OptConstant.DrawingObjectBaseClass.CONNECTOR) {
+                  if (hookObject.DrawingObjectBaseClass != OptConstant.DrawObjectBaseClass.Connector) {
                     hookObject.hooks[hookIndex].connect.y = targetPoints[bestPointIndex].y;
                   }
                 }
@@ -5236,7 +5329,7 @@ class OptUtil {
               // Clear the change flag
               links[linkIndex].flags = Utils2.SetFlag(
                 links[linkIndex].flags,
-                ShapeConstant.LinkFlags.SED_L_CHANGE,
+                DSConstant.LinkFlags.SED_L_CHANGE,
                 false
               );
             }
@@ -5274,7 +5367,7 @@ class OptUtil {
                     links[linkIndex].hookid,
                     deltaX,
                     deltaY,
-                    OptConstant.ActionTriggerType.UPDATELINKS
+                    OptConstant.ActionTriggerType.UpdateLinks
                   );
 
                   // Check if object went out of bounds
@@ -5292,7 +5385,7 @@ class OptUtil {
                     if (targetObject) {
                       targetObject.flags = Utils2.SetFlag(
                         targetObject.flags,
-                        NvConstant.ObjFlags.SEDO_Bounds,
+                        NvConstant.ObjFlags.Bounds,
                         true
                       );
                     }
@@ -5312,7 +5405,7 @@ class OptUtil {
             // Clear move flag and continue processing
             links[linkIndex].flags = Utils2.SetFlag(
               links[linkIndex].flags,
-              ShapeConstant.LinkFlags.SED_L_MOVE,
+              DSConstant.LinkFlags.SED_L_MOVE,
               false
             );
             continueProcessing = true;
@@ -5326,13 +5419,13 @@ class OptUtil {
     // Clean up any links marked for deletion
     if (hasDeletedLinks) {
       for (linkIndex = links.length - 1; linkIndex >= 0 && !(linkIndex >= links.length); linkIndex--) {
-        if (links[linkIndex].flags & ShapeConstant.LinkFlags.SED_L_DELT) {
+        if (links[linkIndex].flags & DSConstant.LinkFlags.SED_L_DELT) {
           this.DeleteLink(links, links[linkIndex].targetid, -1, null, 0, false);
           linkIndex = links.length;
         }
         else if (
-          links[linkIndex].flags & ShapeConstant.LinkFlags.SED_L_DELL ||
-          links[linkIndex].flagss & ShapeConstant.LinkFlags.SED_L_BREAK ||
+          links[linkIndex].flags & DSConstant.LinkFlags.SED_L_DELL ||
+          links[linkIndex].flagss & DSConstant.LinkFlags.SED_L_BREAK ||
           (hookObject = this.GetObjectPtr(links[linkIndex].hookid, false)) == null
         ) {
           this.DeleteLink(
@@ -5359,12 +5452,12 @@ class OptUtil {
         currentObject = this.GetObjectPtr(zList[linkIndex], false);
 
         if (currentObject &&
-          currentObject.flags & NvConstant.ObjFlags.SEDO_Bounds) {
+          currentObject.flags & NvConstant.ObjFlags.Bounds) {
 
           // Clear bounds flag
           currentObject.flags = Utils2.SetFlag(
             currentObject.flags,
-            NvConstant.ObjFlags.SEDO_Bounds,
+            NvConstant.ObjFlags.Bounds,
             false
           );
 
@@ -5403,7 +5496,7 @@ class OptUtil {
                 moveList[pointIndex],
                 deltaX,
                 deltaY,
-                OptConstant.ActionTriggerType.UPDATELINKS
+                OptConstant.ActionTriggerType.UpdateLinks
               );
             }
           }
@@ -5503,7 +5596,7 @@ class OptUtil {
         currentObj.hooks = currentObj.hooks.filter(h => h.objid != hookPairs[i].hookObjectId);
         const linkIndex = T3Gv.opt.FindExactLink(links, hookPairs[i].hookObjectId, hookPairs[i].objectId);
         if (linkIndex >= 0) {
-          links[linkIndex].flags = Utils2.SetFlag(links[linkIndex].flags, ShapeConstant.LinkFlags.SED_L_DELT, true);
+          links[linkIndex].flags = Utils2.SetFlag(links[linkIndex].flags, DSConstant.LinkFlags.SED_L_DELT, true);
         }
       }
     })(circularHookPairs);
@@ -5527,7 +5620,7 @@ class OptUtil {
         actionObject.Data.sizedim.height = actionObject.Data.Frame.height;
         T3Gv.state.ReplaceInCurrentState(this.actionStoredObjectId, actionObject);
 
-        if (actionObject.Data.objecttype !== NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
+        if (actionObject.Data.objecttype !== NvConstant.FNObjectTypes.FlWall) {
           affectedObjects.push(this.actionStoredObjectId);
         }
 
@@ -5549,7 +5642,7 @@ class OptUtil {
   }
 
 
-  AddToDirtyList(objectId: number, isMoveOnly: boolean) {
+  AddToDirtyList(objectId: number, isMoveOnly?: boolean) {
     T3Util.Log('O.Opt AddToDirtyList - Input:', { objectId, isMoveOnly });
 
     if (this.dirtyList.indexOf(objectId) < 0) {
@@ -5590,9 +5683,9 @@ class OptUtil {
         if (guides[guideKey]) {
           const labelId = guideKey + 'label';
           const backgroundId = guideKey + 'back';
-          let guideElement = T3Gv.opt.svgHighlightLayer.GetElementByID(guideKey);
-          let labelElement = T3Gv.opt.svgHighlightLayer.GetElementByID(labelId);
-          let backgroundElement = T3Gv.opt.svgHighlightLayer.GetElementByID(backgroundId);
+          let guideElement = T3Gv.opt.svgHighlightLayer.GetElementById(guideKey);
+          let labelElement = T3Gv.opt.svgHighlightLayer.GetElementById(labelId);
+          let backgroundElement = T3Gv.opt.svgHighlightLayer.GetElementById(backgroundId);
 
           if (guideElement) {
             T3Gv.opt.svgHighlightLayer.RemoveElement(guideElement);
@@ -5610,9 +5703,9 @@ class OptUtil {
               const otherHit = otherHits[index];
               const otherLabelId = guideKey + otherHit.ID.toString() + 'label';
               const otherBackgroundId = guideKey + otherHit.ID.toString() + 'back';
-              guideElement = T3Gv.opt.svgHighlightLayer.GetElementByID(guideKey + otherHit.ID.toString());
-              labelElement = T3Gv.opt.svgHighlightLayer.GetElementByID(otherLabelId);
-              backgroundElement = T3Gv.opt.svgHighlightLayer.GetElementByID(otherBackgroundId);
+              guideElement = T3Gv.opt.svgHighlightLayer.GetElementById(guideKey + otherHit.ID.toString());
+              labelElement = T3Gv.opt.svgHighlightLayer.GetElementById(otherLabelId);
+              backgroundElement = T3Gv.opt.svgHighlightLayer.GetElementById(otherBackgroundId);
 
               if (guideElement) {
                 T3Gv.opt.svgHighlightLayer.RemoveElement(guideElement);
@@ -5637,7 +5730,7 @@ class OptUtil {
 
     // Retrieve the session object and check if hops are allowed
     const session = this.GetObjectPtr(this.sedSessionBlockId, false);
-    if (session.flags & OptConstant.SessionFlags.SEDS_AllowHops) {
+    if (session.flags & OptConstant.SessionFlags.AllowHops) {
       this.HideHopTargets();
       const visibleObjects = this.VisibleZList();
       const totalVisible = visibleObjects.length;
@@ -5659,14 +5752,14 @@ class OptUtil {
         const obj = this.GetObjectPtr(objId, false);
         if (obj instanceof BaseLine && !(obj instanceof PolyLine)) {
           // Check if object is modified or force update is enabled.
-          if ((obj.flags & NvConstant.ObjFlags.SEDO_LineMod || forceUpdate) && modeFlag === -1) {
+          if ((obj.flags & NvConstant.ObjFlags.LineMod || forceUpdate) && modeFlag === -1) {
             modeFlag = -2;
           }
           candidateLineIds.push(objId);
           allLineCount++;
 
           // Check if object has hop flag set
-          if (obj.flags & NvConstant.ObjFlags.SEDO_LineHop) {
+          if (obj.flags & NvConstant.ObjFlags.LineHop) {
             if (modeFlag === -2) {
               startHopIndex = hopLineCount;
               modeFlag = -3;
@@ -5676,7 +5769,7 @@ class OptUtil {
           }
 
           // Clear the modified flag for the object
-          obj.flags = Utils2.SetFlag(obj.flags, NvConstant.ObjFlags.SEDO_LineMod, false);
+          obj.flags = Utils2.SetFlag(obj.flags, NvConstant.ObjFlags.LineMod, false);
         }
       }
 
@@ -5783,7 +5876,7 @@ class OptUtil {
       // Filter visible objects that are not flagged as "not visible".
       const filteredVisibleObjectIds = (function (objectIds: number[]): number[] {
         const result: number[] = [];
-        const notVisibleFlag = NvConstant.ObjFlags.SEDO_NotVisible;
+        const notVisibleFlag = NvConstant.ObjFlags.NotVisible;
         for (let index = 0; index < objectIds.length; index++) {
           const objectRef = T3Gv.opt.GetObjectPtr(objectIds[index], false);
           if (objectRef && (objectRef.flags & notVisibleFlag) === 0) {
@@ -5833,7 +5926,7 @@ class OptUtil {
         const count = filteredVisibleObjectIds.length;
         for (let idx = 0; idx < count; idx++) {
           const id = filteredVisibleObjectIds[idx];
-          const svgElement = this.svgObjectLayer.GetElementByID(id);
+          const svgElement = this.svgObjectLayer.GetElementById(id);
           if (svgElement) {
             this.svgObjectLayer.RemoveElement(svgElement);
             this.svgObjectLayer.AddElement(svgElement, idx);
@@ -5926,7 +6019,7 @@ class OptUtil {
     }
 
     // Handle page-based layouts
-    if (this.contentHeader.flags & OptConstant.ContentHeaderFlags.CT_DA_Pages && !isUsingEdgeLayer) {
+    if (this.contentHeader.flags & OptConstant.CntHeaderFlags.Pages && !isUsingEdgeLayer) {
       let widthInPages = Math.ceil(newWidth / pageWidth);
       let heightInPages = Math.ceil(newHeight / pageHeight);
 
@@ -5974,7 +6067,7 @@ class OptUtil {
       }
 
       // Honor no-auto-grow flag
-      if (this.contentHeader.flags & OptConstant.ContentHeaderFlags.CT_DA_NoAuto) {
+      if (this.contentHeader.flags & OptConstant.CntHeaderFlags.NoAuto) {
         if (newDocumentSize.x < sessionData.dim.x) newDocumentSize.x = sessionData.dim.x;
         if (newDocumentSize.y < sessionData.dim.y) newDocumentSize.y = sessionData.dim.y;
       }
@@ -6001,7 +6094,7 @@ class OptUtil {
             newDocumentSize.y = pageHeight;
           }
 
-          if (!(this.contentHeader.flags & OptConstant.ContentHeaderFlags.CT_DA_NoAuto)) {
+          if (!(this.contentHeader.flags & OptConstant.CntHeaderFlags.NoAuto)) {
             T3Gv.opt.contentHeader.Page.minsize.y = newDocumentSize.y;
             T3Gv.opt.contentHeader.Page.minsize.x = newDocumentSize.x;
           }
@@ -6035,7 +6128,7 @@ class OptUtil {
     } else {
       // Handle no-auto-grow constraint
       if (
-        this.contentHeader.flags & OptConstant.ContentHeaderFlags.CT_DA_NoAuto &&
+        this.contentHeader.flags & OptConstant.CntHeaderFlags.NoAuto &&
         !allowOverride &&
         (!isGrowing || isExactPageMultiple(sessionData.dim, pageWidth, pageHeight))
       ) {
@@ -6127,8 +6220,8 @@ class OptUtil {
           for (let i = 0; i < objectsInEdgeLayer; i++) {
             objectData = T3Gv.opt.GetObjectPtr(objectsFromEdgeLayers[i], false);
             if (objectData &&
-              objectData.objecttype === NvConstant.ObjectTypes.SD_OBJT_ANNOTATION &&
-              objectData.Frame.y + objectData.Frame.height >= sessionData.dim.y - OptConstant.Defines.AnnoHotDist) {
+              objectData.objecttype === NvConstant.FNObjectTypes.Annotation &&
+              objectData.Frame.y + objectData.Frame.height >= sessionData.dim.y - OptConstant.Common.AnnoHotDist) {
 
               heightPadding = 10 + sessionData.dim.y - objectData.Frame.y;
             }
@@ -6156,7 +6249,7 @@ class OptUtil {
       objectData = objectBlock.Data;
 
       // Skip invisible objects
-      if (objectData.flags & NvConstant.ObjFlags.SEDO_NotVisible) {
+      if (objectData.flags & NvConstant.ObjFlags.NotVisible) {
         continue;
       }
 
@@ -6186,7 +6279,7 @@ class OptUtil {
     return enclosingRect;
   }
 
-  SelectObjects(objectsToSelect, isMultipleSelection, preserveSelectionState) {
+  SelectObjects(objectsToSelect, isMultipleSelection?, preserveSelectionState?) {
     T3Util.Log("O.Opt SelectObjects - Input:", { objectsToSelect, isMultipleSelection, preserveSelectionState });
 
     let selectedIndex = -1;
@@ -6199,10 +6292,10 @@ class OptUtil {
         this.DeactivateTextEdit(false, true);
       }
 
-      // Release table editing if active
-      if (tedSession.theActiveTableObjectID !== -1) {
-        this.Table_Release(false);
-      }
+      // // Release table editing if active
+      // if (tedSession.theActiveTableObjectID !== -1) {
+      //   this.Table_Release(false);
+      // }
 
       const selectedList = this.GetObjectPtr(this.theSelectedListBlockID, preserveSelectionState);
       selectedIndex = this.GetTargetSelect();
@@ -6311,8 +6404,8 @@ class OptUtil {
 
     // Determine the list code to use based on mode
     listCode = targetOnlyMode
-      ? NvConstant.ListCodes.SED_LC_TARGONLY
-      : NvConstant.ListCodes.SED_LC_MOVETARG;
+      ? NvConstant.ListCodes.TargOnly
+      : NvConstant.ListCodes.MoveTarg;
 
     // Check for special move target handling
     if (objectId >= 0) {
@@ -6322,7 +6415,7 @@ class OptUtil {
         hookFlags = currentObject.GetHookFlags();
 
         // If object has MoveTarget flag and hooks, get the target node
-        if (hookFlags & NvConstant.HookFlags.SED_LC_MoveTarget &&
+        if (hookFlags & NvConstant.HookFlags.LcMoveTarget &&
           useSelectedList &&
           currentObject.hooks.length) {
           objectId = this.GetTargetNode(currentObject.hooks[0].objid);
@@ -6343,7 +6436,7 @@ class OptUtil {
 
         if (currentObject) {
           // Handle special case for event labels
-          if (currentObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_NG_EVENT_LABEL) {
+          if (currentObject.objecttype === NvConstant.FNObjectTypes.NgEventLabel) {
             if (objectsList.indexOf(currentObject.associd) === -1) {
               objectsList.push(currentObject.associd);
             }
@@ -6425,24 +6518,24 @@ class OptUtil {
     let objectRect = {};
 
     // Handle special list codes by mapping them to standard codes
-    if (listCode === NvConstant.ListCodes.SED_LC_CHILDRENONLY) {
+    if (listCode === NvConstant.ListCodes.ChildrenOnly) {
       skipObject = true;
-      listCode = NvConstant.ListCodes.SED_LC_CIRCTARG;
+      listCode = NvConstant.ListCodes.CircTarg;
     }
 
-    if (listCode === NvConstant.ListCodes.SED_LC_LINESONLY) {
+    if (listCode === NvConstant.ListCodes.LinesOnly) {
       skipObject = true;
-      listCode = NvConstant.ListCodes.SED_LC_TOPONLY;
+      listCode = NvConstant.ListCodes.TopOnly;
     }
 
     // Process based on list code type
     switch (listCode) {
-      case NvConstant.ListCodes.SED_LC_MOVETARG:
+      case NvConstant.ListCodes.MoveTarg:
         // For move targets, check if we need to switch to move hook mode
         if ((object.hooks.length > 1 ||
           (object.hooks.length === 1 &&
-            object.flags & NvConstant.ObjFlags.SEDO_Assoc))) {
-          listCode = NvConstant.ListCodes.SED_LC_MOVEHOOK;
+            object.flags & NvConstant.ObjFlags.Assoc))) {
+          listCode = NvConstant.ListCodes.MoveHook;
         }
 
         // Return if objectId is already in the list
@@ -6452,7 +6545,7 @@ class OptUtil {
         }
         break;
 
-      case NvConstant.ListCodes.SED_LC_MOVEHOOK:
+      case NvConstant.ListCodes.MoveHook:
         // Return if objectId is already in the list
         if (hookList.indexOf(objectId) >= 0) {
           T3Util.Log("O.Opt GetHookList - Output: Object already in list", hookList);
@@ -6460,12 +6553,12 @@ class OptUtil {
         }
         break;
 
-      case NvConstant.ListCodes.SED_LC_MOVETARGANDLINES:
-      case NvConstant.ListCodes.SED_LC_CIRCTARG:
+      case NvConstant.ListCodes.MoveTargAndLines:
+      case NvConstant.ListCodes.CircTarg:
         // No special handling for these codes
         break;
 
-      case NvConstant.ListCodes.SED_LC_TARGONLY:
+      case NvConstant.ListCodes.TargOnly:
         targetOnly = true;
         linkIndex = -1;
         break;
@@ -6482,7 +6575,7 @@ class OptUtil {
 
       // Update bounds rectangle if provided and object is visible
       if (boundsRect &&
-        !(object.flags & NvConstant.ObjFlags.SEDO_NotVisible)) {
+        !(object.flags & NvConstant.ObjFlags.NotVisible)) {
         objectRect = object.GetMoveRect(true, true);
 
         if (hookList.length === 1) {
@@ -6505,9 +6598,9 @@ class OptUtil {
     }
 
     // Handle special case for move hooks with multiple hooks or associated objects
-    if (listCode === NvConstant.ListCodes.SED_LC_MOVEHOOK &&
+    if (listCode === NvConstant.ListCodes.MoveHook &&
       (object.hooks.length >= 2 ||
-        object.flags & NvConstant.ObjFlags.SEDO_Assoc)) {
+        object.flags & NvConstant.ObjFlags.Assoc)) {
       this.GetTargetList(objectId, links, hookList, boundsRect, listCode);
     }
 
@@ -6549,7 +6642,7 @@ class OptUtil {
     return result;
   }
 
-  ScrollObjectIntoView(objectId, shouldCenterObject, customRect) {
+  ScrollObjectIntoView(objectId, shouldCenterObject, customRect?) {
     T3Util.Log("O.Opt ScrollObjectIntoView - Input:", { objectId, shouldCenterObject, customRect });
 
     let objectRect;
@@ -6672,14 +6765,14 @@ class OptUtil {
     this.GetObjectPtr(this.actionStoredObjectId, true);
 
     // Reset edit mode to default
-    this.SetEditMode(NvConstant.EditState.DEFAULT);
+    this.SetEditMode(NvConstant.EditState.Default);
 
     // Rebind default work area events
     this.WorkAreaHammer.on('dragstart', EvtUtil.Evt_WorkAreaHammerDragStart);
     this.WorkAreaHammer.on('tap', EvtUtil.Evt_WorkAreaHammerClick);
 
     // Clear any modal operations
-    this.SetModalOperation(OptConstant.ModalOperations.NONE);
+    this.SetModalOperation(OptConstant.ModalOperations.None);
 
     T3Util.Log('O.Opt ResetObjectDraw - Output: Object draw state reset');
   }
@@ -6786,8 +6879,8 @@ class OptUtil {
       // Collab.UnLockMessages();
 
       // Set edit mode if not in a modal operation
-      if (this.currentModalOperation === OptConstant.ModalOperations.NONE) {
-        T3Gv.opt.SetEditMode(NvConstant.EditState.DRAGSHAPE);
+      if (this.currentModalOperation === OptConstant.ModalOperations.None) {
+        T3Gv.opt.SetEditMode(NvConstant.EditState.DragShape);
       }
 
       // Register event handlers for drag operations
@@ -6810,7 +6903,7 @@ class OptUtil {
     const cursorType = controlElement.GetCursor();
 
     // Set the edit mode to DRAGCONTROL with the element's cursor type
-    this.SetEditMode(NvConstant.EditState.DRAGCONTROL, cursorType);
+    this.SetEditMode(NvConstant.EditState.DragControl, cursorType);
 
     T3Util.Log("O.Opt SetControlDragMode - Output: Mode set to DRAGCONTROL with cursor type:", cursorType);
   }
@@ -6853,7 +6946,7 @@ class OptUtil {
     // Get object ID and verify it's a valid drawing object
     const objectId = svgElement.GetID();
     const drawingObjectRef = T3Gv.opt.GetObjectPtr(objectId, false);
-    if (!(drawingObjectRef && drawingObjectRef instanceof BaseDrawingObject)) {
+    if (!(drawingObjectRef && drawingObjectRef instanceof BaseDrawObject)) {
       T3Util.Log("O.Opt LM_SetupMove - Output: false (Not a valid drawing object)");
       return false;
     }
@@ -6869,8 +6962,8 @@ class OptUtil {
     // Prevent moving dimension text elements
     if (
       targetElement instanceof Text &&
-      (targetElement.ID === OptConstant.SVGElementClass.DIMENSIONTEXT ||
-        targetElement.ID === OptConstant.SVGElementClass.DIMENSIONTEXTNOEDIT)
+      (targetElement.ID === OptConstant.SVGElementClass.DimText ||
+        targetElement.ID === OptConstant.SVGElementClass.DimTextNoEdit)
     ) {
       T3Util.Log("O.Opt LM_SetupMove - Output: false (Is dimension text)");
       return false;
@@ -6889,13 +6982,13 @@ class OptUtil {
     // }
 
     // Handle format painter mode
-    if (this.currentModalOperation === OptConstant.ModalOperations.FORMATPAINTER) {
+    if (this.currentModalOperation === OptConstant.ModalOperations.FormatPainter) {
       targetId = svgElement.GetID();
       if (this.FormatPainterClick(targetId, event)) {
         T3Util.Log("O.Opt LM_SetupMove - Output: false (Format painter handled click)");
         return false;
       }
-      svgElement = this.svgObjectLayer.GetElementByID(targetId);
+      svgElement = this.svgObjectLayer.GetElementById(targetId);
     }
 
     // Get document coordinates for the event
@@ -6906,8 +6999,8 @@ class OptUtil {
 
     // Only process if not in format painter object mode
     if (
-      this.currentModalOperation !== OptConstant.ModalOperations.FORMATPAINTER ||
-      this.formatPainterMode !== StyleConstant.FormatPainterModes.OBJECT
+      this.currentModalOperation !== OptConstant.ModalOperations.FormatPainter ||
+      this.formatPainterMode !== StyleConstant.FormatPainterModes.Object
     ) {
       const clickedElement = svgElement.GetTargetForEvent(event);
       let clickedElementId = clickedElement.GetID();
@@ -6926,7 +7019,7 @@ class OptUtil {
         drawingObject = targetObject.Data;
 
         if (/*drawingObject.IsSwimlane()*/false) {
-          // if (clickedElementId === OptConstant.Defines.TableCellNoHit) {
+          // if (clickedElementId === OptConstant.Common.TableCellNoHit) {
           //   tableObject = drawingObject.GetTable(false);
           //   const cellIndex = this.Table_GetCellClicked(drawingObject, event);
 
@@ -6942,8 +7035,8 @@ class OptUtil {
           // } else
 
           if (
-            drawingObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_FRAME_CONTAINER &&
-            clickedElementId === OptConstant.SVGElementClass.SHAPE &&
+            drawingObject.objecttype === NvConstant.FNObjectTypes.FrameContainer &&
+            clickedElementId === OptConstant.SVGElementClass.Shape &&
             !isRightClick
           ) {
             T3Gv.opt.StartRubberBandSelect(event);
@@ -6953,10 +7046,10 @@ class OptUtil {
         }
 
         // Check for one-click text objects
-        isOneClickTextObject = (drawingObject.TextFlags & NvConstant.TextFlags.SED_TF_OneClick) > 0;
+        isOneClickTextObject = (drawingObject.TextFlags & NvConstant.TextFlags.OneClick) > 0;
         if (isRightClick) {
           isOneClickTextObject = false;
-        } else if (drawingObject.flags & NvConstant.ObjFlags.SEDO_Lock) {
+        } else if (drawingObject.flags & NvConstant.ObjFlags.Lock) {
           this.SelectObjectFromClick(event, svgElement);
           T3Util.Log("O.Opt LM_SetupMove - Output: false (Object is locked)");
           return false;
@@ -6969,24 +7062,24 @@ class OptUtil {
 
       // if (activeTableId === this.dragTargetId || (isOneClickTextObject && tableObject !== null)) {
       //   switch (clickedElementId) {
-      //     case OptConstant.SVGElementClass.SHAPE:
-      //     case OptConstant.Defines.TableSelection:
-      //     case OptConstant.Defines.TableCells:
+      //     case OptConstant.SVGElementClass.Shape:
+      //     case OptConstant.Common.TableSelection:
+      //     case OptConstant.Common.TableCells:
       //       const windowCoordinates = this.svgDoc.ConvertWindowToDocCoords(
       //         event.gesture.center.clientX,
       //         event.gesture.center.clientY
       //       );
       //       if (Utils2.pointInRect(drawingObject.trect, windowCoordinates)) {
-      //         clickedElementId = OptConstant.Defines.TableCellHit;
+      //         clickedElementId = OptConstant.Common.TableCellHit;
       //       }
       //       break;
-      //     case OptConstant.SVGElementClass.TEXT:
+      //     case OptConstant.SVGElementClass.Text:
       //       if (clickedElementUserData >= 0) {
-      //         clickedElementId = OptConstant.Defines.TableTextHit;
+      //         clickedElementId = OptConstant.Common.TableTextHit;
       //       }
       //       break;
-      //     case OptConstant.SVGElementClass.SLOP:
-      //     case OptConstant.SVGElementClass.BACKGROUNDIMAGE:
+      //     case OptConstant.SVGElementClass.Slop:
+      //     case OptConstant.SVGElementClass.BackgroundImage:
       //       isOneClickTextObject = false;
       //       break;
       //   }
@@ -6995,18 +7088,18 @@ class OptUtil {
       {
         // Handle non-active table elements
         switch (clickedElementId) {
-          //  case OptConstant.Defines.TableRowHitHidden:
-          // case OptConstant.Defines.TableRowHit:
-          // case OptConstant.Defines.TableRowSelection:
-          // case OptConstant.Defines.TableColHit:
-          // case OptConstant.Defines.TableColHitHidden:
-          // case OptConstant.Defines.TableColSelection:
-          // case OptConstant.Defines.TableCellHit:
-          // case OptConstant.Defines.TableCells:
-          case OptConstant.SVGElementClass.BACKGROUNDIMAGE:
+          //  case OptConstant.Common.TableRowHitHidden:
+          // case OptConstant.Common.TableRowHit:
+          // case OptConstant.Common.TableRowSelection:
+          // case OptConstant.Common.TableColHit:
+          // case OptConstant.Common.TableColHitHidden:
+          // case OptConstant.Common.TableColSelection:
+          // case OptConstant.Common.TableCellHit:
+          // case OptConstant.Common.TableCells:
+          case OptConstant.SVGElementClass.BackgroundImage:
             clickedElementId = '';
             break;
-          case OptConstant.SVGElementClass.SLOP:
+          case OptConstant.SVGElementClass.Slop:
             this.DeactivateAllTextEdit(false);
             isOneClickTextObject = false;
             break;
@@ -7015,17 +7108,17 @@ class OptUtil {
 
       // Handle actions based on the clicked element type
       switch (clickedElementId) {
-        case OptConstant.Defines.GraphTextHit:
+        case OptConstant.Common.GraphTextHit:
           this.Graph_SetupAction(event, this.dragTargetId, clickedElementId, clickedElementUserData);
           T3Util.Log("O.Opt LM_SetupMove - Output: false (Graph text hit)");
           return false;
 
-        case OptConstant.SVGElementClass.BACKGROUNDIMAGE:
-          // case OptConstant.Defines.TableCellHit:
-          // case OptConstant.Defines.TableTextHit:
-          // case OptConstant.Defines.TableCells:
-          // case OptConstant.Defines.TableRowZone:
-          // case OptConstant.Defines.TableColZone:
+        case OptConstant.SVGElementClass.BackgroundImage:
+          // case OptConstant.Common.TableCellHit:
+          // case OptConstant.Common.TableTextHit:
+          // case OptConstant.Common.TableCells:
+          // case OptConstant.Common.TableRowZone:
+          // case OptConstant.Common.TableColZone:
           // const actionResult = this.Table_SetupAction(event, this.dragTargetId, clickedElementId, clickedElementUserData);
           // if (actionResult === true || actionResult === -1) {
           //   T3Util.Log("O.Opt LM_SetupMove - Output: Setup action handled");
@@ -7033,31 +7126,31 @@ class OptUtil {
           // }
           break;
 
-        // case OptConstant.Defines.TableRowHitHidden:
-        // case OptConstant.Defines.TableRowHit:
-        // case OptConstant.Defines.TableRowSelection:
+        // case OptConstant.Common.TableRowHitHidden:
+        // case OptConstant.Common.TableRowHit:
+        // case OptConstant.Common.TableRowSelection:
         //   if (drawingObject && this.Table_HideUI(drawingObject)) {
         //     T3Util.Log("O.Opt LM_SetupMove - Output: false (Table UI hidden)");
         //     return false;
         //   }
         //   const rowData = clickedElement.GetUserData();
-        //   this.Table_SetupAction(event, this.dragTargetId, OptConstant.Defines.TableRowHit, rowData);
+        //   this.Table_SetupAction(event, this.dragTargetId, OptConstant.Common.TableRowHit, rowData);
         //   T3Util.Log("O.Opt LM_SetupMove - Output: false (Table row action)");
         //   return false;
 
-        // case OptConstant.Defines.TableColHit:
-        // case OptConstant.Defines.TableColHitHidden:
-        // case OptConstant.Defines.TableColSelection:
+        // case OptConstant.Common.TableColHit:
+        // case OptConstant.Common.TableColHitHidden:
+        // case OptConstant.Common.TableColSelection:
         //   if (drawingObject && this.Table_HideUI(drawingObject)) {
         //     T3Util.Log("O.Opt LM_SetupMove - Output: false (Table UI hidden)");
         //     return false;
         //   }
         //   const colData = clickedElement.GetUserData();
-        //   this.Table_SetupAction(event, this.dragTargetId, OptConstant.Defines.TableColHit, colData);
+        //   this.Table_SetupAction(event, this.dragTargetId, OptConstant.Common.TableColHit, colData);
         //   T3Util.Log("O.Opt LM_SetupMove - Output: false (Table column action)");
         //   return false;
 
-        case OptConstant.Defines.HitAreas:
+        case OptConstant.Common.HitAreas:
           const hitAreaData = clickedElement.GetUserData();
           this.LM_HitAreaClick(this.dragTargetId, hitAreaData);
           if (event.gesture) {
@@ -7162,7 +7255,7 @@ class OptUtil {
 
       if (currentObject &&
         !(currentObject instanceof Connector) &&
-        !(currentObject.flags & NvConstant.ObjFlags.SEDO_NotVisible)) {
+        !(currentObject.flags & NvConstant.ObjFlags.NotVisible)) {
         filteredObjects.push(currentId);
       }
     }
@@ -7174,25 +7267,25 @@ class OptUtil {
 
       if (currentObject instanceof Connector) {
         // Use complex connector logic to determine if it should be included
-        if (currentObject.arraylist.styleflags & OptConstant.SEDA_Styles.SEDA_FlowConn) {
+        if (currentObject.arraylist.styleflags & OptConstant.AStyles.FlowConn) {
           filteredObjects.push(currentId);
         } else if (currentObject.hooks.length) {
           const hookId = currentObject.hooks[0].objid;
           const hookObject = this.GetObjectPtr(hookId);
 
           if (hookObject instanceof Connector) {
-            if (!(currentObject.flags & NvConstant.ObjFlags.SEDO_NotVisible)) {
+            if (!(currentObject.flags & NvConstant.ObjFlags.NotVisible)) {
               filteredObjects.push(currentId);
             }
           } else if (
-            (currentObject.flags & NvConstant.ObjFlags.SEDO_NotVisible) &&
+            (currentObject.flags & NvConstant.ObjFlags.NotVisible) &&
             (!currentObject.hooks || filteredObjects.indexOf(hookId) === -1)
           ) {
             // Skip
           } else {
             filteredObjects.push(currentId);
           }
-        } else if (!(currentObject.flags & NvConstant.ObjFlags.SEDO_NotVisible)) {
+        } else if (!(currentObject.flags & NvConstant.ObjFlags.NotVisible)) {
           filteredObjects.push(currentId);
         }
       }
@@ -7220,7 +7313,7 @@ class OptUtil {
     }
 
     // Handle auto-grow constraints
-    if (this.contentHeader.flags & OptConstant.ContentHeaderFlags.CT_DA_NoAuto) {
+    if (this.contentHeader.flags & OptConstant.CntHeaderFlags.NoAuto) {
       this.dragEnclosingRect = T3Gv.opt.GetListSRect(this.moveList);
     }
 
@@ -7269,10 +7362,10 @@ class OptUtil {
 
     const object = T3Gv.opt.GetObjectPtr(objectId);
 
-    if (object && object.objecttype === NvConstant.ObjectTypes.SD_OBJT_NG_EVENT_LABEL) {
+    if (object && object.objecttype === NvConstant.FNObjectTypes.NgEventLabel) {
       const associatedObject = T3Gv.opt.GetObjectPtr(object.associd);
 
-      if (associatedObject && associatedObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_NG_EVENT) {
+      if (associatedObject && associatedObject.objecttype === NvConstant.FNObjectTypes.NgEvent) {
         T3Util.Log('O.Opt GetEventShapeParent - Output:', object.associd);
         return object.associd;
       }
@@ -7303,15 +7396,15 @@ class OptUtil {
   //         g,
   //         h = a.GetTable(!t);
   //       if (a && h) {
-  //         var m = this.svgObjectLayer.GetElementByID(a.BlockID);
+  //         var m = this.svgObjectLayer.GetElementById(a.BlockID);
   //         for (r = h.cells.length, i = 0; i < r; i++) (n = h.cells[i]).flags = Utils2.SetFlag(n.flags, TODO.Table.CellFlags.SDT_F_Select, !1),
   //           n.childcontainer >= 0 &&
-  //           (D = this.svgObjectLayer.GetElementByID(n.childcontainer)) &&
-  //           (g = D.GetElementByID(OptConstant.Defines.TableSelection)) &&
+  //           (D = this.svgObjectLayer.GetElementById(n.childcontainer)) &&
+  //           (g = D.GetElementById(OptConstant.Common.TableSelection)) &&
   //           D.RemoveElement(g);
   //         for (
   //           m &&
-  //           (g = m.GetElementByID(OptConstant.Defines.TableSelection)) &&
+  //           (g = m.GetElementById(OptConstant.Common.TableSelection)) &&
   //           m.RemoveElement(g),
   //           r = h.rows.length,
   //           i = 0;
@@ -7320,7 +7413,7 @@ class OptUtil {
   //         ) {
   //           if ((o = h.rows[i]).selected && m) for (l = o.segments.length, S = 0; S < l; S++) c = i + '.' + S,
   //             (
-  //               g = m.GetElementByID(OptConstant.Defines.TableRowSelection, c)
+  //               g = m.GetElementById(OptConstant.Common.TableRowSelection, c)
   //             ) &&
   //             m.RemoveElement(g);
   //           o.selected = !1
@@ -7328,13 +7421,13 @@ class OptUtil {
   //         if (
   //           m &&
   //           (
-  //             u = m.GetElementListWithID(OptConstant.Defines.TableRowHitHidden)
+  //             u = m.GetElementListWithId(OptConstant.Common.TableRowHitHidden)
   //           )
   //         ) for (r = u.length, i = 0; i < r; i++) u[i].SetStrokeOpacity(0);
   //         for (r = h.cols.length, i = 0; i < r; i++) {
   //           if ((s = h.cols[i]).selected && m) for (l = s.segments.length, S = 0; S < l; S++) c = i + '.' + S,
   //             (
-  //               g = m.GetElementByID(OptConstant.Defines.TableColSelection, c)
+  //               g = m.GetElementById(OptConstant.Common.TableColSelection, c)
   //             ) &&
   //             m.RemoveElement(g);
   //           s.selected = !1
@@ -7342,7 +7435,7 @@ class OptUtil {
   //         if (
   //           m &&
   //           (
-  //             u = m.GetElementListWithID(OptConstant.Defines.TableColHitHidden)
+  //             u = m.GetElementListWithId(OptConstant.Common.TableColHitHidden)
   //           )
   //         ) for (r = u.length, i = 0; i < r; i++) u[i].SetStrokeOpacity(0);
   //         e ||
@@ -7377,7 +7470,7 @@ class OptUtil {
     T3Util.Log('O.Opt SelectObjectFromClick - Input:', { event, svgElement, preserveSelection });
 
     const visibleObjectCount = this.ActiveVisibleZList().length;
-    const shapeContainerType = NvConstant.ObjectTypes.SD_OBJT_SHAPECONTAINER;
+    const shapeContainerType = NvConstant.FNObjectTypes.ShapeContainer;
 
     // Exit if no visible objects or no SVG element provided
     if (visibleObjectCount === 0) {
@@ -7395,7 +7488,7 @@ class OptUtil {
     const object = this.GetObjectPtr(objectId, false);
 
     // Verify the object is a valid drawing object
-    if (!(object && object instanceof BaseDrawingObject)) {
+    if (!(object && object instanceof BaseDrawObject)) {
       T3Util.Log('O.Opt SelectObjectFromClick - Output: false (not a drawing object)');
       return false;
     }
@@ -7457,7 +7550,7 @@ class OptUtil {
     T3Util.Log('O.Opt SelectObjectFromClick - Input:', { event, svgElement, preserveSelection });
 
     const visibleObjectCount = this.ActiveVisibleZList().length;
-    const shapeContainerType = NvConstant.ObjectTypes.SD_OBJT_SHAPECONTAINER;
+    const shapeContainerType = NvConstant.FNObjectTypes.ShapeContainer;
 
     // Exit if no visible objects or no SVG element provided
     if (visibleObjectCount === 0) {
@@ -7475,7 +7568,7 @@ class OptUtil {
     const object = this.GetObjectPtr(objectId, false);
 
     // Verify the object is a valid drawing object
-    if (!(object && object instanceof BaseDrawingObject)) {
+    if (!(object && object instanceof BaseDrawObject)) {
       T3Util.Log('O.Opt SelectObjectFromClick - Output: false (not a drawing object)');
       return false;
     }
@@ -7527,7 +7620,7 @@ class OptUtil {
     T3Util.Log('O.Opt SelectObjectFromClick - Input:', { event, svgElement, preserveSelection });
 
     const visibleObjectCount = this.ActiveVisibleZList().length;
-    const shapeContainerType = NvConstant.ObjectTypes.SD_OBJT_SHAPECONTAINER;
+    const shapeContainerType = NvConstant.FNObjectTypes.ShapeContainer;
 
     // Exit if no visible objects or no SVG element provided
     if (visibleObjectCount === 0) {
@@ -7545,7 +7638,7 @@ class OptUtil {
     const object = this.GetObjectPtr(objectId, false);
 
     // Verify the object is a valid drawing object
-    if (!(object && object instanceof BaseDrawingObject)) {
+    if (!(object && object instanceof BaseDrawObject)) {
       T3Util.Log('O.Opt SelectObjectFromClick - Output: false (not a drawing object)');
       return false;
     }
@@ -7608,10 +7701,10 @@ class OptUtil {
     // Check if this is a lone flowchart connector
     const isLoneFlowchart = !!(
       connectedObject &&
-      connectedObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.CONNECTOR &&
+      connectedObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector &&
       connectedObject._IsFlowChartConnector() &&
       connectedObject.hooks.length === 0 &&
-      connectedObject.arraylist.hook.length === ConnectorDefines.SEDA_NSkip + 1
+      connectedObject.arraylist.hook.length === ConnectorDefines.NSkip + 1
     );
 
     // If it's a lone flowchart, set the ID in the result container
@@ -7644,7 +7737,7 @@ class OptUtil {
         connectorObject &&
         connectorObject.hooks.length &&
         (parentConnector = this.GetObjectPtr(connectorObject.hooks[0].objid, false)) &&
-        parentConnector.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.CONNECTOR
+        parentConnector.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector
       )
     );
 
@@ -7652,8 +7745,8 @@ class OptUtil {
     if (isConnectorEnd) {
       resultContainer.id = connectorObject.hooks[0].objid;
 
-      if (parentConnector.extraflags & OptConstant.ExtraFlags.SEDE_NoDelete) {
-        resultContainer.nshapes = parentConnector.arraylist.hook.length - ConnectorDefines.SEDA_NSkip;
+      if (parentConnector.extraflags & OptConstant.ExtraFlags.NoDelete) {
+        resultContainer.nshapes = parentConnector.arraylist.hook.length - ConnectorDefines.NSkip;
         if (resultContainer.nshapes < 0) {
           resultContainer.nshapes = 0;
         }
@@ -7678,7 +7771,7 @@ class OptUtil {
       connectedObject = this.GetObjectPtr(objectData.hooks[0].objid, false);
 
       if (connectedObject &&
-        connectedObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.CONNECTOR) {
+        connectedObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
 
         // Check if it's a genogram connector
         if (connectedObject.IsGenoConnector()) {
@@ -7687,13 +7780,13 @@ class OptUtil {
           return true;
         }
 
-        // Check if it's a genogram branch with child lines
-        if (connectedObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_GENOGRAM_BRANCH &&
-          this.FindChildObject(objectData.BlockID, OptConstant.DrawingObjectBaseClass.LINE, -1) >= 0) {
-          resultContainer.id = objectData.hooks[0].objid;
-          T3Util.Log("O.Opt IsGenogramPartner - Output: true (genogram branch found)");
-          return true;
-        }
+        // // Check if it's a genogram branch with child lines
+        // if (connectedObject.objecttype === NvConstant.FNObjectTypes.SD_OBJT_GENOGRAM_BRANCH &&
+        //   this.FindChildObject(objectData.BlockID, OptConstant.DrawObjectBaseClass.Line, -1) >= 0) {
+        //   resultContainer.id = objectData.hooks[0].objid;
+        //   T3Util.Log("O.Opt IsGenogramPartner - Output: true (genogram branch found)");
+        //   return true;
+        // }
       }
     }
     // Case 2: Check if object has a child array with a genogram connector
@@ -7732,7 +7825,7 @@ class OptUtil {
           const hookObject = this.GetObjectPtr(hookId, false);
 
           if (hookObject &&
-            hookObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.CONNECTOR) {
+            hookObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
             T3Util.Log("O.Opt FindChildArray - Output: Found connector:", hookId);
             return hookId;
           }
@@ -7779,7 +7872,7 @@ class OptUtil {
 
       // Handle case where object has a single hook that's not a move target
       if (drawingObject.hooks.length === 1 &&
-        (drawingObject.GetHookFlags() & NvConstant.HookFlags.SED_LC_MoveTarget) === 0 &&
+        (drawingObject.GetHookFlags() & NvConstant.HookFlags.LcMoveTarget) === 0 &&
         objectsToMove.indexOf(drawingObject.hooks[0].objid) < 0) {
 
         // Store connection information
@@ -7800,7 +7893,7 @@ class OptUtil {
         this.linkParams.lpCircList,
         this.dragTargetId,
         drawingObject,
-        NvConstant.ListCodes.SED_LC_CIRCTARG,
+        NvConstant.ListCodes.CircTarg,
         {}
       );
 
@@ -7996,7 +8089,7 @@ class OptUtil {
           const drawingObject = this.GetObjectPtr(objectId, false);
 
           if (drawingObject) {
-            const svgElement = this.svgObjectLayer.GetElementByID(objectId);
+            const svgElement = this.svgObjectLayer.GetElementById(objectId);
             drawingObject.RemoveDimensionLines(svgElement);
           }
         }
@@ -8052,7 +8145,7 @@ class OptUtil {
       Utils2.StopPropagationAndDefaults(event),
       T3Gv.opt.UnbindShapeMoveHammerEvents(),
       this.ResetAutoScrollTimer(),
-      T3Gv.opt.SetEditMode(NvConstant.EditState.DEFAULT),
+      T3Gv.opt.SetEditMode(NvConstant.EditState.Default),
       this.DynamicSnapsRemoveGuides(this.dynamicGuides),
       this.dynamicGuides = null,
       !this.dragGotMove || this.CheckDragIsOverCustomLibrary(event)
@@ -8123,7 +8216,7 @@ class OptUtil {
       }
 
       // Apply adjustments for shapes with thick borders
-      if (drawingObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.SHAPE &&
+      if (drawingObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape &&
         drawingObject.polylist === null &&
         drawingObject.StyleRecord.Line.BThick) {
         objectPosition.x += drawingObject.StyleRecord.Line.BThick;
@@ -8133,7 +8226,7 @@ class OptUtil {
       // Handle notes (when coming from collaboration data)
       if (moveData) {
         const noteId = 'note_' + objectId;
-        const noteElement = this.svgHighlightLayer.GetElementByID(noteId);
+        const noteElement = this.svgHighlightLayer.GetElementById(noteId);
 
         if (noteElement) {
           const notePosition = noteElement.GetPos();
@@ -8150,7 +8243,7 @@ class OptUtil {
       this.SetShapeOriginNoDirty(objectId, objectPosition.x, objectPosition.y);
 
       // Additional updates for auto-inserted shapes
-      if (this.linkParams.ConnectHookFlag === NvConstant.HookFlags.SED_LC_AutoInsert) {
+      if (this.linkParams.ConnectHookFlag === NvConstant.HookFlags.LcAutoInsert) {
         drawingObject.UpdateFrame(drawingObject.Frame);
       }
 
@@ -8255,7 +8348,7 @@ class OptUtil {
 
     // Reset edit mode if not a collaborative move
     if (!moveData) {
-      this.SetEditMode(NvConstant.EditState.DEFAULT);
+      this.SetEditMode(NvConstant.EditState.Default);
     }
 
     // Process the completed move if requested
@@ -8264,8 +8357,8 @@ class OptUtil {
       let targetObject = this.GetObjectPtr(this.dragTargetId);
 
       // Special handling for timeline events
-      if (targetObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_NG_EVENT ||
-        targetObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_NG_EVENT_LABEL) {
+      if (targetObject.objecttype === NvConstant.FNObjectTypes.NgEvent ||
+        targetObject.objecttype === NvConstant.FNObjectTypes.NgEventLabel) {
 
         let dragDeltaX = this.dragDeltaX;
         let objectsToMove = this.moveList;
@@ -8307,10 +8400,10 @@ class OptUtil {
 
         // If flow chart handling didn't succeed, handle the connection based on hook flag
         if (!flowChartHookResult) {
-          if (this.linkParams.ConnectHookFlag === NvConstant.HookFlags.SED_LC_AutoInsert) {
+          if (this.linkParams.ConnectHookFlag === NvConstant.HookFlags.LcAutoInsert) {
             // Auto-insert the shape into the line
             this.SD_AutoInsertShape(this.dragTargetId, this.linkParams.ConnectIndex);
-          } else if (this.linkParams.ConnectHookFlag === NvConstant.HookFlags.SED_LC_HookReverse) {
+          } else if (this.linkParams.ConnectHookFlag === NvConstant.HookFlags.LcHookReverse) {
             // Reverse the hook direction
             this.LM_ReverseHook(this.dragTargetId);
           } else {
@@ -8330,7 +8423,7 @@ class OptUtil {
 
               this.SetLinkFlag(
                 this.linkParams.ConnectIndex,
-                ShapeConstant.LinkFlags.SED_L_MOVE
+                DSConstant.LinkFlags.SED_L_MOVE
               );
 
               this.CleanupHooks(this.dragTargetId, this.linkParams.ConnectIndex);
@@ -8531,7 +8624,7 @@ class OptUtil {
 
         this.SetLinkFlag(
           this.linkParams.ConnectIndex,
-          ShapeConstant.LinkFlags.SED_L_MOVE
+          DSConstant.LinkFlags.SED_L_MOVE
         );
 
         this.CleanupHooks(
@@ -8572,15 +8665,15 @@ class OptUtil {
     // If ctrl key is pressed, check if the object type allows duplication
     if (isCtrlKeyPressed) {
       const targetObject = this.GetObjectPtr(this.dragTargetId, false);
-      const objectTypes = NvConstant.ObjectTypes;
+      const objectTypes = NvConstant.FNObjectTypes;
       const objectSubTypes = NvConstant.ObjectSubTypes;
 
       if (targetObject) {
 
-        // Tasks don't support duplication
-        if (targetObject.subtype === objectSubTypes.SD_SUBT_TASK) {
-          isCtrlKeyPressed = false;
-        }
+        // // Tasks don't support duplication
+        // if (targetObject.subtype === objectSubTypes.SD_SUBT_TASK) {
+        //   isCtrlKeyPressed = false;
+        // }
 
         // Objects with dataset elements don't support duplication
         if (targetObject.datasetElemID >= 0) {
@@ -8766,7 +8859,7 @@ class OptUtil {
 
     // Constants for readability
     const extraFlags = OptConstant.ExtraFlags;
-    const centerDimension = OptConstant.Defines.SED_CDim;
+    const centerDimension = OptConstant.Common.MaxDim;
 
     // Early return conditions
     if (drawingObject == null) {
@@ -8784,7 +8877,7 @@ class OptUtil {
       return null;
     }
 
-    if (drawingObject.flags & NvConstant.ObjFlags.SEDO_Assoc) {
+    if (drawingObject.flags & NvConstant.ObjFlags.Assoc) {
       T3Util.Log("O.Opt Move_GetHookPoints - Output: null (Object is associated)");
       return null;
     }
@@ -8803,11 +8896,11 @@ class OptUtil {
     const sessionData = this.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
     if (sessionData) {
       // Check if attach-to-line is allowed
-      allowDropOnLine = sessionData.flags & OptConstant.SessionFlags.SEDS_AttLink &&
-        drawingObject.hookflags & NvConstant.HookFlags.SED_LC_AttachToLine;
+      allowDropOnLine = sessionData.flags & OptConstant.SessionFlags.AttLink &&
+        drawingObject.hookflags & NvConstant.HookFlags.LcAttachToLine;
 
       // Check if we're in freehand mode
-      isFreeHandMode = sessionData.flags & OptConstant.SessionFlags.SEDS_FreeHand;
+      isFreeHandMode = sessionData.flags & OptConstant.SessionFlags.FreeHand;
 
       // Check if auto-insert is allowed
       allowAutoInsert = this.AllowAutoInsert();
@@ -8815,8 +8908,8 @@ class OptUtil {
 
     // Override drop-on-line flag based on object flags
     allowDropOnLine = !!(
-      drawingObject.flags & NvConstant.ObjFlags.SEDO_DropOnBorder ||
-      drawingObject.flags & NvConstant.ObjFlags.SEDO_DropOnTable
+      drawingObject.flags & NvConstant.ObjFlags.DropOnBorder ||
+      drawingObject.flags & NvConstant.ObjFlags.DropOnTable
     );
 
     // Handle drop-on-line or auto-insert mode
@@ -8839,34 +8932,34 @@ class OptUtil {
       this.linkParams.cpt = drawingObject.GetPerimPts(
         objectId,
         attachmentPoints,
-        OptConstant.HookPts.SED_KAT,
+        OptConstant.HookPts.KAT,
         false,
         null,
         -1
       );
 
       if (this.linkParams.cpt && this.linkParams.cpt.length > 0) {
-        this.linkParams.cpt[0].id = OptConstant.HookPts.SED_KAT;
+        this.linkParams.cpt[0].id = OptConstant.HookPts.KAT;
         this.linkParams.cpt[0].x += deltaX;
         this.linkParams.cpt[0].y += deltaY;
       }
     }
 
     // Special handling for shapes
-    if (drawingObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.SHAPE) {
+    if (drawingObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape) {
       containerPoints.push(new Point(centerDimension / 2, 0));
 
       this.linkParams.ContainerPt = drawingObject.GetPerimPts(
         objectId,
         containerPoints,
-        OptConstant.HookPts.SED_KAT,
+        OptConstant.HookPts.KAT,
         false,
         null,
         -1
       );
 
       if (this.linkParams.ContainerPt && this.linkParams.ContainerPt.length > 0) {
-        this.linkParams.ContainerPt[0].id = OptConstant.HookPts.SED_KAT;
+        this.linkParams.ContainerPt[0].id = OptConstant.HookPts.KAT;
         this.linkParams.ContainerPt[0].x += deltaX;
         this.linkParams.ContainerPt[0].y += deltaY;
       }
@@ -8874,7 +8967,7 @@ class OptUtil {
 
     // Set join flag for line objects in freehand mode
     this.linkParams.AllowJoin = isFreeHandMode &&
-      drawingObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.LINE;
+      drawingObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Line;
 
     // Get hook points and adjust for movement
     const points = drawingObject.GetHookPoints(true);
@@ -9097,7 +9190,7 @@ class OptUtil {
     // Get session data and check if auto-grow is disabled
     const sessionData = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
 
-    if (T3Gv.opt.contentHeader.flags & OptConstant.ContentHeaderFlags.CT_DA_NoAuto) {
+    if (T3Gv.opt.contentHeader.flags & OptConstant.CntHeaderFlags.NoAuto) {
       // Constrain to document dimensions
       const rightEdge = T3Gv.opt.moveBounds.x +
         T3Gv.opt.moveBounds.width +
@@ -9215,7 +9308,7 @@ class OptUtil {
 
         // Collab.SendSVGEvent(
         //   this.moveList[index],
-        //   OptConstant.CollabSVGEventTypes.Object_Move,
+        //   OptConstant.CollabSVGEventTypes.ObjectMove,
         //   newRect
         // );
       }
@@ -9266,7 +9359,7 @@ class OptUtil {
       return null;
     }
 
-    const element = this.svgObjectLayer.GetElementByID(this.dragElementList[index]);
+    const element = this.svgObjectLayer.GetElementById(this.dragElementList[index]);
     T3Util.Log("O.Opt GetSVGDragElement - Output:", element ? "Element found" : "null");
     return element;
   }
@@ -9290,7 +9383,7 @@ class OptUtil {
 
     // If position changed, set the link flag
     if (newX - originalPosition.x || newY - originalPosition.y) {
-      this.SetLinkFlag(objectId, ShapeConstant.LinkFlags.SED_L_MOVE);
+      this.SetLinkFlag(objectId, DSConstant.LinkFlags.SED_L_MOVE);
     }
 
     T3Util.Log("O.Opt SetShapeOriginNoDirty - Output: Shape origin updated");
@@ -9356,9 +9449,9 @@ class OptUtil {
       const hookObject = this.GetObjectPtr(hookObjectId, false);
 
       if (hookObject &&
-        (hookObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.CONNECTOR ||
+        (hookObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector ||
           hookObject instanceof ShapeContainer)) {
-        this.SetLinkFlag(hookObjectId, ShapeConstant.LinkFlags.SED_L_MOVE);
+        this.SetLinkFlag(hookObjectId, DSConstant.LinkFlags.SED_L_MOVE);
       }
     }
 
@@ -9409,13 +9502,13 @@ class OptUtil {
       }
 
       // Skip associated objects
-      if (hookObject.associd === targetId && (hookObject.flags & NvConstant.ObjFlags.SEDO_Assoc)) {
+      if (hookObject.associd === targetId && (hookObject.flags & NvConstant.ObjFlags.Assoc)) {
         linkIndex++;
         continue;
       }
 
       // Skip objects that don't allow link maintenance
-      if (hookObject.flags & NvConstant.ObjFlags.SEDO_NoMaintainLink) {
+      if (hookObject.flags & NvConstant.ObjFlags.NoMaintainLink) {
         linkIndex++;
         continue;
       }
@@ -9427,8 +9520,8 @@ class OptUtil {
           let actualMaintainMode = maintainMode;
           if (maintainMode === 2) {
             actualMaintainMode = !(
-              hookObject.hooks[hookIndex].hookpt !== OptConstant.HookPts.SED_KAT ||
-              hookObject.DrawingObjectBaseClass !== OptConstant.DrawingObjectBaseClass.SHAPE ||
+              hookObject.hooks[hookIndex].hookpt !== OptConstant.HookPts.KAT ||
+              hookObject.DrawingObjectBaseClass !== OptConstant.DrawObjectBaseClass.Shape ||
               drawingObject instanceof PolyLineContainer
             );
           }
@@ -9444,10 +9537,10 @@ class OptUtil {
 
           // Update hook coordinates if not in special mode
           if (!actualMaintainMode) {
-            hookFlags = NvConstant.HookFlags.SED_LC_NoSnaps;
+            hookFlags = NvConstant.HookFlags.LcNoSnaps;
             hookFlags = Utils2.SetFlag(
               hookFlags,
-              NvConstant.HookFlags.SED_LC_ShapeOnLine,
+              NvConstant.HookFlags.LcShapeOnLine,
               !(hookObject instanceof BaseLine)
             );
 
@@ -9459,7 +9552,7 @@ class OptUtil {
           }
 
           // Handle text orientation alignment
-          if (drawingObject.TextFlags & NvConstant.TextFlags.SED_TF_HorizText &&
+          if (drawingObject.TextFlags & NvConstant.TextFlags.HorizText &&
             hookObject instanceof BaseShape) {
 
             let textAngle = drawingObject.GetApparentAngle(connectionPoint);
@@ -9544,19 +9637,19 @@ class OptUtil {
       return false;
     }
 
-    if (drawingObject.flags & NvConstant.ObjFlags.SEDO_Lock) {
+    if (drawingObject.flags & NvConstant.ObjFlags.Lock) {
       T3Util.Log("O.Opt CheckTextHyperlinkHit - Output: false (object locked)");
       return false;
     }
 
     // Return false if not in default edit mode
-    if (this.GetEditMode() !== NvConstant.EditState.DEFAULT) {
+    if (this.GetEditMode() !== NvConstant.EditState.Default) {
       T3Util.Log("O.Opt CheckTextHyperlinkHit - Output: false (not in default edit mode)");
       return false;
     }
 
     // Get SVG element for the object
-    const svgElement = this.svgObjectLayer.GetElementByID(drawingObject.tag);
+    const svgElement = this.svgObjectLayer.GetElementById(drawingObject.tag);
 
     // Find the text element to check
     if (this.GetObjectPtr(this.tedSessionBlockId, false).theActiveTextEditObjectID !== drawingObject.BlockID) {
@@ -9568,8 +9661,8 @@ class OptUtil {
       //   if (cellIndex >= 0) {
       //     const cell = table.cells[cellIndex];
       //     if (cell.DataID >= 0 && svgElement) {
-      //       svgElement.textElem = svgElement.GetElementByID(
-      //         OptConstant.SVGElementClass.TEXT,
+      //       svgElement.textElem = svgElement.GetElementById(
+      //         OptConstant.SVGElementClass.Text,
       //         cell.DataID
       //       );
       //     }
@@ -9614,7 +9707,7 @@ class OptUtil {
     let needsRedraw = false;
 
     // Constants for edge annotations
-    const edgeAnnotationDistance = OptConstant.Defines.AnnoHotDist;
+    const edgeAnnotationDistance = OptConstant.Common.AnnoHotDist;
     const leftEdgeOffset = edgeAnnotationDistance;
     const topEdgeOffset = edgeAnnotationDistance;
     const usableWidth = originalDimensions.x - 2 * edgeAnnotationDistance;
@@ -9711,20 +9804,20 @@ class OptUtil {
       const drawingObject = T3Gv.opt.GetObjectPtr(objectId, false);
 
       // Validate that we have a drawing object
-      if (!(drawingObject && drawingObject instanceof BaseDrawingObject)) {
+      if (!(drawingObject && drawingObject instanceof BaseDrawObject)) {
         T3Util.Log("O.Opt LM_TestIconClick - Output: false (no valid drawing object)");
         return false;
       }
 
       // Handle different element types
       switch (elementId) {
-        // case OptConstant.Defines.TableRowHit:
-        // case OptConstant.Defines.TableRowHitHidden:
-        // case OptConstant.Defines.TableRowSelection:
+        // case OptConstant.Common.TableRowHit:
+        // case OptConstant.Common.TableRowHitHidden:
+        // case OptConstant.Common.TableRowSelection:
         //   // Table row handling - no default action
         //   break;
 
-        case OptConstant.Defines.HitAreas:
+        case OptConstant.Common.HitAreas:
           // Handle hit area click
           const hitAreaData = targetElement.GetUserData();
           this.LM_HitAreaClick(objectId, hitAreaData);
@@ -9808,20 +9901,20 @@ class OptUtil {
     }
 
     // Prevent clicking on locked objects
-    if (drawingObject.flags & NvConstant.ObjFlags.SEDO_Lock) {
+    if (drawingObject.flags & NvConstant.ObjFlags.Lock) {
       T3Util.Log("O.Opt LM_ShapeIconClick - Output: false (Object is locked)");
       return false;
     }
 
     // Only handle clicks in default edit mode
-    if (this.GetEditMode() !== NvConstant.EditState.DEFAULT) {
+    if (this.GetEditMode() !== NvConstant.EditState.Default) {
       T3Util.Log("O.Opt LM_ShapeIconClick - Output: false (Not in default edit mode)");
       return false;
     }
 
     // Handle based on icon type
     switch (iconType) {
-      case OptConstant.ShapeIconType.HYPERLINK:
+      case OptConstant.ShapeIconType.HyperLink:
         // Handle regular hyperlink
         const hyperlinkUrl = drawingObject.GetHyperlink(userData);
 
@@ -9833,7 +9926,7 @@ class OptUtil {
         }
         return true;
 
-      case OptConstant.ShapeIconType.EXPANDEDVIEW:
+      case OptConstant.ShapeIconType.ExpandedView:
         // Handle expanded view
         let expandedViewId;
         const cellForExpandedView = drawingObject.IsNoteCell(userData);
@@ -9842,7 +9935,7 @@ class OptUtil {
         T3Util.Log("O.Opt LM_ShapeIconClick - Output: false (Expanded view shown)");
         break;
 
-      case OptConstant.ShapeIconType.COMMENT:
+      case OptConstant.ShapeIconType.Comment:
         // Handle comment icon
         let commentId = null;
 
@@ -9858,7 +9951,7 @@ class OptUtil {
         T3Util.Log("O.Opt LM_ShapeIconClick - Output: false (Comment edit opened)");
         break;
 
-      case OptConstant.ShapeIconType.NOTES:
+      case OptConstant.ShapeIconType.Notes:
         // Handle notes icon
         const cellForNote = drawingObject.IsNoteCell(userData);
 
@@ -9875,19 +9968,19 @@ class OptUtil {
         T3Util.Log("O.Opt LM_ShapeIconClick - Output: true (Note toggled)");
         return true;
 
-      // case OptConstant.ShapeIconType.EXPANDTABLE:
+      // case OptConstant.ShapeIconType.ExpandTable:
       //   // Handle expand table icon
       //   const cellForExpand = drawingObject.IsNoteCell(userData);
       //   T3Util.Log("O.Opt LM_ShapeIconClick - Output: false (Table expanded)");
       //   break;
 
-      // case OptConstant.ShapeIconType.COLLAPSETABLE:
+      // case OptConstant.ShapeIconType.CollapseTable:
       //   // Handle collapse table icon
       //   const cellForCollapse = drawingObject.IsNoteCell(userData);
       //   T3Util.Log("O.Opt LM_ShapeIconClick - Output: false (Table collapsed)");
       //   break;
 
-      case OptConstant.ShapeIconType.FIELDDATA:
+      case OptConstant.ShapeIconType.FieldData:
         // Handle field data icon
         let isShiftPressed = event.shiftKey;
 
@@ -9900,7 +9993,7 @@ class OptUtil {
         T3Util.Log("O.Opt LM_ShapeIconClick - Output: true (Field data tooltip toggled)");
         return true;
 
-      case OptConstant.ShapeIconType.ATTACHMENT:
+      case OptConstant.ShapeIconType.Attachment:
         // Handle attachment icon (no action defined in original code)
         T3Util.Log("O.Opt LM_ShapeIconClick - Output: true (Attachment icon clicked)");
         return true;
@@ -9938,8 +10031,8 @@ class OptUtil {
 
     // Check if the object exists and is not locked
     drawingObject = this.GetObjectPtr(objectId, false);
-    if (!drawingObject || !(drawingObject instanceof BaseDrawingObject) ||
-      (drawingObject.flags & NvConstant.ObjFlags.SEDO_Lock)) {
+    if (!drawingObject || !(drawingObject instanceof BaseDrawObject) ||
+      (drawingObject.flags & NvConstant.ObjFlags.Lock)) {
       T3Util.Log('O.Opt ActivateTextEdit - Output: Object invalid or locked');
       return;
     }
@@ -10017,7 +10110,7 @@ class OptUtil {
       }
 
       // Get the SVG element for the object
-      const svgElement = this.svgObjectLayer.GetElementByID(objectId);
+      const svgElement = this.svgObjectLayer.GetElementById(objectId);
 
       // Create a new text object if needed
       if (textObjectId == -1) {
@@ -10073,8 +10166,8 @@ class OptUtil {
         //   this.Table_Release(false);
 
         //   // Move text element to front if not attached to something
-        //   if ((drawingObject.TextFlags & NvConstant.TextFlags.SED_TF_AttachA) == 0 &&
-        //     (drawingObject.TextFlags & NvConstant.TextFlags.SED_TF_AttachB) == 0) {
+        //   if ((drawingObject.TextFlags & NvConstant.TextFlags.AttachA) == 0 &&
+        //     (drawingObject.TextFlags & NvConstant.TextFlags.AttachB) == 0) {
         //     T3Gv.opt.svgObjectLayer.MoveElementToFront(svgElement);
         //   }
         // }
@@ -10138,14 +10231,14 @@ class OptUtil {
         // Clear the click-here flag
         preservedObject.TextFlags = Utils2.SetFlag(
           preservedObject.TextFlags,
-          NvConstant.TextFlags.SED_TF_Clickhere,
+          NvConstant.TextFlags.Clickhere,
           false
         );
       } else {
         // Replace standard placeholder text if needed
         if ((!textData /*&& !Collab.IsSecondary()*/) ||
           (textData /*&& textData.EditorID === Collab.EditorID*/)) {
-          this.ReplaceStdText(preservedObject, currentText, svgElement.textElem);
+          // this.ReplaceStdText(preservedObject, currentText, svgElement.textElem);
         }
       }
 
@@ -10162,7 +10255,7 @@ class OptUtil {
           this.ShowSVGSelectionState(targetSelectionId, false);
         }
 
-        this.RegisterLastTEOp(NvConstant.TELastOp.INIT);
+        this.RegisterLastTEOp(NvConstant.TextElemLastOpt.Init);
       }
 
       // Preserve undo state and send collaboration message
@@ -10253,7 +10346,7 @@ class OptUtil {
 
     try {
       // Set modal operation mode
-      this.SetModalOperation(OptConstant.ModalOperations.DRAGDROP);
+      this.SetModalOperation(OptConstant.ModalOperations.DragDrop);
       this.GetObjectPtr(this.tedSessionBlockId, false);
       this.CloseEdit();
 
@@ -10272,10 +10365,10 @@ class OptUtil {
       this.drawShape = drawingShape;
 
       // Set appropriate edit mode based on shape type
-      if (drawingShape.flags & NvConstant.ObjFlags.SEDO_TextOnly) {
+      if (drawingShape.flags & NvConstant.ObjFlags.TextOnly) {
         this.SetEditMode(NvConstant.EditState.TEXT);
       } else {
-        this.SetEditMode(NvConstant.EditState.STAMP);
+        this.SetEditMode(NvConstant.EditState.Stamp);
       }
 
       // Set up drag end handler
@@ -10328,7 +10421,7 @@ class OptUtil {
     });
 
     // Set modal operation to STAMP mode
-    this.SetModalOperation(OptConstant.ModalOperations.STAMP);
+    this.SetModalOperation(OptConstant.ModalOperations.Stamp);
     this.GetObjectPtr(this.tedSessionBlockId, false);
 
     // Close any active text editing
@@ -10349,10 +10442,10 @@ class OptUtil {
     this.drawShape = drawingShape;
 
     // Set appropriate edit mode based on shape type
-    if (drawingShape.flags & NvConstant.ObjFlags.SEDO_TextOnly) {
+    if (drawingShape.flags & NvConstant.ObjFlags.TextOnly) {
       this.SetEditMode(NvConstant.EditState.TEXT);
     } else {
-      this.SetEditMode(NvConstant.EditState.STAMP, CursorConstant.CursorType.STAMP);
+      this.SetEditMode(NvConstant.EditState.Stamp, CursorConstant.CursorType.STAMP);
     }
 
     // Disable WorkAreaHammer to prevent conflicts with stamp operation
@@ -10421,7 +10514,7 @@ class OptUtil {
 
       // Convert window coordinates to document coordinates
       let docCoordinates = this.svgDoc.ConvertWindowToDocCoords(event.clientX, event.clientY);
-      const isTextOnlyObject = this.drawShape.flags & NvConstant.ObjFlags.SEDO_TextOnly;
+      const isTextOnlyObject = this.drawShape.flags & NvConstant.ObjFlags.TextOnly;
 
       // Apply snapping if enabled and appropriate
       if (!isTextOnlyObject) {
@@ -10471,7 +10564,7 @@ class OptUtil {
           this.drawShape.sizedim.height = this.drawShape.Frame.height;
 
           // Special handling for frame objects
-          if (this.drawShape.objecttype === NvConstant.ObjectTypes.SD_OBJT_FRAME) {
+          if (this.drawShape.objecttype === NvConstant.FNObjectTypes.Frame) {
             const zList = T3Gv.opt.ZListPreserve();
             replacedObjectId = this.ReplaceSpecialObject(
               this.drawShape,
@@ -10508,7 +10601,7 @@ class OptUtil {
       }
 
       // Reset edit mode and clean up event handlers
-      this.SetEditMode(NvConstant.EditState.DEFAULT);
+      this.SetEditMode(NvConstant.EditState.Default);
       $(window).unbind('mousedown');
       $(window).unbind('click');
       $(window).unbind('mousemove', EvtUtil.Evt_MouseStampObjectMove);
@@ -10564,7 +10657,7 @@ class OptUtil {
       this.dragElementList = [];
       this.actionStoredObjectId = -1;
       this.actionSvgObject = null;
-      this.SetModalOperation(OptConstant.ModalOperations.NONE);
+      this.SetModalOperation(OptConstant.ModalOperations.None);
 
       // // Send collaboration message if available
       // if (collabMessage) {
@@ -10609,7 +10702,7 @@ class OptUtil {
 
         T3Gv.opt.SetLinkFlag(
           objectId,
-          ShapeConstant.LinkFlags.SED_L_MOVE | ShapeConstant.LinkFlags.SED_L_CHANGE
+          DSConstant.LinkFlags.SED_L_MOVE | DSConstant.LinkFlags.SED_L_CHANGE
         );
       }
     }
@@ -10635,7 +10728,7 @@ class OptUtil {
 
               T3Gv.opt.SetLinkFlag(
                 moveObject.hooks[hookIndex].objid,
-                ShapeConstant.LinkFlags.SED_L_MOVE | ShapeConstant.LinkFlags.SED_L_CHANGE
+                DSConstant.LinkFlags.SED_L_MOVE | DSConstant.LinkFlags.SED_L_CHANGE
               );
             }
           }
@@ -10654,7 +10747,7 @@ class OptUtil {
     T3Util.Log("O.Opt CancelObjectStamp - Input:", { shouldUnbindEvents });
 
     // Clear modal operation state
-    this.SetModalOperation(OptConstant.ModalOperations.NONE);
+    this.SetModalOperation(OptConstant.ModalOperations.None);
     T3Constant.DocContext.SelectionToolSticky = false;
     this.LM_StampPostRelease(false);
 
@@ -10669,7 +10762,7 @@ class OptUtil {
     }
 
     // Reset edit mode
-    this.SetEditMode(NvConstant.EditState.DEFAULT);
+    this.SetEditMode(NvConstant.EditState.Default);
 
     // Unbind event handlers if requested
     if (shouldUnbindEvents) {
@@ -10717,12 +10810,12 @@ class OptUtil {
     T3Util.Log("O.Opt CancelObjectDragDrop - Input:", { shouldUnbindEvents });
 
     // Clear modal operation state
-    this.SetModalOperation(OptConstant.ModalOperations.NONE);
+    this.SetModalOperation(OptConstant.ModalOperations.None);
     this.LM_StampPostRelease(false);
 
     // Clean up stored object if one was created
     if (this.actionStoredObjectId >= 0) {
-      const svgElement = this.svgObjectLayer.GetElementByID(this.actionStoredObjectId);
+      const svgElement = this.svgObjectLayer.GetElementById(this.actionStoredObjectId);
 
       if (svgElement) {
         this.svgObjectLayer.RemoveElement(svgElement);
@@ -10741,7 +10834,7 @@ class OptUtil {
     }
 
     // Reset edit mode
-    this.SetEditMode(NvConstant.EditState.DEFAULT);
+    this.SetEditMode(NvConstant.EditState.Default);
 
     // Unbind events if requested
     if (shouldUnbindEvents) {
@@ -10776,7 +10869,7 @@ class OptUtil {
     // Check if the object should drop on border lines
     if (this.drawShape &&
       this.drawShape.flags &&
-      this.drawShape.flags & NvConstant.ObjFlags.SEDO_DropOnBorder) {
+      this.drawShape.flags & NvConstant.ObjFlags.DropOnBorder) {
       this.linkParams.DropOnLine = true;
     }
 
@@ -10861,7 +10954,7 @@ class OptUtil {
 
       // Check if the object is text-only
       if (this.drawShape) {
-        isTextOnlyObject = !!(this.drawShape.flags & NvConstant.ObjFlags.SEDO_TextOnly);
+        isTextOnlyObject = !!(this.drawShape.flags & NvConstant.ObjFlags.TextOnly);
       }
 
       // Apply snapping if enabled and appropriate
@@ -10917,7 +11010,7 @@ class OptUtil {
           this.drawShape.sizedim.height = this.drawShape.Frame.height;
 
           // Special handling for frame objects
-          if (this.drawShape.objecttype === NvConstant.ObjectTypes.SD_OBJT_FRAME) {
+          if (this.drawShape.objecttype === NvConstant.FNObjectTypes.Frame) {
             const zList = T3Gv.opt.ZListPreserve();
             replacedObjectId = this.ReplaceSpecialObject(
               this.drawShape,
@@ -10967,7 +11060,7 @@ class OptUtil {
       // const collabMessage = this.BuildCreateMessage(messageData, false);
 
       // Reset edit mode and prepare selection
-      this.SetEditMode(NvConstant.EditState.DEFAULT);
+      this.SetEditMode(NvConstant.EditState.Default);
       T3Gv.opt.UnbindDragDropOrStamp();
 
       if (!isTextOnlyObject) {
@@ -11048,7 +11141,7 @@ class OptUtil {
       this.actionSvgObject = null;
 
       // Reset modal operation
-      this.SetModalOperation(OptConstant.ModalOperations.NONE);
+      this.SetModalOperation(OptConstant.ModalOperations.None);
 
       // Complete the operation
       this.CompleteOperation(objectsToSelect);
@@ -11139,7 +11232,7 @@ class OptUtil {
 
         // Apply curvature if applicable
         if (newObject &&
-          newObject.SymbolID !== OptConstant.Defines.Floorplan_WallOpeningID &&
+          newObject.SymbolID !== OptConstant.Common.WallOpenId &&
           !hasImageURL) {
           newObject.ApplyCurvature(sessionBlock.def.rrectparam);
         }
@@ -11150,7 +11243,7 @@ class OptUtil {
       }
 
       // Store the SVG object and update UI state
-      this.actionSvgObject = this.svgObjectLayer.GetElementByID(this.actionStoredObjectId);
+      this.actionSvgObject = this.svgObjectLayer.GetElementById(this.actionStoredObjectId);
 
       if (this.linkParams) {
         this.linkParams.lpCircList.push(this.actionStoredObjectId);
@@ -11309,7 +11402,7 @@ class OptUtil {
     }
 
     // Check if this is a text-only object
-    const isTextOnlyObject = this.drawShape.flags & NvConstant.ObjFlags.SEDO_TextOnly;
+    const isTextOnlyObject = this.drawShape.flags & NvConstant.ObjFlags.TextOnly;
 
     // Determine if we should apply snapping
     const isConnectOperation = this.linkParams && this.linkParams.SConnectIndex >= 0;
@@ -11507,7 +11600,7 @@ class OptUtil {
 
           // Handle SVG fragment symbols
           if (!dragElement &&
-            object.ShapeType === OptConstant.ShapeType.SVGFRAGMENTSYMBOL &&
+            object.ShapeType === OptConstant.ShapeType.SVGFragmentSymbol &&
             object.SVGFragment) {
 
             if (!visibleList) {
@@ -11516,7 +11609,7 @@ class OptUtil {
 
             listIndex = visibleList.indexOf(objectId);
             this.AddSVGObject(listIndex, objectId, true, false);
-            dragElement = T3Gv.opt.svgObjectLayer.GetElementByID(objectId);
+            dragElement = T3Gv.opt.svgObjectLayer.GetElementById(objectId);
           }
 
           if (dragElement) {
@@ -11694,20 +11787,20 @@ class OptUtil {
     // Handle attached text dimensions
     if (
       shapeObject.DataID >= 0 && (
-        shapeObject.TextFlags & NvConstant.TextFlags.SED_TF_AttachB ||
-        shapeObject.TextFlags & NvConstant.TextFlags.SED_TF_AttachA
+        shapeObject.TextFlags & NvConstant.TextFlags.AttachB ||
+        shapeObject.TextFlags & NvConstant.TextFlags.AttachA
       )
     ) {
       // Function to get text dimensions from SVG
       const getTextDimensions = (objectId) => {
         if (objectId == null) return null;
 
-        let svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(objectId);
+        let svgElement = T3Gv.opt.svgObjectLayer.GetElementById(objectId);
 
         // Create text element if it doesn't exist
         if (svgElement == null) {
           svgElement = T3Gv.opt.svgDoc.CreateShape(
-            OptConstant.CSType.SHAPECONTAINER
+            OptConstant.CSType.ShapeContainer
           );
           svgElement.SetID(shapeObject.BlockID);
           T3Gv.opt.svgObjectLayer.AddElement(svgElement, 0);
@@ -11715,7 +11808,7 @@ class OptUtil {
         }
 
         if (svgElement) {
-          const textElement = svgElement.GetElementByID(OptConstant.SVGElementClass.TEXT);
+          const textElement = svgElement.GetElementById(OptConstant.SVGElementClass.Text);
           if (textElement) {
             const position = textElement.GetPos();
             const dimensions = textElement.GetTextMinDimensions();
@@ -11761,8 +11854,8 @@ class OptUtil {
 
       // Get polygon points for rotation calculation
       T3Util.Log("O.Opt SetShapeR - Getting poly points for rotation");
-      points = new BaseDrawingObject(shapeObject).GetPolyPoints(
-        OptConstant.Defines.NPOLYPTS,
+      points = new BaseDrawObject(shapeObject).GetPolyPoints(
+        OptConstant.Common.MaxPolyPoints,
         false,
         false,
         false,
@@ -12015,7 +12108,7 @@ class OptUtil {
     const links = linksList || this.GetObjectPtr(this.linksBlockId, false);
 
     // Use provided base class or default to connector
-    baseClass = baseClass || OptConstant.DrawingObjectBaseClass.CONNECTOR;
+    baseClass = baseClass || OptConstant.DrawObjectBaseClass.Connector;
 
     // Find the first link for this parent
     const startLinkIndex = this.FindLink(links, parentId, true);
@@ -12062,10 +12155,10 @@ class OptUtil {
     }
 
     // Set link flags for the object and connected objects
-    this.SetLinkFlag(objectId, ShapeConstant.LinkFlags.SED_L_MOVE);
+    this.SetLinkFlag(objectId, DSConstant.LinkFlags.SED_L_MOVE);
 
     if (targetObject.hooks.length) {
-      this.SetLinkFlag(targetObject.hooks[0].objid, ShapeConstant.LinkFlags.SED_L_MOVE);
+      this.SetLinkFlag(targetObject.hooks[0].objid, DSConstant.LinkFlags.SED_L_MOVE);
     }
 
     // Update the object's frame
@@ -12364,7 +12457,7 @@ class OptUtil {
     let majorUnit = drawingScale.major;
 
     if (majorUnit == null) {
-      majorUnit = OptConstant.Defines.DefaultRulerMajor;
+      majorUnit = OptConstant.Common.DefaultRulerMajor;
     }
 
     // Adjust scale based on unit type
@@ -12381,7 +12474,7 @@ class OptUtil {
     }
 
     // Calculate final scale
-    const finalScale = majorScale * (OptConstant.Defines.DefaultRulerMajor / majorUnit);
+    const finalScale = majorScale * (OptConstant.Common.DefaultRulerMajor / majorUnit);
 
     T3Util.Log("O.Opt GetDrawingScale - Output:", finalScale);
     return finalScale;
@@ -12420,18 +12513,18 @@ class OptUtil {
     }
 
     // Check if this is a container connection or has a cell ID
-    const isContainerConnection = !!(drawingObject.flags & NvConstant.ObjFlags.SEDO_ContConn || cellId != null);
+    const isContainerConnection = !!(drawingObject.flags & NvConstant.ObjFlags.ContConn || cellId != null);
 
     // Get the SVG element for this object
-    svgElement = this.svgObjectLayer.GetElementByID(targetId);
-    if (svgElement == null || svgElement.GetElementByID(OptConstant.SVGElementClass.SHAPE) == null) {
+    svgElement = this.svgObjectLayer.GetElementById(targetId);
+    if (svgElement == null || svgElement.GetElementById(OptConstant.SVGElementClass.Shape) == null) {
       T3Util.Log("O.Opt HiliteConnect - Output: No SVG element found");
       return;
     }
 
     // Create the highlight element ID
     highlightId = 'hilite_' + targetId;
-    highlightElement = this.svgHighlightLayer.GetElementByID(highlightId);
+    highlightElement = this.svgHighlightLayer.GetElementById(highlightId);
 
     // Add highlight if requested and not already present
     if (highlightElement == null && shouldHighlight) {
@@ -12471,10 +12564,10 @@ class OptUtil {
   }
 
   PolyLJoin(e, t, a, r, i) {
-    var n, o, s, l, S, c, u, p, d, D, g, h, m, C, y, f = null, L = null, I = null, T = null, b = [], M = [], P = !1, R = [], A = !1, _ = OptConstant.ActionTriggerType.LINEEND, E = {
+    var n, o, s, l, S, c, u, p, d, D, g, h, m, C, y, f = null, L = null, I = null, T = null, b = [], M = [], P = !1, R = [], A = !1, _ = OptConstant.ActionTriggerType.LineEnd, E = {
       x: 0,
       y: 0
-    }, w = {}, F = OptConstant.Defines.SED_KnobSize, v = -1, G = T3Gv.opt.ActiveVisibleZList(), N = !1;
+    }, w = {}, F = OptConstant.Common.KnobSize, v = -1, G = T3Gv.opt.ActiveVisibleZList(), N = !1;
 
     f = this.GetObjectPtr(e, !0);
     if (f == null) return -1;
@@ -12494,7 +12587,7 @@ class OptUtil {
     C = f.HyperlinkText;
     if (L.HyperlinkText) C = L.HyperlinkText;
 
-    if (r === OptConstant.HookPts.SED_WTL || r === OptConstant.HookPts.SED_WTR) r = OptConstant.HookPts.SED_KTL;
+    if (r === OptConstant.HookPts.WTL || r === OptConstant.HookPts.WTR) r = OptConstant.HookPts.KTL;
 
     if (e === a && f.LineType === OptConstant.LineType.POLYLINE) {
       A = f.polylist.closed;
@@ -12504,7 +12597,7 @@ class OptUtil {
       f.polylist.segs[s - 1].pt.y = f.polylist.segs[0].pt.y;
       f.EndPoint.x = f.StartPoint.x;
       f.EndPoint.y = f.StartPoint.y;
-      if (f.objecttype !== NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) this.OpenShapeEdit(e);
+      if (f.objecttype !== NvConstant.FNObjectTypes.FlWall) this.OpenShapeEdit(e);
 
       var k = -1;
       if (f instanceof PolyLineContainer && !A && i !== !0) {
@@ -12514,7 +12607,7 @@ class OptUtil {
 
       f.CalcFrame();
       T3Gv.opt.AddToDirtyList(f.BlockID);
-      this.SetLinkFlag(e, ShapeConstant.LinkFlags.SED_L_MOVE);
+      this.SetLinkFlag(e, DSConstant.LinkFlags.SED_L_MOVE);
       this.MaintainLink(e, f, null, _, !1);
       return k;
     }
@@ -12558,8 +12651,8 @@ class OptUtil {
           x: f.EndPoint.x,
           y: f.EndPoint.y
         },
-        flags: NvConstant.ObjFlags.SEDO_Erase | NvConstant.ObjFlags.SEDO_EraseOnGrow,
-        extraflags: OptConstant.ExtraFlags.SEDE_SideKnobs,
+        flags: NvConstant.ObjFlags.Erase | NvConstant.ObjFlags.EraseOnGrow,
+        extraflags: OptConstant.ExtraFlags.SideKnobs,
         StartArrowID: L.StartArrowID,
         EndArrowID: L.EndArrowID,
         StartArrowDisp: L.StartArrowDisp,
@@ -12586,13 +12679,13 @@ class OptUtil {
 
       U.StyleRecord = Utils1.DeepCopy(f.StyleRecord);
 
-      if (U.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
+      if (U.objecttype === NvConstant.FNObjectTypes.FlWall) {
         U.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.Transparent;
       }
 
       U.StyleRecord.Fill.Hatch = 0;
 
-      var polyPoints = f.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, true, false, null);
+      var polyPoints = f.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, true, false, null);
       var numPoints = polyPoints.length;
 
       for (var n = 0; n < numPoints; n++) {
@@ -12614,7 +12707,7 @@ class OptUtil {
       T = L;
       P = true;
     }
-    if (t === OptConstant.HookPts.SED_KTL)
+    if (t === OptConstant.HookPts.KTL)
       var J = {
         x: I.StartPoint.x,
         y: I.StartPoint.y
@@ -12624,7 +12717,7 @@ class OptUtil {
         x: I.EndPoint.x,
         y: I.EndPoint.y
       };
-    if (r === OptConstant.HookPts.SED_KTL)
+    if (r === OptConstant.HookPts.KTL)
       var x = {
         x: T.StartPoint.x,
         y: T.StartPoint.y
@@ -12640,11 +12733,11 @@ class OptUtil {
       T.StartPoint.y += S,
       T.EndPoint.x += l,
       T.EndPoint.y += S,
-      (o = (b = T.GetPolyPoints(OptConstant.Defines.NPOLYPTS, !1, !0, !1, null)).length) + (s = I.polylist.segs.length) > OptConstant.Defines.SED_MaxPolySegs)
+      (o = (b = T.GetPolyPoints(OptConstant.Common.MaxPolyPoints, !1, !0, !1, null)).length) + (s = I.polylist.segs.length) > OptConstant.Common.MaxPolySegs)
       -1;
-    if (t === OptConstant.HookPts.SED_KTL) {
-      if (_ = OptConstant.ActionTriggerType.LINESTART,
-        r === OptConstant.HookPts.SED_KTL) {
+    if (t === OptConstant.HookPts.KTL) {
+      if (_ = OptConstant.ActionTriggerType.LineStart,
+        r === OptConstant.HookPts.KTL) {
         for (l = I.StartPoint.x - b[o - 1].x,
           S = I.StartPoint.y - b[o - 1].y,
           n = 0; n < s; n++)
@@ -12736,10 +12829,10 @@ class OptUtil {
           I.EndPoint.x = I.StartPoint.x,
           I.EndPoint.y = I.StartPoint.y,
           I instanceof PolyLine && !0 !== i && I.MaintainDimensionThroughPolygonOpennessChange(I.polylist.closed),
-          I.objecttype !== NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL && this.OpenShapeEdit(I.BlockID),
+          I.objecttype !== NvConstant.FNObjectTypes.FlWall && this.OpenShapeEdit(I.BlockID),
           T3Gv.opt.AddToDirtyList(I.BlockID))
     } else {
-      if (r === OptConstant.HookPts.SED_KTL) {
+      if (r === OptConstant.HookPts.KTL) {
         for (n = 1; n < o; n++) {
           switch (T.LineType) {
             case OptConstant.LineType.POLYLINE:
@@ -12815,7 +12908,7 @@ class OptUtil {
           I.polylist.segs[I.polylist.segs.length - 1].pt.y = I.polylist.segs[0].pt.y,
           I.EndPoint.x = I.StartPoint.x,
           I.EndPoint.y = I.StartPoint.y,
-          I.objecttype !== NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL && this.OpenShapeEdit(I.BlockID),
+          I.objecttype !== NvConstant.FNObjectTypes.FlWall && this.OpenShapeEdit(I.BlockID),
           I instanceof PolyLine && !0 !== i && I.MaintainDimensionThroughPolygonOpennessChange(I.polylist.closed),
           T3Gv.opt.AddToDirtyList(I.BlockID))
     }
@@ -12835,18 +12928,18 @@ class OptUtil {
       f.DataID === h ? (I.TextDirection = f.TextDirection,
         f.DataID = -1) : L.DataID === h && (I.TextDirection = L.TextDirection,
           L.DataID = -1),
-      I.TextFlags = Utils2.SetFlag(I.TextFlags, NvConstant.TextFlags.SED_TF_HorizText, !I.TextDirection)),
+      I.TextFlags = Utils2.SetFlag(I.TextFlags, NvConstant.TextFlags.HorizText, !I.TextDirection)),
       I && I.NoteID < 0 && (I.NoteID = m,
         f.NoteID === m ? f.NoteID = -1 : L.NoteID === m && (L.NoteID = -1),
-        I.TextFlags = Utils2.SetFlag(I.TextFlags, NvConstant.TextFlags.SED_TF_HorizText, !I.TextDirection)),
+        I.TextFlags = Utils2.SetFlag(I.TextFlags, NvConstant.TextFlags.HorizText, !I.TextDirection)),
       I && I.CommentID < 0 && (I.CommentID = y,
         f.CommentID === y ? f.CommentID = -1 : L.CommentID === y && (L.CommentID = -1),
-        I.TextFlags = Utils2.SetFlag(I.TextFlags, NvConstant.TextFlags.SED_TF_HorizText, !I.TextDirection)),
+        I.TextFlags = Utils2.SetFlag(I.TextFlags, NvConstant.TextFlags.HorizText, !I.TextDirection)),
       I && !I.HyperlinkText && (I.HyperlinkText = C),
       n = 0; n < M.length; n++)
       this.MoveLinks(c, M[n], null, null);
     if (this.DeleteObjects(M, !1),
-      this.SetLinkFlag(c, ShapeConstant.LinkFlags.SED_L_MOVE),
+      this.SetLinkFlag(c, DSConstant.LinkFlags.SED_L_MOVE),
       this.MaintainLink(c, I, null, _, !1),
       this.UpdateLinks(),
       R.push(c),
@@ -12915,33 +13008,33 @@ class OptUtil {
       if (target.y > origin.y) {
         // Bottom-left quadrant
         result.param = -NvConstant.Geometry.PI / 2;
-        result.ShortRef = NvConstant.ArcQuad.SD_PLA_BL;
+        result.ShortRef = OptConstant.ArcQuad.PLA_BL;
 
         if (endPoint.notclockwise) {
           result.param = 0;
         }
       } else {
         // Top-left quadrant
-        result.ShortRef = NvConstant.ArcQuad.SD_PLA_TL;
+        result.ShortRef = OptConstant.ArcQuad.PLA_TL;
 
         if (endPoint.notclockwise) {
-          result.ShortRef = NvConstant.ArcQuad.SD_PLA_TR;
+          result.ShortRef = OptConstant.ArcQuad.PLA_TR;
           result.param = NvConstant.Geometry.PI / 2;
         }
       }
     } else {
       if (target.y > origin.y) {
         // Bottom-right quadrant
-        result.ShortRef = NvConstant.ArcQuad.SD_PLA_BR;
+        result.ShortRef = OptConstant.ArcQuad.SD_PLA_BR;
 
         if (endPoint.notclockwise) {
-          result.ShortRef = NvConstant.ArcQuad.SD_PLA_BL;
+          result.ShortRef = OptConstant.ArcQuad.PLA_BL;
           result.param = NvConstant.Geometry.PI / 2;
         }
       } else {
         // Top-right quadrant
         result.param = -NvConstant.Geometry.PI / 2;
-        result.ShortRef = NvConstant.ArcQuad.SD_PLA_TR;
+        result.ShortRef = OptConstant.ArcQuad.PLA_TR;
 
         if (endPoint.notclockwise) {
           result.param = 0;
@@ -13043,7 +13136,7 @@ class OptUtil {
           if (sourceHook == null) continue;
 
           // Skip objects with the NoMaintainLink flag
-          if (sourceHook.flags & NvConstant.ObjFlags.SEDO_NoMaintainLink) continue;
+          if (sourceHook.flags & NvConstant.ObjFlags.NoMaintainLink) continue;
 
           // Find the hook that points to the source object
           for (hookIndex = 0; hookIndex < sourceHook.hooks.length; hookIndex++) {
@@ -13063,11 +13156,11 @@ class OptUtil {
               }
 
               // Handle multiplicity objects differently
-              if (sourceHook.objecttype !== NvConstant.ObjectTypes.SD_OBJT_MULTIPLICITY) {
+              if (sourceHook.objecttype !== NvConstant.FNObjectTypes.Multiplicity) {
                 // Get target points for connection
                 hookPoints = targetObject.GetTargetPoints(
                   hookPoint,
-                  NvConstant.HookFlags.SED_LC_NoSnaps,
+                  NvConstant.HookFlags.LcNoSnaps,
                   null
                 );
 
@@ -13084,7 +13177,7 @@ class OptUtil {
                 // Just mark multiplicity links as moved
                 linksList[linkIndex].flags = Utils2.SetFlag(
                   linksList[linkIndex].flags,
-                  ShapeConstant.LinkFlags.SED_L_MOVE,
+                  DSConstant.LinkFlags.SED_L_MOVE,
                   true
                 );
 
@@ -13197,7 +13290,7 @@ class OptUtil {
 
           // Skip objects with NoDelete flag if not forced
           if (
-            objectData.extraflags & OptConstant.ExtraFlags.SEDE_NoDelete && !forceDelete
+            objectData.extraflags & OptConstant.ExtraFlags.NoDelete && !forceDelete
           ) {
             continue;
           }
@@ -13207,7 +13300,7 @@ class OptUtil {
           this.RemoveFromSelectedList(objectId);
 
           // Mark for deletion in links
-          this.SetLinkFlag(objectId, ShapeConstant.LinkFlags.SED_L_DELT);
+          this.SetLinkFlag(objectId, DSConstant.LinkFlags.SED_L_DELT);
 
           // Process hooks
           hookCount = objectData.hooks.length;
@@ -13240,14 +13333,14 @@ class OptUtil {
         }
 
         // Remove SVG element
-        svgElement = this.svgObjectLayer.GetElementByID(objectId);
+        svgElement = this.svgObjectLayer.GetElementById(objectId);
         if (svgElement) {
           this.svgObjectLayer.RemoveElement(svgElement);
         }
 
         // Remove overlay elements
-        overlayId = OptConstant.Defines.Action + objectId;
-        overlayElement = this.svgOverlayLayer.GetElementByID(overlayId);
+        overlayId = OptConstant.Common.Action + objectId;
+        overlayElement = this.svgOverlayLayer.GetElementById(overlayId);
 
         if (overlayElement != null) {
           this.svgOverlayLayer.RemoveElement(overlayElement);
@@ -13258,11 +13351,11 @@ class OptUtil {
       objectCount = parentObjects.length;
       for (objectIndex = 0; objectIndex < objectCount; objectIndex++) {
         switch (parentObjects[objectIndex].objecttype) {
-          case NvConstant.ObjectTypes.SD_OBJT_NG_TIMELINE:
-            if (T3Gv.opt.GetObjectPtr(parentObjects[objectIndex].BlockID) != null) {
-              T3Gv.opt.Timeline_Format(parentObjects[objectIndex]);
-            }
-            break;
+          // case NvConstant.FNObjectTypes.SD_OBJT_NG_TIMELINE:
+          //   if (T3Gv.opt.GetObjectPtr(parentObjects[objectIndex].BlockID) != null) {
+          //     T3Gv.opt.Timeline_Format(parentObjects[objectIndex]);
+          //   }
+          //   break;
         }
       }
     }
@@ -13583,12 +13676,12 @@ class OptUtil {
     // Handle hook removal
     else if (hookWasDeleted) {
       // Check if object should be deleted on unhook
-      if (sourceObject.extraflags & OptConstant.ExtraFlags.SEDE_DeleteOnUnhook) {
+      if (sourceObject.extraflags & OptConstant.ExtraFlags.DeleteOnUnhook) {
         this.DeleteObjects([sourceObject.BlockID]);
       }
 
       // Handle special case for network diagram events
-      if (sourceObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_NG_EVENT &&
+      if (sourceObject.objecttype === NvConstant.FNObjectTypes.NgEvent &&
         sourceObject &&
         sourceObject.datasetElemID > -1) {
         TODO.SDData.DeleteRow(sourceObject.datasetElemID);
@@ -13638,7 +13731,7 @@ class OptUtil {
       if (
         sourceObject.hooks &&
         sourceObject.hooks[hookIndex] &&
-        sourceObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.SHAPE
+        sourceObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape
       ) {
         // Find parent connector for the shape
         childConnectorId = OptAhUtil.GetParentConnector(sourceObject.BlockID, null);
@@ -13656,21 +13749,21 @@ class OptUtil {
             return;
           }
 
-          if (connectorObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_CAUSEEFFECT_BRANCH) {
-            T3Util.Log("O.Opt CN_ChangeHook - Output: Skipped (cause-effect branch)");
-            return;
-          }
+          // if (connectorObject.objecttype === NvConstant.FNObjectTypes.SD_OBJT_CAUSEEFFECT_BRANCH) {
+          //   T3Util.Log("O.Opt CN_ChangeHook - Output: Skipped (cause-effect branch)");
+          //   return;
+          // }
 
-          if (connectorObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_GENOGRAM_BRANCH) {
-            T3Util.Log("O.Opt CN_ChangeHook - Output: Skipped (genogram branch)");
-            return;
-          }
+          // if (connectorObject.objecttype === NvConstant.FNObjectTypes.SD_OBJT_GENOGRAM_BRANCH) {
+          //   T3Util.Log("O.Opt CN_ChangeHook - Output: Skipped (genogram branch)");
+          //   return;
+          // }
 
           // Check for co-manager flags
-          hasCoManagerFlag = connectorObject.arraylist.styleflags & OptConstant.SEDA_Styles.SEDA_CoManager;
+          hasCoManagerFlag = connectorObject.arraylist.styleflags & OptConstant.AStyles.CoManager;
           if (
             hasCoManagerFlag &&
-            connectorObject.arraylist.hook.length - SDJS.ConnectorDefines.SEDA_NSkip >= 1
+            connectorObject.arraylist.hook.length - SDJS.ConnectorDefines.NSkip >= 1
           ) {
             T3Util.Log("O.Opt CN_ChangeHook - Output: Skipped (co-manager limit reached)");
             return;
@@ -13685,23 +13778,25 @@ class OptUtil {
           objectType = connectorObject.objecttype;
           objectSubtype = connectorObject.subtype;
 
-          // Update subtype for special object types
-          if (
-            sourceObject.subtype === NvConstant.ObjectSubTypes.SD_SUBT_TASKMAP ||
-            sourceObject.subtype === NvConstant.ObjectSubTypes.SD_SUBT_HUBMAP
-          ) {
-            sourceObject.subtype = objectSubtype;
-          }
+          // // Update subtype for special object types
+          // if (
+          //   sourceObject.subtype === NvConstant.ObjectSubTypes.SD_SUBT_TASKMAP ||
+          //   sourceObject.subtype === NvConstant.ObjectSubTypes.SD_SUBT_HUBMAP
+          // ) {
+          //   sourceObject.subtype = objectSubtype;
+          // }
 
           // Find child array for the current object
           connectorId = T3Gv.opt.FindChildArray(sourceObject.BlockID, -1);
 
           // Create a new connector if needed
           if (connectorId < 0) {
-            // Get appropriate connector style based on object type
-            if (connectorObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_DECISIONTREE_CONNECTOR) {
-              connectorStyle = gDecisionTreeManager.GetChildConnectorStyle(sourceObject);
-            } else {
+            // // Get appropriate connector style based on object type
+            // if (connectorObject.objecttype === NvConstant.FNObjectTypes.SD_OBJT_DECISIONTREE_CONNECTOR) {
+            //   connectorStyle = gDecisionTreeManager.GetChildConnectorStyle(sourceObject);
+            // } else
+
+            {
               connectorStyle = OptAhUtil.GetChildConnectorStyle(sourceObject);
             }
 
@@ -13721,15 +13816,15 @@ class OptUtil {
             childConnector.objecttype = objectType;
             childConnector.subtype = objectSubtype;
 
-            // Set text flags for decision tree connectors
-            if (objectType === NvConstant.ObjectTypes.SD_OBJT_DECISIONTREE_CONNECTOR) {
-              childConnector.TextFlags = NvConstant.TextFlags.SED_TF_AttachC;
-            }
+            // // Set text flags for decision tree connectors
+            // if (objectType === NvConstant.FNObjectTypes.SD_OBJT_DECISIONTREE_CONNECTOR) {
+            //   childConnector.TextFlags = NvConstant.TextFlags.AttachC;
+            // }
 
             // Set connection point based on connector type
             if (hasCoManagerFlag) {
               connectionPoint.x = 0;
-              connectionPoint.y = -OptConstant.SEDA_Styles.SEDA_CoManager;
+              connectionPoint.y = -OptConstant.AStyles.CoManager;
             } else {
               connectionPoint = connectorStyle.connect;
             }
@@ -13745,20 +13840,20 @@ class OptUtil {
             );
 
             // Update link flags and format the connector
-            T3Gv.opt.SetLinkFlag(sourceObject.BlockID, ShapeConstant.LinkFlags.SED_L_MOVE);
+            T3Gv.opt.SetLinkFlag(sourceObject.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
             childConnector.Pr_Format(connectorId);
             T3Gv.opt.AddToDirtyList(connectorId);
           }
 
           // // Special handling for mind map connectors
-          // if (objectType === NvConstant.ObjectTypes.SD_OBJT_MINDMAP_CONNECTOR) {
+          // if (objectType === NvConstant.FNObjectTypes.SD_OBJT_MINDMAP_CONNECTOR) {
           //   gMindMapManager.ChangeHook(sourceObject, hookIndex, isAdding, hookData);
           // }
         }
       }
     }
     // Handle hook removal
-    else if (sourceObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.SHAPE) {
+    else if (sourceObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape) {
       // Search information for finding child arrays
       const searchInfo = {
         lindex: -1,
@@ -13869,8 +13964,8 @@ class OptUtil {
     if (drawingObject != null) {
       // Use different connection point sizes based on object type
       connectionRadius = drawingObject instanceof BaseLine
-        ? OptConstant.Defines.CONNECTPT_LINE_DIM / docScreenScale
-        : OptConstant.Defines.CONNECTPT_DIM / docScreenScale;
+        ? OptConstant.Common.ConnPointLineDim / docScreenScale
+        : OptConstant.Common.ConnPointDim / docScreenScale;
 
       // Create a list with the single connection point
       pointsList.push(connectionPoint);
@@ -13879,9 +13974,9 @@ class OptUtil {
       connectionIndex = drawingObject.GetPerimPts(objectId, pointsList, null, false, hookPointType, -1);
 
       // If the object has a shape element, update its highlight
-      if (this.svgObjectLayer.GetElementByID(targetId).GetElementByID(OptConstant.SVGElementClass.SHAPE) != null) {
+      if (this.svgObjectLayer.GetElementById(targetId).GetElementById(OptConstant.SVGElementClass.Shape) != null) {
         highlightId = 'hilite_' + targetId;
-        highlightElement = this.svgHighlightLayer.GetElementByID(highlightId);
+        highlightElement = this.svgHighlightLayer.GetElementById(highlightId);
 
         if (highlightElement) {
           // Position the highlight element at the connection point
@@ -14037,8 +14132,8 @@ class OptUtil {
 
         // Determine whether to add this object based on list code
         switch (listCode) {
-          case NvConstant.ListCodes.SED_LC_MOVEHOOK:
-          case NvConstant.ListCodes.SED_LC_MOVETARG:
+          case NvConstant.ListCodes.MoveHook:
+          case NvConstant.ListCodes.MoveTarg:
             // For connector objects with exactly two hooks, check if the other
             // end is already in the hook list to prevent circular references
             if (
@@ -14054,9 +14149,9 @@ class OptUtil {
             shouldAddToList = true;
             break;
 
-          case NvConstant.ListCodes.SED_LC_CIRCTARG:
-          case NvConstant.ListCodes.SED_LC_TOPONLY:
-          case NvConstant.ListCodes.SED_LC_MOVETARGANDLINES:
+          case NvConstant.ListCodes.CircTarg:
+          case NvConstant.ListCodes.TopOnly:
+          case NvConstant.ListCodes.MoveTargAndLines:
             shouldAddToList = true;
             break;
         }
@@ -14091,7 +14186,7 @@ class OptUtil {
             // Update the bounding rectangle if provided
             if (
               boundingRect &&
-              !(hookObject.flags & NvConstant.ObjFlags.SEDO_NotVisible)
+              !(hookObject.flags & NvConstant.ObjFlags.NotVisible)
             ) {
               objectRect = hookObject.GetMoveRect(true, true);
               boundingRect = Utils2.UnionRect(boundingRect, objectRect, boundingRect);
@@ -14099,7 +14194,7 @@ class OptUtil {
 
             // For TOPONLY, don't recurse further
             // Otherwise, follow the graph in both directions
-            if (listCode !== NvConstant.ListCodes.SED_LC_TOPONLY) {
+            if (listCode !== NvConstant.ListCodes.TopOnly) {
               // Find links where this hook object is the target
               nextLinkIndex = this.FindLink(linksList, hookObjectId, true);
               if (nextLinkIndex >= 0) {
@@ -14117,7 +14212,7 @@ class OptUtil {
               // For non-circular targets, follow other hooks on the object
               if (
                 hookObject.hooks.length > 1 &&
-                listCode !== NvConstant.ListCodes.SED_LC_CIRCTARG
+                listCode !== NvConstant.ListCodes.CircTarg
               ) {
                 hookList = this.GetTargetList(hookObjectId, linksList, hookList, boundingRect, listCode);
               }
@@ -14125,7 +14220,7 @@ class OptUtil {
 
             // Special handling for circular targets at recursion level 0
             if (
-              listCode === NvConstant.ListCodes.SED_LC_CIRCTARG &&
+              listCode === NvConstant.ListCodes.CircTarg &&
               recursionLevel === 0 &&
               hookObject.hooks.length > 1
             ) {
@@ -14262,7 +14357,7 @@ class OptUtil {
 
     // Get the target object
     const targetObject = this.GetObjectPtr(linkData.targetid, false);
-    const linkFlags = ShapeConstant.LinkFlags;
+    const linkFlags = DSConstant.LinkFlags;
 
     // Check if target object exists
     if (targetObject == null) {
@@ -14341,7 +14436,7 @@ class OptUtil {
 
     // Get the polygon points that represent the arc
     const polyPoints = drawingObject.GetPolyPoints(
-      OptConstant.Defines.NPOLYPTS,
+      OptConstant.Common.MaxPolyPoints,
       false,
       false,
       false,
@@ -14378,10 +14473,10 @@ class OptUtil {
     // Check if we have a valid connector and shape
     if (
       connectorObject &&
-      connectorObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.CONNECTOR &&
-      !(connectorObject.arraylist.styleflags & OptConstant.SEDA_Styles.SEDA_FlowConn) > 0 &&
+      connectorObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector &&
+      !(connectorObject.arraylist.styleflags & OptConstant.AStyles.FlowConn) > 0 &&
       shapeObject &&
-      shapeObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.SHAPE
+      shapeObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape
     ) {
       // Find child array for the shape
       const childConnectorId = T3Gv.opt.FindChildArray(shapeId, connectorId);
@@ -14459,8 +14554,8 @@ class OptUtil {
   Table_HideUI(drawingObject) {
     T3Util.Log("O.Opt Table_HideUI - Input:", drawingObject ? drawingObject.BlockID : null);
 
-    const objectTypes = NvConstant.ObjectTypes;
-    const isUIElement = drawingObject.objecttype === objectTypes.SD_OBJT_UIELEMENT;
+    const objectTypes = NvConstant.FNObjectTypes;
+    const isUIElement = drawingObject.objecttype === objectTypes.UiElement;
 
     T3Util.Log("O.Opt Table_HideUI - Output:", isUIElement);
     return isUIElement;
@@ -15147,10 +15242,10 @@ class OptUtil {
     let hookObjectId;
 
     // Default to move hook list code if not specified
-    let hookListCode = NvConstant.ListCodes.SED_LC_MOVEHOOK;
+    let hookListCode = NvConstant.ListCodes.MoveHook;
 
     // Special case for lines and targets
-    if (listCode === NvConstant.ListCodes.SED_LC_MOVETARGANDLINES) {
+    if (listCode === NvConstant.ListCodes.MoveTargAndLines) {
       hookListCode = listCode;
     }
 
@@ -15178,7 +15273,7 @@ class OptUtil {
           targetObject = this.GetObjectPtr(hookObjectId, false);
 
           // Only include visible objects in bounding rectangle calculation
-          if (!(targetObject.flags & NvConstant.ObjFlags.SEDO_NotVisible)) {
+          if (!(targetObject.flags & NvConstant.ObjFlags.NotVisible)) {
             const objectRect = targetObject.GetMoveRect(true, true);
             boundingRect = Utils2.UnionRect(boundingRect, objectRect, boundingRect);
           }
@@ -15316,7 +15411,7 @@ class OptUtil {
 
     // If there was any actual offset, update links and mark as dirty
     if (offsetX || offsetY) {
-      this.SetLinkFlag(shapeId, ShapeConstant.LinkFlags.SED_L_MOVE);
+      this.SetLinkFlag(shapeId, DSConstant.LinkFlags.SED_L_MOVE);
       this.AddToDirtyList(shapeId, true);
     }
 
@@ -15338,7 +15433,7 @@ class OptUtil {
   //   });
 
   //   const polyPoints = polylineObject.GetPolyPoints(
-  //     OptConstant.Defines.NPOLYPTS,
+  //     OptConstant.Common.MaxPolyPoints,
   //     true,
   //     false,
   //     false,
@@ -15862,11 +15957,11 @@ class OptUtil {
           // Process for PolyLine and PolyLineContainer objects
           shape = this.GetObjectPtr(selectedList[tempCounter], true);
           if (shape instanceof PolyLine && shape.rflags) {
-            this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Width, false);
-            this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Height, false);
+            this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.Width, false);
+            this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.Height, false);
           }
           if (shape instanceof PolyLineContainer) {
-            this.SetLinkFlag(selectedList[tempCounter], ShapeConstant.LinkFlags.SED_L_MOVE);
+            this.SetLinkFlag(selectedList[tempCounter], DSConstant.LinkFlags.SED_L_MOVE);
             this.AddToDirtyList(selectedList[tempCounter]);
             rotatedSubList = shape.RotateAllInContainer(shape.BlockID, angleDegrees);
             if (rotatedSubList && rotatedSubList.length) {
@@ -15877,7 +15972,7 @@ class OptUtil {
               }
             }
             // For PolyLineContainer or specific wall opt walls
-            if (shape instanceof PolyLineContainer || shape.objecttype === NvConstant.ObjectTypes.SD_OBJT_FLOORPLAN_WALL) {
+            if (shape instanceof PolyLineContainer || shape.objecttype === NvConstant.FNObjectTypes.FlWall) {
               // Remove hooked objects related to container rotation
               for (removeIndex = selectedList.length - 1; removeIndex >= 0; removeIndex--) {
                 obj = T3Gv.opt.GetObjectPtr(selectedList[removeIndex], false);
@@ -15893,7 +15988,7 @@ class OptUtil {
         for (tempCounter = 0; tempCounter < totalSelected; tempCounter++) {
           shape = this.GetObjectPtr(selectedList[tempCounter], true);
           if (!(shape instanceof PolyLineContainer)) {
-            this.SetLinkFlag(selectedList[tempCounter], ShapeConstant.LinkFlags.SED_L_MOVE);
+            this.SetLinkFlag(selectedList[tempCounter], DSConstant.LinkFlags.SED_L_MOVE);
             this.AddToDirtyList(selectedList[tempCounter]);
             if (shape instanceof BaseLine) {
               if (shape instanceof PolyLine) {
@@ -15903,7 +15998,7 @@ class OptUtil {
                   y: shape.Frame.y + shape.Frame.height / 2
                 };
                 rotationRadians = 2 * Math.PI * ((360 - angleDegrees) / 360);
-                let polyPoints = shape.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, true, false, null);
+                let polyPoints = shape.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, true, false, null);
                 Utils3.RotatePointsAboutPoint(center, rotationRadians, polyPoints);
                 let totalPoints = polyPoints.length;
                 shape.StartPoint.x = polyPoints[0].x;
@@ -15937,7 +16032,7 @@ class OptUtil {
               shape.RotationAngle = angleDegrees;
               shape.UpdateFrame(shape.Frame);
 
-              if (this.contentHeader.flags & OptConstant.ContentHeaderFlags.CT_DA_NoAuto) {
+              if (this.contentHeader.flags & OptConstant.CntHeaderFlags.NoAuto) {
                 let rightBoundary = shape.r.x + shape.r.width;
                 let bottomBoundary = shape.r.y + shape.r.height;
                 let offsetX = 0, offsetY = 0;
@@ -16017,7 +16112,7 @@ class OptUtil {
     T3Util.Log("O.Opt ClearOverlayElementsByID - Input:", { elementID, resetHighlight });
 
     // Get list of overlay elements matching the provided ID
-    const overlayElementList = T3Gv.opt.svgOverlayLayer.GetElementListWithID(elementID);
+    const overlayElementList = T3Gv.opt.svgOverlayLayer.GetElementListWithId(elementID);
     const elementCount = overlayElementList.length;
 
     // Remove each overlay element from the SVG overlay layer
@@ -16077,7 +16172,7 @@ class OptUtil {
             currentDirtyFrame = currentObject.FramezList;
           }
 
-          this.SetLinkFlag(selectedObjects[i], ShapeConstant.LinkFlags.SED_L_MOVE);
+          this.SetLinkFlag(selectedObjects[i], DSConstant.LinkFlags.SED_L_MOVE);
           this.AddToDirtyList(selectedObjects[i], true);
           currentAlignRect = currentObject.GetAlignRect();
 
@@ -16244,80 +16339,84 @@ class OptUtil {
         // Save the current object's id
         tempId = objectIds[currentIndex];
 
-        if (currentObj.objecttype === NvConstant.ObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER) {
-          this.TableContainerAddtoDelete(currentObj, objectIds);
-        } else if (/*currentObj.IsSwimlane && currentObj.IsSwimlane()*/false) {
-          //this.SwimlaneAddtoDelete(currentObj, objectIds);
-          //objectCount = objectIds.length;
-        } else if (currentObj.objecttype === NvConstant.ObjectTypes.SD_OBJT_NG_TIMELINE) {
-          this.TimelineAddtoDelete(currentObj, objectIds);
-        } else if (currentObj instanceof Instance.Shape.ShapeContainer) {
+        // if (currentObj.objecttype === NvConstant.FNObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER) {
+        //   this.TableContainerAddtoDelete(currentObj, objectIds);
+        // } else if (/*currentObj.IsSwimlane && currentObj.IsSwimlane()*/false) {
+        //   //this.SwimlaneAddtoDelete(currentObj, objectIds);
+        //   //objectCount = objectIds.length;
+        // } else
+        // if (currentObj.objecttype === NvConstant.FNObjectTypes.SD_OBJT_NG_TIMELINE) {
+        //   this.TimelineAddtoDelete(currentObj, objectIds);
+        // } else
+        if (currentObj instanceof Instance.Shape.ShapeContainer) {
           this.ContainerAddtoDelete(currentObj, objectIds);
           hasContainerConnector = true;
         }
 
-        if (currentObj.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.CONNECTOR) {
+        if (currentObj.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
           hasContainerConnector = true;
           if (currentObj._IsFlowChartConnector && currentObj._IsFlowChartConnector()) {
             switch (currentObj.objecttype) {
-              case NvConstant.ObjectTypes.SD_OBJT_BAD_STEPCHART_BRANCH:
-                break;
-              case NvConstant.ObjectTypes.SD_OBJT_STEPCHARTH_BRANCH:
-              case NvConstant.ObjectTypes.SD_OBJT_STEPCHARTV_BRANCH:
-                if (!isForced) {
-                  objectIds.splice(currentIndex, 1);
-                  objectCount--;
-                  currentIndex--;
-                }
-                break;
+              // case NvConstant.FNObjectTypes.SD_OBJT_BAD_STEPCHART_BRANCH:
+              //   break;
+              // case NvConstant.FNObjectTypes.SD_OBJT_STEPCHARTH_BRANCH:
+              // case NvConstant.FNObjectTypes.SD_OBJT_STEPCHARTV_BRANCH:
+              //   if (!isForced) {
+              //     objectIds.splice(currentIndex, 1);
+              //     objectCount--;
+              //     currentIndex--;
+              //   }
+              //   break;
               default:
                 OptAhUtil.GetConnectorTree(objectIds[currentIndex], objectIds);
             }
           } else {
-            if (currentObj.objecttype === NvConstant.ObjectTypes.SD_OBJT_CAUSEEFFECT_BRANCH) {
-              if (typeof connectorHookCount === "undefined" && currentObj.hooks.length) {
-                tempObj = this.GetObjectPtr(currentObj.hooks[0].objid, false);
-                if (tempObj && tempObj.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.CONNECTOR) {
-                  connectorHookCount = tempObj.arraylist.hook.length - connectorDefines.SEDA_NSkip;
-                  if (connectorHookCount < 0) {
-                    connectorHookCount = 0;
-                  }
-                  if (0 === (tempObj.extraflags & OptConstant.ExtraFlags.SEDE_NoDelete)) {
-                    connectorHookCount++;
-                  }
-                }
-              }
-              if (typeof connectorHookCount !== "undefined") {
-                if ((connectorHookCount - connectorUsageCount > 1 && (currentObj.extraflags & OptConstant.ExtraFlags.SEDE_NoDelete) === 0) || isForced) {
-                  OptAhUtil.GetConnectorTree(objectIds[currentIndex], objectIds);
-                  connectorUsageCount++;
-                } else {
-                  objectIds.splice(currentIndex, 1);
-                  currentIndex--;
-                  objectCount--;
-                  tempId = -1;
-                  // Reset helper id.
-                  let helperId: number = -1;
-                  if (currentObj.arraylist.hook[connectorDefines.A_Cl].id >= 0) {
-                    helperId = currentObj.arraylist.hook[connectorDefines.A_Cl].id;
-                  }
-                  if (currentObj.arraylist.hook[connectorDefines.A_Cr].id >= 0) {
-                    helperId = currentObj.arraylist.hook[connectorDefines.A_Cr].id;
-                  }
-                  if (helperId >= 0) {
-                    let foundIndex = objectIds.indexOf(helperId);
-                    if (foundIndex >= 0) {
-                      objectIds.splice(foundIndex, 1);
-                    }
-                  }
-                }
-              }
-            } else {
+            // if (currentObj.objecttype === NvConstant.FNObjectTypes.SD_OBJT_CAUSEEFFECT_BRANCH) {
+            //   if (typeof connectorHookCount === "undefined" && currentObj.hooks.length) {
+            //     tempObj = this.GetObjectPtr(currentObj.hooks[0].objid, false);
+            //     if (tempObj && tempObj.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
+            //       connectorHookCount = tempObj.arraylist.hook.length - connectorDefines.SEDA_NSkip;
+            //       if (connectorHookCount < 0) {
+            //         connectorHookCount = 0;
+            //       }
+            //       if (0 === (tempObj.extraflags & OptConstant.ExtraFlags.NoDelete)) {
+            //         connectorHookCount++;
+            //       }
+            //     }
+            //   }
+            //   if (typeof connectorHookCount !== "undefined") {
+            //     if ((connectorHookCount - connectorUsageCount > 1 && (currentObj.extraflags & OptConstant.ExtraFlags.NoDelete) === 0) || isForced) {
+            //       OptAhUtil.GetConnectorTree(objectIds[currentIndex], objectIds);
+            //       connectorUsageCount++;
+            //     } else {
+            //       objectIds.splice(currentIndex, 1);
+            //       currentIndex--;
+            //       objectCount--;
+            //       tempId = -1;
+            //       // Reset helper id.
+            //       let helperId: number = -1;
+            //       if (currentObj.arraylist.hook[connectorDefines.A_Cl].id >= 0) {
+            //         helperId = currentObj.arraylist.hook[connectorDefines.A_Cl].id;
+            //       }
+            //       if (currentObj.arraylist.hook[connectorDefines.A_Cr].id >= 0) {
+            //         helperId = currentObj.arraylist.hook[connectorDefines.A_Cr].id;
+            //       }
+            //       if (helperId >= 0) {
+            //         let foundIndex = objectIds.indexOf(helperId);
+            //         if (foundIndex >= 0) {
+            //           objectIds.splice(foundIndex, 1);
+            //         }
+            //       }
+            //     }
+            //   }
+            // } else
+
+            {
               OptAhUtil.GetConnectorTree(objectIds[currentIndex], objectIds);
               objectCount = objectIds.length;
               if (isForced && currentObj.hooks.length) {
                 tempObj = this.GetObjectPtr(currentObj.hooks[0].objid, false);
-                if (tempObj && tempObj.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.SHAPE && objectIds.indexOf(currentObj.hooks[0].objid) < 0) {
+                if (tempObj && tempObj.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape && objectIds.indexOf(currentObj.hooks[0].objid) < 0) {
                   objectIds.push(currentObj.hooks[0].objid);
                 }
               }
@@ -16339,8 +16438,8 @@ class OptUtil {
                 if (objectIds.indexOf(parentConnector) < 0) {
                   if (connectorHookCount - connectorUsageCount > 1 || connectorEndInfo.pasted || isForced) {
                     objectIds.push(parentConnector);
-                    if ((tempObj.extraflags & OptConstant.ExtraFlags.SEDE_NoDelete)) {
-                      tempObj.extraflags = SDJS.Utils.SetFlag(tempObj.extraflags, OptConstant.ExtraFlags.SEDE_NoDelete, false);
+                    if ((tempObj.extraflags & OptConstant.ExtraFlags.NoDelete)) {
+                      tempObj.extraflags = SDJS.Utils.SetFlag(tempObj.extraflags, OptConstant.ExtraFlags.NoDelete, false);
                     }
                     OptAhUtil.GetConnectorTree(parentConnector, objectIds);
                     if (!connectorEndInfo.pasted) {
@@ -16356,31 +16455,35 @@ class OptUtil {
                     objectIds.splice(parentIndex, 1);
                   }
                 }
-                if (tempObj.objecttype === NvConstant.ObjectTypes.SD_OBJT_GENOGRAM_BRANCH) {
-                  flagSkip = gGenogramManager.DeleteConnector(tempObj, objectIds, currentIndex, deleteInfo);
-                  tempId = deleteInfo.parentshape;
-                } else if (tempObj._IsFlowChartConnector && tempObj._IsFlowChartConnector()) {
+                // if (tempObj.objecttype === NvConstant.FNObjectTypes.SD_OBJT_GENOGRAM_BRANCH) {
+                //   flagSkip = gGenogramManager.DeleteConnector(tempObj, objectIds, currentIndex, deleteInfo);
+                //   tempId = deleteInfo.parentshape;
+                // } else
+
+                if (tempObj._IsFlowChartConnector && tempObj._IsFlowChartConnector()) {
                   childIds = [];
                   let childArray = T3Gv.opt.FindChildArray(objectIds[currentIndex], -1);
                   let childObj = T3Gv.opt.GetObjectPtr(childArray, false);
                   if (childObj == null) {
                     childObj = tempObj;
                   }
-                  if (tempObj.objecttype === NvConstant.ObjectTypes.SD_OBJT_STEPCHARTV_BRANCH ||
-                    childObj.objecttype === NvConstant.ObjectTypes.SD_OBJT_STEPCHARTV_BRANCH) {
-                    if (gStepChartVManager && !isForced) {
-                      helperValue = gStepChartVManager.DeleteShape(objectIds[currentIndex], objectIds, false, null, childIds);
-                    }
-                  } else if (tempObj.objecttype === NvConstant.ObjectTypes.SD_OBJT_STEPCHARTH_BRANCH ||
-                    childObj.objecttype === NvConstant.ObjectTypes.SD_OBJT_STEPCHARTH_BRANCH) {
-                    if (gStepChartHManager && !isForced) {
-                      helperValue = gStepChartHManager.DeleteShape(objectIds[currentIndex], objectIds, false, null, childIds);
-                    }
-                  }
+                  // if (tempObj.objecttype === NvConstant.FNObjectTypes.SD_OBJT_STEPCHARTV_BRANCH ||
+                  //   childObj.objecttype === NvConstant.FNObjectTypes.SD_OBJT_STEPCHARTV_BRANCH) {
+                  //   if (gStepChartVManager && !isForced) {
+                  //     helperValue = gStepChartVManager.DeleteShape(objectIds[currentIndex], objectIds, false, null, childIds);
+                  //   }
+                  // }
+
+                  // else if (tempObj.objecttype === NvConstant.FNObjectTypes.SD_OBJT_STEPCHARTH_BRANCH ||
+                  //   childObj.objecttype === NvConstant.FNObjectTypes.SD_OBJT_STEPCHARTH_BRANCH) {
+                  //   if (gStepChartHManager && !isForced) {
+                  //     helperValue = gStepChartHManager.DeleteShape(objectIds[currentIndex], objectIds, false, null, childIds);
+                  //   }
+                  // }
                   // else if (gFlowChartManager && !isForced) {
                   //   helperValue = gFlowChartManager.DeleteShape(objectIds[currentIndex], objectIds, false, childIds);
                   // }
-                } else if (tempObj.arraylist.styleflags & OptConstant.SEDA_Styles.SEDA_CoManager) {
+                } else if (tempObj.arraylist.styleflags & OptConstant.AStyles.CoManager) {
                   if (isForced) {
                     tempId = tempObj.arraylist.hook[connectorDefines.SEDA_NSkip].id;
                     if (objectIds.indexOf(parentConnector) < 0) {
@@ -16413,7 +16516,7 @@ class OptUtil {
           } else {
             // No parent connector found.
             let repeatCount: number;
-            // if (currentObj.objecttype === NvConstant.ObjectTypes.SD_OBJT_MINDMAP_MAIN) {
+            // if (currentObj.objecttype === NvConstant.FNObjectTypes.SD_OBJT_MINDMAP_MAIN) {
             //   repeatCount = 2;
             //   flagSkip = false;
             // } else
@@ -16428,7 +16531,7 @@ class OptUtil {
               let childId = T3Gv.opt.FindChildArray(objectIds[currentIndex], childSearchIndex);
               if (childId >= 0) {
                 let childObj = this.GetObjectPtr(childId, true);
-                if (childObj && childObj.arraylist && (childObj.arraylist.hook.length <= connectorDefines.SEDA_NSkip || (childObj.flags & NvConstant.ObjFlags.SEDO_NotVisible))) {
+                if (childObj && childObj.arraylist && (childObj.arraylist.hook.length <= connectorDefines.SEDA_NSkip || (childObj.flags & NvConstant.ObjFlags.NotVisible))) {
                   flagSkip = false;
                 }
                 if (childObj.IsGenoConnector && childObj.IsGenoConnector()) {
@@ -16438,11 +16541,11 @@ class OptUtil {
                   for (let hookIndex = connectorDefines.SEDA_NSkip; hookIndex < hookCount; hookIndex++) {
                     let hookId = childObj.arraylist.hook[hookIndex].id;
                     if (objectIds.indexOf(hookId) < 0) {
-                      if (this.GetObjectPtr(hookId, false).DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.SHAPE) {
+                      if (this.GetObjectPtr(hookId, false).DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape) {
                         flagSkip = true;
                         break;
                       }
-                      if (this.GetObjectPtr(hookId, false).DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.CONNECTOR) {
+                      if (this.GetObjectPtr(hookId, false).DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
                         alternateId = hookId;
                       }
                     }
@@ -16457,8 +16560,8 @@ class OptUtil {
                     flagSkip = true;
                   }
                 }
-                childObj.flags = SDJS.Utils.SetFlag(childObj.flags, NvConstant.ObjFlags.SEDO_Obj1, true);
-                this.SetLinkFlag(childId, ShapeConstant.LinkFlags.SED_L_MOVE);
+                childObj.flags = SDJS.Utils.SetFlag(childObj.flags, NvConstant.ObjFlags.Obj1, true);
+                this.SetLinkFlag(childId, DSConstant.LinkFlags.SED_L_MOVE);
               }
               childSearchIndex = childId;
             }
@@ -16473,7 +16576,7 @@ class OptUtil {
                 OptAhUtil.GetConnectorTree(allChildConnectors[idx], objectIds);
               }
             }
-            if (currentObj.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.SHAPE && !isForced) {
+            if (currentObj.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape && !isForced) {
               let tempArray: any[] = [];
               let healLineResult = this.HealLine(currentObj, false, tempArray);
               if (healLineResult >= 0) {
@@ -16492,11 +16595,11 @@ class OptUtil {
               let assocFlag: boolean = false;
               let assocObj = this.GetObjectPtr(currentObj.associd, false);
               if (assocObj) {
-                if (assocObj.hooks.length && assocObj.hooks[0].hookpt === OptConstant.HookPts.SED_KATD) {
+                if (assocObj.hooks.length && assocObj.hooks[0].hookpt === OptConstant.HookPts.KATD) {
                   assocFlag = true;
                 }
 
-                if (assocObj.objecttype !== NvConstant.ObjectTypes.SD_OBJT_NG_EVENT && assocObj.objecttype !== NvConstant.ObjectTypes.SD_OBJT_NG_EVENT_LABEL) {
+                if (assocObj.objecttype !== NvConstant.FNObjectTypes.NgEvent && assocObj.objecttype !== NvConstant.FNObjectTypes.NgEventLabel) {
                   if (objectIds.indexOf(currentObj.associd) < 0) {
                     objectIds.push(currentObj.associd);
                   }
@@ -16506,8 +16609,8 @@ class OptUtil {
                 objectIds.push(currentObj.associd);
               }
             }
-            if (currentObj.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.LINE) {
-              let childShapeList = T3Gv.opt.FindAllChildObjects(currentObj.BlockID, OptConstant.DrawingObjectBaseClass.SHAPE, NvConstant.ObjectTypes.SD_OBJT_MULTIPLICITY);
+            if (currentObj.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Line) {
+              let childShapeList = T3Gv.opt.FindAllChildObjects(currentObj.BlockID, OptConstant.DrawObjectBaseClass.Shape, NvConstant.FNObjectTypes.Multiplicity);
               if (childShapeList && childShapeList.length) {
                 for (let idx = 0; idx < childShapeList.length; idx++) {
                   if (objectIds.indexOf(childShapeList[idx]) < 0) {
@@ -16517,7 +16620,7 @@ class OptUtil {
               }
             }
             if (!isForced) {
-              let childLineList = T3Gv.opt.FindAllChildObjects(currentObj.BlockID, OptConstant.DrawingObjectBaseClass.LINE, null);
+              let childLineList = T3Gv.opt.FindAllChildObjects(currentObj.BlockID, OptConstant.DrawObjectBaseClass.Line, null);
               if (childLineList && childLineList.length) {
                 for (let idx = 0; idx < childLineList.length; idx++) {
                   if (objectIds.indexOf(childLineList[idx]) < 0) {
@@ -16568,7 +16671,7 @@ class OptUtil {
       _ = - 1,
       E = - 1,
       w = !1,
-      F = (OptConstant.Defines.SED_CDim, !1),
+      F = (OptConstant.Common.MaxDim, !1),
       v = [],
       G = OptConstant.HookPts,
       N = function (e, t, a, r, i, n) {
@@ -16621,7 +16724,7 @@ class OptUtil {
         b,
         s,
         e.BlockID,
-        NvConstant.ListCodes.SED_LC_TOPONLY,
+        NvConstant.ListCodes.TopOnly,
         1,
         {
         }
@@ -16679,7 +16782,7 @@ class OptUtil {
         B = T3Gv.opt.GetPolyLineLinks(M[1], 0);
       for (r = n.hooks.length, i = 0; i < r; i++) n.hooks[i].objid != e.BlockID ? _ = n.hooks[i].objid : p = i;
       for (r = o.hooks.length, i = 0; i < r; i++) o.hooks[i].objid != e.BlockID ? (E = o.hooks[i].objid, d = i) : D = i;
-      if (_ >= 0 && E >= 0 && _ != E) return o.hooks[d].hookpt === OptConstant.HookPts.SED_KTL ? (
+      if (_ >= 0 && E >= 0 && _ != E) return o.hooks[d].hookpt === OptConstant.HookPts.KTL ? (
         l = o.segl.firstdir,
         S = o.StartPoint,
         F = !1,
@@ -16699,7 +16802,7 @@ class OptUtil {
         }).x = x.x + o.segl.pts[1].x,
         f.y = x.y + o.segl.pts[1].y
       ),
-        n.hooks[p].hookpt === OptConstant.HookPts.SED_KTL ? (
+        n.hooks[p].hookpt === OptConstant.HookPts.KTL ? (
           (L = {
             x: n.StartPoint.x,
             y: n.StartPoint.y
@@ -16709,9 +16812,9 @@ class OptUtil {
           n.segl.firstdir = l,
           n.StartPoint.x = S.x,
           n.StartPoint.y = S.y,
-          n.SegLFormat(S, OptConstant.ActionTriggerType.LINESTART, 0),
+          n.SegLFormat(S, OptConstant.ActionTriggerType.LineStart, 0),
           k(n, v),
-          n.SegLFormat(S, OptConstant.ActionTriggerType.LINESTART, 0)
+          n.SegLFormat(S, OptConstant.ActionTriggerType.LineStart, 0)
         ) : (
           L = {
             x: n.StartPoint.x,
@@ -16723,9 +16826,9 @@ class OptUtil {
           n.segl.lastdir = l,
           n.EndPoint.x = S.x,
           n.EndPoint.y = S.y,
-          n.SegLFormat(S, OptConstant.ActionTriggerType.LINEEND, 0),
+          n.SegLFormat(S, OptConstant.ActionTriggerType.LineEnd, 0),
           k(n, v),
-          n.SegLFormat(S, OptConstant.ActionTriggerType.LINEEND, 0)
+          n.SegLFormat(S, OptConstant.ActionTriggerType.LineEnd, 0)
         ),
         2 === T &&
         function () {
@@ -16734,11 +16837,11 @@ class OptUtil {
           Utils2.IsEqual(L.y, f.y, 2) ? (
             e.Frame.width + a.def.h_arraywidth,
             0,
-            t = OptConstant.ActionArrow.RIGHT
+            t = OptConstant.ActionArrow.Right
           ) : (
             e.Frame.height + a.def.v_arraywidth,
             0,
-            t = OptConstant.ActionArrow.DOWN
+            t = OptConstant.ActionArrow.Down
           ),
             OptAhUtil.ShiftConnectedShapes(e.BlockID, E, n.BlockID, t, !1)
         }(),
@@ -16761,10 +16864,10 @@ class OptUtil {
           o.hooks[d].connect,
           o.hooks[d].cellid
         ),
-        this.SetLinkFlag(o.hooks[d].objid, ShapeConstant.LinkFlags.SED_L_MOVE),
+        this.SetLinkFlag(o.hooks[d].objid, DSConstant.LinkFlags.SED_L_MOVE),
         this.UpdateLinks(),
         M[1];
-      if (_ >= 0 && E < 0) return o.hooks[0].hookpt === OptConstant.HookPts.SED_KTL ? (
+      if (_ >= 0 && E < 0) return o.hooks[0].hookpt === OptConstant.HookPts.KTL ? (
         l = o.segl.lastdir,
         S = o.EndPoint,
         F = !0,
@@ -16784,7 +16887,7 @@ class OptUtil {
         (I = o.segl.pts.length) > 2 &&
         (f.x = x.x + o.segl.pts[I - 2].x, f.y = x.y + o.segl.pts[I - 2].y)
       ),
-        n.hooks[p].hookpt === OptConstant.HookPts.SED_KTL ? (
+        n.hooks[p].hookpt === OptConstant.HookPts.KTL ? (
           (L = {
             x: n.StartPoint.x,
             y: n.StartPoint.y
@@ -16794,10 +16897,10 @@ class OptUtil {
           n.segl.firstdir = l,
           n.StartPoint.x = S.x,
           n.StartPoint.y = S.y,
-          n.SegLFormat(S, OptConstant.ActionTriggerType.LINESTART, 0),
+          n.SegLFormat(S, OptConstant.ActionTriggerType.LineStart, 0),
           n.CalcFrame(),
           k(n, v),
-          n.SegLFormat(S, OptConstant.ActionTriggerType.LINESTART, 0)
+          n.SegLFormat(S, OptConstant.ActionTriggerType.LineStart, 0)
         ) : (
           L = {
             x: n.StartPoint.x,
@@ -16809,10 +16912,10 @@ class OptUtil {
           n.segl.lastdir = l,
           n.EndPoint.x = S.x,
           n.EndPoint.y = S.y,
-          n.SegLFormat(S, OptConstant.ActionTriggerType.LINEEND, 0),
+          n.SegLFormat(S, OptConstant.ActionTriggerType.LineEnd, 0),
           n.CalcFrame(),
           k(n, v),
-          n.SegLFormat(S, OptConstant.ActionTriggerType.LINEEND, 0)
+          n.SegLFormat(S, OptConstant.ActionTriggerType.LineEnd, 0)
         ),
         this.FilterLinks(O, B, a),
         B &&
@@ -16839,7 +16942,7 @@ class OptUtil {
             n,
             o = new Instance.Shape.SegLine,
             s = Utils2.Pt2Rect(e.StartPoint, e.EndPoint);
-          if (n = e.segl.pts.length, t === OptConstant.HookPts.SED_KTL) {
+          if (n = e.segl.pts.length, t === OptConstant.HookPts.KTL) {
             for (i = n - 1; i > 0; i--) o.pts.push({
               x: e.segl.pts[i].x + s.x,
               y: e.segl.pts[i].y + s.y
@@ -16855,7 +16958,7 @@ class OptUtil {
           if (
             n = a.segl.pts.length,
             s = Utils2.Pt2Rect(a.StartPoint, a.EndPoint),
-            r === OptConstant.HookPts.SED_KTR
+            r === OptConstant.HookPts.KTR
           ) {
             for (i = n - 2; i >= 0; i--) o.pts.push({
               x: a.segl.pts[i].x + s.x,
@@ -16872,7 +16975,7 @@ class OptUtil {
           for (n = o.pts.length, i = 1; i < n; i++) o.pts[i].x == o.pts[i - 1].x ? o.lengths.push(Math.abs(o.pts[i].y - o.pts[i - 1].y)) : o.lengths.push(Math.abs(o.pts[i].x - o.pts[i - 1].x));
           return o
         }(o, o.hooks[0].hookpt, n, n.hooks[0].hookpt);
-      o.hooks[0].hookpt === OptConstant.HookPts.SED_KTL &&
+      o.hooks[0].hookpt === OptConstant.HookPts.KTL &&
         (
           H = o.EndArrowID,
           o.EndArrowID = o.StartArrowID,
@@ -16894,7 +16997,7 @@ class OptUtil {
         o.segl.pts[i].y -= j.y;
       return o.CalcFrame(),
         S = o.EndPoint,
-        o.SegLFormat(S, OptConstant.ActionTriggerType.LINEEND, 0),
+        o.SegLFormat(S, OptConstant.ActionTriggerType.LineEnd, 0),
         o.CalcFrame(),
         this.FilterLinks(B, O, a),
         O &&
@@ -16985,9 +17088,9 @@ class OptUtil {
 
     // If active text editing is in progress, save it first
     if (textEditSession.theActiveTextEditObjectID !== -1 &&
-      textEditSession.theTELastOp !== NvConstant.TELastOp.INIT &&
-      textEditSession.theTELastOp !== NvConstant.TELastOp.TIMEOUT &&
-      textEditSession.theTELastOp !== NvConstant.TELastOp.SELECT) {
+      textEditSession.theTELastOp !== NvConstant.TextElemLastOpt.Init &&
+      textEditSession.theTELastOp !== NvConstant.TextElemLastOpt.Timeout &&
+      textEditSession.theTELastOp !== NvConstant.TextElemLastOpt.Select) {
       this.FlushTextToLMBlock();
       this.PreserveUndoState(false);
     }
@@ -17137,9 +17240,9 @@ class OptUtil {
           activeEditor = this.svgDoc.GetActiveEdit();
           if (activeEditor) {
             // Collab.BeginSecondaryEdit();
-            this.RegisterLastTEOp(NvConstant.TELastOp.PASTE);
+            this.RegisterLastTEOp(NvConstant.TextElemLastOpt.Paste);
             activeEditor.Paste(this.textClipboard, true);
-            this.RegisterLastTEOp(NvConstant.TELastOp.TIMEOUT);
+            this.RegisterLastTEOp(NvConstant.TextElemLastOpt.Timeout);
           }
         }
         T3Util.Log("O.Opt PasteObjects - Output: Text pasted in text editor");
@@ -17236,7 +17339,7 @@ class OptUtil {
         // Collab.BeginSecondaryEdit();
 
         // Get the DOM element for the target text object and activate text edit mode
-        const textElement = this.svgObjectLayer.GetElementByID(targetId);
+        const textElement = this.svgObjectLayer.GetElementById(targetId);
         this.ActivateTextEdit(textElement);
 
         // Get the active text editor object and select its entire text
@@ -17245,9 +17348,9 @@ class OptUtil {
         activeEditor.SetSelectedRange(0, currentTextLength);
 
         // Paste clipboard text and update the text edit state
-        this.RegisterLastTEOp(NvConstant.TELastOp.PASTE);
+        this.RegisterLastTEOp(NvConstant.TextElemLastOpt.Paste);
         activeEditor.Paste(this.textClipboard, true);
-        this.RegisterLastTEOp(NvConstant.TELastOp.TIMEOUT);
+        this.RegisterLastTEOp(NvConstant.TextElemLastOpt.Timeout);
 
         T3Util.Log("O.Opt TargetPasteText - Output: true (text pasted successfully)");
         return true;
@@ -17523,13 +17626,13 @@ class OptUtil {
     T3Util.Log("O.Opt ShowSVGSelectionState - Input:", { objectId, isSelected });
 
     // Build an action element id using the constant prefix and object id.
-    const actionElementId = OptConstant.Defines.Action + objectId;
+    const actionElementId = OptConstant.Common.Action + objectId;
     // Retrieve the currently target selected object id.
     const targetSelection = this.GetTargetSelect();
     // Attempt to retrieve the overlay SVG element for the action.
-    let overlayElement = this.svgOverlayLayer.GetElementByID(actionElementId);
+    let overlayElement = this.svgOverlayLayer.GetElementById(actionElementId);
     // Retrieve the main SVG object element.
-    const objectElement = this.svgObjectLayer.GetElementByID(objectId);
+    const objectElement = this.svgObjectLayer.GetElementById(objectId);
     // Get the object data pointer.
     const objectData = this.GetObjectPtr(objectId, false);
 
@@ -17574,8 +17677,8 @@ class OptUtil {
           const childElement = objectElement.GetElementByIndex(index);
           // If the element is a dimension line or dimension text, update its opacity.
           if (
-            childElement.GetID() === OptConstant.SVGElementClass.DIMENSIONLINE ||
-            childElement.GetID() === OptConstant.SVGElementClass.DIMENSIONTEXT
+            childElement.GetID() === OptConstant.SVGElementClass.DimLine ||
+            childElement.GetID() === OptConstant.SVGElementClass.DimText
           ) {
             childElement.SetOpacity(isSelected ? 1 : 0);
           }
@@ -17596,7 +17699,7 @@ class OptUtil {
      */
   RegisterLastTEOp(lastOp: number) {
     T3Util.Log("O.Opt RegisterLastTEOp - Input:", { lastOp });
-    const opConstants = NvConstant.TELastOp;
+    const opConstants = NvConstant.TextElemLastOpt;
 
     // Only proceed if not in note edit mode.
     if (!this.bInNoteEdit) {
@@ -17738,7 +17841,7 @@ class OptUtil {
 
       // const wasMessagesLocked = Collab.AreMessagesLocked();
       // Collab.LockMessages();
-      this.RegisterLastTEOp(NvConstant.TELastOp.TIMEOUT);
+      this.RegisterLastTEOp(NvConstant.TextElemLastOpt.Timeout);
       // if (!wasMessagesLocked) {
       //   // Collab.UnLockMessages();
       // }
@@ -17767,11 +17870,11 @@ class OptUtil {
           messageData.theTEWasResized = true;
           this.SetLinkFlag(
             session.theActiveTextEditObjectID,
-            ShapeConstant.LinkFlags.SED_L_MOVE
+            DSConstant.LinkFlags.SED_L_MOVE
           );
 
           if (drawingObject.hooks.length) {
-            this.SetLinkFlag(drawingObject.hooks[0].objid, ShapeConstant.LinkFlags.SED_L_MOVE);
+            this.SetLinkFlag(drawingObject.hooks[0].objid, DSConstant.LinkFlags.SED_L_MOVE);
           }
 
           session.theTEWasResized = false;
@@ -17837,7 +17940,7 @@ class OptUtil {
           }
         }
 
-        isTextOnlyObject = !!(drawingObject.flags & NvConstant.ObjFlags.SEDO_TextOnly);
+        isTextOnlyObject = !!(drawingObject.flags & NvConstant.ObjFlags.TextOnly);
 
         // Save text to the data object
         if (textDataId != -1) {
@@ -17936,7 +18039,7 @@ class OptUtil {
       session.theActiveTextEditObjectID = -1;
       session.theTEWasEdited = false;
       session.theTEWasResized = false;
-      session.theTELastOp = NvConstant.TELastOp.INIT;
+      session.theTELastOp = NvConstant.TextElemLastOpt.Init;
 
       // Handle table deactivation
       if (drawingObject && drawingObject.GetTable) {
@@ -17957,7 +18060,7 @@ class OptUtil {
         if (graphData == null && tableData == null) {
           const businessManager = OptAhUtil.GetGvSviOpt(drawingObject.BlockID);
           if (businessManager) {
-            const textElement = this.svgObjectLayer.GetElementByID(drawingObject.BlockID).GetElementByID(OptConstant.SVGElementClass.TEXT);
+            const textElement = this.svgObjectLayer.GetElementById(drawingObject.BlockID).GetElementById(OptConstant.SVGElementClass.Text);
             businessManager.ShapeSaveData(drawingObject, textElement);
           }
         }
@@ -17966,7 +18069,7 @@ class OptUtil {
       // Reset state and finalize operation
       // const wasMessagesLocked = Collab.AreMessagesLocked();
       // Collab.LockMessages();
-      this.RegisterLastTEOp(NvConstant.TELastOp.INIT);
+      this.RegisterLastTEOp(NvConstant.TextElemLastOpt.Init);
 
       // if (!wasMessagesLocked) {
       //   Collab.UnLockMessages();
@@ -18011,26 +18114,26 @@ class OptUtil {
 
     // Update face flag for bold text
     if (textStyle.weight === 'bold') {
-      sdText.Face += TextConstant.STTextFace.St_Bold;
+      sdText.Face += TextConstant.TextFace.Bold;
     }
 
     // Update face flag for italic text
     if (textStyle.style === 'italic') {
-      sdText.Face += TextConstant.STTextFace.St_Italic;
+      sdText.Face += TextConstant.TextFace.Italic;
     }
 
     // Update face flag based on subscript or superscript offset
     if (textStyle.baseOffset === 'sub') {
-      sdText.Face += TextConstant.STTextFace.St_Sub;
+      sdText.Face += TextConstant.TextFace.Sub;
     } else if (textStyle.baseOffset === 'super') {
-      sdText.Face += TextConstant.STTextFace.St_Super;
+      sdText.Face += TextConstant.TextFace.Super;
     }
 
     // Update face flag for text decorations (underline or strike-through)
     if (textStyle.decoration === 'underline') {
-      sdText.Face += TextConstant.STTextFace.St_Under;
+      sdText.Face += TextConstant.TextFace.Under;
     } else if (textStyle.decoration === 'line-through') {
-      sdText.Face += TextConstant.STTextFace.St_Strike;
+      sdText.Face += TextConstant.TextFace.Strike;
     }
 
     // Set text color properties
@@ -18251,7 +18354,7 @@ class OptUtil {
 
     let associatedIds: number[] = [];
     const totalIds = listOfObjectIds.length;
-    const objectTypes = NvConstant.ObjectTypes;
+    const objectTypes = NvConstant.FNObjectTypes;
 
     for (let index = 0; index < totalIds; index++) {
       const objectId = listOfObjectIds[index];
@@ -18261,10 +18364,10 @@ class OptUtil {
       // or if the current object does not have a container parent.
       if (!skipContainerParents || !OptAhUtil.HasContainerParent(currentObject)) {
         switch (currentObject.objecttype) {
-          case objectTypes.SD_OBJT_SWIMLANE_COLS:
-          case objectTypes.SD_OBJT_SWIMLANE_ROWS:
-          case objectTypes.SD_OBJT_SWIMLANE_GRID:
-            break;
+          // case objectTypes.SD_OBJT_SWIMLANE_COLS:
+          // case objectTypes.SwimLaneRows:
+          // case objectTypes.SD_OBJT_SWIMLANE_GRID:
+          //   break;
         }
 
         // Add the current object's ID if not already present.
@@ -18286,12 +18389,12 @@ class OptUtil {
 
         // Process container types.
         switch (currentObject.objecttype) {
-          case objectTypes.SD_OBJT_SHAPECONTAINER:
+          case objectTypes.ShapeContainer:
             T3Gv.opt.ContainerAddtoDelete(currentObject, associatedIds);
             break;
-          case objectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER:
-            T3Gv.opt.TableContainerAddtoDelete(currentObject, associatedIds);
-            break;
+          // case objectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER:
+          //   T3Gv.opt.TableContainerAddtoDelete(currentObject, associatedIds);
+          //   break;
         }
       }
     }
@@ -18748,7 +18851,7 @@ class OptUtil {
 
       // If object is already a group symbol, clean up its native data
       if (currentObject.NativeID >= 0 &&
-        currentObject.ShapeType === OptConstant.ShapeType.GROUPSYMBOL) {
+        currentObject.ShapeType === OptConstant.ShapeType.GroupSymbol) {
         const nativeBlock = T3Gv.stdObj.PreserveBlock(currentObject.NativeID);
         if (nativeBlock) {
           nativeBlock.Delete();
@@ -18785,7 +18888,7 @@ class OptUtil {
     if (hasNoRotateObject) {
       groupSymbol.extraflags = Utils2.SetFlag(
         groupSymbol.extraflags,
-        OptConstant.ExtraFlags.SEDE_NoRotate,
+        OptConstant.ExtraFlags.NoRotate,
         true
       );
     }
@@ -18929,7 +19032,7 @@ class OptUtil {
       const currentObject = this.GetObjectPtr(objectId, false);
       if (currentObject) {
         // If object has a lock flag, grouping is not allowed.
-        if (currentObject.flags & NvConstant.ObjFlags.SEDO_Lock) {
+        if (currentObject.flags & NvConstant.ObjFlags.Lock) {
           T3Util.Log("O.Opt AllowGroup - Output: false");
           return false;
         }
@@ -18990,24 +19093,24 @@ class OptUtil {
     for (let index = 0; index < selectedObjects.length; index++) {
       currentObject = T3Gv.opt.GetObjectPtr(selectedObjects[index], false);
 
-      if (currentObject.subtype === NvConstant.ObjectTypes.SD_SUBT_KANBAN_TABLE) {
+      // if (currentObject.subtype === NvConstant.FNObjectTypes.SD_SUBT_KANBAN_TABLE) {
+      //   T3Util.Log("O.Opt IsGroupNonDelete - Output: true");
+      //   return true;
+      // }
+
+      if (currentObject.extraflags & OptConstant.ExtraFlags.NoDelete) {
         T3Util.Log("O.Opt IsGroupNonDelete - Output: true");
         return true;
       }
 
-      if (currentObject.extraflags & OptConstant.ExtraFlags.SEDE_NoDelete) {
-        T3Util.Log("O.Opt IsGroupNonDelete - Output: true");
-        return true;
-      }
-
-      if (
-        currentObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_TIMELINE_EVENT &&
-        currentObject.hooks.length > 0 &&
-        T3Gv.opt.GetObjectPtr(currentObject.hooks[0].objid, false).objecttype === NvConstant.ObjectTypes.SD_OBJT_TIMELINE
-      ) {
-        T3Util.Log("O.Opt IsGroupNonDelete - Output: true");
-        return true;
-      }
+      // if (
+      //   currentObject.objecttype === NvConstant.FNObjectTypes.SD_OBJT_TIMELINE_EVENT &&
+      //   currentObject.hooks.length > 0 &&
+      //   T3Gv.opt.GetObjectPtr(currentObject.hooks[0].objid, false).objecttype === NvConstant.FNObjectTypes.SD_OBJT_TIMELINE
+      // ) {
+      //   T3Util.Log("O.Opt IsGroupNonDelete - Output: true");
+      //   return true;
+      // }
     }
 
     T3Util.Log("O.Opt IsGroupNonDelete - Output: false");
@@ -19025,7 +19128,7 @@ class OptUtil {
     T3Util.Log("O.Opt GetListSRect - Input:", { objectIdList, useFrame, useDragRectangle });
 
     let unionRect;
-    const notVisibleFlag = NvConstant.ObjFlags.SEDO_NotVisible;
+    const notVisibleFlag = NvConstant.ObjFlags.NotVisible;
 
     for (let i = 0; i < objectIdList.length; i++) {
       const objectId = objectIdList[i];
@@ -19180,9 +19283,9 @@ class OptUtil {
       let currentObject: any = null;
       let cannotFlipFound: boolean = false;
 
-      alternativeFlipType = flipType === OptConstant.ExtraFlags.SEDE_FlipVert
-        ? OptConstant.ExtraFlags.SEDE_FlipHoriz
-        : OptConstant.ExtraFlags.SEDE_FlipVert;
+      alternativeFlipType = flipType === OptConstant.ExtraFlags.FlipVert
+        ? OptConstant.ExtraFlags.FlipHoriz
+        : OptConstant.ExtraFlags.FlipVert;
 
       for (index = 0; index < count; index++) {
         currentObject = this.GetObjectPtr(selectedObjects[index], false);
@@ -19199,9 +19302,9 @@ class OptUtil {
         // }
         for (index = 0; index < count; index++) {
           currentObject = this.GetObjectPtr(selectedObjects[index], true);
-          this.SetLinkFlag(selectedObjects[index], ShapeConstant.LinkFlags.SED_L_MOVE);
+          this.SetLinkFlag(selectedObjects[index], DSConstant.LinkFlags.SED_L_MOVE);
           if (currentObject.hooks.length) {
-            this.SetLinkFlag(currentObject.hooks[0].objid, ShapeConstant.LinkFlags.SED_L_MOVE);
+            this.SetLinkFlag(currentObject.hooks[0].objid, DSConstant.LinkFlags.SED_L_MOVE);
           }
           this.AddToDirtyList(selectedObjects[index]);
           if (isRotationQualified(currentObject)) {
@@ -19226,7 +19329,7 @@ class OptUtil {
   /**
    * Flips an array of vertex coordinates horizontally, vertically, or both.
    * @param vertices - Array of vertex objects with 'x' and 'y' properties, normalized between 0 and 1.
-   * @param flipFlags - Bitmask flag that indicates the flip type. Use OptConstant.ExtraFlags.SEDE_FlipHoriz for horizontal flip and OptConstant.ExtraFlags.SEDE_FlipVert for vertical flip.
+   * @param flipFlags - Bitmask flag that indicates the flip type. Use OptConstant.ExtraFlags.FlipHoriz for horizontal flip and OptConstant.ExtraFlags.FlipVert for vertical flip.
    * @returns The modified array of vertices after flipping.
    */
   FlipVertexArray(vertices: { x: number, y: number }[], flipFlags: number): { x: number, y: number }[] {
@@ -19234,10 +19337,10 @@ class OptUtil {
 
     const count = vertices.length;
     for (let i = 0; i < count; i++) {
-      if (flipFlags & OptConstant.ExtraFlags.SEDE_FlipHoriz) {
+      if (flipFlags & OptConstant.ExtraFlags.FlipHoriz) {
         vertices[i].x = 1 - vertices[i].x;
       }
-      if (flipFlags & OptConstant.ExtraFlags.SEDE_FlipVert) {
+      if (flipFlags & OptConstant.ExtraFlags.FlipVert) {
         vertices[i].y = 1 - vertices[i].y;
       }
     }
@@ -19580,10 +19683,10 @@ class OptUtil {
         }
       }
       if (currentObject.rflags) {
-        currentObject.rflags = Utils2.SetFlag(currentObject.rflags, NvConstant.FloatingPointDim.SD_FP_Width, false);
-        currentObject.rflags = Utils2.SetFlag(currentObject.rflags, NvConstant.FloatingPointDim.SD_FP_Height, false);
+        currentObject.rflags = Utils2.SetFlag(currentObject.rflags, NvConstant.FloatingPointDim.Width, false);
+        currentObject.rflags = Utils2.SetFlag(currentObject.rflags, NvConstant.FloatingPointDim.Height, false);
       }
-      this.SetLinkFlag(objectId, ShapeConstant.LinkFlags.SED_L_MOVE);
+      this.SetLinkFlag(objectId, DSConstant.LinkFlags.SED_L_MOVE);
       this.AddToDirtyList(objectId);
     }
 
@@ -19608,7 +19711,7 @@ class OptUtil {
   StampNewTextShapeOnTap(shape, hCenter, vCenter, operation, isSticky, completeCallback, completeUserData) {
     T3Util.Log("O.Opt StampNewTextShapeOnTap - Input:", { shape, hCenter, vCenter, operation, isSticky, completeCallback, completeUserData });
 
-    this.SetModalOperation(OptConstant.ModalOperations.STAMPTEXTONTAP);
+    this.SetModalOperation(OptConstant.ModalOperations.StampTextOnTap);
     this.stampCompleteCallback = completeCallback || null;
     this.stampCompleteUserData = completeUserData || null;
     this.stampHCenter = hCenter;
@@ -19628,7 +19731,7 @@ class OptUtil {
         const activeLayerZList = T3Gv.opt.ActiveLayerZList();
         const activeCount = activeLayerZList.length;
         T3Gv.opt.actionStoredObjectId = activeLayerZList[activeCount - 1];
-        T3Gv.opt.actionSvgObject = T3Gv.opt.svgObjectLayer.GetElementByID(T3Gv.opt.actionStoredObjectId);
+        T3Gv.opt.actionSvgObject = T3Gv.opt.svgObjectLayer.GetElementById(T3Gv.opt.actionStoredObjectId);
         T3Gv.opt.StampTextObjectOnTapDone(tapEvent, operation);
       } catch (error) {
         T3Gv.opt.CancelModalOperation();
@@ -19650,9 +19753,9 @@ class OptUtil {
      */
   CancelObjectStampTextOnTap(event: any): void {
     T3Util.Log("O.Opt CancelObjectStampTextOnTap - Input:", event);
-    this.SetModalOperation(OptConstant.ModalOperations.NONE);
+    this.SetModalOperation(OptConstant.ModalOperations.None);
     this.LM_StampPostRelease(false);
-    this.SetEditMode(NvConstant.EditState.DEFAULT);
+    this.SetEditMode(NvConstant.EditState.Default);
     if (event) {
       this.WorkAreaHammer.on('tap', EvtUtil.Evt_WorkAreaHammerClick);
     }
@@ -19686,7 +19789,7 @@ class OptUtil {
       event.gesture.center.clientX,
       event.gesture.center.clientY
     );
-    let isTextOnly = this.drawShape.flags & NvConstant.ObjFlags.SEDO_TextOnly;
+    let isTextOnly = this.drawShape.flags & NvConstant.ObjFlags.TextOnly;
 
     if (!isTextOnly) {
       let hasValidConnection = this.linkParams && this.linkParams.SConnectIndex >= 0;
@@ -19717,7 +19820,7 @@ class OptUtil {
     this.BuildCreateMessage(collaborationData, true);
 
     this.GetObjectPtr(this.actionStoredObjectId, true);
-    this.SetEditMode(NvConstant.EditState.DEFAULT);
+    this.SetEditMode(NvConstant.EditState.Default);
 
     if (this.moveList && this.moveList.length) {
       this.DeleteObjects(objectIds, false);
@@ -19753,7 +19856,7 @@ class OptUtil {
 
     this.actionStoredObjectId = -1;
     this.actionSvgObject = null;
-    this.SetModalOperation(OptConstant.ModalOperations.NONE);
+    this.SetModalOperation(OptConstant.ModalOperations.None);
 
     T3Util.Log("O.Opt StampTextObjectOnTapDone - Output:", { stampedShapeId: this.actionStoredObjectId, objectIds });
   }
@@ -19780,7 +19883,7 @@ class OptUtil {
     //           replaceIndex = TextConstant.ReplaceTextStrings.Indexes.PersonClick;
     //           break;
     //         default:
-    //           replaceIndex = (source.TextFlags & NvConstant.TextFlags.SED_TF_OneClick)
+    //           replaceIndex = (source.TextFlags & NvConstant.TextFlags.OneClick)
     //             ? TextConstant.ReplaceTextStrings.Indexes.Click
     //             : TextConstant.ReplaceTextStrings.Indexes.DoubleClick;
     //       }
@@ -19792,81 +19895,81 @@ class OptUtil {
     //     }
     //   }
     // } else
-    if (source.TextFlags & NvConstant.TextFlags.SED_TF_Clickhere) {
-      resultText = (source.TextFlags & NvConstant.TextFlags.SED_TF_OneClick)
-        ? TextConstant.ReplaceTextStrings[TextConstant.ReplaceTextStrings.Indexes.Click]
-        : TextConstant.ReplaceTextStrings[TextConstant.ReplaceTextStrings.Indexes.DoubleClick];
-      clipboard.Paste(resultText);
-      source.TextFlags = Utils2.SetFlag(source.TextFlags, NvConstant.TextFlags.SED_TF_Clickhere, false);
-      T3Util.Log("O.Opt ReverseReplaceStdText - Output:", true);
-      return true;
-    }
+    // if (source.TextFlags & NvConstant.TextFlags.Clickhere) {
+    //   resultText = (source.TextFlags & NvConstant.TextFlags.OneClick)
+    //     ? TextConstant.ReplaceTextStrings[TextConstant.ReplaceTextStrings.Indexes.Click]
+    //     : TextConstant.ReplaceTextStrings[TextConstant.ReplaceTextStrings.Indexes.DoubleClick];
+    //   clipboard.Paste(resultText);
+    //   source.TextFlags = Utils2.SetFlag(source.TextFlags, NvConstant.TextFlags.Clickhere, false);
+    //   T3Util.Log("O.Opt ReverseReplaceStdText - Output:", true);
+    //   return true;
+    // }
 
     T3Util.Log("O.Opt ReverseReplaceStdText - Output:", false);
     return false;
   }
 
-  /**
-     * Checks and replaces standard text in the provided text source.
-     * @param textSource - The object containing the text and optional table data.
-     * @param currentText - The current text string to evaluate for replacement.
-     * @param textEditor - The text editor element that can update its text.
-     * @param checkOnly - Flag indicating if the function should only check for a match without performing the replacement.
-     * @returns True if a replacement condition is met; otherwise, false.
-     */
-  ReplaceStdText(textSource, currentText, textEditor, checkOnly) {
-    T3Util.Log("O.Opt ReplaceStdText - Input:", { textSource, currentText, textEditor, checkOnly });
+  // /**
+  //    * Checks and replaces standard text in the provided text source.
+  //    * @param textSource - The object containing the text and optional table data.
+  //    * @param currentText - The current text string to evaluate for replacement.
+  //    * @param textEditor - The text editor element that can update its text.
+  //    * @param checkOnly - Flag indicating if the function should only check for a match without performing the replacement.
+  //    * @returns True if a replacement condition is met; otherwise, false.
+  //    */
+  // ReplaceStdText(textSource, currentText, textEditor, checkOnly) {
+  //   T3Util.Log("O.Opt ReplaceStdText - Input:", { textSource, currentText, textEditor, checkOnly });
 
-    let index, textPart, tempPart, isMatched, upperText;
-    let replaceStringCount = TextConstant.ReplaceTextStrings.length;
+  //   let index, textPart, tempPart, isMatched, upperText;
+  //   let replaceStringCount = TextConstant.ReplaceTextStrings.length;
 
-    // Get substring from currentText to compare with the first replacement string.
-    replaceStringCount = TextConstant.ReplaceTextStrings[0].length;
-    textPart = currentText.slice(0, replaceStringCount);
+  //   // Get substring from currentText to compare with the first replacement string.
+  //   replaceStringCount = TextConstant.ReplaceTextStrings[0].length;
+  //   textPart = currentText.slice(0, replaceStringCount);
 
-    // Get substring from currentText to compare with the second replacement string.
-    replaceStringCount = TextConstant.ReplaceTextStrings[1].length;
-    tempPart = currentText.slice(0, replaceStringCount);
+  //   // Get substring from currentText to compare with the second replacement string.
+  //   replaceStringCount = TextConstant.ReplaceTextStrings[1].length;
+  //   tempPart = currentText.slice(0, replaceStringCount);
 
-    // Determine if either starting substring matches (case insensitive).
-    isMatched = textPart.toUpperCase() === TextConstant.ReplaceTextStrings[0].toUpperCase() ||
-      tempPart.toUpperCase() === TextConstant.ReplaceTextStrings[1].toUpperCase();
+  //   // Determine if either starting substring matches (case insensitive).
+  //   isMatched = textPart.toUpperCase() === TextConstant.ReplaceTextStrings[0].toUpperCase() ||
+  //     tempPart.toUpperCase() === TextConstant.ReplaceTextStrings[1].toUpperCase();
 
-    // Get the complete currentText in uppercase.
-    upperText = currentText.toUpperCase();
+  //   // Get the complete currentText in uppercase.
+  //   upperText = currentText.toUpperCase();
 
-    // Loop through all replacement strings starting from index 1.
-    replaceStringCount = TextConstant.ReplaceTextStrings.length;
-    for (index = 1; index < replaceStringCount; index++) {
-      if (isMatched || upperText === TextConstant.ReplaceTextStrings[index].toUpperCase()) {
-        // If only checking, log and return true immediately.
-        if (checkOnly) {
-          T3Util.Log("O.Opt ReplaceStdText - Output:", true);
-          return true;
-        }
-        // Clear the text in the text editor.
-        textEditor.SetText('');
-        // // Check if the textSource contains a table.
-        // tableData = textSource.GetTable(true);
-        // if (tableData) {
-        //   // If there is a valid cell selection in the table, update its flags.
-        //   if (tableData.select >= 0) {
-        //     let cell = tableData.cells[tableData.select];
-        //     cell.flags = Utils2.SetFlag(cell.flags, TODO.Table.CellFlags.SDT_F_Clickhere, true);
-        //   }
-        // } else
+  //   // Loop through all replacement strings starting from index 1.
+  //   replaceStringCount = TextConstant.ReplaceTextStrings.length;
+  //   for (index = 1; index < replaceStringCount; index++) {
+  //     if (isMatched || upperText === TextConstant.ReplaceTextStrings[index].toUpperCase()) {
+  //       // If only checking, log and return true immediately.
+  //       if (checkOnly) {
+  //         T3Util.Log("O.Opt ReplaceStdText - Output:", true);
+  //         return true;
+  //       }
+  //       // Clear the text in the text editor.
+  //       textEditor.SetText('');
+  //       // // Check if the textSource contains a table.
+  //       // tableData = textSource.GetTable(true);
+  //       // if (tableData) {
+  //       //   // If there is a valid cell selection in the table, update its flags.
+  //       //   if (tableData.select >= 0) {
+  //       //     let cell = tableData.cells[tableData.select];
+  //       //     cell.flags = Utils2.SetFlag(cell.flags, TODO.Table.CellFlags.SDT_F_Clickhere, true);
+  //       //   }
+  //       // } else
 
-        {
-          // Otherwise, update the text flags on the text source.
-          textSource.TextFlags = Utils2.SetFlag(textSource.TextFlags, NvConstant.TextFlags.SED_TF_Clickhere, true);
-        }
-        T3Util.Log("O.Opt ReplaceStdText - Output:", true);
-        return true;
-      }
-    }
-    T3Util.Log("O.Opt ReplaceStdText - Output:", false);
-    return false;
-  }
+  //       {
+  //         // Otherwise, update the text flags on the text source.
+  //         textSource.TextFlags = Utils2.SetFlag(textSource.TextFlags, NvConstant.TextFlags.Clickhere, true);
+  //       }
+  //       T3Util.Log("O.Opt ReplaceStdText - Output:", true);
+  //       return true;
+  //     }
+  //   }
+  //   T3Util.Log("O.Opt ReplaceStdText - Output:", false);
+  //   return false;
+  // }
 
   /**
      * Ungroups a shape by extracting its constituent shapes and applying any transformations
@@ -19889,8 +19992,8 @@ class OptUtil {
     let linksList = T3Gv.opt.GetObjectPtr(this.linksBlockId, true);
 
     // Constants for flip operations
-    const FLIP_VERTICAL = OptConstant.ExtraFlags.SEDE_FlipVert;
-    const FLIP_HORIZONTAL = OptConstant.ExtraFlags.SEDE_FlipHoriz;
+    const FLIP_VERTICAL = OptConstant.ExtraFlags.FlipVert;
+    const FLIP_HORIZONTAL = OptConstant.ExtraFlags.FlipHoriz;
 
     // Get the group object
     const groupObject = T3Gv.opt.GetObjectPtr(groupId, true);
@@ -19945,7 +20048,7 @@ class OptUtil {
       }
 
       // Create a deep copy for maintaining links
-      newObject = new BaseDrawingObject(null);
+      newObject = new BaseDrawObject(null);
       newObject = Utils1.DeepCopy(currentShape);
       newObject.Frame.x += groupX;
       newObject.Frame.y += groupY;
@@ -20039,7 +20142,7 @@ class OptUtil {
         objectsForLinkMaintenance[index].BlockID,
         existingObject,
         T3Gv.opt.ob,
-        OptConstant.ActionTriggerType.FLIP,
+        OptConstant.ActionTriggerType.Flip,
         linkMode
       );
     }
@@ -20050,7 +20153,7 @@ class OptUtil {
     // Update link flags for containers
     const containerCount = containerIds.length;
     for (index = 0; index < containerCount; index++) {
-      T3Gv.opt.SetLinkFlag(containerIds[index], ShapeConstant.LinkFlags.SED_L_MOVE);
+      T3Gv.opt.SetLinkFlag(containerIds[index], DSConstant.LinkFlags.SED_L_MOVE);
     }
 
     // Update all links
@@ -20085,7 +20188,7 @@ class OptUtil {
     if (targetObject && targetObject.hooks) {
       const hookCount = targetObject.hooks.length;
       for (let hookIndex = 0; hookIndex < hookCount; hookIndex++) {
-        T3Gv.opt.InsertLink(linkList, objectId, hookIndex, ShapeConstant.LinkFlags.SED_L_MOVE);
+        T3Gv.opt.InsertLink(linkList, objectId, hookIndex, DSConstant.LinkFlags.SED_L_MOVE);
       }
     }
     T3Util.Log("O.Opt RebuildLinks - Output: Completed");
@@ -20153,11 +20256,11 @@ class OptUtil {
         if (activeTextEditor) {
           this.textClipboard = activeTextEditor.Copy(true);
           // Collab.BeginSecondaryEdit();
-          this.RegisterLastTEOp(NvConstant.TELastOp.CUT);
+          this.RegisterLastTEOp(NvConstant.TextElemLastOpt.Cut);
           activeTextEditor.Delete();
           this.contentHeader.ClipboardBuffer = null;
           this.contentHeader.ClipboardType = T3Constant.ClipboardType.Text;
-          this.RegisterLastTEOp(NvConstant.TELastOp.TIMEOUT);
+          this.RegisterLastTEOp(NvConstant.TextElemLastOpt.Timeout);
         }
         T3Util.Log("O.Opt CutObjects - Output:", "Text cut completed.");
         return;
@@ -20257,7 +20360,7 @@ class OptUtil {
       const updatedSelectedObjects = this.GetObjectPtr(this.theSelectedListBlockID, false);
       for (let i = updatedSelectedObjects.length - 1; i >= 0; i--) {
         const currentObject = this.GetObjectPtr(updatedSelectedObjects[i], false);
-        if (currentObject && (currentObject.flags & NvConstant.ObjFlags.SEDO_NotVisible)) {
+        if (currentObject && (currentObject.flags & NvConstant.ObjFlags.NotVisible)) {
           updatedSelectedObjects.splice(i, 1);
         }
       }
@@ -20465,34 +20568,34 @@ class OptUtil {
     if (tedSession.theActiveTextEditObjectID !== -1) {
       businessManager = OptAhUtil.GetGvSviOpt();
       if (businessManager) {
-        selectionContexts.push(ShapeConstant.Contexts.Text);
+        selectionContexts.push(DSConstant.Contexts.Text);
         selectionContexts.push(this.GetAutomationContext(businessManager));
         T3Util.Log("O.Opt GetSelectionContext - Output:", selectionContexts);
         return selectionContexts;
       } else {
-        T3Util.Log("O.Opt GetSelectionContext - Output:", ShapeConstant.Contexts.Text);
-        return ShapeConstant.Contexts.Text;
+        T3Util.Log("O.Opt GetSelectionContext - Output:", DSConstant.Contexts.Text);
+        return DSConstant.Contexts.Text;
       }
     }
 
     // Check if the active edit element corresponds to dimension or note text.
     const activeEditElement = this.svgDoc.GetActiveEdit();
-    if (activeEditElement !== null && activeEditElement.ID === OptConstant.SVGElementClass.DIMENSIONTEXT) {
-      T3Util.Log("O.Opt GetSelectionContext - Output:", ShapeConstant.Contexts.DimensionText);
-      return ShapeConstant.Contexts.DimensionText;
+    if (activeEditElement !== null && activeEditElement.ID === OptConstant.SVGElementClass.DimText) {
+      T3Util.Log("O.Opt GetSelectionContext - Output:", DSConstant.Contexts.DimensionText);
+      return DSConstant.Contexts.DimensionText;
     }
-    if (activeEditElement !== null && activeEditElement.ID === OptConstant.SVGElementClass.NOTETEXT) {
-      T3Util.Log("O.Opt GetSelectionContext - Output:", ShapeConstant.Contexts.NoteText);
-      return ShapeConstant.Contexts.NoteText;
+    if (activeEditElement !== null && activeEditElement.ID === OptConstant.SVGElementClass.NoteText) {
+      T3Util.Log("O.Opt GetSelectionContext - Output:", DSConstant.Contexts.NoteText);
+      return DSConstant.Contexts.NoteText;
     }
 
     // // Check if a table is active.
     // if (this.Table_GetActiveID() !== -1) {
-    //   selectionContexts.push(ShapeConstant.Contexts.Table);
-    //   selectionContexts.push(ShapeConstant.Contexts.Text);
+    //   selectionContexts.push(DSConstant.Contexts.Table);
+    //   selectionContexts.push(DSConstant.Contexts.Text);
     //   businessManager = OptAhUtil.GetGvSviOpt();
     //   if (businessManager) {
-    //     selectionContexts.push(ShapeConstant.Contexts.Automation);
+    //     selectionContexts.push(DSConstant.Contexts.Automation);
     //   }
     //   T3Util.Log("O.Opt GetSelectionContext - Output:", selectionContexts);
     //   return selectionContexts;
@@ -20508,22 +20611,22 @@ class OptUtil {
       const targetObject = T3Gv.stdObj.GetObject(targetObjectId);
       const objectData = targetObject.Data;
       if (businessManager && /*!T3Gv.opt.Comment_IsTarget(targetObjectId)*/ true) {
-        selectionContexts.push(ShapeConstant.Contexts.Automation);
+        selectionContexts.push(DSConstant.Contexts.Automation);
       }
       if (objectData.AllowTextEdit()) {
         if (selectionContexts.length) {
-          selectionContexts.push(ShapeConstant.Contexts.Text);
+          selectionContexts.push(DSConstant.Contexts.Text);
           T3Util.Log("O.Opt GetSelectionContext - Output:", selectionContexts);
           return selectionContexts;
         } else {
-          T3Util.Log("O.Opt GetSelectionContext - Output:", ShapeConstant.Contexts.Text);
-          return ShapeConstant.Contexts.Text;
+          T3Util.Log("O.Opt GetSelectionContext - Output:", DSConstant.Contexts.Text);
+          return DSConstant.Contexts.Text;
         }
       }
     }
 
-    T3Util.Log("O.Opt GetSelectionContext - Output:", ShapeConstant.Contexts.None);
-    return ShapeConstant.Contexts.None;
+    T3Util.Log("O.Opt GetSelectionContext - Output:", DSConstant.Contexts.None);
+    return DSConstant.Contexts.None;
   }
 
   // /**
@@ -20576,14 +20679,14 @@ class OptUtil {
             case KeyboardConstant.Keys.Right_Arrow:
             case KeyboardConstant.Keys.Up_Arrow:
             case KeyboardConstant.Keys.Down_Arrow:
-              if (textEditSession.theTELastOp !== NvConstant.TELastOp.INIT) {
-                this.RegisterLastTEOp(NvConstant.TELastOp.SELECT);
+              if (textEditSession.theTELastOp !== NvConstant.TextElemLastOpt.Init) {
+                this.RegisterLastTEOp(NvConstant.TextElemLastOpt.Select);
               }
               break;
 
             case KeyboardConstant.Keys.Backspace:
             case KeyboardConstant.Keys.Delete:
-              this.RegisterLastTEOp(NvConstant.TELastOp.CHAR);
+              this.RegisterLastTEOp(NvConstant.TextElemLastOpt.Char);
               break;
           }
         }
@@ -20601,14 +20704,14 @@ class OptUtil {
         const targetObject = this.GetObjectPtr(targetId, false);
 
         if (targetObject && targetObject.AllowTextEdit()) {
-          const svgElement = this.svgObjectLayer.GetElementByID(targetId);
+          const svgElement = this.svgObjectLayer.GetElementById(targetId);
           this.ActivateTextEdit(svgElement);
 
           activeEdit = this.svgDoc.GetActiveEdit();
           const textLength = activeEdit.GetText().length;
 
           activeEdit.SetSelectedRange(textLength, textLength);
-          this.RegisterLastTEOp(NvConstant.TELastOp.CHAR);
+          this.RegisterLastTEOp(NvConstant.TextElemLastOpt.Char);
           activeEdit.HandleKeyDownEvent(event);
 
           T3Util.Log("O.Opt HandleKeyDown - Output: true (space activated text edit)");
@@ -20644,7 +20747,7 @@ class OptUtil {
         const textEditSession = this.GetObjectPtr(this.tedSessionBlockId, false);
 
         if (textEditSession.theActiveTextEditObjectID !== -1) {
-          this.RegisterLastTEOp(NvConstant.TELastOp.CHAR);
+          this.RegisterLastTEOp(NvConstant.TextElemLastOpt.Char);
         }
       }
 
@@ -20661,7 +20764,7 @@ class OptUtil {
         const targetObject = this.GetObjectPtr(targetId, false);
 
         if (targetObject && targetObject.AllowTextEdit()) {
-          const svgElement = this.svgObjectLayer.GetElementByID(targetId);
+          const svgElement = this.svgObjectLayer.GetElementById(targetId);
           this.ActivateTextEdit(svgElement);
 
           activeEdit = this.svgDoc.GetActiveEdit();
@@ -20669,7 +20772,7 @@ class OptUtil {
           if (activeEdit) {
             const textLength = activeEdit.GetText().length;
             activeEdit.SetSelectedRange(0, textLength);
-            this.RegisterLastTEOp(NvConstant.TELastOp.CHAR);
+            this.RegisterLastTEOp(NvConstant.TextElemLastOpt.Char);
             activeEdit.HandleKeyPressEvent(event);
 
             T3Util.Log("O.Opt HandleKeyPress - Output: true (activated text edit)");
@@ -20887,14 +20990,14 @@ class OptUtil {
         }
 
         let isBinaryImage = false;
-        let imageType = ShapeConstant.GetImageBlobType(StyleConstant.ImageDir.dir_svg);
+        let imageType = DSConstant.GetImageBlobType(StyleConstant.ImageDir.Svg);
 
         // Determine image type from extension
         if (imageUrl.toLowerCase().indexOf('.png') > 0) {
-          imageType = ShapeConstant.GetImageBlobType(StyleConstant.ImageDir.dir_png);
+          imageType = DSConstant.GetImageBlobType(StyleConstant.ImageDir.Png);
           isBinaryImage = true;
         } else if (imageUrl.toLowerCase().indexOf('.jpg') > 0) {
-          imageType = ShapeConstant.GetImageBlobType(StyleConstant.ImageDir.dir_jpg);
+          imageType = DSConstant.GetImageBlobType(StyleConstant.ImageDir.Jpg);
           isBinaryImage = true;
         }
 
@@ -20911,7 +21014,7 @@ class OptUtil {
                 imageBytes[0] === 255 &&
                 imageBytes[1] === 216 &&
                 imageBytes[2] === 255) {
-                imageType = ShapeConstant.GetImageBlobType(StyleConstant.ImageDir.dir_jpg);
+                imageType = DSConstant.GetImageBlobType(StyleConstant.ImageDir.Jpg);
                 formatDetected = true;
               }
 
@@ -20926,13 +21029,13 @@ class OptUtil {
                 imageBytes[5] === 10 &&
                 imageBytes[6] === 26 &&
                 imageBytes[7] === 10) {
-                imageType = ShapeConstant.GetImageBlobType(StyleConstant.ImageDir.dir_png);
+                imageType = DSConstant.GetImageBlobType(StyleConstant.ImageDir.Png);
                 formatDetected = true;
               }
 
               // Default to SVG if no binary format detected
               if (!formatDetected) {
-                imageType = ShapeConstant.GetImageBlobType(StyleConstant.ImageDir.dir_svg);
+                imageType = DSConstant.GetImageBlobType(StyleConstant.ImageDir.Svg);
               }
             }
 
@@ -21044,7 +21147,7 @@ class OptUtil {
     for (objectIndex = 0; objectIndex < objectCount; ++objectIndex) {
       currentObject = this.GetObjectPtr(objectIds[objectIndex], false);
 
-      if (currentObject.ShapeType == OptConstant.ShapeType.GROUPSYMBOL) {
+      if (currentObject.ShapeType == OptConstant.ShapeType.GroupSymbol) {
         // For group symbols, recursively process their contained shapes
         if (currentObject.ShapesInGroup && currentObject.ShapesInGroup.length) {
           this.GetBlobImages(currentObject.ShapesInGroup, blobMap);
@@ -21106,8 +21209,8 @@ class OptUtil {
     });
 
     // Constants for better readability
-    const FLAG_NOT_VISIBLE = NvConstant.ObjFlags.SEDO_NotVisible;
-    const FLAG_TITLE_BLOCK = NvConstant.TextFlags.SED_TF_TitleBlock;
+    const FLAG_NOT_VISIBLE = NvConstant.ObjFlags.NotVisible;
+    const FLAG_TITLE_BLOCK = NvConstant.TextFlags.TitleBlock;
 
     // Use provided object list or get all visible objects
     const visibleObjects = objectList || T3Gv.opt.VisibleZList();
@@ -21187,18 +21290,19 @@ class OptUtil {
     T3Util.Log("O.Opt GetAutomationContext - Input:", businessManager);
 
     const sessionObject = T3Gv.opt.GetObjectPtr(this.sedSessionBlockId, false);
-    let automationContext = ShapeConstant.Contexts.Automation;
+    let automationContext = DSConstant.Contexts.Automation;
 
     if (businessManager) {
       automationContext = businessManager.GetAutomationContext();
     }
 
     // Check if the context is Automation and if control arrows should be disabled
-    if (automationContext === ShapeConstant.Contexts.Automation) {
-      if (sessionObject.moreflags & NvConstant.SessionMoreFlags.SEDSM_NoCtrlArrow) {
-        automationContext = ShapeConstant.Contexts.AutomationNoCtrl;
-      } else {
-        automationContext = ShapeConstant.Contexts.Automation;
+    if (automationContext === DSConstant.Contexts.Automation) {
+      // if (sessionObject.moreflags & NvConstant.SessionMoreFlags.SEDSM_NoCtrlArrow) {
+      //   automationContext = DSConstant.Contexts.AutomationNoCtrl;
+      // } else
+      {
+        automationContext = DSConstant.Contexts.Automation;
       }
     }
 
@@ -21325,8 +21429,8 @@ class OptUtil {
 
     // Only take action if we're not already using the primary state manager
     if (!T3Gv.bIsPrimaryStateManager) {
-      this.RestorePrimaryStateManagerLMMethods();
-      SDJS_select_primary_state_manager();
+      // this.RestorePrimaryStateManagerLMMethods();
+      // SDJS_select_primary_state_manager();
       T3Gv.opt.RenderAllSVGObjects();
     }
 
@@ -21403,7 +21507,7 @@ class OptUtil {
         storedObject = T3Gv.state.States[stateId + 1].StoredObjects[objectIndex];
 
         // Handle drawing objects with CREATE operations
-        if (storedObject.Type === StateConstant.StoredObjectType.BaseDrawingObject) {
+        if (storedObject.Type === StateConstant.StoredObjectType.BaseDrawObject) {
           if (storedObject.StateOperationTypeID === StateConstant.StateOperationType.CREATE) {
             objectData = storedObject.Data;
 
@@ -21413,7 +21517,7 @@ class OptUtil {
               if (objectInstance) {
                 objectData = objectInstance.Data;
                 blobBytes = objectData.GetBlobBytes();
-                imageType = ShapeConstant.GetImageBlobType(blobBytes.ImageDir);
+                imageType = DSConstant.GetImageBlobType(blobBytes.ImageDir);
                 objectData.ImageURL = T3Gv.opt.MakeURL(null, blobBytes.Bytes, imageType);
               }
             }
@@ -21439,7 +21543,7 @@ class OptUtil {
       storedObject = T3Gv.state.States[stateId].StoredObjects[objectIndex];
 
       // Handle drawing objects
-      if (storedObject.Type === StateConstant.StoredObjectType.BaseDrawingObject) {
+      if (storedObject.Type === StateConstant.StoredObjectType.BaseDrawObject) {
         // Handle DELETE operations
         if (storedObject.StateOperationTypeID === StateConstant.StateOperationType.DELETE) {
           if (!isNextState) {
@@ -21450,7 +21554,7 @@ class OptUtil {
 
               if (objectData.BlobBytesID >= 0 && this.IsBlobURL(objectData.ImageURL)) {
                 blobBytes = objectData.GetBlobBytes();
-                imageType = ShapeConstant.GetImageBlobType(blobBytes.ImageDir);
+                imageType = DSConstant.GetImageBlobType(blobBytes.ImageDir);
                 objectData.ImageURL = T3Gv.opt.MakeURL(null, blobBytes.Bytes, imageType);
               }
             }
@@ -21472,7 +21576,7 @@ class OptUtil {
                   blobBytes = objectData.GetBlobBytes();
 
                   if (blobBytes) {
-                    imageType = ShapeConstant.GetImageBlobType(blobBytes.ImageDir);
+                    imageType = DSConstant.GetImageBlobType(blobBytes.ImageDir);
 
                     if (this.IsBlobURL(objectData.ImageURL)) {
                       objectData.ImageURL = T3Gv.opt.MakeURL(null, blobBytes.Bytes, imageType);
@@ -21490,7 +21594,7 @@ class OptUtil {
               blobBytes = objectData.GetBlobBytes();
 
               if (blobBytes) {
-                imageType = ShapeConstant.GetImageBlobType(blobBytes.ImageDir);
+                imageType = DSConstant.GetImageBlobType(blobBytes.ImageDir);
 
                 if (this.IsBlobURL(objectData.ImageURL)) {
                   objectData.ImageURL = T3Gv.opt.MakeURL(null, blobBytes.Bytes, imageType);
@@ -21594,8 +21698,8 @@ class OptUtil {
   //     this.selectionState.lockedTableSelected = (tableData.flags & TODO.Table.TableFlags.SDT_TF_LOCK) > 0;
 
   //     // Check if this is a special table in non-Builder application
-  //     if (SDUI.AppSettings.Application !== ShapeConstant.Application.Builder &&
-  //       tableObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER) {
+  //     if (SDUI.AppSettings.Application !== DSConstant.Application.Builder &&
+  //       tableObject.objecttype === NvConstant.FNObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER) {
   //       this.selectionState.lockedTableSelected = true;
   //     }
 
@@ -21781,7 +21885,7 @@ class OptUtil {
           }
 
           // Get and prepare the SVG element
-          const svgElement = this.svgObjectLayer.GetElementByID(textEditSession.theActiveTextEditObjectID);
+          const svgElement = this.svgObjectLayer.GetElementById(textEditSession.theActiveTextEditObjectID);
 
           if (svgElement && svgElement.textElem) {
             this.TERegisterEvents(svgElement.textElem);
@@ -21807,7 +21911,7 @@ class OptUtil {
       }
 
       // Reset the text edit state
-      textEditSession.TELastOp = NvConstant.TELastOp.INIT;
+      textEditSession.TELastOp = NvConstant.TextElemLastOpt.Init;
       this.ShowSVGSelectionState(textEditSession.theActiveTextEditObjectID, false);
     }
 
@@ -21837,7 +21941,7 @@ class OptUtil {
     // Handle BaseShape objects
     if (shape instanceof Instance.Shape.BaseShape) {
       // Get SVG element if not provided
-      let element = svgElement || this.svgObjectLayer.GetElementByID(shapeId);
+      let element = svgElement || this.svgObjectLayer.GetElementById(shapeId);
 
       if (element) {
         const textElement = element.textElem;
@@ -21878,18 +21982,18 @@ class OptUtil {
           );
 
           // Handle text attachment positioning
-          if (shape.TextFlags & NvConstant.TextFlags.SED_TF_AttachA ||
-            shape.TextFlags & NvConstant.TextFlags.SED_TF_AttachB) {
-            if (shape.TextFlags & NvConstant.TextFlags.SED_TF_AttachA) {
+          if (shape.TextFlags & NvConstant.TextFlags.AttachA ||
+            shape.TextFlags & NvConstant.TextFlags.AttachB) {
+            if (shape.TextFlags & NvConstant.TextFlags.AttachA) {
               switch (shape.TextAlign) {
-                case TextConstant.TextAlign.TOPLEFT:
-                case TextConstant.TextAlign.LEFT:
-                case TextConstant.TextAlign.BOTTOMLEFT:
+                case TextConstant.TextAlign.TopLeft:
+                case TextConstant.TextAlign.Left:
+                case TextConstant.TextAlign.BottomLeft:
                   textElement.SetPos(0, -textMinDimensions.height - shape.TMargins.top);
                   break;
-                case TextConstant.TextAlign.TOPRIGHT:
-                case TextConstant.TextAlign.RIGHT:
-                case TextConstant.TextAlign.BOTTOMRIGHT:
+                case TextConstant.TextAlign.TopRight:
+                case TextConstant.TextAlign.Right:
+                case TextConstant.TextAlign.BottomRight:
                   textElement.SetPos(
                     shape.Frame.width - textMinDimensions.width,
                     -textMinDimensions.height - shape.TMargins.top
@@ -21902,16 +22006,16 @@ class OptUtil {
                   );
               }
               T3Gv.opt.SetShapeR(shape);
-            } else if (shape.TextFlags & NvConstant.TextFlags.SED_TF_AttachB) {
+            } else if (shape.TextFlags & NvConstant.TextFlags.AttachB) {
               switch (shape.TextAlign) {
-                case TextConstant.TextAlign.TOPLEFT:
-                case TextConstant.TextAlign.LEFT:
-                case TextConstant.TextAlign.BOTTOMLEFT:
+                case TextConstant.TextAlign.TopLeft:
+                case TextConstant.TextAlign.Left:
+                case TextConstant.TextAlign.BottomLeft:
                   textElement.SetPos(0, shape.Frame.height);
                   break;
-                case TextConstant.TextAlign.TOPRIGHT:
-                case TextConstant.TextAlign.RIGHT:
-                case TextConstant.TextAlign.BOTTOMRIGHT:
+                case TextConstant.TextAlign.TopRight:
+                case TextConstant.TextAlign.Right:
+                case TextConstant.TextAlign.BottomRight:
                   textElement.SetPos(
                     shape.Frame.width - textMinDimensions.width,
                     shape.Frame.height
@@ -21989,14 +22093,14 @@ class OptUtil {
                   // Adjust position based on text alignment
                   if (widthChange) {
                     switch (shape.TextAlign) {
-                      case TextConstant.TextAlign.TOPLEFT:
-                      case TextConstant.TextAlign.LEFT:
-                      case TextConstant.TextAlign.BOTTOMLEFT:
+                      case TextConstant.TextAlign.TopLeft:
+                      case TextConstant.TextAlign.Left:
+                      case TextConstant.TextAlign.BottomLeft:
                         newFrame.width += widthChange;
                         break;
-                      case TextConstant.TextAlign.TOPCENTER:
-                      case TextConstant.TextAlign.CENTER:
-                      case TextConstant.TextAlign.BOTTOMCENTER:
+                      case TextConstant.TextAlign.TopCenter:
+                      case TextConstant.TextAlign.Center:
+                      case TextConstant.TextAlign.BottomCenter:
                         centerX = newFrame.x + newFrame.width / 2;
                         newFrame.width += widthChange;
                         centerX -= newFrame.width / 2;
@@ -22006,9 +22110,9 @@ class OptUtil {
                           newFrame.x = centerX;
                         }
                         break;
-                      case TextConstant.TextAlign.TOPRIGHT:
-                      case TextConstant.TextAlign.RIGHT:
-                      case TextConstant.TextAlign.BOTTOMRIGHT:
+                      case TextConstant.TextAlign.TopRight:
+                      case TextConstant.TextAlign.Right:
+                      case TextConstant.TextAlign.BottomRight:
                         newFrame.width += widthChange;
                         if (isInGroup && shape.RotationAngle === 0) {
                           // No position adjustment
@@ -22091,7 +22195,7 @@ class OptUtil {
 
                     // Update link flags
                     if (!skipLinkFlagUpdate) {
-                      this.Resize_SetLinkFlag(shapeId, ShapeConstant.LinkFlags.SED_L_MOVE);
+                      this.Resize_SetLinkFlag(shapeId, DSConstant.LinkFlags.SED_L_MOVE);
                     }
                   }
                 }
@@ -22136,7 +22240,7 @@ class OptUtil {
     var boundingRect = {};
 
     // Get points of the source line
-    var sourcePoints = sourceLine.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, true, false, null);
+    var sourcePoints = sourceLine.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, true, false, null);
     Utils2.GetPolyRect(boundingRect, sourcePoints);
 
     // Calculate angle of the segment in the source line
@@ -22160,7 +22264,7 @@ class OptUtil {
     Utils3.RotatePointsAboutCenter(boundingRect, sourceAngleRadians, rotatedPoints);
 
     // Get points of the target line
-    var targetPoints = targetLine.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, true, false, null);
+    var targetPoints = targetLine.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, true, false, null);
 
     // Calculate angle of the segment in the target line
     var targetAngle = Utils1.CalcAngleFromPoints(targetPoints[segmentIndex - 1], targetPoints[segmentIndex]);
@@ -22324,7 +22428,7 @@ class OptUtil {
       function (e) {
         const t = T3Gv.opt.ZList().filter((t => !e.includes(t)));
         for (let e = 0, a = t.length; e < a; e++) {
-          const a = T3Gv.opt.svgObjectLayer.GetElementByID(t[e]);
+          const a = T3Gv.opt.svgObjectLayer.GetElementById(t[e]);
           a &&
             a.svgObj &&
             a.svgObj.node &&
@@ -22699,7 +22803,7 @@ class OptUtil {
       var z in function () {
         const e = T3Gv.opt.ZList();
         for (let t = 0, a = e.length; t < a; t++) {
-          const a = T3Gv.opt.svgObjectLayer.GetElementByID(e[t]);
+          const a = T3Gv.opt.svgObjectLayer.GetElementById(e[t]);
           a &&
             a.svgObj &&
             a.svgObj.node &&
@@ -22754,7 +22858,7 @@ class OptUtil {
           0 == Z.toLowerCase().indexOf('blob:') &&
           u[Z]
         ) Y = u[Z],
-          pe = 'data:' + ShapeConstant.GetImageBlobType(Y.ImageDir) + ';base64,' + Utils2.ArrayBufferToBase64(Y.Bytes),
+          pe = 'data:' + DSConstant.GetImageBlobType(Y.ImageDir) + ';base64,' + Utils2.ArrayBufferToBase64(Y.Bytes),
           X.setAttribute('xlink:href', pe);
         else if (
           0 === Z.toLowerCase().indexOf(Constants.FilePath_CMSRoot.toLowerCase())
@@ -22981,11 +23085,11 @@ class OptUtil {
     let currentObject;
     const textEditSession = this.GetObjectPtr(this.theTEDSessionBlockID, false);
     let textLength = 0;
-    const shapeContainerType = OptConstant.ObjectTypes.SD_OBJT_SHAPECONTAINER;
+    const shapeContainerType = ShapeConstant.ObjectTypes.ShapeContainer;
 
     // Handle active text edit mode
     if (textEditSession.theActiveTextEditObjectID >= 0) {
-      svgElement = this.svgObjectLayer.GetElementByID(textEditSession.theActiveTextEditObjectID);
+      svgElement = this.svgObjectLayer.GetElementById(textEditSession.theActiveTextEditObjectID);
       const textElement = svgElement.textElem;
 
       if (textElement) {
@@ -23010,7 +23114,7 @@ class OptUtil {
         const tableData = currentObject.GetTable(false);
 
         if (tableData) {
-          svgElement = this.svgObjectLayer.GetElementByID(textEditSession.theActiveTableObjectID);
+          svgElement = this.svgObjectLayer.GetElementById(textEditSession.theActiveTableObjectID);
           tableData.select = 0;
 
           const changedCellList = [];
@@ -23061,7 +23165,7 @@ class OptUtil {
         // Skip objects that don't match filter criteria
         if (filterCount > 0) {
           isClosedPolyline = !!(
-            typeFilter.indexOf(OptConstant.DrawingObjectBaseClass.SHAPE) !== -1 &&
+            typeFilter.indexOf(OptConstant.DrawObjectBaseClass.Shape) !== -1 &&
             currentObject instanceof Instance.Shape.PolyLineContainer &&
             currentObject.polylist &&
             currentObject.polylist.closed

@@ -3,6 +3,7 @@
 import T3Gv from "../../Data/T3Gv";
 import Instance from "../../Data/Instance/Instance";
 import NvConstant from '../../Data/Constant/NvConstant'
+import OptConstant from "../../Data/Constant/OptConstant";
 
 class OptAhUtil {
 
@@ -29,12 +30,12 @@ class OptAhUtil {
     }
 
     // Skip line objects
-    if (drawingObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.LINE) {
+    if (drawingObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Line) {
       return false;
     }
 
     // Process based on object type
-    if (drawingObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.CONNECTOR) {
+    if (drawingObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
       result.topconnector = drawingObject.BlockID;
       result.foundtree = true;
 
@@ -66,7 +67,7 @@ class OptAhUtil {
       }
     } else if (result.foundtree) {
       // Handle connector objects after tree is found
-      if (drawingObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.CONNECTOR) {
+      if (drawingObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
         const childArrayId = T3Gv.opt.FindChildArray(result.topshape, -1);
         if (childArrayId >= 0) {
           result.secondconnector = childArrayId;
@@ -128,27 +129,28 @@ class OptAhUtil {
         const childId = currentObject.hooks[0].objid;
         const childObject = T3Gv.opt.GetObjectPtr(childId, false);
 
-        if (childObject && childObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.CONNECTOR) {
+        if (childObject && childObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
           // Handle flow chart connectors
           if (childObject._IsFlowChartConnector()) {
             return -1;
           }
 
-          // Special handling for cause-effect branches
-          if (currentObject.hooks[0].connect.x < 0 &&
-            childObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_CAUSEEFFECT_BRANCH) {
+          // // Special handling for cause-effect branches
+          // if (currentObject.hooks[0].connect.x < 0 &&
+          //   childObject.objecttype === NvConstant.FNObjectTypes.SD_OBJT_CAUSEEFFECT_BRANCH) {
 
-            if (childObject.hooks.length) {
-              const grandChildObject = T3Gv.opt.GetObjectPtr(childObject.hooks[0].objid, false);
-              if (grandChildObject && grandChildObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.CONNECTOR) {
-                nextSelection = OptAhUtil.GetConnectorNextSelect(grandChildObject, childObject.BlockID, currentListSelection);
-              }
-            }
-          }
-          // Handle genogram branches
-          else if (childObject.objecttype === NvConstant.ObjectTypes.SD_OBJT_GENOGRAM_BRANCH) {
-            // return gGenogramManager.GetNextSelect();
-          } else {
+          //   if (childObject.hooks.length) {
+          //     const grandChildObject = T3Gv.opt.GetObjectPtr(childObject.hooks[0].objid, false);
+          //     if (grandChildObject && grandChildObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
+          //       nextSelection = OptAhUtil.GetConnectorNextSelect(grandChildObject, childObject.BlockID, currentListSelection);
+          //     }
+          //   }
+          // }
+          // // Handle genogram branches
+          // else if (childObject.objecttype === NvConstant.FNObjectTypes.SD_OBJT_GENOGRAM_BRANCH) {
+          //   // return gGenogramManager.GetNextSelect();
+          // } else
+          {
             nextSelection = OptAhUtil.GetConnectorNextSelect(childObject, currentSelectedId, currentListSelection);
           }
         }
@@ -214,7 +216,7 @@ class OptAhUtil {
       const childArrayId = T3Gv.opt.FindChildArray(currentSelectedId, -1);
       if (childArrayId >= 0) {
         const childArray = T3Gv.opt.GetObjectPtr(childArrayId, false);
-        // if (childArray.objecttype === NvConstant.ObjectTypes.SD_OBJT_GENOGRAM_BRANCH) {
+        // if (childArray.objecttype === NvConstant.FNObjectTypes.SD_OBJT_GENOGRAM_BRANCH) {
         //   return gGenogramManager.GetNextSelect();
         // }
       }
@@ -239,7 +241,7 @@ class OptAhUtil {
         const parentObject = T3Gv.opt.GetObjectPtr(parentId, false);
 
         if (parentObject &&
-          parentObject.DrawingObjectBaseClass === OptConstant.DrawingObjectBaseClass.CONNECTOR) {
+          parentObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
           connectorId = parentId;
 
           if (positionOut) {

@@ -32,7 +32,7 @@ class T3Gv {
   static ArrowheadLookupTable: any = [];   // Arrowhead lookup table
   static ArrowheadSizeTable: any = [];     // Arrowhead size table
 
-  static gFmtTextObj: any;            // Global formatted text object
+  static gFmtTextObj: any;                 // Global formatted text object
 }
 
 export default T3Gv

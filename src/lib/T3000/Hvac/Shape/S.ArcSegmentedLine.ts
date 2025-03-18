@@ -25,25 +25,25 @@ class ArcSegmentedLine extends SegmentedLine {
     T3Util.Log("S.ArcSegmentedLine - CreateShape input:", { svgContext, isPreviewMode });
 
     let shapePath, shapeSlop, pointsArray = [];
-    if (this.flags & NvConstant.ObjFlags.SEDO_NotVisible) {
+    if (this.flags & NvConstant.ObjFlags.NotVisible) {
       T3Util.Log("S.ArcSegmentedLine - CreateShape output:", null);
       return null;
     }
 
     let polyPointsResult;
-    const containerShape = svgContext.CreateShape(OptConstant.CSType.SHAPECONTAINER);
+    const containerShape = svgContext.CreateShape(OptConstant.CSType.ShapeContainer);
     const isSimpleSegment = (this.hoplist.nhops === 0);
 
     if (isSimpleSegment) {
-      shapePath = svgContext.CreateShape(OptConstant.CSType.PATH);
-      shapeSlop = svgContext.CreateShape(OptConstant.CSType.PATH);
+      shapePath = svgContext.CreateShape(OptConstant.CSType.Path);
+      shapeSlop = svgContext.CreateShape(OptConstant.CSType.Path);
     } else {
-      shapePath = svgContext.CreateShape(OptConstant.CSType.POLYLINE);
-      shapeSlop = svgContext.CreateShape(OptConstant.CSType.POLYLINE);
+      shapePath = svgContext.CreateShape(OptConstant.CSType.Polyline);
+      shapeSlop = svgContext.CreateShape(OptConstant.CSType.Polyline);
     }
 
-    shapePath.SetID(OptConstant.SVGElementClass.SHAPE);
-    shapeSlop.SetID(OptConstant.SVGElementClass.SLOP);
+    shapePath.SetID(OptConstant.SVGElementClass.Shape);
+    shapeSlop.SetID(OptConstant.SVGElementClass.Slop);
     shapeSlop.ExcludeFromExport(true);
 
     this.CalcFrame();
@@ -70,10 +70,10 @@ class ArcSegmentedLine extends SegmentedLine {
     shapePath.SetSize(shapeWidth, shapeHeight);
 
     if (isSimpleSegment) {
-      pointsArray = Instance.Shape.SegmentedLine.prototype.GetPolyPoints.call(this, OptConstant.Defines.NPOLYPTS, true, true, null);
+      pointsArray = Instance.Shape.SegmentedLine.prototype.GetPolyPoints.call(this, OptConstant.Common.MaxPolyPoints, true, true, null);
       polyPointsResult = this.UpdateSVG(shapePath, pointsArray);
     } else {
-      pointsArray = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true);
+      pointsArray = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, true);
       if (this.hoplist.nhops !== 0) {
         const hopsResult = T3Gv.opt.InsertHops(this, pointsArray, pointsArray.length);
         pointsArray = pointsArray.slice(0, hopsResult.npts);
@@ -100,12 +100,12 @@ class ArcSegmentedLine extends SegmentedLine {
     shapeSlop.SetFillColor('none');
     shapeSlop.SetOpacity(0);
     if (isPreviewMode) {
-      shapeSlop.SetEventBehavior(OptConstant.EventBehavior.HIDDEN_OUT);
+      shapeSlop.SetEventBehavior(OptConstant.EventBehavior.HiddenOut);
     } else {
-      shapeSlop.SetEventBehavior(OptConstant.EventBehavior.NONE);
+      shapeSlop.SetEventBehavior(OptConstant.EventBehavior.None);
     }
 
-    shapeSlop.SetStrokeWidth(strokeWidth + OptConstant.Defines.SED_Slop);
+    shapeSlop.SetStrokeWidth(strokeWidth + OptConstant.Common.Slop);
     containerShape.AddElement(shapePath);
     containerShape.AddElement(shapeSlop);
 
@@ -194,7 +194,7 @@ class ArcSegmentedLine extends SegmentedLine {
       resultPoints: Point[] = [];
 
     // Obtain base points from SegmentedLine's implementation.
-    basePoints = Instance.Shape.SegmentedLine.prototype.GetPolyPoints.call(this, OptConstant.Defines.NPOLYPTS, true, true, false, null);
+    basePoints = Instance.Shape.SegmentedLine.prototype.GetPolyPoints.call(this, OptConstant.Common.MaxPolyPoints, true, true, false, null);
     boundingRect = Utils2.Pt2Rect(this.StartPoint, this.EndPoint);
 
     // Check if the starting and ending directions are zero and the bounding rectangle is degenerate.
@@ -283,9 +283,9 @@ class ArcSegmentedLine extends SegmentedLine {
     }
 
     switch (this.TextAlign) {
-      case TextConstant.TextAlign.TOPCENTER:
-      case TextConstant.TextAlign.CENTER:
-      case TextConstant.TextAlign.BOTTOMCENTER: {
+      case TextConstant.TextAlign.TopCenter:
+      case TextConstant.TextAlign.Center:
+      case TextConstant.TextAlign.BottomCenter: {
         const polyPoints = this.GetPolyPoints(22, false, false, false, null);
         const rotatedPoints: Point[] = [];
         const textParams = {

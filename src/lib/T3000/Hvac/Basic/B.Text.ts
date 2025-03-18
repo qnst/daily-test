@@ -60,7 +60,7 @@ class Text extends Element {
     // Initialize cursor settings
     this.cursorTimer = undefined;
     this.cursorPos = undefined;
-    this.cursorState = CursorConstant.CursorState.LINKONLY;
+    this.cursorState = CursorConstant.CursorState.LinkOnly;
 
     // Configure click area element
     this.clickAreaElem.attr('stroke-width', 0);
@@ -89,10 +89,7 @@ class Text extends Element {
     this.dataTableID = -1;
     this.dataRecordID = -1;
     this.dataStyleOverride = null;
-    this.lastFmtSize = {
-      width: 0,
-      height: 0
-    };
+    this.lastFmtSize = { width: 0, height: 0 };
 
     // Initialize text content
     this.SetText('');
@@ -786,8 +783,8 @@ class Text extends Element {
 
       if (
         !this.linksDisabled &&
-        (this.cursorState === CursorConstant.CursorState.EDITLINK ||
-          this.cursorState === CursorConstant.CursorState.LINKONLY)
+        (this.cursorState === CursorConstant.CursorState.EditLink ||
+          this.cursorState === CursorConstant.CursorState.LinkOnly)
       ) {
         this.formatter.SetHyperlinkCursor();
       }
@@ -1035,8 +1032,8 @@ class Text extends Element {
 
     // If the new cursor state indicates editing, set the text cursor
     if (
-      newCursorState === CursorConstant.CursorState.EDITONLY ||
-      newCursorState === CursorConstant.CursorState.EDITLINK
+      newCursorState === CursorConstant.CursorState.EditOnly ||
+      newCursorState === CursorConstant.CursorState.EditLink
     ) {
       this.SetCursor(CursorConstant.CursorType.TEXT);
     }
@@ -1045,8 +1042,8 @@ class Text extends Element {
     if (
       !this.linksDisabled &&
       (
-        newCursorState === CursorConstant.CursorState.EDITLINK ||
-        newCursorState === CursorConstant.CursorState.LINKONLY
+        newCursorState === CursorConstant.CursorState.EditLink ||
+        newCursorState === CursorConstant.CursorState.LinkOnly
       )
     ) {
       this.formatter.SetHyperlinkCursor();
@@ -1188,10 +1185,10 @@ class Text extends Element {
     const formattedFieldId = Formatter.FormatDataFieldID(fieldId, false);
 
     if (useFieldName) {
-      result = TODO.SDData.FieldedDataGetFieldName(this.dataTableID, formattedFieldId);
+      result = TData.FieldedDataGetFieldName(this.dataTableID, formattedFieldId);
     } else {
-      result = TODO.SDData.FieldedDataGetFieldValue(this.dataTableID, this.dataRecordID, formattedFieldId);
-      const fieldType = TODO.SDData.FieldedDataGetFieldType(this.dataTableID, formattedFieldId);
+      result = TData.FieldedDataGetFieldValue(this.dataTableID, this.dataRecordID, formattedFieldId);
+      const fieldType = TData.FieldedDataGetFieldType(this.dataTableID, formattedFieldId);
       result = T3Gv.opt.ModifyFieldDataForDisplay(result, fieldType);
     }
 
@@ -1213,10 +1210,10 @@ class Text extends Element {
     }
 
     const formattedDataFieldId = Formatter.FormatDataFieldID(dataFieldId, false);
-    const fieldStyle = TODO.SDData.FieldedDataGetFieldStyle(this.dataTableID, this.dataRecordID, formattedDataFieldId);
+    const fieldStyle = TData.FieldedDataGetFieldStyle(this.dataTableID, this.dataRecordID, formattedDataFieldId);
 
     if (fieldStyle) {
-      styleArray = TODO.SDData.FieldedDataParseStyle(fieldStyle);
+      styleArray = TData.FieldedDataParseStyle(fieldStyle);
     }
 
     T3Util.Log("B.Text: GetDataStyle output:", styleArray);
@@ -1232,7 +1229,7 @@ class Text extends Element {
 
     if (tableIsValid && recordIsValid) {
       const formattedFieldId = Formatter.FormatDataFieldID(dataFieldId, false);
-      const record = TODO.SDData.FieldedDataGetRecord(this.dataTableID, this.dataRecordID);
+      const record = TData.FieldedDataGetRecord(this.dataTableID, this.dataRecordID);
       exists = !!record[formattedFieldId];
     }
 
@@ -1288,53 +1285,6 @@ class Text extends Element {
 
     T3Util.Log("B.Text: RemapDataFieldsInRuntimeText output:", runtimeText);
   }
-
-  // static CursorState = {
-  //   NONE: 0,
-  //   EDITONLY: 1,
-  //   EDITLINK: 2,
-  //   LINKONLY: 3
-  // }
-
-  // static ParagraphFormat() {
-  //   T3Util.Log("B.Text: ParagraphFormat input: no parameters");
-
-  //   // Set default paragraph formatting properties with readable names
-  //   this.just = 'center';
-  //   this.bullet = 'none';
-  //   this.spacing = 0;
-  //   this.lindent = 0;
-  //   this.rindent = 0;
-  //   this.pindent = 0;
-  //   this.tabspace = 0;
-  //   this.vjust = 'middle';
-
-  //   const fmtSetting=new ParagraphFormat(){
-  //     justification: this.just,
-  //     bullet: this.bullet,
-  //     spacing: this.spacing,
-  //     leftIndent: this.lindent,
-  //     rightIndent: this.rindent,
-  //     paragraphIndent: this.pindent,
-  //     tabSpace: this.tabspace,
-  //     verticalJustification: this.vjust
-  //   }
-
-  //   const formatSettings = {
-  //     justification: this.just,
-  //     bullet: this.bullet,
-  //     spacing: this.spacing,
-  //     leftIndent: this.lindent,
-  //     rightIndent: this.rindent,
-  //     paragraphIndent: this.pindent,
-  //     tabSpace: this.tabspace,
-  //     verticalJustification: this.vjust
-  //   };
-
-  //   T3Util.Log("B.Text: ParagraphFormat output:", formatSettings);
-  //   return formatSettings;
-  // }
-
 }
 
 export default Text

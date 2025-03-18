@@ -6,7 +6,7 @@ import Utils2 from "../Util/Utils2";
 import T3Gv from '../Data/T3Gv'
 import NvConstant from '../Data/Constant/NvConstant'
 import ShapeUtil from '../Opt/Shape/ShapeUtil';
-import ShapeConstant from '../Opt/DS/DSConstant';
+import DSConstant from '../Opt/DS/DSConstant';
 import Point from '../Model/Point';
 import OptConstant from '../Data/Constant/OptConstant';
 import CursorConstant from '../Data/Constant/CursorConstant';
@@ -25,7 +25,7 @@ class FreehandLine extends BaseLine {
   constructor(options) {
     options = options || {};
     options.LineType = OptConstant.LineType.FREEHAND;
-    options.TextFlags = options.TextFlags | NvConstant.TextFlags.SED_TF_None;
+    options.TextFlags = options.TextFlags | NvConstant.TextFlags.None;
 
     super(options);
 
@@ -127,8 +127,8 @@ class FreehandLine extends BaseLine {
    * @param svgDoc - The SVG document object to update
    */
   UpdateDrawing(svgDoc) {
-    var shapeElement = svgDoc.GetElementByID(OptConstant.SVGElementClass.SHAPE),
-      slopElement = svgDoc.GetElementByID(OptConstant.SVGElementClass.SLOP);
+    var shapeElement = svgDoc.GetElementById(OptConstant.SVGElementClass.Shape),
+      slopElement = svgDoc.GetElementById(OptConstant.SVGElementClass.Slop);
 
     this.CalcFrame();
     var points = this.GetFreehandPoints(true);
@@ -173,16 +173,16 @@ class FreehandLine extends BaseLine {
    * @returns The created SVG shape container
    */
   CreateShape(svgDoc, isInteractive) {
-    if (this.flags & NvConstant.ObjFlags.SEDO_NotVisible) return null;
+    if (this.flags & NvConstant.ObjFlags.NotVisible) return null;
 
     let points = [],
-      shapeContainer = svgDoc.CreateShape(OptConstant.CSType.SHAPECONTAINER),
-      shapePath = svgDoc.CreateShape(OptConstant.CSType.PATH);
+      shapeContainer = svgDoc.CreateShape(OptConstant.CSType.ShapeContainer),
+      shapePath = svgDoc.CreateShape(OptConstant.CSType.Path);
 
-    shapePath.SetID(OptConstant.SVGElementClass.SHAPE);
+    shapePath.SetID(OptConstant.SVGElementClass.Shape);
 
-    let slopPath = svgDoc.CreateShape(OptConstant.CSType.PATH);
-    slopPath.SetID(OptConstant.SVGElementClass.SLOP);
+    let slopPath = svgDoc.CreateShape(OptConstant.CSType.Path);
+    slopPath.SetID(OptConstant.SVGElementClass.Slop);
     slopPath.ExcludeFromExport(true);
 
     this.CalcFrame();
@@ -230,12 +230,12 @@ class FreehandLine extends BaseLine {
     slopPath.SetOpacity(0);
 
     if (isInteractive) {
-      slopPath.SetEventBehavior(OptConstant.EventBehavior.HIDDEN_OUT);
+      slopPath.SetEventBehavior(OptConstant.EventBehavior.HiddenOut);
     } else {
-      slopPath.SetEventBehavior(OptConstant.EventBehavior.NONE);
+      slopPath.SetEventBehavior(OptConstant.EventBehavior.None);
     }
 
-    slopPath.SetStrokeWidth(lineThickness + OptConstant.Defines.SED_Slop);
+    slopPath.SetStrokeWidth(lineThickness + OptConstant.Common.Slop);
     shapeContainer.AddElement(shapePath);
     shapeContainer.AddElement(slopPath);
     this.ApplyStyles(shapePath, styleRecord);
@@ -264,8 +264,8 @@ class FreehandLine extends BaseLine {
    * @returns The created action triggers group element
    */
   CreateActionTriggers(svgDoc, blockId, options, selectedId) {
-    let knobSize = OptConstant.Defines.SED_KnobSize;
-    let triggerGroup = svgDoc.CreateShape(OptConstant.CSType.GROUP);
+    let knobSize = OptConstant.Common.KnobSize;
+    let triggerGroup = svgDoc.CreateShape(OptConstant.CSType.Group);
 
     let scale = svgDoc.docInfo.docToScreenScale;
     if (svgDoc.docInfo.docScale <= 0.5) {
@@ -293,7 +293,7 @@ class FreehandLine extends BaseLine {
     // Base knob configuration
     let knobConfig = {
       svgDoc: svgDoc,
-      shapeType: OptConstant.CSType.RECT,
+      shapeType: OptConstant.CSType.Rect,
       knobSize: scaledKnobSize,
       fillColor: 'black',
       fillOpacity: 1,
@@ -312,7 +312,7 @@ class FreehandLine extends BaseLine {
     }
 
     // Top left knob
-    knobConfig.knobID = OptConstant.ActionTriggerType.TOPLEFT;
+    knobConfig.knobID = OptConstant.ActionTriggerType.TopLeft;
     knobConfig.cursorType = CursorConstant.CursorType.RESIZE_LT;
     let knob = this.GenericKnob(knobConfig);
     triggerGroup.AddElement(knob);
@@ -321,7 +321,7 @@ class FreehandLine extends BaseLine {
     knobConfig.x = width - scaledKnobSize;
     knobConfig.y = 0;
     knobConfig.cursorType = CursorConstant.CursorType.RESIZE_RT;
-    knobConfig.knobID = OptConstant.ActionTriggerType.TOPRIGHT;
+    knobConfig.knobID = OptConstant.ActionTriggerType.TopRight;
     knob = this.GenericKnob(knobConfig);
     triggerGroup.AddElement(knob);
 
@@ -329,7 +329,7 @@ class FreehandLine extends BaseLine {
     knobConfig.x = width - scaledKnobSize;
     knobConfig.y = height - scaledKnobSize;
     knobConfig.cursorType = CursorConstant.CursorType.RESIZE_RB;
-    knobConfig.knobID = OptConstant.ActionTriggerType.BOTTOMRIGHT;
+    knobConfig.knobID = OptConstant.ActionTriggerType.BottomRight;
     knob = this.GenericKnob(knobConfig);
     triggerGroup.AddElement(knob);
 
@@ -337,7 +337,7 @@ class FreehandLine extends BaseLine {
     knobConfig.x = 0;
     knobConfig.y = height - scaledKnobSize;
     knobConfig.cursorType = CursorConstant.CursorType.RESIZE_LB;
-    knobConfig.knobID = OptConstant.ActionTriggerType.BOTTOMLEFT;
+    knobConfig.knobID = OptConstant.ActionTriggerType.BottomLeft;
     knob = this.GenericKnob(knobConfig);
     triggerGroup.AddElement(knob);
 
@@ -345,7 +345,7 @@ class FreehandLine extends BaseLine {
     triggerGroup.SetSize(width, height);
     triggerGroup.SetPos(extendedFrame.x, extendedFrame.y);
     triggerGroup.isShape = true;
-    triggerGroup.SetID(OptConstant.Defines.Action + blockId);
+    triggerGroup.SetID(OptConstant.Common.Action + blockId);
 
     return triggerGroup;
   }
@@ -367,7 +367,7 @@ class FreehandLine extends BaseLine {
     let newBBox = $.extend(true, {}, T3Gv.opt.actionBBox);
 
     switch (T3Gv.opt.actionTriggerId) {
-      case OptConstant.ActionTriggerType.TOPLEFT:
+      case OptConstant.ActionTriggerType.TopLeft:
         let deltaX = newBBox.x - mouseX;
         let deltaY = newBBox.y - mouseY;
         newBBox.x = mouseX;
@@ -389,7 +389,7 @@ class FreehandLine extends BaseLine {
         this.HandleActionTriggerCallResize(T3Gv.opt.actionNewBBox, true, currentPoint);
         break;
 
-      case OptConstant.ActionTriggerType.TOPRIGHT:
+      case OptConstant.ActionTriggerType.TopRight:
         deltaY = newBBox.y - mouseY;
         newBBox.y = mouseY;
         newBBox.height = newBBox.height + deltaY;
@@ -409,7 +409,7 @@ class FreehandLine extends BaseLine {
         this.HandleActionTriggerCallResize(T3Gv.opt.actionNewBBox, true, currentPoint);
         break;
 
-      case OptConstant.ActionTriggerType.BOTTOMRIGHT:
+      case OptConstant.ActionTriggerType.BottomRight:
         newBBox.width = mouseX - newBBox.x;
         newBBox.height = mouseY - newBBox.y;
 
@@ -427,7 +427,7 @@ class FreehandLine extends BaseLine {
         this.HandleActionTriggerCallResize(T3Gv.opt.actionNewBBox, true, currentPoint);
         break;
 
-      case OptConstant.ActionTriggerType.BOTTOMLEFT:
+      case OptConstant.ActionTriggerType.BottomLeft:
         newBBox.height = mouseY - newBBox.y;
         deltaX = newBBox.x - mouseX;
         newBBox.x = mouseX;
@@ -489,11 +489,11 @@ class FreehandLine extends BaseLine {
       // Update flags if necessary
       if (this.rflags) {
         if (width) {
-          this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Width, false);
+          this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.Width, false);
         }
 
         if (height) {
-          this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Height, false);
+          this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.Height, false);
         }
       }
     }
@@ -510,11 +510,11 @@ class FreehandLine extends BaseLine {
     let originalFrame = $.extend(false, {}, this.Frame);
 
     // Enforce minimum dimensions
-    if (newFrame.width < OptConstant.Defines.SED_MinDim) {
-      newFrame.width = OptConstant.Defines.SED_MinDim;
+    if (newFrame.width < OptConstant.Common.MinDim) {
+      newFrame.width = OptConstant.Common.MinDim;
     }
-    if (newFrame.height < OptConstant.Defines.SED_MinDim) {
-      newFrame.height = OptConstant.Defines.SED_MinDim;
+    if (newFrame.height < OptConstant.Common.MinDim) {
+      newFrame.height = OptConstant.Common.MinDim;
     }
 
     // Calculate scaling factors
@@ -546,7 +546,7 @@ class FreehandLine extends BaseLine {
 
     this.CalcFrame();
 
-    if (updateFlag === OptConstant.ActionTriggerType.LINELENGTH) {
+    if (updateFlag === OptConstant.ActionTriggerType.LineLength) {
       updateFlag = 0;
       noMin = true;
     }
@@ -710,13 +710,13 @@ class FreehandLine extends BaseLine {
     shapeAttributes.attributes.StartPoint = Utils1.DeepCopy(T3Gv.opt.drawShape.StartPoint);
     shapeAttributes.attributes.EndPoint = Utils1.DeepCopy(T3Gv.opt.drawShape.EndPoint);
     shapeAttributes.attributes.Frame = Utils1.DeepCopy(T3Gv.opt.drawShape.Frame);
-    shapeAttributes.attributes.extraflags = OptConstant.ExtraFlags.SEDE_SideKnobs;
+    shapeAttributes.attributes.extraflags = OptConstant.ExtraFlags.SideKnobs;
 
     if (this.pointlist) {
       shapeAttributes.attributes.pointlist = Utils1.DeepCopy(this.pointlist);
     }
 
-    shapeAttributes.LineTool = ShapeConstant.LineToolTypes.FreehandLine;
+    shapeAttributes.LineTool = DSConstant.LineToolTypes.FreehandLine;
 
     if (false) {
       shapeAttributes.CreateList = [T3Gv.opt.drawShape.BlockID];
@@ -778,7 +778,7 @@ class FreehandLine extends BaseLine {
     let freehandPoints = Utils1.DeepCopy(this).GetFreehandPoints(true);
 
     // Write the freehand line opcode
-    let codePosition = ShapeUtil.WriteCode(outputStream, ShapeConstant.OpNameCode.cFreeHandLine);
+    let codePosition = ShapeUtil.WriteCode(outputStream, DSConstant.OpNameCode.cFreeHandLine);
 
     // Prepare the data structure
     let pointData,
@@ -796,7 +796,7 @@ class FreehandLine extends BaseLine {
     }
 
     // Write the structure to the file
-    outputStream.writeStruct(ShapeConstant.FreehandLineStruct, lineData);
+    outputStream.writeStruct(DSConstant.FreehandLineStruct, lineData);
     ShapeUtil.WriteLength(outputStream, codePosition);
 
     T3Util.Log('S.FreehandLine.WriteShapeData - Output:', { freehandPoints });

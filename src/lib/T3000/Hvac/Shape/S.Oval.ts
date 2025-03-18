@@ -15,7 +15,7 @@ class Oval extends BaseShape {
 
   constructor(options) {
     options = options || {};
-    options.ShapeType = OptConstant.ShapeType.OVAL;
+    options.ShapeType = OptConstant.ShapeType.Oval;
     options.Frame;
 
     T3Util.Log('S.Oval: Input options:', options);
@@ -30,11 +30,11 @@ class Oval extends BaseShape {
   }
 
   CreateShape(renderer, isHidden) {
-    if (this.flags & NvConstant.ObjFlags.SEDO_NotVisible) return null;
+    if (this.flags & NvConstant.ObjFlags.NotVisible) return null;
 
     T3Util.Log('S.Oval: Input renderer:', renderer, 'isHidden:', isHidden);
 
-    const shapeContainer = renderer.CreateShape(OptConstant.CSType.SHAPECONTAINER);
+    const shapeContainer = renderer.CreateShape(OptConstant.CSType.ShapeContainer);
     const frameCopy = $.extend(true, {}, this.Frame);
     const style = this.StyleRecord;
 
@@ -51,7 +51,7 @@ class Oval extends BaseShape {
     shapeContainer.SetSize(width, height);
     shapeContainer.SetPos(frameCopy.x, frameCopy.y);
 
-    const ovalShape = renderer.CreateShape(OptConstant.CSType.OVAL);
+    const ovalShape = renderer.CreateShape(OptConstant.CSType.Oval);
     ovalShape.SetSize(width, height);
     ovalShape.SetStrokeColor(strokeColor);
     ovalShape.SetStrokeWidth(strokeWidth);
@@ -60,33 +60,33 @@ class Oval extends BaseShape {
       ovalShape.SetStrokePattern(strokePattern);
     }
 
-    ovalShape.SetID(OptConstant.SVGElementClass.SHAPE);
+    ovalShape.SetID(OptConstant.SVGElementClass.Shape);
     shapeContainer.AddElement(ovalShape);
 
     this.ApplyStyles(ovalShape, style);
     this.ApplyEffects(shapeContainer, false, false);
 
-    const slopShape = renderer.CreateShape(OptConstant.CSType.OVAL);
+    const slopShape = renderer.CreateShape(OptConstant.CSType.Oval);
     slopShape.SetStrokeColor('white');
     slopShape.SetFillColor('none');
     slopShape.SetOpacity(0);
-    slopShape.SetStrokeWidth(strokeWidth + OptConstant.Defines.SED_Slop);
+    slopShape.SetStrokeWidth(strokeWidth + OptConstant.Common.Slop);
 
     if (isHidden) {
-      slopShape.SetEventBehavior(OptConstant.EventBehavior.HIDDEN_OUT);
+      slopShape.SetEventBehavior(OptConstant.EventBehavior.HiddenOut);
     } else {
-      slopShape.SetEventBehavior(OptConstant.EventBehavior.NONE);
+      slopShape.SetEventBehavior(OptConstant.EventBehavior.None);
     }
 
-    slopShape.SetID(OptConstant.SVGElementClass.SLOP);
+    slopShape.SetID(OptConstant.SVGElementClass.Slop);
     slopShape.ExcludeFromExport(true);
     slopShape.SetSize(width, height);
     shapeContainer.AddElement(slopShape);
 
     const hatchFill = style.Fill.Hatch;
     if (hatchFill && hatchFill !== 0) {
-      const hatchShape = renderer.CreateShape(OptConstant.CSType.OVAL);
-      hatchShape.SetID(OptConstant.SVGElementClass.HATCH);
+      const hatchShape = renderer.CreateShape(OptConstant.CSType.Oval);
+      hatchShape.SetID(OptConstant.SVGElementClass.Hatch);
       hatchShape.SetSize(width, height);
       hatchShape.SetStrokeWidth(0);
       this.SetFillHatch(hatchShape, hatchFill);
@@ -199,9 +199,9 @@ class Oval extends BaseShape {
     let frameHeight = this.Frame.height;
     let halfWidth = frameWidth / 2;
     let halfHeight = frameHeight / 2;
-    let dimension = OptConstant.Defines.SED_CDim;
+    let dimension = OptConstant.Common.MaxDim;
 
-    if (points.length === 1 && points[0].y === -OptConstant.SEDA_Styles.SEDA_CoManager && this.IsCoManager({})) {
+    if (points.length === 1 && points[0].y === -OptConstant.AStyles.CoManager && this.IsCoManager({})) {
       perimeterPoints.push(new Point(this.Frame.x, this.Frame.y));
       if (points[0].id != null) {
         perimeterPoints[0].id = points[0].id;
@@ -210,7 +210,7 @@ class Oval extends BaseShape {
       return perimeterPoints;
     }
 
-    if (hookType === OptConstant.HookPts.SED_KAT) {
+    if (hookType === OptConstant.HookPts.KAT) {
       perimeterPoints = this.BaseDrawingObject_GetPerimPts(event, points, hookType, false, tableIndex, isReversed);
       T3Util.Log('S.Oval: Output perimeterPoints:', perimeterPoints);
       return perimeterPoints;
@@ -230,8 +230,8 @@ class Oval extends BaseShape {
     //   }
     // }
 
-    let useConnect = this.flags & NvConstant.ObjFlags.SEDO_UseConnect;
-    // let useTableRows = this.hookflags & NvConstant.HookFlags.SED_LC_TableRows && table;
+    let useConnect = this.flags & NvConstant.ObjFlags.UseConnect;
+    // let useTableRows = this.hookflags & NvConstant.HookFlags.LcTableRows && table;
 
     if (useConnect /*|| useTableRows*/) {
       for (let i = 0; i < points.length; i++) {
@@ -275,7 +275,7 @@ class Oval extends BaseShape {
     const perimeterPoints = [];
     const numPoints = points.length;
     const triangleShapeType = PolygonConstant.ShapeTypes.TRIANGLE;
-    const dimension = OptConstant.Defines.SED_CDim;
+    const dimension = OptConstant.Common.MaxDim;
 
     for (let i = 0; i < numPoints; i++) {
       const point = {
@@ -298,7 +298,7 @@ class Oval extends BaseShape {
   SetShapeIndent(isIndented) {
     T3Util.Log('S.Oval: Input isIndented:', isIndented);
 
-    const roundFactor = OptConstant.Defines.SED_RoundFactor / 2;
+    const roundFactor = OptConstant.Common.RoundFactor / 2;
     const width = this.inside.width;
     const height = this.inside.height;
 

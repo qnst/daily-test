@@ -7,12 +7,11 @@ import T3Gv from '../Data/T3Gv'
 import PolygonShapeGenerator from '../Opt/Polygon/PolygonUtil'
 import $ from 'jquery'
 import NvConstant from '../Data/Constant/NvConstant'
-import ConstantData2 from '../Data/Constant/ConstantData2';
 import PolygonConstant from '../Opt/Polygon/PolygonConstant';
 import PolygonUtil from '../Opt/Polygon/PolygonUtil';
 import ShapeUtil from "../Opt/Shape/ShapeUtil";
 import Instance from '../Data/Instance/Instance';
-import ShapeConstant from '../Opt/DS/DSConstant';
+import DSConstant from '../Opt/DS/DSConstant';
 import OptConstant from '../Data/Constant/OptConstant';
 import T3Timer from '../Util/T3Timer';
 import T3Util from '../Util/T3Util';
@@ -29,13 +28,13 @@ class Polygon extends BaseShape {
     T3Util.Log('S.Polygon: Constructor input:', options);
 
     options = options || {};
-    options.ShapeType = OptConstant.ShapeType.POLYGON;
+    options.ShapeType = OptConstant.ShapeType.Polygon;
 
     super(options);
 
     this.VertexArray = options.VertexArray || [];
     this.FixedPoint = options.FixedPoint || [0, 0];
-    this.LineOrientation = options.LineOrientation || OptConstant.LineOrientation.NONE;
+    this.LineOrientation = options.LineOrientation || OptConstant.LineOrientation.None;
     this.hoplist = options.hoplist || { nhops: 0, hops: [] };
     this.ArrowheadData = options.ArrowheadData || [];
 
@@ -64,7 +63,7 @@ class Polygon extends BaseShape {
           pathCreator.Apply();
         }
 
-        shapeElement = svgDoc.GetElementByID(OptConstant.SVGElementClass.SHAPE, geometry.shapeid);
+        shapeElement = svgDoc.GetElementById(OptConstant.SVGElementClass.Shape, geometry.shapeid);
         currentShapeId = geometry.shapeid;
 
         if (shapeElement) {
@@ -92,7 +91,7 @@ class Polygon extends BaseShape {
         const subShapeId = `${currentShapeId}.${subShapeIdCounter}`;
         subShapeIdCounter++;
 
-        subShapeElement = svgDoc.GetElementByID(OptConstant.SVGElementClass.SHAPE, subShapeId);
+        subShapeElement = svgDoc.GetElementById(OptConstant.SVGElementClass.Shape, subShapeId);
 
         if (!subShapeElement) {
           continue;
@@ -137,15 +136,15 @@ class Polygon extends BaseShape {
   CreateShape(svgDoc, isInteractive) {
     T3Util.Log("S.Polygon: CreateShape input:", { svgDoc, isInteractive });
 
-    if (this.flags & NvConstant.ObjFlags.SEDO_NotVisible) {
+    if (this.flags & NvConstant.ObjFlags.NotVisible) {
       T3Util.Log("S.Polygon: CreateShape output: null (not visible)");
       return null;
     }
 
     // Create the container shape and initial polygon shape.
-    const containerShape = svgDoc.CreateShape(OptConstant.CSType.SHAPECONTAINER);
-    let polygonShape = svgDoc.CreateShape(OptConstant.CSType.POLYGON);
-    polygonShape.SetID(OptConstant.SVGElementClass.SHAPE);
+    const containerShape = svgDoc.CreateShape(OptConstant.CSType.ShapeContainer);
+    let polygonShape = svgDoc.CreateShape(OptConstant.CSType.Polygon);
+    polygonShape.SetID(OptConstant.SVGElementClass.Shape);
 
     // Clone frame for modification.
     const frameRect = $.extend(true, {}, this.Frame);
@@ -184,8 +183,8 @@ class Polygon extends BaseShape {
       let shapeCounter = 1;
       let secondaryCounter = 0;
       const geometriesCount = this.Geometries.length;
-      let currentPathShape = svgDoc.CreateShape(OptConstant.CSType.PATH);
-      currentPathShape.SetID(OptConstant.SVGElementClass.SHAPE);
+      let currentPathShape = svgDoc.CreateShape(OptConstant.CSType.Path);
+      currentPathShape.SetID(OptConstant.SVGElementClass.Shape);
       currentPathShape.SetUserData(shapeCounter);
       currentPathShape.SetSize(width, height);
       let pathCreator = currentPathShape.PathCreator();
@@ -218,8 +217,8 @@ class Polygon extends BaseShape {
           containerShape.AddElement(currentPathShape);
 
           // Create a new path shape.
-          currentPathShape = svgDoc.CreateShape(OptConstant.CSType.PATH);
-          currentPathShape.SetID(OptConstant.SVGElementClass.SHAPE);
+          currentPathShape = svgDoc.CreateShape(OptConstant.CSType.Path);
+          currentPathShape.SetID(OptConstant.SVGElementClass.Shape);
           shapeCounter++;
           currentPathShape.SetUserData(shapeCounter);
           currentPathShape.SetSize(width, height);
@@ -245,8 +244,8 @@ class Polygon extends BaseShape {
 
         // Process secondary path if MoveTo points exist.
         if (geometry.MoveTo.length > 0) {
-          const secondaryShape = svgDoc.CreateShape(OptConstant.CSType.PATH);
-          secondaryShape.SetID(OptConstant.SVGElementClass.SHAPE);
+          const secondaryShape = svgDoc.CreateShape(OptConstant.CSType.Path);
+          secondaryShape.SetID(OptConstant.SVGElementClass.Shape);
           const secondaryUserData = shapeCounter + '.' + secondaryCounter;
           secondaryCounter++;
           secondaryShape.SetUserData(secondaryUserData);
@@ -309,18 +308,18 @@ class Polygon extends BaseShape {
     this.ApplyEffects(containerShape, false, false);
 
     // Create an invisible polygon for events/slop.
-    const invisiblePolygon = svgDoc.CreateShape(OptConstant.CSType.POLYGON);
+    const invisiblePolygon = svgDoc.CreateShape(OptConstant.CSType.Polygon);
     invisiblePolygon.SetPoints(points);
     invisiblePolygon.SetStrokeColor("white");
     invisiblePolygon.SetFillColor("none");
     invisiblePolygon.SetOpacity(0);
-    invisiblePolygon.SetStrokeWidth(lineThickness + OptConstant.Defines.SED_Slop);
+    invisiblePolygon.SetStrokeWidth(lineThickness + OptConstant.Common.Slop);
     if (isInteractive) {
-      invisiblePolygon.SetEventBehavior(OptConstant.EventBehavior.HIDDEN_OUT);
+      invisiblePolygon.SetEventBehavior(OptConstant.EventBehavior.HiddenOut);
     } else {
-      invisiblePolygon.SetEventBehavior(OptConstant.EventBehavior.NONE);
+      invisiblePolygon.SetEventBehavior(OptConstant.EventBehavior.None);
     }
-    invisiblePolygon.SetID(OptConstant.SVGElementClass.SLOP);
+    invisiblePolygon.SetID(OptConstant.SVGElementClass.Slop);
     invisiblePolygon.ExcludeFromExport(true);
     invisiblePolygon.SetSize(width, height);
     containerShape.AddElement(invisiblePolygon);
@@ -328,9 +327,9 @@ class Polygon extends BaseShape {
     // Add hatch fill if defined.
     const hatch = styleRecord.Fill.Hatch;
     if (hatch && hatch !== 0) {
-      const hatchShape = svgDoc.CreateShape(OptConstant.CSType.POLYGON);
+      const hatchShape = svgDoc.CreateShape(OptConstant.CSType.Polygon);
       hatchShape.SetPoints(points);
-      hatchShape.SetID(OptConstant.SVGElementClass.HATCH);
+      hatchShape.SetID(OptConstant.SVGElementClass.Hatch);
       hatchShape.SetSize(width, height);
       hatchShape.SetStrokeWidth(0);
       this.SetFillHatch(hatchShape, hatch);
@@ -364,11 +363,11 @@ class Polygon extends BaseShape {
         Utils2.InflateRect(adjustedBoundingBox, this.StyleRecord.Line.BThick, this.StyleRecord.Line.BThick);
       }
 
-      if (actionTriggerType !== OptConstant.ActionTriggerType.MOVEPOLYSEG) {
+      if (actionTriggerType !== OptConstant.ActionTriggerType.MovePolySeg) {
         svgDoc.SetSize(adjustedBoundingBox.width, adjustedBoundingBox.height);
         svgDoc.SetPos(adjustedBoundingBox.x + offset.x, adjustedBoundingBox.y + offset.y);
 
-        const shapeElement = svgDoc.GetElementByID(OptConstant.SVGElementClass.SHAPE);
+        const shapeElement = svgDoc.GetElementById(OptConstant.SVGElementClass.Shape);
         const regeneratedVectors = this.RegenerateVectors(adjustedBoundingBox.width, adjustedBoundingBox.height);
         if (regeneratedVectors) {
           this.VertexArray = regeneratedVectors;
@@ -387,13 +386,13 @@ class Polygon extends BaseShape {
           shapeElement.SetSize(adjustedBoundingBox.width, adjustedBoundingBox.height);
         }
 
-        const slopElement = svgDoc.GetElementByID(OptConstant.SVGElementClass.SLOP);
+        const slopElement = svgDoc.GetElementById(OptConstant.SVGElementClass.Slop);
         if (slopElement) {
           slopElement.SetPoints(points);
           slopElement.SetSize(adjustedBoundingBox.width, adjustedBoundingBox.height);
         }
 
-        const hatchElement = svgDoc.GetElementByID(OptConstant.SVGElementClass.HATCH);
+        const hatchElement = svgDoc.GetElementById(OptConstant.SVGElementClass.Hatch);
         if (hatchElement) {
           hatchElement.SetPoints(points);
           hatchElement.SetSize(newSize.width, newSize.height);
@@ -434,7 +433,7 @@ class Polygon extends BaseShape {
     svgDoc.SetSize(adjustedFrame.width, adjustedFrame.height);
     svgDoc.SetPos(adjustedFrame.x + offset.x, adjustedFrame.y + offset.y);
 
-    const shapeElement = svgDoc.GetElementByID(OptConstant.SVGElementClass.SHAPE);
+    const shapeElement = svgDoc.GetElementById(OptConstant.SVGElementClass.Shape);
     const regeneratedVectors = this.RegenerateVectors(adjustedFrame.width, adjustedFrame.height);
     if (regeneratedVectors) {
       this.VertexArray = regeneratedVectors;
@@ -459,7 +458,7 @@ class Polygon extends BaseShape {
       shapeElement.SetSize(adjustedFrame.width, adjustedFrame.height);
     }
 
-    const slopElement = svgDoc.GetElementByID(OptConstant.SVGElementClass.SLOP);
+    const slopElement = svgDoc.GetElementById(OptConstant.SVGElementClass.Slop);
     if (slopElement) {
       slopElement.SetPoints(points);
       slopElement.SetSize(adjustedFrame.width, adjustedFrame.height);
@@ -469,7 +468,7 @@ class Polygon extends BaseShape {
     //   T3Gv.opt.Table_ResizeSVGTableObject(svgDoc, this, newSize, true);
     // }
 
-    const hatchElement = svgDoc.GetElementByID(OptConstant.SVGElementClass.HATCH);
+    const hatchElement = svgDoc.GetElementById(OptConstant.SVGElementClass.Hatch);
     if (hatchElement) {
       hatchElement.SetPoints(points);
       hatchElement.SetSize(newSize.width, newSize.height);
@@ -488,21 +487,21 @@ class Polygon extends BaseShape {
 
     const targetPoints = [];
     const defaultPoints = [
-      { x: OptConstant.Defines.SED_CDim / 2, y: 0 },
-      { x: OptConstant.Defines.SED_CDim, y: OptConstant.Defines.SED_CDim / 2 },
-      { x: OptConstant.Defines.SED_CDim / 2, y: OptConstant.Defines.SED_CDim },
-      { x: 0, y: OptConstant.Defines.SED_CDim / 2 }
+      { x: OptConstant.Common.MaxDim / 2, y: 0 },
+      { x: OptConstant.Common.MaxDim, y: OptConstant.Common.MaxDim / 2 },
+      { x: OptConstant.Common.MaxDim / 2, y: OptConstant.Common.MaxDim },
+      { x: 0, y: OptConstant.Common.MaxDim / 2 }
     ];
 
-    const isContinuousConnection = this.flags & NvConstant.ObjFlags.SEDO_ContConn && target !== null && (hookFlags & NvConstant.HookFlags.SED_LC_NoContinuous) === 0;
-    const hasConnectPoints = this.flags & NvConstant.ObjFlags.SEDO_UseConnect && this.ConnectPoints;
+    const isContinuousConnection = this.flags & NvConstant.ObjFlags.ContConn && target !== null && (hookFlags & NvConstant.HookFlags.LcNoContinuous) === 0;
+    const hasConnectPoints = this.flags & NvConstant.ObjFlags.UseConnect && this.ConnectPoints;
     // const table = this.GetTable(false);
-    // const hasTableRows = this.hookflags & NvConstant.HookFlags.SED_LC_TableRows && table;
-    // const isNoTableLink = !hasTableRows && (this.flags & NvConstant.ObjFlags.SEDO_NoTableLink);
+    // const hasTableRows = this.hookflags & NvConstant.HookFlags.LcTableRows && table;
+    // const isNoTableLink = !hasTableRows && (this.flags & NvConstant.ObjFlags.NoTableLink);
 
     let tableTargetPoint = {};
     let foundTableTarget = false;
-    const dimension = OptConstant.Defines.SED_CDim;
+    const dimension = OptConstant.Common.MaxDim;
 
     if (objectID >= 0) {
       const object = T3Gv.opt.GetObjectPtr(objectID, false);
@@ -571,9 +570,9 @@ class Polygon extends BaseShape {
     T3Util.Log('S.Polygon: GetPerimeterPoints input:', { event, pointsArray, hookType, rotateFlag, tableID, additionalParams });
 
     let intersectionCount, rotatedPoints, perimeterPoints = [], tempPoints = [], intersectionPoints = {}, defaultPoint = [0, 0];
-    const dimension = OptConstant.Defines.SED_CDim;
+    const dimension = OptConstant.Common.MaxDim;
 
-    if (pointsArray.length === 1 && pointsArray[0].y === -OptConstant.SEDA_Styles.SEDA_CoManager && this.IsCoManager(intersectionPoints)) {
+    if (pointsArray.length === 1 && pointsArray[0].y === -OptConstant.AStyles.CoManager && this.IsCoManager(intersectionPoints)) {
       perimeterPoints.push(new Point(intersectionPoints.x, intersectionPoints.y));
       if (pointsArray[0].id != null) {
         perimeterPoints[0].id = pointsArray[0].id;
@@ -582,7 +581,7 @@ class Polygon extends BaseShape {
       return perimeterPoints;
     }
 
-    if (hookType === OptConstant.HookPts.SED_KAT || hookType === OptConstant.HookPts.SED_KATD) {
+    if (hookType === OptConstant.HookPts.KAT || hookType === OptConstant.HookPts.KATD) {
       perimeterPoints = this.BaseDrawingObject_GetPerimPts(event, pointsArray, hookType, false, tableID);
       T3Util.Log('S.Polygon: GetPerimeterPoints output:', perimeterPoints);
       return perimeterPoints;
@@ -603,8 +602,8 @@ class Polygon extends BaseShape {
     // }
 
     const pointsLength = pointsArray.length;
-    const useConnectFlag = this.flags & NvConstant.ObjFlags.SEDO_UseConnect;
-    // const tableRowsFlag = this.hookflags & NvConstant.HookFlags.SED_LC_TableRows && table;
+    const useConnectFlag = this.flags & NvConstant.ObjFlags.UseConnect;
+    // const tableRowsFlag = this.hookflags & NvConstant.HookFlags.LcTableRows && table;
 
     if (useConnectFlag /*|| tableRowsFlag*/) {
       for (let i = 0; i < pointsLength; i++) {
@@ -616,14 +615,14 @@ class Polygon extends BaseShape {
         }
       }
     } else {
-      if (this.flags & NvConstant.ObjFlags.SEDO_ContConn && !T3Gv.opt.fromOverlayLayer) {
+      if (this.flags & NvConstant.ObjFlags.ContConn && !T3Gv.opt.fromOverlayLayer) {
         perimeterPoints = this.BaseDrawingObject_GetPerimPts(event, pointsArray, hookType, rotateFlag, tableID, additionalParams);
         T3Util.Log('S.Polygon: GetPerimeterPoints output:', perimeterPoints);
         return perimeterPoints;
       }
 
       perimeterPoints = this.BaseDrawingObject_GetPerimPts(event, pointsArray, hookType, true, tableID, additionalParams);
-      const polyPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, false, false, false, null);
+      const polyPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, false, false, null);
       const polyPointsLength = polyPoints.length;
 
       if (!Utils2.EqualPt(polyPoints[0], polyPoints[polyPointsLength - 1])) {
@@ -685,7 +684,7 @@ class Polygon extends BaseShape {
     const perimeterPoints = [];
     const pointsCount = pointsArray.length;
     const triangleShapeType = PolygonConstant.ShapeTypes.TRIANGLE;
-    const dimension = OptConstant.Defines.SED_CDim;
+    const dimension = OptConstant.Common.MaxDim;
 
     for (let i = 0; i < pointsCount; i++) {
       perimeterPoints[i] = { x: 0, y: 0, id: 0 };
@@ -747,7 +746,7 @@ class Polygon extends BaseShape {
     height = this.inside.height;
 
     if (this.NeedsSIndentCount) {
-      polygonPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true, false, false, null);
+      polygonPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, true, false, false, null);
       indentValues = T3Gv.opt.GuessTextIndents(polygonPoints, this.Frame);
       this.left_sindent = indentValues.left_sindent;
       this.right_sindent = indentValues.right_sindent;
@@ -784,7 +783,7 @@ class Polygon extends BaseShape {
       if (this.polylist) {
         Instance.Shape.PolyLine.prototype.WriteShapeData.call(this, outputStream, context, true);
       } else {
-        let code = ShapeUtil.WriteCode(outputStream, ShapeConstant.OpNameCode.cDrawPoly);
+        let code = ShapeUtil.WriteCode(outputStream, DSConstant.OpNameCode.cDrawPoly);
         vertexCount = this.VertexArray.length;
         width = ShapeUtil.ToSDWinCoords(this.Frame.width, context.coordScaleFactor);
         height = ShapeUtil.ToSDWinCoords(this.Frame.height, context.coordScaleFactor);
@@ -796,18 +795,18 @@ class Polygon extends BaseShape {
             InstID: polyId,
             n: vertexCount,
             dim: { x: 0, y: 0 },
-            flags: ShapeConstant.PolyListFlags.SD_PLF_FreeHand,
+            flags: DSConstant.PolyListFlags.SD_PLF_FreeHand,
             ldim: { x: width, y: height }
           };
-          outputStream.writeStruct(ShapeConstant.PolyListStruct20, polyListStruct);
+          outputStream.writeStruct(DSConstant.PolyListStruct20, polyListStruct);
         } else {
           polyListStruct = {
             InstID: polyId,
             n: vertexCount,
-            flags: ShapeConstant.PolyListFlags.SD_PLF_FreeHand,
+            flags: DSConstant.PolyListFlags.SD_PLF_FreeHand,
             ldim: { x: width, y: height }
           };
-          outputStream.writeStruct(ShapeConstant.PolyListStruct24, polyListStruct);
+          outputStream.writeStruct(DSConstant.PolyListStruct24, polyListStruct);
         }
         ShapeUtil.WriteLength(outputStream, code);
 
@@ -815,7 +814,7 @@ class Polygon extends BaseShape {
           vertexX = this.VertexArray[i].x * width;
           vertexY = this.VertexArray[i].y * height;
           polySegment = {
-            otype: NvConstant.ObjectTypes.SED_LineD,
+            otype: NvConstant.FNObjectTypes.SED_LineD,
             dataclass: 0,
             ShortRef: 0,
             param: 0,
@@ -823,11 +822,11 @@ class Polygon extends BaseShape {
             lpt: { x: vertexX, y: vertexY },
             dimDeflection: 0
           };
-          code = ShapeUtil.WriteCode(outputStream, ShapeConstant.OpNameCode.cDrawPolySeg);
-          outputStream.writeStruct(ShapeConstant.PolySegStruct, polySegment);
+          code = ShapeUtil.WriteCode(outputStream, DSConstant.OpNameCode.cDrawPolySeg);
+          outputStream.writeStruct(DSConstant.PolySegStruct, polySegment);
           ShapeUtil.WriteLength(outputStream, code);
         }
-        outputStream.writeUint16(ShapeConstant.OpNameCode.cDrawPolyEnd);
+        outputStream.writeUint16(DSConstant.OpNameCode.cDrawPolyEnd);
       }
     }
     super.WriteShapeData(outputStream, context);
@@ -840,7 +839,7 @@ class Polygon extends BaseShape {
 
     let shouldUpdate = true;
     const shapeTypes = PolygonConstant.ShapeTypes;
-    const dimension = OptConstant.Defines.SED_CDim;
+    const dimension = OptConstant.Common.MaxDim;
 
     this.VertexArray = T3Gv.opt.FlipVertexArray(this.VertexArray, flipType);
 
@@ -848,7 +847,7 @@ class Polygon extends BaseShape {
       Instance.Shape.PolyLine.prototype.Flip.call(this, flipType);
     }
 
-    if (flipType & OptConstant.ExtraFlags.SEDE_FlipVert && this.dataclass != null) {
+    if (flipType & OptConstant.ExtraFlags.FlipVert && this.dataclass != null) {
       switch (this.dataclass) {
         case shapeTypes.ARROW_TOP:
           this.dataclass = shapeTypes.ARROW_BOTTOM;
@@ -875,20 +874,20 @@ class Polygon extends BaseShape {
         default:
           this.extraflags = Utils2.SetFlag(
             this.extraflags,
-            OptConstant.ExtraFlags.SEDE_FlipVert,
-            !(this.extraflags & OptConstant.ExtraFlags.SEDE_FlipVert)
+            OptConstant.ExtraFlags.FlipVert,
+            !(this.extraflags & OptConstant.ExtraFlags.FlipVert)
           );
           shouldUpdate = false;
       }
 
-      if (shouldUpdate && this.flags & NvConstant.ObjFlags.SEDO_UseConnect && this.ConnectPoints) {
+      if (shouldUpdate && this.flags & NvConstant.ObjFlags.UseConnect && this.ConnectPoints) {
         for (let i = 0; i < this.ConnectPoints.length; i++) {
           this.ConnectPoints[i].y = dimension - this.ConnectPoints[i].y;
         }
       }
     }
 
-    if (flipType & OptConstant.ExtraFlags.SEDE_FlipHoriz && this.dataclass != null) {
+    if (flipType & OptConstant.ExtraFlags.FlipHoriz && this.dataclass != null) {
       switch (this.dataclass) {
         case shapeTypes.ARROW_LEFT:
           this.dataclass = shapeTypes.ARROW_RIGHT;
@@ -903,13 +902,13 @@ class Polygon extends BaseShape {
         default:
           this.extraflags = Utils2.SetFlag(
             this.extraflags,
-            OptConstant.ExtraFlags.SEDE_FlipHoriz,
-            !(this.extraflags & OptConstant.ExtraFlags.SEDE_FlipHoriz)
+            OptConstant.ExtraFlags.FlipHoriz,
+            !(this.extraflags & OptConstant.ExtraFlags.FlipHoriz)
           );
           shouldUpdate = false;
       }
 
-      if (shouldUpdate && this.flags & NvConstant.ObjFlags.SEDO_UseConnect && this.ConnectPoints) {
+      if (shouldUpdate && this.flags & NvConstant.ObjFlags.UseConnect && this.ConnectPoints) {
         for (let i = 0; i < this.ConnectPoints.length; i++) {
           this.ConnectPoints[i].x = dimension - this.ConnectPoints[i].x;
         }
@@ -918,17 +917,17 @@ class Polygon extends BaseShape {
 
     T3Gv.opt.SetLinkFlag(
       this.BlockID,
-      ShapeConstant.LinkFlags.SED_L_MOVE | ShapeConstant.LinkFlags.SED_L_CHANGE
+      DSConstant.LinkFlags.SED_L_MOVE | DSConstant.LinkFlags.SED_L_CHANGE
     );
 
     if (this.hooks.length) {
-      T3Gv.opt.SetLinkFlag(this.hooks[0].objid, ShapeConstant.LinkFlags.SED_L_MOVE);
+      T3Gv.opt.SetLinkFlag(this.hooks[0].objid, DSConstant.LinkFlags.SED_L_MOVE);
     }
 
     this.NeedsSIndentCount = true;
     this.UpdateFrame(this.Frame);
     this.Resize(
-      T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID),
+      T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID),
       this.Frame,
       this
     );
@@ -1012,7 +1011,7 @@ class Polygon extends BaseShape {
     }
 
     const extraFlags = this.extraflags;
-    if (extraFlags & (OptConstant.ExtraFlags.SEDE_FlipHoriz | OptConstant.ExtraFlags.SEDE_FlipVert) && vectors) {
+    if (extraFlags & (OptConstant.ExtraFlags.FlipHoriz | OptConstant.ExtraFlags.FlipVert) && vectors) {
       vectors = T3Gv.opt.FlipVertexArray(vectors, extraFlags);
     }
 
@@ -1068,8 +1067,8 @@ class Polygon extends BaseShape {
     }
 
     if (this.rflags) {
-      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Width, false);
-      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.SD_FP_Height, false);
+      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.Width, false);
+      this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.Height, false);
     }
 
     if (rotation) {
@@ -1126,7 +1125,7 @@ class Polygon extends BaseShape {
       this.Dimensions & NvConstant.DimensionFlags.ShowLineAngles &&
       this.polylist
     ) {
-      pointsArray = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true, true, false, null);
+      pointsArray = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, true, true, false, null);
       pointsCount = pointsArray.length;
 
       for (let i = 1; i < pointsCount; i++) {
@@ -1197,7 +1196,7 @@ class Polygon extends BaseShape {
       userData = textObj.GetUserData();
     }
 
-    const svgElement = T3Gv.opt.svgObjectLayer.GetElementByID(this.BlockID);
+    const svgElement = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
 
     if (userData.angleChange) {
       this.UpdateLineAngleDimensionFromText(svgElement, text, userData);
@@ -1210,7 +1209,7 @@ class Polygon extends BaseShape {
       return;
     }
 
-    if (this.polylist && (this.extraflags & OptConstant.ExtraFlags.SEDE_SideKnobs) > 0) {
+    if (this.polylist && (this.extraflags & OptConstant.ExtraFlags.SideKnobs) > 0) {
       T3Gv.opt.ShapeToPolyLine(this.BlockID, false, true);
       T3Gv.opt.GetObjectPtr(this.BlockID, false).UpdateDimensionFromText(svgElement, text, userData);
       T3Gv.opt.PolyLineToShape(this.BlockID);
@@ -1225,10 +1224,10 @@ class Polygon extends BaseShape {
     T3Util.Log('S.Polygon: GetDimensionPoints input');
 
     let dimensionPoints;
-    if (this.polylist && (this.extraflags & OptConstant.ExtraFlags.SEDE_SideKnobs) > 0) {
+    if (this.polylist && (this.extraflags & OptConstant.ExtraFlags.SideKnobs) > 0) {
       let deepCopiedShape = Utils1.DeepCopy(this);
       deepCopiedShape = T3Gv.opt.ShapeToPolyLine(this.BlockID, false, true, deepCopiedShape);
-      dimensionPoints = deepCopiedShape.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true, true, false, null);
+      dimensionPoints = deepCopiedShape.GetPolyPoints(OptConstant.Common.MaxPolyPoints, true, true, false, null);
     } else {
       dimensionPoints = Instance.Shape.BaseShape.prototype.GetDimensionPoints.call(this);
     }
@@ -1243,7 +1242,7 @@ class Polygon extends BaseShape {
     let widthDimension, heightDimension, angle, points = [];
     if (!this.polylist) return null;
 
-    points = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true, true, false, null);
+    points = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, true, true, false, null);
     if (this.polylist.segs.length !== 5 || !this.polylist.closed) return null;
 
     let filteredPoints = [];
@@ -1288,7 +1287,7 @@ class Polygon extends BaseShape {
       return null;
     }
 
-    if (!(this.rflags & NvConstant.FloatingPointDim.SD_FP_Width || this.rflags & NvConstant.FloatingPointDim.SD_FP_Height)) {
+    if (!(this.rflags & NvConstant.FloatingPointDim.Width || this.rflags & NvConstant.FloatingPointDim.Height)) {
       T3Util.Log('S.Polygon: GetDimensionFloatingPointValue output: null (no floating point dimensions)');
       return null;
     }
@@ -1300,13 +1299,13 @@ class Polygon extends BaseShape {
     }
 
     if (polyRectInfo.wdDim === dimensionType || polyRectInfo.wdDim + 2 === dimensionType) {
-      if (this.rflags & NvConstant.FloatingPointDim.SD_FP_Width) {
+      if (this.rflags & NvConstant.FloatingPointDim.Width) {
         dimensionValue = this.GetDimensionLengthFromValue(this.rwd);
         const result = this.GetLengthInRulerUnits(dimensionValue);
         T3Util.Log('S.Polygon: GetDimensionFloatingPointValue output:', result);
         return result;
       }
-    } else if ((polyRectInfo.htDim === dimensionType || polyRectInfo.htDim + 2 === dimensionType) && this.rflags & NvConstant.FloatingPointDim.SD_FP_Height) {
+    } else if ((polyRectInfo.htDim === dimensionType || polyRectInfo.htDim + 2 === dimensionType) && this.rflags & NvConstant.FloatingPointDim.Height) {
       dimensionValue = this.GetDimensionLengthFromValue(this.rht);
       const result = this.GetLengthInRulerUnits(dimensionValue);
       T3Util.Log('S.Polygon: GetDimensionFloatingPointValue output:', result);
@@ -1325,7 +1324,7 @@ class Polygon extends BaseShape {
       return false;
     }
 
-    const polygonPoints = this.GetPolyPoints(OptConstant.Defines.NPOLYPTS, true, true, false, null);
+    const polygonPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, true, true, false, null);
     const adjustedAngle = 360 - rotationAngle;
     const radians = 2 * Math.PI * (adjustedAngle / 360);
     Utils3.RotatePointsAboutCenter(this.Frame, -radians, polygonPoints);

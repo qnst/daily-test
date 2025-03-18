@@ -168,50 +168,35 @@ class BConstant {
 
   /**
    * Defines gloss effect types for surface finishes
-   * @property HARD - Distinct, polished gloss finish
-   * @property SOFT - Subtle, diffused gloss finish
+   * @property Hard - Distinct, polished gloss finish
+   * @property Soft - Subtle, diffused gloss finish
    */
   static GlossType = {
-    HARD: 'H',
-    SOFT: 'S'
+    Hard: 'H',
+    Soft: 'S'
   }
 
   /**
    * Defines size presets for visual effects with percentage values
-   * @property DEFAULT - Default effect size (10% of element size)
-   * @property SMALL - Small effect size (5% of element size)
-   * @property MEDIUM - Medium effect size (25% of element size)
-   * @property LARGE - Large effect size (10% of element size)
-   * @property GIANT - Very large effect size (5% of element size)
+   * @property Default - Default effect size (10% of element size)
+   * @property Small - Small effect size (5% of element size)
+   * @property Medium - Medium effect size (25% of element size)
+   * @property Large - Large effect size (10% of element size)
+   * @property Giant - Very large effect size (5% of element size)
    */
   static EffectSize = {
-    DEFAULT: {
-      id: 'D',
-      percentage: 0.1
-    },
-    SMALL: {
-      id: 'S',
-      percentage: 0.05
-    },
-    MEDIUM: {
-      id: 'M',
-      percentage: 0.25
-    },
-    LARGE: {
-      id: 'L',
-      percentage: 0.1
-    },
-    GIANT: {
-      id: 'G',
-      percentage: 0.05
-    }
+    Default: { id: 'D', percentage: 0.1 },
+    Small: { id: 'S', percentage: 0.05 },
+    Medium: { id: 'M', percentage: 0.25 },
+    Large: { id: 'L', percentage: 0.1 },
+    Giant: { id: 'G', percentage: 0.05 }
   }
 
 
   static WordState = {
-    WRONG: 0,
-    CORRECT: 1,
-    NOTPROCESSED: 2
+    Wrong: 0,
+    Correct: 1,
+    NotProcessed: 2
   }
 
   static Globals = {

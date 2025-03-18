@@ -1,284 +1,429 @@
-
-
+/**
+ * Constants used throughout the HVAC application
+ * Contains enumerations for shape types, events, drawing parameters and other system constants
+ */
 class OptConstant {
 
+  /**
+   * Canvas shape type identifiers
+   * Used to identify different shape types in the rendering system
+   */
   static CSType = {
-    RECT: 1,
-    RRECT: 2,
-    OVAL: 3,
-    LINE: 4,
-    POLYLINE: 5,
-    POLYGON: 6,
-    PATH: 7,
-    TEXT: 8,
-    IMAGE: 9,
-    GROUP: 10,
-    LAYER: 11,
-    SYMBOL: 12,
-    POLYLINECONTAINER: 13,
-    POLYPOLYLINE: 14,
-    SHAPECOPY: 15,
-    SHAPECONTAINER: 16
+    Rect: 1,               // Rectangle
+    RRect: 2,              // Rounded Rectangle
+    Oval: 3,               // Oval/Circle
+    Line: 4,               // Line
+    Polyline: 5,           // Multi-segment line
+    Polygon: 6,            // Closed polygon
+    Path: 7,               // SVG path
+    Text: 8,               // Text element
+    Image: 9,              // Image element
+    Group: 10,             // Group of shapes
+    Layer: 11,             // Layer container
+    Symbol: 12,            // Symbol instance
+    PolylineContainer: 13, // Container for polylines
+    PolyPolyline: 14,      // Multiple polylines
+    ShapeCopy: 15,         // Copy of another shape
+    ShapeContainer: 16     // Container for shapes
   }
 
+  /**
+   * Shape type string identifiers
+   * Used for shape creation and identification
+   */
   static ShapeType = {
-    RECT: 'Rect',
-    RRECT: 'RRect',
-    OVAL: 'Oval',
-    POLYGON: 'Polygon',
-    VECTORSYMBOL: 'VectorSymbol',
-    BITMAPSYMBOL: 'BitmapSymbol',
-    GROUPSYMBOL: 'GroupSymbol',
-    SVGFRAGMENTSYMBOL: 'SVGFragmentSymbol',
-    D3SYMBOL: 'D3Symbol'
+    Rect: 'Rect',                           // Rectangle shape
+    RRect: 'RRect',                         // Rounded rectangle shape
+    Oval: 'Oval',                           // Oval/Circle shape
+    Polygon: 'Polygon',                     // Polygon shape
+    VectorSymbol: 'VectorSymbol',           // Vector-based symbol
+    BitmapSymbol: 'BitmapSymbol',           // Bitmap/raster symbol
+    GroupSymbol: 'GroupSymbol',             // Group of symbols
+    SVGFragmentSymbol: 'SVGFragmentSymbol', // SVG fragment as symbol
+    D3Symbol: 'D3Symbol'                    // 3D symbol
   }
 
+  /**
+   * Event behavior constants
+   * Controls how events are processed for shapes
+   */
   static EventBehavior = {
-    NORMAL: 'visiblePainted',
-    INSIDE: 'visibleFill',
-    OUTSIDE: 'visibleStroke',
-    ALL: 'visible',
-    HIDDEN: 'painted',
-    HIDDEN_IN: 'fill',
-    HIDDEN_OUT: 'stroke',
-    HIDDEN_ALL: 'all',
-    NONE: 'none'
+    Normal: 'visiblePainted',       // Normal event processing
+    Inside: 'visibleFill',          // Events inside the shape
+    Outside: 'visibleStroke',       // Events on the shape outline
+    ALL: 'visible',                 // All events
+    Hidden: 'painted',              // Events on hidden elements
+    HiddenIn: 'fill',              // Events on hidden fills
+    HiddenOut: 'stroke',           // Events on hidden strokes
+    HiddenAll: 'all',              // All events including hidden
+    None: 'none'                    // No events
   }
 
+  /**
+   * Export type formats
+   * Used when exporting drawings to different formats
+   */
   static ExportType = {
-    None: 0,
-    PNG: 2,
-    SVG: 3,
-    JPEG: 13,
+    None: 0,    // No export
+    PNG: 2,     // PNG image format
+    SVG: 3,     // SVG vector format
+    JPEG: 13,   // JPEG image format
   }
 
+  /**
+   * Line type definitions
+   * Specifies different types of lines
+   */
   static LineTypes = {
-    SedLsNone: 0,
-    SedLsComm: 1,
-    SedLsDigi: 2,
-    SedLsChord: 3,
-    SedLsWall: 4,
-    SedLsMeasuringTape: 5
+    LsNone: 0,           // No line
+    LsComm: 1,           // Common line
+    LsDigi: 2,           // Digital line
+    LsChord: 3,          // Chord line
+    LsWall: 4,           // Wall line
+    LsMeasuringTape: 5   // Measuring tape line
   }
 
+  /**
+   * SVG path segment types
+   * Defines types of segments in SVG paths as per SVG spec
+   */
   static SVGPathSeg = {
-    PATHSEG_UNKNOWN: 0,
-    PATHSEG_CLOSEPATH: 1,
-    PATHSEG_MOVETO_ABS: 2,
-    PATHSEG_MOVETO_REL: 3,
-    PATHSEG_LINETO_ABS: 4,
-    PATHSEG_LINETO_REL: 5,
-    PATHSEG_CURVETO_CUBIC_ABS: 6,
-    PATHSEG_CURVETO_CUBIC_REL: 7,
-    PATHSEG_CURVETO_QUADRATIC_ABS: 8,
-    PATHSEG_CURVETO_QUADRATIC_REL: 9,
-    PATHSEG_ARC_ABS: 10,
-    PATHSEG_ARC_REL: 11,
-    PATHSEG_LINETO_HORIZONTAL_ABS: 12,
-    PATHSEG_LINETO_HORIZONTAL_REL: 13,
-    PATHSEG_LINETO_VERTICAL_ABS: 14,
-    PATHSEG_LINETO_VERTICAL_REL: 15,
-    PATHSEG_CURVETO_CUBIC_SMOOTH_ABS: 16,
-    PATHSEG_CURVETO_CUBIC_SMOOTH_REL: 17,
-    PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS: 18,
-    PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL: 19
+    PATHSEG_UNKNOWN: 0,                     // Unknown segment type
+    PATHSEG_CLOSEPATH: 1,                   // Close path command (Z)
+    PATHSEG_MOVETO_ABS: 2,                  // Move to absolute (M)
+    PATHSEG_MOVETO_REL: 3,                  // Move to relative (m)
+    PATHSEG_LINETO_ABS: 4,                  // Line to absolute (L)
+    PATHSEG_LINETO_REL: 5,                  // Line to relative (l)
+    PATHSEG_CURVETO_CUBIC_ABS: 6,           // Cubic bezier absolute (C)
+    PATHSEG_CURVETO_CUBIC_REL: 7,           // Cubic bezier relative (c)
+    PATHSEG_CURVETO_QUADRATIC_ABS: 8,       // Quadratic bezier absolute (Q)
+    PATHSEG_CURVETO_QUADRATIC_REL: 9,       // Quadratic bezier relative (q)
+    PATHSEG_ARC_ABS: 10,                    // Arc absolute (A)
+    PATHSEG_ARC_REL: 11,                    // Arc relative (a)
+    PATHSEG_LINETO_HORIZONTAL_ABS: 12,      // Horizontal line absolute (H)
+    PATHSEG_LINETO_HORIZONTAL_REL: 13,      // Horizontal line relative (h)
+    PATHSEG_LINETO_VERTICAL_ABS: 14,        // Vertical line absolute (V)
+    PATHSEG_LINETO_VERTICAL_REL: 15,        // Vertical line relative (v)
+    PATHSEG_CURVETO_CUBIC_SMOOTH_ABS: 16,   // Smooth cubic bezier absolute (S)
+    PATHSEG_CURVETO_CUBIC_SMOOTH_REL: 17,   // Smooth cubic bezier relative (s)
+    PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS: 18, // Smooth quadratic bezier absolute (T)
+    PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL: 19  // Smooth quadratic bezier relative (t)
   }
 
-  static ObjectTypes = {
-    SED_Shape: 0,
-    SED_LineD: 1,
-    SED_SegL: 2,
-    SED_Array: 3,
-    SED_PolyL: 4,
-    SED_NURBS: 501,
-    SED_NURBSSEG: 502,
-    SED_ELLIPSE: 503,
-    SED_ELLIPSEEND: 504,
-    SED_QUADBEZ: 505,
-    SED_QUADBEZCON: 506,
-    SED_CUBEBEZ: 507,
-    SED_CUBEBEZCON: 508,
-    SED_SPLINE: 509,
-    SED_SPLINECON: 510,
-    SED_MOVETO: 600,
-    SED_MOVETO_NEWPOLY: 601,
-    SED_Freehand: 7
-  }
-
+  /**
+   * Line type identifiers
+   * Defines various types of lines in the system
+   */
   static LineType = {
-    LINE: 1,
-    ARCLINE: 2,
-    SEGLINE: 3,
-    ARCSEGLINE: 4,
-    POLYLINE: 5,
-    PARABOLA: 6,
-    FREEHAND: 7,
-    NURBS: 501,
-    NURBSSEG: 502,
-    ELLIPSE: 503,
-    ELLIPSEEND: 504,
-    QUADBEZ: 505,
-    QUADBEZCON: 506,
-    CUBEBEZ: 507,
-    CUBEBEZCON: 508,
-    SPLINE: 509,
-    SPLINECON: 510,
-    MOVETO: 600,
-    MOVETO_NEWPOLY: 601
+    LINE: 1,                 // Simple line
+    ARCLINE: 2,              // Arc line
+    SEGLINE: 3,              // Segmented line
+    ARCSEGLINE: 4,           // Arc segment line
+    POLYLINE: 5,             // Multi-segment line
+    PARABOLA: 6,             // Parabolic curve
+    FREEHAND: 7,             // Freehand drawn line
+    NURBS: 501,              // Non-uniform rational B-spline
+    NURBSSEG: 502,           // NURBS segment
+    ELLIPSE: 503,            // Elliptical line
+    ELLIPSEEND: 504,         // Ellipse endpoint
+    QUADBEZ: 505,            // Quadratic bezier curve
+    QUADBEZCON: 506,         // Quadratic bezier connector
+    CUBEBEZ: 507,            // Cubic bezier curve
+    CUBEBEZCON: 508,         // Cubic bezier connector
+    SPLINE: 509,             // Spline curve
+    SPLINECON: 510,          // Spline connector
+    MOVETO: 600,             // Move to point
+    MOVETO_NEWPOLY: 601      // Move to start new polygon
   }
 
-
+  /**
+   * Arc quadrant identifiers
+   * Defines the quadrants for arc positioning
+   */
   static ArcQuad = {
-    SD_PLA_TL: 0,
-    SD_PLA_BL: 1,
-    SD_PLA_BR: 2,
-    SD_PLA_TR: 3
+    PLA_TL: 0,       // Top-left quadrant
+    PLA_BL: 1,       // Bottom-left quadrant
+    PLA_BR: 2,       // Bottom-right quadrant
+    PLA_TR: 3        // Top-right quadrant
   }
 
+  /**
+   * Additional object flags
+   * Specifies extended behaviors for objects
+   */
   static ObjMoreFlags = {
-    SED_MF_FixedRR: 64,
-    SED_MF_Container: 128,
-    SED_MF_UseInfoNoteIcon: 256,
-    SED_MF_ContainerChild: 512,
-    SED_MF_AutoContainer: 1024,
-    SED_MF_Frame_AllowNesting: 2048,
-    SED_MF_Frame_Group: 4096
+    FixedRR: 64,             // Fixed rounded rectangle
+    Container: 128,          // Container object
+    UseInfoNoteIcon: 256,    // Use information note icon
+    ContainerChild: 512,     // Child of a container
+    AutoContainer: 1024,     // Auto-container
+    FrameAllowNesting: 2048, // Allow nested frames
+    FrameGroup: 4096         // Frame group
   }
 
+  /**
+   * System-wide constants and definitions
+   * Contains various measurement values, dimensions and default settings
+   */
+  static Common = {
+    /**
+     * Maximum canvas dimension in drawing units
+     * Used as a bound for drawing space calculations
+     */
+    DimMax: 30000,
 
-  static Defines = {
-    SED_CDim: 30000,
+    /**
+     * Metric conversion factor (inches to cm)
+     * Used for converting between imperial and metric units
+     */
     MetricConv: 2.54,
-    CONNECTPT_DIM: 7,
-    CONNECTPT_LINE_DIM: 16,
-    // JOINPT_DIM: 10,
-    JOINPT_LINE_DIM: 32,
-    SED_MinWid: 1,
-    NPOLYPTS: 100,
-    SED_RoundFactor: 0.292893218,
+
+    /**
+     * Dimensions for connection and join points
+     * Defines the visual size of different connection elements
+     */
+    ConnPointDim: 7,
+    ConnPointLineDim: 16,
+    JoinPointLineDim: 32,
+
+    /**
+     * Minimum width for shapes and elements
+     * Prevents creation of shapes that are too small to be usable
+     */
+    MinWidth: 1,
+
+    /**
+     * Maximum number of points allowed in a polygon
+     * Limits resource usage for complex polygons
+     */
+    MaxPolyPoints: 100,
+
+    /**
+     * Rounding factor for corners and edges
+     * Used in calculations for rounded corners
+     */
+    RoundFactor: 0.292893218,
+
+    /**
+     * Maximum value for long integers
+     * Used as a boundary in calculations
+     */
     LongIntMax: 2147483647,
-    SED_HorizOnly: 1,
-    SED_VertOnly: 2,
-    SED_SegMinLen: 4,
-    SED_SegMinSeg: 4,
-    // SD_MaxLongDim: 10000000,
-    SED_SegDefLen: 25,
-    SED_Slop: 7,
-    // SED_EdgeSlop: 5,
-    SED_SlopShapeExtra: 10,
-    SED_ConnectorSlop: 25,
-    SED_FlowConnectorSlop: 75,
-    SED_FlowRadialSlop: 150,
-    SED_FlowConnectorDisp: 50,
-    SED_KnobSize: 9,
-    SED_RKnobSize: 7,
-    SED_CKnobSize: 14,
-    SED_MinDim: 4,
+
+    /**
+     * Constraint flags for movement
+     * Controls how objects can be moved or resized
+     */
+    HorizOnly: 1,
+    VertOnly: 2,
+
+    /**
+     * Segment dimension constraints
+     * Controls minimum sizes for line segments
+     */
+    SegMinLen: 4,
+    SegMinSeg: 4,
+    SegDefLen: 25,
+
+    /**
+     * Slop values for selection tolerance
+     * Determines how close to an object the cursor must be to select it
+     */
+    Slop: 7,
+    SlopShapeExtra: 10,
+    ConnectorSlop: 25,
+    FlowConnectorSlop: 75,
+    FlowRadialSlop: 150,
+    FlowConnectorDisp: 50,
+
+    /**
+     * Knob sizes for different control points
+     * Defines the visual size of handles used to manipulate objects
+     */
+    KnobSize: 9,
+    RKnobSize: 7,
+    CKnobSize: 14,
+
+    /**
+     * Minimum dimension for shapes
+     * Prevents creation of shapes that are too small to be visible
+     */
+    MinDim: 4,
+
+    /**
+     * Prefixes for special elements
+     * Used to identify different types of elements in the DOM
+     */
     Action: 'act_',
     HitAreas: 'hitareas_',
-    // TableRowHit: 'table_rowhit',
-    // TableRowHitHidden: 'table_rowhithidden',
-    // TableRowSelection: 'table_rowselection',
-    // TableColHit: 'table_colhit',
-    // TableColHitHidden: 'table_colhithidden',
-    // TableColSelection: 'table_colselection',
-    // TableCellHit: 'table_cellhit',
-    // TableTextHit: 'table_texthit',
-    // TableSelection: 'table_selection',
-    // TableCells: 'table_cells',
-    // TableRowZone: 'table_rowzone',
-    // TableColZone: 'table_colzone',
-    // TableZoneDim: 3,
     GraphTextHit: 'graph_texthit',
-    // TableCellFrame: 'table_cellframe',
-    // TableCellSeparator: 'table_menuseparator',
-    // TableCellNoHit: 'table_cellnohit',
     EllipseAxes: 'axes_',
-    SED_MaxPolySegs: 500,
-    SD_MAXSTEPS: 100,
-    DimensionDefaultStandoff: 25,
-    DimensionDefaultNonStandoff: 5,
-    DimensionDefaultTextGap: 3,
-    DimensionLineColor: '#000000',// '#9999FF',
 
-    // Set the default value to -2.5
-    CoordinateLineDefaultStandoff: -2.5,// 25,
+    /**
+     * Maximum limits for complex objects
+     * Prevents performance issues with overly complex elements
+     */
+    MaxPolySegs: 500,
+    MaxSteps: 100,
+
+    /**
+     * Dimension line parameters
+     * Controls appearance and positioning of dimension lines
+     */
+    DimDefaultStandoff: 25,
+    DimDefaultNonStandoff: 5,
+    DimDefaultTextGap: 3,
+    DimLineColor: '#000000',
+
+    /**
+     * Coordinate line parameters
+     * Controls appearance and positioning of coordinate lines
+     */
+    CoordinateLineDefaultStandoff: -2.5,
     CoordinateLineDefaultNonStandoff: 0,
     CoordinateLineDefaultTextGap: 3,
-
-    //Double
     CoordinateLineColor: 'blue',
+
+    /**
+     * Object finding parameters
+     * Controls sensitivity when searching for objects
+     */
     FindObjectMinHitSpot: 5,
-    // DEFAULT_NONWORKINGDAYS: 130,
-    SED_DefTMargin: 2,
-    // DefaultStyle: 'Style7',
+
+    /**
+     * Default text margin
+     * Defines spacing around text elements
+     */
+    DefTextMargin: 2,
+
+    /**
+     * Text block style identifier
+     * Defines the style name for text blocks
+     */
     TextBlockStyle: 'Text Block',
-    // D3Style: 'D3',
-    // GanttBarDefaultStyle: 'Remaining',
+
+    /**
+     * Default margin for elements
+     * Defines standard margin around elements
+     */
     DefMargin: 50,
-    // SED_MaxLineThick: 48,
-    // SED_MaxJSLineThick: 8,
-    SED_DNULL: 4294967295,
+
+    /**
+     * Special null value for drawing operations
+     * Used to represent null or invalid values
+     */
+    DNull: 4294967295,
+
+    /**
+     * Default rounded rectangle parameters
+     * Controls roundness of rectangle corners
+     */
     DefRRect: 0.2,
     DefFixedRRect: 0.05,
-    // Icon_Person: 2,
-    // Icon_Dim: 18,
-    Shape_Width: 150,
-    Shape_Height: 75,
-    Shape_Square: 100,
-    SDMAXHOPS: 32,
-    // SED_MaxPoints: 16000,
-    // SED_PolyLNPts: 301,
-    // HOPPOLYPTS: 25,
-    // MAXARRAYSPACING: 1000,
-    // SED_DefThick: 6,
+
+    /**
+     * Default shape dimensions
+     * Provides standard sizes for newly created shapes
+     */
+    ShapeWidth: 150,
+    ShapeHeight: 75,
+    ShapeSquare: 100,
+
+    /**
+     * Maximum hops for shape detection
+     * Limits the depth of recursion when traversing shapes
+     */
+    MaxHops: 32,
+
+    /**
+     * Maximum working dimensions
+     * Defines the bounds of the drawing canvas
+     */
     MaxWorkDimX: 320000,
     MaxWorkDimY: 320000,
-    // CITreeSpacing: 36,
-    CITreeSpacingExtra: 16,
-    Connector_PlusPath: 'assets/images/connector/plus.svg',
-    Connector_MinusPath: 'assets/images/connector/minus.svg',
-    Connector_Move_Vertical_Path: 'assets/images/connector/move-vertical.svg',
-    Connector_Move_Horizontal_Path: 'assets/images/connector/move-horizontal.svg',
-    Floorplan_WallOpeningID: '6f8f8fce-dc39-40ec-8b44-3bc91897ca2b',
-    // Stickynote_SymbolID: '20b1b997-2ad1-461e-8cb7-c16920498da9',
+
+    /**
+     * Tree spacing parameter
+     * Controls spacing in tree-like structures
+     */
+    CITreeSpaceExtra: 16,
+
+    /**
+     * Connector icon paths
+     * Defines file paths for connector icons
+     */
+    ConPlusPath: 'plus.svg',
+    ConMinusPath: 'minus.svg',
+    ConMoveVerticalPath: 'move-vertical.svg',
+    ConMoveHorizontalPath: 'move-horizontal.svg',
+
+    /**
+     * Floorplan wall opening identifier
+     * Unique ID for wall openings in floorplans
+     */
+    WallOpenId: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+
+    /**
+     * Action arrow dimensions
+     * Defines size parameters for action arrows
+     */
     ActionArrowSizeH: 20,
     ActionArrowSizeV: 13,
-    baseArrowSlop: 7,
-    connectorArrowSlop: 25,
-    // Swimlane_Width: 150,
-    // Swimlane_Height: 75,
-    // MaxUserLayers: 32,
+
+    /**
+     * Arrow slop parameters
+     * Controls selection tolerance for arrows
+     */
+    BaseArrowSlop: 7,
+    ConnectorArrowSlop: 25,
+
+    /**
+     * Minimum side point length
+     * Defines minimum length for side points
+     */
     MinSidePointLength: 40,
+
+    /**
+     * Default ruler major increment
+     * Defines spacing for major tick marks on rulers
+     */
     DefaultRulerMajor: 100,
-    // STANDARD_INTERIOR_WALL: 8.33325,
-    // STANDARD_EXTERIOR_WALL: 12.5,
-    // METRIC_INTERIOR_WALL: 11.811023622047243,
-    // METRIC_EXTERIOR_WALL: 15.74796,
+
+    /**
+     * Annotation hotspot distance
+     * Defines distance for annotation interaction
+     */
     AnnoHotDist: 200,
+
+    /**
+     * Rounded rectangle fixed dimension
+     * Standard size for rounded rectangles
+     */
     RRectFixedDim: 100,
-    MinLineDistanceForDeterminingOrientation: 0.2,
-    // Note_TextMargin: 6,
-    // Note_FontSize: 12,
-    // Note_Spacing: 0.1,
+
+    /**
+     * Minimum line distance for orientation detection
+     * Determines when a line's orientation can be calculated
+     */
+    MinLineDisDeterminOri: 0.2,
+
+    /**
+     * Icon shape offset parameters
+     * Controls positioning of icons within shapes
+     */
     IconShapeBottomOffset: 2,
     iconShapeRightOffset: 2,
-    // TimelineRowHeight: 25,
-    // NoteHeight: 20,
-    // SVGIconIndex: 450,
-    // MinCellDim: 3,
-    // MaxRecentSymbols: 8,
-    // MaxSwimlanes: 100,
-    // SwimlaneGap: 20,
-    // FrameGap: 20,
-    // FrameTitleHeight: 40,
-    // FrameTitleWidth: 200,
-    // FrameFillColor: '#F5F6F7',
-    // FrameLineColor: '#DDDDDD',
-    // FrameTextColor: '#333333',
+
+    /**
+     * Default layer name
+     * Standard name for the first layer in drawings
+     */
     DefaultLayerName: 'Layer-1',
-    // MinLineDrawGap: 20,
-    //CustomSymbolSignature: 'JSCustomSymbol',
+
+    /**
+     * Default pen styling parameters
+     * Defines standard appearance for pen strokes
+     */
     PenStylingDefault: {
       Line: {
         Thickness: 1,
@@ -289,6 +434,11 @@ class OptConstant {
         }
       }
     },
+
+    /**
+     * Default highlighter styling parameters
+     * Defines standard appearance for highlighter strokes
+     */
     HighlighterStylingDefault: {
       Line: {
         Thickness: 5,
@@ -301,329 +451,343 @@ class OptConstant {
     }
   }
 
+  /**
+   * Additional object flag constants
+   * Controls special behaviors for objects
+   */
   public static ExtraFlags = {
-    // SEDE_NoColor: 1,
-    // SEDE_NoShadow: 2,
-    // SEDE_NoTShadow: 4,
-    SEDE_FlipHoriz: 8,
-    SEDE_FlipVert: 16,
-    SEDE_NoRotate: 32,
-    // SEDE_OldHookPt: 64,
-    // SEDE_PermAssoc: 128,
-    // SEDE_TableFit: 256,
-    // SEDE_TableActive: 512,
-    // SEDE_License: 1024,
-    // SEDE_PhotoPH: 2048,
-    // SEDE_ShareTable: 4096,
-    // SEDE_ShareProp: 8192,
-    // SEDE_AutoParent: 16384,
-    // SEDE_AutoNumber: 32768,
-    // SEDE_AutoChild: 65536,
-    // SEDE_ShareScale: 131072,
-    // SEDE_GroupHasScript: 262144,
-    // SEDE_IsPhotoTitle: 524288,
-    SEDE_SideKnobs: 1048576,
-    SEDE_ConnToConn: 2097152,
-    // SEDE_ConnToShapes: 4194304,
-    SEDE_NoDelete: 8388608,
-    // SEDE_LinkVCenter: 16777216,
-    // SEDE_MaintainLinkedObjOrientation: 16777216,
-    // SEDE_ImageDup: 33554432,
-    // SEDE_ComboSelect: 67108864,
-    SEDE_CollapseConn: 134217728,
-    // SEDE_ExtraPolySegs: 268435456,
-    // SEDE_DataUpdate: 536870912,
-    // SEDE_NoDraw: 1073741824,
-    SEDE_DeleteOnUnhook: 2147483648
+    FlipHoriz: 8,                // Flip horizontally
+    FlipVert: 16,                // Flip vertically
+    NoRotate: 32,                // Prevent rotation
+    SideKnobs: 1048576,          // Show side knobs
+    ConnToConn: 2097152,         // Allow connector-to-connector
+    NoDelete: 8388608,           // Prevent deletion
+    CollapseConn: 134217728,     // Collapsible connector
+    DeleteOnUnhook: 2147483648   // Delete when unhooked
   }
 
-  static DrawingObjectBaseClass = {
-    SHAPE: 0,
-    LINE: 1,
-    CONNECTOR: 3
+  /**
+   * Base class identifiers for drawing objects
+   * Specifies the fundamental type of a drawing object
+   */
+  static DrawObjectBaseClass = {
+    Shape: 0,       // Basic shape
+    Line: 1,        // Line
+    Connector: 3    // Connector
   }
 
-
-
+  /**
+   * Action arrow types
+   * Defines different types of action arrows in diagrams
+   */
   static ActionArrow = {
-    UP: 1,
-    LEFT: 2,
-    DOWN: 3,
-    RIGHT: 4,
-    SLOP: 5,
-    CUSTOM: 6,
-    ENTER: 7,
-    COMANAGER: 8,
-    ASSISTANT: 9,
-    ADDPARENTS: 10,
-    ADDDESCENDANTS: 11
+    Up: 1,              // Upward arrow
+    Left: 2,            // Left arrow
+    Down: 3,            // Downward arrow
+    Right: 4,           // Right arrow
+    Slop: 5,            // Sloped arrow
+    Custom: 6,          // Custom arrow
+    Enter: 7,           // Enter arrow
+    CoManger: 8,       // Co-manager arrow
+    Assistant: 9,       // Assistant arrow
+    AddParents: 10,     // Add parents arrow
+    AddDescendants: 11  // Add descendants arrow
   }
 
+  /**
+   * SVG element class identifiers
+   * Classifies different types of SVG elements
+   */
   static SVGElementClass = {
-    SHAPE: 1,
-    SLOP: 2,
-    HATCH: 3,
-    TEXT: 4,
-    TEXTBACKGROUND: 5,
-    DIMENSIONTEXT: 6,
-    DIMENSIONLINE: 7,
-    BACKGROUNDIMAGE: 8,
-    ICON: 9,
-    NOTETEXT: 10,
-    ACTIONARROW: 11,
-    DIMENSIONTEXTNOEDIT: 12,
-    AREADIMENSIONLINE: 13,
-    GRAPHLINE: 14,
-    CoordinateLine: 21
+    Shape: 1,                  // Generic shape
+    Slop: 2,                   // Sloped element
+    Hatch: 3,                  // Hatching pattern
+    Text: 4,                   // Text element
+    TextBackground: 5,         // Background for text
+    DimText: 6,                // Dimension text
+    DimLine: 7,                // Dimension line
+    BackgroundImage: 8,        // Background image
+    Icon: 9,                   // Icon
+    NoteText: 10,              // Note text
+    ActionArrow: 11,           // Action arrow
+    DimTextNoEdit: 12,         // Non-editable dimension text
+    AreaDimLine: 13,           // Area dimension line
+    GraphLine: 14,             // Graph line
+    CoordinateLine: 21         // Coordinate line
   }
 
+  /**
+   * Content type identifiers
+   * Specifies types of content objects
+   */
   static ContentType = {
-    NONE: 1,
-    TEXT: 2,
-    TABLE: 3,
-    GRAPH: 4
+    None: 1,    // No content
+    Text: 2,    // Text content
+    Table: 3,   // Table content
+    Graph: 4    // Graph content
   }
 
+  /**
+   * Growth behavior constants
+   * Controls how objects resize
+   */
   static GrowBehavior = {
-    ALL: 0,
-    HCONSTRAIN: 1,
-    VCONSTRAIN: 2,
-    ProPortional: 3
+    All: 0,           // Grow in all directions
+    Horiz: 1,         // Constrain horizontal growth
+    Vertical: 2,      // Constrain vertical growth
+    ProPortional: 3   // Maintain proportions
   }
 
+  /**
+   * Line orientation constants
+   * Defines possible orientations for lines
+   */
   static LineOrientation = {
-    NONE: 1,
-    Horizontal: 2,
-    Vertical: 3,
-    DIAGONAL_TLRB: 4,
-    DIAGONAL_TRBL: 5
+    None: 1,              // No specific orientation
+    Horizontal: 2,        // Horizontal line
+    Vertical: 3,          // Vertical line
+    DiagonalTLRB: 4,      // Diagonal from top-left to bottom-right
+    DiagonalTRBL: 5       // Diagonal from top-right to bottom-left
   }
 
-
+  /**
+   * Hit area type constants
+   * Defines types of interactive hit areas
+   */
   static HitAreaType = {
-    CONNECTOR_COLLAPSE: 1,
-    CONNECTOR_EXPAND: 2,
-    EDITDIMENSIONTEXT: 3
+    ConnCollapse: 1,    // Area to collapse connector
+    ConnExpand: 2,      // Area to expand connector
+    EditDimText: 3      // Area to edit dimension text
   }
 
+  /**
+   * Shape icon type identifiers
+   * Defines types of icons that can appear on shapes
+   */
   static ShapeIconType = {
-    HYPERLINK: 'HYPERLINK',
-    NOTES: 'NOTES',
-    ATTACHMENT: 'ATTACHMENT',
-    FIELDDATA: 'FIELDDATA',
-    EXPANDTABLE: 'EXPANDTABLE',
-    COLLAPSETABLE: 'COLLAPSETABLE',
-    DATAACTION: 'DATAACTION',
-    EXPANDEDVIEW: 'EXPANDEDVIEW',
-    COMMENT: 'COMMENT'
+    HyperLink: 'HYPERLINK',         // Hyperlink icon
+    Notes: 'NOTES',                 // Notes icon
+    Attachment: 'ATTACHMENT',       // Attachment icon
+    FieldData: 'FIELDDATA',         // Field data icon
+    ExpandTable: 'EXPANDTABLE',     // Expand table icon
+    CollapseTable: 'COLLAPSETABLE', // Collapse table icon
+    DataAction: 'DATAACTION',       // Data action icon
+    ExpandedView: 'EXPANDEDVIEW',   // Expanded view icon
+    Comment: 'COMMENT'              // Comment icon
   }
 
-
+  /**
+   * Action trigger type constants
+   * Defines different types of interaction triggers
+   */
   static ActionTriggerType = {
-    TOPLEFT: 1,
-    TOPCENTER: 2,
-    TOPRIGHT: 3,
-    CENTERRIGHT: 4,
-    BOTTOMRIGHT: 5,
-    BOTTOMCENTER: 6,
-    BOTTOMLEFT: 7,
-    CENTERLEFT: 8,
-    ROTATE: 9,
-    MODIFYSHAPE: 10,
-    LINESTART: 11,
-    LINEEND: 12,
-    ATTACHPOINT: 13,
-    SEGL_ONE: 14,
-    SEGL_TWO: 15,
-    SEGL_THREE: 16,
-    POLYLNODE: 17,
-    POLYLADJ: 18,
-    POLYLEND: 19,
-    CONNECTOR_HOOK: 20,
-    CONNECTOR_PERP: 21,
-    CONNECTOR_ADJ: 22,
-    MOVEPOLYSEG: 23,
-    FLIP: 24,
-    TABLE_ROW: 25,
-    TABLE_COL: 26,
-    TABLE_SELECT: 27,
-    TABLE_EDIT: 28,
-    TABLE_ROWSELECT: 29,
-    TABLE_COLSELECT: 30,
-    LINELENGTH: 31,
-    SEGL_PRESERVE: 32,
-    LINE_THICKNESS: 33,
-    DIMENSION_LINE_ADJ: 34,
-    UPDATELINKS: 35,
-    CONTAINER_ADJ: 36
+    TopLeft: 1,               // Top-left handle
+    TopCenter: 2,             // Top-center handle
+    TopRight: 3,              // Top-right handle
+    CenterRight: 4,           // Center-right handle
+    BottomRight: 5,           // Bottom-right handle
+    BottomCenter: 6,          // Bottom-center handle
+    BottomLeft: 7,            // Bottom-left handle
+    CenterLeft: 8,            // Center-left handle
+    Rotate: 9,                // Rotate handle
+    ModifyShape: 10,          // Shape modification
+    LineStart: 11,            // Line start point
+    LineEnd: 12,              // Line end point
+    AttachPoint: 13,          // Attachment point
+    SeglOne: 14,              // Segment line point 1
+    SeglTwo: 15,              // Segment line point 2
+    SeglThree: 16,            // Segment line point 3
+    PolyNode: 17,             // Polyline node
+    PolyAdj: 18,              // Polyline adjustment
+    PolyEnd: 19,              // Polyline end
+    ConnectorHook: 20,        // Connector hook point
+    ConnectorRerp: 21,        // Connector perpendicular
+    ConnectorAdj: 22,         // Connector adjustment
+    MovePolySeg: 23,          // Move polygon segment
+    Flip: 24,                 // Flip action
+    LineLength: 31,           // Line length adjustment
+    SeglPreserve: 32,         // Preserve segment line
+    LineThickness: 33,        // Line thickness adjustment
+    DimLineAdj: 34,           // Dimension line adjustment
+    UpdateLinks: 35,          // Update links
+    ContainerAdj: 36          // Container adjustment
   }
 
+  /**
+   * Collaborative SVG event type constants
+   * Defines events for collaborative editing
+   */
   static CollabSVGEventTypes = {
-    Object_Move: 1,
-    Shape_Grow: 2,
-    Table_GrowColumn: 3,
-    TextEntry: 4
+    ObjectMove: 1,        // Object movement
+    ShapeGrow: 2,         // Shape resizing
+    TableGrowColumn: 3,   // Table column resize
+    TextEntry: 4           // Text entry
   }
 
+  /**
+   * Line angle dimension definition constants
+   * Specifies dimensions for line angle measurements
+   */
   static LineAngleDimensionDefs = {
-    ANGLEDIMENSION_ARROWHEAD_SIZE: 10,
-    ANGLEDIMENSION_ARROWHEAD_WIDTH: 4,
-    ANGLEDIMENSION_PREFERRED_ARROWSTEM_MINIMUM: 4,
-    ANGLEDIMENSION_PREFERRED_BISECTOR_LEN: 75
+    ArrowHeadSize: 10,              // Size of angle dimension arrowhead
+    ArrowHeadWidth: 4,              // Width of angle dimension arrowhead
+    PreferredArrowStemMin: 4,  // Minimum arrow stem length
+    PreferredBisectorLen: 75       // Preferred bisector length
   }
 
-  static Array_Flags = {
-    Array_LeaveA_Cl: 1,
-    Array_LeaveA_Cr: 1
+  /**
+   * Array flags
+   * Controls behavior of arrays
+   */
+  static ArrayFlags = {
+    LeaveACl: 1,  // Leave array class
+    LeaveACr: 1   // Leave array create
   }
 
-
-  static SEDA_Styles = {
-    SEDA_StartLeft: 1,
-    SEDA_BothSides: 2,
-    SEDA_Stagger: 4,
-    SEDA_PerpConn: 8,
-    SEDA_Linear: 16,
-    SEDA_Radial: 32,
-    SEDA_ReverseCol: 64,
-    SEDA_EndConn: 128,
-    SEDA_MinZero: 256,
-    SEDA_CoManager: 512,
-    SEDA_FlowConn: 1024,
-    SEDA_GenoConn: 2048,
-    SEDA_MatchSize: 4096,
-    SEDA_MinInvisible: 8192,
-    SEDA_MinOne: 16384,
-    SEDA_Timeline: 32768
+  /**
+   * Style flags for SEDA objects
+   * Controls styling and behavior of SEDA elements
+   */
+  static AStyles = {
+    StartLeft: 1,        // Start from left
+    BothSides: 2,        // Apply to both sides
+    Stagger: 4,          // Staggered layout
+    PerpConn: 8,         // Perpendicular connector
+    Linear: 16,          // Linear layout
+    Radial: 32,          // Radial layout
+    ReverseCol: 64,      // Reverse column order
+    EndConn: 128,        // End connector
+    MinZero: 256,        // Minimum zero
+    CoManager: 512,      // Co-manager
+    FlowConn: 1024,      // Flow connector
+    GenoConn: 2048,      // Genome connector
+    MatchSize: 4096,     // Match size
+    MinInvisible: 8192,  // Minimum invisible
+    MinOne: 16384,       // Minimum one
+    Timeline: 32768      // Timeline layout
   }
 
+  /**
+   * Connector definitions and constants
+   * Specifies dimensions and behaviors for connectors
+   */
   static ConnectorDefines = {
-    DefaultHt: 25,
-    DefaultWd: 25,
-    A_Bk: 0,
-    A_Cl: 1,
-    A_Cr: 2,
-    SEDA_NSkip: 3,
-    StubHookPt: - 3,
-    SEDAC_NORMAL: 0,
-    SEDAC_ABOVE: - 2,
-    SEDAC_BELOW: - 3,
-    SEDAC_PARENT: - 4
+    DefaultHt: 25,         // Default connector height
+    DefaultWd: 25,         // Default connector width
+    ABk: 0,               // Back alignment
+    ACl: 1,               // Center-left alignment
+    ACr: 2,               // Center-right alignment
+    NSkip: 3,         // Skip nodes
+    StubHookPt: -3,        // Stub hook point
+    Normal: 0,       // Normal connector
+    Above: -2,       // Above connector
+    Below: -3,       // Below connector
+    Parent: -4       // Parent connector
   }
 
+  /**
+   * Session flags
+   * Controls behavior of editing session
+   */
   static SessionFlags = {
-    // SEDS_Active: 1,
-    // SEDS_Snap: 2,
-    // SEDS_InLink: 4,
-    SEDS_LLink: 8,
-    SEDS_SLink: 16,
-    // SEDS_HorizText: 64,
-    // SEDS_TabNext: 128,
-    SEDS_AttLink: 256,
-    // SEDS_SwitchSpell: 512,
-    SEDS_FreeHand: 1024,
-    SEDS_NoTreeOverlap: 2048,
-    SEDS_AllowHops: 4096,
-    // SEDS_AutoConnect: 8192,
-    // SEDS_NoSideHitConvert: 16384,
-    // SEDS_Bk_Tile: 32768,
-    // SEDS_LockLayers: 65536,
-    // SEDS_AutoInsert: 131072,
-    // SEDS_SegLLinkToLinesOnly: 262144,
-    SEDS_AutoFormat: 524288,
-    SEDS_HideConnExpand: 1048576,
-    SEDS_IsFlowChart: 2097152,
-    // SEDS_NoAnimate: 4194304,
-    // SEDS_AllowShapeReplace: 8388608,
-    // SEDS_RetiredFlag: 16777216,
-    // SEDS_ShowTaskIcons: 33554432,
-    SEDS_NoStepFormatting: 1073741824,
-    // SEDS_NoPageBreakLines: 2147483648
+    LLink: 8,                    // Line link
+    SLink: 16,                   // Shape link
+    AttLink: 256,                // Attachment link
+    FreeHand: 1024,              // Freehand drawing mode
+    NoTreeOverlap: 2048,         // Prevent tree overlapping
+    AllowHops: 4096,             // Allow connector hops
+    AutoFormat: 524288,          // Auto-format
+    HideConnExpand: 1048576,     // Hide connector expand
+    IsFlowChart: 2097152,        // Flowchart mode
+    NoStepFormatting: 1073741824 // No step formatting
   }
 
-  static ContentHeaderFlags = {
-    // CT_OnePage: 16,
-    // CT_AutoSpell: 32,
-    CT_DA_Pages: 1024,
-    // CT_DA_Limit: 2048,
-    CT_DA_NoAuto: 4096,
-    // CT_HideLeftPanel: 16384,
-    // CT_SymbolSearchCombine: 32768,
-    CT_ShowRulers: 65536,
-    CT_ShowGrid: 131072,
-    CT_SnapToGridTL: 262144,
-    CT_SnapToGridC: 524288,
-    CT_SnapToShapes_Off: 1048576,
-    CT_ShowPageDividers: 2097152,
-    // CT_TaskChanged: 268435456
+  /**
+   * Content header flags
+   * Controls display and behavior of content headers
+   */
+  static CntHeaderFlags = {
+    Pages: 1024,            // Pages with direct access
+    NoAuto: 4096,           // No auto direct access
+    ShowRulers: 65536,         // Show rulers
+    ShowGrid: 131072,          // Show grid
+    SnapToGridTL: 262144,      // Snap to grid top-left
+    SnapToGridC: 524288,       // Snap to grid center
+    SnapToShapesOff: 1048576, // Turn off snap to shapes
+    ShowPageDividers: 2097152  // Show page dividers
   }
 
+  /**
+   * Hook point identifiers
+   * Defines attachment points on shapes
+   */
   static HookPts = {
-    SED_KTL: 1,
-    SED_KTR: 2,
-    // SED_KBL: 3,
-    // SED_KBR: 4,
-    SED_KTC: 5,
-    SED_KBC: 6,
-    SED_KLC: 7,
-    SED_KRC: 8,
-    SED_LL: 20,
-    SED_LR: 21,
-    SED_LT: 22,
-    SED_LB: 23,
-    SED_KCTL: 201,
-    SED_KCTR: 202,
-    SED_KCBL: 203,
-    SED_KCBR: 204,
-    SED_KCT: 205,
-    SED_KCB: 206,
-    SED_KCL: 207,
-    SED_KCR: 208,
-    SED_KCC: 209,
-    SED_KAT: 220,
-    SED_KATD: 221,
-    SED_AK: 300,
-    // SED_AKCTL: 301,
-    SED_AKCT: 305,
-    SED_AKCB: 306,
-    SED_AKCL: 307,
-    SED_AKCR: 308,
-    // SED_AKCC: 309,
-    SED_WTL: 321,
-    SED_WTR: 322,
-    SED_WBL: 323,
-    SED_WBR: 324,
-    SED_CustomBase: 500
+    KTL: 1,         // Top-left knob
+    KTR: 2,         // Top-right knob
+    KTC: 5,         // Top-center knob
+    KBC: 6,         // Bottom-center knob
+    KLC: 7,         // Left-center knob
+    KRC: 8,         // Right-center knob
+    LL: 20,         // Line left
+    LR: 21,         // Line right
+    LT: 22,         // Line top
+    LB: 23,         // Line bottom
+    KCTL: 201,      // Center-top-left knob
+    KCTR: 202,      // Center-top-right knob
+    KCBL: 203,      // Center-bottom-left knob
+    KCBR: 204,      // Center-bottom-right knob
+    KCT: 205,       // Center-top knob
+    KCB: 206,       // Center-bottom knob
+    KCL: 207,       // Center-left knob
+    KCR: 208,       // Center-right knob
+    KCC: 209,       // Center-center knob
+    KAT: 220,       // Attach-top knob
+    KATD: 221,      // Attach-top-down knob
+    AK: 300,        // Auto knob
+    AKCT: 305,      // Auto knob center-top
+    AKCB: 306,      // Auto knob center-bottom
+    AKCL: 307,      // Auto knob center-left
+    AKCR: 308,      // Auto knob center-right
+    WTL: 321,       // Wall top-left
+    WTR: 322,       // Wall top-right
+    WBL: 323,       // Wall bottom-left
+    WBR: 324,       // Wall bottom-right
+    CustomBase: 500 // Base for custom hook points
   }
 
+  /**
+   * Line subclass identifiers
+   * Specifies different subclasses of lines
+   */
   static LineSubclass = {
-    SED_LCH: 0,
-    SED_LCD: 1,
-    SED_LCV: 2
+    LCH: 0,  // Line class horizontal
+    LCD: 1,  // Line class diagonal
+    LCV: 2   // Line class vertical
   }
 
+  /**
+   * Segment line types
+   * Defines types of line segments
+   */
   static SeglTypes = {
-    SED_L_Line: 0,
-    SED_L_Arc: 1
+    Line: 0,  // Straight line segment
+    Arc: 1    // Arc line segment
   }
 
-
-
+  /**
+   * Modal operation types
+   * Defines different modal operation states
+   */
   static ModalOperations = {
-    NONE: 0,
-    STAMP: 1,
-    DRAW: 2,
-    DRAGDROP: 3,
-    STAMPTEXTONTAP: 4,
-    ADDCORNER: 5,
-    DRAWPOLYLINE: 6,
-    FORMATPAINTER: 7,
-    SPLITWALL: 8
+    None: 0,             // No modal operation
+    Stamp: 1,            // Stamp operation
+    Draw: 2,             // Draw operation
+    DragDrop: 3,         // Drag and drop
+    StampTextOnTap: 4,   // Stamp text on tap
+    AddCorner: 5,        // Add corner
+    DrawPolyline: 6,     // Draw polyline
+    FormatPainter: 7,    // Format painter
   }
-
-
-
-
 }
 
 export default OptConstant
