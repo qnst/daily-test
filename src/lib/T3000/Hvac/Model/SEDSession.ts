@@ -5,13 +5,89 @@ import 'reflect-metadata'
 import RulerConfig from "./RulerConfig"
 import PageRecord from "./PageRecord"
 import NvConstant from "../Data/Constant/NvConstant"
-import RecentSymbol from "./RecentSymbol"
+// import RecentSymbol from "./RecentSymbol"
 import FillData from "./FillData"
 import SEDDefault from './SEDDefault'
 import SEDGraphDefault from './SEDGraphDefault'
 import StateConstant from '../Data/State/StateConstant'
 import OptConstant from '../Data/Constant/OptConstant'
 
+/**
+ * Represents a session configuration for HVAC controls.
+ *
+ * @remarks
+ * The SEDSession class encapsulates state settings and configurations for a session, including display dimensions,
+ * default settings, graph configurations, background properties, and various flags and parameters to control
+ * the behavior of HVAC control interfaces.
+ *
+ * The class is initialized with default values using constants and instances of helper classes such as SEDDefault,
+ * SEDGraphDefault, FillData, RulerConfig, and PageRecord. These defaults ensure a consistent starting state for new
+ * sessions.
+ *
+ * @example
+ * // Create a new session instance and adjust some settings.
+ * const session = new SEDSession();
+ *
+ * // Update display dimensions.
+ * session.dim = { x: 1280, y: 720 };
+ *
+ * // Disable spell checking.
+ * session.EnableSpellCheck = false;
+ *
+ * // Log the session type to the console.
+ * console.log("Session type:", session.Type);
+ *
+ * @property {any} Type - The type identifier of the session, generally defined by state constants.
+ * @property {{ x: number, y: number }} dim - The dimensions of the session's display area.
+ * @property {number} flags - A set of flags combining options such as link mode, free-hand drawing, and tree overlap.
+ * @property {number} tselect - The selected tool or mode identifier (-1 indicates no selection).
+ * @property {{ x: number, y: number }} dupdisp - Offset values for duplicate display.
+ *
+ * @property {SEDDefault} def - Default session settings.
+ * @property {SEDGraphDefault} graphDef - Default graph component settings for the session.
+ *
+ * @property {number} RefCon - A reference constant used for general state referencing.
+ * @property {number} d_sarrow - The identifier for the starting arrow configuration.
+ * @property {boolean} d_sarrowdisp - Flag indicating whether the starting arrow is displayed.
+ * @property {number} d_earrow - The identifier for the ending arrow configuration.
+ * @property {boolean} d_earrowdisp - Flag indicating whether the ending arrow is displayed.
+ * @property {number} d_arrowsize - The size of the arrows used in the session.
+ *
+ * @property {boolean} centersnapalign - Determines if snap alignment should be centered.
+ * @property {number} hopdimindex - Index used to select hop dimensions.
+ * @property {{ x: any, y: any }} hopdim - Hop dimensions based on predefined constant values.
+ * @property {any} hopstyle - The style applied to hops within the session.
+ * @property {any} dimensions - Flags defining the various dimension types used in the session.
+ * @property {number} shapedimensions - Custom shape dimensions.
+ *
+ * @property {FillData} background - Background fill configuration.
+ * @property {number} bkdir - Background direction value.
+ * @property {number} bkid - Identifier for the current background.
+ * @property {{ left: number, top: number, right: number, bottom: number }} bkcroprect - The crop rectangle used for the background.
+ * @property {number} bkflags - Flags associated with background rendering settings.
+ *
+ * @property {number} addCount - A counter for additional operations or additions.
+ * @property {number} sequencemask - A mask used to represent a sequence of operations.
+ * @property {number} sequencestep - The current step in a sequence (-1 indicates no active sequence).
+ * @property {number} nsequencesteps - The total number of steps in the sequence.
+ * @property {number} sequenceflags - Flags that provide additional configuration for sequence behavior.
+ * @property {any} libSelectedRestore - A helper property to restore library selection states.
+ * @property {number} chartdirection - The direction in which charts are rendered.
+ * @property {number} copyPasteTrialVers - Version number for copy-paste trial operations.
+ * @property {number} taskmanagementflags - Flags used for managing tasks within the session.
+ * @property {number} taskdays - The number of days allocated for tasks (default is 7).
+ * @property {boolean} forcedotted - Whether or not dotted lines are enforced in drawings.
+ * @property {number} moreflags - Additional flags for extended session configurations.
+ * @property {number} fieldmask - A mask used for filtering or highlighting fields.
+ * @property {string} CurrentTheme - The identifier for the currently applied theme.
+ * @property {boolean} EnableSpellCheck - Flag indicating whether spell check is enabled.
+ *
+ * @property {RulerConfig} rulerConfig - Configuration settings for on-screen rulers.
+ * @property {PageRecord} Page - Represents the page record associated with the session.
+ *
+ * @property {number} CommentListID - Identifier for the comment list associated with the session.
+ * @property {number} CommentID - Identifier for a specific comment within the session.
+ */
 class SEDSession {
 
   //#region Properties
@@ -70,8 +146,8 @@ class SEDSession {
   @Type(() => PageRecord)
   public Page: PageRecord;
 
-  @Type(() => RecentSymbol)
-  public RecentSymbols: RecentSymbol[];
+  // @Type(() => RecentSymbol)
+  // public RecentSymbols: RecentSymbol[];
 
   public CommentListID: number;
   public CommentID: number;
@@ -126,7 +202,7 @@ class SEDSession {
     this.EnableSpellCheck = true;
     this.rulerConfig = new RulerConfig();
     this.Page = new PageRecord();
-    this.RecentSymbols = [];
+    // this.RecentSymbols = [];
     this.CommentListID = -1;
     this.CommentID = -1;
 

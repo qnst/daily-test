@@ -11,6 +11,22 @@ import PolygonConstant from '../Opt/Polygon/PolygonConstant';
 import OptConstant from '../Data/Constant/OptConstant';
 import T3Util from '../Util/T3Util';
 
+/**
+ * Represents a rectangle shape that can be rendered with various styles and properties.
+ *
+ * The Rect class extends BaseShape to provide specialized rectangle rendering with support for:
+ * - Normal and rounded rectangles with configurable corner radius
+ * - Fill styling including solid colors, gradients, and hatch patterns
+ * - Stroke styling with configurable color, opacity, thickness, and line patterns
+ * - Image fills from symbol URLs with optional transformations (flip, mirror)
+ * - Interactive hover areas for user interaction
+ * - Text content rendering when associated with data
+ *
+ * The rectangle can be configured with fixed or proportional corner radii, and includes
+ * special handling for shape indentation based on corner curvature.
+ *
+ * @extends BaseShape
+ */
 class Rect extends BaseShape {
 
   /**
@@ -70,7 +86,7 @@ class Rect extends BaseShape {
     shapeContainer.SetPos(adjustedFrame.x, adjustedFrame.y);
 
     // Get corner radius for rounded rectangle
-    const cornerRadius = this.RRect_GetCornerSize();
+    const cornerRadius = this.RRectGetCornerSize();
     let mainShape;
 
     // Handle symbol URL case (using image)
@@ -185,16 +201,16 @@ class Rect extends BaseShape {
     // Mark as shape
     shapeContainer.isShape = true;
 
-    // Add table and graph objects if present
-    const table = null; // this.GetTable(false); - Commented out in original code
-    if (table) {
-      T3Gv.opt.LM_AddSVGTableObject(this, renderer, shapeContainer, table);
-    }
+    // // Add table and graph objects if present
+    // const table = null; // this.GetTable(false); - Commented out in original code
+    // if (table) {
+    //   T3Gv.opt.LM_AddSVGTableObject(this, renderer, shapeContainer, table);
+    // }
 
-    const graph = this.GetGraph(false);
-    if (graph) {
-      T3Gv.opt.LM_AddSVGGraphObject(this, renderer, shapeContainer, graph);
-    }
+    // const graph = this.GetGraph(false);
+    // if (graph) {
+    //   T3Gv.opt.LM_AddSVGGraphObject(this, renderer, shapeContainer, graph);
+    // }
 
     // Add text if there's data
     if (this.DataID >= 0) {
@@ -206,13 +222,13 @@ class Rect extends BaseShape {
 
   GetCornerSize(inputSize) {
     T3Util.Log("= S.Rect GetCornerSize Input:", inputSize);
-    const cornerSize = this.RRect_GetCornerSize(inputSize);
+    const cornerSize = this.RRectGetCornerSize(inputSize);
     T3Util.Log("= S.Rect GetCornerSize Output:", cornerSize);
     return cornerSize;
   }
 
-  RRect_GetCornerSize(inputSize) {
-    T3Util.Log("= S.Rect RRect_GetCornerSize Input:", inputSize);
+  RRectGetCornerSize(inputSize) {
+    T3Util.Log("= S.Rect RRectGetCornerSize Input:", inputSize);
 
     let width = this.Frame.width;
     let height = this.Frame.height;
@@ -228,18 +244,18 @@ class Rect extends BaseShape {
       if (fixedSize > maxSize) {
         fixedSize = maxSize;
       }
-      T3Util.Log("= S.Rect RRect_GetCornerSize Output:", fixedSize);
+      T3Util.Log("= S.Rect RRectGetCornerSize Output:", fixedSize);
       return fixedSize;
     }
 
     let cornerSize = minDimension * this.shapeparam;
-    T3Util.Log("= S.Rect RRect_GetCornerSize Output:", cornerSize);
+    T3Util.Log("= S.Rect RRectGetCornerSize Output:", cornerSize);
     return cornerSize;
   }
 
   GetPolyPoints(event, type, arg, rect, index) {
     T3Util.Log("= S.Rect GetPolyPoints Input:", { event, type, arg, rect, index });
-    const cornerSize = this.RRect_GetCornerSize();
+    const cornerSize = this.RRectGetCornerSize();
     let polyPoints;
     if (cornerSize > 0) {
       polyPoints = this.RRect_GetPolyPoints(event, type, arg, rect, index);
@@ -334,9 +350,9 @@ class Rect extends BaseShape {
 
   ExtendLines(extend) {
     T3Util.Log("= S.Rect ExtendLines Input:", extend);
-    const cornerSize = this.RRect_GetCornerSize();
+    const cornerSize = this.RRectGetCornerSize();
     if (cornerSize > 0 || extend) {
-      this.RRect_ExtendLines();
+      // this.RRect_ExtendLines();
     }
     T3Util.Log("= S.Rect ExtendLines Output");
   }
@@ -354,7 +370,7 @@ class Rect extends BaseShape {
 
   // ExtendCell(event, type, arg) {
   //   T3Util.Log("= S.Rect ExtendCell Input:", { event, type, arg });
-  //   const cornerSize = this.RRect_GetCornerSize();
+  //   const cornerSize = this.RRectGetCornerSize();
   //   let result;
   //   if (cornerSize > 0) {
   //     result = this.RRect_ExtendCell(event, type, arg);
@@ -391,7 +407,7 @@ class Rect extends BaseShape {
 
   SetShapeIndent(indentOptions) {
     T3Util.Log("= S.Rect SetShapeIndent Input:", indentOptions);
-    const cornerSize = this.RRect_GetCornerSize();
+    const cornerSize = this.RRectGetCornerSize();
     let result;
     if (cornerSize > 0) {
       result = this.RRect_SetShapeIndent(indentOptions);
@@ -459,7 +475,7 @@ class Rect extends BaseShape {
       if (isFixedRRectChanged || isShapeParamChanged) {
         this.moreflags = Utils2.SetFlag(this.moreflags, fixedRRectFlag, properties.rrectfixed);
         this.shapeparam = properties.rrectparam;
-        this.GetTable(true);
+        // this.GetTable(true);
 
         if (this.shapeparam === 0) {
           this.left_sindent = 0;

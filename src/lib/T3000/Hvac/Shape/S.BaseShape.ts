@@ -28,11 +28,54 @@ import TextConstant from '../Data/Constant/TextConstant';
 import StyleConstant from '../Data/Constant/StyleConstant';
 import T3Util from '../Util/T3Util';
 
+/**
+ * BaseShape is the foundation class for all shape types in the T3000 HVAC drawing system.
+ * It extends BaseDrawObject with shape-specific properties and behavior for creating,
+ * manipulating, and rendering various geometric shapes within the application.
+ *
+ * This class provides:
+ * - Core shape properties and attributes (type, parameters, dimensions)
+ * - Interactive resize/rotate controls and connection points
+ * - Shape manipulation handling (resize, rotate, move)
+ * - Text positioning and formatting within shapes
+ * - Connection point management for line attachments
+ * - Shape transformation and rendering behavior
+ *
+ * All specific shape types (Rectangle, Oval, Polygon, etc.) extend this base class
+ * to inherit common shape behavior while implementing their specific geometry.
+ *
+ * @example
+ * ```typescript
+ * // Extend BaseShape to create a custom shape type
+ * class CustomShape extends BaseShape {
+ *   constructor(options) {
+ *     // Configure as a shape with custom parameters
+ *     options.ShapeType = 'Custom';
+ *     options.shapeparam = 10; // Custom corner radius or other parameter
+ *
+ *     // Call parent constructor
+ *     super(options);
+ *
+ *     // Add custom shape-specific properties
+ *     this.customProperty = options.customProperty || 'default';
+ *   }
+ *
+ *   // Override methods to customize shape behavior
+ *   GetPolyList() {
+ *     // Define custom shape geometry
+ *     const polyList = super.GetPolyList();
+ *     // Modify polyList for custom shape
+ *     return polyList;
+ *   }
+ * }
+ * ```
+ */
 class BaseShape extends BaseDrawObject {
 
   public ShapeType: any;
   public shapeparam: any;
   public SVGDim: any;
+  public zListIndex: any;
 
   /**
    * Constructor for the BaseShape class that creates a basic shape object
@@ -1205,7 +1248,7 @@ class BaseShape extends BaseDrawObject {
     // const useTableRows = (this.hookflags & NvConstant.HookFlags.LcTableRows) && table;
     const useConnect = (this.flags & NvConstant.ObjFlags.UseConnect) && this.ConnectPoints;
     let connectPoints: Array<{ x: number; y: number }> = [];
-    const connectDimension = OptConstant.Common.MaxDim;
+    const connectDimension = OptConstant.Common.DimMax;
 
     if (useConnect) {
       // Create a rect with the connection dimension
@@ -3102,7 +3145,7 @@ class BaseShape extends BaseDrawObject {
   LM_ActionPostRelease(objectId) {
     // Handle format painter operations
     const applyFormatPainting = () => {
-      if (T3Gv.opt.currentModalOperation === OptConstant.ModalOperations.FormatPainter) {
+      if (T3Gv.opt.crtOpt === OptConstant.OptTypes.FormatPainter) {
         if (T3Gv.opt.formatPainterMode === TODO.formatPainterModes.OBJECT) {
           // Format painting logic for objects would go here
           // If table support is needed, uncomment:
@@ -3155,7 +3198,7 @@ class BaseShape extends BaseDrawObject {
       // case OptConstant.ActionTriggerType.TABLE_SELECT:
       // case OptConstant.ActionTriggerType.TABLE_ROWSELECT:
       // case OptConstant.ActionTriggerType.TABLE_COLSELECT:
-      //   if (T3Gv.opt.currentModalOperation === OptConstant.ModalOperations.FormatPainter) {
+      //   if (T3Gv.opt.crtOpt === OptConstant.OptTypes.FormatPainter) {
       //     if (T3Gv.opt.formatPainterMode === OptConstant.formatPainterModes.OBJECT) {
       //       var activeTableId = T3Gv.opt.Table_GetActiveID();
       //       T3Gv.opt.Table_PasteFormat(activeTableId, T3Gv.opt.formatPainterStyle, false);
@@ -3732,10 +3775,10 @@ class BaseShape extends BaseDrawObject {
     return knobCenterDivisor;
   }
 
-  OffsetShape(offsetX: number, offsetY: number, childShapes: any[], linkFlags: any) {
+  OffsetShape(offsetX: number, offsetY: number, childShapes?: any[], linkFlags?: any) {
     T3Util.Log("= S.BaseShape - OffsetShape input:", { offsetX, offsetY, childShapes, linkFlags });
 
-    if (this.moreflags & OptConstant.ObjMoreFlags.SED_MF_Container && childShapes) {
+    if (this.moreflags & OptConstant.ObjMoreFlags.Container && childShapes) {
       for (let i = 0; i < childShapes.length; i++) {
         const childShapeId = childShapes[i];
         const childShape = T3Gv.opt.GetObjectPtr(childShapeId, true);
@@ -3969,7 +4012,7 @@ class BaseShape extends BaseDrawObject {
       null
     );
     let topCount = 1, bottomCount = 1, leftCount = 1, rightCount = 1;
-    const dimension = OptConstant.Common.MaxDim;
+    const dimension = OptConstant.Common.DimMax;
     let isSinglePoint = false;
     const ActionArrow = OptConstant.ActionArrow;
     let boundingRect = { x: 0, y: 0, width: dimension, height: dimension };
@@ -4423,10 +4466,10 @@ class BaseShape extends BaseDrawObject {
     }
 
     let defaultHookPoints = [
-      { x: OptConstant.Common.MaxDim / 2, y: 0, id: OptConstant.HookPts.KTC },
-      { x: OptConstant.Common.MaxDim, y: OptConstant.Common.MaxDim / 2, id: OptConstant.HookPts.KRC },
-      { x: OptConstant.Common.MaxDim / 2, y: OptConstant.Common.MaxDim, id: OptConstant.HookPts.KBC },
-      { x: 0, y: OptConstant.Common.MaxDim / 2, id: OptConstant.HookPts.KLC }
+      { x: OptConstant.Common.DimMax / 2, y: 0, id: OptConstant.HookPts.KTC },
+      { x: OptConstant.Common.DimMax, y: OptConstant.Common.DimMax / 2, id: OptConstant.HookPts.KRC },
+      { x: OptConstant.Common.DimMax / 2, y: OptConstant.Common.DimMax, id: OptConstant.HookPts.KBC },
+      { x: 0, y: OptConstant.Common.DimMax / 2, id: OptConstant.HookPts.KLC }
     ];
 
     T3Util.Log("= S.BaseShape - GetHookPoints output:", defaultHookPoints);
@@ -4460,7 +4503,7 @@ class BaseShape extends BaseDrawObject {
           if (childObject) {
             isFlowConnection = childObject.arraylist.styleflags & OptConstant.AStyles.FlowConn &&
               !(childObject.arraylist.styleflags & OptConstant.AStyles.Linear);
-            if (childObject.hooks.length && childObject.hooks[0].connect.x === OptConstant.Common.MaxDim && !isFlowConnection) {
+            if (childObject.hooks.length && childObject.hooks[0].connect.x === OptConstant.Common.DimMax && !isFlowConnection) {
               childObject._SetDirection(true, false, false);
             }
           }
@@ -4481,7 +4524,7 @@ class BaseShape extends BaseDrawObject {
     let isCustomHook = false;
     let connectionFlags = 0;
     const HookPts = OptConstant.HookPts;
-    const SED_CDim = OptConstant.Common.MaxDim;
+    const SED_CDim = OptConstant.Common.DimMax;
     const HookFlags = NvConstant.HookFlags;
 
     if (this.flags & NvConstant.ObjFlags.Obj1 && this.Pr_Format && this.Pr_Format(this.BlockID)) {
@@ -4618,8 +4661,8 @@ class BaseShape extends BaseDrawObject {
     return isCoManager;
   }
 
-  RRect_GetCornerSize(customSize) {
-    T3Util.Log("= S.BaseShape - RRect_GetCornerSize input:", { customSize });
+  RRectGetCornerSize(customSize) {
+    T3Util.Log("= S.BaseShape - RRectGetCornerSize input:", { customSize });
 
     let width = this.Frame.width;
     let height = this.Frame.height;
@@ -4641,12 +4684,12 @@ class BaseShape extends BaseDrawObject {
         fixedSize = maxSize;
       }
 
-      T3Util.Log("= S.BaseShape - RRect_GetCornerSize output:", fixedSize);
+      T3Util.Log("= S.BaseShape - RRectGetCornerSize output:", fixedSize);
       return fixedSize;
     }
 
     let result = minDimension * this.shapeparam;
-    T3Util.Log("= S.BaseShape - RRect_GetCornerSize output:", result);
+    T3Util.Log("= S.BaseShape - RRectGetCornerSize output:", result);
     return result;
   }
 
@@ -4660,7 +4703,7 @@ class BaseShape extends BaseDrawObject {
     let tablePoints = null;
 
     if (this.ShapeType === OptConstant.ShapeType.Rect) {
-      cornerSize = this.RRect_GetCornerSize();
+      cornerSize = this.RRectGetCornerSize();
       if (cornerSize > 0) {
         return this.RRect_GetPerimPts(points, targetPoints, hookId, rotate, table, needRotate);
       }
@@ -4687,8 +4730,8 @@ class BaseShape extends BaseDrawObject {
     if (!isCoManager) {
       for (let i = 0; i < targetPoints.length; i++) {
         perimeterPoints[i] = {
-          x: targetPoints[i].x / OptConstant.Common.MaxDim * this.Frame.width + this.Frame.x,
-          y: targetPoints[i].y / OptConstant.Common.MaxDim * this.Frame.height + this.Frame.y,
+          x: targetPoints[i].x / OptConstant.Common.DimMax * this.Frame.width + this.Frame.x,
+          y: targetPoints[i].y / OptConstant.Common.DimMax * this.Frame.height + this.Frame.y,
           id: targetPoints[i].id != null ? targetPoints[i].id : 0
         };
       }
@@ -4707,7 +4750,7 @@ class BaseShape extends BaseDrawObject {
     T3Util.Log("= S.BaseShape - RRect_GetPerimPts input:", { e, targetPoints, hookId, rotate, table, needRotate });
 
     let cornerSize, polyPoints, intersectCount, intersectPoints = [0, 0];
-    const dimension = OptConstant.Common.MaxDim;
+    const dimension = OptConstant.Common.DimMax;
     let perimeterPoints = [];
     let coManagerPoint = {};
 
@@ -4839,21 +4882,21 @@ class BaseShape extends BaseDrawObject {
 
     const defaultPoints = [
       { x: 0, y: 0 },
-      { x: OptConstant.Common.MaxDim / 4, y: 0 },
-      { x: OptConstant.Common.MaxDim / 2, y: 0 },
-      { x: 3 * OptConstant.Common.MaxDim / 4, y: 0 },
-      { x: OptConstant.Common.MaxDim, y: 0 },
-      { x: OptConstant.Common.MaxDim, y: OptConstant.Common.MaxDim / 4 },
-      { x: OptConstant.Common.MaxDim, y: OptConstant.Common.MaxDim / 2 },
-      { x: OptConstant.Common.MaxDim, y: 3 * OptConstant.Common.MaxDim / 4 },
-      { x: OptConstant.Common.MaxDim, y: OptConstant.Common.MaxDim },
-      { x: 3 * OptConstant.Common.MaxDim / 4, y: OptConstant.Common.MaxDim },
-      { x: OptConstant.Common.MaxDim / 2, y: OptConstant.Common.MaxDim },
-      { x: OptConstant.Common.MaxDim / 4, y: OptConstant.Common.MaxDim },
-      { x: 0, y: OptConstant.Common.MaxDim },
-      { x: 0, y: 3 * OptConstant.Common.MaxDim / 4 },
-      { x: 0, y: OptConstant.Common.MaxDim / 2 },
-      { x: 0, y: OptConstant.Common.MaxDim / 4 }
+      { x: OptConstant.Common.DimMax / 4, y: 0 },
+      { x: OptConstant.Common.DimMax / 2, y: 0 },
+      { x: 3 * OptConstant.Common.DimMax / 4, y: 0 },
+      { x: OptConstant.Common.DimMax, y: 0 },
+      { x: OptConstant.Common.DimMax, y: OptConstant.Common.DimMax / 4 },
+      { x: OptConstant.Common.DimMax, y: OptConstant.Common.DimMax / 2 },
+      { x: OptConstant.Common.DimMax, y: 3 * OptConstant.Common.DimMax / 4 },
+      { x: OptConstant.Common.DimMax, y: OptConstant.Common.DimMax },
+      { x: 3 * OptConstant.Common.DimMax / 4, y: OptConstant.Common.DimMax },
+      { x: OptConstant.Common.DimMax / 2, y: OptConstant.Common.DimMax },
+      { x: OptConstant.Common.DimMax / 4, y: OptConstant.Common.DimMax },
+      { x: 0, y: OptConstant.Common.DimMax },
+      { x: 0, y: 3 * OptConstant.Common.DimMax / 4 },
+      { x: 0, y: OptConstant.Common.DimMax / 2 },
+      { x: 0, y: OptConstant.Common.DimMax / 4 }
     ];
 
     let targetPoints = [];
@@ -4863,7 +4906,7 @@ class BaseShape extends BaseDrawObject {
     // const isTableRows = this.hookflags & NvConstant.HookFlags.LcTableRows && table;
     let customTargetPoint = {};
     let hasCustomTargetPoint = false;
-    const dimension = OptConstant.Common.MaxDim;
+    const dimension = OptConstant.Common.DimMax;
 
     if (objectID >= 0) {
       const targetObject = T3Gv.opt.GetObjectPtr(objectID, false);
@@ -4903,7 +4946,7 @@ class BaseShape extends BaseDrawObject {
   GetSegLFace(point: { x: number; y: number }, table: any, hookFlags: any) {
     T3Util.Log("= S.BaseShape - GetSegLFace input:", { point, table, hookFlags });
 
-    const m = OptConstant.Common.MaxDim;
+    const m = OptConstant.Common.DimMax;
     const distanceSquared = (p1: { x: number; y: number }, p2: { x: number; y: number }) => {
       const dx = p1.x - p2.x;
       const dy = p1.y - p2.y;
@@ -5031,7 +5074,7 @@ class BaseShape extends BaseDrawObject {
 
         let cornerSize = 0;
         if (this.ShapeType === OptConstant.ShapeType.Rect) {
-          cornerSize = this.RRect_GetCornerSize();
+          cornerSize = this.RRectGetCornerSize();
         }
 
         const shapeElement = element.GetElementById(OptConstant.SVGElementClass.Shape);
@@ -5102,7 +5145,7 @@ class BaseShape extends BaseDrawObject {
 
     let cornerSize = 0;
     if (this.ShapeType === OptConstant.ShapeType.Rect) {
-      cornerSize = this.RRect_GetCornerSize();
+      cornerSize = this.RRectGetCornerSize();
     }
 
     const shapeElement = element.GetElementById(OptConstant.SVGElementClass.Shape);
@@ -5316,7 +5359,7 @@ class BaseShape extends BaseDrawObject {
     T3Util.Log("= S.BaseShape - ApplyStyles output");
   }
 
-  SetFillHatch(element, hatchType, color) {
+  SetFillHatch(element, hatchType, color?) {
     T3Util.Log("= S.BaseShape - SetFillHatch input:", { element, hatchType, color });
 
     if (hatchType !== -1 && hatchType !== 0) {
@@ -5377,7 +5420,7 @@ class BaseShape extends BaseDrawObject {
 
     let rotationRadians, polyPoints, hitCode;
     const transformedPoint = [{ x: point.x, y: point.y }];
-    const frameWithThickness = {};
+    let frameWithThickness = {};
     const borderThickness = this.StyleRecord.Line.Thickness / 2;
 
     if (this.flags & NvConstant.ObjFlags.UseConnect && this.ConnectPoints) {
@@ -5507,8 +5550,8 @@ class BaseShape extends BaseDrawObject {
         Utils3.RotatePointsAboutCenter(rotatedFrame, rotationRadians, targetPoints);
       }
 
-      const normalizedX = (targetPoints[0].x - frame.x) / frame.width * OptConstant.Common.MaxDim;
-      const normalizedY = (targetPoints[0].y - frame.y) / frame.height * OptConstant.Common.MaxDim;
+      const normalizedX = (targetPoints[0].x - frame.x) / frame.width * OptConstant.Common.DimMax;
+      const normalizedY = (targetPoints[0].y - frame.y) / frame.height * OptConstant.Common.DimMax;
       resultPoints.push(new Point(normalizedX, normalizedY));
 
       T3Util.Log("= S.BaseShape - PolyGetTargets output:", resultPoints);
@@ -6618,7 +6661,7 @@ class BaseShape extends BaseDrawObject {
             let customActionButton: any = null;
 
             if (actionButtons.custom) {
-              // Create custom action buttons via the business controller
+              // Create custom action buttons via the operation controller
               const customButtons = gBusinessController.CreateCustomActionButtons(svgEvent, this, 0, this.BlockID);
               if (customButtons) {
                 const frameClone = $.extend(true, {}, this.Frame);
@@ -7018,7 +7061,7 @@ class BaseShape extends BaseDrawObject {
 
   OnDisconnect(
     elementId: string,
-    container: Instance.Shape.ShapeContainer,
+    container: any,
     disconnectData: any,
     reason: any
   ): void {
@@ -7039,7 +7082,6 @@ class BaseShape extends BaseDrawObject {
 
     T3Util.Log("S.ArcSegmentedLine - OnDisconnect output: completed");
   }
-
 }
 
 export default BaseShape

@@ -16,6 +16,53 @@ import OptConstant from '../Data/Constant/OptConstant';
 import T3Timer from '../Util/T3Timer';
 import T3Util from '../Util/T3Util';
 
+/**
+ * Represents a polygon shape that can be rendered in SVG.
+ * This class extends BaseShape and provides functionality for creating and
+ * manipulating polygons with various styles, dimensions, and behaviors.
+ *
+ * @class Polygon
+ * @extends {BaseShape}
+ *
+ * @property {any[]} VertexArray - Array of vertices defining the polygon's shape. Each vertex contains x,y coordinates.
+ * @property {any} FixedPoint - Reference point for the polygon, defaults to [0,0].
+ * @property {any} LineOrientation - Determines the orientation of lines, defaults to None.
+ * @property {Object} hoplist - Contains data about hops in the polygon, with properties nhops and hops array.
+ * @property {any[]} ArrowheadData - Contains data for rendering arrowheads.
+ *
+ * @example
+ * // Create a basic polygon
+ * const polygonOptions = {
+ *   VertexArray: [
+ *     { x: 0, y: 0 },
+ *     { x: 1, y: 0 },
+ *     { x: 1, y: 1 },
+ *     { x: 0, y: 1 }
+ *   ],
+ *   StyleRecord: {
+ *     Line: {
+ *       Paint: { Color: 'black', Opacity: 1 },
+ *       Thickness: 2,
+ *       LinePattern: 0
+ *     },
+ *     Fill: {
+ *       Paint: { Color: 'white' }
+ *     }
+ *   }
+ * };
+ *
+ * const polygon = new Polygon(polygonOptions);
+ *
+ * // Render the polygon to SVG
+ * const svgDoc = T3Gv.opt.svgDoc;
+ * const svgElement = polygon.CreateShape(svgDoc, true);
+ *
+ * // Resize the polygon
+ * polygon.Resize(svgDoc, { x: 100, y: 100, width: 200, height: 150 }, OptConstant.ActionTriggerType.Move);
+ *
+ * // Flip the polygon horizontally
+ * polygon.Flip(OptConstant.ExtraFlags.FlipHoriz);
+ */
 class Polygon extends BaseShape {
 
   public VertexArray: any;
@@ -487,10 +534,10 @@ class Polygon extends BaseShape {
 
     const targetPoints = [];
     const defaultPoints = [
-      { x: OptConstant.Common.MaxDim / 2, y: 0 },
-      { x: OptConstant.Common.MaxDim, y: OptConstant.Common.MaxDim / 2 },
-      { x: OptConstant.Common.MaxDim / 2, y: OptConstant.Common.MaxDim },
-      { x: 0, y: OptConstant.Common.MaxDim / 2 }
+      { x: OptConstant.Common.DimMax / 2, y: 0 },
+      { x: OptConstant.Common.DimMax, y: OptConstant.Common.DimMax / 2 },
+      { x: OptConstant.Common.DimMax / 2, y: OptConstant.Common.DimMax },
+      { x: 0, y: OptConstant.Common.DimMax / 2 }
     ];
 
     const isContinuousConnection = this.flags & NvConstant.ObjFlags.ContConn && target !== null && (hookFlags & NvConstant.HookFlags.LcNoContinuous) === 0;
@@ -501,7 +548,7 @@ class Polygon extends BaseShape {
 
     let tableTargetPoint = {};
     let foundTableTarget = false;
-    const dimension = OptConstant.Common.MaxDim;
+    const dimension = OptConstant.Common.DimMax;
 
     if (objectID >= 0) {
       const object = T3Gv.opt.GetObjectPtr(objectID, false);
@@ -570,7 +617,7 @@ class Polygon extends BaseShape {
     T3Util.Log('S.Polygon: GetPerimeterPoints input:', { event, pointsArray, hookType, rotateFlag, tableID, additionalParams });
 
     let intersectionCount, rotatedPoints, perimeterPoints = [], tempPoints = [], intersectionPoints = {}, defaultPoint = [0, 0];
-    const dimension = OptConstant.Common.MaxDim;
+    const dimension = OptConstant.Common.DimMax;
 
     if (pointsArray.length === 1 && pointsArray[0].y === -OptConstant.AStyles.CoManager && this.IsCoManager(intersectionPoints)) {
       perimeterPoints.push(new Point(intersectionPoints.x, intersectionPoints.y));
@@ -684,7 +731,7 @@ class Polygon extends BaseShape {
     const perimeterPoints = [];
     const pointsCount = pointsArray.length;
     const triangleShapeType = PolygonConstant.ShapeTypes.TRIANGLE;
-    const dimension = OptConstant.Common.MaxDim;
+    const dimension = OptConstant.Common.DimMax;
 
     for (let i = 0; i < pointsCount; i++) {
       perimeterPoints[i] = { x: 0, y: 0, id: 0 };
@@ -839,7 +886,7 @@ class Polygon extends BaseShape {
 
     let shouldUpdate = true;
     const shapeTypes = PolygonConstant.ShapeTypes;
-    const dimension = OptConstant.Common.MaxDim;
+    const dimension = OptConstant.Common.DimMax;
 
     this.VertexArray = T3Gv.opt.FlipVertexArray(this.VertexArray, flipType);
 

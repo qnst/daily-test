@@ -2,6 +2,47 @@
 
 
 
+/**
+ * Represents a collection of selection attributes for various UI components,
+ * such as shapes, connectors, tables, and text elements used in HVAC controls.
+ *
+ * This class encapsulates the state and visual properties related to selection,
+ * including dimensions (width, height, left, and top coordinates), font styling,
+ * and table configurations (number of rows, columns, etc.). It is used
+ * for managing the transient state during selection operations in the user interface,
+ * allowing actions like undo, redo, and paste, as well as controlling alignment and copy behavior.
+ *
+ * @remarks
+ * The properties include flags for text formatting (bold, italic, underline, superscript, subscript)
+ * and indicate whether certain operations (like pasting or aligning) are permitted. The class
+ * also maintains state for table selections and other graphical elements.
+ *
+ * @example
+ * Here's an example of how to instantiate and use the SelectAttributes class:
+ *
+ * // Create a new instance of SelectAttributes
+ * const selection = new SelectAttributes();
+ *
+ * // Set some attributes for a selected element
+ * selection.tselect = 1;
+ * selection.width = 150;
+ * selection.height = 75;
+ * selection.left = 10;
+ * selection.top = 20;
+ *
+ * // Apply font styling for the selection
+ * selection.fontsize = 14;
+ * selection.bold = true;
+ *
+ * // Configure table selection properties if a table is selected
+ * selection.NTableRows = 5;
+ * selection.NTableCols = 4;
+ *
+ * // Using the selection status to perform further operations
+ * if (selection.undo) {
+ *   console.log('An undoable action is available.');
+ * }
+ */
 class SelectAttributes {
 
   //#region  Properties

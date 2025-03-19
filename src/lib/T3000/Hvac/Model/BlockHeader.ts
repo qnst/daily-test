@@ -1,5 +1,39 @@
 
 
+/**
+ * Represents the header section for a block in an HVAC control system.
+ *
+ * @remarks
+ * This class is responsible for storing metadata about a block, such as its current state,
+ * adjustment (delta) value, type, and identification. It is used to structure information for blocks
+ * in multi-block configurations, where each block’s identity and order are important.
+ *
+ * @property state - The current state of the block.
+ * @property delta - The delta adjustment value for the block.
+ * @property action - An action value initialized to 0, representing an internal operation mode.
+ * @property blocktype - The type of the block, indicating its category or functionality.
+ * @property blockid - The unique identifier for the block.
+ * @property index - The sequential index of the block within a larger configuration.
+ * @property nblocks - The total number of blocks in the configuration.
+ *
+ * @example
+ * ```typescript
+ * // Creating a new BlockHeader instance with sample values:
+ * const header = new BlockHeader(1, 0.5, 2, 1001, 0, 5);
+ *
+ * console.log(header);
+ * // Expected output:
+ * // BlockHeader {
+ * //   state: 1,
+ * //   delta: 0.5,
+ * //   action: 0,
+ * //   blocktype: 2,
+ * //   blockid: 1001,
+ * //   index: 0,
+ * //   nblocks: 5
+ * // }
+ * ```
+ */
 class BlockHeader {
 
   public state: number;

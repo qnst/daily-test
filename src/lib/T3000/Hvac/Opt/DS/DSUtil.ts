@@ -5,6 +5,51 @@ import TextConstant from "../../Data/Constant/TextConstant"
 import T3DataStream from "../../Util/T3DataStream"
 import DSConstant from "./DSConstant";
 
+/**
+ * Utility class providing binary data parsing functionality for the T3000 HVAC system.
+ *
+ * This class contains static methods that parse various types of binary data structures
+ * into JavaScript objects. It supports parsing of images, drawing objects, text, fonts,
+ * UI components, and other elements used in the T3000 visualization system.
+ *
+ * The parsing methods use the T3DataStream utility to read structured binary data
+ * with proper endianness handling.
+ *
+ * Key features:
+ * - Image data format conversion (MIME types, directory codes)
+ * - Hexadecimal conversion utilities
+ * - Integer type conversion (signed/unsigned)
+ * - Parsing of drawing objects, text, fonts, and visual elements
+ * - Connection point and layout parsing
+ * - Theme and style data extraction
+ *
+ * @example
+ * // Converting a MIME type to directory code
+ * const dirCode = DSUtil.GetImageDir('image/jpeg');
+ * // Returns StyleConstant.ImageDir.Jpg
+ *
+ * @example
+ * // Converting a directory code back to MIME type
+ * const mimeType = DSUtil.GetImageBlobType(StyleConstant.ImageDir.Png);
+ * // Returns 'image/png'
+ *
+ * @example
+ * // Converting decimal to hex
+ * const hexValue = DSUtil.decimalToHex(255, 4, false);
+ * // Returns '0x00FF'
+ *
+ * @example
+ * // Parsing binary image data
+ * const imageBuffer = new ArrayBuffer(| image data |);
+ * const imageData = DSUtil.parseImage(imageBuffer, 'image/png');
+ * // Returns object with URL, Blob and BlobBytes
+ *
+ * @example
+  * // Parsing font data
+ * const fontBuffer = new ArrayBuffer(| font data |);
+ * const fontData = DSUtil.parseFontName(fontBuffer);
+ * // Returns font object with cleaned lfFaceName
+ */
 class DSUtil {
 
   static GetImageDir(fileType) {

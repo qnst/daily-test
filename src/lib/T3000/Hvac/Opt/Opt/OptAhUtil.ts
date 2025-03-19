@@ -5,6 +5,48 @@ import Instance from "../../Data/Instance/Instance";
 import NvConstant from '../../Data/Constant/NvConstant'
 import OptConstant from "../../Data/Constant/OptConstant";
 
+/**
+ * Utility class for handling HVAC optimization operations in T3000 system.
+ * Provides methods to navigate drawing hierarchies, find tree structures,
+ * manage object selections, and handle container relationships.
+ *
+ * The class primarily works with drawing objects in optimization scenarios,
+ * handling specialized operations for connectors, shapes, and container objects.
+ *
+ * @example
+ * // Getting the global service operation instance
+ * const serviceOpt = OptAhUtil.GetGvSviOpt();
+ *
+ * @example
+ * // Finding the top element of a tree structure
+ * const result = { foundtree: false, topconnector: -1, topshape: -1 };
+ * const treeFound = OptAhUtil.FindTreeTop(drawingObject, true, result);
+ * if (treeFound) {
+ *   console.log(`Tree top shape ID: ${result.topshape}`);
+ *   console.log(`Tree top connector ID: ${result.topconnector}`);
+ * }
+ *
+ * @example
+ * // Selecting the parent container
+ * const objectId = 123;
+ * const parentId = OptAhUtil.SelectContainerParent(objectId);
+ *
+ * @example
+ * // Navigating to the next logical selection
+ * const nextObjectId = OptAhUtil.GetNextSelect();
+ * if (nextObjectId >= 0) {
+ *   // Select the next object
+ *   T3Gv.opt.SelectObject(nextObjectId);
+ * }
+ *
+ * @example
+ * // Finding a parent connector
+ * const position = { x: 0, y: 0 };
+ * const connectorId = OptAhUtil.GetParentConnector(objectId, position);
+ * if (connectorId >= 0) {
+ *   console.log(`Parent connector found at position (${position.x}, ${position.y})`);
+ * }
+ */
 class OptAhUtil {
 
   /**

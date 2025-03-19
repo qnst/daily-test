@@ -1,5 +1,32 @@
 
 
+/**
+ * Represents window display settings for the HVAC interface.
+ *
+ * This class stores configuration parameters for window positioning,
+ * scaling, and panel display modes within the T3000 HVAC application.
+ *
+ * @example
+ * ```typescript
+ * // Create new window settings
+ * const settings = new WindowSettings();
+ *
+ * // Update origin position
+ * settings.worigin = { x: 100, y: 50 };
+ *
+ * // Set scaling factor
+ * settings.wscale = 1.25;
+ *
+ * // Set scale mode (e.g., 0: normal, 1: fit to screen)
+ * settings.wscalemode = 1;
+ *
+ * // Set left panel mode (e.g., 0: collapsed, 1: expanded)
+ * settings.leftpanelmode = 1;
+ *
+ * // Mark as updated
+ * settings.updated = Date.now();
+ * ```
+ */
 class WindowSettings {
 
   public updated: number;

@@ -6,7 +6,6 @@ import Utils2 from "../Util/Utils2";
 import T3Gv from '../Data/T3Gv'
 import NvConstant from '../Data/Constant/NvConstant'
 import ContainerListShape from '../Model/ContainerListShape'
-import T3Constant from '../Data/Constant/T3Constant';
 import Instance from '../Data/Instance/Instance';
 import Point from '../Model/Point';
 import PolygonConstant from '../Opt/Polygon/PolygonConstant';
@@ -15,6 +14,43 @@ import OptConstant from '../Data/Constant/OptConstant';
 import CursorConstant from '../Data/Constant/CursorConstant';
 import T3Util from '../Util/T3Util';
 
+/**
+ * A shape container that manages collections of child shapes in various layout arrangements.
+ *
+ * @extends Rect
+ * @class
+ * @description
+ * ShapeContainer acts as a parent container for organizing and managing groups of shapes in
+ * different layout configurations. It provides advanced layout management for HVAC components
+ * with support for:
+ *
+ * - Grid-based layouts with automatic spacing and alignment
+ * - Row and column arrangements with configurable wrapping
+ * - Sparse layouts where shapes can be positioned at specific grid coordinates
+ * - Dynamic resizing and repositioning of child elements
+ * - Container-to-container connections with proper z-index handling
+ *
+ * The container automatically manages the positioning of child shapes and can adjust its size
+ * to accommodate its contents. It supports both direct shape attachment and grid-based placement,
+ * and provides facilities for hit testing, hooking points, and container-specific connection handling.
+ *
+ * When shapes are added to a container, they become "container children" and their positions
+ * are managed by the container's layout system. The ShapeContainer supports double-click
+ * operations for sparse layouts, which enables quick addition or manipulation of child shapes.
+ *
+ * @example
+ * // Create a new shape container with a sparse grid layout
+ * const containerOptions = {
+ *   ContainerList: {
+ *     flags: NvConstant.ContainerListFlags.Sparse,
+ *     nacross: 3,
+ *     ndown: 2,
+ *     VerticalSpacing: 10,
+ *     HorizontalSpacing: 10
+ *   }
+ * };
+ * const container = new ShapeContainer(containerOptions);
+ */
 class ShapeContainer extends Rect {
 
   public ContainerList: any;
@@ -218,31 +254,31 @@ class ShapeContainer extends Rect {
     const containerList = this.ContainerList;
     const list = containerList.List;
     const listLength = list.length;
-    const standardDimension = OptConstant.Common.MaxDim;
+    const standardDimension = OptConstant.Common.DimMax;
     let defaultPoint = { x: standardDimension / 2, y: 0 };
     const isSparse = containerList.flags & NvConstant.ContainerListFlags.Sparse;
     const containerFrame = this.Pr_GetContainerFrame().frame;
-    const isContainerInCell = T3Gv.opt.ContainerIsInCell(this);
+    // const isContainerInCell = T3Gv.opt.ContainerIsInCell(this);
     const frameWidth = containerFrame.width;
     let numDown = containerList.ndown;
     let numAcross = containerList.nacross;
 
-    // Adjust grid dimensions if container is in cell and in sparse mode
-    if (isContainerInCell && isSparse) {
-      let heightDifference = containerFrame.height - containerList.height;
-      let additionalRows = Math.floor(heightDifference / containerList.childheight);
-      if (additionalRows < 0) {
-        additionalRows = 0;
-      }
-      numDown += additionalRows;
+    // // Adjust grid dimensions if container is in cell and in sparse mode
+    // if (isContainerInCell && isSparse) {
+    //   let heightDifference = containerFrame.height - containerList.height;
+    //   let additionalRows = Math.floor(heightDifference / containerList.childheight);
+    //   if (additionalRows < 0) {
+    //     additionalRows = 0;
+    //   }
+    //   numDown += additionalRows;
 
-      let widthDifference = containerFrame.width - containerList.width;
-      let additionalCols = Math.floor(widthDifference / containerList.childwidth);
-      if (additionalCols < 0) {
-        additionalCols = 0;
-      }
-      numAcross += additionalCols;
-    }
+    //   let widthDifference = containerFrame.width - containerList.width;
+    //   let additionalCols = Math.floor(widthDifference / containerList.childwidth);
+    //   if (additionalCols < 0) {
+    //     additionalCols = 0;
+    //   }
+    //   numAcross += additionalCols;
+    // }
 
     // Process for sparse container list
     if (isSparse) {
@@ -380,17 +416,17 @@ class ShapeContainer extends Rect {
       return maxWidth + 2 * containerList.HorizontalSpacing;
     };
 
-    if (!target) {
-      const ctrlKey = event.gesture.srcEvent.ctrlKey;
-      const shiftKey = event.gesture.srcEvent.shiftKey;
-      const containerInCell = T3Gv.opt.ContainerIsInCell(this);
-      if (containerInCell && (shiftKey || ctrlKey)) {
-        T3Util.Log("= S.ShapeContainer DoubleClick - Detected container in cell with modifier keys.");
-        T3Gv.opt.Table_SetupAction(event, containerInCell.obj.BlockID, OptConstant.Common.TableCellHit, null);
-        T3Util.Log("= S.ShapeContainer DoubleClick - Output: action triggered via Table_SetupAction");
-        return;
-      }
-    }
+    // if (!target) {
+    //   const ctrlKey = event.gesture.srcEvent.ctrlKey;
+    //   const shiftKey = event.gesture.srcEvent.shiftKey;
+    //   // const containerInCell = T3Gv.opt.ContainerIsInCell(this);
+    //   // if (containerInCell && (shiftKey || ctrlKey)) {
+    //   //   T3Util.Log("= S.ShapeContainer DoubleClick - Detected container in cell with modifier keys.");
+    //   //   T3Gv.opt.Table_SetupAction(event, containerInCell.obj.BlockID, OptConstant.Common.TableCellHit, null);
+    //   //   T3Util.Log("= S.ShapeContainer DoubleClick - Output: action triggered via Table_SetupAction");
+    //   //   return;
+    //   // }
+    // }
 
     if (isSparse) {
       if (target) {
@@ -612,7 +648,7 @@ class ShapeContainer extends Rect {
     const containerList = this.ContainerList;
     const containerItems = containerList.List;
     const containerItemCount = containerItems.length;
-    const standardDimension = OptConstant.Common.MaxDim;
+    const standardDimension = OptConstant.Common.DimMax;
     const containerArrangement = NvConstant.ContainerListArrangements;
     const isSparse = !!(containerList.flags & NvConstant.ContainerListFlags.Sparse);
 
@@ -624,7 +660,7 @@ class ShapeContainer extends Rect {
     const containerFrameData = this.Pr_GetContainerFrame();
     const containerFrame = containerFrameData.frame;
     let verticalOffset = containerList.VerticalSpacing + containerFrameData.StartY;
-    const isInCell = T3Gv.opt.ContainerIsInCell(this);
+    // const isInCell = T3Gv.opt.ContainerIsInCell(this);
 
     // Case 1: Single point and negative index - handle simplified perimeter point
     if (targetPoints.length === 1 && pointIndex < 0) {
@@ -661,7 +697,7 @@ class ShapeContainer extends Rect {
             // Point is to the left of the grid
             listIndex = targetPoints[i].y * containerList.nacross;
             yCoordinate = containerItems[listIndex].pt.y;
-            xCoordinate = isInCell
+            xCoordinate = false/*isInCell*/
               ? containerList.HorizontalSpacing / 2
               : -containerList.childwidth / 2;
           } else if (targetPoints[i].x < containerList.nacross) {
@@ -677,7 +713,7 @@ class ShapeContainer extends Rect {
               (targetPoints[i].x - containerList.nacross) * containerList.childwidth +
               containerList.childwidth / 2;
 
-            if (isInCell && xCoordinate > containerFrame.width - containerList.HorizontalSpacing / 2) {
+            if (/*isInCell && */xCoordinate > containerFrame.width - containerList.HorizontalSpacing / 2) {
               xCoordinate = containerFrame.width - containerList.HorizontalSpacing / 2;
             }
           }
@@ -687,14 +723,14 @@ class ShapeContainer extends Rect {
             (targetPoints[i].y - containerList.ndown) * containerList.childheight +
             containerList.VerticalSpacing;
 
-          if (isInCell && yCoordinate > containerFrame.height - containerList.VerticalSpacing / 2) {
+          if (/*isInCell &&*/ yCoordinate > containerFrame.height - containerList.VerticalSpacing / 2) {
             yCoordinate = containerFrame.height - containerList.VerticalSpacing / 2;
           }
 
           if (targetPoints[i].x < 0) {
             // Point is to the left of the extended grid
             listIndex = targetPoints[i].y * containerList.nacross;
-            xCoordinate = isInCell
+            xCoordinate = false/* isInCell*/
               ? containerList.HorizontalSpacing / 2
               : -containerList.childwidth / 2;
           } else if (targetPoints[i].x < containerList.nacross) {
@@ -709,7 +745,7 @@ class ShapeContainer extends Rect {
               (targetPoints[i].x - containerList.nacross) * containerList.childwidth +
               containerList.childwidth / 2;
 
-            if (isInCell && xCoordinate > containerFrame.width - containerList.HorizontalSpacing / 2) {
+            if (/*isInCell && */xCoordinate > containerFrame.width - containerList.HorizontalSpacing / 2) {
               xCoordinate = containerFrame.width - containerList.HorizontalSpacing / 2;
             }
           }
@@ -1220,14 +1256,14 @@ class ShapeContainer extends Rect {
     // Create appropriate connector based on container arrangement (row or column)
     const connectorInfo = containerList.Arrangement === NvConstant.ContainerListArrangements.Row
       ? {
-        knobID: actionTriggerType.CONTAINER_ADJ,
+        knobID: actionTriggerType.ContainerAdj,
         cursorType: CursorConstant.CursorType.RESIZE_R,
         knobData: 0,
         hook: eventData.hookpt,
         polyType: "horizontal"
       }
       : {
-        knobID: actionTriggerType.CONTAINER_ADJ,
+        knobID: actionTriggerType.ContainerAdj,
         cursorType: CursorConstant.CursorType.RESIZE_B,
         knobData: 0,
         hook: eventData.hookpt,
@@ -1289,7 +1325,7 @@ class ShapeContainer extends Rect {
     });
 
     const containerFlags = NvConstant.ContainerListFlags;
-    const isContainerInCell = T3Gv.opt.ContainerIsInCell(this);
+    // const isContainerInCell = T3Gv.opt.ContainerIsInCell(this);
 
     /**
      * Inserts a new shape into the container list at a specified index
@@ -1412,7 +1448,7 @@ class ShapeContainer extends Rect {
       }
 
       // Remove empty rows before the first filled row (if not in a cell)
-      if (isContainerInCell == null) {
+      if (/*isContainerInCell == null*/true) {
         for (let row = firstFullRow - 1; row >= 0; row--) {
           if (container.ndown > 1) {
             list.splice(row * container.nacross, container.nacross);
@@ -1433,7 +1469,7 @@ class ShapeContainer extends Rect {
       }
 
       // Remove empty columns before the first filled column (if not in a cell)
-      if (isContainerInCell == null) {
+      if (/*isContainerInCell == null*/true) {
         for (let col = firstFullCol - 1; col >= 0; col--) {
           if (container.nacross > 1) {
             for (let row = container.ndown - 1; row >= 0; row--) {
@@ -1765,7 +1801,6 @@ class ShapeContainer extends Rect {
       });
     }
   }
-
 }
 
-export default ShapeContainer;
+export default ShapeContainer

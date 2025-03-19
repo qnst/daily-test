@@ -4,6 +4,41 @@ import { Type } from 'class-transformer'
 import 'reflect-metadata'
 import CRect from './CRect'
 
+/**
+ * Represents a configuration array for HVAC-related style and structural parameters.
+ *
+ * This class encapsulates various numeric properties that define the layout, orientation, and
+ * additional flags for a HVAC model. It includes properties for dimensions, angles, and a set of
+ * custom flags. The `profile` and `coprofile` properties, both instances of the `CRect` class,
+ * define rectangular areas possibly used for graphical representations or boundary definitions
+ * in the HVAC domain.
+ *
+ * @remarks
+ * The default constructor initializes all numeric properties to zero except for `lasttexthook`,
+ * which is set to -1. Both `profile` and `coprofile` are initialized as new instances of `CRect`
+ * with zero dimensions, and the arrays `steps` and `hook` are created as empty arrays.
+ *
+ * @example
+ * An example of how to create and use a SEDArray instance:
+ * ```typescript
+ * // Create a new SEDArray instance
+ * const sedArray = new SEDArray();
+ *
+ * // Output initial style flags (default is 0)
+ * console.log(sedArray.styleflags); // 0
+ *
+ * // Modify properties as needed
+ * sedArray.tilt = 45;
+ * sedArray.angle = 90;
+ * sedArray.ht = 150;
+ * sedArray.wd = 200;
+ *
+ * // Display updated values
+ * console.log(`Tilt: ${sedArray.tilt}, Angle: ${sedArray.angle}, Height: ${sedArray.ht}, Width: ${sedArray.wd}`);
+ * ```
+ *
+ * @public
+ */
 class SEDArray {
 
   public styleflags: number;

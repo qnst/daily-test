@@ -501,7 +501,7 @@ class ShapeUtil {
       this.CurrentSymbol = null,
       this.SearchResults = [],
       this.LoadBlockList = !1,
-      this.RecentSymbols = [],
+      // this.RecentSymbols = [],
       this.PaletteStatus = {}
   }
 
@@ -955,7 +955,7 @@ class ShapeUtil {
   static ReadSymbolFromBufferComplete(parsedData, result, ignoreErrors) {
     try {
       const opCodes = DSConstant.OpNameCode;
-      const CDim = OptConstant.Common.MaxDim;
+      const CDim = OptConstant.Common.DimMax;
       const minConnectorSegments = OptConstant.ConnectorDefines.NSkip;
       let dataBlockLoaded = false;
       let codeIndex, objectCount, objectIndex, segmentIndex, objectId, object, layer;
@@ -1403,7 +1403,7 @@ class ShapeUtil {
     let linkFlags = DSConstant.LinkFlags.SED_L_MOVE;
     let skipCount = OptConstant.ConnectorDefines.NSkip;
     let textData = {};
-    let coordinateDimension = OptConstant.Common.MaxDim;
+    let coordinateDimension = OptConstant.Common.DimMax;
     idMapLength = idMap.length;
 
     // /**
@@ -2958,23 +2958,23 @@ class ShapeUtil {
         //   tableBlock = ShapeUtil.ReadTableBlock(codeData, codeIndex, resultObject);
         //   break;
 
-        case opCodes.cGraphBlock:
-          // Process graph block
-          graphBlock = ShapeUtil.ReadGraphBlock(codeData, codeIndex, resultObject);
-          break;
+        // case opCodes.cGraphBlock:
+        //   // Process graph block
+        //   graphBlock = ShapeUtil.ReadGraphBlock(codeData, codeIndex, resultObject);
+        //   break;
 
-        case opCodes.cGraph:
-          // Process graph data
-          if (graphBlock == null) {
-            graphBlock = new Instance.Shape.Graph();
-          }
-          codeIndex = ShapeUtil.ReadGraph(graphBlock, codeData, codeIndex, resultObject, opCodes, opCodes.cGraphEnd);
-          break;
+        // case opCodes.cGraph:
+        //   // Process graph data
+        //   if (graphBlock == null) {
+        //     graphBlock = new Instance.Shape.Graph();
+        //   }
+        //   codeIndex = ShapeUtil.ReadGraph(graphBlock, codeData, codeIndex, resultObject, opCodes, opCodes.cGraphEnd);
+        //   break;
 
-        case opCodes.cExpandedViewBlock:
-          // Process expanded view block
-          expandedViewBlock = ShapeUtil.ReadExpandedViewBlock(codeData, codeIndex, resultObject);
-          break;
+        // case opCodes.cExpandedViewBlock:
+        //   // Process expanded view block
+        //   expandedViewBlock = ShapeUtil.ReadExpandedViewBlock(codeData, codeIndex, resultObject);
+        //   break;
 
         case opCodes.cExpandedView:
           // Process expanded view SVG data
@@ -3691,7 +3691,7 @@ class ShapeUtil {
    */
   static ObjectIsExternalTextLabel(codeData, codeIndex, opCodes, endCodeMarker, resultObject) {
     const objectData = codeData.codes[codeIndex].data;
-    const coordinateDimension = OptConstant.Common.MaxDim;
+    const coordinateDimension = OptConstant.Common.DimMax;
 
     codeIndex++;
 
@@ -4416,11 +4416,11 @@ class ShapeUtil {
         case r.cDrawFill:
           ShapeUtil.Readv6Fill(n, e.codes[t].data);
           break;
-        case r.cGraph:
-          h = new Instance.Shape.Graph,
-            n.SetGraph(h),
-            t = ShapeUtil.ReadGraph(h, e, t, a, r, r.cGraphEnd);
-          break;
+        // case r.cGraph:
+        //   h = new Instance.Shape.Graph,
+        //     n.SetGraph(h),
+        //     t = ShapeUtil.ReadGraph(h, e, t, a, r, r.cGraphEnd);
+        //   break;
         case r.cExpandedView:
           R = T3Gv.stdObj.CreateBlock(
             StateConstant.StoredObjectType.ExpandedViewObject,
@@ -5670,7 +5670,7 @@ class ShapeUtil {
    * Writes header information to the data stream for a document in
    *
    * This function writes all necessary header information to identify the document,
-   * including page settings, import paths, business module information,
+   * including page settings, import paths, operation module information,
    * symbol search strings, and organization chart configurations.
    *
    * @param dataStream - The data stream to write header information to
@@ -5698,7 +5698,7 @@ class ShapeUtil {
       ShapeUtil.WriteString(dataStream, exportPath, opCodes.cExportPath, resultObject);
     }
 
-    // Write business module information if not explicitly skipped
+    // Write operation module information if not explicitly skipped
     if (skipCodes == null || skipCodes.indexOf(opCodes.cBusinessModule) == -1) {
       ShapeUtil.WriteString(
         dataStream,
@@ -6210,25 +6210,25 @@ class ShapeUtil {
     ShapeUtil.WriteLength(dataStream, codeOffset);
   }
 
-  /**
-   * Writes a graph identifier to the data stream
-   *
-   * This function serializes a graph identifier to the data stream using
-   * the cGraphId opcode. Graph IDs reference chart and graph data
-   * structures within the document.
-   *
-   * @param dataStream - The data stream to write the graph ID to
-   * @param graphId - The graph identifier to write
-   * @param resultObject - Object containing context information for serialization
-   */
-  static WriteGraphID(dataStream, graphId, resultObject) {
-    const codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cGraphId);
-    const graphIdData = {
-      value: graphId
-    };
-    dataStream.writeStruct(DSConstant.LongValueStruct, graphIdData);
-    ShapeUtil.WriteLength(dataStream, codeOffset);
-  }
+  // /**
+  //  * Writes a graph identifier to the data stream
+  //  *
+  //  * This function serializes a graph identifier to the data stream using
+  //  * the cGraphId opcode. Graph IDs reference chart and graph data
+  //  * structures within the document.
+  //  *
+  //  * @param dataStream - The data stream to write the graph ID to
+  //  * @param graphId - The graph identifier to write
+  //  * @param resultObject - Object containing context information for serialization
+  //  */
+  // static WriteGraphID(dataStream, graphId, resultObject) {
+  //   const codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cGraphId);
+  //   const graphIdData = {
+  //     value: graphId
+  //   };
+  //   dataStream.writeStruct(DSConstant.LongValueStruct, graphIdData);
+  //   ShapeUtil.WriteLength(dataStream, codeOffset);
+  // }
 
   /**
    * Writes an expanded view identifier to the data stream
@@ -6762,15 +6762,15 @@ class ShapeUtil {
             // Handle bottom-attached text
             rectObject.hooks[0].hookpt = OptConstant.HookPts.KTC;
             rectObject.hooks[0].connect = new Point(
-              OptConstant.Common.MaxDim / 2,
-              OptConstant.Common.MaxDim
+              OptConstant.Common.DimMax / 2,
+              OptConstant.Common.DimMax
             );
             rectObject.hooks[0].objid = resultObject.UniqueMap[uniqueMapIndex - 1];
             rectObject.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.Transparent;
           } else if (currentObject && currentObject.TextFlags & NvConstant.TextFlags.AttachA) {
             // Handle top-attached text
             rectObject.hooks[0].hookpt = OptConstant.HookPts.KBC;
-            rectObject.hooks[0].connect = new Point(OptConstant.Common.MaxDim / 2, 0);
+            rectObject.hooks[0].connect = new Point(OptConstant.Common.DimMax / 2, 0);
             rectObject.hooks[0].objid = resultObject.UniqueMap[uniqueMapIndex - 1];
             rectObject.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.Transparent;
           }
@@ -8146,7 +8146,7 @@ class ShapeUtil {
     let isLineReversed = false;
     let connectPoint = {};
     let isReverseColumn = false;
-    const centerDimension = OptConstant.Common.MaxDim;
+    const centerDimension = OptConstant.Common.DimMax;
 
     // Check if the line or connector is reversed (affects hook point direction)
     if (drawingObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Line) {
@@ -8387,7 +8387,7 @@ class ShapeUtil {
     Links: 'Links.sdr',
     Image: 'Image.',
     Text: 'Text.',
-    Graph: 'Graph.',
+    // Graph: 'Graph.',
     Table: 'Table.',
     GanttInfo: 'GanttInfo',
     LMObject: 'Obj.',
@@ -8407,7 +8407,7 @@ class ShapeUtil {
     Image: 8,
     Text: 9,
     ExpandedView: 10,
-    Graph: 11,
+    // Graph: 11,
     Table: 12,
     GanttInfo: 13,
     LMObject: 14,
@@ -8521,21 +8521,21 @@ class ShapeUtil {
       //   }
       //   break;
 
-      case objectTypes.GraphObject:
-        blockName = ShapeUtil.BlockNames.Graph + storedObject.ID;
-        if (blockMetadata) {
-          blockMetadata.id = storedObject.ID;
-          blockMetadata.type = ShapeUtil.BlockIDs.Graph;
-        }
-        break;
+      // case objectTypes.GraphObject:
+      //   blockName = ShapeUtil.BlockNames.Graph + storedObject.ID;
+      //   if (blockMetadata) {
+      //     blockMetadata.id = storedObject.ID;
+      //     blockMetadata.type = ShapeUtil.BlockIDs.Graph;
+      //   }
+      //   break;
 
-      case objectTypes.ExpandedViewObject:
-        blockName = ShapeUtil.BlockNames.ExpandedView + storedObject.ID;
-        if (blockMetadata) {
-          blockMetadata.id = storedObject.ID;
-          blockMetadata.type = ShapeUtil.BlockIDs.ExpandedView;
-        }
-        break;
+      // case objectTypes.ExpandedViewObject:
+      //   blockName = ShapeUtil.BlockNames.ExpandedView + storedObject.ID;
+      //   if (blockMetadata) {
+      //     blockMetadata.id = storedObject.ID;
+      //     blockMetadata.type = ShapeUtil.BlockIDs.ExpandedView;
+      //   }
+      //   break;
 
       case objectTypes.CommentBlock:
         blockName = ShapeUtil.BlockNames.Comment + storedObject.ID;

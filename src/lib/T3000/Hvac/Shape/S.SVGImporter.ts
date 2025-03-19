@@ -1,6 +1,20 @@
 import T3Util from "../Util/T3Util";
 
 
+/**
+ * A utility class for importing and processing SVG files.
+ *
+ * The SVGImporter provides functionality to load SVG files, convert them to various formats
+ * (URL, Blob, and Uint8Array), and process them using a callback function.
+ *
+ * @class SVGImporter
+ * @example
+ * const importer = new SVGImporter();
+ * importer.ImportSVG(svgFile, (url, blob, uint8Array) => {
+ *   // Process the imported SVG
+ *   console.log('SVG URL:', url);
+ * });
+ */
 class SVGImporter {
 
   // This method imports an SVG file, creates a URL for it, and processes the file using the given callback.
@@ -56,4 +70,4 @@ class SVGImporter {
   }
 }
 
-export default SVGImporter;
+export default SVGImporter

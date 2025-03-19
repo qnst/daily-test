@@ -20,13 +20,52 @@ import HitResult from '../Model/HitResult'
 import SelectionAttributes from '../Model/SelectionAttributes'
 import DSConstant from '../Opt/DS/DSConstant';
 import OptConstant from '../Data/Constant/OptConstant';
-import T3Constant from '../Data/Constant/T3Constant';
 import BConstant from '../Basic/B.Constant';
 import CursorConstant from '../Data/Constant/CursorConstant';
 import TextConstant from '../Data/Constant/TextConstant';
 import StyleConstant from '../Data/Constant/StyleConstant';
 import T3Util from '../Util/T3Util';
 
+/**
+ * Represents a polyline shape with multiple connected segments.
+ *
+ * The PolyLine class provides functionality for creating, rendering, and manipulating
+ * polylines in the T3000 HVAC system. A polyline consists of multiple connected segments
+ * that can be straight lines or various curve types like arcs, parabolas, or Bezier curves.
+ *
+ * @class PolyLine
+ * @extends BaseLine
+ *
+ * @property {PolyList} polylist - Contains the segments and their properties
+ * @property {Point} StartPoint - Starting point of the polyline
+ * @property {Point} EndPoint - Ending point of the polyline
+ * @property {Array} hoplist - List of hops associated with the polyline
+ * @property {Array} ArrowheadData - Data for arrowhead rendering
+ * @property {number} StartArrowID - ID of the start arrowhead
+ * @property {number} EndArrowID - ID of the end arrowhead
+ * @property {boolean} StartArrowDisp - Whether to display start arrowhead
+ * @property {boolean} EndArrowDisp - Whether to display end arrowhead
+ * @property {number} ArrowSizeIndex - Size index for arrowheads
+ * @property {Point} RotateKnobPt - Position of the rotation knob
+ * @property {boolean} TextDirection - Text direction on the polyline
+ *
+ * @example
+ * // Creating a simple polyline
+ * const options = {
+ *   StartPoint: { x: 50, y: 50 },
+ *   EndPoint: { x: 200, y: 150 },
+ *   LineType: OptConstant.LineType.POLYLINE
+ * };
+ * const polyline = new PolyLine(options);
+ *
+ * // Add a corner point
+ * const svgElement = T3Gv.opt.svgObjectLayer.GetElementById(polyline.BlockID);
+ * polyline.AddCorner(svgElement, { x: 150, y: 100 });
+ *
+ * // Close the polyline to form a polygon
+ * polyline.polylist.closed = true;
+ * polyline.UpdateDrawing(svgElement);
+ */
 class PolyLine extends BaseLine {
 
   @Type(() => PolyList)
@@ -745,7 +784,7 @@ class PolyLine extends BaseLine {
           rotatedPoints.push({ ...secondPoint });
 
           // Get the clockwise angle (in radians) between first and second points.
-          let angleRadians = T3Gv.opt.SD_GetClockwiseAngleBetween2PointsInRadians(firstPoint, secondPoint);
+          let angleRadians = T3Gv.opt.GetClockwiseAngleBetween2PointsInRadians(firstPoint, secondPoint);
           let angleDegrees = (angleRadians * (180 / NvConstant.Geometry.PI)) % 180;
           // If the angle is nonzero and no rotation is applied, mark text as horizontal.
           if (!Utils2.IsEqual(angleDegrees, 0) && svgShape.RotationAngle === 0) {
@@ -2349,13 +2388,13 @@ class PolyLine extends BaseLine {
       }
     }
 
-    const result = this.BaseShape_PolyGetTargets(hookPoint, hookFlags, this.Frame);
+    const result = this.BaseShapePolyGetTargets(hookPoint, hookFlags, this.Frame);
     T3Util.Log("S.PolyLine: GetTargetPoints output", result);
     return result;
   }
 
-  BaseShape_PolyGetTargets(hookPoint, hookFlags, targetFrame) {
-    T3Util.Log("S.PolyLine: BaseShape_PolyGetTargets input", { hookPoint, hookFlags, targetFrame });
+  BaseShapePolyGetTargets(hookPoint, hookFlags, targetFrame) {
+    T3Util.Log("S.PolyLine: BaseShapePolyGetTargets input", { hookPoint, hookFlags, targetFrame });
 
     let closestPointIndex = -1;
     let minDistance = OptConstant.Common.LongIntMax;
@@ -2428,12 +2467,12 @@ class PolyLine extends BaseLine {
       const relativeX = width === 0 ? 0 : (relativePoint[0].x - targetFrame.x) / width;
       const relativeY = height === 0 ? 0 : (relativePoint[0].y - targetFrame.y) / height;
 
-      const result = [new Point(relativeX * OptConstant.Common.MaxDim, relativeY * OptConstant.Common.MaxDim)];
-      T3Util.Log("S.PolyLine: BaseShape_PolyGetTargets output", result);
+      const result = [new Point(relativeX * OptConstant.Common.DimMax, relativeY * OptConstant.Common.DimMax)];
+      T3Util.Log("S.PolyLine: BaseShapePolyGetTargets output", result);
       return result;
     }
 
-    T3Util.Log("S.PolyLine: BaseShape_PolyGetTargets output", null);
+    T3Util.Log("S.PolyLine: BaseShapePolyGetTargets output", null);
     return null;
   }
 
@@ -2492,7 +2531,7 @@ class PolyLine extends BaseLine {
         T3Util.Log('S.PolyLine: GetPerimeterPoints output', perimeterPoints);
         return perimeterPoints;
       }
-      if (hookPoints[0].x === OptConstant.Common.MaxDim) {
+      if (hookPoints[0].x === OptConstant.Common.DimMax) {
         perimeterPoints[0] = { x: this.EndPoint.x, y: this.EndPoint.y, id: hookPoints[0].id || 0 };
         T3Util.Log('S.PolyLine: GetPerimeterPoints output', perimeterPoints);
         return perimeterPoints;
@@ -2503,8 +2542,8 @@ class PolyLine extends BaseLine {
       perimeterPoints[i] = { x: 0, y: 0, id: 0 };
       let width = frame.width;
       let height = frame.height;
-      perimeterPoints[i].x = (hookPoints[i].x / OptConstant.Common.MaxDim) * width + frame.x;
-      perimeterPoints[i].y = (hookPoints[i].y / OptConstant.Common.MaxDim) * height + frame.y;
+      perimeterPoints[i].x = (hookPoints[i].x / OptConstant.Common.DimMax) * width + frame.x;
+      perimeterPoints[i].y = (hookPoints[i].y / OptConstant.Common.DimMax) * height + frame.y;
       if (hookPoints[i].id != null) {
         perimeterPoints[i].id = hookPoints[i].id;
       }
@@ -4240,7 +4279,7 @@ class PolyLine extends BaseLine {
         ellipseCenterY = rotatedPoints[0].y;
         direction = -1;
         break;
-      case OptConstant.ArcQuad.SD_PLA_BR:
+      case OptConstant.ArcQuad.PLA_BR:
       default:
         ellipseCenterX = rotatedPoints[1].x;
         ellipseCenterY = rotatedPoints[0].y;

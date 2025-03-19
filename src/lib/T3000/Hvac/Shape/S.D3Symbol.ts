@@ -9,6 +9,54 @@ import DSConstant from '../Opt/DS/DSConstant';
 import OptConstant from '../Data/Constant/OptConstant';
 import T3Util from '../Util/T3Util';
 
+/**
+ * A specialized symbol class for rendering 3D symbols in T3000 applications.
+ *
+ * The D3Symbol extends BaseSymbol to provide 3D visualization capabilities with
+ * modular code libraries, data binding, and interactive visual properties.
+ * D3Symbol supports dynamic resizing, field data mapping, and custom rendering.
+ *
+ * @class D3Symbol
+ * @extends {BaseSymbol}
+ *
+ * @property {Object} d3Settings - Configuration settings for the 3D symbol
+ * @property {string} codeLibID - ID of the currently loaded code library
+ * @property {Object} codeLib - Reference to the loaded code library
+ * @property {boolean} bMultiDataRecsAllowed - Whether multiple data records are allowed
+ * @property {boolean} ResizeAspectConstrain - Whether to maintain aspect ratio during resize
+ *
+ * @example
+ * // Create a new D3Symbol instance
+ * const symbolOptions = {
+ *   d3Settings: {
+ *     moduleID: "fan_symbol",
+ *     renderSettings: {
+ *       fillColor: { value: "#4287f5" },
+ *       strokeColor: { value: "#1a3c70" },
+ *       strokeWidth: { value: 2 },
+ *       rotationSpeed: { value: 5 }
+ *     },
+ *     publicAttributes: ["fillColor", "strokeColor", "strokeWidth", "rotationSpeed"]
+ *   },
+ *   TextFlags: NvConstant.TextFlags.AttachB
+ * };
+ *
+ * const fanSymbol = new D3Symbol(symbolOptions);
+ *
+ * // Create shape in SVG document
+ * const svgDoc = T3Gv.opt.svgDoc;
+ * const shape = fanSymbol.CreateShape(svgDoc, true);
+ *
+ * // Map data from external source
+ * fanSymbol.SetDataMap("rotationSpeed", "speed_value:0:all");
+ *
+ * // Update a parameter value
+ * fanSymbol.SetParamValue("fillColor", "#FF0000");
+ *
+ * // Resize the symbol
+ * const newSize = { width: 100, height: 100 };
+ * fanSymbol.Resize(shape, newSize);
+ */
 class D3Symbol extends BaseSymbol {
 
   constructor(options) {

@@ -1,6 +1,6 @@
 
 
-import BaseDrawObject from './S.BaseDrawObject'
+import BaseDrawObject from "./S.BaseDrawObject"
 import Utils1 from '../Util/Utils1';
 import Utils2 from "../Util/Utils2";
 import Utils3 from "../Util/Utils3";
@@ -10,12 +10,10 @@ import $ from 'jquery'
 import T3Timer from '../Util/T3Timer'
 import Point from '../Model/Point'
 import Rect from "./S.Rect";
-import Document from '../Basic/B.Document'
 import Instance from "../Data/Instance/Instance"
 import NvConstant from "../Data/Constant/NvConstant"
 import HitResult from '../Model/HitResult'
 import LinkParameters from '../Model/LinkParameters'
-import RightClickData from '../Model/RightClickData'
 import ArrowheadRecord from '../Model/ArrowheadRecord'
 import ShapeUtil from '../Opt/Shape/ShapeUtil';
 import T3Constant from '../Data/Constant/T3Constant';
@@ -25,6 +23,43 @@ import CursorConstant from '../Data/Constant/CursorConstant';
 import TextConstant from '../Data/Constant/TextConstant';
 import T3Util from '../Util/T3Util';
 
+/**
+ * Represents a base line object in the T3000 drawing system.
+ *
+ * @class BaseLine
+ * @extends BaseDrawObject
+ * @description
+ * The BaseLine class provides core functionality for all line-based objects in the T3000 HVAC drawing system.
+ * It manages line properties, connections, rendering, and interaction behaviors including:
+ * - Line styling and appearance (line types, thickness, etc.)
+ * - Arrow styling for line endpoints
+ * - Connection points (hooks) for linking objects
+ * - Hit testing for user interaction
+ * - Geometric operations (rotation, scaling, etc.)
+ * - Event handling for drawing and modification
+ *
+ * BaseLine serves as the foundation for more specialized line classes like PolyLine,
+ * SegLine and other line variants.
+ *
+ * @example
+ * // Create a basic line with start and end points
+ * const lineParams = {
+ *   LineType: OptConstant.LineType.LINE,
+ *   StyleRecord: defaultLineStyle,
+ *   StartPoint: { x: 100, y: 100 },
+ *   EndPoint: { x: 200, y: 150 }
+ * };
+ * const newLine = new BaseLine(lineParams);
+ *
+ * // Add arrows to the line
+ * newLine.StartArrowID = OptConstant.ArrowStyles.Arrow;
+ * newLine.EndArrowID = OptConstant.ArrowStyles.Circle;
+ * newLine.ArrowSizeIndex = 2; // Medium size
+ *
+ * // Create a shape and add it to the drawing
+ * const lineShape = newLine.CreateShape(T3Gv.opt.svgDoc, false);
+ * T3Gv.opt.svgObjectLayer.AddElement(lineShape);
+ */
 class BaseLine extends BaseDrawObject {
 
   public LineType: any;
@@ -1949,7 +1984,7 @@ class BaseLine extends BaseDrawObject {
   GetHookPoints(): { x: number; y: number; id: number }[] {
     T3Util.Log("= S.BaseLine: GetHookPoints called");
 
-    const hookDimension = OptConstant.Common.MaxDim;
+    const hookDimension = OptConstant.Common.DimMax;
     const hookPoints = [
       {
         x: 0,
@@ -2094,7 +2129,7 @@ class BaseLine extends BaseDrawObject {
         T3Util.Log("= S.BaseLine: GetPerimPts output:", resultPoints);
         return resultPoints;
       } else if (targetObject && targetObject.objecttype === NvConstant.FNObjectTypes.ExtraTextLable && numTargetPoints === 1) {
-        const proportion = targetPoints[0].x / OptConstant.Common.MaxDim;
+        const proportion = targetPoints[0].x / OptConstant.Common.DimMax;
         const pointOnLine = this.GetPointOnLine(proportion);
         resultPoints.push(pointOnLine);
         resultPoints[0].id = targetPoints[0].id;
@@ -2117,14 +2152,14 @@ class BaseLine extends BaseDrawObject {
       if (targetPoints[i].x === 0 && targetPoints[i].y === 0) {
         resultPoints[i].x = startPoint.x;
         resultPoints[i].y = startPoint.y;
-      } else if (targetPoints[i].x === OptConstant.Common.MaxDim && targetPoints[i].y === OptConstant.Common.MaxDim) {
+      } else if (targetPoints[i].x === OptConstant.Common.DimMax && targetPoints[i].y === OptConstant.Common.DimMax) {
         resultPoints[i].x = endPoint.x;
         resultPoints[i].y = endPoint.y;
       } else {
         const deltaX = endPoint.x - startPoint.x;
         const deltaY = endPoint.y - startPoint.y;
-        resultPoints[i].x = (targetPoints[i].x / OptConstant.Common.MaxDim) * deltaX + startPoint.x;
-        resultPoints[i].y = (targetPoints[i].y / OptConstant.Common.MaxDim) * deltaY + startPoint.y;
+        resultPoints[i].x = (targetPoints[i].x / OptConstant.Common.DimMax) * deltaX + startPoint.x;
+        resultPoints[i].y = (targetPoints[i].y / OptConstant.Common.DimMax) * deltaY + startPoint.y;
       }
       if (targetPoints[i].id != null) resultPoints[i].id = targetPoints[i].id;
     }
@@ -2195,13 +2230,13 @@ class BaseLine extends BaseDrawObject {
             const isReversed = ShapeUtil.LineIsReversed(this, null, false);
             if (this.hooks.length === 0) {
               if (isReversed) {
-                targetPoints[0].x = OptConstant.Common.MaxDim;
-                targetPoints[0].y = OptConstant.Common.MaxDim;
+                targetPoints[0].x = OptConstant.Common.DimMax;
+                targetPoints[0].y = OptConstant.Common.DimMax;
                 targetPoints.push({ x: 0, y: 0 });
               } else {
                 targetPoints[0].x = 0;
                 targetPoints[0].y = 0;
-                targetPoints.push({ x: OptConstant.Common.MaxDim, y: OptConstant.Common.MaxDim });
+                targetPoints.push({ x: OptConstant.Common.DimMax, y: OptConstant.Common.DimMax });
               }
               T3Util.Log("= S.BaseLine: GetTargetPoints output:", targetPoints);
               return targetPoints;
@@ -2214,8 +2249,8 @@ class BaseLine extends BaseDrawObject {
                 return targetPoints;
               }
               if (this.hooks[0].hookpt === hookPts.SED_KTL) {
-                targetPoints[0].x = OptConstant.Common.MaxDim;
-                targetPoints[0].y = OptConstant.Common.MaxDim;
+                targetPoints[0].x = OptConstant.Common.DimMax;
+                targetPoints[0].y = OptConstant.Common.DimMax;
                 T3Util.Log("= S.BaseLine: GetTargetPoints output:", targetPoints);
                 return targetPoints;
               }
@@ -2275,19 +2310,19 @@ class BaseLine extends BaseDrawObject {
     }
 
     if (!isHorizontal) {
-      targetPoints[0].y = (offsetY / deltaY) * OptConstant.Common.MaxDim;
+      targetPoints[0].y = (offsetY / deltaY) * OptConstant.Common.DimMax;
     }
-    targetPoints[0].x = isVertical ? targetPoints[0].y : (offsetX / deltaX) * OptConstant.Common.MaxDim;
+    targetPoints[0].x = isVertical ? targetPoints[0].y : (offsetX / deltaX) * OptConstant.Common.DimMax;
 
     if (isHorizontal) {
       targetPoints[0].y = targetPoints[0].x;
     }
 
-    if (targetPoints[0].x > OptConstant.Common.MaxDim) {
-      targetPoints[0].x = OptConstant.Common.MaxDim;
+    if (targetPoints[0].x > OptConstant.Common.DimMax) {
+      targetPoints[0].x = OptConstant.Common.DimMax;
     }
-    if (targetPoints[0].y > OptConstant.Common.MaxDim) {
-      targetPoints[0].y = OptConstant.Common.MaxDim;
+    if (targetPoints[0].y > OptConstant.Common.DimMax) {
+      targetPoints[0].y = OptConstant.Common.DimMax;
     }
     if (targetPoints[0].x < 0) {
       targetPoints[0].x = 0;
@@ -2412,7 +2447,7 @@ class BaseLine extends BaseDrawObject {
 
     const connectPoint = { x: 0, y: 0 };
     const alternatePoint = { x: 0, y: 0 };
-    const dimension = OptConstant.Common.MaxDim;
+    const dimension = OptConstant.Common.DimMax;
     const frame = Utils2.Pt2Rect(this.StartPoint, this.EndPoint);
 
     if (frame.width < frame.height) {
@@ -2442,40 +2477,72 @@ class BaseLine extends BaseDrawObject {
     return result;
   }
 
-  GetBestHook(hookPointID: number, hookPoint: Point, relativePoint: Point): any {
-    T3Util.Log("= S.BaseLine: GetBestHook called with hookPointID:", hookPointID, "hookPoint:", hookPoint, "relativePoint:", relativePoint);
+  /**
+   * Determines the best hook point for connecting to another object based on geometry
+   *
+   * This function analyzes the relationship between this line and a target object to determine
+   * the optimal hook point. It considers the orientation of the line (whether it's more vertical
+   * or horizontal) and the relative position of the target point to select the most appropriate
+   * hook point from the four cardinal directions (top, bottom, left, right center points).
+   *
+   * @param targetObjectId - The ID of the target object to connect to
+   * @param requestedHookPoint - The initially requested hook point ID
+   * @param relativePosition - The relative position coordinates within the object
+   * @returns The ID of the most appropriate hook point
+   */
+  GetBestHook(targetObjectId, requestedHookPoint, relativePosition) {
+    const maxDimension = OptConstant.Common.DimMax;
+    const frameRect = Utils2.Pt2Rect(this.StartPoint, this.EndPoint);
+    const hookPointConstants = OptConstant.HookPts;
+    let isEndPointAtOrigin = false;
 
-    const dimension = OptConstant.Common.MaxDim;
-    const rect = Utils2.Pt2Rect(this.StartPoint, this.EndPoint);
-    const HookPts = OptConstant.HookPts;
-    let isEndPoint = false;
+    // Get the target object from the object pointer
+    const targetObject = T3Gv.opt.GetObjectPtr(targetObjectId, false);
 
-    const targetObject = T3Gv.opt.GetObjectPtr(hookPointID, false);
+    // Handle target objects that are shapes
     if (targetObject && targetObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape) {
-      switch (hookPoint) {
-        case HookPts.KTC:
-        case HookPts.KBC:
-        case HookPts.KRC:
-        case HookPts.KLC:
-          if (rect.width < rect.height) {
-            isEndPoint = rect.y === this.EndPoint.y;
-            const bestHook = relativePoint.y < dimension / 2 ? (isEndPoint ? HookPts.KTC : HookPts.KBC) : (isEndPoint ? HookPts.KBC : HookPts.KTC);
-            T3Util.Log("= S.BaseLine: GetBestHook output:", bestHook);
-            return bestHook;
-          } else {
-            isEndPoint = rect.x === this.EndPoint.x;
-            const bestHook = relativePoint.x < dimension / 2 ? (isEndPoint ? HookPts.KLC : HookPts.KRC) : (isEndPoint ? HookPts.KRC : HookPts.KLC);
-            T3Util.Log("= S.BaseLine: GetBestHook output:", bestHook);
-            return bestHook;
+      switch (requestedHookPoint) {
+        case hookPointConstants.KTC: // Top center
+        case hookPointConstants.KBC: // Bottom center
+        case hookPointConstants.KRC: // Right center
+        case hookPointConstants.KLC: // Left center
+          // If the line is more vertical than horizontal
+          if (frameRect.width < frameRect.height) {
+            // Determine if the endpoint is at the beginning of the frame (top)
+            isEndPointAtOrigin = frameRect.y === this.EndPoint.y;
+
+            // For the top half of the object, choose top or bottom center based on line orientation
+            if (relativePosition?.y < maxDimension / 2) {
+              return isEndPointAtOrigin ? hookPointConstants.KTC : hookPointConstants.KBC;
+            }
+            // For the bottom half of the object, choose bottom or top center based on line orientation
+            else {
+              return isEndPointAtOrigin ? hookPointConstants.KBC : hookPointConstants.KTC;
+            }
           }
+          // If the line is more horizontal than vertical
+          else {
+            // Determine if the endpoint is at the beginning of the frame (left)
+            isEndPointAtOrigin = frameRect.x === this.EndPoint.x;
+
+            // For the left half of the object, choose left or right center based on line orientation
+            if (relativePosition?.x < maxDimension / 2) {
+              return isEndPointAtOrigin ? hookPointConstants.KLC : hookPointConstants.KRC;
+            }
+            // For the right half of the object, choose right or left center based on line orientation
+            else {
+              return isEndPointAtOrigin ? hookPointConstants.KRC : hookPointConstants.KLC;
+            }
+          }
+
+        // For other hook points, return the requested hook point unchanged
         default:
-          T3Util.Log("= S.BaseLine: GetBestHook output (default):", hookPoint);
-          return hookPoint;
+          return requestedHookPoint;
       }
     }
 
-    T3Util.Log("= S.BaseLine: GetBestHook output (no target object):", hookPoint);
-    return hookPoint;
+    // If the target object isn't a shape or doesn't exist, return the requested hook point
+    return requestedHookPoint;
   }
 
   CreateConnectHilites(svgDoc, targetPoint, hookPoint, isJoin, hookIndex, additionalParam) {
@@ -2510,7 +2577,7 @@ class BaseLine extends BaseDrawObject {
         if (hookPoint.x === 0 && hookPoint.y === 0) {
           perimeter[0].x = this.StartPoint.x;
           perimeter[0].y = this.StartPoint.y;
-        } else if (hookPoint.x === OptConstant.Common.MaxDim && hookPoint.y === OptConstant.Common.MaxDim) {
+        } else if (hookPoint.x === OptConstant.Common.DimMax && hookPoint.y === OptConstant.Common.DimMax) {
           perimeter[0].x = this.EndPoint.x;
           perimeter[0].y = this.EndPoint.y;
         }
@@ -2716,7 +2783,7 @@ class BaseLine extends BaseDrawObject {
     T3Util.Log("= S.BaseLine: ChangeTarget completed for BlockID:", this.BlockID);
   }
 
-  GetPolyPoints(numPoints: number, isRelative: boolean, a: any, r: any, i: any): Point[] {
+  GetPolyPoints(numPoints: number, isRelative: boolean, a: any, r: any, i?: any): Point[] {
     T3Util.Log("= S.BaseLine: GetPolyPoints called with:", { numPoints, isRelative, a, r, i });
 
     // Create the points array using StartPoint and EndPoint
@@ -3066,8 +3133,8 @@ class BaseLine extends BaseDrawObject {
         T3Gv.opt.fromOverlayLayer &&
         (deltaX * deltaX + deltaY * deltaY) < minLength * minLength
       ) {
-        T3Util.Log("= S.BaseLine: LM_DrawRelease - movement below minimum length; canceling modal operation.");
-        return SDUI.Commands.MainController.Shapes.CancelModalOperation();
+        // T3Util.Log("= S.BaseLine: LM_DrawRelease - movement below minimum length; canceling modal operation.");
+        // return SDUI.Commands.MainController.Shapes.CancelOperation();
       }
 
       // Preserve current linkParams for messaging output
@@ -3097,14 +3164,14 @@ class BaseLine extends BaseDrawObject {
         T3Gv.opt.lineStamp = false;
       }
 
-      // If drawing was initiated from overlay, complete business action and reset overlay flag
+      // If drawing was initiated from overlay, complete operation action and reset overlay flag
       if (T3Gv.opt.fromOverlayLayer) {
         T3Gv.opt.fromOverlayLayer = false;
         gBusinessController.CompleteAction(this.BlockID, pointerPos);
       }
       T3Util.Log("= S.BaseLine: LM_DrawRelease output: completed successfully");
     } catch (error) {
-      T3Gv.opt.CancelModalOperation();
+      T3Gv.opt.CancelOperation();
       this.LM_DrawClick_ExceptionCleanup(error);
       T3Gv.opt.ExceptionCleanup(error);
       console.error("= S.BaseLine: LM_DrawRelease encountered error:", error);
@@ -3729,7 +3796,7 @@ class BaseLine extends BaseDrawObject {
     let endY = textParams.EndPoint.y;
 
     // Calculate the rotation angle between start and end points (in radians and degrees)
-    let angleRadians = T3Gv.opt.SD_GetClockwiseAngleBetween2PointsInRadians(textParams.StartPoint, textParams.EndPoint);
+    let angleRadians = T3Gv.opt.GetClockwiseAngleBetween2PointsInRadians(textParams.StartPoint, textParams.EndPoint);
     let angleDegrees = angleRadians * (180 / NvConstant.Geometry.PI);
 
     // Flags and adjustments

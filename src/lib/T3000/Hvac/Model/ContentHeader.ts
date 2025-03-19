@@ -10,6 +10,44 @@ import LibList from './LibList'
 import T3Constant from '../Data/Constant/T3Constant'
 import OptConstant from '../Data/Constant/OptConstant';
 
+/**
+ * Represents the header configuration for HVAC-related content.
+ *
+ * This class encapsulates various settings and records that define the header behavior
+ * and display properties for a content page. It includes information about the page layout,
+ * work dimensions, font records, styles, clipboard configurations, and other relevant data.
+ *
+ * @remarks
+ * The class is initialized with default parameters through the {@link ContentHeader#Initialize method}
+ * invoked in the constructor. Key properties include:
+ * - {@link ContentHeader#Page}: The record representing the content page.
+ * - {@link ContentHeader#MaxWorkDim}: The maximum working dimensions, typically set using preset constants.
+ * - {@link ContentHeader#DimensionFont} and {@link ContentHeader#DimensionFontStyle}: Font record and style for dimensions.
+ * - Various configuration fields such as {@link ContentHeader#flags}, {@link ContentHeader#BusinessModule},
+ *   {@link ContentHeader#dateformat}, etc., for controlling business logic and display details.
+ * - {@link ContentHeader#lp_list}: Represents a list of libraries used in the content.
+ *
+ * @example
+ * An example of creating and using a ContentHeader instance:
+ *
+ * ```typescript
+ * // Create a new ContentHeader instance
+ * const header = new ContentHeader();
+ *
+ * // Access the page record
+ * console.log(header.Page);
+ *
+ * // Modify the presentation name
+ * header.presentationName = "Main Presentation";
+ *
+ * // Check if the document is marked as dirty (modified)
+ * if (header.DocIsDirty) {
+ *   console.log("The document has unsaved changes.");
+ * }
+ * ```
+ *
+ * @category HVAC Model
+ */
 class ContentHeader {
 
   @Type(() => PageRecord)

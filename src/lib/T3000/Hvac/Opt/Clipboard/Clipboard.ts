@@ -6,6 +6,41 @@ import base64js from 'base64-js'
 import T3Constant from '../../Data/Constant/T3Constant'
 import T3Util from '../../Util/T3Util'
 
+/**
+ * A utility class for handling clipboard operations with cross-browser and cross-platform support.
+ *
+ * The Clipboard class provides methods for cut, copy, and paste operations across different browsers
+ * and devices, handling the complexities of various clipboard APIs and browser-specific behaviors.
+ * It supports text, HTML, and image content types, and provides fallbacks for browsers with limited
+ * clipboard access.
+ *
+ * Features:
+ * - Detection of device type, operating system, and browser
+ * - Browser-specific clipboard operation handling for Chrome, Firefox, Safari, and Internet Explorer
+ * - Support for both synchronous and asynchronous clipboard APIs
+ * - Handling of different clipboard content types (text, HTML, images)
+ * - Focus management for clipboard operations
+ *
+ * @example
+ * // Initialize clipboard functionality
+ * Clipboard.Init();
+ *
+ * @example
+ * // Programmatically trigger a paste operation from UI
+ * Clipboard.PasteFromUIaction();
+ *
+ * @example
+ * // Check if browser supports async clipboard API
+ * if (Clipboard.CanUseAsyncClipboard()) {
+ *   // Use modern clipboard features
+ * } else {
+ *   // Use fallback methods
+ * }
+ *
+ * @example
+ * // Set focus to clipboard input for keyboard shortcuts
+ * Clipboard.FocusOnClipboardInput();
+ */
 class Clipboard {
 
   /**

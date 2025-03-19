@@ -14,6 +14,54 @@ import OptConstant from '../Data/Constant/OptConstant'
 import CursorConstant from '../Data/Constant/CursorConstant'
 import T3Util from '../Util/T3Util'
 
+/**
+ * Represents a utility class for managing and configuring an SVG-based document.
+ *
+ * This class encapsulates logic for:
+ * - Initializing and updating document configuration options (rulers, grid, snap settings, zoom, etc.).
+ * - Setting up and managing the SVG work area along with its layers (background, grid, page dividers).
+ * - Handling user interactions such as window resize, scrolling, and drag events for responsive UI updates.
+ * - Synchronizing and rendering rulers (horizontal, vertical, and center) with dynamically computed scales.
+ * - Processing events like double-clicks on rulers to reset or update document origin settings.
+ * - Adjusting zoom factors and snapping coordinates to grid intersections for precise layout control.
+ *
+ * @remarks
+ * The DocUtil class is central to document management in graphical applications that utilize an SVG interface.
+ * It provides methods to calculate layout parameters, update UI components upon user interactions, and maintain
+ * the integrity of document transformations (e.g., scaling, translating, and snapping).
+ *
+ * @example
+ * ```typescript
+ * // Instantiate and configure a new document.
+ * const docUtil = new DocUtil();
+ *
+ * // Initialize default document configuration.
+ * docUtil.InitDocConfig();
+ *
+ * // Set up the SVG work area with specific DOM element IDs.
+ * docUtil.InitializeWorkArea({
+ *   workAreaID: '#document-area',
+ *   svgAreaID: '#svg-area',
+ *   hRulerAreaID: '#h-ruler',
+ *   vRulerAreaID: '#v-ruler',
+ *   cRulerAreaID: '#c-ruler'
+ * });
+ *
+ * // Resize the document dimensions and update associated UI components.
+ * docUtil.ResizeDocument(1024, 768, false);
+ *
+ * // Enable zooming and adjust the document scale.
+ * docUtil.SetZoomFactor(1.5);
+ *
+ * // Update grid and ruler visibility as per the current document configuration.
+ * docUtil.UpdateRulerVisibility();
+ * docUtil.UpdateGrid();
+ *
+ * // Snap a point to the nearest grid intersection.
+ * const snappedPoint = docUtil.SnapToGrid({ x: 150, y: 200 });
+ * console.log('Snapped Point:', snappedPoint);
+ * ```
+ */
 class DocUtil {
 
   // Document configuration properties

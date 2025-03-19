@@ -2,11 +2,32 @@
 import WindowSettings from './WindowSettings'
 
 /**
- * Result object used for writing  format data
+ * Represents the result container for HVAC document processing operations.
  *
- * This class stores all the necessary state, configuration, and references
- * required during the  writing process. It holds references to document
- * components, tracking maps, style information, and special processing flags.
+ * This class stores all the state, settings, and output data related to
+ * processing and rendering HVAC diagrams and documents. It maintains references
+ * to document components, styling information, object tracking, and various
+ * processing flags.
+ *
+ * @class WResult
+ * @example
+ * ```ts
+ * // Create a new result container
+ * const result = new WResult();
+ *
+ * // Configure processing options
+ * result.WriteBlocks = true;
+ * result.selectonly = false;
+ * result.docDpi = 300;
+ *
+ * // Set document offsets for grouped objects
+ * result.GroupOffset = { x: 10, y: 20 };
+ *
+ * // Check for processing errors after operations
+ * if (result.error !== 0) {
+ *   console.error(`Processing failed with error code: ${result.error}`);
+ * }
+ * ```
  */
 class WResult {
 

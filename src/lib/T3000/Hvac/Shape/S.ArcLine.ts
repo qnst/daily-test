@@ -10,13 +10,56 @@ import SelectionAttributes from '../Model/SelectionAttributes'
 import Point from '../Model/Point'
 import $ from 'jquery'
 import Instance from '../Data/Instance/Instance'
-import T3Constant from '../Data/Constant/T3Constant'
 import DSConstant from '../Opt/DS/DSConstant'
 import OptConstant from '../Data/Constant/OptConstant'
 import CursorConstant from '../Data/Constant/CursorConstant'
 import T3Util from '../Util/T3Util'
 import TextConstant from '../Data/Constant/TextConstant'
 
+/**
+ * ArcLine class represents a curved line segment in the T3000 HVAC drawing system.
+ * This class extends BaseLine and provides functionality for creating, rendering, and manipulating
+ * arc-shaped connections between two points.
+ *
+ * @extends BaseLine
+ *
+ * @property {any} CurveAdjust - Controls the curvature of the arc (1-500). Higher values increase curvature.
+ * @property {boolean} IsReversed - Determines the side of the curve relative to the line between start and end points.
+ * @property {any} FromPolygon - Indicates if this arc is part of a polygon.
+ * @property {any} FixedPoint - Reference point used for certain operations.
+ * @property {any} LineOrientation - Specifies the orientation of the line.
+ * @property {any} hoplist - Contains information about "hops" (places where the arc jumps over other elements).
+ * @property {any} ArrowheadData - Data for rendering arrowheads.
+ * @property {number} StartArrowID - ID of the arrow style at the start point.
+ * @property {number} EndArrowID - ID of the arrow style at the end point.
+ * @property {boolean} StartArrowDisp - Controls visibility of the start arrow.
+ * @property {boolean} EndArrowDisp - Controls visibility of the end arrow.
+ * @property {number} ArrowSizeIndex - Controls the size of arrowheads.
+ * @property {boolean} TextDirection - Affects text placement/orientation on the arc.
+ * @property {number} OriginalCurveAdjust - Stores initial curvature during modifications.
+ * @property {boolean} OriginalIsReversed - Stores initial reversal state during modifications.
+ * @property {number} OriginalLineSide - Stores which side of the line the curve is on during modifications.
+ * @property {number} OriginalCenterPointDistance - Stores the initial distance to center during modifications.
+ *
+ * @example
+ * // Create a new arc line
+ * const arcLine = new ArcLine({
+ *   StartPoint: { x: 100, y: 100 },
+ *   EndPoint: { x: 200, y: 200 },
+ *   CurveAdjust: 50,
+ *   IsReversed: false,
+ *   StartArrowID: 1,
+ *   EndArrowID: 2,
+ *   ArrowSizeIndex: 1
+ * });
+ *
+ * // Modify the curve's shape
+ * arcLine.CurveAdjust = 75;
+ * arcLine.ModifyShape(svgDoc, 150, 130, 0);
+ *
+ * // Flip the arc horizontally
+ * arcLine.Flip(OptConstant.ExtraFlags.FlipHoriz);
+ */
 class ArcLine extends BaseLine {
   public CurveAdjust: any;
   public IsReversed: any;
@@ -536,7 +579,7 @@ class ArcLine extends BaseLine {
       case TextConstant.TextAlign.TopCenter:
       case TextConstant.TextAlign.Center:
       case TextConstant.TextAlign.BottomCenter: {
-        const angle = T3Gv.opt.SD_GetClockwiseAngleBetween2PointsInRadians(
+        const angle = T3Gv.opt.GetClockwiseAngleBetween2PointsInRadians(
           result.StartPoint,
           result.EndPoint
         );
@@ -1092,9 +1135,9 @@ class ArcLine extends BaseLine {
   GetPolyPoints(
     numPoints: number,
     skipOffset: boolean,
-    useSuper: boolean,
-    extraParam1: any,
-    extraParam2: any
+    useSuper?: boolean,
+    extraParam1?: any,
+    extraParam2?: any
   ): Point[] {
     T3Util.Log("= S.ArcLine GetPolyPoints input:", {
       numPoints,
@@ -1313,7 +1356,7 @@ class ArcLine extends BaseLine {
 
     // Initialize the target point with default values.
     const targetPoints = [{ x: 0, y: 0 }];
-    let chordResult = { x: 0, y: 0 };
+    let chordResult: any;
     let startPt = { x: 0, y: 0 };
     let endPt = { x: 0, y: 0 };
     const hookPts = OptConstant.HookPts;
@@ -1326,10 +1369,10 @@ class ArcLine extends BaseLine {
       T3Gv.opt.GetObjectPtr(targetId, false).DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape
     ) {
       switch (hookElement.id) {
-        case hookPts.SED_KTC:
-        case hookPts.SED_KBC:
-        case hookPts.SED_KRC:
-        case hookPts.SED_KLC:
+        case hookPts.KTC:
+        case hookPts.KBC:
+        case hookPts.KRC:
+        case hookPts.KLC:
           const baseTargetPoints = super.GetTargetPoints(hookElement, hookFlags, targetId);
           T3Util.Log("= S.ArcLine GetTargetPoints output:", baseTargetPoints);
           return baseTargetPoints;
@@ -1374,19 +1417,19 @@ class ArcLine extends BaseLine {
     // Calculate the target point coordinates scaled to a standard dimension.
     targetPoints[0].y =
       Math.abs(segDeltaY) > 1
-        ? (offsetY / segDeltaY) * OptConstant.Common.MaxDim
-        : OptConstant.Common.MaxDim;
+        ? (offsetY / segDeltaY) * OptConstant.Common.DimMax
+        : OptConstant.Common.DimMax;
     targetPoints[0].x =
       Math.abs(segDeltaX) > 1
-        ? (offsetX / segDeltaX) * OptConstant.Common.MaxDim
-        : OptConstant.Common.MaxDim;
+        ? (offsetX / segDeltaX) * OptConstant.Common.DimMax
+        : OptConstant.Common.DimMax;
 
     // Clamp the values between 0 and the defined dimension.
-    if (targetPoints[0].x > OptConstant.Common.MaxDim) {
-      targetPoints[0].x = OptConstant.Common.MaxDim;
+    if (targetPoints[0].x > OptConstant.Common.DimMax) {
+      targetPoints[0].x = OptConstant.Common.DimMax;
     }
-    if (targetPoints[0].y > OptConstant.Common.MaxDim) {
-      targetPoints[0].y = OptConstant.Common.MaxDim;
+    if (targetPoints[0].y > OptConstant.Common.DimMax) {
+      targetPoints[0].y = OptConstant.Common.DimMax;
     }
     if (targetPoints[0].x < 0) {
       targetPoints[0].x = 0;
@@ -1425,9 +1468,9 @@ class ArcLine extends BaseLine {
       hooks[0].id && hooks[0].id === OptConstant.HookPts.KTL &&
       hooks[1].id && hooks[1].id === OptConstant.HookPts.KTR
     ) {
-      const ptStart = new Point(this.StartPoint.x, this.StartPoint.y);
+      let ptStart = new Point(this.StartPoint.x, this.StartPoint.y);
       ptStart.id = hooks[0].id;
-      const ptEnd = new Point(this.EndPoint.x, this.EndPoint.y);
+      let ptEnd = new Point(this.EndPoint.x, this.EndPoint.y);
       ptEnd.id = hooks[1].id;
       resultPoints.push(ptStart, ptEnd);
       T3Util.Log("= S.ArcLine GetPerimPts output (direct start/end):", resultPoints);
@@ -1528,21 +1571,23 @@ class ArcLine extends BaseLine {
           T3Util.Log("= S.ArcLine MaintainPoint output:", true);
           return true;
         }
-        if (T3Gv.opt.Arc_Intersect(this, drawingObject, event)) {
+        if (T3Gv.opt.ArcIntersect(this, drawingObject, event)) {
           T3Util.Log("= S.ArcLine MaintainPoint output:", true);
           return true;
         }
-        T3Gv.opt.Lines_MaintainDist(this, maintainDistParam, extraParam, event);
+        T3Gv.opt.LinesMaintainDist(this, maintainDistParam, extraParam, event);
         break;
 
       case OptConstant.DrawObjectBaseClass.Shape:
-        T3Gv.opt.Lines_MaintainDist(this, maintainDistParam, extraParam, event);
+        T3Gv.opt.LinesMaintainDist(this, maintainDistParam, extraParam, event);
         break;
     }
 
     T3Util.Log("= S.ArcLine MaintainPoint output:", true);
     return true;
   }
+
+
 }
 
 export default ArcLine

@@ -17,7 +17,6 @@ import Instance from "../Data/Instance/Instance"
 import NvConstant from "../Data/Constant/NvConstant"
 import TextFormatData from "../Model/TextFormatData"
 import QuickStyle from "../Model/QuickStyle"
-import RightClickData from '../Model/RightClickData'
 import TextObject from '../Model/TextObject'
 import Rectangle from '../Model/Rectangle'
 import CRect from '../Model/CRect'
@@ -33,6 +32,44 @@ import TextConstant from '../Data/Constant/TextConstant'
 import StyleConstant from '../Data/Constant/StyleConstant'
 import T3Util from '../Util/T3Util'
 
+/**
+ * BaseDrawObject is the fundamental class for all drawable elements within the T3000 HVAC system.
+ * It provides core functionality for positioning, rendering, scaling, and manipulating graphical objects.
+ *
+ * This class handles:
+ * - Basic geometric properties (position, size, rotation)
+ * - Visual styling (colors, line styles, fill effects)
+ * - Object connections and hooks for creating relationships between elements
+ * - Dimension display and measurement
+ * - Event handling and user interactions
+ * - Object lifecycle management
+ *
+ * Most drawing objects in the system inherit from BaseDrawObject and extend its functionality
+ * for specific use cases such as shapes, lines, text, or symbols.
+ *
+ * @example
+ * ```typescript
+ * // Create a new drawing object
+ * const config = {
+ *   Frame: { x: 100, y: 100, width: 200, height: 150 },
+ *   StyleRecord: new QuickStyle(),
+ *   UniqueID: 12345
+ * };
+ * const drawObject = new BaseDrawObject(config);
+ *
+ * // Move the object
+ * drawObject.SetShapeOrigin(150, 200);
+ *
+ * // Scale the object
+ * drawObject.ScaleObject(0, 0, { x: 150, y: 200 }, 0, 1.5, 1.5, true);
+ *
+ * // Rotate the object
+ * drawObject.RotationAngle = 45;
+ *
+ * // Connect to another object
+ * drawObject.OnConnect(connectionPoint, targetObject, connectionData, options, context);
+ * ```
+ */
 class BaseDrawObject {
   public Type: string;
   public Frame: Rectangle;
@@ -185,7 +222,7 @@ class BaseDrawObject {
     this.hooks = config.hooks || [];
     this.maxhooks = config.maxhooks || 1;
     this.associd = config.associd || -1;
-    this.attachpoint = config.attachpoint || { x: OptConstant.Common.MaxDim / 2, y: OptConstant.Common.MaxDim / 2 };
+    this.attachpoint = config.attachpoint || { x: OptConstant.Common.DimMax / 2, y: OptConstant.Common.DimMax / 2 };
     this.hookdisp = { x: 0, y: 0 };
     this.TextFlags = config.TextFlags || 0;
     this.DrawingObjectBaseClass = config.DrawingObjectBaseClass || OptConstant.DrawObjectBaseClass.Shape;
@@ -297,7 +334,7 @@ class BaseDrawObject {
         ];
         knobShape.SetPoints(defaultPoints);
       }
-      knobShape.SetEventBehavior(OptConstant.EventBehavior.All);
+      knobShape.SetEventBehavior(OptConstant.EventBehavior.ALL);
     }
 
     if (params.locked) {
@@ -1024,7 +1061,7 @@ class BaseDrawObject {
     const numPoints = points.length;
     const computedPoints: Point[] = [];
     const shapeTriType = PolygonConstant.ShapeTypes.TRIANGLE;
-    const cellDimension = OptConstant.Common.MaxDim;
+    const cellDimension = OptConstant.Common.DimMax;
 
     for (let index = 0; index < numPoints; index++) {
       computedPoints[index] = { x: 0, y: 0, id: 0 };
@@ -3412,7 +3449,7 @@ class BaseDrawObject {
     return result;
   }
 
-  UpdateDimensionLines(container: any, triggerType: any): any {
+  UpdateDimensionLines(container: any, triggerType?: any): any {
     T3Util.Log("= S.BaseDrawObject: UpdateDimensionLines input:", { container, triggerType });
 
     if (T3Gv.opt.bBuildingSymbols) {
@@ -3444,7 +3481,7 @@ class BaseDrawObject {
     return null;
   }
 
-  UpdateCoordinateLines(container: any, triggerType: any): any {
+  UpdateCoordinateLines(container: any, triggerType?: any): any {
     T3Util.Log("= S.BaseDrawObject: UpdateCoordinateLines input:", { container, triggerType });
 
     if (T3Gv.opt.bBuildingSymbols) {

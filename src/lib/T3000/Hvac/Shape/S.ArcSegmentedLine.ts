@@ -6,11 +6,52 @@ import Utils3 from "../Util/Utils3";
 import T3Gv from '../Data/T3Gv'
 import NvConstant from '../Data/Constant/NvConstant'
 import Instance from '../Data/Instance/Instance';
-import ConstantData2 from '../Data/Constant/ConstantData2'
 import OptConstant from '../Data/Constant/OptConstant';
 import T3Util from '../Util/T3Util';
 import TextConstant from '../Data/Constant/TextConstant';
+import Point from '../Model/Point';
 
+/**
+ * Class representing an arc segmented line in an HVAC visualization system.
+ *
+ * @class ArcSegmentedLine
+ * @extends {SegmentedLine}
+ * @description
+ * The ArcSegmentedLine class renders a line with multiple segments connected by arcs,
+ * providing a smoother visual representation compared to straight segmented lines.
+ * It is commonly used in HVAC diagrams to represent curved pipe or duct connections.
+ *
+ * Key features:
+ * - Creates SVG representations with proper arc connections between segments
+ * - Supports styling including color, opacity, line thickness, and patterns
+ * - Handles both simple segments and complex multi-segment paths
+ * - Provides slop elements for better interaction and selection
+ * - Supports text positioning relative to the curved line
+ *
+ * @example
+ * ```typescript
+ * // Create a new arc segmented line
+ * const arcLine = new ArcSegmentedLine({
+ *   StartPoint: new Point(100, 100),
+ *   EndPoint: new Point(300, 300),
+ *   StyleRecord: {
+ *     Line: {
+ *       Paint: {
+ *         Color: '#FF0000',
+ *         Opacity: 1.0
+ *       },
+ *       Thickness: 2,
+ *       LinePattern: 0
+ *     }
+ *   }
+ * });
+ *
+ * // Add to SVG context
+ * const svgContainer = svgContext.CreateShape(OptConstant.CSType.ShapeContainer);
+ * const renderedShape = arcLine.CreateShape(svgContext, false);
+ * svgContainer.AddElement(renderedShape);
+ * ```
+ */
 class ArcSegmentedLine extends SegmentedLine {
 
   constructor(options: any) {
@@ -295,7 +336,7 @@ class ArcSegmentedLine extends SegmentedLine {
         };
 
         textParams.Frame = Utils2.Pt2Rect(polyPoints[0], polyPoints[9]);
-        const angle = T3Gv.opt.SD_GetClockwiseAngleBetween2PointsInRadians(polyPoints[0], polyPoints[9]);
+        const angle = T3Gv.opt.GetClockwiseAngleBetween2PointsInRadians(polyPoints[0], polyPoints[9]);
 
         rotatedPoints.push(new Point(polyPoints[0].x, polyPoints[0].y));
         rotatedPoints.push(new Point(polyPoints[9].x, polyPoints[9].y));

@@ -1,7 +1,31 @@
 
 
 /**
- * Constants for keyboard interactions in the application
+ * Provides constant definitions for keyboard interactions in the T3000 HVAC system.
+ *
+ * This class contains static mappings for keyboard contexts, modifier keys, key codes,
+ * and special keys that are used throughout the application for handling keyboard events.
+ *
+ * @example
+ * // Check if a key event is a navigation key
+ * function isNavigationKey(event: KeyboardEvent): boolean {
+ *   return KeyboardConstant.NonTextKeys.includes(event.keyCode);
+ * }
+ *
+ * @example
+ * // Handle keyboard shortcuts with modifiers
+ * function handleKeyDown(event: KeyboardEvent, context: number): void {
+ *   const isCtrlPressed = event.ctrlKey;
+ *   const modifierKey = isCtrlPressed ? KeyboardConstant.ModifierKeys.Ctrl : KeyboardConstant.ModifierKeys.None;
+ *
+ *   if (context === KeyboardConstant.Contexts.Automation &&
+ *       modifierKey === KeyboardConstant.ModifierKeys.Ctrl &&
+ *       event.keyCode === KeyboardConstant.Keys.S) {
+ *     // Handle Ctrl+S in Automation context
+ *     event.preventDefault();
+ *     saveAutomation();
+ *   }
+ * }
  */
 class KeyboardConstant {
   /**

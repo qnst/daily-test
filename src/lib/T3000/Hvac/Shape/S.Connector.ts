@@ -25,6 +25,42 @@ import CursorConstant from '../Data/Constant/CursorConstant';
 import TextConstant from '../Data/Constant/TextConstant';
 import T3Util from '../Util/T3Util';
 
+/**
+ * Represents a connector drawing object that connects elements in a diagram.
+ *
+ * The Connector class provides functionality for creating and manipulating connection lines
+ * between elements. It supports various styles including linear, perpendicular, and radial
+ * connections with customizable appearance and behavior.
+ *
+ * Features include:
+ * - Various connector styles (linear, perpendicular, radial)
+ * - Start and end arrowheads with customizable styles
+ * - Text labels at various points along the connector
+ * - Custom routing with adjustable segment positions
+ * - Hit testing and user interaction handling
+ * - Support for connector collapse/expand functionality
+ *
+ * @extends BaseDrawObject
+ *
+ * @example
+ * // Create a simple connector between two points
+ * const connector = new Connector({
+ *   StartPoint: { x: 100, y: 100 },
+ *   EndPoint: { x: 300, y: 200 },
+ *   styleflags: OptConstant.AStyles.PerpConn | OptConstant.AStyles.MinZero,
+ *   StartArrowID: 0,
+ *   EndArrowID: 1,
+ *   EndArrowDisp: true
+ * });
+ *
+ * // Add text to the connector
+ * const textId = T3Gv.stdObj.CreateTextObject("Connection Label");
+ * connector.SetTextObject(textId);
+ *
+ * // Change the connector appearance
+ * connector.StyleRecord.Line.Paint.Color = "blue";
+ * connector.StyleRecord.Line.Thickness = 2;
+ */
 class Connector extends BaseDrawObject {
 
   public StartPoint: { x: number, y: number };
@@ -7929,7 +7965,7 @@ class Connector extends BaseDrawObject {
     );
 
     const styles = OptConstant.AStyles;
-    const connectorDimension = OptConstant.Common.MaxDim;
+    const connectorDimension = OptConstant.Common.DimMax;
 
     // Determine style flags
     const isStartLeft = Boolean(this.arraylist.styleflags & styles.SEDA_StartLeft);

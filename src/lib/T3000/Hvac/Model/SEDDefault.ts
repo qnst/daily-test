@@ -6,6 +6,31 @@ import FontRecord from "./FontRecord"
 import QuickStyle from './QuickStyle'
 import OptConstant from '../Data/Constant/OptConstant'
 
+/**
+ * Represents the default settings for an HVAC element, encapsulating style,
+ * text formatting, margins, and various graphical dimension properties.
+ *
+ * @remarks
+ * This class provides a collection of default configuration values that are used to initialize
+ * an HVAC model element. These include visual styling through the QuickStyle and FontRecord objects,
+ * text alignment properties, text growth behavior, fixed margins, and parameters for drawing arrays
+ * and rectangles. The class is designed to supply a standardized configuration which can be easily
+ * modified to suit different visual or spatial requirements.
+ *
+ * @example
+ * // Create an instance with default settings
+ * const sedDefault = new SEDDefault();
+ *
+ * // Access and modify some properties
+ * sedDefault.just = 'left';
+ * sedDefault.tmargins.left = 10;
+ * sedDefault.textgrow = NvConstant.TextGrowBehavior.Flexible;
+ * sedDefault.rrectparam = SomeOtherConstant;
+ *
+ * // Use the updated sedDefault instance for further processing in the HVAC control system.
+ *
+ * @public
+ */
 class SEDDefault {
 
   @Type(() => QuickStyle)

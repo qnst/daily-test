@@ -10,6 +10,41 @@ import DocUtil from "../../Doc/DocUtil"
 import KeyboardUtil from "./KeyboardUtil"
 import T3Util from "../../Util/T3Util"
 
+/**
+ * Class that manages keyboard commands and event handling for the T3000 HVAC application.
+ *
+ * This class is responsible for:
+ * - Building and organizing keyboard commands for different contexts
+ * - Processing keyboard events (keydown, keyup, keypress)
+ * - Executing appropriate commands based on the current context and key combinations
+ * - Managing specialized behavior for text editing contexts
+ *
+ * @example
+ * // Initialize keyboard commands
+ * const keyboardManager = new KeyboardOpt();
+ * keyboardManager.BuildCommands();
+ *
+ * // Get commands for a specific context
+ * const allCommands = keyboardManager.GetCommandsInContext(KeyboardConstant.Contexts.All);
+ *
+ * // Register event handlers
+ * document.addEventListener('keydown', KeyboardOpt.OnKeyDown);
+ * document.addEventListener('keyup', KeyboardOpt.OnKeyUp);
+ * document.addEventListener('keypress', KeyboardOpt.OnKeyPress);
+ *
+ * @example
+ * // Adding a new keyboard command
+ * this.KeyboardCommands.All.push(
+ *   this.keyboardUtil.BuildCommand(
+ *     'SaveAs',
+ *     this.keyContext.All,
+ *     this.keyModifierKeys.Ctrl_Shift,
+ *     this.keyConstants.Keys.S,
+ *     this.toolUtil.SaveAs,
+ *     this.toolUtil
+ *   )
+ * );
+ */
 class KeyboardOpt {
 
   public KeyboardCommands: any;
@@ -40,7 +75,7 @@ class KeyboardOpt {
       this.keyboardUtil.BuildCommand('Redo', this.keyContext.All, this.keyModifierKeys.Ctrl, this.keyConstants.Keys.Y, this.toolUtil.Redo, this.toolUtil),
       this.keyboardUtil.BuildCommand('SelectAll', this.keyContext.All, this.keyModifierKeys.Ctrl, this.keyConstants.Keys.A, this.toolUtil.SelectAllObjects, this.toolUtil),
       this.keyboardUtil.BuildCommand('Delete', this.keyContext.All, this.keyModifierKeys.None, this.keyConstants.Keys.Delete, this.toolUtil.DeleteSelectedObjects, this.toolUtil),
-      this.keyboardUtil.BuildCommand('Cancel', this.keyContext.All, this.keyModifierKeys.None, this.keyConstants.Keys.Escape, this.toolUtil.CancelModalOperation, this.toolUtil),
+      // this.keyboardUtil.BuildCommand('Cancel', this.keyContext.All, this.keyModifierKeys.None, this.keyConstants.Keys.Escape, this.toolUtil.CancelOperation, this.toolUtil),
       this.keyboardUtil.BuildCommand('Group', this.keyContext.All, this.keyModifierKeys.Ctrl, this.keyConstants.Keys.G, this.toolUtil.GroupSelectedShapes, this.toolUtil),
       this.keyboardUtil.BuildCommand('Ungroup', this.keyContext.All, this.keyModifierKeys.Ctrl_Shift, this.keyConstants.Keys.G, this.toolUtil.UnGroupSelectedShapes, this.toolUtil),
       this.keyboardUtil.BuildCommand('Duplicate', this.keyContext.All, this.keyModifierKeys.Ctrl, this.keyConstants.Keys.D, this.toolUtil.Duplicate, this.toolUtil),

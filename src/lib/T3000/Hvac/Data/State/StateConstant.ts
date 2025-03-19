@@ -1,8 +1,36 @@
 
 
+
 /**
- * Constants used for managing application state
- * Contains operation types and object types used throughout the application
+ * Represents a collection of constant values for state operations and stored object types.
+ *
+ * This class contains two key sets of constants:
+ *
+ * - StateOperationType: Enumerates the operation types for managing state entries.
+ *   It includes:
+ *   - CREATE: Indicates creation of a new state entry.
+ *   - UPDATE: Indicates updating an existing state entry.
+ *   - DELETE: Indicates deletion of a state entry.
+ *
+ * - StoredObjectType: Defines unique identifiers for different object types that can be stored and managed
+ *   within the system. These identifiers serve as keys for accessing and manipulating various data objects
+ *   (e.g., BaseDrawObject, TextObject, NotesObject, etc.).
+ *
+ * @example
+ * // Example: Using the state operation type to handle creation of a new state entry.
+ * if (operation === StateConstant.StateOperationType.CREATE) {
+ *   // Code to create a new state entry
+ * }
+ *
+ * @example
+ * // Example: Retrieving a stored object type identifier for a text object.
+ * const objectType = StateConstant.StoredObjectType.TextObject;
+ * console.log(objectType); // Outputs: "TextObject"
+ *
+ * @remarks
+ * The constants in this class are defined using the "as const" assertion, making them immutable. This ensures
+ * that the operation types and object identifiers remain consistent throughout the application, reducing the risk
+ * of accidental modifications.
  */
 class StateConstant {
   /**
@@ -35,7 +63,6 @@ class StateConstant {
    * @property {string} HNativeObject - Native handler object type
    * @property {string} HNativeWinObject - Native Windows handler object type
    * @property {string} BlobBytesObject - Binary large object data type
-   * @property {string} GraphObject - Graph visualization object type
    * @property {string} SDDataObject - Structured data object type
    * @property {string} ExpandedViewObject - Expanded view state object type
    * @property {string} CommentBlock - Comment block object type
@@ -54,7 +81,7 @@ class StateConstant {
     HNativeObject: 'hNative',
     HNativeWinObject: 'hNativeWindows',
     BlobBytesObject: 'BlobBytes',
-    GraphObject: 'Graph',
+    // GraphObject: 'Graph',
     SDDataObject: 'SDData',
     ExpandedViewObject: 'ExpandedView',
     CommentBlock: 'CommentBlock',

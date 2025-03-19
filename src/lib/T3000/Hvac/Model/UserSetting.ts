@@ -2,6 +2,21 @@
 
 import T3Constant from "../Data/Constant/T3Constant";
 
+/**
+ * Represents user-specific settings for the HVAC system interface.
+ * This class stores preferences and configurations that customize the user experience.
+ *
+ * @class UserSetting
+ * @example
+ * // Create a new user setting instance
+ * const userSetting = new UserSetting();
+ *
+ * // Customize settings
+ * userSetting.UserID = 123;
+ * userSetting.ShowGrid = true;
+ * userSetting.Metric = true;
+ * userSetting.RecentColors = ['#FF0000', '#00FF00', '#0000FF'];
+ */
 class UserSetting {
 
   public UserID: number;

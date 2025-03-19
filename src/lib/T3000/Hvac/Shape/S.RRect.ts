@@ -12,6 +12,27 @@ import PolygonConstant from '../Opt/Polygon/PolygonConstant';
 import OptConstant from '../Data/Constant/OptConstant';
 import T3Util from '../Util/T3Util';
 
+/**
+ * Represents a rounded rectangle shape in the T3000 HVAC system.
+ *
+ * @class RRect
+ * @extends BaseShape
+ * @description
+ * The RRect class implements a rounded rectangle shape with configurable corner radius.
+ * It supports both fixed and proportional corner sizes, SVG rendering, resizing operations,
+ * style customization, and intersection calculations for connection points.
+ *
+ * Key features:
+ * - SVG shape generation with main shape, slop (for interaction), and optional hatch pattern
+ * - Corner size calculation based on shape parameters and dimensions
+ * - Shape resize operations that maintain corner proportions
+ * - Polygon point generation for perimeter calculations
+ * - Integration with the T3000 drawing system
+ *
+ * The corner radius can be either:
+ * - Proportional to the shape's smallest dimension (default)
+ * - Fixed size when the FixedRR flag is set in moreflags
+ */
 class RRect extends BaseShape {
 
   constructor(inputParams: any) {
@@ -452,14 +473,14 @@ class RRect extends BaseShape {
   }
 
   ExtendLines() {
-    T3Util.Log("= S.RRect: ExtendLines input:", {});
+    // T3Util.Log("= S.RRect: ExtendLines input:", {});
 
     // const tableData = this.GetTable(false);
     // if (tableData) {
     //   T3Gv.opt.Table_ExtendLines(this, tableData);
     // }
 
-    T3Util.Log("= S.RRect: ExtendLines output:", { tableDataFound: !!tableData });
+    // T3Util.Log("= S.RRect: ExtendLines output:", { tableDataFound: !!tableData });
   }
 
   // ExtendCell(cellIndex: number, extensionData: any, additionalOptions: any) {
@@ -520,7 +541,7 @@ class RRect extends BaseShape {
     const localPoints: any[] = [];
     const interSectionData: any = {};
     const tmpIntersect: number[] = [0, 0];
-    const baseDim = OptConstant.Common.MaxDim;
+    const baseDim = OptConstant.Common.DimMax;
     const totalHooks = hookPoints.length;
 
     // Special check
@@ -578,10 +599,10 @@ class RRect extends BaseShape {
       for (let i = 0; i < totalHooks; i++) {
         outputPoints[i] = { x: 0, y: 0, id: 0 };
         outputPoints[i].x =
-          (hookPoints[i].x / OptConstant.Common.MaxDim) * this.Frame.width +
+          (hookPoints[i].x / OptConstant.Common.DimMax) * this.Frame.width +
           this.Frame.x;
         outputPoints[i].y =
-          (hookPoints[i].y / OptConstant.Common.MaxDim) * this.Frame.height +
+          (hookPoints[i].y / OptConstant.Common.DimMax) * this.Frame.height +
           this.Frame.y;
         if (hookPoints[i].id != null) {
           outputPoints[i].id = hookPoints[i].id;
@@ -779,7 +800,6 @@ class RRect extends BaseShape {
     T3Util.Log("= S.RRect: SetShapeProperties output:", updated);
     return updated;
   }
-
 }
 
 export default RRect

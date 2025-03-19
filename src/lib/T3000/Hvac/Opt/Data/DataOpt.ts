@@ -13,6 +13,31 @@ import LayersManager from '../../Model/LayersManager'
 import TEDSession from '../../Model/TEDSession'
 import Instance from '../../Data/Instance/Instance'
 
+/**
+ * Class for managing data operations in T3000 HVAC system.
+ *
+ * This utility class handles persistent storage operations between the application
+ * and localStorage, managing application state, clipboard content, object stores,
+ * and sequence IDs. It provides methods for initializing, saving, and converting
+ * stored data.
+ *
+ * @example
+ * // Initialize all stored data from localStorage
+ * DataOpt.InitStoredData();
+ *
+ * @example
+ * // Save all application data to localStorage
+ * DataOpt.SaveToLocalStorage();
+ *
+ * @example
+ * // Initialize state and object store with default values
+ * DataOpt.InitStateAndStore();
+ *
+ * @example
+ * // Load and save specific data
+ * const savedState = DataOpt.LoadData(DataOpt.STATE_KEY);
+ * DataOpt.SaveData(DataOpt.STATE_KEY, newState);
+ */
 class DataOpt {
 
   /**

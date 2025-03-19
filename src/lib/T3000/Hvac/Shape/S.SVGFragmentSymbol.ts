@@ -13,9 +13,35 @@ import CursorConstant from '../Data/Constant/CursorConstant';
 import TextConstant from '../Data/Constant/TextConstant';
 import StyleConstant from '../Data/Constant/StyleConstant';
 import T3Util from '../Util/T3Util';
+import Instance from '../Data/Instance/Instance';
 
+/**
+ * Represents an SVG Fragment Symbol that can be inserted into documents as a reusable graphical element.
+ *
+ * SVGFragmentSymbol manages external SVG content as a shape element with extensive styling and
+ * transformation capabilities. It handles rendering, positioning, resizing, styling, and interactive
+ * behaviors for SVG fragments.
+ *
+ * Key features:
+ * - Renders SVG fragments with configurable styling (fill colors, stroke colors, opacity)
+ * - Supports transformations including scaling, rotation, and flipping
+ * - Handles field data style overrides to dynamically change appearance
+ * - Provides interactive resize handles and rotation controls
+ * - Supports text integration with the SVG content
+ * - Manages proportional, horizontal-only, or vertical-only resizing behaviors
+ * - Supports connector attachment points for linking with other objects
+ *
+ * The symbol maintains its source SVG properties while allowing integration with the T3000
+ * object system, including event handling, dimension lines, and style application.
+ *
+ * @extends BaseSymbol
+ */
 class SVGFragmentSymbol extends BaseSymbol {
 
+  /**
+   * Creates a new SVG Fragment Symbol instance
+   * @param options - Configuration options for the symbol including dimensions, styling, and behavior
+   */
   constructor(options: any) {
     T3Util.Log("= S.SVGFragmentSymbol | Constructor Input:", options);
     options = options || {};
@@ -24,16 +50,22 @@ class SVGFragmentSymbol extends BaseSymbol {
     T3Util.Log("= S.SVGFragmentSymbol | Constructor Output:", this);
   }
 
-  CreateShape(svgDoc: any, useEvent: any) {
-    T3Util.Log("= S.SVGFragmentSymbol | CreateShape Input:", { svgDoc, useEvent });
+  /**
+   * Creates an SVG shape representation of this symbol
+   * @param svgDocument - The SVG document where the shape will be created
+   * @param enableEvents - Whether to enable event handling on the created shape
+   * @returns The created SVG shape container element, or null if the shape is not visible
+   */
+  CreateShape(svgDocument: any, enableEvents: any) {
+    T3Util.Log("= S.SVGFragmentSymbol | CreateShape Input:", { svgDocument, enableEvents });
 
     if (this.flags & NvConstant.ObjFlags.NotVisible) {
       return null;
     }
 
     // Create container and symbol shapes
-    const container = svgDoc.CreateShape(OptConstant.CSType.ShapeContainer);
-    const symbol = svgDoc.CreateShape(OptConstant.CSType.Symbol);
+    const container = svgDocument.CreateShape(OptConstant.CSType.ShapeContainer);
+    const symbol = svgDocument.CreateShape(OptConstant.CSType.Symbol);
 
     // Set up symbol properties
     symbol.SetSymbolSource(this.SVGFragment);
@@ -45,13 +77,13 @@ class SVGFragmentSymbol extends BaseSymbol {
     const lineThickness = styleRecord.Line.Thickness;
 
     // Override with field data style if available
-    let fieldStyle = this.GetFieldDataStyleOverride();
-    if (fieldStyle && fieldStyle.strokeColor) {
-      lineColor = fieldStyle.strokeColor;
+    let fieldDataStyle = this.GetFieldDataStyleOverride();
+    if (fieldDataStyle && fieldDataStyle.strokeColor) {
+      lineColor = fieldDataStyle.strokeColor;
     }
 
     // Set stroke color and width based on color changes flags
-    if (fieldStyle || (this.colorchanges & (StyleConstant.ColorFilters.NCLine | StyleConstant.ColorFilters.NCStyle))) {
+    if (fieldDataStyle || (this.colorchanges & (StyleConstant.ColorFilters.NCLine | StyleConstant.ColorFilters.NCStyle))) {
       symbol.SetStrokeColor(lineColor);
     }
 
@@ -74,13 +106,15 @@ class SVGFragmentSymbol extends BaseSymbol {
     symbol.SetScale(width / this.InitialGroupBounds.width, height / this.InitialGroupBounds.height);
 
     // Apply mirror/flip effects if needed
-    const flipHoriz = (this.extraflags & OptConstant.ExtraFlags.FlipHoriz) > 0;
-    const flipVert = (this.extraflags & OptConstant.ExtraFlags.FlipVert) > 0;
-    if (flipHoriz) {
-      symbol.SetMirror(flipHoriz);
+    const flipHorizontal = (this.extraflags & OptConstant.ExtraFlags.FlipHoriz) > 0;
+    const flipVertical = (this.extraflags & OptConstant.ExtraFlags.FlipVert) > 0;
+
+    if (flipHorizontal) {
+      symbol.SetMirror(flipHorizontal);
     }
-    if (flipVert) {
-      symbol.SetFlip(flipVert);
+
+    if (flipVertical) {
+      symbol.SetFlip(flipVertical);
     }
 
     container.AddElement(symbol);
@@ -88,16 +122,18 @@ class SVGFragmentSymbol extends BaseSymbol {
     this.ApplyEffects(container, false, false);
 
     // Create a slop shape for event handling
-    const slopShape = svgDoc.CreateShape(OptConstant.CSType.Rect);
+    const slopShape = svgDocument.CreateShape(OptConstant.CSType.Rect);
     slopShape.SetStrokeColor('white');
     slopShape.SetFillColor('none');
     slopShape.SetOpacity(0);
     slopShape.SetStrokeWidth(0);
-    if (useEvent) {
+
+    if (enableEvents) {
       slopShape.SetEventBehavior(OptConstant.EventBehavior.HiddenAll);
     } else {
       slopShape.SetEventBehavior(OptConstant.EventBehavior.None);
     }
+
     slopShape.SetID(OptConstant.SVGElementClass.Slop);
     slopShape.ExcludeFromExport(true);
     slopShape.SetSize(width, height);
@@ -107,7 +143,7 @@ class SVGFragmentSymbol extends BaseSymbol {
 
     // Add SVG text object if applicable
     if (this.DataID !== -1) {
-      this.LM_AddSVGTextObject(svgDoc, container);
+      this.LM_AddSVGTextObject(svgDocument, container);
     }
 
     T3Util.Log("= S.SVGFragmentSymbol | CreateShape Output:", container);
@@ -151,19 +187,19 @@ class SVGFragmentSymbol extends BaseSymbol {
         );
         shapeElement.fillPaintType = fillType;
       } else if (fillType === NvConstant.FillTypes.Texture) {
-        const texture = styleRecord.Fill.Paint.Texture;
-        const textureData = T3Gv.opt.TextureList.Textures[texture];
-        if (textureData) {
-          const textureFill = {
-            url: textureData.ImageURL || (Constants.FilePath_CMSRoot + Constants.FilePath_Textures + textureData.filename),
-            scale: T3Gv.opt.CalcTextureScale(styleRecord.Fill.Paint.TextureScale, textureData.dim.x),
-            alignment: styleRecord.Fill.Paint.TextureScale.AlignmentScalar,
-            dim: textureData.dim
-          };
-          // Update scale inside styleRecord for consistency
-          styleRecord.Fill.Paint.TextureScale.Scale = textureFill.scale;
-          shapeElement.SetTextureFill(textureFill);
-        }
+        // const texture = styleRecord.Fill.Paint.Texture;
+        // const textureData = T3Gv.opt.TextureList.Textures[texture];
+        // if (textureData) {
+        //   const textureFill = {
+        //     url: textureData.ImageURL || (Constants.FilePath_CMSRoot + Constants.FilePath_Textures + textureData.filename),
+        //     scale: T3Gv.opt.CalcTextureScale(styleRecord.Fill.Paint.TextureScale, textureData.dim.x),
+        //     alignment: styleRecord.Fill.Paint.TextureScale.AlignmentScalar,
+        //     dim: textureData.dim
+        //   };
+        //   // Update scale inside styleRecord for consistency
+        //   styleRecord.Fill.Paint.TextureScale.Scale = textureFill.scale;
+        //   shapeElement.SetTextureFill(textureFill);
+        // }
       } else if (fillType === NvConstant.FillTypes.Transparent) {
         shapeElement.SetFillColor('none');
       } else {
@@ -175,39 +211,46 @@ class SVGFragmentSymbol extends BaseSymbol {
     T3Util.Log("S.SVGFragmentSymbol | ApplyStyles Output:", { shapeElement });
   }
 
-  Resize(shapeElement, newBBox, eventInfo) {
+  /**
+   * Resizes the SVG fragment symbol to the new dimensions
+   * @param shapeElement - The SVG element representing the shape to resize
+   * @param newBoundingBox - The new bounding box dimensions and position
+   * @param eventInfo - Additional information about the event that triggered the resize
+   * @returns Offset object with x and y values for position adjustment
+   */
+  Resize(shapeElement, newBoundingBox, eventInfo) {
     T3Util.Log("= S.SVGFragmentSymbol | Resize Input:", {
       shapeElement,
-      newBBox,
+      newBoundingBox,
       eventInfo
     });
 
     // Get the current rotation, previous bounding box and calculate offset for rotation.
     const rotation = shapeElement.GetRotation();
-    const prevBBox = $.extend(true, {}, this.prevBBox);
-    const updatedBBox = $.extend(true, {}, newBBox);
-    const offset = T3Gv.opt.svgDoc.CalculateRotatedOffsetForResize(prevBBox, updatedBBox, rotation);
+    const previousBoundingBox = $.extend(true, {}, this.prevBBox);
+    const updatedBoundingBox = $.extend(true, {}, newBoundingBox);
+    const offset = T3Gv.opt.svgDoc.CalculateRotatedOffsetForResize(previousBoundingBox, updatedBoundingBox, rotation);
 
     // Update the main shape size and position.
-    shapeElement.SetSize(updatedBBox.width, updatedBBox.height);
-    shapeElement.SetPos(updatedBBox.x + offset.x, updatedBBox.y + offset.y);
+    shapeElement.SetSize(updatedBoundingBox.width, updatedBoundingBox.height);
+    shapeElement.SetPos(updatedBoundingBox.x + offset.x, updatedBoundingBox.y + offset.y);
 
     // Update the inner shape content.
     const shapeContent = shapeElement.GetElementById(OptConstant.SVGElementClass.Shape);
-    shapeContent.SetSize(updatedBBox.width, updatedBBox.height);
+    shapeContent.SetSize(updatedBoundingBox.width, updatedBoundingBox.height);
     shapeContent.SetScale(
-      updatedBBox.width / this.InitialGroupBounds.width,
-      updatedBBox.height / this.InitialGroupBounds.height
+      updatedBoundingBox.width / this.InitialGroupBounds.width,
+      updatedBoundingBox.height / this.InitialGroupBounds.height
     );
 
     // Update the "slop" element, if present.
     const slopElement = shapeElement.GetElementById(OptConstant.SVGElementClass.Slop);
     if (slopElement) {
-      slopElement.SetSize(updatedBBox.width, updatedBBox.height);
+      slopElement.SetSize(updatedBoundingBox.width, updatedBoundingBox.height);
     }
 
     // Resize the SVG text object.
-    this.LM_ResizeSVGTextObject(shapeElement, eventInfo, updatedBBox);
+    this.LM_ResizeSVGTextObject(shapeElement, eventInfo, updatedBoundingBox);
 
     // Reset rotation and update dimension lines.
     shapeElement.SetRotation(rotation);
@@ -220,15 +263,21 @@ class SVGFragmentSymbol extends BaseSymbol {
     return offset;
   }
 
-  ResizeInTextEdit(shapeElement, newBBox) {
-    T3Util.Log("= S.SVGFragmentSymbol | ResizeInTextEdit Input:", { shapeElement, newBBox });
+  /**
+   * Handles resizing of the SVG fragment during text editing operations
+   * @param shapeElement - The SVG element representing the shape to resize
+   * @param newBoundingBox - The new bounding box dimensions and position
+   * @returns Offset object with x and y values for position adjustment
+   */
+  ResizeInTextEdit(shapeElement, newBoundingBox) {
+    T3Util.Log("= S.SVGFragmentSymbol | ResizeInTextEdit Input:", { shapeElement, newBoundingBox });
 
     if (shapeElement) {
       const shapeID = shapeElement.GetID();
       if (shapeID >= 0) {
         const shapeObject = T3Gv.opt.GetObjectPtr(shapeID, false);
         this.prevBBox = $.extend(true, {}, this.Frame);
-        const offset = this.Resize(shapeElement, newBBox, shapeObject);
+        const offset = this.Resize(shapeElement, newBoundingBox, shapeObject);
         T3Util.Log("= S.SVGFragmentSymbol | ResizeInTextEdit Output:", { offset });
         return offset;
       }
@@ -239,15 +288,36 @@ class SVGFragmentSymbol extends BaseSymbol {
     return defaultOffset;
   }
 
-  CreateActionTriggers(svgDoc: any, triggerType: any, action: any, extraParams: any) {
-    T3Util.Log("= S.SVGFragmentSymbol | CreateActionTriggers Input:", { svgDoc, triggerType, action, extraParams });
-    const result = super.CreateActionTriggers2(svgDoc, triggerType, action, extraParams);
+  /**
+   * Creates interactive trigger elements for the SVG fragment symbol
+   * @param svgDocument - The SVG document where the triggers will be created
+   * @param triggerType - The type of trigger to create
+   * @param actionHandler - The handler that processes actions when triggers are activated
+   * @param additionalParameters - Additional parameters for configuring the triggers
+   * @returns The created trigger elements
+   */
+  CreateActionTriggers(svgDocument, triggerType, actionHandler, additionalParameters) {
+    T3Util.Log("= S.SVGFragmentSymbol | CreateActionTriggers Input:", {
+      svgDocument,
+      triggerType,
+      actionHandler,
+      additionalParameters
+    });
+    const result = super.CreateActionTriggers2(svgDocument, triggerType, actionHandler, additionalParameters);
     T3Util.Log("= S.SVGFragmentSymbol | CreateActionTriggers Output:", result);
     return result;
   }
 
-  BaseShape_CreateActionTriggers(svgDoc: any, triggerId: any, shape: any, additionalParams: any) {
-    T3Util.Log("= S.SVGFragmentSymbol | BaseShape_CreateActionTriggers Input:", { svgDoc, triggerId, shape, additionalParams });
+  /**
+   * Creates action triggers (resize handles, rotate knob, etc.) for the SVG fragment symbol
+   * @param svgDoc - The SVG document where the triggers will be created
+   * @param triggerId - The ID for the trigger element
+   * @param shape - The shape element to add triggers to
+   * @param additionalParams - Additional parameters for configuring the triggers
+   * @returns The group shape containing all trigger elements
+   */
+  BaseShapeCreateActionTriggers(svgDoc: any, triggerId: any, shape: any, additionalParams: any) {
+    T3Util.Log("= S.SVGFragmentSymbol | BaseShapeCreateActionTriggers Input:", { svgDoc, triggerId, shape, additionalParams });
 
     const cursors = [
       CursorConstant.CursorType.RESIZE_LT,
@@ -260,18 +330,13 @@ class SVGFragmentSymbol extends BaseSymbol {
       CursorConstant.CursorType.RESIZE_L,
     ];
 
-    // if (T3Gv.opt.Table_GetActiveID() === this.BlockID) {
-    //   T3Util.Log("= S.SVGFragmentSymbol | BaseShape_CreateActionTriggers Output:", null);
-    //   return null;
-    // }
-
     let connectorData,
       knobIcon,
       groupShape = svgDoc.CreateShape(OptConstant.CSType.Group),
       knobSize = OptConstant.Common.KnobSize,
       rKnobSize = OptConstant.Common.RKnobSize,
-      sideKnobs = ((this.extraflags & OptConstant.ExtraFlags.SideKnobs &&
-        this.dataclass === PolygonConstant.ShapeTypes.POLYGON) > 0),
+      hasSideKnobs = (this.extraflags & OptConstant.ExtraFlags.SideKnobs &&
+        this.dataclass === PolygonConstant.ShapeTypes.POLYGON),
       minSidePointLength = OptConstant.Common.MinSidePointLength,
       docToScreenScale = svgDoc.docInfo.docToScreenScale;
 
@@ -287,12 +352,13 @@ class SVGFragmentSymbol extends BaseSymbol {
     width += adjustedKnobSize;
     height += adjustedKnobSize;
 
-    const pos = $.extend(true, {}, this.Frame);
-    pos.x -= adjustedKnobSize / 2;
-    pos.y -= adjustedKnobSize / 2;
-    pos.width += adjustedKnobSize;
-    pos.height += adjustedKnobSize;
+    const position = $.extend(true, {}, this.Frame);
+    position.x -= adjustedKnobSize / 2;
+    position.y -= adjustedKnobSize / 2;
+    position.width += adjustedKnobSize;
+    position.height += adjustedKnobSize;
 
+    // Calculate cursor orientation based on rotation
     let rotation = shape.GetRotation() + 22.5;
     if (rotation >= 360) {
       rotation = 0;
@@ -300,8 +366,9 @@ class SVGFragmentSymbol extends BaseSymbol {
 
     const rotationIndex = Math.floor(rotation / 45);
     let rotatedCursors = cursors.slice(rotationIndex).concat(cursors.slice(0, rotationIndex));
-    let allowProportional = true, allowHorizontal = !sideKnobs, allowVertical = !sideKnobs;
+    let allowProportional = true, allowHorizontal = !hasSideKnobs, allowVertical = !hasSideKnobs;
 
+    // Determine allowed resize behaviors based on object growth properties
     switch (this.ObjGrow) {
       case OptConstant.GrowBehavior.Horiz:
         allowProportional = false;
@@ -318,6 +385,7 @@ class SVGFragmentSymbol extends BaseSymbol {
         break;
     }
 
+    // Configure basic knob appearance and behavior
     const knobConfig: any = {
       svgDoc: svgDoc,
       shapeType: OptConstant.CSType.Rect,
@@ -338,13 +406,14 @@ class SVGFragmentSymbol extends BaseSymbol {
       knobConfig.fillOpacity = 0.0;
     }
 
+    // Adjust knob appearance for locked or non-resizable shapes
     if (this.flags & NvConstant.ObjFlags.Lock) {
       knobConfig.fillColor = 'gray';
       knobConfig.locked = true;
-      sideKnobs = false;
+      hasSideKnobs = false;
     } else if (this.NoGrow()) {
       knobConfig.fillColor = 'red';
-      sideKnobs = false;
+      hasSideKnobs = false;
       knobConfig.strokeColor = 'red';
       rotatedCursors = [
         CursorConstant.CursorType.DEFAULT,
@@ -358,7 +427,7 @@ class SVGFragmentSymbol extends BaseSymbol {
       ];
     }
 
-    // Proportional knobs (corners)
+    // Create proportional knobs (corners)
     if (allowProportional) {
       knobConfig.knobID = OptConstant.ActionTriggerType.TopLeft;
       knobConfig.cursorType = rotatedCursors[0];
@@ -387,7 +456,7 @@ class SVGFragmentSymbol extends BaseSymbol {
       groupShape.AddElement(knob);
     }
 
-    // Vertical side knobs (top and bottom centers)
+    // Create vertical side knobs (top and bottom centers)
     if (allowVertical) {
       knobConfig.x = width / 2 - adjustedKnobSize / 2;
       knobConfig.y = 0;
@@ -404,7 +473,7 @@ class SVGFragmentSymbol extends BaseSymbol {
       groupShape.AddElement(knob);
     }
 
-    // Horizontal side knobs (left and right centers)
+    // Create horizontal side knobs (left and right centers)
     if (allowHorizontal) {
       knobConfig.x = 0;
       knobConfig.y = height / 2 - adjustedKnobSize / 2;
@@ -421,7 +490,7 @@ class SVGFragmentSymbol extends BaseSymbol {
       groupShape.AddElement(knob);
     }
 
-    // Connector knob/icon if applicable
+    // Get connector information if applicable
     connectorData = (function (obj: any) {
       let hook, result = null;
       if (obj.hooks.length) {
@@ -435,6 +504,7 @@ class SVGFragmentSymbol extends BaseSymbol {
       return result;
     })(this);
 
+    // Create connector icons if connectors exist
     if (connectorData && connectorData.length) {
       const iconConfig: any = {
         svgDoc: svgDoc,
@@ -468,8 +538,8 @@ class SVGFragmentSymbol extends BaseSymbol {
       }
     }
 
-    // Side knobs for poly shape
-    if (sideKnobs) {
+    // Create side knobs for polygon shapes
+    if (hasSideKnobs) {
       const sideObj = Utils1.DeepCopy(this);
       sideObj.inside = $.extend(true, {}, sideObj.Frame);
       const polyPoints = T3Gv.opt
@@ -492,25 +562,27 @@ class SVGFragmentSymbol extends BaseSymbol {
       }
     }
 
-    // Check conditions for rotation knob
-    const smallWidth = this.Frame.width < 44,
-      hasHooks = this.hooks.length > 0 &&
+    // Check conditions for adding rotation knob
+    const tooSmallForRotation = this.Frame.width < 44,
+      hasConnectorHooks = this.hooks.length > 0 &&
         (T3Gv.opt.GetObjectPtr(this.hooks[0].objid, false) ?
           T3Gv.opt.GetObjectPtr(this.hooks[0].objid, false).DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector
           : false);
+
     if (
       !(
         this.NoRotate() ||
         this.NoGrow() ||
         T3Gv.opt.touchInitiated ||
         knobConfig.locked ||
-        smallWidth ||
-        hasHooks
+        tooSmallForRotation ||
+        hasConnectorHooks
       )
     ) {
       const isTextGrowHorizontal = this.TextGrow === NvConstant.TextGrowBehavior.Horizontal &&
         (this.flags & NvConstant.ObjFlags.TextOnly) &&
         ShapeUtil.TextAlignToWin(this.TextAlign).just === TextConstant.TextJust.Left;
+
       knobConfig.shapeType = OptConstant.CSType.Oval;
       knobConfig.x = isTextGrowHorizontal ? width + adjustedRKnobSize : width - 3 * adjustedRKnobSize;
       knobConfig.y = height / 2 - adjustedRKnobSize / 2;
@@ -530,12 +602,13 @@ class SVGFragmentSymbol extends BaseSymbol {
       this.CreateDimensionAdjustmentKnobs(groupShape, svgObj, knobConfig);
     }
 
+    // Set final group properties
     groupShape.SetSize(width, height);
-    groupShape.SetPos(pos.x, pos.y);
+    groupShape.SetPos(position.x, position.y);
     groupShape.isShape = true;
     groupShape.SetID(OptConstant.Common.Action + triggerId);
 
-    T3Util.Log("= S.SVGFragmentSymbol | BaseShape_CreateActionTriggers Output:", groupShape);
+    T3Util.Log("= S.SVGFragmentSymbol | BaseShapeCreateActionTriggers Output:", groupShape);
     return groupShape;
   }
 

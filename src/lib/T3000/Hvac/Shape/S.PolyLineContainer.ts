@@ -16,6 +16,26 @@ import OptConstant from '../Data/Constant/OptConstant';
 import CursorConstant from '../Data/Constant/CursorConstant';
 import T3Util from '../Util/T3Util';
 
+/**
+ * A container class representing a polyline shape that can contain other objects.
+ * Extends PolyLine to create a container that can be closed (forming a polygon) or open,
+ * with capabilities to manage objects inside its boundaries.
+ *
+ * This class handles:
+ * - Container behavior for enclosed shapes
+ * - Special rendering of polygon containers with customizable borders
+ * - Interaction handling including rotation, movement, and resizing
+ * - Shape inflation/deflation operations
+ * - Dimension calculations and display
+ * - Snap behavior for alignment with other shapes
+ * - Polygon modification with segment manipulation
+ * - Coordinate transformations and rotations
+ *
+ * The container can operate in different modes based on whether it's closed or open,
+ * with closed containers able to fully contain other objects and provide area dimensions.
+ *
+ * @extends PolyLine
+ */
 class PolyLineContainer extends PolyLine {
 
   public T3Type: string;
@@ -856,10 +876,10 @@ class PolyLineContainer extends PolyLine {
     T3Util.Log("= S.PolyLineContainer: Setting cursors");
 
     const element = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
-    const currentOperation = T3Gv.opt.currentModalOperation;
+    const currentOperation = T3Gv.opt.crtOpt;
 
-    if ((/*currentOperation === OptConstant.ModalOperations.SplitWall &&*/ false && this.polylist && this.polylist.segs.length >= 3) ||
-      currentOperation === OptConstant.ModalOperations.AddCorner) {
+    if ((/*currentOperation === OptConstant.OptTypes.SplitWall &&*/ false && this.polylist && this.polylist.segs.length >= 3) ||
+      currentOperation === OptConstant.OptTypes.AddCorner) {
       const slopElement = element.GetElementById(OptConstant.SVGElementClass.Slop);
       if (slopElement) {
         slopElement.SetCursor(CursorConstant.CursorType.CROSSHAIR);

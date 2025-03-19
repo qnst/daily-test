@@ -5,6 +5,42 @@ import TextConstant from "../../Data/Constant/TextConstant"
 import T3DataStream from "../../Util/T3DataStream"
 import DSUtil from "./DSUtil"
 
+
+/**
+ * @class DSConstant
+ * @description A static utility class providing constants and structural definitions for the T3000 HVAC drawing system.
+ *
+ * This class contains various constants used throughout the drawing system, including:
+ * - Line tool type definitions
+ * - SDF (Standard Drawing Format) flags
+ * - Line pattern data for different line styles
+ * - Window line pattern styles
+ * - Polygon flags and segment flags
+ * - Context types for different drawing modes
+ * - Link flags for connecting objects
+ * - Library flags for managing symbol libraries
+ * - Operation code mappings for file parsing
+ * - Fill types, color indexes, and shadow styles
+ * - Line direction flags and platform identifiers
+ * - Font family definitions and print flags
+ * - Binary structure definitions for various drawing elements
+ *
+ * These constants are used for parsing and rendering drawings, managing object properties,
+ * and controlling the behavior of drawing tools and file operations.
+ *
+ * @example
+ * // Access line pattern data for a dashed line
+ * const dashedLinePattern = DSConstant.LinePatternData[3]; // '3,1,1,1'
+ *
+ * // Check if a code is a begin block using SDF flags
+ * const isBeginBlock = (code & DSConstant.SDF_BEGIN) === DSConstant.SDF_BEGIN;
+ *
+ * // Look up an operation code name
+ * const opName = DSConstant.OpCodeName[32770]; // 'cHeader'
+ *
+ * // Get structure definition for binary parsing
+ * const drawObjStruct = DSConstant.DrawObj8Struct;
+ */
 class DSConstant {
 
   static LineToolTypes = {
@@ -78,7 +114,7 @@ class DSConstant {
     None: - 1,
     All: 0,
     Text: 1,
-    // Table: 2,
+    Table: 2,
     Automation: 3,
     DimensionText: 4,
     FloorPlan: 5,
@@ -849,14 +885,6 @@ class DSConstant {
   static Std_ONStyleColors = 7
   static Signature = '00000000'
 
-
-
-  /**
-   * Structure definition for a 2D point with integer coordinates
-   * Used for storing coordinate data in the SmartDraw format
-   * Each point consists of x and y integer values (16-bit)
-   * This is commonly used for positioning elements in drawing files
-   */
   static PointStruct = [
     'x',        // X coordinate
     'int16',    // 16-bit signed integer

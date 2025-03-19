@@ -32,6 +32,33 @@ SVGElement.prototype.getTransformToElement = function (element: SVGElement): SVG
   return element.getScreenCTM().inverse().multiply(this.getScreenCTM());
 };
 
+/**
+ * A class for managing document and UI operations in the T3 project.
+ *
+ * @remarks
+ * The T3Opt class is responsible for initializing various subsystems necessary for the functioning
+ * of the application. It orchestrates the setup of data state, document utilities, wall operations,
+ * keyboard commands, event bindings, instance associations, clipboard operations, and stored data loading.
+ *
+ * The process includes:
+ * - Initializing the application state and data store.
+ * - Setting up a document utility and an option management system.
+ * - Creating and configuring wall operations.
+ * - Preventing the default context menu behavior in the browser.
+ * - Configuring global keyboard event handlers using the KeyboardOpt class.
+ * - Building and binding keyboard commands to UI interactions.
+ * - Binding element control events via the EvtOpt class.
+ * - Associating instance types for shapes and basic elements for later use.
+ * - Initializing the clipboard for copy-paste functionalities.
+ * - Loading any stored data and rendering all SVG objects.
+ *
+ * @example
+ * // Instantiate and initialize the document operation system:
+ * const t3Opt = new T3Opt();
+ * t3Opt.Initialize();
+ *
+ * @public
+ */
 class T3Opt {
 
   /**

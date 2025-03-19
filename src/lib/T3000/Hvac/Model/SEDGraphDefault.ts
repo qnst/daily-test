@@ -4,6 +4,36 @@ import 'reflect-metadata'
 import NvConstant from "../Data/Constant/NvConstant"
 import QuickStyle from "./QuickStyle"
 
+/**
+ * Class representing the default configuration settings for an SED graph.
+ *
+ * @remarks
+ * The SEDGraphDefault class encapsulates the default options for a graph, including graph type, flags for various aspects,
+ * and styling configurations for different graph elements such as areas, grids, titles, legends, axes, and data points.
+ *
+ * The class leverages the @Type decorator to properly instantiate QuickStyle objects for the respective graphical components.
+ * Key properties include:
+ *
+ * - type: Specifies the graph type (e.g., Bar) as defined in NvConstant.GraphType.
+ * - flags: Graph flags that control graph behavior (e.g., SequenceByCategory).
+ * - pointflags, catAxisflags, magAxisflags: Provide specific flag-based configurations for points and axes.
+ * - legendType and legendlayoutflags: Determine the appearance and layout of the graph's legend.
+ * - imagevaluerep: An image value representation, typically used to control how data is visually represented.
+ * - quadrant: Denotes the quadrant settings for the graph.
+ *
+ * Each visual component (style, areaStyle, gridStyle, etc.) is instantiated as a new QuickStyle, allowing for individual styling.
+ *
+ * @example
+ * // Example usage of SEDGraphDefault:
+ * import { SEDGraphDefault } from './path/to/SEDGraphDefault';
+ *
+ * const graphConfig = new SEDGraphDefault();
+ * console.log(graphConfig.type); // Expected to log the default graph type (NvConstant.GraphType.Bar)
+ *
+ * // Customizing the QuickStyle for the graph title:
+ * graphConfig.titleStyle.fontSize = 16;
+ * graphConfig.titleStyle.color = '#333';
+ */
 class SEDGraphDefault {
 
   public type: number;

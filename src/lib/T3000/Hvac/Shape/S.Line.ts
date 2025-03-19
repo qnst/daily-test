@@ -11,10 +11,48 @@ import SelectionAttributes from '../Model/SelectionAttributes'
 import Instance from '../Data/Instance/Instance';
 import DSConstant from '../Opt/DS/DSConstant';
 import OptConstant from '../Data/Constant/OptConstant';
-import T3Constant from '../Data/Constant/T3Constant';
 import CursorConstant from '../Data/Constant/CursorConstant';
 import T3Util from '../Util/T3Util';
 
+/**
+ * Represents a line shape in the T3000 HVAC drawing system.
+ * Extends BaseLine to provide specialized line drawing functionality.
+ *
+ * The Line class supports various line styles, arrows, and measurements, and can be
+ * displayed with different visual properties like thickness, color, and pattern.
+ * It handles rendering as SVG, user interaction, dimension annotations, and line manipulations
+ * such as adding corners, flipping, and precise positioning.
+ *
+ * @extends BaseLine
+ * @example
+ * ```typescript
+ * // Create a basic line from (100, 100) to (300, 200)
+ * const lineParams = {
+ *   StartPoint: { x: 100, y: 100 },
+ *   EndPoint: { x: 300, y: 200 },
+ *   StyleRecord: {
+ *     Line: {
+ *       Paint: { Color: '#FF0000', Opacity: 1 },
+ *       Thickness: 2,
+ *       LinePattern: 0
+ *     }
+ *   }
+ * };
+ *
+ * // Instantiate the line
+ * const myLine = new Line(lineParams);
+ *
+ * // Add the line to the SVG container
+ * const svgContainer = T3Gv.opt.svgObjectLayer;
+ * const lineShape = myLine.CreateShape(svgContainer, false);
+ *
+ * // Adjust line end point
+ * myLine.AdjustLineEnd(lineShape, 400, 250);
+ *
+ * // Add a corner to convert to polyline
+ * myLine.AddCorner(null, { x: 350, y: 100 });
+ * ```
+ */
 class Line extends BaseLine {
 
   public StartPoint: Point;
@@ -280,12 +318,12 @@ class Line extends BaseLine {
   }
 
   SetCursors() {
-    T3Util.Log('S.Line - Input:', { currentModalOperation: T3Gv.opt.currentModalOperation });
+    T3Util.Log('S.Line - Input:', { crtOpt: T3Gv.opt.crtOpt });
 
     let shapeElement;
     const shapeContainer = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
 
-    if (T3Gv.opt.currentModalOperation === OptConstant.ModalOperations.AddCorner) {
+    if (T3Gv.opt.crtOpt === OptConstant.OptTypes.AddCorner) {
       shapeElement = shapeContainer.GetElementById(OptConstant.SVGElementClass.Slop);
       if (shapeElement) {
         shapeElement.SetCursor(CursorConstant.CursorType.CROSSHAIR);

@@ -1,5 +1,31 @@
 
 
+/**
+ * Represents a collection of arrow definitions used in rendering various arrow styles, typically for HVAC control system visualizations.
+ *
+ * This class encapsulates a list of arrow configurations in its "uiArrowDefs" property. Each configuration object contains
+ * details such as:
+ *  - id: A unique numeric identifier.
+ *  - desc: A short descriptive label for the arrow style.
+ *  - defArea: An object specifying the default width and height of the arrow's bounding area.
+ *  - endPt: The endpoint of the arrow geometry.
+ *  - attachPt: The point where the arrow attaches to a line or another graphical element.
+ *  - centered: A boolean indicating if the arrow's geometry should be drawn centered.
+ *  - geometry: An array (or object for certain shapes) that defines the actual drawing instructions (e.g., PATH, OVAL, RECT).
+ *  - flippedGeometry (optional): Alternate geometry definitions for drawing the arrow flipped or mirrored.
+ *
+ * The constructor automatically calls the "InitArrowDefs" method to populate "uiArrowDefs" with a comprehensive array of arrow definitions.
+ *
+ * @example
+ * // Create an instance of ArrowDefs
+ * const arrowDefs = new ArrowDefs();
+ *
+ * // Retrieve and log the arrow definitions
+ * console.log(arrowDefs.uiArrowDefs);
+ *
+ * // Example of using an arrow definition in a custom rendering method:
+ * // renderArrow(arrowDefs.uiArrowDefs.find(def => def.id === 1));
+ */
 class ArrowDefs {
 
   public uiArrowDefs: any;

@@ -3,6 +3,35 @@
 import T3Gv from '../Data/T3Gv'
 import T3Util from '../Util/T3Util';
 
+/**
+ * A utility class for importing and processing bitmap images with specified dimensions and resolution.
+ * Handles different image formats including JPEG, PNG, SVG, and other formats.
+ *
+ * The class processes images differently based on their format:
+ * - For JPEG/PNG: Reads the file as a data URL and stores metadata in T3Gv.opt
+ * - For SVG and other formats: Converts the file to an object URL and passes it to the callback
+ *
+ * @example
+ * // Create an instance of BitmapImporter
+ * const importer = new BitmapImporter();
+ *
+ * // Import an image file with specified dimensions and resolution
+ * importer.ImportBitmap(
+ *   fileInput.files[0], // File object from an input element
+ *   800, // Target width in pixels
+ *   600, // Target height in pixels
+ *   300, // Resolution in DPI
+ *   (result, blob, byteArray) => {
+ *     // Handle the imported image
+ *     const imageElement = document.createElement('img');
+ *     imageElement.src = result;
+ *     document.body.appendChild(imageElement);
+ *   }
+ * );
+ *
+ * @remarks
+ * The class stores import parameters in global settings via T3Gv.opt.
+ */
 class BitmapImporter {
 
   /**
@@ -43,7 +72,7 @@ class BitmapImporter {
         T3Gv.opt.bitmapImportFile = imageFile;
         T3Gv.opt.bitmapImportResult = event.target.result;
         T3Util.Log("S.BitmapImporter - Output (JPEG/PNG):", { result: event.target.result });
-        EXIF.getData(imageFile, GotEXIF);
+        // EXIF.getData(imageFile, GotEXIF);
       };
       fileReader.readAsDataURL(imageFile);
     } else {

@@ -154,7 +154,7 @@ class WallOpt {
   StopAddingWalls(event?) {
     T3Util.Log('U.WallUtil StopAddingWalls input:', event);
 
-    const modalOperations = OptConstant.ModalOperations;
+    const optTypes = OptConstant.OptTypes;
 
     if (this.IsAddingWalls()) {
       // Turn off adding walls mode
@@ -170,7 +170,7 @@ class WallOpt {
         T3Gv.wallOpt.PostObjectDrawHook();
       } else {
         // Cancel current modal operation
-        T3Gv.opt.CancelModalOperation();
+        T3Gv.opt.CancelOperation();
       }
 
       // Set edit mode to default
@@ -186,12 +186,12 @@ class WallOpt {
       }
     } else {
       // Handle different modal operations if not adding walls
-      switch (T3Gv.opt.currentModalOperation) {
-        case modalOperations.AddCorner:
+      switch (T3Gv.opt.crtOpt) {
+        case optTypes.AddCorner:
           T3Gv.wallOpt.AddCornerCancel();
           break;
         default:
-          T3Gv.opt.CancelModalOperation();
+          T3Gv.opt.CancelOperation();
       }
     }
 
@@ -256,7 +256,7 @@ class WallOpt {
     T3Util.Log('U.WallUtil AddCornerCancel input: none');
 
     T3Gv.opt.SetEditMode(NvConstant.EditState.Default);
-    T3Gv.opt.CancelModalOperation();
+    T3Gv.opt.CancelOperation();
     T3Gv.opt.ResetObjectDraw();
     T3Gv.wallOpt.PostObjectDrawHook();
     T3Gv.opt.SetEditMode(NvConstant.EditState.Default);
@@ -306,7 +306,7 @@ class WallOpt {
 
       // Reset application state
       T3Gv.opt.SetEditMode(NvConstant.EditState.Default);
-      T3Gv.opt.CancelModalOperation();
+      T3Gv.opt.CancelOperation();
       T3Gv.opt.ResetObjectDraw();
       T3Gv.wallOpt.PostObjectDrawHook();
       T3Gv.opt.SetEditMode(NvConstant.EditState.Default);
@@ -332,13 +332,13 @@ class WallOpt {
 
   //   // Reset editor state
   //   T3Gv.opt.SetEditMode(NvConstant.EditState.Default);
-  //   T3Gv.opt.CancelModalOperation();
+  //   T3Gv.opt.CancelOperation();
 
   //   // Enable polyline container movement mode
   //   T3Constant.DocContext.PolyLineContainerMoveMode = true;
 
   //   // Clear any active modal operations
-  //   T3Gv.opt.SetModalOperation(OptConstant.ModalOperations.None);
+  //   T3Gv.opt.SetModalOperation(OptConstant.OptTypes.None);
 
   //   T3Util.Log('U.WallUtil MoveOutline output: completed');
   // }
@@ -352,7 +352,7 @@ class WallOpt {
 
     this.StopAddingWalls();
     T3Gv.opt.CloseEdit();
-    T3Gv.opt.CancelModalOperation();
+    T3Gv.opt.CancelOperation();
     T3Gv.opt.SetEditMode(NvConstant.EditState.Edit);
 
     const visibleObjectIds = T3Gv.opt.ActiveVisibleZList();
@@ -368,7 +368,7 @@ class WallOpt {
       }
     }
 
-    T3Gv.opt.SetModalOperation(OptConstant.ModalOperations.AddCorner);
+    T3Gv.opt.SetModalOperation(OptConstant.OptTypes.AddCorner);
 
     T3Util.Log('U.WallUtil AddCornerStart output: completed');
   }
@@ -615,7 +615,7 @@ class WallOpt {
   //     }
 
   //     // Clean up and reset state
-  //     T3Gv.opt.CancelModalOperation();
+  //     T3Gv.opt.CancelOperation();
   //     T3Gv.opt.PostObjectDraw();
 
   //     T3Util.Log('U.WallUtil SplitWall output: false');
@@ -636,7 +636,7 @@ class WallOpt {
 
   //   this.StopAddingWalls();
   //   T3Gv.opt.CloseEdit();
-  //   T3Gv.opt.CancelModalOperation();
+  //   T3Gv.opt.CancelOperation();
   //   T3Gv.opt.SetEditMode(
   //     NvConstant.EditState.Edit,
   //     CursorConstant.CursorType.ALIAS
@@ -655,7 +655,7 @@ class WallOpt {
   //     }
   //   }
 
-  //   T3Gv.opt.SetModalOperation(OptConstant.ModalOperations.SplitWall);
+  //   T3Gv.opt.SetModalOperation(OptConstant.OptTypes.SplitWall);
 
   //   T3Util.Log('U.WallUtil SplitWallStart output: completed');
   // }

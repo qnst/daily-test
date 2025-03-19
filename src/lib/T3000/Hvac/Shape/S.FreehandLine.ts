@@ -12,6 +12,49 @@ import OptConstant from '../Data/Constant/OptConstant';
 import CursorConstant from '../Data/Constant/CursorConstant';
 import T3Util from '../Util/T3Util';
 
+/**
+ * Represents a freehand line shape that consists of multiple connected points.
+ * This class extends BaseLine to provide functionality for drawing irregular lines with multiple points.
+ *
+ * The freehand line is defined by a starting point and a collection of points (pointlist) that trace the path of the line.
+ * The shape can be rendered in SVG and supports various styling options like color, thickness and opacity.
+ * Unlike regular lines, freehand lines cannot be rotated or have hooks attached to them.
+ *
+ * @extends BaseLine
+ *
+ * @example
+ * ```typescript
+ * // Create a new freehand line
+ * const freehandLine = new FreehandLine({
+ *   StartPoint: { x: 50, y: 50 },
+ *   pointlist: [
+ *     { x: 0, y: 0 },    // First point (relative to StartPoint)
+ *     { x: 20, y: 30 },  // Second point
+ *     { x: 40, y: 10 },  // Third point
+ *     { x: 60, y: 40 }   // Fourth point
+ *   ],
+ *   // Optional styling
+ *   StyleRecord: {
+ *     Line: {
+ *       Paint: { Color: '#FF0000', Opacity: 1.0 },
+ *       Thickness: 2
+ *     }
+ *   }
+ * });
+ *
+ * // Calculate the bounding frame
+ * freehandLine.CalcFrame();
+ *
+ * // Render the freehand line to an SVG document
+ * const svgShape = freehandLine.CreateShape(svgDoc, true);
+ * ```
+ *
+ * @remarks
+ * - Points in the pointlist are stored relative to the StartPoint
+ * - The shape automatically calculates its bounding frame based on all points
+ * - Unlike other shapes, freehand lines do not support rotation or linking
+ * - The shape creates interactive resize handles at the corners when selected
+ */
 class FreehandLine extends BaseLine {
 
   public StartPoint: any;

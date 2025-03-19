@@ -2,6 +2,30 @@ import DSConstant from "./DSConstant";
 import DSUtil from "./DSUtil";
 
 
+/**
+ * A class for defining structured binary data parsers for Shape Description Records (SDR).
+ *
+ * This class provides standardized parsing structures for T3000 SDR file formats.
+ * It contains definitions that map binary data into structured JavaScript objects,
+ * enabling systematic parsing of different SDR document components.
+ *
+ * The class provides two main parser structures:
+ * - T3Struct: For complete SDR document parsing
+ * - T3HeaderOnlyStruct: For lightweight parsing of just the header information
+ *
+ * @example
+ * // Parse a complete SDR document
+ * import { DSStruct, DataStream } from './T3000/Hvac/Opt/DS';
+ *
+ * const dataStream = new DataStream(fileBuffer);
+ * const parser = new BinaryParser(DSStruct.T3Struct);
+ * const parsedDocument = parser.parse(dataStream);
+ *
+ * // Header-only parsing for quick metadata access
+ * const headerParser = new BinaryParser(DSStruct.T3HeaderOnlyStruct);
+ * const documentMetadata = headerParser.parse(dataStream);
+ * console.log(documentMetadata.codes.find(c => c.code === DSConstant.OpNameCode.cVersion)?.data);
+ */
 class DSStruct {
 
   /**

@@ -65,6 +65,38 @@ import T3Util from "../../Util/T3Util";
 import ShapeConstant from "../../Data/Constant/ShapeConstant";
 import BConstant from "../../Basic/B.Constant";
 
+/**
+ * Utility class for managing SVG optimization and editor functionality in the T3000 application.
+ *
+ * OptUtil provides core functionality for the T3000 HVAC graphics editor, handling operations like:
+ * - SVG document initialization and manipulation
+ * - Selection management and rubber band selection
+ * - Drag and drop operations
+ * - Object formatting and styling
+ * - Text editing and formatting
+ * - Layer management
+ *
+ * The class maintains the state of the editor, tracks user interactions, and provides
+ * utilities for transforming and manipulating graphical elements.
+ *
+ * @example
+ * // Initialize OptUtil with required configuration
+ * const optUtil = new OptUtil();
+ * optUtil.Initialize();
+ *
+ * // Use rubber band selection to select multiple objects
+ * optUtil.StartRubberBandSelect(mouseEvent);
+ *
+ * // Handle format painter operations
+ * optUtil.SetFormatPainter(false, true); // Enable format painter in sticky mode
+ *
+ * // Access and modify selected objects
+ * const selectedList = optUtil.GetObjectPtr(optUtil.theSelectedListBlockID, false);
+ * optUtil.UpdateSelectionAttributes(selectedList);
+ *
+ * // Manage document scale/zoom
+ * optUtil.SetDocumentScale(1.5, true); // Set zoom to 150% with animation
+ */
 class OptUtil {
 
   //#region  Variables
@@ -120,7 +152,7 @@ class OptUtil {
   public actionStoredObjectId: number;  // ID of the object being acted upon
   public actionSvgObject: any;       // SVG object being acted upon
   public actionTriggerId: number;    // ID of the action trigger
-  public actionTriggerData: number;  // Data associated with the trigger
+  public actionTriggerData: any;  // Data associated with the trigger
   public actionStartX: number;       // Starting X coordinate for action
   public actionStartY: number;       // Starting Y coordinate for action
   // public actionTableLastX: number;   // Last X coordinate for table actions
@@ -131,7 +163,7 @@ class OptUtil {
   public actionLockAspectRatio: boolean;     // Whether to maintain width/height ratio
   public actionAspectRatioWidth: number;     // Original width for aspect ratio
   public actionAspectRatioHeight: number;    // Original height for aspect ratio
-  public currentModalOperation: number;      // Current modal operation type
+  public crtOpt: number;      // Current operation type
 
   /**
    * Drawing state variables
@@ -360,6 +392,7 @@ class OptUtil {
   public selectionState: any;            // Current selection state
 
   public forcedotted: any;
+  public ob: any;
 
   //#endregion
 
@@ -451,7 +484,7 @@ class OptUtil {
     this.actionAspectRatioHeight = 0;           // Original height for aspect ratio
 
     // Modal state
-    this.currentModalOperation = OptConstant.ModalOperations.None;  // Current modal operation type
+    this.crtOpt = OptConstant.OptTypes.None;  // Current modal operation type
     // #endregion
 
     // #region Drawing State
@@ -637,9 +670,9 @@ class OptUtil {
      * Initialize properties for note editing functionality
      * These track state during note editing
      */
-    this.curNoteShape = -1;                      // Shape with note being edited
-    this.curNoteTableCell = null;                // Table cell with note being edited
-    this.curNoteGraphPint = null;                // Graph point with note
+    // this.curNoteShape = -1;                      // Shape with note being edited
+    // this.curNoteTableCell = null;                // Table cell with note being edited
+    // this.curNoteGraphPint = null;                // Graph point with note
     this.bInNoteEdit = false;                    // Whether in note edit mode
     this.bNoteChanged = false;                   // Whether note content changed
     // #endregion
@@ -957,7 +990,7 @@ class OptUtil {
     let currentObject;
     let targetObject;
     let moveList;
-    let businessManager;
+    let optMng;
     let currentTable;
     let currentTextFormat;
     let objectCount = 0;
@@ -1135,7 +1168,7 @@ class OptUtil {
     this.selectionState.fixedCornerRadius = -2;
     this.selectionState.lineCornerRadius = -2;
     this.selectionState.connectorCanHaveCurve = false;
-    this.selectionState.CurrentSelectionBusinessManager = T3Gv.wallOpt;
+    this.selectionState.csOptMng = T3Gv.wallOpt;
     this.selectionState.isJiraCard = false;
 
     T3Util.Log('O.Opt ResetSelectionState - Output: Selection state reset');
@@ -1153,7 +1186,7 @@ class OptUtil {
     this.selectionState.underline = (T3Gv.opt.contentHeader.DimensionFont.face & TEXT_FACE.Underline) > 0;
     this.selectionState.superscript = (T3Gv.opt.contentHeader.DimensionFont.face & TEXT_FACE.Superscript) > 0;
     this.selectionState.subscript = (T3Gv.opt.contentHeader.DimensionFont.face & TEXT_FACE.Subscript) > 0;
-    this.selectionState.CurrentSelectionBusinessManager = null;
+    this.selectionState.csOptMng = null;
 
     T3Util.Log('O.Opt HandleDimensionEditMode - Output: Dimension edit mode processed');
   }
@@ -1176,11 +1209,11 @@ class OptUtil {
       (sessionData.dimensions & NvConstant.DimensionFlags.Always) ||
       (sessionData.dimensions & NvConstant.DimensionFlags.Select);
 
-    // Handle business manager for note edit
+    // Handle operation mng for note edit
     if (this.bInNoteEdit && this.curNoteShape >= 0) {
-      const businessManager = OptAhUtil.GetGvSviOpt(this.curNoteShape);
-      if (businessManager) {
-        this.selectionState.CurrentSelectionBusinessManager = businessManager;
+      const optMng = OptAhUtil.GetGvSviOpt(this.curNoteShape);
+      if (optMng) {
+        this.selectionState.csOptMng = optMng;
       }
     }
 
@@ -1191,10 +1224,10 @@ class OptUtil {
   ProcessTargetObject(targetId, targetObject) {
     T3Util.Log('O.Opt ProcessTargetObject - Input:', { targetId, targetObject });
 
-    // Get the business manager for the target object
-    const businessManager = OptAhUtil.GetGvSviOpt(targetId);
-    if (businessManager) {
-      this.selectionState.CurrentSelectionBusinessManager = businessManager;
+    // Get the operation mng for the target object
+    const optMng = OptAhUtil.GetGvSviOpt(targetId);
+    if (optMng) {
+      this.selectionState.csOptMng = optMng;
     }
 
     this.selectionState.tselect = targetId;
@@ -1617,7 +1650,7 @@ class OptUtil {
       this.editModeList = [];
     }
 
-    // Notify business manager if available
+    // Notify operation mng if available
     if (T3Gv.wallOpt && T3Gv.wallOpt.NotifySetEditMode) {
       T3Gv.wallOpt.NotifySetEditMode(stateMode);
     }
@@ -2032,7 +2065,7 @@ class OptUtil {
       //     throw error;
       //   }
       // }
-      if (this.currentModalOperation === OptConstant.ModalOperations.FormatPainter) {
+      if (this.crtOpt === OptConstant.OptTypes.FormatPainter) {
         if (this.formatPainterSticky) {
           T3Util.Log('O.Opt StartRubberBandSelect - formatPainterSticky active; aborting.');
           return;
@@ -2317,8 +2350,8 @@ class OptUtil {
     let tableCol;
 
     // If format painter is already active, disable it
-    if (this.currentModalOperation === OptConstant.ModalOperations.FormatPainter) {
-      this.currentModalOperation = OptConstant.ModalOperations.None;
+    if (this.crtOpt === OptConstant.OptTypes.FormatPainter) {
+      this.crtOpt = OptConstant.OptTypes.None;
       this.SetEditMode(NvConstant.EditState.Default);
       this.formatPainterSticky = false;
       T3Util.Log("O.Opt SetFormatPainter - Output: Format painter disabled");
@@ -2328,7 +2361,7 @@ class OptUtil {
     // If not disabling, set up format painter based on current selection/context
     if (!shouldDisable) {
       // Cancel any existing modal operation
-      this.CancelModalOperation();
+      this.CancelOperation();
 
       // Get current text edit and active table
       const activeTextEdit = T3Gv.opt.GetActiveTextEdit();
@@ -2336,7 +2369,7 @@ class OptUtil {
 
       // CASE 1: If text is being edited, set up text format painter
       if (activeTextEdit != null) {
-        this.currentModalOperation = OptConstant.ModalOperations.FormatPainter;
+        this.crtOpt = OptConstant.OptTypes.FormatPainter;
         this.formatPainterMode = StyleConstant.FormatPainterModes.Text;
         this.formatPainterSticky = makeSticky;
 
@@ -2356,7 +2389,7 @@ class OptUtil {
 
       //     // If a cell is selected
       //     if (tableCell.select >= 0) {
-      //       this.currentModalOperation = OptConstant.ModalOperations.FormatPainter;
+      //       this.crtOpt = OptConstant.OptTypes.FormatPainter;
       //       this.formatPainterSticky = makeSticky;
       //       this.formatPainterMode = StyleConstant.FormatPainterModes.Table;
       //       this.formatPainterStyle = {
@@ -2384,7 +2417,7 @@ class OptUtil {
       //     }
       //     // If a row is selected
       //     else if (tableCell.rselect >= 0) {
-      //       this.currentModalOperation = OptConstant.ModalOperations.FormatPainter;
+      //       this.crtOpt = OptConstant.OptTypes.FormatPainter;
       //       this.formatPainterSticky = makeSticky;
       //       this.formatPainterMode = StyleConstant.FormatPainterModes.Table;
       //       this.formatPainterStyle = {
@@ -2398,7 +2431,7 @@ class OptUtil {
       //     }
       //     // If a column is selected
       //     else if (tableCell.cselect >= 0) {
-      //       this.currentModalOperation = OptConstant.ModalOperations.FormatPainter;
+      //       this.crtOpt = OptConstant.OptTypes.FormatPainter;
       //       this.formatPainterSticky = makeSticky;
       //       this.formatPainterMode = StyleConstant.FormatPainterModes.Table;
       //       this.formatPainterStyle = {
@@ -2415,7 +2448,7 @@ class OptUtil {
       else if ((targetObject = this.GetTargetSelect()) >= 0 &&
         (tableObject = this.GetObjectPtr(targetObject, false))) {
 
-        this.currentModalOperation = OptConstant.ModalOperations.FormatPainter;
+        this.crtOpt = OptConstant.OptTypes.FormatPainter;
         this.formatPainterSticky = makeSticky;
         this.formatPainterMode = StyleConstant.FormatPainterModes.Object;
         this.formatPainterStyle = Utils1.DeepCopy(tableObject.StyleRecord);
@@ -2452,7 +2485,7 @@ class OptUtil {
     T3Util.Log("O.Opt SetFormatPainter - Output:", {
       mode: this.formatPainterMode,
       isSticky: this.formatPainterSticky,
-      currentModalOperation: this.currentModalOperation
+      crtOpt: this.crtOpt
     });
   }
 
@@ -3073,9 +3106,9 @@ class OptUtil {
 
   CompleteOperation(
     selectionObjects: any,
-    preserveUndoState: boolean,
-    fitOption: any,
-    unusedParameter: any
+    preserveUndoState?: boolean,
+    fitOption?: any,
+    unusedParameter?: any
   ) {
     T3Util.Log("O.Opt CompleteOperation - Input:", { selectionObjects, preserveUndoState, fitOption, unusedParameter });
 
@@ -3134,7 +3167,7 @@ class OptUtil {
   DrawNewObject(newShape, clearExistingSection) {
     T3Util.Log("O.Opt DrawNewObject - Input:", { newShape, clearExistingSection });
 
-    this.SetModalOperation(OptConstant.ModalOperations.Draw);
+    this.SetModalOperation(OptConstant.OptTypes.Draw);
     this.GetObjectPtr(this.tedSessionBlockId, false);
     this.CloseEdit();
 
@@ -3151,15 +3184,15 @@ class OptUtil {
     T3Util.Log("O.Opt SetModalOperation - Input:", { operation });
 
     if (
-      operation !== OptConstant.ModalOperations.None &&
-      this.currentModalOperation !== OptConstant.ModalOperations.None &&
-      this.currentModalOperation !== operation
+      operation !== OptConstant.OptTypes.None &&
+      this.crtOpt !== OptConstant.OptTypes.None &&
+      this.crtOpt !== operation
     ) {
-      this.CancelModalOperation();
+      this.CancelOperation();
     }
-    this.currentModalOperation = operation;
+    this.crtOpt = operation;
 
-    T3Util.Log("O.Opt SetModalOperation - Output:", { currentModalOperation: operation });
+    T3Util.Log("O.Opt SetModalOperation - Output:", { crtOpt: operation });
   }
 
   StartNewObjectDraw(inputEvent) {
@@ -3426,8 +3459,8 @@ class OptUtil {
             this.linkParams.ConnectPt.x = 0;
             this.linkParams.ConnectPt.y = 0;
           } else {
-            this.linkParams.ConnectPt.x = OptConstant.Common.MaxDim;
-            this.linkParams.ConnectPt.y = OptConstant.Common.MaxDim;
+            this.linkParams.ConnectPt.x = OptConstant.Common.DimMax;
+            this.linkParams.ConnectPt.y = OptConstant.Common.DimMax;
           }
 
           break;
@@ -4685,39 +4718,39 @@ class OptUtil {
     return conversionFactor;
   }
 
-  CancelModalOperation(): void {
-    T3Util.Log("O.Opt CancelModalOperation - Input: currentModalOperation =", this.currentModalOperation);
-    switch (this.currentModalOperation) {
-      case OptConstant.ModalOperations.None:
+  CancelOperation(): void {
+    T3Util.Log("O.Opt CancelOperation - Input: crtOpt =", this.crtOpt);
+    switch (this.crtOpt) {
+      case OptConstant.OptTypes.None:
         break;
-      case OptConstant.ModalOperations.Stamp:
+      case OptConstant.OptTypes.Stamp:
         this.CancelObjectStamp(true);
         break;
-      case OptConstant.ModalOperations.StampTextOnTap:
+      case OptConstant.OptTypes.StampTextOnTap:
         this.CancelObjectStampTextOnTap(true);
         break;
-      case OptConstant.ModalOperations.DragDrop:
+      case OptConstant.OptTypes.DragDrop:
         this.CancelObjectDragDrop(true);
         break;
-      case OptConstant.ModalOperations.Draw:
+      case OptConstant.OptTypes.Draw:
         this.CancelObjectDraw();
         break;
-      case OptConstant.ModalOperations.FormatPainter:
+      case OptConstant.OptTypes.FormatPainter:
         this.SetFormatPainter(true, false);
         break;
-      case OptConstant.ModalOperations.AddCorner:
+      case OptConstant.OptTypes.AddCorner:
         if (T3Gv.wallOpt && T3Gv.wallOpt.AddCorner) {
           this.ResetHammerGesture('dragstart', T3Gv.wallOpt.AddCorner, T3Gv.Evt_ShapeDragStart);
         }
         break;
-      // case OptConstant.ModalOperations.SplitWall:
+      // case OptConstant.OptTypes.SplitWall:
       //   if (T3Gv.wallOpt && T3Gv.wallOpt.SplitWall) {
       //     this.ResetHammerGesture('dragstart', T3Gv.wallOpt.SplitWall, T3Gv.Evt_ShapeDragStart);
       //     T3Gv.opt.SetEditMode(NvConstant.EditState.Default);
       //   }
       //   break;
     }
-    T3Util.Log("O.Opt CancelModalOperation - Output: completed");
+    T3Util.Log("O.Opt CancelOperation - Output: completed");
   }
 
   CancelObjectDraw(): void {
@@ -4727,7 +4760,7 @@ class OptUtil {
     const isPolyLineOrContainer = actionObject instanceof PolyLine || actionObject instanceof PolyLineContainer;
 
     // Clear modal operation and release stamp if needed.
-    this.SetModalOperation(OptConstant.ModalOperations.None);
+    this.SetModalOperation(OptConstant.OptTypes.None);
     this.LM_StampPostRelease(false);
 
     if (this.actionStoredObjectId >= 0 && !isPolyLineOrContainer) {
@@ -4757,13 +4790,13 @@ class OptUtil {
       actionObject.CancelObjectDraw();
     }
 
-    // Invoke any business manager cancellation routines if present.
+    // Invoke any operation mng cancellation routines if present.
     if (T3Gv.wallOpt.CancelObjectDraw) {
       T3Gv.wallOpt.CancelObjectDraw();
     }
 
     // Set the selection tool to the default select tool.
-    // Commands.MainController.Selection.SetSelectionTool(Resources.Tools.Tool_Select, false);
+    // Commands.MainController.Selection.SetSelectionTool(Resources.Tools.Select, false);
 
     T3Util.Log("O.Opt CancelObjectDraw - Output: Object draw canceled.");
   }
@@ -4859,8 +4892,8 @@ class OptUtil {
 
     // Cancel modal operation if required
     if (cancelModalOperation) {
-      T3Gv.opt.CancelModalOperation();
-    } else if (this.currentModalOperation !== OptConstant.ModalOperations.None) {
+      T3Gv.opt.CancelOperation();
+    } else if (this.crtOpt !== OptConstant.OptTypes.None) {
       T3Util.Log("O.Opt Undo - Output:", false);
       return false;
     }
@@ -6772,7 +6805,7 @@ class OptUtil {
     this.WorkAreaHammer.on('tap', EvtUtil.Evt_WorkAreaHammerClick);
 
     // Clear any modal operations
-    this.SetModalOperation(OptConstant.ModalOperations.None);
+    this.SetModalOperation(OptConstant.OptTypes.None);
 
     T3Util.Log('O.Opt ResetObjectDraw - Output: Object draw state reset');
   }
@@ -6789,32 +6822,32 @@ class OptUtil {
 
   //   if (!NvConstant.DocumentContext.SelectionToolSticky) {
   //     // If sticky selection is not enabled, set tool back to Select
-  //     if (NvConstant.DocumentContext.SelectionTool !== Resources.Tools.Tool_Select) {
-  //       // SDUI.Commands.MainController.Selection.SetSelectionTool(Resources.Tools.Tool_Select, false);
+  //     if (NvConstant.DocumentContext.SelectionTool !== Resources.Tools.Select) {
+  //       // SDUI.Commands.MainController.Selection.SetSelectionTool(Resources.Tools.Select, false);
   //     }
   //   } else {
   //     // If sticky selection is enabled, maintain the current drawing tool
   //     switch (NvConstant.DocumentContext.SelectionTool) {
-  //       case Resources.Tools.Tool_Line:
+  //       case Resources.Tools.Line:
   //         Commands.MainController.Shapes.DrawNewLineShape(null, false, true);
   //         break;
 
-  //       case Resources.Tools.Tool_Shape:
+  //       case Resources.Tools.Shape:
   //         mouseEvent = { type: 'mousedown' };
   //         Commands.MainController.Shapes.StampOrDragDropNewShape(mouseEvent, null);
   //         mouseEvent = { type: 'mouseup' };
   //         Commands.MainController.Shapes.StampOrDragDropNewShape(mouseEvent, null);
   //         break;
 
-  //       case Resources.Tools.Tool_Text:
+  //       case Resources.Tools.Text:
   //         Commands.MainController.Shapes.StampTextLabel(true, true);
   //         break;
 
-  //       case Resources.Tools.Tool_Wall:
+  //       case Resources.Tools.Wall:
   //         Commands.MainController.Shapes.DrawNewWallShape(true, null);
   //         break;
 
-  //       case Resources.Tools.Tool_Symbol:
+  //       case Resources.Tools.Symbol:
   //         mouseEvent = { type: 'mousedown' };
   //         const selectedButton = Commands.MainController.Symbols.GetSelectedButton();
   //         Commands.MainController.Shapes.DragDropSymbol(mouseEvent, selectedButton);
@@ -6822,7 +6855,7 @@ class OptUtil {
   //         Commands.MainController.Shapes.DragDropSymbol(mouseEvent, selectedButton);
   //         break;
 
-  //       case Resources.Tools.Tool_StyledLine:
+  //       case Resources.Tools.StyledLine:
   //         Commands.MainController.Shapes.DrawNewStyledLineShape(null, true);
   //         break;
   //     }
@@ -6879,7 +6912,7 @@ class OptUtil {
       // Collab.UnLockMessages();
 
       // Set edit mode if not in a modal operation
-      if (this.currentModalOperation === OptConstant.ModalOperations.None) {
+      if (this.crtOpt === OptConstant.OptTypes.None) {
         T3Gv.opt.SetEditMode(NvConstant.EditState.DragShape);
       }
 
@@ -6982,7 +7015,7 @@ class OptUtil {
     // }
 
     // Handle format painter mode
-    if (this.currentModalOperation === OptConstant.ModalOperations.FormatPainter) {
+    if (this.crtOpt === OptConstant.OptTypes.FormatPainter) {
       targetId = svgElement.GetID();
       if (this.FormatPainterClick(targetId, event)) {
         T3Util.Log("O.Opt LM_SetupMove - Output: false (Format painter handled click)");
@@ -6999,7 +7032,7 @@ class OptUtil {
 
     // Only process if not in format painter object mode
     if (
-      this.currentModalOperation !== OptConstant.ModalOperations.FormatPainter ||
+      this.crtOpt !== OptConstant.OptTypes.FormatPainter ||
       this.formatPainterMode !== StyleConstant.FormatPainterModes.Object
     ) {
       const clickedElement = svgElement.GetTargetForEvent(event);
@@ -7108,10 +7141,10 @@ class OptUtil {
 
       // Handle actions based on the clicked element type
       switch (clickedElementId) {
-        case OptConstant.Common.GraphTextHit:
-          this.Graph_SetupAction(event, this.dragTargetId, clickedElementId, clickedElementUserData);
-          T3Util.Log("O.Opt LM_SetupMove - Output: false (Graph text hit)");
-          return false;
+        // case OptConstant.Common.GraphTextHit:
+        //   this.Graph_SetupAction(event, this.dragTargetId, clickedElementId, clickedElementUserData);
+        //   T3Util.Log("O.Opt LM_SetupMove - Output: false (Graph text hit)");
+        //   return false;
 
         case OptConstant.SVGElementClass.BackgroundImage:
           // case OptConstant.Common.TableCellHit:
@@ -8431,9 +8464,9 @@ class OptUtil {
           }
         }
       } else {
-        // Get business manager for the object
-        const businessManager = OptAhUtil.GetGvSviOpt(this.dragTargetId);
-        const activeManager = businessManager || T3Gv.wallOpt;
+        // Get operation mng for the object
+        const optMng = OptAhUtil.GetGvSviOpt(this.dragTargetId);
+        const activeManager = optMng || T3Gv.wallOpt;
 
         // Handle floor plan specific logic
         if (activeManager instanceof WallOpt) {
@@ -8859,7 +8892,7 @@ class OptUtil {
 
     // Constants for readability
     const extraFlags = OptConstant.ExtraFlags;
-    const centerDimension = OptConstant.Common.MaxDim;
+    const centerDimension = OptConstant.Common.DimMax;
 
     // Early return conditions
     if (drawingObject == null) {
@@ -9469,7 +9502,7 @@ class OptUtil {
    * @param triggerType - Trigger type for the change
    * @param maintainMode - Mode for maintaining the link
    */
-  MaintainLink(targetId, drawingObject, changeEvent, triggerType, maintainMode) {
+  MaintainLink(targetId, drawingObject, changeEvent, triggerType, maintainMode?) {
     T3Util.Log("O.Opt MaintainLink - Input:", { targetId, drawingObject: drawingObject.BlockID, triggerType, maintainMode });
 
     let linkIndex, hookObject;
@@ -10346,7 +10379,7 @@ class OptUtil {
 
     try {
       // Set modal operation mode
-      this.SetModalOperation(OptConstant.ModalOperations.DragDrop);
+      this.SetModalOperation(OptConstant.OptTypes.DragDrop);
       this.GetObjectPtr(this.tedSessionBlockId, false);
       this.CloseEdit();
 
@@ -10395,7 +10428,7 @@ class OptUtil {
       T3Util.Log("O.Opt DragDropNewShape - Output: Drag and drop initialized");
     } catch (error) {
       T3Util.Log("O.Opt DragDropNewShape - Error:", error);
-      T3Gv.opt.CancelModalOperation();
+      T3Gv.opt.CancelOperation();
       T3Gv.opt.ExceptionCleanup(error);
       throw error;
     }
@@ -10421,7 +10454,7 @@ class OptUtil {
     });
 
     // Set modal operation to STAMP mode
-    this.SetModalOperation(OptConstant.ModalOperations.Stamp);
+    this.SetModalOperation(OptConstant.OptTypes.Stamp);
     this.GetObjectPtr(this.tedSessionBlockId, false);
 
     // Close any active text editing
@@ -10657,7 +10690,7 @@ class OptUtil {
       this.dragElementList = [];
       this.actionStoredObjectId = -1;
       this.actionSvgObject = null;
-      this.SetModalOperation(OptConstant.ModalOperations.None);
+      this.SetModalOperation(OptConstant.OptTypes.None);
 
       // // Send collaboration message if available
       // if (collabMessage) {
@@ -10674,7 +10707,7 @@ class OptUtil {
       T3Util.Log("O.Opt MouseStampObjectDone - Output: Stamp operation completed successfully");
     } catch (error) {
       T3Util.Log("O.Opt MouseStampObjectDone - Error:", error);
-      T3Gv.opt.CancelModalOperation();
+      T3Gv.opt.CancelOperation();
       T3Gv.opt.DragDrop_ExceptionCleanup();
       T3Gv.opt.ExceptionCleanup(error);
     }
@@ -10747,7 +10780,7 @@ class OptUtil {
     T3Util.Log("O.Opt CancelObjectStamp - Input:", { shouldUnbindEvents });
 
     // Clear modal operation state
-    this.SetModalOperation(OptConstant.ModalOperations.None);
+    this.SetModalOperation(OptConstant.OptTypes.None);
     T3Constant.DocContext.SelectionToolSticky = false;
     this.LM_StampPostRelease(false);
 
@@ -10810,7 +10843,7 @@ class OptUtil {
     T3Util.Log("O.Opt CancelObjectDragDrop - Input:", { shouldUnbindEvents });
 
     // Clear modal operation state
-    this.SetModalOperation(OptConstant.ModalOperations.None);
+    this.SetModalOperation(OptConstant.OptTypes.None);
     this.LM_StampPostRelease(false);
 
     // Clean up stored object if one was created
@@ -11067,15 +11100,15 @@ class OptUtil {
         objectsToSelect.push(this.actionStoredObjectId);
       }
 
-      // Get business manager for the target object
-      let businessManager = OptAhUtil.GetGvSviOpt(targetObjectId);
-      if (businessManager == null) {
-        businessManager = T3Gv.wallOpt;
+      // Get operation mng for the target object
+      let optMng = OptAhUtil.GetGvSviOpt(targetObjectId);
+      if (optMng == null) {
+        optMng = T3Gv.wallOpt;
       }
 
-      // Handle floor plan special case
-      if (businessManager instanceof WallOpt) {
-        businessManager.EnsureCubicleBehindOutline(this.actionStoredObjectId);
+      // Handle wall opt special case
+      if (optMng instanceof WallOpt) {
+        optMng.EnsureCubicleBehindOutline(this.actionStoredObjectId);
       }
 
       // Update selection list based on move list or single object
@@ -11141,7 +11174,7 @@ class OptUtil {
       this.actionSvgObject = null;
 
       // Reset modal operation
-      this.SetModalOperation(OptConstant.ModalOperations.None);
+      this.SetModalOperation(OptConstant.OptTypes.None);
 
       // Complete the operation
       this.CompleteOperation(objectsToSelect);
@@ -11149,7 +11182,7 @@ class OptUtil {
       T3Util.Log("DragDropObjectDone - Output: Drag-drop operation completed successfully");
     } catch (error) {
       T3Util.Log("DragDropObjectDone - Error:", error);
-      T3Gv.opt.CancelModalOperation();
+      T3Gv.opt.CancelOperation();
       T3Gv.opt.DragDrop_ExceptionCleanup();
       T3Gv.opt.ExceptionCleanup(error);
       throw error;
@@ -16671,7 +16704,7 @@ class OptUtil {
       _ = - 1,
       E = - 1,
       w = !1,
-      F = (OptConstant.Common.MaxDim, !1),
+      F = (OptConstant.Common.DimMax, !1),
       v = [],
       G = OptConstant.HookPts,
       N = function (e, t, a, r, i, n) {
@@ -17070,7 +17103,7 @@ class OptUtil {
 
     // Handle modal operations
     if (shouldCancelModalOperation) {
-      T3Gv.opt.CancelModalOperation();
+      T3Gv.opt.CancelOperation();
     }
     // Check if we're already at the last state
     else if (T3Gv.state.CurrentStateID + 1 >= T3Gv.state.States.length) {
@@ -17081,7 +17114,7 @@ class OptUtil {
     // Get the session data
     const sessionData = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
     const wasSpellCheckEnabled = sessionData.EnableSpellCheck;
-    const hadNoRecentSymbols = sessionData.RecentSymbols.length === 0;
+    const hadNoRecentSymbols = false;// sessionData.RecentSymbols.length === 0;
 
     // Get text editing session
     const textEditSession = this.GetObjectPtr(this.tedSessionBlockId, false);
@@ -18056,12 +18089,12 @@ class OptUtil {
           drawingObject.DataID = -1;
         }
 
-        // Special business manager handling
+        // Special operation mng handling
         if (graphData == null && tableData == null) {
-          const businessManager = OptAhUtil.GetGvSviOpt(drawingObject.BlockID);
-          if (businessManager) {
+          const optMng = OptAhUtil.GetGvSviOpt(drawingObject.BlockID);
+          if (optMng) {
             const textElement = this.svgObjectLayer.GetElementById(drawingObject.BlockID).GetElementById(OptConstant.SVGElementClass.Text);
-            businessManager.ShapeSaveData(drawingObject, textElement);
+            optMng.ShapeSaveData(drawingObject, textElement);
           }
         }
       }
@@ -19711,7 +19744,7 @@ class OptUtil {
   StampNewTextShapeOnTap(shape, hCenter, vCenter, operation, isSticky, completeCallback, completeUserData) {
     T3Util.Log("O.Opt StampNewTextShapeOnTap - Input:", { shape, hCenter, vCenter, operation, isSticky, completeCallback, completeUserData });
 
-    this.SetModalOperation(OptConstant.ModalOperations.StampTextOnTap);
+    this.SetModalOperation(OptConstant.OptTypes.StampTextOnTap);
     this.stampCompleteCallback = completeCallback || null;
     this.stampCompleteUserData = completeUserData || null;
     this.stampHCenter = hCenter;
@@ -19734,7 +19767,7 @@ class OptUtil {
         T3Gv.opt.actionSvgObject = T3Gv.opt.svgObjectLayer.GetElementById(T3Gv.opt.actionStoredObjectId);
         T3Gv.opt.StampTextObjectOnTapDone(tapEvent, operation);
       } catch (error) {
-        T3Gv.opt.CancelModalOperation();
+        T3Gv.opt.CancelOperation();
         T3Gv.opt.ExceptionCleanup(error);
         throw error;
       }
@@ -19753,7 +19786,7 @@ class OptUtil {
      */
   CancelObjectStampTextOnTap(event: any): void {
     T3Util.Log("O.Opt CancelObjectStampTextOnTap - Input:", event);
-    this.SetModalOperation(OptConstant.ModalOperations.None);
+    this.SetModalOperation(OptConstant.OptTypes.None);
     this.LM_StampPostRelease(false);
     this.SetEditMode(NvConstant.EditState.Default);
     if (event) {
@@ -19856,7 +19889,7 @@ class OptUtil {
 
     this.actionStoredObjectId = -1;
     this.actionSvgObject = null;
-    this.SetModalOperation(OptConstant.ModalOperations.None);
+    this.SetModalOperation(OptConstant.OptTypes.None);
 
     T3Util.Log("O.Opt StampTextObjectOnTapDone - Output:", { stampedShapeId: this.actionStoredObjectId, objectIds });
   }
@@ -20560,16 +20593,16 @@ class OptUtil {
   GetSelectionContext(): any {
     T3Util.Log("O.Opt GetSelectionContext - Input:", {});
 
-    let businessManager: any;
+    let optMng: any;
     let selectionContexts: any[] = [];
 
     // Check if there is an active text edit object in the TED session.
     const tedSession = this.GetObjectPtr(this.tedSessionBlockId, false);
     if (tedSession.theActiveTextEditObjectID !== -1) {
-      businessManager = OptAhUtil.GetGvSviOpt();
-      if (businessManager) {
+      optMng = OptAhUtil.GetGvSviOpt();
+      if (optMng) {
         selectionContexts.push(DSConstant.Contexts.Text);
-        selectionContexts.push(this.GetAutomationContext(businessManager));
+        selectionContexts.push(this.GetAutomationContext(optMng));
         T3Util.Log("O.Opt GetSelectionContext - Output:", selectionContexts);
         return selectionContexts;
       } else {
@@ -20593,8 +20626,8 @@ class OptUtil {
     // if (this.Table_GetActiveID() !== -1) {
     //   selectionContexts.push(DSConstant.Contexts.Table);
     //   selectionContexts.push(DSConstant.Contexts.Text);
-    //   businessManager = OptAhUtil.GetGvSviOpt();
-    //   if (businessManager) {
+    //   optMng = OptAhUtil.GetGvSviOpt();
+    //   if (optMng) {
     //     selectionContexts.push(DSConstant.Contexts.Automation);
     //   }
     //   T3Util.Log("O.Opt GetSelectionContext - Output:", selectionContexts);
@@ -20607,10 +20640,10 @@ class OptUtil {
       targetObjectId = -1;
     }
     if (targetObjectId !== -1) {
-      businessManager = OptAhUtil.GetGvSviOpt();
+      optMng = OptAhUtil.GetGvSviOpt();
       const targetObject = T3Gv.stdObj.GetObject(targetObjectId);
       const objectData = targetObject.Data;
-      if (businessManager && /*!T3Gv.opt.Comment_IsTarget(targetObjectId)*/ true) {
+      if (optMng && /*!T3Gv.opt.Comment_IsTarget(targetObjectId)*/ true) {
         selectionContexts.push(DSConstant.Contexts.Automation);
       }
       if (objectData.AllowTextEdit()) {
@@ -21279,21 +21312,21 @@ class OptUtil {
   }
 
   /**
-    * Gets the automation context based on the provided business manager
+    * Gets the automation context based on the provided operation mng
     * This function determines the appropriate automation context, considering
     * special flags that might modify the behavior (like disabling control arrows).
     *
-    * @param businessManager - The business manager to get context from
+    * @param optMng - The opteration mng to get context from
     * @returns The appropriate automation context string
     */
-  GetAutomationContext(businessManager) {
-    T3Util.Log("O.Opt GetAutomationContext - Input:", businessManager);
+  GetAutomationContext(optMng) {
+    T3Util.Log("O.Opt GetAutomationContext - Input:", optMng);
 
     const sessionObject = T3Gv.opt.GetObjectPtr(this.sedSessionBlockId, false);
     let automationContext = DSConstant.Contexts.Automation;
 
-    if (businessManager) {
-      automationContext = businessManager.GetAutomationContext();
+    if (optMng) {
+      automationContext = optMng.GetAutomationContext();
     }
 
     // Check if the context is Automation and if control arrows should be disabled
@@ -23185,6 +23218,675 @@ class OptUtil {
       this.SelectObjects(objectsToSelect, false, false);
       T3Util.Log("U.Util1 SelectAllObjects - Output: Selected", objectsToSelect.length, "objects");
     }
+  }
+
+  ShapeToPolyLine(e, t, a, r) {
+    var i,
+      n,
+      o,
+      s,
+      l = [],
+      S = {};
+    if (r) (i = r), (s = !0), (S = $.extend(!0, {}, i.Frame));
+    else {
+      null == (i = this.GetObjectPtr(e, !1)).polylist
+        ? ((i.polylist = i.GetPolyList()), (i.StartPoint = {}), (i.EndPoint = {}))
+        : (s = !0);
+      var c = T3Gv.stdObj.PreserveBlock(e);
+      if (null == c) return;
+      (i = c.Data), (S = $.extend(!0, {}, i.Frame));
+    }
+    if (s) {
+      if (!i.polylist) return null;
+      if (
+        (T3Gv.opt.GetClosedPolyDim(i),
+          !SDJS.Utils.IsEqual(i.polylist.dim.x, S.width))
+      ) {
+        var u = Utils2.DeepCopy(i);
+        (u.inside = $.extend(!0, {}, i.Frame)),
+          SDJS.ListManager.PolyLine.prototype.ScaleObject.call(
+            u,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ),
+          (i.polylist = u.polylist);
+      }
+    }
+    return (
+      (o = i.polylist.segs.length),
+      (i.StartPoint.x =
+        i.Frame.x + i.polylist.segs[0].pt.x + i.polylist.offset.x),
+      (i.StartPoint.y =
+        i.Frame.y + i.polylist.segs[0].pt.y + i.polylist.offset.y),
+      (i.EndPoint.x =
+        i.Frame.x + i.polylist.segs[o - 1].pt.x + i.polylist.offset.x),
+      (i.EndPoint.y =
+        i.Frame.y + i.polylist.segs[o - 1].pt.y + i.polylist.offset.y),
+      ((n = t
+        ? new SDJS.ListManager.PolyLineContainer(i)
+        : new SDJS.ListManager.PolyLine(i)).BlockID = i.BlockID),
+      (n.polylist.Shape_Rotation = i.RotationAngle),
+      (n.polylist.Shape_DataID = i.DataID),
+      (n.RotationAngle = 0),
+      (n.DataID = -1),
+      r || (c.Data = n),
+      a ||
+      (this.AddToDirtyList(e),
+        this.RenderDirtySVGObjects(),
+        l.push(e),
+        this.SelectObjects(l, !1, !0)),
+      (n.inside = $.extend(!0, {}, i.Frame)),
+      n
+    );
+  }
+
+  PutInFrontofObject(e, t) {
+    var a,
+      r = T3Gv.opt.GetObjectPtr(this.theLayersManagerBlockID, !0),
+      i = r.layers[r.activelayer].zList,
+      n = i.indexOf(e),
+      o = i.indexOf(t);
+    if (n >= 0 && o >= 0)
+      if (o < n) {
+        for (a = o; a < n; a++)
+          (i[a] = i[a + 1]), T3Gv.opt.AddToDirtyList(i[a]);
+        (i[n] = t), T3Gv.opt.AddToDirtyList(t);
+      } else {
+        for (a = o; a > n + 1; a--)
+          (i[a] = i[a - 1]), T3Gv.opt.AddToDirtyList(i[a]);
+        (i[n + 1] = t), T3Gv.opt.AddToDirtyList(t);
+      }
+  }
+
+  InsertHops(e, t, a) {
+    var r,
+      i,
+      n,
+      o,
+      s,
+      l,
+      S,
+      c,
+      u,
+      p,
+      d,
+      D,
+      g = e.hoplist.nhops,
+      h = {},
+      m = new Point(),
+      C = new Point(),
+      y = new Point(),
+      f = new Point(),
+      L = [],
+      I = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, !1);
+    for (D = I.hopdim.x, d = I.hopdim.y, r = g - 1; r >= 0; r--) if (!e.hoplist.hops[r].cons) {
+      for (
+        c = i = e.hoplist.hops[r].segment,
+        s = r,
+        p = r;
+        s > 0 &&
+        e.hoplist.hops[s - 1].cons;
+      ) c = e.hoplist.hops[s - 1].segment,
+        p = s - 1,
+        s--;
+      if (!(i < a)) return {
+        bSuccess: !1,
+        npts: a
+      };
+      if (a = (h = this.InsertPoints(t, a, i, 2)).npts, h.bSuccess) {
+        if (
+          t[i] = {
+            x: e.hoplist.hops[p].pt.x,
+            y: e.hoplist.hops[p].pt.y
+          },
+          t[i + 1] = {
+            x: e.hoplist.hops[r].pt.x,
+            y: e.hoplist.hops[r].pt.y
+          },
+          c < i
+        ) {
+          for (s = i; s < a; s++) t[c + s - i] = {
+            x: t[s].x,
+            y: t[s].y
+          };
+          a -= i - c
+        }
+        if (
+          n = (i = c) + 1,
+          o = u = c + 1,
+          u = (h = this.PolyTrimForArrow(t, 0, u, D, D, m, C, !1)).npts,
+          m = h.spt,
+          C = h.ept,
+          u < o
+        ) {
+          for (s = o; s < a; s++) t[u + s - o] = {
+            x: t[s].x,
+            y: t[s].y
+          };
+          a -= o - u,
+            n -= o - u
+        }
+        if (
+          y = {
+            x: m.x,
+            y: m.y
+          },
+          o = l = a - n,
+          l = (h = this.PolyTrimForArrow(t, n, l, D, D, m, C, !0)).npts,
+          m = h.spt,
+          l < o &&
+          (a -= o - l),
+          f = {
+            x: (C = h.ept).x,
+            y: C.y
+          },
+          L = (h = this.BuildHop(I.hopstyle, d, y, f, S)).pts,
+          S = h.npts,
+          a = (h = this.InsertPoints(t, a, u, S)).npts,
+          h.bSuccess
+        ) for (s = 0; s < S; s++) t[u + s] = {
+          x: L[s].x,
+          y: L[s].y
+        }
+      }
+    }
+    return {
+      bSuccess: !0,
+      npts: a
+    }
+  }
+
+  PolyTrimForArrow(e, t, a, r, i, n, o, s) {
+    var l = new Point()
+      , S = {}
+      , c = {};
+    return l = (S = this.PolyFindLength(e, t, a, i, s, !1, l)).findpt,
+      a = S.npts,
+      s ? (c.spt = {
+        x: e[t].x,
+        y: e[t].y
+      },
+        c.ept = {
+          x: l.x,
+          y: l.y
+        }) : (c.ept = {
+          x: e[t + a - 1].x,
+          y: e[t + a - 1].y
+        },
+          c.spt = {
+            x: l.x,
+            y: l.y
+          }),
+      l = (S = this.PolyFindLength(e, t, a, r, s, !0, l)).findpt,
+      a = S.npts,
+      c.pts = S.pts,
+      c.npts = a,
+      c
+  }
+
+  InsertPoints(e, t, a, r) {
+    var i;
+    if (t + r > SDJS.ListManager.Defines.SED_MaxPoints)
+      return {
+        bSuccess: !1,
+        npts: t
+      };
+    for (i = 0; i < r; ++i) {
+      var n = new SDJS.ListManager.Point;
+      e.push(n)
+    }
+    for (i = t - 1; i >= a; i--)
+      e[i + r] = {
+        x: e[i].x,
+        y: e[i].y
+      };
+    for (t += r,
+      i = a; i < a + r; i++)
+      e[i] = {
+        x: i - a,
+        y: i - a
+      };
+    return {
+      bSuccess: !0,
+      npts: t
+    }
+  }
+
+
+  ArcToChord(e, t, a, r, i) {
+    var n,
+      o,
+      s,
+      l,
+      S,
+      c,
+      u,
+      p,
+      d,
+      D,
+      g = {},
+      h = {},
+      m = {},
+      C = {},
+      y = {};
+    (g.x = (t.x + e.x) / 2),
+      (g.y = (t.y + e.y) / 2),
+      (o = t.x - e.x),
+      (l = (s = t.y - e.y) / (n = Math.sqrt(o * o + s * s))),
+      (S = o / n),
+      Math.abs(l) < 1e-4 && (l = 0),
+      Math.abs(o) < 1e-4 && (o = 0),
+      (p = Math.asin(l)),
+      (D = Math.acos(S));
+    var f = {},
+      L = {};
+    return (
+      o < 0 && s < 0 ? (p = -D) : p > 0 && o < 0 && (p = -p),
+      (l = Math.sin(p)),
+      (S = Math.cos(p)),
+      (c = e.x - g.x),
+      (u = e.y - g.y),
+      (f.x = c * S + u * l + g.x),
+      (f.y = -c * l + u * S + g.y),
+      (c = t.x - g.x),
+      (u = t.y - g.y),
+      (L.x = c * S + u * l + g.x),
+      (L.y = -c * l + u * S + g.y),
+      (C.x = i.StartPoint.x),
+      (C.y = i.StartPoint.y),
+      (y.x = i.EndPoint.x),
+      (y.y = i.EndPoint.y),
+      (c = C.x - g.x),
+      (u = C.y - g.y),
+      (C.x = c * S + u * l + g.x),
+      (C.y = -c * l + u * S + g.y),
+      (c = y.x - g.x),
+      (u = y.y - g.y),
+      (y.x = c * S + u * l + g.x),
+      (y.y = -c * l + u * S + g.y),
+      (c = a.x - g.x),
+      (u = a.y - g.y),
+      (h.x = c * S + u * l + g.x),
+      (h.y = -c * l + u * S + g.y),
+      r &&
+      ((c = r.center.x - g.x),
+        (u = r.center.y - g.y),
+        (m.x = c * S + u * l + g.x),
+        (m.y = -c * l + u * S + g.y),
+        (d = g.y < m.y ? h.y < m.y : h.y > m.y) &&
+        (C.x < y.x
+          ? h.x > C.x &&
+          h.x < y.x &&
+          (y.x - h.x < h.x - C.x ? (h.x = y.x) : (h.x = C.x))
+          : h.x > y.x &&
+          h.x < C.x &&
+          (C.x - h.x < h.x - y.x ? (h.x = C.x) : (h.x = y.x)))),
+      (h.y = g.y),
+      (c = h.x - g.x),
+      (u = h.y - g.y),
+      (l = Math.sin(-p)),
+      (S = Math.cos(-p)),
+      (h.x = c * S + u * l + g.x),
+      (h.y = -c * l + u * S + g.y),
+      (c = f.x - g.x),
+      (u = f.y - g.y),
+      (f.x = c * S + u * l + g.x),
+      (f.y = -c * l + u * S + g.y),
+      r && ((h.x = 2 * Math.round((h.x + 0.5) / 2)), !0 === d && h.x--),
+      h
+    );
+  }
+
+  ChordToArc(e, t, a, r, i, n, o, s) {
+    var l,
+      S,
+      c,
+      u,
+      p,
+      d,
+      D,
+      g,
+      h,
+      m = {},
+      C = {},
+      y = {},
+      f = {};
+    return (
+      (S = t.x - e.x),
+      (u = (c = t.y - e.y) / (l = Math.sqrt(S * S + c * c))),
+      (p = S / l),
+      Math.abs(u) < 1e-4 && (u = 0),
+      Math.abs(S) < 1e-4 && (S = 0),
+      (((g = Math.asin(u)) > 0 && S < 0) || (g < 0 && S < 0 && c < 0)) &&
+      (g = -g),
+      (u = Math.sin(g)),
+      (p = Math.cos(g)),
+      (d = e.x - a.x),
+      (D = e.y - a.y),
+      (y.x = d * p + D * u + a.x),
+      (y.y = -d * u + D * p + a.y),
+      (d = t.x - a.x),
+      (D = t.y - a.y),
+      (f.x = d * p + D * u + a.x),
+      (f.y = -d * u + D * p + a.y),
+      (d = s.x - a.x),
+      (D = s.y - a.y),
+      (m.x = d * p + D * u + a.x),
+      (m.y = -d * u + D * p + a.y),
+      (d = e.x - a.x),
+      (D = e.y - a.y),
+      (C.x = d * p + D * u + a.x),
+      (C.y = -d * u + D * p + a.y),
+      (h = (C.y > a.y && !o) || (C.y <= a.y && o)),
+      n && (h = !h),
+      (d = m.x - a.x),
+      Math.abs(d) > r && (d = r),
+      (D = SDJS.Utils.sqrt(r * r - d * d)),
+      h
+        ? ((m.y = a.y + D), i && ((D = C.y - m.y), (m.y = C.y + D)))
+        : ((m.y = a.y - D), i && ((D = C.y - m.y), (m.y = C.y + D))),
+      (d = m.x - a.x),
+      (D = m.y - a.y),
+      (u = Math.sin(-g)),
+      (p = Math.cos(-g)),
+      (m.x = d * p + D * u + a.x),
+      (m.y = -d * u + D * p + a.y),
+      m
+    );
+  }
+
+  ArcIntersect(e, t, a) {
+    var r,
+      i,
+      n,
+      o,
+      s,
+      l,
+      S,
+      c,
+      u,
+      p,
+      d,
+      D,
+      g,
+      h,
+      m,
+      C,
+      y,
+      f = !1,
+      L = {},
+      I = {},
+      T = [];
+    return (
+      (r = e.EndPoint.x - e.StartPoint.x),
+      (i = e.EndPoint.y - e.StartPoint.y),
+      0 === r ? (!0, (l = e.EndPoint.x), 1) : i / r,
+      e.StartPoint.x,
+      e.StartPoint.y,
+      (L = e.IsReversed
+        ? e.CalcRadiusAndCenter(
+          e.EndPoint.x,
+          e.EndPoint.y,
+          e.StartPoint.x,
+          e.StartPoint.y,
+          e.CurveAdjust,
+          e.IsReversed
+        )
+        : e.CalcRadiusAndCenter(
+          e.StartPoint.x,
+          e.StartPoint.y,
+          e.EndPoint.x,
+          e.EndPoint.y,
+          e.CurveAdjust,
+          e.IsReversed
+        )),
+      (I.x = L.centerX),
+      (I.y = L.centerY),
+      (C = L.radius),
+      (n = t.EndPoint.x - t.StartPoint.x),
+      (o = t.EndPoint.y - t.StartPoint.y),
+      0 === n ? ((f = !0), (l = t.EndPoint.x), (s = 1)) : (s = o / n),
+      (p = t.StartPoint.x),
+      (u = t.StartPoint.y),
+      0 === s
+        ? !((c = C * C - (m = (S = t.StartPoint.y) - I.y) * m) < 0) &&
+        ((l = (h = SDJS.Utils.sqrt(c)) + I.x),
+          (a.x = l),
+          (a.y = S),
+          (T = e.GetPolyPoints(
+            SDJS.ListManager.Defines.NPOLYPTS,
+            !1,
+            !1,
+            !1,
+            null
+          )),
+          !!SDJS.ListManager.LM.prototype.LineDStyleHit(
+            T,
+            a,
+            e.StyleRecord.lineThickness,
+            0,
+            null
+          ) ||
+          !!SDJS.Utils.PtInRect(e.Frame, a) ||
+          ((l = -h + I.x),
+            (a.x = l),
+            (a.y = S),
+            !!SDJS.ListManager.LM.prototype.LineDStyleHit(
+              T,
+              a,
+              e.StyleRecord.lineThickness,
+              0,
+              null
+            ) || !!SDJS.Utils.PtInRect(e.Frame, a)))
+        : f
+          ? !((c = C * C - (h = (l = t.StartPoint.x) - I.x) * h) < 0) &&
+          ((S = (m = SDJS.Utils.sqrt(c)) + I.y),
+            (a.x = l),
+            (a.y = S),
+            (T = e.GetPolyPoints(
+              SDJS.ListManager.Defines.NPOLYPTS,
+              !1,
+              !1,
+              !1,
+              null
+            )),
+            !!SDJS.ListManager.LM.prototype.LineDStyleHit(
+              T,
+              a,
+              e.StyleRecord.lineThickness,
+              0,
+              null
+            ) ||
+            !!SDJS.Utils.PtInRect(e.Frame, a) ||
+            ((S = -m + I.y),
+              (a.x = l),
+              (a.y = S),
+              !!SDJS.ListManager.LM.prototype.LineDStyleHit(
+                T,
+                a,
+                e.StyleRecord.lineThickness,
+                0,
+                null
+              ) || !!SDJS.Utils.PtInRect(e.Frame, a)))
+          : ((d = s * s + 1),
+            !(
+              (g =
+                (D = 2 * s * (y = u - I.y - s * p) - 2 * I.x) * D -
+                4 * d * (I.x * I.x + y * y - C * C)) < 0
+            ) &&
+            ((S = u + s * ((l = (-D + (g = SDJS.Utils.sqrt(g))) / (2 * d)) - p)),
+              (a.x = l),
+              (a.y = S),
+              (T = e.GetPolyPoints(
+                SDJS.ListManager.Defines.NPOLYPTS,
+                !1,
+                !1,
+                !1,
+                null
+              )),
+              !!SDJS.ListManager.LM.prototype.LineDStyleHit(
+                T,
+                a,
+                e.StyleRecord.lineThickness,
+                0,
+                null
+              ) ||
+              !!SDJS.Utils.PtInRect(e.Frame, a) ||
+              ((S = u + s * ((l = (-D - g) / (2 * d)) - p)),
+                (a.x = l),
+                (a.y = S),
+                !!SDJS.ListManager.LM.prototype.LineDStyleHit(
+                  T,
+                  a,
+                  e.StyleRecord.lineThickness,
+                  0,
+                  null
+                ) || !!SDJS.Utils.PtInRect(e.Frame, a))))
+    );
+  }
+
+  LinesMaintainDist(e, t, a, r) {
+    var i,
+      n,
+      o,
+      s,
+      l,
+      S,
+      c,
+      u,
+      p,
+      d,
+      D,
+      g = {},
+      h = {
+        x: 0,
+        y: 0,
+      },
+      m = {};
+    if (
+      (null === t && (t = e),
+        (g = t.GetConnectLine())
+          ? ((D = g.startpt), (d = g.endpt))
+          : ((D = t.StartPoint), (d = t.EndPoint)),
+        (i = d.x - D.x),
+        (n = d.y - D.y),
+        Math.sqrt(i * i + n * n),
+        (h.x = r.x),
+        (h.y = r.y),
+        t.LineType === SDJS.ListManager.LineType.ARCLINE &&
+        (h = this.ArcToChord(D, d, h, g, t)),
+        a === SDJS.ListManager.ActionTriggerType.LINESTART
+          ? ((i = h.x - d.x), (n = h.y - d.y))
+          : ((i = h.x - D.x), (n = h.y - D.y)),
+        (o = Math.sqrt(i * i + n * n)),
+        (g = e.GetConnectLine())
+          ? ((D = g.startpt), (d = g.endpt))
+          : ((D = e.StartPoint), (d = e.EndPoint)),
+        a === SDJS.ListManager.ActionTriggerType.LINESTART
+          ? ((c = d), (i = -(d.x - D.x)), (n = -(d.y - D.y)))
+          : ((c = D), (i = d.x - D.x), (n = d.y - D.y)),
+        o > (s = Math.sqrt(i * i + n * n)) && (o = s),
+        s < 1
+          ? ((r.x = D.x), (r.y = D.y))
+          : ((l = n / s), (S = i / s), (r.x = c.x + S * o), (r.y = c.y + l * o)),
+        e.LineType === SDJS.ListManager.LineType.ARCLINE)
+    ) {
+      var C = e.CalcRadiusAndCenter(
+        e.StartPoint.x,
+        e.StartPoint.y,
+        e.EndPoint.x,
+        e.EndPoint.y,
+        e.CurveAdjust,
+        e.IsReversed
+      );
+      g ? ((u = !1), (p = !1)) : ((u = !1), (p = e.IsReversed)),
+        (m.x = C.centerX),
+        (m.y = C.centerY),
+        (r = this.ChordToArc(D, d, m, C.radius, p, u, C.centerInside, r));
+    }
+  }
+
+  GetMaxDim(e) {
+    return (
+      (e.x = SDJS.ListManager.Defines.SD_MaxLongDim),
+      (e.y = SDJS.ListManager.Defines.SD_MaxLongDim),
+      !0
+    );
+  }
+
+  LinesAddCurve(e, t, a, r, i, n) {
+    var o,
+      s = [],
+      l = [],
+      S = {};
+    if (e)
+      if (t > 0 && a > 0)
+        for (
+          S.x = r,
+          S.y = i,
+          S.width = n,
+          S.height = -2 * n,
+          gListManager.PolyYCurve(l, S, 20, 0, 0, 0, -n, !0),
+          o = l.length - 1;
+          o >= 0;
+          o--
+        )
+          s.push(l[o]);
+      else
+        t < 0 && a > 0
+          ? ((S.x = r),
+            (S.y = i + 2 * n),
+            (S.width = n),
+            (S.height = -2 * n),
+            gListManager.PolyYCurve(s, S, 20, 0, 0, -n, 0, !0))
+          : t > 0 && a < 0
+            ? ((S.x = r),
+              (S.y = i - 2 * n),
+              (S.width = -n),
+              (S.height = 2 * n),
+              gListManager.PolyYCurve(s, S, 20, 0, 0, n, 0, !0))
+            : t < 0 &&
+            a < 0 &&
+            ((S.x = r),
+              (S.y = i + 2 * n),
+              (S.width = -n),
+              (S.height = -2 * n),
+              gListManager.PolyYCurve(s, S, 20, 0, 0, -n, 0, !0));
+    else if (t > 0 && a > 0)
+      (S.x = r - n),
+        (S.y = i),
+        (S.width = n),
+        (S.height = 2 * n),
+        gListManager.PolyYCurve(s, S, 20, 0, 0, 0, n, !1);
+    else if (t < 0 && a > 0)
+      (S.x = r),
+        (S.y = i),
+        (S.width = n),
+        (S.height = 2 * n),
+        gListManager.PolyYCurve(s, S, 20, 0, 0, 0, n, !0);
+    else if (t > 0 && a < 0)
+      (S.x = r - n),
+        (S.y = i),
+        (S.width = n),
+        (S.height = -2 * n),
+        gListManager.PolyYCurve(s, S, 20, 0, 0, 0, -n, !1);
+    else if (t < 0 && a < 0)
+      for (
+        S.x = r,
+        S.y = i - 2 * n,
+        S.width = n,
+        S.height = 2 * n,
+        gListManager.PolyYCurve(l, S, 20, 0, 0, n, 0, !0),
+        o = l.length - 1;
+        o >= 0;
+        o--
+      )
+        s.push(l[o]);
+    return s;
   }
 }
 

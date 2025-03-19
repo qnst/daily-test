@@ -11,6 +11,40 @@ import PolygonConstant from '../Opt/Polygon/PolygonConstant';
 import OptConstant from '../Data/Constant/OptConstant';
 import T3Util from '../Util/T3Util';
 
+/**
+ * Represents an oval shape in the HVAC visualization system.
+ *
+ * @class Oval
+ * @extends {BaseShape}
+ * @description
+ * The Oval class creates and manages oval-shaped elements with various styles and behaviors.
+ * It supports features such as stroke styling, fill patterns, effects, hatch patterns,
+ * and can be used in both proportional and non-proportional growth modes.
+ *
+ * @example
+ * ```typescript
+ * // Create a basic oval
+ * const ovalOptions = {
+ *   Frame: { x: 100, y: 100, width: 200, height: 150 },
+ *   StyleRecord: {
+ *     Line: {
+ *       Paint: { Color: '#000000' },
+ *       Thickness: 2,
+ *       LinePattern: 0,
+ *       BThick: 1
+ *     },
+ *     Fill: {
+ *       Paint: { Color: '#FFFFFF' },
+ *       Hatch: 0
+ *     }
+ *   },
+ *   ObjGrow: OptConstant.GrowBehavior.ProPortional
+ * };
+ *
+ * const oval = new Oval(ovalOptions);
+ * const ovalShape = oval.CreateShape(renderer, false);
+ * ```
+ */
 class Oval extends BaseShape {
 
   constructor(options) {
@@ -199,7 +233,7 @@ class Oval extends BaseShape {
     let frameHeight = this.Frame.height;
     let halfWidth = frameWidth / 2;
     let halfHeight = frameHeight / 2;
-    let dimension = OptConstant.Common.MaxDim;
+    let dimension = OptConstant.Common.DimMax;
 
     if (points.length === 1 && points[0].y === -OptConstant.AStyles.CoManager && this.IsCoManager({})) {
       perimeterPoints.push(new Point(this.Frame.x, this.Frame.y));
@@ -275,7 +309,7 @@ class Oval extends BaseShape {
     const perimeterPoints = [];
     const numPoints = points.length;
     const triangleShapeType = PolygonConstant.ShapeTypes.TRIANGLE;
-    const dimension = OptConstant.Common.MaxDim;
+    const dimension = OptConstant.Common.DimMax;
 
     for (let i = 0; i < numPoints; i++) {
       const point = {

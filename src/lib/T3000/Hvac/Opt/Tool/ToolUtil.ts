@@ -38,29 +38,29 @@ class ToolUtil {
     // Initial render of all SVG selection states
     T3Gv.opt.RenderAllSVGSelectionStates();
 
-    // Check if we're currently using the wall tool
-    const isCurrentlyWallTool = T3Constant.DocContext.SelectionTool === ToolConstant.Tools.Tool_Wall;
+    // // Check if we're currently using the wall tool
+    // const isCurrentlyWallTool = T3Constant.DocContext.SelectionTool === ToolConstant.Tools.Wall;
 
-    // Update context with new tool settings
-    T3Constant.DocContext.SelectionTool = toolType;
-    T3Constant.DocContext.SelectionToolSticky = isSticky;
-    T3Constant.DocContext.SelectionToolMultiple = false;
+    // // Update context with new tool settings
+    // T3Constant.DocContext.SelectionTool = toolType;
+    // T3Constant.DocContext.SelectionToolSticky = isSticky;
+    // T3Constant.DocContext.SelectionToolMultiple = false;
 
-    // Additional handling for wall tool transitions
-    if (toolType !== ToolConstant.Tools.Tool_Wall) {
-      T3Constant.DocContext.UsingWallTool = false;
+    // // Additional handling for wall tool transitions
+    // if (toolType !== ToolConstant.Tools.Wall) {
+    //   T3Constant.DocContext.UsingWallTool = false;
 
-      // If we were previously using the wall tool, re-render all states
-      if (isCurrentlyWallTool) {
-        T3Gv.opt.RenderAllSVGSelectionStates();
-      }
-    }
+    //   // If we were previously using the wall tool, re-render all states
+    //   if (isCurrentlyWallTool) {
+    //     T3Gv.opt.RenderAllSVGSelectionStates();
+    //   }
+    // }
 
-    T3Util.Log('O.ActiveSelection.SetSelectionTool - Output:', {
-      updatedTool: T3Constant.DocContext.SelectionTool,
-      isSticky: T3Constant.DocContext.SelectionToolSticky,
-      usingWallTool: T3Constant.DocContext.UsingWallTool
-    });
+    // T3Util.Log('O.ActiveSelection.SetSelectionTool - Output:', {
+    //   updatedTool: T3Constant.DocContext.SelectionTool,
+    //   isSticky: T3Constant.DocContext.SelectionToolSticky,
+    //   usingWallTool: T3Constant.DocContext.UsingWallTool
+    // });
   }
 
   /**
@@ -68,18 +68,18 @@ class ToolUtil {
      * @param skipMessageHandling - If true, skips handling of collaboration messages
      * @returns false to indicate operation was cancelled
      */
-  CancelModalOperation(skipMessageHandling?) {
-    T3Util.Log("O.ToolOpt CancelModalOperation input:", skipMessageHandling);
+  CancelOperation(skipMessageHandling?) {
+    T3Util.Log("O.ToolOpt CancelOperation input:", skipMessageHandling);
 
-    this.SetSelectionTool(ToolConstant.Tools.Tool_Select, false);
-    T3Gv.opt.CancelModalOperation();
+    this.SetSelectionTool(ToolConstant.Tools.Select, false);
+    T3Gv.opt.CancelOperation();
 
     if (!skipMessageHandling) {
       // Collab.UnLockMessages();
       // Collab.UnBlockMessages();
     }
 
-    T3Util.Log("O.ToolOpt CancelModalOperation output: false");
+    T3Util.Log("O.ToolOpt CancelOperation output: false");
     return false;
   }
 

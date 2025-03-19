@@ -5,12 +5,45 @@ import Utils2 from "../Util/Utils2";
 import T3Gv from '../Data/T3Gv'
 import NvConstant from '../Data/Constant/NvConstant'
 import $ from 'jquery';
-import T3Constant from '../Data/Constant/T3Constant';
 import OptConstant from '../Data/Constant/OptConstant';
 import CursorConstant from '../Data/Constant/CursorConstant';
-import T3Timer from '../Util/T3Timer';
 import T3Util from '../Util/T3Util';
 
+/**
+ * Represents a base symbol shape in the T3000 HVAC visualization system.
+ * This class extends BaseShape to provide specialized symbol handling with
+ * interactive manipulation capabilities including resizing, rotation, and flipping.
+ *
+ * BaseSymbol manages:
+ * - Symbol data initialization and rendering
+ * - Interactive control knobs for manipulation (resize, rotate)
+ * - User interaction handling during symbol editing
+ * - Visual state management including locked and growth constraints
+ *
+ * @extends BaseShape
+ *
+ * @example
+ * ```typescript
+ * // Create a new symbol with custom options
+ * const symbolOptions = {
+ *   nativeDataArrayBuffer: myDataBuffer,
+ *   SymbolData: mySymbolData,
+ *   // Other shape options like position, size, etc.
+ *   x: 100,
+ *   y: 100,
+ *   width: 200,
+ *   height: 150
+ * };
+ *
+ * const mySymbol = new BaseSymbol(symbolOptions);
+ *
+ * // Add to a document
+ * svgDocument.AddElement(mySymbol);
+ *
+ * // Flip the symbol horizontally
+ * mySymbol.Flip(OptConstant.ExtraFlags.FlipHoriz);
+ * ```
+ */
 class BaseSymbol extends BaseShape {
 
   constructor(options: any) {

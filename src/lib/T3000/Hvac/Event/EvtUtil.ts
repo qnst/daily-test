@@ -12,6 +12,44 @@ import DocUtil from '../Doc/DocUtil';
 import OptConstant from '../Data/Constant/OptConstant';
 import T3Util from '../Util/T3Util';
 
+/**
+ * Utility class for handling various user interaction events on an SVG document.
+ *
+ * The EvtUtil class provides a collection of static methods to process and manage events such as:
+ *
+ * - Mouse movement: Tracks the cursor, converts window to document coordinates, and updates UI displays.
+ * - Hammer tap, drag, pan, and pinch gestures: Supports rubber band selection, panning, zooming,
+ *   shape tapping, drawing operations, and long-press actions.
+ * - Shape interactions: Handles tap, double-tap, drag start, drag, and hold events for interacting with individual SVG shapes.
+ * - Drawing and stamping operations: Provides factory functions for tracking drawing progress,
+ *   releasing drawn objects, and finalizing stamp placements.
+ * - Dimension text editing: Facilitates editing of dimension text with double-tap actions and lifts UI on virtual keyboard appearance.
+ * - Action tracking: Provides generic action tracking and release mechanism for specialized event-driven interactions.
+ *
+ * @remarks
+ * The methods in this class ensure that the UI remains responsive and consistent across different interaction modes.
+ * They integrate with various other components, such as document utilities for coordinate conversion, zoom and scroll management,
+ * and error handling systems to ensure smooth cleanup of resources during exceptions.
+ *
+ * @example
+ * Usage example to handle mouse move events on an SVG element:
+ *
+ *   import { EvtUtil } from './EvtUtil';
+ *
+ *   const svgElement = document.getElementById('svg-element');
+ *   svgElement.addEventListener('mousemove', (mouseEvent: MouseEvent) => {
+ *     EvtUtil.Evt_MouseMove(mouseEvent);
+ *   });
+ *
+ * Additional examples include using factory functions for shape events:
+ *
+ *   // For handling double-tap on a shape:
+ *   const shape = getSomeShape();
+ *   const handleDoubleTap = EvtUtil.Evt_ShapeDoubleTapFactory(shape);
+ *   shape.element.addEventListener('dblclick', handleDoubleTap);
+ *
+ * @public
+ */
 class EvtUtil {
 
   /**
@@ -243,11 +281,11 @@ class EvtUtil {
 
     // Prevent default browser behavior
     Utils2.StopPropagationAndDefaults(event);
-    const modalOperations = OptConstant.ModalOperations;
+    const optTypes = OptConstant.OptTypes;
 
     try {
       // // Cancel any special mode operations if active
-      // switch (T3Gv.opt.currentModalOperation) {
+      // switch (T3Gv.opt.crtOpt) {
       //   case modalOperations.ADDCORNER:
       //   case modalOperations.SPLITWALL:
       //     T3Gv.gFloorplanManager.AddCornerCancel();
@@ -415,7 +453,7 @@ class EvtUtil {
         T3Util.Log("E.Evt DrawRelease output: drawing completed");
       } catch (error) {
         // Clean up in case of errors during draw completion
-        T3Gv.opt.CancelModalOperation();
+        T3Gv.opt.CancelOperation();
         drawableObject.LM_DrawClick_ExceptionCleanup(error);
         T3Gv.opt.ExceptionCleanup(error);
 
@@ -461,8 +499,8 @@ class EvtUtil {
       }
 
       // Handle tap based on current modal operation
-      switch (T3Gv.opt.currentModalOperation) {
-        case OptConstant.ModalOperations.None:
+      switch (T3Gv.opt.crtOpt) {
+        case OptConstant.OptTypes.None:
           // Check for hyperlink hits or process normal tap
           if (!T3Gv.opt.CheckTextHyperlinkHit(shape, tapEvent)) {
             T3Gv.opt.LM_TestIconClick(tapEvent);
@@ -477,12 +515,12 @@ class EvtUtil {
           T3Util.Log("E.Evt ShapeTap output: normal tap processed");
           return false;
 
-        case OptConstant.ModalOperations.Draw:
-        case OptConstant.ModalOperations.DrawPolyline:
+        case OptConstant.OptTypes.Draw:
+        case OptConstant.OptTypes.DrawPolyline:
           T3Util.Log("E.Evt ShapeTap output: ignored in draw mode");
           return false;
 
-        case OptConstant.ModalOperations.StampTextOnTap:
+        case OptConstant.OptTypes.StampTextOnTap:
           // Handle text editing in stamp text mode
           if (!T3Gv.opt.stampSticky) {
             T3Gv.opt.CancelObjectStampTextOnTap(true);
@@ -513,13 +551,13 @@ class EvtUtil {
       T3Util.Log("E.Evt ShapeDragStart input:", event);
 
       // Check if we're in drawing mode - prevent drag start
-      if (T3Gv.opt.currentModalOperation === OptConstant.ModalOperations.Draw) {
+      if (T3Gv.opt.crtOpt === OptConstant.OptTypes.Draw) {
         T3Util.Log("E.Evt ShapeDragStart output: prevented in draw mode");
         return false;
       }
 
       // Check if we're in stamp mode - prevent drag start and stop propagation
-      if (T3Gv.opt.currentModalOperation === OptConstant.ModalOperations.Stamp) {
+      if (T3Gv.opt.crtOpt === OptConstant.OptTypes.Stamp) {
         event.stopPropagation();
         event.gesture.stopPropagation();
         T3Util.Log("E.Evt ShapeDragStart output: prevented in stamp mode");
@@ -540,22 +578,22 @@ class EvtUtil {
       }
 
       // Process based on current modal operation state
-      switch (T3Gv.opt.currentModalOperation) {
-        case OptConstant.ModalOperations.None:
-        case OptConstant.ModalOperations.FormatPainter:
+      switch (T3Gv.opt.crtOpt) {
+        case OptConstant.OptTypes.None:
+        case OptConstant.OptTypes.FormatPainter:
           // Normal drag operation - start movement
           Utils2.StopPropagationAndDefaults(event);
           T3Gv.opt.LM_MoveClick(event);
           T3Util.Log("E.Evt ShapeDragStart output: move operation started");
           return false;
 
-        case OptConstant.ModalOperations.Draw:
+        case OptConstant.OptTypes.Draw:
           // Forward to draw handler if in draw mode
           T3Util.Log("E.Evt ShapeDragStart output: forwarded to draw handler");
           return EvtUtil.Evt_WorkAreaHammerDrawStart(event);
 
-        case OptConstant.ModalOperations.DrawPolyline:
-        case OptConstant.ModalOperations.StampTextOnTap:
+        case OptConstant.OptTypes.DrawPolyline:
+        case OptConstant.OptTypes.StampTextOnTap:
           // Prevent drag in these modes
           T3Util.Log("E.Evt ShapeDragStart output: prevented in special mode");
           return false;
@@ -576,8 +614,8 @@ class EvtUtil {
     return function (event) {
       T3Util.Log("E.Evt ShapeHold input:", event);
 
-      switch (T3Gv.opt.currentModalOperation) {
-        case OptConstant.ModalOperations.None:
+      switch (T3Gv.opt.crtOpt) {
+        case OptConstant.OptTypes.None:
           // Stop the gesture detection and prevent default behavior
           event.gesture.stopDetect();
           Utils2.StopPropagationAndDefaults(event);
@@ -599,9 +637,9 @@ class EvtUtil {
           T3Util.Log("E.Evt ShapeHold output: context menu displayed");
           return false;
 
-        case OptConstant.ModalOperations.Draw:
-        case OptConstant.ModalOperations.DrawPolyline:
-        case OptConstant.ModalOperations.StampTextOnTap:
+        case OptConstant.OptTypes.Draw:
+        case OptConstant.OptTypes.DrawPolyline:
+        case OptConstant.OptTypes.StampTextOnTap:
           // Prevent hold actions in these modes
           T3Util.Log("E.Evt ShapeHold output: prevented in special mode");
           return false;
@@ -636,8 +674,8 @@ class EvtUtil {
       T3Gv.opt.SetUIAdaptation(event);
 
       // Process based on current modal operation state
-      switch (T3Gv.opt.currentModalOperation) {
-        case OptConstant.ModalOperations.None:
+      switch (T3Gv.opt.crtOpt) {
+        case OptConstant.OptTypes.None:
           // Don't process if already editing a note
           if (T3Gv.opt.bInNoteEdit) {
             T3Util.Log("E.Evt ShapeDoubleTap output: prevented during note edit");
@@ -704,9 +742,9 @@ class EvtUtil {
           T3Util.Log("E.Evt ShapeDoubleTap output: text editor activated");
           return false;
 
-        case OptConstant.ModalOperations.Draw:
-        case OptConstant.ModalOperations.DrawPolyline:
-        case OptConstant.ModalOperations.StampTextOnTap:
+        case OptConstant.OptTypes.Draw:
+        case OptConstant.OptTypes.DrawPolyline:
+        case OptConstant.OptTypes.StampTextOnTap:
           // Prevent double-tap actions in these modes
           T3Util.Log("E.Evt ShapeDoubleTap output: prevented in special mode");
           return false;
@@ -1161,7 +1199,7 @@ class EvtUtil {
 
       let textElement, elementCount;
 
-      if (T3Gv.opt.currentModalOperation == OptConstant.ModalOperations.None) {
+      if (T3Gv.opt.crtOpt == OptConstant.OptTypes.None) {
         const shapeElement = T3Gv.opt.svgObjectLayer.GetElementById(shape.BlockID);
 
         if (shapeElement != null) {
@@ -1215,7 +1253,7 @@ class EvtUtil {
       T3Util.Log("E.Evt DimensionTextTap input:", event);
 
       // Only process in default mode (no modal operations active)
-      if (T3Gv.opt.currentModalOperation == OptConstant.ModalOperations.None) {
+      if (T3Gv.opt.crtOpt == OptConstant.OptTypes.None) {
         // Find the shape element
         const shapeElement = T3Gv.opt.svgObjectLayer.GetElementById(shape.BlockID);
 
@@ -1288,7 +1326,7 @@ class EvtUtil {
         T3Util.Log("E.Evt PolyLineDrawExtend output: polyline extended");
       } catch (error) {
         // Clean up in case of errors
-        T3Gv.opt.CancelModalOperation();
+        T3Gv.opt.CancelOperation();
         polyLineObject.LM_DrawClick_ExceptionCleanup(error);
         T3Gv.opt.ExceptionCleanup(error);
 
