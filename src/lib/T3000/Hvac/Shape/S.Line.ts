@@ -7,12 +7,14 @@ import Utils3 from "../Util/Utils3";
 import T3Gv from '../Data/T3Gv';
 import Point from '../Model/Point'
 import NvConstant from '../Data/Constant/NvConstant'
-import SelectionAttributes from '../Model/SelectionAttributes'
+import SelectionAttr from '../Model/SelectionAttr'
 import Instance from '../Data/Instance/Instance';
 import DSConstant from '../Opt/DS/DSConstant';
 import OptConstant from '../Data/Constant/OptConstant';
 import CursorConstant from '../Data/Constant/CursorConstant';
 import T3Util from '../Util/T3Util';
+import ObjectUtil from '../Opt/Data/ObjectUtil';
+import UIUtil from '../Opt/UI/UIUtil';
 
 /**
  * Represents a line shape in the T3000 HVAC drawing system.
@@ -234,7 +236,7 @@ class Line extends BaseLine {
     let styleRecord = this.StyleRecord;
 
     if (styleRecord == null) {
-      let sessionBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+      let sessionBlock = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
       if (sessionBlock) {
         styleRecord = sessionBlock.def.style;
       }
@@ -329,13 +331,13 @@ class Line extends BaseLine {
         shapeElement.SetCursor(CursorConstant.CursorType.CROSSHAIR);
       }
     } else {
-      this.BaseDrawingObject_SetCursors();
+      this.BaseDrawingObjectSetCursors();
     }
 
     T3Util.Log('S.Line - Output:', { shapeElement });
   }
 
-  BaseDrawingObject_SetCursors() {
+  BaseDrawingObjectSetCursors() {
     T3Util.Log('S.Line - Input:', { BlockID: this.BlockID, flags: this.flags });
 
     const shapeContainer = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
@@ -504,7 +506,7 @@ class Line extends BaseLine {
     this.UpdateDimensionLines(svgContainer);
     this.UpdateCoordinateLines(svgContainer);
 
-    new SelectionAttributes();
+    new SelectionAttr();
     let rect = Utils2.Pt2Rect(this.StartPoint, this.EndPoint);
     points.push(new Point(this.StartPoint.x - rect.x, this.StartPoint.y - rect.y));
     points.push(new Point(this.EndPoint.x - rect.x, this.EndPoint.y - rect.y));
@@ -513,10 +515,10 @@ class Line extends BaseLine {
     let deltaY = points[0].y - points[1].y;
     Utils2.sqrt(deltaX * deltaX + deltaY * deltaY);
 
-    T3Gv.opt.UpdateDisplayCoordinates(this.Frame, this.StartPoint, CursorConstant.CursorTypes.Grow, this);
+    UIUtil.UpdateDisplayCoordinates(this.Frame, this.StartPoint, CursorConstant.CursorTypes.Grow, this);
 
     if (this.DataID !== -1) {
-      this.LM_ResizeSVGTextObject(svgContainer, this, this.Frame);
+      this.LMResizeSVGTextObject(svgContainer, this, this.Frame);
     }
 
     T3Util.Log('S.Line - Output:', { shapeElement, slopElement, points });
@@ -624,7 +626,7 @@ class Line extends BaseLine {
       this.UpdateDimensionLines(svgContainer);
       this.UpdateCoordinateLines(svgContainer);
 
-      new SelectionAttributes();
+      new SelectionAttr();
       const rect = Utils2.Pt2Rect(this.StartPoint, this.EndPoint);
       points.push(new Point(this.StartPoint.x - rect.x, this.StartPoint.y - rect.y));
       points.push(new Point(this.EndPoint.x - rect.x, this.EndPoint.y - rect.y));
@@ -634,7 +636,7 @@ class Line extends BaseLine {
       const distance = Utils2.sqrt(deltaX * deltaX + deltaY * deltaY);
       const deepCopiedEndPoint = Utils1.DeepCopy(this.EndPoint);
 
-      T3Gv.opt.UpdateDisplayCoordinates(this.Frame, deepCopiedEndPoint, CursorConstant.CursorTypes.Grow, this);
+      UIUtil.UpdateDisplayCoordinates(this.Frame, deepCopiedEndPoint, CursorConstant.CursorTypes.Grow, this);
 
       if (
         (T3Gv.opt.contentHeader.flags & OptConstant.CntHeaderFlags.NoAuto) &&
@@ -646,7 +648,7 @@ class Line extends BaseLine {
       }
 
       if (this.DataID !== -1) {
-        this.LM_ResizeSVGTextObject(svgContainer, this, this.Frame);
+        this.LMResizeSVGTextObject(svgContainer, this, this.Frame);
       }
     }
 
@@ -681,7 +683,7 @@ class Line extends BaseLine {
       this.UpdateDimensionLines(shapeElement);
 
       if (this.DataID !== -1) {
-        this.LM_ResizeSVGTextObject(shapeElement, this, this.Frame);
+        this.LMResizeSVGTextObject(shapeElement, this, this.Frame);
       }
 
       if (T3Gv.opt.ob.Frame) {
@@ -764,7 +766,7 @@ class Line extends BaseLine {
         ? T3Gv.opt.PolyLJoin(newBlockID, OptConstant.HookPts.KTL, this.BlockID, OptConstant.HookPts.KTL, false)
         : T3Gv.opt.PolyLJoin(newBlockID, OptConstant.HookPts.KTL, this.BlockID, OptConstant.HookPts.KTR, false);
 
-      const joinedObject = T3Gv.opt.GetObjectPtr(joinID, false);
+      const joinedObject = ObjectUtil.GetObjectPtr(joinID, false);
       const joinedElement = T3Gv.opt.svgObjectLayer.GetElementById(joinID);
 
       let dimensionText = Number(T3Gv.docUtil.rulerConfig.majorScale).toString();
@@ -843,7 +845,7 @@ class Line extends BaseLine {
     }
 
     if (shouldAdjust) {
-      T3Gv.opt.GetObjectPtr(this.BlockID, true);
+      ObjectUtil.GetObjectPtr(this.BlockID, true);
       if (deltaX || deltaY) {
         this.OffsetShape(deltaX, deltaY);
       }

@@ -6,11 +6,15 @@ import $ from 'jquery';
 import BaseDrawObject from '../Shape/S.BaseDrawObject'
 import Instance from '../Data/Instance/Instance'
 import NvConstant from '../Data/Constant/NvConstant'
-import RightClickData from '../Model/RightClickData'
+import RightClickMd from '../Model/RightClickMd'
 import T3Constant from '../Data/Constant/T3Constant';
 import DocUtil from '../Doc/DocUtil';
 import OptConstant from '../Data/Constant/OptConstant';
 import T3Util from '../Util/T3Util';
+import MouseUtil from './MouseUtil';
+import ObjectUtil from '../Opt/Data/ObjectUtil';
+import SelectUtil from '../Opt/Opt/SelectUtil';
+import UIUtil from '../Opt/UI/UIUtil';
 
 /**
  * Utility class for handling various user interaction events on an SVG document.
@@ -77,8 +81,8 @@ class EvtUtil {
       );
 
       // Show and update coordinates display
-      T3Gv.opt.ShowXY(true);
-      T3Gv.opt.UpdateDisplayCoordinates(
+      UIUtil.ShowXY(true);
+      UIUtil.UpdateDisplayCoordinates(
         null,
         documentCoordinates,
         null,
@@ -87,7 +91,7 @@ class EvtUtil {
 
     } else {
       // Hide coordinates display when outside document bounds
-      T3Gv.opt.ShowXY(false);
+      UIUtil.ShowXY(false);
     }
   }
 
@@ -104,10 +108,10 @@ class EvtUtil {
     Utils2.StopPropagationAndDefaults(event);
 
     // Set UI adaptation based on event
-    T3Gv.opt.SetUIAdaptation(event);
+    // T3Gv.opt.SetUIAdaptation(event);
 
     // Check if this is a right-click
-    const isRightClick = T3Gv.opt.IsRightClick(event);
+    const isRightClick = MouseUtil.IsRightClick(event);
 
     // For left-clicks, clear selection
     if (!isRightClick) {
@@ -119,10 +123,10 @@ class EvtUtil {
 
     // Handle right-click contextual menu
     if (isRightClick) {
-      T3Gv.opt.rightClickParams = new RightClickData();
+      T3Gv.opt.rClickParam = new RightClickMd();
 
       // Convert window coordinates to document coordinates
-      T3Gv.opt.rightClickParams.HitPt = T3Gv.opt.svgDoc.ConvertWindowToDocCoords(
+      T3Gv.opt.rClickParam.hitPoint = T3Gv.opt.svgDoc.ConvertWindowToDocCoords(
         event.gesture.center.clientX,
         event.gesture.center.clientY
       );
@@ -251,10 +255,10 @@ class EvtUtil {
       }
 
       Utils2.StopPropagationAndDefaults(event);
-      T3Gv.opt.SetUIAdaptation(event);
+      // T3Gv.opt.SetUIAdaptation(event);
 
       // Handle right clicks separately
-      if (T3Gv.opt.IsRightClick(event)) {
+      if (MouseUtil.IsRightClick(event)) {
         event.preventDefault();
         event.stopPropagation();
 
@@ -387,11 +391,11 @@ class EvtUtil {
     hammerEvent.preventDefault();
 
     // Check if this is a right-click event
-    const isRightClick = T3Gv.opt.IsRightClick(hammerEvent);
+    const isRightClick = MouseUtil.IsRightClick(hammerEvent);
 
     if (!isRightClick) {
       // Set UI adaptation based on event
-      T3Gv.opt.SetUIAdaptation(hammerEvent);
+      // T3Gv.opt.SetUIAdaptation(hammerEvent);
 
       // Start the drawing operation
       T3Gv.opt.StartNewObjectDraw(hammerEvent);
@@ -419,12 +423,12 @@ class EvtUtil {
 
       try {
         // Track the drawing movement for the current object
-        drawableObject.LM_DrawTrack(event);
+        drawableObject.LMDrawTrack(event);
 
         T3Util.Log("E.Evt DrawTrack output: drawing tracked");
       } catch (error) {
         // Clean up in case of errors during draw tracking
-        drawableObject.LM_DrawClick_ExceptionCleanup(error);
+        drawableObject.LMDrawClickExceptionCleanup(error);
         T3Gv.opt.ExceptionCleanup(error);
 
         T3Util.Log("E.Evt DrawTrack error:", error);
@@ -448,13 +452,13 @@ class EvtUtil {
 
       try {
         // Complete the drawing operation when the user releases
-        drawableObject.LM_DrawRelease(event);
+        drawableObject.LMDrawRelease(event);
 
         T3Util.Log("E.Evt DrawRelease output: drawing completed");
       } catch (error) {
         // Clean up in case of errors during draw completion
         T3Gv.opt.CancelOperation();
-        drawableObject.LM_DrawClick_ExceptionCleanup(error);
+        drawableObject.LMDrawClickExceptionCleanup(error);
         T3Gv.opt.ExceptionCleanup(error);
 
         T3Util.Log("E.Evt DrawRelease error:", error);
@@ -480,10 +484,10 @@ class EvtUtil {
 
       // Prevent default browser behavior
       Utils2.StopPropagationAndDefaults(tapEvent);
-      T3Gv.opt.SetUIAdaptation(tapEvent);
+      // T3Gv.opt.SetUIAdaptation(tapEvent);
 
       // Check if this is a right-click
-      const isRightClick = T3Gv.opt.IsRightClick(tapEvent);
+      const isRightClick = MouseUtil.IsRightClick(tapEvent);
 
       // Handle read-only document case
       if (T3Gv.docUtil.IsReadOnly()) {
@@ -503,7 +507,7 @@ class EvtUtil {
         case OptConstant.OptTypes.None:
           // Check for hyperlink hits or process normal tap
           if (!T3Gv.opt.CheckTextHyperlinkHit(shape, tapEvent)) {
-            T3Gv.opt.LM_TestIconClick(tapEvent);
+            T3Gv.opt.LMTestIconClick(tapEvent);
 
             // Handle rollover actions if not in read-only mode
             if (T3Gv.opt.GetUIAdaptation(tapEvent) && !T3Gv.docUtil.IsReadOnly()) {
@@ -565,10 +569,10 @@ class EvtUtil {
       }
 
       // Set UI adaptation for current platform/device
-      T3Gv.opt.SetUIAdaptation(event);
+      // T3Gv.opt.SetUIAdaptation(event);
 
       // Handle right-click differently
-      if (T3Gv.opt.IsRightClick(event)) {
+      if (MouseUtil.IsRightClick(event)) {
         event.preventDefault();
         event.stopPropagation();
         event.gesture.preventDefault();
@@ -583,7 +587,7 @@ class EvtUtil {
         case OptConstant.OptTypes.FormatPainter:
           // Normal drag operation - start movement
           Utils2.StopPropagationAndDefaults(event);
-          T3Gv.opt.LM_MoveClick(event);
+          T3Gv.opt.LMMoveClick(event);
           T3Util.Log("E.Evt ShapeDragStart output: move operation started");
           return false;
 
@@ -625,10 +629,10 @@ class EvtUtil {
 
           try {
             // Clean up any active move operation
-            T3Gv.opt.LM_MoveRelease(event);
+            T3Gv.opt.LMMoveRelease(event);
           } catch (error) {
             // Handle exceptions during move release
-            T3Gv.opt.LM_Move_ExceptionCleanup(error);
+            T3Gv.opt.LMMoveExceptionCleanup(error);
             T3Gv.opt.ExceptionCleanup(error);
             T3Util.Log("E.Evt ShapeHold error:", error);
             throw error;
@@ -662,7 +666,7 @@ class EvtUtil {
 
       // Get the object using its ID
       const shapeBlockId = shape.BlockID;
-      const objectPtr = T3Gv.opt.GetObjectPtr(shapeBlockId, false);
+      const objectPtr = ObjectUtil.GetObjectPtr(shapeBlockId, false);
 
       // Validate that we have a valid drawing object
       if (!(objectPtr && objectPtr instanceof BaseDrawObject)) {
@@ -671,7 +675,7 @@ class EvtUtil {
       }
 
       // Set UI adaptation for current device/platform
-      T3Gv.opt.SetUIAdaptation(event);
+      // T3Gv.opt.SetUIAdaptation(event);
 
       // Process based on current modal operation state
       switch (T3Gv.opt.crtOpt) {
@@ -769,12 +773,12 @@ class EvtUtil {
       let isOverCustomLibrary = T3Gv.opt.CheckDragIsOverCustomLibrary(event);
 
       // Track the movement of the shape
-      T3Gv.opt.LM_MoveTrack(event, isOverCustomLibrary);
+      T3Gv.opt.LMMoveTrack(event, isOverCustomLibrary);
 
       T3Util.Log("E.Evt ShapeDrag output: shape position updated");
     } catch (error) {
       // Clean up in case of errors during movement
-      T3Gv.opt.LM_Move_ExceptionCleanup(error);
+      T3Gv.opt.LMMoveExceptionCleanup(error);
       T3Gv.opt.ExceptionCleanup(error);
 
       T3Util.Log("E.Evt ShapeDrag error:", error);
@@ -796,12 +800,12 @@ class EvtUtil {
 
     try {
       // Complete the movement operation
-      T3Gv.opt.LM_MoveRelease(event);
+      T3Gv.opt.LMMoveRelease(event);
 
       T3Util.Log("E.Evt ShapeDragEnd output: shape movement completed");
     } catch (error) {
       // Clean up in case of errors during move completion
-      T3Gv.opt.LM_Move_ExceptionCleanup(error);
+      T3Gv.opt.LMMoveExceptionCleanup(error);
       T3Gv.opt.ExceptionCleanup(error);
 
       T3Util.Log("E.Evt ShapeDragEnd error:", error);
@@ -823,7 +827,7 @@ class EvtUtil {
       T3Util.Log("E.Evt ActionTrack input:", event);
 
       // Track the action movement through the action object
-      actionObject.LM_ActionTrack(event);
+      actionObject.LMActionTrack(event);
 
       T3Util.Log("E.Evt ActionTrack output: action tracked");
       return false;
@@ -844,7 +848,7 @@ class EvtUtil {
       T3Util.Log("E.Evt ActionRelease input:", event);
 
       // Complete the action through the action object
-      actionObject.LM_ActionRelease(event);
+      actionObject.LMActionRelease(event);
 
       T3Util.Log("E.Evt ActionRelease output: action completed");
       return false;
@@ -975,7 +979,7 @@ class EvtUtil {
     // Cancel any active selections or moves
     T3Gv.opt.RubberBandSelect_Cancel();
     if (T3Gv.opt.moveList && T3Gv.opt.moveList.length) {
-      T3Gv.opt.LM_MoveRelease(event);
+      T3Gv.opt.LMMoveRelease(event);
     }
 
     // Get work area and cursor position
@@ -1032,7 +1036,7 @@ class EvtUtil {
 
     // Release any active move operation
     if (T3Gv.opt.moveList && T3Gv.opt.moveList.length) {
-      T3Gv.opt.LM_MoveRelease(event);
+      T3Gv.opt.LMMoveRelease(event);
     }
 
     // Set edit mode to indicate grabbing/panning
@@ -1109,7 +1113,7 @@ class EvtUtil {
     T3Gv.opt.RubberBandSelect_Cancel();
     if (T3Gv.opt.moveList &&
       T3Gv.opt.moveList.length) {
-      T3Gv.opt.LM_MoveRelease(event);
+      T3Gv.opt.LMMoveRelease(event);
     }
 
     // Get work area and cursor position
@@ -1212,7 +1216,7 @@ class EvtUtil {
               textElement.GetUserData() == textId) {
 
               T3Gv.opt.bInDimensionEdit = true;
-              T3Gv.opt.UpdateSelectionAttributes(null);
+              SelectUtil.UpdateSelectionAttributes(null);
 
               if (event.gesture) {
                 T3Gv.opt.TERegisterEvents(textElement.svgObj.SDGObj, event.gesture.srcEvent);
@@ -1281,7 +1285,7 @@ class EvtUtil {
 
               // Enable dimension edit mode
               T3Gv.opt.bInDimensionEdit = true;
-              T3Gv.opt.UpdateSelectionAttributes(null);
+              SelectUtil.UpdateSelectionAttributes(null);
 
               // Register text editing event handlers
               if (event.gesture) {
@@ -1321,13 +1325,13 @@ class EvtUtil {
 
       try {
         // Extend the polyline drawing
-        polyLineObject.LM_DrawExtend(event);
+        polyLineObject.LMDrawExtend(event);
 
         T3Util.Log("E.Evt PolyLineDrawExtend output: polyline extended");
       } catch (error) {
         // Clean up in case of errors
         T3Gv.opt.CancelOperation();
-        polyLineObject.LM_DrawClick_ExceptionCleanup(error);
+        polyLineObject.LMDrawClickExceptionCleanup(error);
         T3Gv.opt.ExceptionCleanup(error);
 
         T3Util.Log("E.Evt PolyLineDrawExtend error:", error);

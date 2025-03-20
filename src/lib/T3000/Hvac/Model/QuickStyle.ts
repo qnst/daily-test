@@ -4,7 +4,7 @@ import 'reflect-metadata'
 import FillData from './FillData'
 import LineData from './LineData'
 import OutsideEffectData from './OutsideEffectData'
-import TextFormatData from './TextFormatData'
+import TextFmtData from './TextFmtData'
 
 /**
  * Represents a style configuration used for HVAC components, encapsulating visual properties such as fill, border, line, outside effects, and text formatting.
@@ -30,7 +30,7 @@ import TextFormatData from './TextFormatData'
  * @property {FillData} Fill - Contains fill settings such as color and pattern. Uses a type transformer for proper conversion.
  * @property {LineData} Line - Defines the line styling properties. Uses a type transformer to enforce the type during transformation.
  * @property {OutsideEffectData} OutsideEffect - Encapsulates outside effect styling details. Uses a type transformer for correct conversion.
- * @property {TextFormatData} Text - Stores text formatting specifications. Uses a type transformer to maintain type integrity.
+ * @property {TextFmtData} Text - Stores text formatting specifications. Uses a type transformer to maintain type integrity.
  * @property {*} StyleRecord - A flexible record to store additional or custom style-related data.
  */
 class QuickStyle {
@@ -48,8 +48,8 @@ class QuickStyle {
   @Type(() => OutsideEffectData)
   public OutsideEffect: OutsideEffectData;
 
-  @Type(() => TextFormatData)
-  public Text: TextFormatData;
+  @Type(() => TextFmtData)
+  public Text: TextFmtData;
 
   public StyleRecord: any;
 
@@ -58,7 +58,7 @@ class QuickStyle {
     this.Fill = new FillData();
     this.Border = new LineData();
     this.OutsideEffect = new OutsideEffectData();
-    this.Text = new TextFormatData();
+    this.Text = new TextFmtData();
     this.Line = new LineData();
   }
 }

@@ -9,14 +9,14 @@ import $ from 'jquery'
 import RulerConfig from '../../Model/RulerConfig'
 import PolygonShapeGenerator from "../Polygon/PolygonUtil"
 import QuickStyle from '../../Model/QuickStyle'
-import SEDSession from '../../Model/SEDSession'
+import SDData from '../../Model/SDData'
 import LayersManager from '../../Model/LayersManager'
 import Point from '../../Model/Point'
 import Instance from '../../Data/Instance/Instance'
 import NvConstant from '../../Data/Constant/NvConstant'
 import PaintData from '../../Model/PaintData'
 import FontRecord from '../../Model/FontRecord'
-import SEDGraphDefault from '../../Model/SEDGraphDefault'
+import SDGraphDefault from '../../Model/SDGraphDefault'
 import OutsideEffectData from '../../Model/OutsideEffectData'
 import PolySeg from '../../Model/PolySeg'
 import Link from '../../Model/Link'
@@ -26,12 +26,12 @@ import Layer from '../../Model/Layer'
 import TextureList from '../../Model/TextureList'
 import PolygonConstant from '../Polygon/PolygonConstant'
 import TextureScale from '../../Model/TextureScale'
-import WindowSettings from '../../Model/WindowSettings'
+import WinSetting from '../../Model/WinSetting'
 import WResult from '../../Model/WResult'
 import BlockHeader from '../../Model/BlockHeader'
 import StateConstant from '../../Data/State/StateConstant'
 import OptConstant from '../../Data/Constant/OptConstant'
-import PolyGeometryModel from '../../Model/PolyGeometryModel'
+import PolyGeomMd from '../../Model/PolyGeomMd'
 import TextConstant from '../../Data/Constant/TextConstant'
 import StyleConstant from '../../Data/Constant/StyleConstant'
 import DSStruct from '../DS/DSStruct'
@@ -39,6 +39,7 @@ import DSUtil from '../DS/DSUtil'
 import TextObject from '../../Model/TextObject'
 import DSConstant from '../DS/DSConstant'
 import ShapeConstant from '../../Data/Constant/ShapeConstant'
+import ObjectUtil from '../Data/ObjectUtil'
 
 class ShapeUtil {
 
@@ -425,7 +426,7 @@ class ShapeUtil {
         y: 0
       },
       this.ReadingGroup = !1,
-      this.WindowSettings = new WindowSettings(),
+      this.WinSetting = new WinSetting(),
       this.DefTStyle = {},
       this.DefRun = {},
       this.DefFSize = 10,
@@ -495,7 +496,7 @@ class ShapeUtil {
       this.IsLucid = !1,
       this.VisioFileVersion = !1,
       this.ReadTexture = - 1,
-      this.SDData = null,
+      this.STData = null,
       this.FromWindows = !1,
       this.SearchLibs = [],
       this.CurrentSymbol = null,
@@ -560,12 +561,12 @@ class ShapeUtil {
     let result = new ShapeUtil.Result();
 
     let formattedTextObject = null;
-    let sessionBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, true);
+    let sessionBlock = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, true);
     let objectsToRemove = [];
 
     result.isTemplate = false;
     result.IgnoreHeader = true;
-    result.sdp = new SEDSession();
+    result.sdp = new SDData();
     result.sdp.def.style = Utils1.DeepCopy(sessionBlock.def.style);
     result.isSymbol = isSymbolFlag !== 0;
     // result.gHash = new HashController();
@@ -610,11 +611,11 @@ class ShapeUtil {
 
     if (errorCode !== ShapeUtil.Errors.WaitingForCallBack) {
       const isPlanningDocument = T3Gv.opt.IsPlanningDocument();
-      const layersManager = T3Gv.opt.GetObjectPtr(T3Gv.opt.layersManagerBlockId, true);
+      const layersManager = ObjectUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, true);
 
       objectCount = result.zList.length;
       for (index = 0; index < objectCount; index++) {
-        object = T3Gv.opt.GetObjectPtr(result.zList[index], false);
+        object = ObjectUtil.GetObjectPtr(result.zList[index], false);
 
         // if (object.objecttype === NvConstant.FNObjectTypes.SD_OBJT_BPMN_POOL) {
         //   DSUtil.ConvertBPMNPool(object);
@@ -622,7 +623,7 @@ class ShapeUtil {
 
         let tableID = -1;
         if (object.datasetID >= 0) {
-          tableID = TODO.SDData.GetTableID(object.datasetID, TODO.DataTableNames.PLANNING_TASKS);
+          tableID = TODO.STData.GetTableID(object.datasetID, TODO.DataTableNames.PLANNING_TASKS);
         }
 
         let targetLayer;
@@ -647,7 +648,7 @@ class ShapeUtil {
           selectedObjects.selectedList.push(result.zList[index]);
         }
 
-        if (result.SDData == null) {
+        if (result.STData == null) {
           object.datasetTableID = -1;
           object.datasetElemID = -1;
           object.datasetID = -1;
@@ -660,13 +661,14 @@ class ShapeUtil {
         T3Gv.opt.DeleteObjects(objectsToRemove);
       }
 
-      if (result.SDData && T3Gv.opt.SDData_Transfer) {
-        T3Gv.opt.SDData_Transfer(result.zList, result.SDData, applyColorChanges);
+      // FROM SDData_Transfer
+      if (result.STData && T3Gv.opt.STData_Transfer) {
+        T3Gv.opt.STData_Transfer(result.zList, result.STData, applyColorChanges);
       }
 
       linksCount = result.links.length;
       if (!skipLinks && linksCount > 0) {
-        let linksBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.linksBlockId, true);
+        let linksBlock = ObjectUtil.GetObjectPtr(T3Gv.opt.linksBlockId, true);
         for (index = 0; index < linksCount; index++) {
           linksBlock.push(result.links[index]);
         }
@@ -679,7 +681,7 @@ class ShapeUtil {
       // Calculate bounding rectangle for all objects
       let objectWithBoundsCount = 0;
       for (index = 0; index < objectCount; index++) {
-        object = T3Gv.opt.GetObjectPtr(result.zList[index], false);
+        object = ObjectUtil.GetObjectPtr(result.zList[index], false);
         if (object && (object.flags & NvConstant.ObjFlags.NotVisible) === 0) {
           if (objectWithBoundsCount === 0) {
             boundingRect = new Rectangle(object.r.x, object.r.y, object.r.width, object.r.height);
@@ -702,7 +704,7 @@ class ShapeUtil {
         // Apply offset if needed
         if (offsetX || offsetY) {
           for (index = 0; index < objectCount; index++) {
-            object = T3Gv.opt.GetObjectPtr(result.zList[index], false);
+            object = ObjectUtil.GetObjectPtr(result.zList[index], false);
             if (object && (object.flags & NvConstant.ObjFlags.NotVisible) === 0) {
               object.OffsetShape(offsetX, offsetY);
             }
@@ -743,7 +745,7 @@ class ShapeUtil {
           }
 
           if (newWidth || newHeight) {
-            const layersManagerBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
+            const layersManagerBlock = ObjectUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
             const layerCount = layersManagerBlock.nlayers;
             let activeLayerUsesEdges = false;
             let anyVisibleLayerUsesEdges = false;
@@ -769,7 +771,7 @@ class ShapeUtil {
           } else if (offsetX || offsetY) {
             // If we need to shift objects to stay within bounds
             for (index = 0; index < objectCount; index++) {
-              object = T3Gv.opt.GetObjectPtr(result.zList[index], false);
+              object = ObjectUtil.GetObjectPtr(result.zList[index], false);
               if (object && (object.flags & NvConstant.ObjFlags.NotVisible) === 0) {
                 object.OffsetShape(-offsetX, -offsetY);
               }
@@ -971,14 +973,14 @@ class ShapeUtil {
 
           // Process Smart Draw data blocks
           case opCodes.SDF_C_SDDATABLOCK:
-            TODO.SDData.LoadDataSets(parsedData.codes[codeIndex].data.bytes, true, true, result);
+            TODO.STData.LoadDataSets(parsedData.codes[codeIndex].data.bytes, true, true, result);
             dataBlockLoaded = true;
             break;
 
           // Process compressed data block
           case opCodes.cSdData64c:
             if (!dataBlockLoaded) {
-              TODO.SDData.LoadDataSets(parsedData.codes[codeIndex].data.bytes, true, true, result);
+              TODO.STData.LoadDataSets(parsedData.codes[codeIndex].data.bytes, true, true, result);
               dataBlockLoaded = true;
             }
             break;
@@ -986,7 +988,7 @@ class ShapeUtil {
           // Process 64-bit data block if version supports it
           case opCodes.cSdData64:
             if (!dataBlockLoaded && result.PVersion >= DSConstant.SDF_PVERSION861) {
-              TODO.SDData.LoadDataSets(parsedData.codes[codeIndex].data.bytes, true, false, result);
+              TODO.STData.LoadDataSets(parsedData.codes[codeIndex].data.bytes, true, false, result);
               dataBlockLoaded = true;
             }
             break;
@@ -1052,7 +1054,7 @@ class ShapeUtil {
       objectCount = result.zList.length;
       for (objectIndex = 0; objectIndex < objectCount; objectIndex++) {
         objectId = result.zList[objectIndex];
-        object = T3Gv.opt.GetObjectPtr(objectId, false);
+        object = ObjectUtil.GetObjectPtr(objectId, false);
 
         if (!object) continue;
 
@@ -1273,7 +1275,7 @@ class ShapeUtil {
               object.StyleRecord.Line.Thickness = 0;
 
               const parentId = T3Gv.opt.SD_GetVisioTextParent(object.BlockID);
-              textParent = T3Gv.opt.GetObjectPtr(parentId, false);
+              textParent = ObjectUtil.GetObjectPtr(parentId, false);
 
               if (textParent) {
                 textParent.just = object.just;
@@ -1329,14 +1331,15 @@ class ShapeUtil {
           T3Gv.opt.FileVersion = ShapeUtil.SDF_FVERSION2022;
         }
 
+        // FROM SDDataDatasetIDByName
         // Check for planning or fielded data datasets and update version
-        const hasPlanningData = TODO.SDData.GetSDDataDatasetIDByName(
-          result.SDData,
+        const hasPlanningData = TODO.STData.GetSTDataDatasetIDByName(
+          result.STData,
           TODO.DataSetNameList[TODO.DataSetNameListIndexes.DATASET_PLANNING]
         ) >= 0;
 
-        const hasFieldedData = TODO.SDData.GetSDDataDatasetIDByName(
-          result.SDData,
+        const hasFieldedData = TODO.STData.GetSTDataDatasetIDByName(
+          result.STData,
           TODO.DataSetNameList[TODO.DataSetNameListIndexes.DATASET_FIELDEDDATA]
         ) >= 0;
 
@@ -1435,7 +1438,7 @@ class ShapeUtil {
     for (let idIndex = 0; idIndex < idMapLength; idIndex++) {
       if (idMap[idIndex]) {
         objectId = idMap[idIndex];
-        currentObject = T3Gv.opt.GetObjectPtr(objectId, false);
+        currentObject = ObjectUtil.GetObjectPtr(objectId, false);
 
         // Process hooks for each object
         if (currentObject && currentObject.hooks) {
@@ -1452,7 +1455,7 @@ class ShapeUtil {
               // Insert link if needed
               if (links.length === 0 && !ignoreErrors) {
                 if (linksBlock == null) {
-                  linksBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.linksBlockId, true);
+                  linksBlock = ObjectUtil.GetObjectPtr(T3Gv.opt.linksBlockId, true);
                 }
                 T3Gv.opt.InsertLink(linksBlock, objectId, currentHook, DSConstant.LinkFlags.SED_L_MOVE);
               }
@@ -1464,7 +1467,7 @@ class ShapeUtil {
                 currentObject.LineType === OptConstant.LineType.SEGLINE &&
                 currentObject.segl) {
 
-                targetObject = T3Gv.opt.GetObjectPtr(currentObject.hooks[currentHook].objid, false);
+                targetObject = ObjectUtil.GetObjectPtr(currentObject.hooks[currentHook].objid, false);
 
                 // Adjust connection point for rotated objects
                 if (targetObject.RotationAngle) {
@@ -1623,7 +1626,7 @@ class ShapeUtil {
         hookCount = currentObject.arraylist.hook.length;
 
         if (hookCount < skipCount) {
-          currentObject.Pr_Format(currentObject.BlockID);
+          currentObject.PrFormat(currentObject.BlockID);
         }
       }
     }
@@ -2884,7 +2887,7 @@ class ShapeUtil {
 
         case opCodes.cSdData64c:
           // Load structured data sets
-          TODO.SDData.LoadDataSets(codeData.codes[codeIndex].data.bytes, true, true, resultObject);
+          TODO.STData.LoadDataSets(codeData.codes[codeIndex].data.bytes, true, true, resultObject);
           break;
 
         case opCodes.cBeginStyle:
@@ -3717,7 +3720,7 @@ class ShapeUtil {
 
             // If not a Visio callout, perform additional check
             if (!isVisioCallout) {
-              const targetObject = T3Gv.opt.GetObjectPtr(
+              const targetObject = ObjectUtil.GetObjectPtr(
                 resultObject.IDMap[hookData.objid],
                 false
               );
@@ -4112,7 +4115,7 @@ class ShapeUtil {
         case r.cText:
           if (a.textonline >= 0) if (a.textonline < a.objectcount) {
             if ((S = a.IDMap[a.textonline]) >= 0) if (
-              (l = T3Gv.opt.GetObjectPtr(S, !1)) &&
+              (l = ObjectUtil.GetObjectPtr(S, !1)) &&
               l.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector
             ) l = n;
             else {
@@ -4619,7 +4622,7 @@ class ShapeUtil {
         if (resultObject.textonline >= 0 &&
           resultObject.textonline < resultObject.objectcount &&
           (objectWithData = resultObject.IDMap[resultObject.textonline]) >= 0 &&
-          (objectPtr = T3Gv.opt.GetObjectPtr(objectWithData, false))) {
+          (objectPtr = ObjectUtil.GetObjectPtr(objectWithData, false))) {
 
           // Handle different object types differently
           switch (objectPtr.DrawingObjectBaseClass) {
@@ -4646,7 +4649,7 @@ class ShapeUtil {
         }
 
         // Apply text alignment to the referenced text object
-        const textObject = T3Gv.opt.GetObjectPtr(targetObject.DataID, false);
+        const textObject = ObjectUtil.GetObjectPtr(targetObject.DataID, false);
         if (textObject) {
           const textAlignment = ShapeUtil.TextAlignToJust(targetObject.TextAlign);
           T3Gv.opt.SetTextAlignment(textObject, textAlignment.vjust, null);
@@ -5085,7 +5088,7 @@ class ShapeUtil {
       skipTextLink = true;
 
       if ((destinationID = resultObject.IDMap[sourceData.associd]) >= 0) {
-        targetObject = T3Gv.opt.GetObjectPtr(destinationID, false);
+        targetObject = ObjectUtil.GetObjectPtr(destinationID, false);
 
         if (targetObject && targetObject.DataID >= 0) {
           skipTextLink = false;
@@ -5479,8 +5482,8 @@ class ShapeUtil {
     const result = new WResult();
 
     // Get current session, layer manager and content header
-    result.sdp = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
-    result.tLMB = T3Gv.opt.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
+    result.sdp = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
+    result.tLMB = ObjectUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
     result.ctp = T3Gv.opt.contentHeader;
 
     // Mark as selection-only operation
@@ -5555,8 +5558,9 @@ class ShapeUtil {
     }
 
     // Write structured data if available and not ignored
-    if (T3Gv.opt.contentHeader.SDDataID >= 0 && !ignoreDataCheck) {
-      ShapeUtil.WriteSDDATA(dataStream, resultObject);
+    if (T3Gv.opt.contentHeader.STDataID >= 0 && !ignoreDataCheck) {
+      // FROM SDData
+      ShapeUtil.WriteSTDATA(dataStream, resultObject);
     }
 
     // Write the drawing content
@@ -5855,12 +5859,12 @@ class ShapeUtil {
         x: 0,
         y: 0
       },
-      wscale: resultObject.WindowSettings.wscale,
-      wflags: resultObject.WindowSettings.wflags,
+      wscale: resultObject.WinSetting.wscale,
+      wflags: resultObject.WinSetting.wflags,
       oleback: -1,
       lworigin: {
-        x: resultObject.WindowSettings.worigin.x,
-        y: resultObject.WindowSettings.worigin.y
+        x: resultObject.WinSetting.worigin.x,
+        y: resultObject.WinSetting.worigin.y
       },
       longflags: resultObject.ctp.flags,
       dateformat: resultObject.ctp.dateformat
@@ -6705,7 +6709,7 @@ class ShapeUtil {
         if (lastConnectorIndex >= 0) {
           // Process connector text
           rectObject.associd = connectorBlockId;
-          connectorObject = T3Gv.opt.GetObjectPtr(resultObject.UniqueMap[lastConnectorIndex], false);
+          connectorObject = ObjectUtil.GetObjectPtr(resultObject.UniqueMap[lastConnectorIndex], false);
 
           let isLinearConnector = connectorObject.arraylist.styleflags & OptConstant.AStyles.Linear;
           textAlign = ShapeUtil.TextAlignToWin(connectorObject.TextAlign);
@@ -6741,7 +6745,7 @@ class ShapeUtil {
           }
         } else {
           // Handle text for non-connector objects
-          currentObject = T3Gv.opt.GetObjectPtr(resultObject.UniqueMap[uniqueMapIndex - 1], false);
+          currentObject = ObjectUtil.GetObjectPtr(resultObject.UniqueMap[uniqueMapIndex - 1], false);
 
           if (currentObject && currentObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Line) {
             // Handle line text
@@ -6779,7 +6783,7 @@ class ShapeUtil {
         }
       } else {
         // Handle regular objects
-        currentObject = T3Gv.opt.GetObjectPtr(objectId, false);
+        currentObject = ObjectUtil.GetObjectPtr(objectId, false);
 
         if (currentObject) {
           if (currentObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
@@ -7105,7 +7109,7 @@ class ShapeUtil {
     objectsProcessed = 0;
     for (index = 0; index < objectCount; index++) {
       // Get object and add its style to the style list
-      currentObject = T3Gv.opt.GetObjectPtr(resultObject.zList[index], false);
+      currentObject = ObjectUtil.GetObjectPtr(resultObject.zList[index], false);
       currentObject.tstyleindex = addUniqueStyle(currentObject.StyleRecord);
 
       // Handle table cell styles if this object has a table
@@ -7218,7 +7222,7 @@ class ShapeUtil {
     }
 
     // Create default graph settings
-    const defaultGraph = new SEDGraphDefault();
+    const defaultGraph = new SDGraphDefault();
 
     // Create the drawing structure with all properties
     const drawingData = {
@@ -8190,7 +8194,7 @@ class ShapeUtil {
         connectPoint.y = drawingObject.hooks[hookIndex].connect.y;
 
         // Get target object and adjust connection point if it's reversed
-        targetObject = T3Gv.opt.GetObjectPtr(drawingObject.hooks[hookIndex].objid, false);
+        targetObject = ObjectUtil.GetObjectPtr(drawingObject.hooks[hookIndex].objid, false);
         if (ShapeUtil.LineIsReversed(targetObject, resultObject, true)) {
           connectPoint.x = centerDimension - connectPoint.x;
           connectPoint.y = centerDimension - connectPoint.y;
@@ -8244,7 +8248,7 @@ class ShapeUtil {
 
     // // Validate table references - if table doesn't exist, reset all table references
     // if (drawingObject.datasetTableID >= 0 &&
-    //   !TODO.SDData.GetTable(drawingObject.datasetTableID)) {
+    //   !TODO.STData.GetTable(drawingObject.datasetTableID)) {
     //   objectDataInfo.datasetID = -1;
     //   objectDataInfo.datasetType = -1;
     //   objectDataInfo.datasetElemID = -1;
@@ -8382,7 +8386,7 @@ class ShapeUtil {
     Header: 'Header.sdr',
     Header2: 'Header2.sdr',
     sdp: 'SDP.sdr',
-    SDData: 'SDData.',
+    STData: 'STData.',
     Layers: 'Layers.sdr',
     Links: 'Links.sdr',
     Image: 'Image.',
@@ -8401,7 +8405,7 @@ class ShapeUtil {
     Header: 2,
     Header2: 3,
     sdp: 4,
-    SDData: 5,
+    STData: 5,
     Layers: 6,
     Links: 7,
     Image: 8,
@@ -8562,7 +8566,7 @@ class ShapeUtil {
         }
         break;
 
-      case objectTypes.SedSessionObject:
+      case objectTypes.SDDataObject:
         if (skipSystemObjects) return null;
         blockName = ShapeUtil.BlockNames.sdp;
         if (blockMetadata) {
@@ -8580,12 +8584,12 @@ class ShapeUtil {
         }
         break;
 
-      case objectTypes.SDDataObject:
+      case objectTypes.STDataObject:
         if (skipSystemObjects) return null;
-        blockName = ShapeUtil.BlockNames.SDData;
+        blockName = ShapeUtil.BlockNames.STData;
         if (blockMetadata) {
           blockMetadata.id = storedObject.ID;
-          blockMetadata.type = ShapeUtil.BlockIDs.SDData;
+          blockMetadata.type = ShapeUtil.BlockIDs.STData;
         }
         break;
 
@@ -8721,17 +8725,18 @@ class ShapeUtil {
         }
         break;
 
-      case objectTypes.SedSessionObject:
+      case objectTypes.STDataObject:
         // Handle session objects
         if (countOnly) return true;
         serializedBlock = ShapeUtil.WriteSDPBlock(resultObject, blockIndex);
         break;
 
-      case objectTypes.SDDataObject:
+      case objectTypes.STDataObject:
         // Handle data objects
         if (countOnly) return true;
-        if (T3Gv.opt.contentHeader.SDDataID >= 0) {
-          serializedBlock = ShapeUtil.WriteSDDataBlock(resultObject, blockIndex);
+        if (T3Gv.opt.contentHeader.STDataID >= 0) {
+          //from SDDataBlock
+          serializedBlock = ShapeUtil.WriteSTDataBlock(resultObject, blockIndex);
         }
         break;
 
@@ -8786,35 +8791,35 @@ class ShapeUtil {
       const objectCount = stateObjects.length;
 
       // Initialize result object with document context
-      resultObject.sdp = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+      resultObject.sdp = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
       resultObject.ctp = T3Gv.opt.contentHeader;
-      resultObject.tLMB = T3Gv.opt.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
+      resultObject.tLMB = ObjectUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
       resultObject.fontlist = T3Gv.opt.contentHeader.FontList;
       resultObject.richGradients = T3Gv.opt.richGradients;
       resultObject.WriteBlocks = true;
 
       // Get current view settings from the work area
       const workArea = T3Gv.docUtil.svgDoc.GetWorkArea();
-      resultObject.WindowSettings.wscale = T3Gv.docUtil.GetZoomFactor();
-      resultObject.WindowSettings.worigin.x = workArea.scrollX;
-      resultObject.WindowSettings.worigin.y = workArea.scrollY;
-      resultObject.WindowSettings.wflags = 0;
+      resultObject.WinSetting.wscale = T3Gv.docUtil.GetZoomFactor();
+      resultObject.WinSetting.worigin.x = workArea.scrollX;
+      resultObject.WinSetting.worigin.y = workArea.scrollY;
+      resultObject.WinSetting.wflags = 0;
 
       // Set appropriate view flags based on current state
       if (T3Gv.docUtil.scaleToFit) {
-        resultObject.WindowSettings.wflags = TODO.WFlags.W_Stf;
+        resultObject.WinSetting.wflags = TODO.WFlags.W_Stf;
       } else if (T3Gv.docUtil.scaleToPage) {
-        resultObject.WindowSettings.wflags = TODO.WFlags.W_Page;
+        resultObject.WinSetting.wflags = TODO.WFlags.W_Page;
       }
 
       // Store document resolution
       resultObject.docDpi = T3Gv.docUtil.svgDoc.docInfo.docDpi;
 
       // Handle zoom scaling
-      if (resultObject.WindowSettings.wscale === 1) {
-        resultObject.WindowSettings.wscale = 0;
+      if (resultObject.WinSetting.wscale === 1) {
+        resultObject.WinSetting.wscale = 0;
       } else {
-        resultObject.WindowSettings.wscale *= 1000;
+        resultObject.WinSetting.wscale *= 1000;
       }
 
       // Update content header flags with current configuration
@@ -9026,7 +9031,7 @@ class ShapeUtil {
         }
       }
     } catch (error) {
-      T3Gv.opt.Export_ExceptionCleanup(error);
+      T3Gv.opt.ExportExceptionCleanup(error);
     }
   }
 
@@ -10106,7 +10111,7 @@ class ShapeUtil {
 
       // Get initial segment and create first geometry model
       currentSegment = drawingObject.polylist.segs[0];
-      currentGeometry = new PolyGeometryModel(
+      currentGeometry = new PolyGeomMd(
         (currentSegment.flags & segmentFlags.SD_PLS_NoFill) > 0,
         (currentSegment.flags & segmentFlags.SD_PLS_NoLine) > 0,
         false,
@@ -10130,7 +10135,7 @@ class ShapeUtil {
             geometryModels.push(currentGeometry);
 
             // Create new geometry
-            currentGeometry = new PolyGeometryModel(
+            currentGeometry = new PolyGeomMd(
               (currentSegment.flags & segmentFlags.SD_PLS_NoFill) > 0,
               (currentSegment.flags & segmentFlags.SD_PLS_NoLine) > 0,
               false,

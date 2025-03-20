@@ -8,10 +8,11 @@ import ObjectStore from '../../Data/State/ObjectStore'
 import ObjectStoreFactory from '../../Data/State/ObjectStoreFactory'
 import State from '../../Data/State/State'
 import StoredObject from '../../Data/State/StoredObject'
-import SEDSession from '../../Model/SEDSession'
+import SDData from '../../Model/SDData'
 import LayersManager from '../../Model/LayersManager'
-import TEDSession from '../../Model/TEDSession'
+import TEData from '../../Model/TEData'
 import Instance from '../../Data/Instance/Instance'
+import LayerUtil from '../Opt/LayerUtil'
 
 /**
  * Class for managing data operations in T3000 HVAC system.
@@ -149,9 +150,9 @@ class DataOpt {
     const storedObject = plainToInstance(StoredObject, storedObjectJson);
     const objectData = storedObject.Data;
 
-    if (objectData.Type === 'SEDSession') {
-      const sedSessionData = plainToInstance(SEDSession, objectData);
-      storedObject.Data = sedSessionData;
+    if (objectData.Type === 'SDData') {
+      const sdDataData = plainToInstance(SDData, objectData);
+      storedObject.Data = sdDataData;
       storedObject.Data.dimensions = 146;
     }
 
@@ -160,9 +161,9 @@ class DataOpt {
       storedObject.Data = layersManagerData;
     }
 
-    if (objectData.Type === 'TEDSession') {
-      const tedSessionData = plainToInstance(TEDSession, objectData);
-      storedObject.Data = tedSessionData;
+    if (objectData.Type === 'TEData') {
+      const tDataData = plainToInstance(TEData, objectData);
+      storedObject.Data = tDataData;
     }
 
     if (objectData.Type === 'BaseDrawObject') {
@@ -208,7 +209,7 @@ class DataOpt {
    * Includes clipboard, state, object store and current object sequence ID
    */
   static SaveToLocalStorage(): void {
-    const visibleZList = T3Gv.opt.VisibleZList();
+    const visibleZList = LayerUtil.VisibleZList();
 
     // Save clipboard
     this.SaveData(this.CLIPBOARD_KEY, T3Gv.clipboard);

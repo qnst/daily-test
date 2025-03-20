@@ -24,6 +24,9 @@ import PolygonConstant from "../Polygon/PolygonConstant"
 import OptConstant from "../../Data/Constant/OptConstant"
 import T3Util from "../../Util/T3Util"
 import TextConstant from "../../Data/Constant/TextConstant"
+import ObjectUtil from "../Data/ObjectUtil"
+import SelectUtil from "../Opt/SelectUtil"
+import SvgUtil from "../Opt/SvgUtil"
 
 class ToolUtil {
 
@@ -36,7 +39,7 @@ class ToolUtil {
     T3Util.Log('O.ActiveSelection.SetSelectionTool - Input:', { toolType, isSticky });
 
     // Initial render of all SVG selection states
-    T3Gv.opt.RenderAllSVGSelectionStates();
+    SvgUtil.RenderAllSVGSelectionStates();
 
     // // Check if we're currently using the wall tool
     // const isCurrentlyWallTool = T3Constant.DocContext.SelectionTool === ToolConstant.Tools.Wall;
@@ -104,17 +107,17 @@ class ToolUtil {
     var wallThickness = thickness * T3Gv.docUtil.rulerConfig.major /
       (T3Gv.docUtil.rulerConfig.majorScale * conversionFactor);
 
-    var sessionBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+    var sessionBlock = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
 
     if (!Utils2.IsEqual(sessionBlock.def.wallThickness, wallThickness, 0.01) || wallObj) {
       T3Gv.opt.CloseEdit(true, true);
-      sessionBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, true);
+      sessionBlock = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, true);
 
       if (!wallObj) {
         sessionBlock.def.wallThickness = wallThickness;
       }
 
-      var sessionBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+      var sessionBlock = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
       T3Gv.opt.CompleteOperation(null);
     }
 
@@ -158,7 +161,7 @@ class ToolUtil {
     let context;
     let callbackFunction;
 
-    T3Gv.opt.SetUIAdaptation(event);
+    // T3Gv.opt.SetUIAdaptation(event);
 
     // Initialize cancel flag
     let cancelOperation = false;
@@ -248,7 +251,7 @@ class ToolUtil {
   DrawNewLine(event, lineType, isDrawing, referenceObject) {
     T3Util.Log("O.ToolOpt DrawNewLine input:", event, lineType, isDrawing, referenceObject);
 
-    const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
+    const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sdDataBlockId).Data;
     const isVerticalText = 0 == (sessionData.def.textflags & NvConstant.TextFlags.HorizText);
     let startArrowID = sessionData.d_sarrow;
     let endArrowID = sessionData.d_earrow;
@@ -399,7 +402,7 @@ class ToolUtil {
     T3Util.Log("O.ToolOpt StampRectangle input:", isDragDropMode, isSquare);
 
     let width, height;
-    const sessionBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+    const sessionBlock = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
 
     // Set dimensions based on whether we want a square or rectangle
     if (isSquare) {
@@ -448,7 +451,7 @@ class ToolUtil {
     T3Util.Log("O.ToolOpt StampRoundRect input:", isDragDropMode, isSquare);
 
     let width, height;
-    const sessionBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+    const sessionBlock = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
 
     // Set dimensions based on whether we want a square or rectangle
     if (isSquare) {
@@ -555,15 +558,15 @@ class ToolUtil {
     T3Util.Log("O.ToolOpt StampTextLabel input:", isDragDropMode, skipTargetCheck);
 
     // Get the text edit session block
-    var textEditSession = T3Gv.opt.GetObjectPtr(T3Gv.opt.tedSessionBlockId, false);
+    var textEditSession = ObjectUtil.GetObjectPtr(T3Gv.opt.teDataBlockId, false);
 
     // Check if we need to handle existing active text editing
     if (skipTargetCheck || textEditSession.theActiveTextEditObjectID == -1) {
       // If not skipping target check, try to activate text edit on selected object
       if (!skipTargetCheck) {
-        var targetID = T3Gv.opt.GetTargetSelect();
+        var targetID = SelectUtil.GetTargetSelect();
         if (targetID >= 0) {
-          var targetObject = T3Gv.opt.GetObjectPtr(targetID, false);
+          var targetObject = ObjectUtil.GetObjectPtr(targetID, false);
           if (targetObject && targetObject.AllowTextEdit()) {
             var svgElement = T3Gv.opt.svgObjectLayer.GetElementById(targetID);
             T3Gv.opt.ActivateTextEdit(svgElement);
@@ -577,7 +580,7 @@ class ToolUtil {
     }
 
     // Get session data and default text style
-    var sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
+    var sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sdDataBlockId).Data;
     var defaultTextStyle = Utils3.FindStyle(OptConstant.Common.TextBlockStyle);
 
     if (defaultTextStyle == null) {
@@ -864,8 +867,8 @@ class ToolUtil {
     try {
       T3Gv.opt.PastePoint = null;
 
-      if (eventData && T3Gv.opt.rightClickParams) {
-        T3Gv.opt.PastePoint = T3Gv.opt.rightClickParams.HitPt;
+      if (eventData && T3Gv.opt.rClickParam) {
+        T3Gv.opt.PastePoint = T3Gv.opt.rClickParam.hitPoint;
       }
 
       Clipboard.PasteFromUIaction();
@@ -1028,7 +1031,7 @@ class ToolUtil {
     T3Util.Log("O.ToolOpt IsActiveTextEdit input: no parameters");
 
     try {
-      const textEditSession = T3Gv.opt.GetObjectPtr(T3Gv.opt.tedSessionBlockId, false);
+      const textEditSession = ObjectUtil.GetObjectPtr(T3Gv.opt.teDataBlockId, false);
       const isActive = textEditSession.theActiveTextEditObjectID !== -1;
 
       T3Util.Log("O.ToolOpt IsActiveTextEdit output:", isActive);
@@ -1234,7 +1237,7 @@ class ToolUtil {
     T3Util.Log("O.ToolOpt DrawNewSegLine input:", isDrawing, eventObject, referenceObject);
 
     let attributes;
-    const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
+    const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sdDataBlockId).Data;
     const isVerticalText = 0 == (sessionData.def.textflags & NvConstant.TextFlags.HorizText);
     let startArrowID = sessionData.d_sarrow;
     let endArrowID = sessionData.d_earrow;
@@ -1326,7 +1329,7 @@ class ToolUtil {
     T3Util.Log("O.ToolOpt DrawNewArcSegLine input:", isDrawing, eventObject, referenceObject);
 
     let attributes;
-    const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
+    const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sdDataBlockId).Data;
     const isVerticalText = 0 == (sessionData.def.textflags & NvConstant.TextFlags.HorizText);
     let startArrowID = sessionData.d_sarrow;
     let endArrowID = sessionData.d_earrow;
@@ -1417,7 +1420,7 @@ class ToolUtil {
     T3Util.Log("O.ToolOpt DrawNewPolyLine input:", isDrawing, eventObject, referenceObject);
 
     let attributes;
-    const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
+    const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sdDataBlockId).Data;
     const isVerticalText = 0 == (sessionData.def.textflags & NvConstant.TextFlags.HorizText);
     let startArrowID = sessionData.d_sarrow;
     let endArrowID = sessionData.d_earrow;
@@ -1513,8 +1516,8 @@ class ToolUtil {
     T3Util.Log("O.ToolOpt DrawNewPolyLineContainer input:", isDrawing, eventObject, referenceObject);
 
     let attributes;
-    const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
-    const sessionBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+    const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sdDataBlockId).Data;
+    const sessionBlock = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
     const isVerticalText = 0 == (sessionData.def.textflags & NvConstant.TextFlags.HorizText);
 
     // Create attributes from reference or defaults
@@ -1582,7 +1585,7 @@ class ToolUtil {
     T3Util.Log("O.ToolOpt DrawNewFreehandLine input:", isDrawing, eventObject, referenceObject);
 
     let attributes;
-    const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
+    const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sdDataBlockId).Data;
 
     if (referenceObject) {
       attributes = Utils1.DeepCopy(referenceObject.Data.attributes);
@@ -1645,7 +1648,7 @@ class ToolUtil {
     T3Util.Log("O.ToolOpt DrawNewArcLine input:", isDrawing, eventObject, referenceObject);
 
     let attributes;
-    const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
+    const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sdDataBlockId).Data;
     const isVerticalText = 0 == (sessionData.def.textflags & NvConstant.TextFlags.HorizText);
     let startArrowID = sessionData.d_sarrow;
     let endArrowID = sessionData.d_earrow;

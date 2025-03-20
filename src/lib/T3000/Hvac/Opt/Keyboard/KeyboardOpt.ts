@@ -9,6 +9,7 @@ import T3Constant from "../../Data/Constant/T3Constant"
 import DocUtil from "../../Doc/DocUtil"
 import KeyboardUtil from "./KeyboardUtil"
 import T3Util from "../../Util/T3Util"
+import SvgUtil from "../Opt/SvgUtil"
 
 /**
  * Class that manages keyboard commands and event handling for the T3000 HVAC application.
@@ -347,7 +348,7 @@ class KeyboardOpt {
           if (T3Gv.opt.bInNoteEdit) {
             T3Gv.opt.Note_CloseEdit();
           }
-          T3Gv.opt.RenderAllSVGSelectionStates();
+          SvgUtil.RenderAllSVGSelectionStates();
           event.stopPropagation();
           event.preventDefault();
           T3Util.Log('U.KeyboardUtil: Text edit closed with Escape key');

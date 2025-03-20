@@ -11,6 +11,7 @@ import NvConstant from '../Data/Constant/NvConstant'
 import PolygonConstant from '../Opt/Polygon/PolygonConstant';
 import OptConstant from '../Data/Constant/OptConstant';
 import T3Util from '../Util/T3Util';
+import UIUtil from '../Opt/UI/UIUtil';
 
 /**
  * Represents a rounded rectangle shape in the T3000 HVAC system.
@@ -150,7 +151,7 @@ class RRect extends BaseShape {
     // }
 
     if (this.DataID >= 0) {
-      this.LM_AddSVGTextObject(svgDoc, shapeContainer);
+      this.LMAddSVGTextObject(svgDoc, shapeContainer);
     }
 
     T3Util.Log("= S.RRect: CreateShape output:", shapeContainer);
@@ -241,7 +242,7 @@ class RRect extends BaseShape {
     //   );
     // } else
     {
-      this.LM_ResizeSVGTextObject(
+      this.LMResizeSVGTextObject(
         svgElement,
         drawingContainer,
         newDimensions
@@ -250,7 +251,7 @@ class RRect extends BaseShape {
 
     svgElement.SetRotation(rotation);
     this.UpdateDimensionLines(svgElement);
-    T3Gv.opt.UpdateDisplayCoordinates(
+    UIUtil.UpdateDisplayCoordinates(
       newDimensions,
       null,
       null,
@@ -354,7 +355,7 @@ class RRect extends BaseShape {
 
     svgElement.SetRotation(rotation);
     this.UpdateDimensionLines(svgElement);
-    T3Gv.opt.UpdateDisplayCoordinates(newDimensions, null, null, this);
+    UIUtil.UpdateDisplayCoordinates(newDimensions, null, null, this);
 
     T3Util.Log("= S.RRect: ResizeInTextEdit output:", offset);
     return offset;

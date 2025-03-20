@@ -55,15 +55,15 @@ class StateConstant {
    * @property {string} BaseDrawObject - Base drawing object type
    * @property {string} TextObject - Text element object type
    * @property {string} NotesObject - Notes object type
-   * @property {string} SedSessionObject - SED session data object type
-   * @property {string} TedSessionObject - TED session data object type
+   * @property {string} SDDataObject - SDData data object type
+   * @property {string} TEDataObject - TEData data object type
    * @property {string} SelectedListObject - Selected items list object type
    * @property {string} LinkListObject - Links collection object type
    * @property {string} LayersManagerObject - Layers management object type
    * @property {string} HNativeObject - Native handler object type
    * @property {string} HNativeWinObject - Native Windows handler object type
    * @property {string} BlobBytesObject - Binary large object data type
-   * @property {string} SDDataObject - Structured data object type
+   * @property {string} STDataObject - Structured data object type
    * @property {string} ExpandedViewObject - Expanded view state object type
    * @property {string} CommentBlock - Comment block object type
    * @property {string} CommentThread - Comment thread object type
@@ -73,8 +73,8 @@ class StateConstant {
     BaseDrawObject: 'BaseDrawObject',
     TextObject: 'TextObject',
     NotesObject: 'NotesObject',
-    SedSessionObject: 'SEDSession',
-    TedSessionObject: 'TEDSession',
+    SDDataObject: 'SDData',
+    TEDataObject: 'TEData',
     SelectedListObject: 'SelectedList',
     LinkListObject: 'Links',
     LayersManagerObject: 'LayersManager',
@@ -82,7 +82,7 @@ class StateConstant {
     HNativeWinObject: 'hNativeWindows',
     BlobBytesObject: 'BlobBytes',
     // GraphObject: 'Graph',
-    SDDataObject: 'SDData',
+    STDataObject: 'STData',
     ExpandedViewObject: 'ExpandedView',
     CommentBlock: 'CommentBlock',
     CommentThread: 'CommentThread',

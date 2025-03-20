@@ -93,7 +93,6 @@ class BitmapImporter {
       fileReader.readAsArrayBuffer(imageFile);
     }
   }
-
 }
 
 export default BitmapImporter

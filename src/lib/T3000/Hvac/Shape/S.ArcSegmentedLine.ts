@@ -363,7 +363,6 @@ class ArcSegmentedLine extends SegmentedLine {
       }
     }
   }
-
 }
 
 export default ArcSegmentedLine

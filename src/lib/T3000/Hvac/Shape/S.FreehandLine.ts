@@ -11,6 +11,8 @@ import Point from '../Model/Point';
 import OptConstant from '../Data/Constant/OptConstant';
 import CursorConstant from '../Data/Constant/CursorConstant';
 import T3Util from '../Util/T3Util';
+import ObjectUtil from '../Opt/Data/ObjectUtil';
+import UIUtil from '../Opt/UI/UIUtil';
 
 /**
  * Represents a freehand line shape that consists of multiple connected points.
@@ -236,7 +238,7 @@ class FreehandLine extends BaseLine {
     styleRecord = this.SVGTokenizerHook(styleRecord);
 
     if (styleRecord == null) {
-      let sessionObject = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+      let sessionObject = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
       if (sessionObject) {
         styleRecord = sessionObject.def.style;
       }
@@ -321,7 +323,7 @@ class FreehandLine extends BaseLine {
     let height = frame.height;
 
     // Get object pointer based on blockId
-    T3Gv.opt.GetObjectPtr(blockId, false);
+    ObjectUtil.GetObjectPtr(blockId, false);
 
     // Adjust frame dimensions to account for knob size
     width += scaledKnobSize;
@@ -597,7 +599,7 @@ class FreehandLine extends BaseLine {
     // Update display coordinates if this is the active object
     if (T3Gv.opt.actionStoredObjectId === this.BlockID &&
       cursorPoint &&
-      T3Gv.opt.UpdateDisplayCoordinates(newFrame, cursorPoint, CursorConstant.CursorTypes.Grow, this)) {
+      UIUtil.UpdateDisplayCoordinates(newFrame, cursorPoint, CursorConstant.CursorTypes.Grow, this)) {
       // Coordinates updated
     }
 
@@ -704,7 +706,7 @@ class FreehandLine extends BaseLine {
    * @param event - The event object
    * @returns The event object
    */
-  LM_ActionDuringTrack(event) {
+  LMActionDuringTrack(event) {
     return event;
   }
 
@@ -713,7 +715,7 @@ class FreehandLine extends BaseLine {
    * @param event - The event object
    * @returns The event object
    */
-  LM_DrawDuringTrack(event) {
+  LMDrawDuringTrack(event) {
     return event;
   }
 
@@ -721,7 +723,7 @@ class FreehandLine extends BaseLine {
    * Handles the release event when finishing drawing
    * @param event - The release event
    */
-  LM_DrawRelease(event) {
+  LMDrawRelease(event) {
     if (event) {
       Utils2.StopPropagationAndDefaults(event);
       event.gesture.stopDetect();
@@ -768,7 +770,7 @@ class FreehandLine extends BaseLine {
     shapeAttributes.linkParams = Utils1.DeepCopy(T3Gv.opt.linkParams);
     shapeAttributes.Actions = [];
 
-    this.LM_DrawPostRelease(T3Gv.opt.actionStoredObjectId);
+    this.LMDrawPostRelease(T3Gv.opt.actionStoredObjectId);
     T3Gv.opt.PostObjectDraw();
   }
 
@@ -777,8 +779,8 @@ class FreehandLine extends BaseLine {
    * @param mouseX - The X coordinate where the drawing starts
    * @param mouseY - The Y coordinate where the drawing starts
    */
-  LM_DrawClick(mouseX, mouseY) {
-    T3Util.Log('ListManager.FreehandLine.prototype.LM_DrawClick e, t=>', mouseX, mouseY);
+  LMDrawClick(mouseX, mouseY) {
+    T3Util.Log('ListManager.FreehandLine.prototype.LMDrawClick e, t=>', mouseX, mouseY);
 
     try {
       this.Frame.x = mouseX;
@@ -803,7 +805,7 @@ class FreehandLine extends BaseLine {
         T3Gv.opt.WorkAreaHammer.on('dragend', Evt_DrawReleaseHandlerFactory(this));
       }
     } catch (error) {
-      this.LM_DrawClick_ExceptionCleanup(error);
+      this.LMDrawClickExceptionCleanup(error);
       T3Gv.opt.ExceptionCleanup(error);
       throw error;
     }

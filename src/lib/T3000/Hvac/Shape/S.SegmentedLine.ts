@@ -6,7 +6,7 @@ import Utils2 from "../Util/Utils2";
 import Utils3 from "../Util/Utils3";
 import T3Gv from '../Data/T3Gv'
 import NvConstant from '../Data/Constant/NvConstant'
-import SelectionAttributes from '../Model/SelectionAttributes'
+import SelectionAttr from '../Model/SelectionAttr'
 import SegLine from '../Model/SegLine';
 import Point from '../Model/Point'
 import $ from 'jquery'
@@ -17,6 +17,8 @@ import OptConstant from '../Data/Constant/OptConstant';
 import CursorConstant from '../Data/Constant/CursorConstant';
 import T3Util from '../Util/T3Util';
 import TextConstant from '../Data/Constant/TextConstant';
+import ObjectUtil from '../Opt/Data/ObjectUtil';
+import UIUtil from '../Opt/UI/UIUtil';
 
 /**
  * A specialized line class that implements segmented (polyline) functionality with advanced features.
@@ -696,7 +698,7 @@ class SegmentedLine extends BaseLine {
         // Look for KTL hook point
         for (let j = 0; j < this.hooks.length; j++) {
           if (this.hooks[j].hookpt === OptConstant.HookPts.KTL) {
-            const hookObj = T3Gv.opt.GetObjectPtr(this.hooks[j].objid, false);
+            const hookObj = ObjectUtil.GetObjectPtr(this.hooks[j].objid, false);
             if (hookObj) {
               hookObjectRect = hookObj.GetTargetRect();
               if (isVertical) {
@@ -720,7 +722,7 @@ class SegmentedLine extends BaseLine {
         // Look for KTR hook point
         for (let j = 0; j < this.hooks.length; j++) {
           if (this.hooks[j].hookpt === OptConstant.HookPts.KTR) {
-            const hookObj = T3Gv.opt.GetObjectPtr(this.hooks[j].objid, false);
+            const hookObj = ObjectUtil.GetObjectPtr(this.hooks[j].objid, false);
             if (hookObj) {
               hookObjectRect = hookObj.GetTargetRect();
               if (isVertical) {
@@ -1177,7 +1179,7 @@ class SegmentedLine extends BaseLine {
       if (this.hooks && this.hooks.length > 0) {
         for (let hookIndex = 0; hookIndex < this.hooks.length; hookIndex++) {
           if (this.hooks[hookIndex].hookpt === OptConstant.HookPts.KTL) {
-            const hookObj = T3Gv.opt.GetObjectPtr(this.hooks[hookIndex].objid, false);
+            const hookObj = ObjectUtil.GetObjectPtr(this.hooks[hookIndex].objid, false);
             if (hookObj) {
               const hookRect = hookObj.GetTargetRect();
               if (isVertical) {
@@ -1379,7 +1381,7 @@ class SegmentedLine extends BaseLine {
     const segmentDimension = OptConstant.Common.DimMax;
 
     // Check if auto-insert is allowed
-    T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+    ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
     if (T3Gv.opt.AllowAutoInsert()) {
       isAutoInsertAllowed = true;
     }
@@ -1473,7 +1475,7 @@ class SegmentedLine extends BaseLine {
             // Look for hook at KTR point
             for (loopIndex = 0; loopIndex < this.hooks.length; loopIndex++) {
               if (this.hooks[loopIndex].hookpt === OptConstant.HookPts.KTR) {
-                hookObj = T3Gv.opt.GetObjectPtr(this.hooks[loopIndex].objid, false);
+                hookObj = ObjectUtil.GetObjectPtr(this.hooks[loopIndex].objid, false);
                 if (hookObj) {
                   const hookRect = hookObj.GetTargetRect();
                   const heightDiff = startSecondary - (hookRect.y + hookRect.height);
@@ -1494,7 +1496,7 @@ class SegmentedLine extends BaseLine {
             // Handle other factor cases
             for (loopIndex = 0; loopIndex < this.hooks.length; loopIndex++) {
               if (this.hooks[loopIndex].hookpt === OptConstant.HookPts.KTR) {
-                hookObj = T3Gv.opt.GetObjectPtr(this.hooks[loopIndex].objid, false);
+                hookObj = ObjectUtil.GetObjectPtr(this.hooks[loopIndex].objid, false);
                 if (hookObj) {
                   const hookRect = hookObj.GetTargetRect();
                   hookStartAdjustment = isVertical ?
@@ -1509,7 +1511,7 @@ class SegmentedLine extends BaseLine {
           // Handle the case where primary is greater than or equal to secondary
           for (loopIndex = 0; loopIndex < this.hooks.length; loopIndex++) {
             if (this.hooks[loopIndex].hookpt === OptConstant.HookPts.KTR) {
-              hookObj = T3Gv.opt.GetObjectPtr(this.hooks[loopIndex].objid, false);
+              hookObj = ObjectUtil.GetObjectPtr(this.hooks[loopIndex].objid, false);
               if (hookObj) {
                 const hookRect = hookObj.GetTargetRect();
                 hookEndAdjustment = isVertical ?
@@ -1856,19 +1858,19 @@ class SegmentedLine extends BaseLine {
    * initialization for the line's start and end points. The function determines
    * proper segmentation direction flags based on connected shapes.
    */
-  LM_DrawPreTrack(svgDoc) {
-    T3Util.Log("= S.SegmentedLine: LM_DrawPreTrack input", { svgDoc });
+  LMDrawPreTrack(svgDoc) {
+    T3Util.Log("= S.SegmentedLine: LMDrawPreTrack input", { svgDoc });
 
     // Call the base class method and log its result
-    const basePreTrackResult = super.LM_DrawPreTrack(svgDoc);
-    T3Util.Log("= S.SegmentedLine: Base LM_DrawPreTrack output", { basePreTrackResult });
+    const basePreTrackResult = super.LMDrawPreTrack(svgDoc);
+    T3Util.Log("= S.SegmentedLine: Base LMDrawPreTrack output", { basePreTrackResult });
 
     let connectedObject;
     if (
       T3Gv.opt.linkParams &&
       T3Gv.opt.linkParams.SConnectIndex >= 0
     ) {
-      connectedObject = T3Gv.opt.GetObjectPtr(
+      connectedObject = ObjectUtil.GetObjectPtr(
         T3Gv.opt.linkParams.SConnectIndex,
         false
       );
@@ -1884,7 +1886,7 @@ class SegmentedLine extends BaseLine {
       }
     }
 
-    T3Util.Log("= S.SegmentedLine: LM_DrawPreTrack output", { result: true });
+    T3Util.Log("= S.SegmentedLine: LMDrawPreTrack output", { result: true });
     return true;
   }
 
@@ -1928,10 +1930,10 @@ class SegmentedLine extends BaseLine {
       interactionLineShape.SetSize(this.Frame.width, this.Frame.height);
       this.UpdateSVG(interactionLineShape, polylinePoints);
 
-      new SelectionAttributes();
+      new SelectionAttr();
       this.UpdateDimensionLines(svgDoc);
 
-      T3Gv.opt.UpdateDisplayCoordinates(
+      UIUtil.UpdateDisplayCoordinates(
         this.Frame,
         adjustmentPoint,
         CursorConstant.CursorTypes.Grow,
@@ -1939,7 +1941,7 @@ class SegmentedLine extends BaseLine {
       );
 
       if (this.DataID !== -1) {
-        this.LM_ResizeSVGTextObject(svgDoc, this, this.Frame);
+        this.LMResizeSVGTextObject(svgDoc, this, this.Frame);
       }
     }
 
@@ -1981,7 +1983,7 @@ class SegmentedLine extends BaseLine {
 
     // Update directional properties based on connected object if applicable
     if (T3Gv.opt.linkParams && T3Gv.opt.linkParams.ConnectIndex >= 0) {
-      const connectedObject = T3Gv.opt.GetObjectPtr(T3Gv.opt.linkParams.ConnectIndex, false);
+      const connectedObject = ObjectUtil.GetObjectPtr(T3Gv.opt.linkParams.ConnectIndex, false);
       if (connectedObject) {
         this.segl.lastdir = connectedObject.GetSegLFace(
           T3Gv.opt.linkParams.ConnectPt,
@@ -2056,7 +2058,7 @@ class SegmentedLine extends BaseLine {
 
     // Update segl.firstdir based on a connected object if available
     if (T3Gv.opt.linkParams && T3Gv.opt.linkParams.ConnectIndex >= 0) {
-      const connectedObject = T3Gv.opt.GetObjectPtr(T3Gv.opt.linkParams.ConnectIndex, false);
+      const connectedObject = ObjectUtil.GetObjectPtr(T3Gv.opt.linkParams.ConnectIndex, false);
       if (connectedObject) {
         this.segl.firstdir = connectedObject.GetSegLFace(
           T3Gv.opt.linkParams.ConnectPt,
@@ -2347,7 +2349,7 @@ class SegmentedLine extends BaseLine {
     if (isFlipped) {
       const svgElement = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
       if (this.DataID !== -1) {
-        this.LM_ResizeSVGTextObject(svgElement, this, this.Frame);
+        this.LMResizeSVGTextObject(svgElement, this, this.Frame);
       }
       if (T3Gv.opt.ob.Frame) {
         T3Gv.opt.MaintainLink(
@@ -2880,7 +2882,7 @@ class SegmentedLine extends BaseLine {
     let adjustedHeight = this.Frame.height + knobSize;
 
     // Get the connected object if available
-    const connectedObject = T3Gv.opt.GetObjectPtr(objectId, false);
+    const connectedObject = ObjectUtil.GetObjectPtr(objectId, false);
 
     // Create an adjusted frame that accounts for knob dimensions
     const adjustedFrame = $.extend(true, {}, this.Frame);
@@ -3067,7 +3069,7 @@ class SegmentedLine extends BaseLine {
     // Update dimension lines and text if applicable
     this.UpdateDimensionLines(svgDocument);
     if (this.DataID !== -1) {
-      this.LM_ResizeSVGTextObject(svgDocument, this, this.Frame);
+      this.LMResizeSVGTextObject(svgDocument, this, this.Frame);
     }
 
     T3Util.Log("= S.SegmentedLine: ModifyShape output", {
@@ -3376,7 +3378,7 @@ class SegmentedLine extends BaseLine {
     if (
       connectedObjectId != null &&
       connectedObjectId >= 0 &&
-      T3Gv.opt.GetObjectPtr(connectedObjectId, false).DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape
+      ObjectUtil.GetObjectPtr(connectedObjectId, false).DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape
     ) {
       // Determine a normalized hook id value
       let normalizedHookId = hookData.id;
@@ -3659,7 +3661,7 @@ class SegmentedLine extends BaseLine {
 
       // Handle connected object cases if provided
       if (connectedObjectId >= 0) {
-        const connectedObject = T3Gv.opt.GetObjectPtr(connectedObjectId, false);
+        const connectedObject = ObjectUtil.GetObjectPtr(connectedObjectId, false);
         if (connectedObject) {
           // Case for multiplicity object
           if (connectedObject.objecttype === NvConstant.FNObjectTypes.Multiplicity && hookCount === 1) {
@@ -3869,8 +3871,8 @@ class SegmentedLine extends BaseLine {
 
     let firstConnectedObject, secondConnectedObject;
     if (this.hooks.length === 2) {
-      firstConnectedObject = T3Gv.opt.GetObjectPtr(this.hooks[0].objid, false);
-      secondConnectedObject = T3Gv.opt.GetObjectPtr(this.hooks[1].objid, false);
+      firstConnectedObject = ObjectUtil.GetObjectPtr(this.hooks[0].objid, false);
+      secondConnectedObject = ObjectUtil.GetObjectPtr(this.hooks[1].objid, false);
     }
 
     switch (this.segl.firstdir) {
@@ -4095,7 +4097,7 @@ class SegmentedLine extends BaseLine {
     }
 
     // Retrieve the object pointer for the given objectId
-    const connectedShape = T3Gv.opt.GetObjectPtr(objectId, false);
+    const connectedShape = ObjectUtil.GetObjectPtr(objectId, false);
     let bestHookType = initialHookType;
     if (connectedShape && connectedShape.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape) {
       switch (initialHookType) {
@@ -4212,8 +4214,8 @@ class SegmentedLine extends BaseLine {
         return true;
       }
       // Check for intersection with the current object
-      if (T3Gv.opt.Lines_Intersect(objectCopy, currentObject, point)) {
-        T3Util.Log("= S.SegmentedLine: MaintainPoint - Lines_Intersect returned true", { segment: pointIndex, lineSegmentRectangle });
+      if (T3Gv.opt.LinesIntersect(objectCopy, currentObject, point)) {
+        T3Util.Log("= S.SegmentedLine: MaintainPoint - LinesIntersect returned true", { segment: pointIndex, lineSegmentRectangle });
         T3Util.Log("= S.SegmentedLine: MaintainPoint output", true);
         return true;
       }

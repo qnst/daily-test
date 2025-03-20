@@ -135,7 +135,7 @@ class Oval extends BaseShape {
     // }
 
     if (this.DataID >= 0) {
-      this.LM_AddSVGTextObject(renderer, shapeContainer);
+      this.LMAddSVGTextObject(renderer, shapeContainer);
     }
 
     T3Util.Log('S.Oval: Output shapeContainer:', shapeContainer);
@@ -358,7 +358,6 @@ class Oval extends BaseShape {
 
     T3Util.Log('S.Oval: Output tindent:', this.tindent);
   }
-
 }
 
 export default Oval;

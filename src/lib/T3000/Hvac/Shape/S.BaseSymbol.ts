@@ -250,8 +250,8 @@ class BaseSymbol extends BaseShape {
     T3Util.Log("S.BaseSymbol - Flip output:", this.extraflags);
   }
 
-  LM_ActionPreTrack(event: any, trigger: any): void {
-    T3Util.Log("S.BaseSymbol - LM_ActionPreTrack input:", { event, trigger });
+  LMActionPreTrack(event: any, trigger: any): void {
+    T3Util.Log("S.BaseSymbol - LMActionPreTrack input:", { event, trigger });
 
     if (this.DataID !== -1) {
       if (this.TextFlags & NvConstant.TextFlags.AttachA ||
@@ -265,11 +265,11 @@ class BaseSymbol extends BaseShape {
       this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.Height, false);
     }
 
-    T3Util.Log("S.BaseSymbol - LM_ActionPreTrack output: completed");
+    T3Util.Log("S.BaseSymbol - LMActionPreTrack output: completed");
   }
 
-  LM_ActionPostRelease(event: any): void {
-    T3Util.Log("S.BaseSymbol - LM_ActionPostRelease input:", event);
+  LMActionPostRelease(event: any): void {
+    T3Util.Log("S.BaseSymbol - LMActionPostRelease input:", event);
 
     if (this.DataID !== -1) {
       if (
@@ -287,9 +287,8 @@ class BaseSymbol extends BaseShape {
     this.sizedim.width = this.Frame.width;
     this.sizedim.height = this.Frame.height;
 
-    T3Util.Log("S.BaseSymbol - LM_ActionPostRelease output: completed");
+    T3Util.Log("S.BaseSymbol - LMActionPostRelease output: completed");
   }
-
 }
 
 export default BaseSymbol

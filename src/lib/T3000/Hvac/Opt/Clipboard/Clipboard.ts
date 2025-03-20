@@ -5,6 +5,7 @@ import T3Gv from '../../Data/T3Gv'
 import base64js from 'base64-js'
 import T3Constant from '../../Data/Constant/T3Constant'
 import T3Util from '../../Util/T3Util'
+import ObjectUtil from '../Data/ObjectUtil'
 
 /**
  * A utility class for handling clipboard operations with cross-browser and cross-platform support.
@@ -334,7 +335,7 @@ class Clipboard {
    */
   static GenerateImageInfo1() {
     const imageInfo = {};
-    const selectedObjects = T3Gv.opt.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
+    const selectedObjects = ObjectUtil.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
 
     if (!selectedObjects || selectedObjects.length === 0) {
       return Promise.resolve(null);
@@ -375,7 +376,7 @@ class Clipboard {
 
   static GenerateImageInfo() {
     const e = {},
-      t = T3Gv.opt.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, !1);
+      t = ObjectUtil.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, !1);
     return t &&
       0 !== t.length ? function (e) {
         return new Promise(

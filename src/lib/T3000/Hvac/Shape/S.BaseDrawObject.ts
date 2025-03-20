@@ -15,7 +15,7 @@ import Effects from "../Basic/B.Element.Effects";
 import ParagraphFormat from '../Model/ParagraphFormat'
 import Instance from "../Data/Instance/Instance"
 import NvConstant from "../Data/Constant/NvConstant"
-import TextFormatData from "../Model/TextFormatData"
+import TextFmtData from "../Model/TextFmtData"
 import QuickStyle from "../Model/QuickStyle"
 import TextObject from '../Model/TextObject'
 import Rectangle from '../Model/Rectangle'
@@ -31,6 +31,10 @@ import CursorConstant from '../Data/Constant/CursorConstant'
 import TextConstant from '../Data/Constant/TextConstant'
 import StyleConstant from '../Data/Constant/StyleConstant'
 import T3Util from '../Util/T3Util'
+import ObjectUtil from '../Opt/Data/ObjectUtil'
+import RightClickMd from '../Model/RightClickMd'
+import UIUtil from '../Opt/UI/UIUtil'
+import RulerUtil from '../Opt/UI/RulerUtil'
 
 /**
  * BaseDrawObject is the fundamental class for all drawable elements within the T3000 HVAC system.
@@ -861,7 +865,7 @@ class BaseDrawObject {
     return resultRect;
   }
 
-  public GetArrayRect(useAlternateMapping: boolean): CRect {
+  GetArrayRect(useAlternateMapping: boolean): CRect {
     T3Util.Log("= S.BaseDrawObject: GetArrayRect input:", { useAlternateMapping });
 
     // Calculate the border thickness based on the line style record
@@ -911,11 +915,11 @@ class BaseDrawObject {
   //   return 0
   // }
 
-  // _IsFlowChartConnector() {
+  // IsFlowChartConnector() {
   //   return !1
   // }
 
-  // _IsOrgChartConnector() {
+  // IsOrgChartConnector() {
   //   return !1
   // }
 
@@ -1020,7 +1024,7 @@ class BaseDrawObject {
     return result;
   }
 
-  public IsCoManager(manager: any): boolean {
+  IsCoManager(manager: any): boolean {
     T3Util.Log("= S.BaseDrawObject: IsCoManager input:", manager);
     const result = false;
     T3Util.Log("= S.BaseDrawObject: IsCoManager output:", result);
@@ -1090,7 +1094,7 @@ class BaseDrawObject {
 
   ChangeHook(sourceHook: any, targetHook: any, additionalData: any): void {
     T3Util.Log("= S.BaseDrawObject: ChangeHook input:", { sourceHook, targetHook, additionalData });
-    T3Gv.opt.CN_ChangeHook(this, sourceHook, targetHook, additionalData);
+    T3Gv.opt.CNChangeHook(this, sourceHook, targetHook, additionalData);
     T3Util.Log("= S.BaseDrawObject: ChangeHook output:", "Hook change applied");
   }
 
@@ -1114,7 +1118,7 @@ class BaseDrawObject {
     return frame;
   }
 
-  public DeleteObject(): void {
+  DeleteObject(): void {
     T3Util.Log("= S.BaseDrawObject: DeleteObject input:", {
       TableID: this.TableID,
       DataID: this.DataID,
@@ -1131,7 +1135,7 @@ class BaseDrawObject {
 
     // Delete table object if exists
     // if (this.TableID !== -1) {
-    //   const tablePtr = T3Gv.opt.GetObjectPtr(this.TableID, true);
+    //   const tablePtr = ObjectUtil.GetObjectPtr(this.TableID, true);
     //   if (tablePtr) {
     //     T3Gv.opt.Table_DeleteObject(tablePtr);
     //   }
@@ -1197,7 +1201,7 @@ class BaseDrawObject {
 
     // Process hooks and update dimension lines for hooked objects if necessary
     if (this.hooks.length > 0) {
-      const hookedObj = T3Gv.opt.GetObjectPtr(this.hooks[0].objid, false);
+      const hookedObj = ObjectUtil.GetObjectPtr(this.hooks[0].objid, false);
       if (
         hookedObj &&
         hookedObj.objecttype === NvConstant.FNObjectTypes.FlWall &&
@@ -1334,42 +1338,53 @@ class BaseDrawObject {
     return points;
   }
 
-  RightClick(event: any): any {
-    // T3Util.Log("= S.BaseDrawObject: RightClick input:", event);
+  /**
+   * Handles right-click events on the drawing object
+   * This method processes the right-click event, converts window coordinates to document coordinates,
+   * selects the object, and prepares the context menu parameters
+   *
+   * @param clickEvent - The mouse/touch event with gesture information
+   * @returns Boolean indicating whether the right-click handling was successful
+   */
+  RightClick(clickEvent: any): boolean {
+    T3Util.Log("= S.BaseDrawObject: RightClick input:", clickEvent);
 
-    // // Convert the window coordinates to document coordinates
-    // const docCoords = T3Gv.opt.svgDoc.ConvertWindowToDocCoords(
-    //   event.gesture.center.clientX,
-    //   event.gesture.center.clientY
-    // );
-    // T3Util.Log("= S.BaseDrawObject: Converted window to doc coords:", docCoords);
+    // Convert the window coordinates to document coordinates
+    const documentCoordinates = T3Gv.opt.svgDoc.ConvertWindowToDocCoords(
+      clickEvent.gesture.center.clientX,
+      clickEvent.gesture.center.clientY
+    );
+    T3Util.Log("= S.BaseDrawObject: Converted window to doc coords:", documentCoordinates);
 
-    // // Find the SVG element corresponding to the current target
-    // const element = T3Gv.opt.svgObjectLayer.FindElementByDOMElement(event.currentTarget);
-    // T3Util.Log("= S.BaseDrawObject: Found SVG element:", element);
+    // Find the SVG element corresponding to the current target
+    const targetElement = T3Gv.opt.svgObjectLayer.FindElementByDOMElement(clickEvent.currentTarget);
+    T3Util.Log("= S.BaseDrawObject: Found SVG element:", targetElement);
 
-    // // Select the object from the click event; exit if not selected
-    // if (!T3Gv.opt.SelectObjectFromClick(event, element)) {
-    //   T3Util.Log("= S.BaseDrawObject: RightClick output: Object selection failed");
-    //   return false;
-    // }
+    // Select the object from the click event; exit if not selected
+    if (!T3Gv.opt.SelectObjectFromClick(clickEvent, targetElement)) {
+      T3Util.Log("= S.BaseDrawObject: RightClick output: Object selection failed");
+      return false;
+    }
 
-    // // Set up right click parameters
-    // T3Gv.opt.rightClickParams = new RightClickData();
-    // T3Gv.opt.rightClickParams.TargetID = element.GetID();
-    // T3Gv.opt.rightClickParams.HitPt.x = docCoords.x;
-    // T3Gv.opt.rightClickParams.HitPt.y = docCoords.y;
-    // T3Gv.opt.rightClickParams.Locked = (this.flags & NvConstant.ObjFlags.Lock) > 0;
-    // T3Util.Log("= S.BaseDrawObject: RightClickParams set to:", T3Gv.opt.rightClickParams);
+    // Set up right click parameters
+    T3Gv.opt.rClickParam = new RightClickMd();
+    T3Gv.opt.rClickParam.targetId = targetElement.GetID();
+    T3Gv.opt.rClickParam.hitPoint.x = documentCoordinates.x;
+    T3Gv.opt.rClickParam.hitPoint.y = documentCoordinates.y;
+    T3Gv.opt.rClickParam.locked = (this.flags & NvConstant.ObjFlags.Lock) > 0;
+    T3Util.Log("= S.BaseDrawObject: Right click param set to:", T3Gv.opt.rClickParam);
 
-    // // Show the appropriate contextual menu based on read-only status
-    // if (T3Gv.docUtil.IsReadOnly()) {
-    //   // TODO
-    // } else {
-    //   // TODO
-    // }
+    // Show the appropriate contextual menu based on read-only status
+    if (T3Gv.docUtil.IsReadOnly()) {
+      // Show read-only context menu
+      UIUtil.ShowContextMenu("", clickEvent.gesture.center.clientX, clickEvent.gesture.center.clientY);
+    } else {
+      // Show editable context menu
+      UIUtil.ShowContextMenu("", clickEvent.gesture.center.clientX, clickEvent.gesture.center.clientY);
+    }
 
-    // T3Util.Log("= S.BaseDrawObject: RightClick output: Contextual menu shown");
+    T3Util.Log("= S.BaseDrawObject: RightClick output: Contextual menu shown");
+    return true;
   }
 
   AdjustTextEditBackground(e: any, t: any): void {
@@ -1483,20 +1498,20 @@ class BaseDrawObject {
     let isBold: boolean, isItalic: boolean, isUnderline: boolean, isSuperscript: boolean, isSubscript: boolean;
     let textElement: any = null;
     const textFace = TextConstant.TextFace;
-    let textFormatData = new TextFormatData();
+    let txtFmtData = new TextFmtData();
     let defaultStyle = new DefaultStyle();
     // const activeTableID = T3Gv.opt.Table_GetActiveID();
-    const sessionBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+    const sessionBlock = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
 
     // Deep copy the StyleRecord's Text settings and update font information from session block
-    textFormatData = Utils1.DeepCopy(this.StyleRecord.Text);
-    textFormatData.FontId = -1;
-    textFormatData.FontName = sessionBlock.def.lf.fontName;
+    txtFmtData = Utils1.DeepCopy(this.StyleRecord.Text);
+    txtFmtData.FontId = -1;
+    txtFmtData.FontName = sessionBlock.def.lf.fontName;
 
     // Try to get the table for text formatting
     // const table = this.GetTable(false);
     // if (table) {
-    //   T3Gv.opt.Table_GetTextFormat(table, textFormatData, null, activeTableID !== this.BlockID, textOptions);
+    //   T3Gv.opt.Table_GetTextFormat(table, txtFmtData, null, activeTableID !== this.BlockID, textOptions);
     // } else
 
     if (this.DataID !== null && this.DataID >= 0) {
@@ -1512,25 +1527,25 @@ class BaseDrawObject {
         const selectedFormat = textElement.GetSelectedFormat();
         if (selectedFormat) {
           if (returnTextFormat) {
-            textFormatData.FontSize = T3Gv.opt.FontSizeToPoints(selectedFormat.size);
-            textFormatData.FontId = -1;// T3Gv.opt.GetFontIdByName(selectedFormat.font);
-            textFormatData.FontName = selectedFormat.font;
+            txtFmtData.FontSize = T3Gv.opt.FontSizeToPoints(selectedFormat.size);
+            txtFmtData.FontId = -1;// T3Gv.opt.GetFontIdByName(selectedFormat.font);
+            txtFmtData.FontName = selectedFormat.font;
             isBold = (selectedFormat.weight === 'bold');
-            textFormatData.Face = Utils2.SetFlag(textFormatData.Face, textFace.Bold, isBold);
+            txtFmtData.Face = Utils2.SetFlag(txtFmtData.Face, textFace.Bold, isBold);
             isItalic = (selectedFormat.style === 'italic');
-            textFormatData.Face = Utils2.SetFlag(textFormatData.Face, textFace.Italic, isItalic);
+            txtFmtData.Face = Utils2.SetFlag(txtFmtData.Face, textFace.Italic, isItalic);
             isUnderline = (selectedFormat.decoration === 'underline');
-            textFormatData.Face = Utils2.SetFlag(textFormatData.Face, textFace.Underline, isUnderline);
+            txtFmtData.Face = Utils2.SetFlag(txtFmtData.Face, textFace.Underline, isUnderline);
             isSuperscript = (selectedFormat.baseOffset === 'super');
-            textFormatData.Face = Utils2.SetFlag(textFormatData.Face, textFace.Superscript, isSuperscript);
+            txtFmtData.Face = Utils2.SetFlag(txtFmtData.Face, textFace.Superscript, isSuperscript);
             isSubscript = (selectedFormat.baseOffset === 'sub');
-            textFormatData.Face = Utils2.SetFlag(textFormatData.Face, textFace.Subscript, isSubscript);
-            textFormatData.Paint.Color = selectedFormat.color ? selectedFormat.color : "";
+            txtFmtData.Face = Utils2.SetFlag(txtFmtData.Face, textFace.Subscript, isSubscript);
+            txtFmtData.Paint.Color = selectedFormat.color ? selectedFormat.color : "";
             if (selectedFormat.colorTrans) {
-              textFormatData.Paint.Opacity = selectedFormat.colorTrans;
+              txtFmtData.Paint.Opacity = selectedFormat.colorTrans;
             }
-            T3Util.Log("= S.BaseDrawObject: GetTextFormat output (TextFormatData):", textFormatData);
-            return textFormatData;
+            T3Util.Log("= S.BaseDrawObject: GetTextFormat output (TxtFmtData):", txtFmtData);
+            return txtFmtData;
           } else {
             defaultStyle.font = selectedFormat.font;
             defaultStyle.size = selectedFormat.size;
@@ -1546,8 +1561,8 @@ class BaseDrawObject {
         }
       }
     }
-    T3Util.Log("= S.BaseDrawObject: GetTextFormat output:", returnTextFormat ? textFormatData : null);
-    return returnTextFormat ? textFormatData : null;
+    T3Util.Log("= S.BaseDrawObject: GetTextFormat output:", returnTextFormat ? txtFmtData : null);
+    return returnTextFormat ? txtFmtData : null;
   }
 
   UseTextBlockColor(): boolean {
@@ -1571,7 +1586,7 @@ class BaseDrawObject {
     return dataId;
   }
 
-  SetTextFormat(textFormat: TextFormatData, options: any): void {
+  SetTextFormat(textFormat: TextFmtData, options: any): void {
     T3Util.Log("= S.BaseDrawObject: SetTextFormat input:", { textFormat, options });
 
     // TODO: Implement text formatting logic here.
@@ -1579,16 +1594,6 @@ class BaseDrawObject {
 
     T3Util.Log("= S.BaseDrawObject: SetTextFormat output: completed");
   }
-
-
-
-
-
-
-
-
-
-
 
   ExtendLines(): void {
     T3Util.Log("= S.BaseDrawObject: ExtendLines input:");
@@ -1794,14 +1799,14 @@ class BaseDrawObject {
     });
 
     if (this.polylist && this.StartPoint && this.EndPoint) {
-      this.PolyLine_ScaleEndPoints();
+      this.PolyLineScaleEndPoints();
     }
 
     T3Util.Log("= S.BaseDrawObject: ScaleEndPoints output: completed");
   }
 
-  PolyLine_ScaleEndPoints(): void {
-    T3Util.Log("= S.BaseDrawObject: PolyLine_ScaleEndPoints input:", {
+  PolyLineScaleEndPoints(): void {
+    T3Util.Log("= S.BaseDrawObject: PolyLineScaleEndPoints input:", {
       polylist: this.polylist,
       Frame: this.Frame,
       StartPoint: this.StartPoint,
@@ -1815,7 +1820,7 @@ class BaseDrawObject {
     const center = { x: this.Frame.x + this.Frame.width / 2, y: this.Frame.y + this.Frame.height / 2 };
 
     if (scaleX === 1 && scaleY === 1) {
-      T3Util.Log("= S.BaseDrawObject: PolyLine_ScaleEndPoints output: no scaling required");
+      T3Util.Log("= S.BaseDrawObject: PolyLineScaleEndPoints output: no scaling required");
       return;
     }
 
@@ -1831,7 +1836,7 @@ class BaseDrawObject {
     deltaY = center.y - this.EndPoint.y;
     this.EndPoint.y = center.y - deltaY * scaleY;
 
-    T3Util.Log("= S.BaseDrawObject: PolyLine_ScaleEndPoints output:", {
+    T3Util.Log("= S.BaseDrawObject: PolyLineScaleEndPoints output:", {
       StartPoint: this.StartPoint,
       EndPoint: this.EndPoint
     });
@@ -1960,7 +1965,7 @@ class BaseDrawObject {
    * and retrieves font information from the session block.
    *
    * @param paraFormat - The paragraph format object to be populated with default settings
-   * @returns TextFormatData object containing default text formatting
+   * @returns TextFmtData object containing default text formatting
    */
   GetTextDefault(paraFormat) {
     // Initialize paragraph format if provided
@@ -1990,7 +1995,7 @@ class BaseDrawObject {
     }
 
     // Get the session block to retrieve font information
-    const sessionBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+    const sessionBlock = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
 
     // Create a deep copy of this object's text style record
     const textFormat = $.extend(true, {}, this.StyleRecord.Text);
@@ -2120,7 +2125,7 @@ class BaseDrawObject {
   GetLengthInRulerUnits(length: number, offset?: number): string {
     T3Util.Log("= S.BaseDrawObject: GetLengthInRulerUnits input:", { length, offset });
 
-    const sessionBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+    const sessionBlock = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
     let result = '';
     let feet = 0;
     let inches = 0;
@@ -2220,7 +2225,7 @@ class BaseDrawObject {
     const distance = Math.abs(points[0].x - points[1].x);
 
     // Convert the distance to ruler units
-    const result = this.GetLengthInRulerUnits(distance);
+    const result = RulerUtil.GetLengthInRulerUnits(distance);
     T3Util.Log("= S.BaseDrawObject: GetDimensionTextForPoints output:", result);
     return result;
   }
@@ -2283,7 +2288,7 @@ class BaseDrawObject {
       return;
     }
 
-    const hookedObject = T3Gv.opt.GetObjectPtr(hookedObjectInfo.hookedObjectID, true);
+    const hookedObject = ObjectUtil.GetObjectPtr(hookedObjectInfo.hookedObjectID, true);
     if (!hookedObject) {
       T3Util.Log("= S.BaseDrawObject: UpdateDimensionsFromTextForHookedObject output: hooked object not found");
       return;
@@ -2296,7 +2301,7 @@ class BaseDrawObject {
     const endPoint = new Point(hookedObjectInfo.end.x, hookedObjectInfo.end.y);
     const dimensionPoints = [startPoint, endPoint];
 
-    const angle = T3Gv.opt.SD_GetCounterClockwiseAngleBetween2Points(startPoint, endPoint);
+    const angle = T3Gv.opt.GetCounterClockwiseAngleBetween2Points(startPoint, endPoint);
     Utils3.RotatePointsAboutCenter(this.Frame, -angle, dimensionPoints);
 
     let offset = dimensionLength - Math.abs(dimensionPoints[1].x - dimensionPoints[0].x);
@@ -2725,7 +2730,7 @@ class BaseDrawObject {
   GetPerpendicularAngle(point1: Point, point2: Point, isClockwise: boolean): number {
     T3Util.Log("= S.BaseDrawObject: GetPerpendicularAngle input:", { point1, point2, isClockwise });
 
-    let angle = T3Gv.opt.SD_GetCounterClockwiseAngleBetween2Points(point1, point2);
+    let angle = T3Gv.opt.GetCounterClockwiseAngleBetween2Points(point1, point2);
     angle += isClockwise ? Math.PI / 2 : -Math.PI / 2;
 
     if (angle < 0) {
@@ -2762,8 +2767,8 @@ class BaseDrawObject {
       x: textRect.x + textRect.width / 2,
       y: textRect.y + textRect.height / 2
     };
-    let startAngle = T3Gv.opt.SD_GetCounterClockwiseAngleBetween2Points(startPoint, arcCenter);
-    let endAngle = T3Gv.opt.SD_GetCounterClockwiseAngleBetween2Points(startPoint, centerPoint);
+    let startAngle = T3Gv.opt.GetCounterClockwiseAngleBetween2Points(startPoint, arcCenter);
+    let endAngle = T3Gv.opt.GetCounterClockwiseAngleBetween2Points(startPoint, centerPoint);
 
     if (startAngle > Math.PI && endAngle === 0) {
       endAngle = 2 * Math.PI;
@@ -2783,7 +2788,7 @@ class BaseDrawObject {
 
     let arcStartPoint = isClockwise ? rotatedCenterPoint : arcCenter;
     let arcEndPoint = isClockwise ? arcCenter : rotatedCenterPoint;
-    let arcStartAngle = T3Gv.opt.SD_GetCounterClockwiseAngleBetween2Points(startPoint, arcStartPoint);
+    let arcStartAngle = T3Gv.opt.GetCounterClockwiseAngleBetween2Points(startPoint, arcStartPoint);
 
     let arcPoints = T3Gv.opt.ArcToPoly(
       OptConstant.Common.MaxPolyPoints,
@@ -2811,7 +2816,7 @@ class BaseDrawObject {
       }
     }
 
-    let arrowheadAngle = T3Gv.opt.SD_GetCounterClockwiseAngleBetween2Points(arrowheadPoint, arcPoints[0]);
+    let arrowheadAngle = T3Gv.opt.GetCounterClockwiseAngleBetween2Points(arrowheadPoint, arcPoints[0]);
     this.DrawDimensionAngleArrowhead(container, arrowheadAngle, arcPoints[0]);
 
     T3Util.Log("= S.BaseDrawObject: DrawDimensionAngleArc output: completed");
@@ -2867,8 +2872,8 @@ class BaseDrawObject {
     }
 
     // Calculate angles
-    angle = T3Gv.opt.SD_GetCounterClockwiseAngleBetween2Points(targetLinePoints[0], targetLinePoints[1]);
-    baseAngle = T3Gv.opt.SD_GetCounterClockwiseAngleBetween2Points(baseLinePoints[0], baseLinePoints[1]);
+    angle = T3Gv.opt.GetCounterClockwiseAngleBetween2Points(targetLinePoints[0], targetLinePoints[1]);
+    baseAngle = T3Gv.opt.GetCounterClockwiseAngleBetween2Points(baseLinePoints[0], baseLinePoints[1]);
     angle -= baseAngle;
     if (angle < 0) {
       angle += 2 * Math.PI;
@@ -3018,7 +3023,7 @@ class BaseDrawObject {
     }
 
     const lengthInUnits = T3Gv.docUtil.rulerConfig.showpixels ? area : this.GetLengthInUnits(area);
-    result = this.GetLengthInRulerUnits(lengthInUnits);
+    result = RulerUtil.GetLengthInRulerUnits(lengthInUnits);
 
     T3Util.Log("= S.BaseDrawObject: GetAreaDimensionText output:", result);
     return result;
@@ -3078,7 +3083,7 @@ class BaseDrawObject {
     T3Util.Log("= S.BaseDrawObject: GetHookedObjectDescList input:", { dimensionPoints, context });
 
     let result: any[] = [];
-    let linkManager = T3Gv.opt.GetObjectPtr(T3Gv.opt.linksBlockId, false);
+    let linkManager = ObjectUtil.GetObjectPtr(T3Gv.opt.linksBlockId, false);
     let boundingRect = new Rectangle(0, 0, 0, 0);
     let hookPoints: Point[] = [];
     let hookObject: any = null;
@@ -3090,7 +3095,7 @@ class BaseDrawObject {
       let linkCount = linkManager.length;
 
       while (linkIndex >= 0 && linkIndex < linkCount && linkManager[linkIndex].targetid === this.BlockID) {
-        hookObject = T3Gv.opt.GetObjectPtr(linkManager[linkIndex].hookid, false);
+        hookObject = ObjectUtil.GetObjectPtr(linkManager[linkIndex].hookid, false);
         if (hookObject) {
           for (let i = 0; i < hookObject.hooks.length; i++) {
             if (hookObject.hooks[i].objid === this.BlockID) {
@@ -3118,7 +3123,7 @@ class BaseDrawObject {
     }
 
     for (let i = 0; i < hookPoints.length; i++) {
-      hookObject = T3Gv.opt.GetObjectPtr(hookPoints[i], false);
+      hookObject = ObjectUtil.GetObjectPtr(hookPoints[i], false);
       if (hookObject instanceof Instance.Shape.BaseShape &&
         !(context && context.linkParams && context.movingShapeID === hookObject.BlockID &&
           context.linkParams.ConnectIndex < 0 && context.linkParams.PrevConnect === this.BlockID)) {
@@ -3153,7 +3158,7 @@ class BaseDrawObject {
           new Point(dimensionPoints[segmentIndex].x, dimensionPoints[segmentIndex].y)
         ];
 
-        let angle = T3Gv.opt.SD_GetCounterClockwiseAngleBetween2Points(segmentPoints[0], segmentPoints[1]);
+        let angle = T3Gv.opt.GetCounterClockwiseAngleBetween2Points(segmentPoints[0], segmentPoints[1]);
         Utils3.RotatePointsAboutCenter(boundingRect, -angle, segmentPoints);
 
         let hookObjectPoints = context && context.movingShapeID === hookObject.BlockID ?
@@ -3343,7 +3348,7 @@ class BaseDrawObject {
       y: (points[0].y + points[1].y) / 2
     };
 
-    deflectionAngle = T3Gv.opt.SD_GetCounterClockwiseAngleBetween2Points(dimensionPoints[segmentIndex - 1], dimensionPoints[segmentIndex]);
+    deflectionAngle = T3Gv.opt.GetCounterClockwiseAngleBetween2Points(dimensionPoints[segmentIndex - 1], dimensionPoints[segmentIndex]);
 
     if (this instanceof Instance.Shape.Polygon && this.polylist) {
       const polyCopy = Utils1.DeepCopy(this);
@@ -3707,7 +3712,7 @@ class BaseDrawObject {
     this.HideOrShowSelectOnlyDimensions(show, context);
 
     if (this.hooks.length > 0 && context && context.movingShapeID === this.BlockID) {
-      hookedObject = T3Gv.opt.GetObjectPtr(this.hooks[0].objid, false);
+      hookedObject = ObjectUtil.GetObjectPtr(this.hooks[0].objid, false);
 
       if (
         !hookedObject ||
@@ -3770,12 +3775,12 @@ class BaseDrawObject {
     if (hasWidthFlag || hasHeightFlag) {
       if (segmentIndex === 1 && hasWidthFlag) {
         dimensionValue = this.GetDimensionLengthFromValue(this.rwd);
-        const result = this.GetLengthInRulerUnits(dimensionValue);
+        const result = RulerUtil.GetLengthInRulerUnits(dimensionValue);
         T3Util.Log("= S.BaseDrawObject: GetDimensionFloatingPointValue output:", result);
         return result;
       } else if (segmentIndex === 2 && hasHeightFlag) {
         dimensionValue = this.GetDimensionLengthFromValue(this.rht);
-        const result = this.GetLengthInRulerUnits(dimensionValue);
+        const result = RulerUtil.GetLengthInRulerUnits(dimensionValue);
         T3Util.Log("= S.BaseDrawObject: GetDimensionFloatingPointValue output:", result);
         return result;
       }
@@ -4071,7 +4076,7 @@ class BaseDrawObject {
       this.ShortRef != OptConstant.LineTypes.LsMeasuringTape &&
       this.objecttype === NvConstant.FNObjectTypes.FlWall
     ) {
-      const linkObj = T3Gv.opt.GetObjectPtr(T3Gv.opt.linksBlockId, false);
+      const linkObj = ObjectUtil.GetObjectPtr(T3Gv.opt.linksBlockId, false);
       if (linkObj && T3Gv.opt.FindLink(linkObj, this.BlockID, true) >= 0) {
         useStandOff = true;
       }
@@ -4277,7 +4282,7 @@ class BaseDrawObject {
 
 
     if (check3) {
-      var linkObject = T3Gv.opt.GetObjectPtr(T3Gv.opt.linksBlockId, false);
+      var linkObject = ObjectUtil.GetObjectPtr(T3Gv.opt.linksBlockId, false);
       if (linkObject) {
 
         const fdLink = T3Gv.opt.FindLink(linkObject, this.BlockID, !0);
@@ -4476,7 +4481,7 @@ class BaseDrawObject {
     if (
       check3
     ) {
-      var linkObject = T3Gv.opt.GetObjectPtr(T3Gv.opt.linksBlockId, false);
+      var linkObject = ObjectUtil.GetObjectPtr(T3Gv.opt.linksBlockId, false);
       if (linkObject) {
 
         const fdLink = T3Gv.opt.FindLink(linkObject, this.BlockID, !0);
@@ -4806,7 +4811,7 @@ class BaseDrawObject {
   GetFractionStringGranularity(input: any): number {
     T3Util.Log("= S.BaseDrawObject: GetFractionStringGranularity input:", { input });
 
-    const rulerSettings = T3Gv.docUtil.rulerConfig;
+    const rulerConfig = T3Gv.docUtil.rulerConfig;
     let granularity: number;
 
     if (rulerConfig.fractionaldenominator >= 1) {
@@ -4982,7 +4987,7 @@ class BaseDrawObject {
     T3Util.Log("= S.BaseDrawObject: UnitsToCoord - Input:", { value, offset });
 
     // Ensure the SED session block is retrieved (result unused here)
-    T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+    ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
 
     const toUnits = this.GetToUnits();
     value += offset * T3Gv.docUtil.rulerConfig.majorScale;
@@ -4996,7 +5001,7 @@ class BaseDrawObject {
     T3Util.Log("= S.BaseDrawObject: ConvToUnits input:", { value, offset });
 
     // Ensure the SED session block is retrieved (though result is unused here)
-    T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+    ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
 
     const toUnits = this.GetToUnits();
     const majorScale = T3Gv.docUtil.rulerConfig.majorScale;
@@ -5054,7 +5059,7 @@ class BaseDrawObject {
     T3Util.Log("= S.BaseDrawObject: GetBlobBytes input: none");
     let blob: any = null;
     if (this.BlobBytesID >= 0) {
-      blob = T3Gv.opt.GetObjectPtr(this.BlobBytesID, false);
+      blob = ObjectUtil.GetObjectPtr(this.BlobBytesID, false);
     }
     T3Util.Log("= S.BaseDrawObject: GetBlobBytes output:", blob);
     return blob;
@@ -5064,7 +5069,7 @@ class BaseDrawObject {
     T3Util.Log("= S.BaseDrawObject: GetEMFBlobBytes input: EMFBlobBytesID =", this.EMFBlobBytesID);
     let emfBlob: any = null;
     if (this.EMFBlobBytesID >= 0) {
-      emfBlob = T3Gv.opt.GetObjectPtr(this.EMFBlobBytesID, false);
+      emfBlob = ObjectUtil.GetObjectPtr(this.EMFBlobBytesID, false);
     }
     T3Util.Log("= S.BaseDrawObject: GetEMFBlobBytes output:", emfBlob);
     return emfBlob;
@@ -5074,7 +5079,7 @@ class BaseDrawObject {
     T3Util.Log("= S.BaseDrawObject: GetOleBlobBytes input:", { OleBlobBytesID: this.OleBlobBytesID });
     let oleBlob: any = null;
     if (this.OleBlobBytesID >= 0) {
-      oleBlob = T3Gv.opt.GetObjectPtr(this.OleBlobBytesID, false);
+      oleBlob = ObjectUtil.GetObjectPtr(this.OleBlobBytesID, false);
     }
     T3Util.Log("= S.BaseDrawObject: GetOleBlobBytes output:", oleBlob);
     return oleBlob;
@@ -5084,7 +5089,7 @@ class BaseDrawObject {
   //   T3Util.Log("= S.BaseDrawObject: GetTable - Input:", { preserve });
   //   let table = null;
   //   if (this.TableID >= 0) {
-  //     table = T3Gv.opt.GetObjectPtr(this.TableID, preserve);
+  //     table = ObjectUtil.GetObjectPtr(this.TableID, preserve);
   //   }
   //   T3Util.Log("= S.BaseDrawObject: GetTable - Output:", table);
   //   return table;
@@ -5121,7 +5126,7 @@ class BaseDrawObject {
     let graph = null;
 
     if (this.GraphID >= 0) {
-      graph = T3Gv.opt.GetObjectPtr(this.GraphID, preserve);
+      graph = ObjectUtil.GetObjectPtr(this.GraphID, preserve);
     }
 
     T3Util.Log("= S.BaseDrawObject: GetGraph output:", graph);
@@ -6347,7 +6352,7 @@ class BaseDrawObject {
       T3Gv.opt.curHiliteShape !== -1 &&
       T3Gv.opt.curHiliteShape !== this.BlockID
     ) {
-      const previousShape = T3Gv.opt.GetObjectPtr(T3Gv.opt.curHiliteShape, false);
+      const previousShape = ObjectUtil.GetObjectPtr(T3Gv.opt.curHiliteShape, false);
       if (previousShape) {
         T3Util.Log("= S.BaseDrawObject SetRolloverActions - Clearing previous shape:", T3Gv.opt.curHiliteShape);
         previousShape.SetRuntimeEffects(false);
@@ -6461,7 +6466,7 @@ class BaseDrawObject {
     let currentIndex: number = $.inArray(currentBlockID, frontLayerZList);
 
     // Retrieve the links object.
-    let linksObj = T3Gv.opt.GetObjectPtr(T3Gv.opt.linksBlockId, true);
+    let linksObj = ObjectUtil.GetObjectPtr(T3Gv.opt.linksBlockId, true);
     if (linksObj) {
       // Start finding links starting for the current block.
       let linkIndex: number = T3Gv.opt.FindLink(linksObj, currentBlockID, true);
@@ -6643,7 +6648,7 @@ class BaseDrawObject {
     if (!this.HasFieldData()) {
       this.dataStyleOverride = null;
     } else if (this.fieldDataElemID >= 0) {
-      this.dataStyleOverride = TODO.SDData.FieldedDataProcessRulesForRecord(this.fieldDataTableID, this.fieldDataElemID);
+      this.dataStyleOverride = TODO.STData.FieldedDataProcessRulesForRecord(this.fieldDataTableID, this.fieldDataElemID);
     } else {
       this.dataStyleOverride = null;
     }

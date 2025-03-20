@@ -7,7 +7,7 @@ import T3Gv from '../../Data/T3Gv';
 import TextureList from "../../Model/TextureList";
 import ShapeUtil from '../Shape/ShapeUtil';
 import ContentHeader from '../../Model/ContentHeader';
-import SEDSession from '../../Model/SEDSession';
+import SDData from '../../Model/SDData';
 import LayersManager from "../../Model/LayersManager";
 import Layer from "../../Model/Layer";
 import $ from 'jquery';
@@ -39,14 +39,14 @@ import TextParams from "../../Model/TextParams"
 import Style from '../../Basic/B.Element.Style'
 import Instance from "../../Data/Instance/Instance"
 import NvConstant from '../../Data/Constant/NvConstant'
-import TEDSession from "../../Model/TEDSession"
-import TextFormatData from "../../Model/TextFormatData"
+import TEData from "../../Model/TEData"
+import TextFmtData from "../../Model/TextFmtData"
 import PolyList from "../../Model/PolyList"
 import PolySeg from "../../Model/PolySeg"
 import HitResult from "../../Model/HitResult"
 import LinkParameters from "../../Model/LinkParameters"
 import Link from '../../Model/Link'
-import SelectionAttributes from "../../Model/SelectionAttributes"
+import SelectionAttr from "../../Model/SelectionAttr"
 import Rectangle from "../../Model/Rectangle"
 import Hook from "../../Model/Hook"
 import TextObject from "../../Model/TextObject"
@@ -64,6 +64,14 @@ import StyleConstant from "../../Data/Constant/StyleConstant";
 import T3Util from "../../Util/T3Util";
 import ShapeConstant from "../../Data/Constant/ShapeConstant";
 import BConstant from "../../Basic/B.Constant";
+import ObjectUtil from "../Data/ObjectUtil";
+import MouseUtil from "../../Event/MouseUtil";
+import RightClickMd from "../../Model/RightClickMd";
+import LayerUtil from "./LayerUtil";
+import SelectUtil from "./SelectUtil";
+import SvgUtil from "./SvgUtil";
+import UIUtil from "../UI/UIUtil";
+import RulerUtil from "../UI/RulerUtil";
 
 /**
  * Utility class for managing SVG optimization and editor functionality in the T3000 application.
@@ -240,8 +248,8 @@ class OptUtil {
    * References to stored objects in the object manager
    */
   public theSelectedListBlockID: number; // ID for object selection storage
-  public sedSessionBlockId: number;      // ID for shape editing session data
-  public tedSessionBlockId: number;      // ID for text editing session data
+  public sdDataBlockId: number;      // ID for shape editing data
+  public teDataBlockId: number;      // ID for text editing session data
   public layersManagerBlockId: number;   // ID for layer management data
   public linksBlockId: number;           // ID for connection links data
 
@@ -368,7 +376,7 @@ class OptUtil {
   public bBuildingSymbols: boolean;      // Whether building symbols
   public bTokenizeStyle: boolean;        // Whether tokenizing style
   public linkParams: any;                // Parameters for linking objects
-  public rightClickParams: any;          // Parameters from right-click
+  public rClickParam: RightClickMd;      // Parameters from right-click
   public bInDimensionEdit: boolean;      // Whether editing dimensions
   public oldAllowSave: boolean;          // Previous save permission
   public doubleClickSymbolTimeStamp: number;  // Time of last symbol double-click
@@ -393,6 +401,7 @@ class OptUtil {
 
   public forcedotted: any;
   public ob: any;
+  public PastePoint: any;
 
   //#endregion
 
@@ -575,8 +584,8 @@ class OptUtil {
      * These reference stored objects in the object manager
      */
     this.theSelectedListBlockID = -1;           // ID for selected objects list
-    this.sedSessionBlockId = -1;                // ID for shape editing session data
-    this.tedSessionBlockId = -1;                // ID for text editing session data
+    this.sdDataBlockId = -1;                // ID for shape editing data
+    this.teDataBlockId = -1;                // ID for text editing session data
     this.layersManagerBlockId = -1;             // ID for layer management data
     this.linksBlockId = -1;                     // ID for connection links data
     // #endregion
@@ -692,7 +701,7 @@ class OptUtil {
     this.bBuildingSymbols = false;               // Whether building symbols
     this.bTokenizeStyle = false;                 // Whether tokenizing style
     this.linkParams = null;                      // Parameters for linking objects
-    this.rightClickParams = null;                // Parameters from right-click
+    this.rClickParam = null;                // Parameters from right-click
     this.curHiliteShape = -1;                    // Currently highlighted shape
     this.doubleClickSymbolTimeStamp = 0;         // Time of last symbol double-click
     this.importContext = null;                   // Context for import operations
@@ -746,7 +755,7 @@ class OptUtil {
     this.pageAction = [];                        // Actions for page changes
     this.pagesToDelete = [];                     // Pages marked for deletion
     this.oldFileMetaData = null;                 // Previous file metadata
-    this.selectionState = new SelectionAttributes(); // Current selection state
+    this.selectionState = new SelectionAttr(); // Current selection state
     // #endregion
 
     // #region Block Creation & Initialization
@@ -761,23 +770,23 @@ class OptUtil {
     );
     this.theSelectedListBlockID = selectedListBlock.ID;
 
-    // Create session data block
-    const sedSession = new SEDSession();
-    sedSession.def.style = new QuickStyle();
-    sedSession.def.pen = Utils1.DeepCopy(OptConstant.Common.PenStylingDefault);
-    sedSession.def.highlighter = Utils1.DeepCopy(OptConstant.Common.HighlighterStylingDefault);
-    sedSession.d_sarrow = 0;
-    sedSession.d_sarrowdisp = false;
-    sedSession.d_earrow = 0;
-    sedSession.d_earrowdisp = false;
-    sedSession.d_arrowsize = 1;
-    sedSession.CurrentTheme = null;
+    // Create shape data block
+    const sdData = new SDData();
+    sdData.def.style = new QuickStyle();
+    sdData.def.pen = Utils1.DeepCopy(OptConstant.Common.PenStylingDefault);
+    sdData.def.highlighter = Utils1.DeepCopy(OptConstant.Common.HighlighterStylingDefault);
+    sdData.d_sarrow = 0;
+    sdData.d_sarrowdisp = false;
+    sdData.d_earrow = 0;
+    sdData.d_earrowdisp = false;
+    sdData.d_arrowsize = 1;
+    sdData.CurrentTheme = null;
 
-    const sedSessionBlock = T3Gv.stdObj.CreateBlock(
-      StateConstant.StoredObjectType.SedSessionObject,
-      sedSession
+    const sdDataBlock = T3Gv.stdObj.CreateBlock(
+      StateConstant.StoredObjectType.SDDataObject,
+      sdData
     );
-    this.sedSessionBlockId = sedSessionBlock.ID;
+    this.sdDataBlockId = sdDataBlock.ID;
 
     // Create layers manager block
     const layersManager = new LayersManager();
@@ -793,13 +802,13 @@ class OptUtil {
     );
     this.layersManagerBlockId = layersManagerBlock.ID;
 
-    // Create text edit session block
-    const tedSession = new TEDSession();
-    const tedSessionBlock = T3Gv.stdObj.CreateBlock(
-      StateConstant.StoredObjectType.TedSessionObject,
-      tedSession
+    // Create text edit block
+    const teData = new TEData();
+    const tDataBlock = T3Gv.stdObj.CreateBlock(
+      StateConstant.StoredObjectType.TEDataObject,
+      teData
     );
-    this.tedSessionBlockId = tedSessionBlock.ID;
+    this.teDataBlockId = tDataBlock.ID;
 
     // Create links list block
     const linksBlock = T3Gv.stdObj.CreateBlock(
@@ -813,7 +822,7 @@ class OptUtil {
     this.PreserveUndoState(true);
     this.InitSVGDocument();
     this.sVGroot = this.svgDoc.svgObj.node;
-    this.UpdateSelectionAttributes(null);
+    SelectUtil.UpdateSelectionAttributes(null);
     this.BuildArrowheadLookupTables();
     this.SetEditMode(NvConstant.EditState.Default);
   }
@@ -878,7 +887,7 @@ class OptUtil {
    */
   InitSVGDocument() {
     // Get the session data from stored object
-    const sessionData = T3Gv.stdObj.GetObject(this.sedSessionBlockId).Data;
+    const sessionData = T3Gv.stdObj.GetObject(this.sdDataBlockId).Data;
 
     // Get current screen dimensions
     const screenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
@@ -956,223 +965,6 @@ class OptUtil {
     return denominator;
   }
 
-  /**
-   * Converts pixel values to point values for font size calculations
-   * This function is used when displaying font sizes that are stored in pixels but need to be shown in points.
-   * The conversion uses the standard DPI relationship between pixels and points (72 points per inch).
-   *
-   * @param pixelValue - The font size in pixels to convert
-   * @returns The equivalent font size in points, rounded to the nearest 0.5
-   */
-  PixelstoPoints(pixelValue) {
-    return Math.floor(100 * pixelValue / 72 + 0.5);
-  }
-
-  UpdateSelectionAttributes(selectedObjects) {
-    T3Util.Log('O.Opt UpdateSelectionAttributes - Input:', selectedObjects);
-
-    if (!selectedObjects) {
-      T3Util.Log('O.Opt UpdateSelectionAttributes - Output: No selection objects provided, exiting early');
-      return;
-    }
-
-    // Constants for better readability
-    const DRAWING_OBJECT_CLASS = OptConstant.DrawObjectBaseClass;
-    const TEXT_FACE = TextConstant.TextFace;
-    const OBJECT_TYPES = NvConstant.FNObjectTypes;
-    const SHAPE_TYPE = OptConstant.ShapeType;
-    const DIMENSION_FLAGS = NvConstant.DimensionFlags;
-    const TEXT_FLAGS = NvConstant.TextFlags;
-
-    // Local variables with descriptive names
-    let targetObjectId;
-    let objectIndex;
-    let currentObject;
-    let targetObject;
-    let moveList;
-    let optMng;
-    let currentTable;
-    let currentTextFormat;
-    let objectCount = 0;
-    let dimensions;
-    let objectBaseClass;
-    let cornerRadiusValue;
-    let textDirectionValue;
-    let hasFoundTreeTop = false;
-    let textData = {};
-    let activeTableId;
-
-    // Tree tracking
-    const treeTopInfo = {
-      topconnector: -1,
-      topshape: -1,
-      foundtree: false
-    };
-
-    // Get session data
-    const sessionData = T3Gv.opt.GetObjectPtr(this.sedSessionBlockId, false);
-
-    // Get selection count if we have selected objects
-    if (selectedObjects && (objectCount = selectedObjects.length)) {
-      const firstSelectedObject = selectedObjects[0];
-
-      // // Handle collaborator animations for selection changes
-      // if (Collab.IsCollaborating() && Collab.Animation_AllowSelectionMessage(undefined)) {
-      //   Collab.Animation_BuildMessage(
-      //     0, 0,
-      //     NvConstant.Collab_AnimationMessages.ChangeSelection,
-      //     selectedObjects
-      //   );
-      // }
-    }
-
-    // Reset selection state properties
-    this.ResetSelectionState();
-
-    // Handle undo/redo state
-    const undoState = T3Gv.state.GetUndoState();
-
-    this.selectionState.undo = undoState.undo;
-    this.selectionState.redo = undoState.redo;
-
-    // Special case: dimension editing mode
-    if (T3Gv.opt.bInDimensionEdit) {
-      this.HandleDimensionEditMode(sessionData);
-      T3Util.Log('O.Opt UpdateSelectionAttributes - Output: Dimension edit mode handled');
-      return;
-    }
-
-    // No selection or note editing mode
-    if (objectCount === 0 || this.bInNoteEdit) {
-      this.HandleEmptySelectionOrNoteEditMode(sessionData);
-      T3Util.Log('O.Opt UpdateSelectionAttributes - Output: Empty selection or note edit mode handled');
-      return;
-    }
-
-    // Get target selection object
-    targetObjectId = this.GetTargetSelect();
-    this.selectionState.nselect = objectCount;
-
-    // Validate target object
-    if (targetObjectId >= 0) {
-      targetObject = this.GetObjectPtr(targetObjectId, false);
-      if (!(targetObject && targetObject instanceof BaseDrawObject)) {
-        targetObjectId = -1;
-        sessionData.tselect = -1;
-      }
-    }
-
-    // Process target object if valid
-    if (targetObjectId >= 0) {
-      this.ProcessTargetObject(targetObjectId, targetObject);
-
-      // // Find tree top if applicable
-      // if (OptAhUtil.FindTreeTop(targetObject, 0, treeTopInfo)) {
-      //   const topNodeId = treeTopInfo.topshape >= 0 ? treeTopInfo.topshape : treeTopInfo.topconnector;
-      //   moveList = this.GetMoveList(topNodeId, false, true, false, null, false);
-      // } else {
-      //   moveList = this.GetMoveList(targetObjectId, false, true, false, null, false);
-      // }
-    }
-
-    // Process each selected object
-    for (objectIndex = 0; objectIndex < objectCount; objectIndex++) {
-      const objectId = selectedObjects[objectIndex];
-
-      // Check if selection allows alignment
-      if (moveList) {
-        if (moveList.indexOf(objectId) === -1) {
-          this.selectionState.allowalign = true;
-        }
-      } else if (objectId !== targetObjectId) {
-        this.selectionState.allowalign = true;
-      }
-
-      // Get and process the current object
-      currentObject = this.GetObjectPtr(objectId, false);
-      if (!(currentObject instanceof BaseDrawObject)) continue;
-
-      const objectToProcess = currentObject;
-      // Process the object based on its type and properties
-      this.ProcessSelectedObject(currentObject, objectToProcess, objectIndex);
-    }
-
-    // Clean up and finalize
-    this.moveList = null;
-    this.selectionState.allowcopy = this.selectionState.nselect > 0;
-
-    // Create copy of selection attributes for UI
-    const selectionAttributes = new SelectionAttributes();
-    $.extend(true, selectionAttributes, this.selectionState);
-
-    // Handle pixel to point conversion for font size if needed
-    if (T3Gv.docUtil.rulerConfig.showpixels && selectionAttributes.fontsize >= 0) {
-      selectionAttributes.fontsize = this.PixelstoPoints(selectionAttributes.fontsize);
-    }
-
-    // Update UI with selection state (commented out as it's referencing SDUI)
-    // SDUI.Commands.MainController.UpdateActiveSelection(selectionAttributes, false);
-
-    T3Util.Log('O.Opt UpdateSelectionAttributes - Output:', {
-      nselect: this.selectionState.nselect,
-      nshapeselected: this.selectionState.nshapeselected,
-      nlineselected: this.selectionState.nlineselected,
-      nconnectorselected: this.selectionState.nconnectorselected,
-      hastext: this.selectionState.selectionhastext
-    });
-  }
-
-  // Helper methods for UpdateSelectionAttributes would go here
-  ResetSelectionState() {
-    T3Util.Log('O.Opt ResetSelectionState - Input: No parameters');
-
-    this.selectionState.nselect = 0;
-    this.selectionState.nlineselected = 0;
-    this.selectionState.nshapeselected = 0;
-    this.selectionState.nconnectorselected = 0;
-    this.selectionState.ngroupsselected = 0;
-    this.selectionState.nimageselected = 0;
-    this.selectionState.IsTargetTable = false;
-    this.selectionState.allowalign = 0;
-    this.selectionState.width = 0;
-    this.selectionState.widthstr = '';
-    this.selectionState.height = 0;
-    this.selectionState.heightstr = '';
-    this.selectionState.left = 0;
-    this.selectionState.leftstr = '';
-    this.selectionState.top = 0;
-    this.selectionState.topstr = '';
-    this.selectionState.paste = this.GetClipboardType();
-    this.selectionState.TextDirection = 0;
-    this.selectionState.dimensions = 0;
-    this.selectionState.ncells_selected = 0;
-    this.selectionState.cell_notext = false;
-    this.selectionState.celltype = 0;
-    this.selectionState.cellselected = false;
-    this.selectionState.cellflags = 0;
-    this.selectionState.ntablesselected = 0;
-    this.selectionState.bInNoteEdit = this.bInNoteEdit;
-    this.selectionState.allowcopy = false;
-    this.selectionState.selectionhastext = false;
-    this.selectionState.npolylinecontainerselected = 0;
-    this.selectionState.projectTableSelected = false;
-    this.selectionState.lockedTableSelected = false;
-    this.selectionState.nsegs = 0;
-    this.selectionState.polyclosed = false;
-    this.selectionState.iswallselected = false;
-    this.selectionState.WallThickness = 0;
-    this.selectionState.subtype = 0;
-    this.selectionState.objecttype = 0;
-    this.selectionState.datasetElemID = -1;
-    this.selectionState.tselect = -1;
-    this.selectionState.fixedCornerRadius = -2;
-    this.selectionState.lineCornerRadius = -2;
-    this.selectionState.connectorCanHaveCurve = false;
-    this.selectionState.csOptMng = T3Gv.wallOpt;
-    this.selectionState.isJiraCard = false;
-
-    T3Util.Log('O.Opt ResetSelectionState - Output: Selection state reset');
-  }
 
   HandleDimensionEditMode(sessionData) {
     T3Util.Log('O.Opt HandleDimensionEditMode - Input:', sessionData);
@@ -1190,7 +982,6 @@ class OptUtil {
 
     T3Util.Log('O.Opt HandleDimensionEditMode - Output: Dimension edit mode processed');
   }
-
 
   HandleEmptySelectionOrNoteEditMode(sessionData) {
     T3Util.Log('O.Opt HandleEmptySelectionOrNoteEditMode - Input:', sessionData);
@@ -1219,7 +1010,6 @@ class OptUtil {
 
     T3Util.Log('O.Opt HandleEmptySelectionOrNoteEditMode - Output: Empty selection or note edit mode processed');
   }
-
 
   ProcessTargetObject(targetId, targetObject) {
     T3Util.Log('O.Opt ProcessTargetObject - Input:', { targetId, targetObject });
@@ -1269,7 +1059,7 @@ class OptUtil {
       }
 
       // // Handle table objects
-      // const table = T3Gv.opt.Table_HideUI(targetObject) ? null : targetObject.GetTable(false);
+      // const table = T3Gv.opt.TableHideUI(targetObject) ? null : targetObject.GetTable(false);
       // if (table) {
       //   this.selectionState.IsTargetTable = true;
       //   this.selectionState.NTableRows = table.rows.length;
@@ -1514,104 +1304,11 @@ class OptUtil {
     T3Util.Log('O.Opt HandleTextFormatAttributes - Output: Text format attributes processed');
   }
 
-  GetObjectPtr(blockId, isPreserveBlock?) {
-    // T3Util.Log('O.Opt GetObjectPtr - Input:', { blockId, isPreserveBlock });
-
-    const object = T3Gv.stdObj.GetObject(blockId);
-    if (object == null || blockId < 0) {
-      T3Util.Log('O.Opt GetObjectPtr - Output: null (invalid block ID or not found)');
-      return null;
-    }
-
-    const result = isPreserveBlock ?
-      T3Gv.stdObj.PreserveBlock(blockId).Data :
-      object.Data;
-
-    // T3Util.Log('O.Opt GetObjectPtr - Output:', result);
-    return result;
-  }
-
-  GetClipboardType() {
-    T3Util.Log('O.Opt GetClipboardType - Input: No parameters');
-
-    // Get the text edit session data
-    const tedSession = this.GetObjectPtr(this.tedSessionBlockId, false);
-
-    // Initialize clipboard
-    T3Gv.clipboard.Get();
-
-    let clipboardType;
-
-    // Handle case when text editing is active or note editing is active
-    if (tedSession.theActiveTextEditObjectID !== -1 || this.bInNoteEdit) {
-      // if (tedSession.theActiveTableObjectID >= 0 &&
-      //   this.contentHeader.ClipboardType === T3Constant.ClipboardType.Table &&
-      //   this.contentHeader.ClipboardBuffer) {
-      //   clipboardType = T3Constant.ClipboardType.Table;
-      // } else
-
-      if (this.textClipboard && this.textClipboard.text) {
-        clipboardType = T3Constant.ClipboardType.Text;
-      } else {
-        clipboardType = T3Constant.ClipboardType.None;
-      }
-    }
-    // Handle case when table is active
-    // else if (tedSession.theActiveTableObjectID >= 0 &&
-    //   ((this.contentHeader.ClipboardType === T3Constant.ClipboardType.Table &&
-    //     this.contentHeader.ClipboardBuffer) ||
-    //     (this.textClipboard && this.textClipboard.text))) {
-    //   clipboardType = T3Constant.ClipboardType.Table;
-    // }
-    // Handle case when LM content is in clipboard
-    else if (T3Gv.opt.contentHeader.ClipboardBuffer &&
-      this.contentHeader.ClipboardType === T3Constant.ClipboardType.LM) {
-      clipboardType = T3Constant.ClipboardType.LM;
-    }
-    // Handle case when text is selected and text is in clipboard
-    else if (this.GetTargetSelect() >= 0 && this.textClipboard && this.textClipboard.text) {
-      clipboardType = T3Constant.ClipboardType.Text;
-    }
-    // Default case: no valid clipboard content
-    else {
-      clipboardType = T3Constant.ClipboardType.None;
-    }
-
-    T3Util.Log('O.Opt GetClipboardType - Output:', clipboardType);
-    return clipboardType;
-  }
-
-  GetTargetSelect() {
-    T3Util.Log('O.Opt GetTargetSelect - Input: No parameters');
-
-    // Get session data
-    const sessionData = this.GetObjectPtr(this.sedSessionBlockId, false);
-
-    // // Check if table is active and update target select if needed
-    // const activeTableId = this.Table_GetActiveID();
-    // if (activeTableId >= 0) {
-    //   sessionData.tselect = activeTableId;
-    // }
-
-    // Default to no selection
-    let targetSelectId = -1;
-
-    // Verify the selected object is valid
-    if (sessionData.tselect >= 0) {
-      const selectedObject = T3Gv.opt.GetObjectPtr(sessionData.tselect, false);
-      if (selectedObject && selectedObject instanceof BaseDrawObject) {
-        targetSelectId = sessionData.tselect;
-      }
-    }
-
-    T3Util.Log('O.Opt GetTargetSelect - Output:', targetSelectId);
-    return targetSelectId;
-  }
 
   // Table_GetActiveID() {
   //   T3Util.Log('O.Opt Table_GetActiveID - Input: No parameters');
 
-  //   const activeTableId = this.GetObjectPtr(this.tedSessionBlockId, false).theActiveTableObjectID;
+  //   const activeTableId = ObjectUtil.GetObjectPtr(this.teDataBlockId, false).theActiveTableObjectID;
 
   //   T3Util.Log('O.Opt Table_GetActiveID - Output:', activeTableId);
   //   return activeTableId;
@@ -1715,114 +1412,6 @@ class OptUtil {
     T3Util.Log("O.Opt SetEditMode - Output:", { mode: stateMode, cursor: actualCursorType });
   }
 
-  ShowXY(showCoordinates) {
-    // T3Util.Log("O.Opt ShowXY - Input:", { showCoordinates });
-    // Show the x and y coordinates of the mouse pointer
-    // T3Util.Log("O.Opt ShowXY - Output: Coordinates display updated");
-  }
-
-  UpdateDisplayCoordinates(dimensions, position, cursorType, drawingObject) {
-    // T3Util.Log("O.Opt UpdateDisplayCoordinates - Input:", {
-    //   dimensions,
-    //   position,
-    //   cursorType,
-    //   drawingObject: drawingObject ? drawingObject.BlockID : null
-    // });
-
-    // Set default cursor type if not provided
-    if (cursorType == null) {
-      // cursorType = CollabOverlayContoller.CursorTypes.Default;
-      cursorType = "DEFAULT";
-    }
-
-    // // Handle collaboration cursor movement
-    // if (Collab.IsCollaborating() && position) {
-    //   const currentTime = Date.now();
-    //   if (currentTime - Collab.MoveTimestamp > Collab.MoveDelay) {
-    //     const message = {
-    //       CursorType: cursorType
-    //     };
-    //     Collab.Animation_BuildMessage(
-    //       position.x,
-    //       position.y,
-    //       NvConstant.Collab_AnimationMessages.CursorMove,
-    //       message
-    //     );
-    //     Collab.MoveTimestamp = currentTime;
-    //   }
-    // }
-
-    // Update ruler displays if rulers are enabled
-    if (T3Gv.docUtil.docConfig.showRulers) {
-      let showFractionalInches = 0;
-      let showFeetAsInches = 0;
-      const useFeet = T3Gv.docUtil.rulerConfig.useInches &&
-        T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnit.Feet;
-
-      // Configure display options for feet/inch mode
-      if (useFeet) {
-        showFractionalInches = showFeetAsInches = NvConstant.DimensionFlags.ShowFractionalInches;
-        if (drawingObject) {
-          showFeetAsInches = Utils2.SetFlag(
-            showFractionalInches,
-            NvConstant.DimensionFlags.ShowFeetAsInches,
-            (drawingObject.Dimensions & NvConstant.DimensionFlags.ShowFeetAsInches) > 0
-          );
-        }
-      }
-
-      // Update dimension display
-      if (dimensions) {
-        const xLength = this.GetLengthInRulerUnits(dimensions.x, false, T3Gv.docUtil.rulerConfig.originx, showFractionalInches);
-        const yLength = this.GetLengthInRulerUnits(dimensions.y, false, T3Gv.docUtil.rulerConfig.originy, showFractionalInches);
-        const width = this.GetLengthInRulerUnits(dimensions.width, false, null, showFeetAsInches);
-        const height = this.GetLengthInRulerUnits(dimensions.height, false, null, showFeetAsInches);
-
-        // Helper function to format number values for display (assuming it's defined elsewhere)
-        const formatValue = (value) => value ? value : "";
-
-        // // Update UI controls with the dimension values
-        // const workArea = Resources.Controls.WorkArea;
-
-        // const leftEdit = workArea.LeftEdit;
-        // leftEdit.GetControl();
-        // if (leftEdit.Control) {
-        //   leftEdit.Control[0].value = formatValue(NumberToString(xLength, useFeet));
-        // }
-
-        // const topEdit = workArea.TopEdit;
-        // topEdit.GetControl();
-        // if (topEdit.Control) {
-        //   topEdit.Control[0].value = formatValue(NumberToString(yLength, useFeet));
-        // }
-
-        // const widthEdit = workArea.WidthEdit;
-        // widthEdit.GetControl();
-        // if (widthEdit.Control) {
-        //   widthEdit.Control[0].value = formatValue(NumberToString(width, useFeet));
-        // }
-
-        // const heightEdit = workArea.HeightEdit;
-        // heightEdit.GetControl();
-        // if (heightEdit.Control) {
-        //   heightEdit.Control[0].value = formatValue(NumberToString(height, useFeet));
-        // }
-      }
-
-      // Constrain position to document bounds
-      if (position) {
-        position.x = Math.max(0, position.x);
-        position.y = Math.max(0, position.y);
-
-        const sessionBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
-        position.x = Math.min(sessionBlock.dim.x, position.x);
-        position.y = Math.min(sessionBlock.dim.y, position.y);
-      }
-    }
-
-    // T3Util.Log("O.Opt UpdateDisplayCoordinates - Output: Coordinates updated in UI");
-  }
-
   IsWheelClick(event) {
     T3Util.Log("O.Opt IsWheelClick - Input:", event);
 
@@ -1874,10 +1463,6 @@ class OptUtil {
     T3Util.Log("O.Opt RubberBandSelect_Cancel - Output: Rubber band selection canceled");
   }
 
-  SetUIAdaptation(event) {
-  }
-
-
   SetDocumentScale(scaleFactor, isAnimated?) {
     T3Util.Log('O.Opt SetDocumentScale: input', { scaleFactor, isAnimated });
 
@@ -1895,8 +1480,8 @@ class OptUtil {
       const activeEdit = this.svgDoc.GetActiveEdit();
 
       if (!activeEdit) {
-        this.HideAllSVGSelectionStates();
-        this.RenderAllSVGSelectionStates();
+        SvgUtil.HideAllSVGSelectionStates();
+        SvgUtil.RenderAllSVGSelectionStates();
       }
 
       // Double IdleZoomControls();
@@ -1905,28 +1490,12 @@ class OptUtil {
     T3Util.Log('O.Opt UpdateDocumentScale: output');
   }
 
-  HideAllSVGSelectionStates() {
-    T3Util.Log('O.Opt HideAllSVGSelectionStates: input');
-
-    const selectedList = this.GetObjectPtr(this.theSelectedListBlockID, false);
-    this.SetDimensionVisibility(selectedList, false);
-
-    if (!T3Gv.opt.fromOverlayLayer) {
-      this.svgOverlayLayer.RemoveAll();
-    }
-
-    this.ClearAllActionArrowTimers();
-    this.ShowOverlayLayer();
-
-    T3Util.Log('O.Opt HideAllSVGSelectionStates: output');
-  }
-
   SetDimensionVisibility(objects, isVisible) {
     T3Util.Log('O.Opt SetDimensionVisibility: input', { objects, isVisible });
 
     let objectCount = objects.length;
     for (let i = 0; i < objectCount; i++) {
-      let object = T3Gv.opt.GetObjectPtr(objects[i], false);
+      let object = ObjectUtil.GetObjectPtr(objects[i], false);
       if (object && object.ShowOrHideDimensions) {
         object.ShowOrHideDimensions(isVisible);
       }
@@ -1935,31 +1504,12 @@ class OptUtil {
     T3Util.Log('O.Opt SetDimensionVisibility: output');
   }
 
-  IsRightClick(event) {
-    T3Util.Log('O.Opt isRightClick: input', event);
-
-    let isRightClick = false;
-
-    if (event.gesture) {
-      event = event.gesture.srcEvent;
-    }
-
-    if (event instanceof MouseEvent) {
-      isRightClick = (event.which === 3 || (event.ctrlKey && event.metaKey));
-    } else if ('onpointerdown' in window && event instanceof PointerEvent) {
-      isRightClick = (event.which === 3);
-    }
-
-    T3Util.Log('O.Opt isRightClick: output', isRightClick);
-    return isRightClick;
-  }
-
   ClearSelectionClick() {
     T3Util.Log('O.Opt ClearSelectionClick: input');
 
     this.CloseEdit();
     this.ClearAnySelection(false);
-    this.UpdateSelectionAttributes(null);
+    SelectUtil.UpdateSelectionAttributes(null);
 
     T3Util.Log('O.Opt ClearSelectionClick: output');
   }
@@ -1992,51 +1542,13 @@ class OptUtil {
 
   ClearAnySelection(preserveBlock: boolean) {
     T3Util.Log("O.Opt ClearAnySelection - Input:", { preserveBlock });
-    const selectedList = this.GetObjectPtr(this.theSelectedListBlockID, preserveBlock);
+    const selectedList = ObjectUtil.GetObjectPtr(this.theSelectedListBlockID, preserveBlock);
     if (selectedList.length !== 0) {
-      this.SetTargetSelect(-1, preserveBlock);
-      this.HideAllSVGSelectionStates();
+      SelectUtil.SetTargetSelect(-1, preserveBlock);
+      SvgUtil.HideAllSVGSelectionStates();
       selectedList.length = 0;
     }
     T3Util.Log("O.Opt ClearAnySelection - Output: selection cleared");
-  }
-
-  SetTargetSelect(targetId: number, preserveSession: boolean) {
-    T3Util.Log("O.Opt SetTargetSelect - Input:", { targetId, preserveSession });
-    let sessionData = this.GetObjectPtr(this.sedSessionBlockId, preserveSession);
-    sessionData.tselect = targetId;
-    let dimensions: any = null;
-    if (targetId > 0) {
-      const drawingObject = this.GetObjectPtr(targetId, false);
-      if (drawingObject && drawingObject instanceof BaseDrawObject) {
-        dimensions = drawingObject.GetDimensionsForDisplay();
-      } else {
-        targetId = -1;
-        sessionData.tselect = targetId;
-      }
-    }
-    if (dimensions) {
-      this.ShowFrame(true);
-      this.UpdateDisplayCoordinates(dimensions, null, null, /* drawingObject */ null);
-    } else {
-      this.ShowFrame(false);
-    }
-    T3Util.Log("O.Opt SetTargetSelect - Output:", { targetId: sessionData.tselect, dimensions });
-  }
-
-  ShowFrame(isShowFrame: boolean) {
-    T3Util.Log('O.Opt ShowFrame - Input:', { isShowFrame });
-
-    const isShowRulers = T3Gv.docUtil.docConfig.showRulers;
-
-    if (!isShowRulers) {
-      T3Util.Log('O.Opt ShowFrame - Output: Rulers are not shown');
-      return;
-    }
-
-    // Double show frame details
-
-    T3Util.Log('O.Opt ShowFrame - Output: Frame visibility set to', isShowFrame);
   }
 
   StartRubberBandSelect(event: any) {
@@ -2074,7 +1586,7 @@ class OptUtil {
       }
 
       // Ensure any active edit is closed
-      this.GetObjectPtr(this.tedSessionBlockId, false);
+      ObjectUtil.GetObjectPtr(this.teDataBlockId, false);
       T3Gv.opt.CloseEdit();
 
       // Create the rubber band shape as a rectangle
@@ -2151,175 +1663,8 @@ class OptUtil {
     // T3Util.Log('O.Opt ClearFieldDataDatePicker - Output: DatePicker cleared');
   }
 
-  ClearAllActionArrowTimers() {
-    T3Util.Log('O.Opt ClearAllActionArrowTimers: input');
 
-    const visibleObjects = this.VisibleZList();
-    for (let i = 0; i < visibleObjects.length; i++) {
-      const object = this.GetObjectPtr(visibleObjects[i], false);
-      if (object && object.actionArrowHideTimerID !== -1) {
-        this.actionArrowHideTimer.clearTimeout(object.actionArrowHideTimerID);
-        object.actionArrowHideTimerID = -1;
-      }
-    }
-
-    T3Util.Log('O.Opt ClearAllActionArrowTimers: output');
-  }
-
-  VisibleZList() {
-    T3Util.Log('O.Opt VisibleZList: input');
-
-    const layersManager = T3Gv.opt.GetObjectPtr(this.layersManagerBlockId, false);
-    const layers = layersManager.layers;
-    const numberOfLayers = layersManager.nlayers;
-    const activeLayerIndex = layersManager.activelayer;
-    let visibleZList = [];
-
-    for (let i = numberOfLayers - 1; i >= 0; i--) {
-      const layer = layers[i];
-      if (i === activeLayerIndex || (layer.flags & NvConstant.LayerFlags.Visible)) {
-        visibleZList = visibleZList.concat(layer.zList);
-      }
-    }
-
-    T3Util.Log('O.Opt VisibleZList: output', visibleZList);
-    return visibleZList;
-  }
-
-  ShowOverlayLayer() {
-    T3Util.Log('O.Opt ShowOverlayLayer: input');
-    this.svgOverlayLayer.SetVisible(true);
-    T3Util.Log('O.Opt ShowOverlayLayer: output');
-  }
-
-  RenderAllSVGSelectionStates() {
-    T3Util.Log('O.Opt RenderAllSVGSelectionStates - Input: No parameters');
-
-    // Get the visible objects list and the currently selected objects
-    const visibleObjectIds = this.ActiveVisibleZList();
-    const visibleObjectCount = visibleObjectIds.length;
-    const selectedList = T3Gv.stdObj.GetObject(this.theSelectedListBlockID).Data;
-
-    let objectIndex = 0;
-    let indexInSelectedList = -1;
-    let objectId = 0;
-    let drawingObject = null;
-    let svgElement = null;
-    let actionTriggerElement = null;
-    let actionTriggerId = null;
-    const targetSelectedId = this.GetTargetSelect();
-
-    // List of dimension element types to check for visibility
-    const dimensionElementTypes = [
-      OptConstant.SVGElementClass.DimLine,
-      OptConstant.SVGElementClass.DimText,
-      OptConstant.SVGElementClass.AreaDimLine,
-      OptConstant.SVGElementClass.DimTextNoEdit
-    ];
-
-    // Create action click handler factory
-    const createActionClickHandler = function (drawingObject) {
-      return function (event) {
-        // if (T3Constant.DocContext.HTMLFocusControl &&
-        //   T3Constant.DocContext.HTMLFocusControl.blur) {
-        //   T3Constant.DocContext.HTMLFocusControl.blur();
-        // }
-        drawingObject.LM_ActionClick(event);
-        return false;
-      };
-    };
-
-    // Process each visible object
-    for (objectIndex = 0; objectIndex < visibleObjectCount; ++objectIndex) {
-      objectId = visibleObjectIds[objectIndex];
-
-      // Skip if object is not in selection list or has issues
-      indexInSelectedList = selectedList.indexOf(objectId);
-      if (indexInSelectedList < 0 ||
-        (drawingObject = T3Gv.opt.GetObjectPtr(objectId, false)) === null ||
-        drawingObject.flags & NvConstant.ObjFlags.NotVisible ||
-        (svgElement = this.svgObjectLayer.GetElementById(objectId)) === null ||
-        svgElement.GetElementById(OptConstant.SVGElementClass.Shape) === null) {
-        continue;
-      }
-
-      // Handle action triggers
-      actionTriggerId = OptConstant.Common.Action + objectId;
-      actionTriggerElement = this.svgOverlayLayer.GetElementById(actionTriggerId);
-
-      if (actionTriggerElement === null &&
-        (actionTriggerElement = drawingObject.CreateActionTriggers(this.svgDoc, objectId, svgElement, targetSelectedId)) !== null) {
-
-        this.svgOverlayLayer.AddElement(actionTriggerElement);
-
-        try {
-          actionTriggerElement.SetRotation(drawingObject.RotationAngle);
-        } catch (error) {
-          throw error;
-        }
-
-        // Add interaction events if object is not locked
-        if ((drawingObject.flags & NvConstant.ObjFlags.Lock) === 0 &&
-          !T3Gv.docUtil.IsReadOnly() &&
-          !drawingObject.NoGrow()) {
-
-          const domElement = actionTriggerElement.DOMElement();
-          const hammerInstance = new Hammer(domElement);
-
-          hammerInstance.on('tap', EvtUtil.Evt_ActionTriggerTap);
-          hammerInstance.on('dragstart', createActionClickHandler(drawingObject));
-
-          if (this.isGestureCapable) {
-            hammerInstance.on('pinchin', EvtUtil.Evt_WorkAreaHammerPinchIn);
-            hammerInstance.on('pinchout', EvtUtil.Evt_WorkAreaHammerPinchOut);
-            hammerInstance.on('transformend', EvtUtil.Evt_WorkAreaHammerPinchEnd);
-          }
-
-          actionTriggerElement.SetEventProxy(hammerInstance);
-        }
-      }
-
-      // Handle dimension visibility
-      if (drawingObject.Dimensions & NvConstant.DimensionFlags.Select) {
-        let elementId;
-        let currentElement = null;
-
-        // Set opacity for dimension elements based on selection state
-        for (let elementIndex = svgElement.ElementCount() - 1; elementIndex >= 1; elementIndex--) {
-          currentElement = svgElement.GetElementByIndex(elementIndex);
-          elementId = currentElement.GetID();
-
-          if (dimensionElementTypes.indexOf(elementId) >= 0) {
-            currentElement.SetOpacity(indexInSelectedList >= 0 ? 1 : 0);
-          }
-        }
-      }
-    }
-
-    T3Util.Log('O.Opt RenderAllSVGSelectionStates - Output: Selection states rendered');
-  }
-
-  ActiveVisibleZList() {
-    T3Util.Log('O.Opt ActiveVisibleZList: input');
-
-    const layersManager = T3Gv.opt.GetObjectPtr(this.layersManagerBlockId, false);
-    const layers = layersManager.layers;
-    const numberOfLayers = layersManager.nlayers;
-    const activeLayerIndex = layersManager.activelayer;
-    let visibleZList = [];
-
-    for (let i = numberOfLayers - 1; i >= 0; i--) {
-      const layer = layers[i];
-      if (i === activeLayerIndex || (layer.flags & NvConstant.LayerFlags.Visible && layer.flags & NvConstant.LayerFlags.Active)) {
-        visibleZList = visibleZList.concat(layer.zList);
-      }
-    }
-
-    T3Util.Log('O.Opt ActiveVisibleZList: output', visibleZList);
-    return visibleZList;
-  }
-
-  UpdateFieldDataTooltipPos = function (e, t) {
+  UpdateFieldDataTooltipPos(e, t) {
     // if (this.FieldedDataTooltipVisible() && (e || t)) {
     //   var a = SDUI.Commands.MainController.Dropdowns.GetDropdown(Resources.Controls.Dropdowns.EditDataValues.Id);
     //   if (a && a.Control) {
@@ -2377,14 +1722,14 @@ class OptUtil {
         if (activeEdit) {
           this.formatPainterText = activeEdit.GetSelectedFormat();
           this.formatPainterStyle = { StyleRecord: {} };
-          this.formatPainterStyle.Text = new TextFormatData();
+          this.formatPainterStyle.Text = new TextFmtData();
           this.TextStyleToSDText(this.formatPainterStyle.Text, this.formatPainterText);
           this.SetEditMode(NvConstant.EditState.FormatPaint);
         }
       }
       // // CASE 2: If a table is active, set up table format painter
       // else if (activeTableId >= 0) {
-      //   if ((tableObject = this.GetObjectPtr(activeTableId, false)) &&
+      //   if ((tableObject = ObjectUtil.GetObjectPtr(activeTableId, false)) &&
       //     (tableCell = tableObject.GetTable(false))) {
 
       //     // If a cell is selected
@@ -2445,8 +1790,8 @@ class OptUtil {
       //   }
       // }
       // CASE 3: If a shape/object is selected, set up object format painter
-      else if ((targetObject = this.GetTargetSelect()) >= 0 &&
-        (tableObject = this.GetObjectPtr(targetObject, false))) {
+      else if ((targetObject = SelectUtil.GetTargetSelect()) >= 0 &&
+        (tableObject = ObjectUtil.GetObjectPtr(targetObject, false))) {
 
         this.crtOpt = OptConstant.OptTypes.FormatPainter;
         this.formatPainterSticky = makeSticky;
@@ -2492,8 +1837,8 @@ class OptUtil {
   DeactivateAllTextEdit(skipShapeClose: boolean, closeOption?: any) {
     T3Util.Log('O.Opt DeactivateAllTextEdit - Input:', { skipShapeClose, closeOption });
 
-    const tedSession = this.GetObjectPtr(this.tedSessionBlockId, false);
-    if (tedSession.theActiveTextEditObjectID !== -1) {
+    const teData = ObjectUtil.GetObjectPtr(this.teDataBlockId, false);
+    if (teData.theActiveTextEditObjectID !== -1) {
       this.DeactivateTextEdit(skipShapeClose, closeOption);
     } else {
       const activeEdit = this.svgDoc.GetActiveEdit();
@@ -2546,7 +1891,7 @@ class OptUtil {
   CloseShapeEdit(providedOutlineId, useAlternate?, alternateOutlineId?) {
     T3Util.Log("O.Opt CloseShapeEdit - Input:", { providedOutlineId, useAlternate, alternateOutlineId });
 
-    let sessionData = this.GetObjectPtr(this.tedSessionBlockId, false);
+    let sessionData = ObjectUtil.GetObjectPtr(this.teDataBlockId, false);
     let activeOutlineId = sessionData.theActiveOutlineObjectID;
 
     // If using the alternate outline id then override activeOutlineId.
@@ -2564,7 +1909,7 @@ class OptUtil {
         T3Util.Log("O.Opt CloseShapeEdit - Output: Provided outline id equals active outline id, no action taken");
         return;
       }
-      let shapeObject = this.GetObjectPtr(activeOutlineId, false);
+      let shapeObject = ObjectUtil.GetObjectPtr(activeOutlineId, false);
       if (shapeObject) {
         if (shapeObject.objecttype === NvConstant.FNObjectTypes.FlWall) {
           T3Util.Log("O.Opt CloseShapeEdit - Output: Active outline is a wall opt wall, skipping close");
@@ -2573,7 +1918,7 @@ class OptUtil {
         // Begin secondary edit and re-fetch the shape object.
         // Collab.BeginSecondaryEdit();
 
-        shapeObject = this.GetObjectPtr(activeOutlineId, false);
+        shapeObject = ObjectUtil.GetObjectPtr(activeOutlineId, false);
         if (
           shapeObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Line &&
           shapeObject.LineType === OptConstant.LineType.POLYLINE &&
@@ -2586,7 +1931,7 @@ class OptUtil {
       }
       if (!useAlternate) {
         // Reset the active outline id.
-        sessionData = this.GetObjectPtr(this.tedSessionBlockId, true);
+        sessionData = ObjectUtil.GetObjectPtr(this.teDataBlockId, true);
         sessionData.theActiveOutlineObjectID = -1;
       }
       this.CompleteOperation();
@@ -2865,7 +2210,6 @@ class OptUtil {
     return altKeyIsPressed === true;
   }
 
-
   UnbindRubberBandHammerEvents() {
     T3Util.Log('O.Opt UnbindRubberBandHammerEvents - Input');
 
@@ -2953,9 +2297,9 @@ class OptUtil {
       this.ResizeSVGDocument();
       this.RenderAllSVGObjects();
 
-      const sessionData = this.GetObjectPtr(this.sedSessionBlockId, false);
-      const selectedList = this.GetObjectPtr(this.theSelectedListBlockID, false);
-      this.UpdateSelectionAttributes(selectedList);
+      const sessionData = ObjectUtil.GetObjectPtr(this.sdDataBlockId, false);
+      const selectedList = ObjectUtil.GetObjectPtr(this.theSelectedListBlockID, false);
+      SelectUtil.UpdateSelectionAttributes(selectedList);
 
       T3Util.Log('O.Opt ExceptionCleanup - Output: done');
     } catch (cleanupError) {
@@ -2966,23 +2310,11 @@ class OptUtil {
     throw error;
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
   SelectAllInRect(selectionRect, allowMultipleSelection) {
     T3Util.Log("O.Opt SelectAllInRect - Input:", { selectionRect, allowMultipleSelection });
 
     // Get all visible objects and filter out objects flagged as not visible
-    const visibleObjects = this.ActiveVisibleZList();
+    const visibleObjects = LayerUtil.ActiveVisibleZList();
     const filteredObjects = this.RemoveNotVisible(visibleObjects);
     const objectCount = filteredObjects.length;
     const shapeContainerType = NvConstant.FNObjectTypes.ShapeContainer;
@@ -3034,7 +2366,7 @@ class OptUtil {
         this.ClearSelectionClick();
       } else {
         T3Util.Log("O.Opt SelectAllInRect - Found objects:", selectedObjects.length);
-        this.SelectObjects(selectedObjects, allowMultipleSelection, false);
+        SelectUtil.SelectObjects(selectedObjects, allowMultipleSelection, false);
       }
     } else {
       T3Util.Log("O.Opt SelectAllInRect - No visible objects to select");
@@ -3051,7 +2383,7 @@ class OptUtil {
 
     for (let i = 0; i < objects.length; i++) {
       const objectId = objects[i];
-      const object = this.GetObjectPtr(objectId, false);
+      const object = ObjectUtil.GetObjectPtr(objectId, false);
 
       if (object && !(object.flags & notVisibleFlag)) {
         visibleObjects.push(objectId);
@@ -3103,7 +2435,6 @@ class OptUtil {
     T3Util.Log("O.Opt RubberBandSelectDoAutoScroll - Output: Rubber band selection moved");
   }
 
-
   CompleteOperation(
     selectionObjects: any,
     preserveUndoState?: boolean,
@@ -3117,7 +2448,7 @@ class OptUtil {
     // }
 
     // if (!this.collaboration.NoRedrawFromSameEditor) {
-    this.HideAllSVGSelectionStates();
+    SvgUtil.HideAllSVGSelectionStates();
     // }
 
     this.DynamicSnapsRemoveGuides(this.dynamicGuides);
@@ -3138,16 +2469,16 @@ class OptUtil {
     // }
 
     if (selectionObjects /*&& Collab.AllowSelectionChange()*/) {
-      this.SelectObjects(selectionObjects, false, true);
+      SelectUtil.SelectObjects(selectionObjects, false, true);
     } else /*if (!noRedraw)*/ {
-      this.RenderAllSVGSelectionStates();
+      SvgUtil.RenderAllSVGSelectionStates();
     }
 
     if (!preserveUndoState) {
       this.PreserveUndoState(false);
     }
 
-    const selectedList = this.GetObjectPtr(this.theSelectedListBlockID, false);
+    const selectedList = ObjectUtil.GetObjectPtr(this.theSelectedListBlockID, false);
     T3Gv.docUtil.ShowCoordinates(true);
 
     // if (Collab.AllowSelectionChange()) {
@@ -3168,7 +2499,7 @@ class OptUtil {
     T3Util.Log("O.Opt DrawNewObject - Input:", { newShape, clearExistingSection });
 
     this.SetModalOperation(OptConstant.OptTypes.Draw);
-    this.GetObjectPtr(this.tedSessionBlockId, false);
+    ObjectUtil.GetObjectPtr(this.teDataBlockId, false);
     this.CloseEdit();
 
     this.lineDrawId = -1;
@@ -3217,7 +2548,7 @@ class OptUtil {
     T3Util.Log("O.Opt StartNewObjectDraw: Draw start coordinates set", this.drawStartX, this.drawStartY);
 
     // Pre-track check before drawing
-    const preTrackCheck = this.drawShape.LM_DrawPreTrack(docCoords);
+    const preTrackCheck = this.drawShape.LMDrawPreTrack(docCoords);
     if (!preTrackCheck) {
       T3Util.Log("O.Opt StartNewObjectDraw - Output: Pre-track check failed");
       return;
@@ -3274,8 +2605,8 @@ class OptUtil {
     // Begin drawing the new shape
     let drawShape = this.drawShape;
     this.InitializeAutoGrowDrag();
-    this.ShowFrame(true);
-    drawShape.LM_DrawClick(docX, docY);
+    UIUtil.ShowFrame(true);
+    drawShape.LMDrawClick(docX, docY);
     this.AddNewObject(drawShape, !drawShape.bOverrideDefaultStyleOnDraw, false);
 
     // Retrieve the new object's ID from the active layer
@@ -3306,7 +2637,6 @@ class OptUtil {
 
     T3Util.Log("O.Opt StartNewObjectDraw - Output: New object drawn with ID", this.actionStoredObjectId);
   }
-
 
   FindConnect(targetObjectId, drawingObject, hookPoints, showVisuals, isAttachMode, allowJoin, eventPosition) {
     T3Util.Log("O.Opt FindConnect - Input:", {
@@ -3384,7 +2714,7 @@ class OptUtil {
     hookFlags = Utils2.SetFlag(hookFlags, NvConstant.HookFlags.LcAttachToLine, false);
 
     // Get session data and flags
-    const sessionData = this.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+    const sessionData = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
     if (sessionData) {
       sessionFlags = sessionData.flags;
     }
@@ -3469,7 +2799,7 @@ class OptUtil {
 
       // Check for previous connection if available
       if (this.linkParams.PrevConnect >= 0) {
-        const prevConnectObject = this.GetObjectPtr(this.linkParams.PrevConnect, false);
+        const prevConnectObject = ObjectUtil.GetObjectPtr(this.linkParams.PrevConnect, false);
         if (prevConnectObject) {
           // Check if object is a container
           const containerPoint = Utils1.DeepCopy(T3Gv.opt.linkParams.ContainerPt[0]);
@@ -3510,7 +2840,7 @@ class OptUtil {
 
       // Process the hit if found
       if (hitResult && hitResult.hitcode) {
-        targetObject = this.GetObjectPtr(hitResult.objectid, false);
+        targetObject = ObjectUtil.GetObjectPtr(hitResult.objectid, false);
         if (targetObject == null) {
           T3Util.Log("O.Opt FindConnect - Output: false (Target object not found)");
           return false;
@@ -3860,7 +3190,7 @@ class OptUtil {
         }
       } else if (this.linkParams.ConnectIndex < 0 && this.linkParams.HiliteConnect >= 0) {
         // Handle disconnection if needed
-        const prevConnect = this.GetObjectPtr(this.linkParams.HiliteConnect, false);
+        const prevConnect = ObjectUtil.GetObjectPtr(this.linkParams.HiliteConnect, false);
         drawingObject.OnDisconnect(
           targetObjectId,
           prevConnect,
@@ -3940,7 +3270,7 @@ class OptUtil {
     let hitFrame: any;
     let result: any = {};
     const hitResult = new HitResult(-1, 0, null);
-    const visibleObjects = this.ActiveVisibleZList();
+    const visibleObjects = LayerUtil.ActiveVisibleZList();
 
     if (visibleObjects == null) {
       T3Util.Log("O.Opt FindObject - Output: no visible objects");
@@ -3951,7 +3281,7 @@ class OptUtil {
     for (let idx = visibleObjects.length - 1; idx >= 0; idx--) {
       // Check if an object filter is provided and if the current object's ID is in the filter.
       if (!(isFiltered = objectIdFilter && objectIdFilter.indexOf(visibleObjects[idx]) !== -1)) {
-        currentObject = this.GetObjectPtr(visibleObjects[idx], false);
+        currentObject = ObjectUtil.GetObjectPtr(visibleObjects[idx], false);
         if (currentObject != null) {
           // If containerObject is provided and is a ShapeContainer type, skip connectors.
           if (
@@ -4131,7 +3461,7 @@ class OptUtil {
       throw new Error('The drawing object is null');
     }
 
-    const sessionData = T3Gv.stdObj.GetObject(this.sedSessionBlockId).Data;
+    const sessionData = T3Gv.stdObj.GetObject(this.sdDataBlockId).Data;
 
     if (shouldStyleCopy === undefined) {
       shouldStyleCopy = true;
@@ -4182,7 +3512,7 @@ class OptUtil {
     this.ZListPreserve(layerFlag).push(newBlock.ID);
 
     const isBaseline = drawingObject instanceof BaseLine;
-    const layersData = T3Gv.opt.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
+    const layersData = ObjectUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
 
     const isSpecialLayer = false;
 
@@ -4210,7 +3540,7 @@ class OptUtil {
    */
   MarkAllAllVisibleHigherLayerObjectsDirty() {
     let layerIndex, objectIndex;
-    const layersManager = T3Gv.opt.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
+    const layersManager = ObjectUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
 
     // Iterate from the layer just above the active one (lower index) up to the top-most layer
     for (layerIndex = layersManager.activelayer - 1; layerIndex >= 0; layerIndex--) {
@@ -4270,7 +3600,7 @@ class OptUtil {
 
   ZListPreserve(additionalLayerFlag) {
     T3Util.Log('O.Opt zListPreserve - Input:', additionalLayerFlag);
-    const layersManager = T3Gv.opt.GetObjectPtr(this.layersManagerBlockId, true);
+    const layersManager = ObjectUtil.GetObjectPtr(this.layersManagerBlockId, true);
     const layers = layersManager.layers;
     const activeLayerIndex = layersManager.activelayer;
     let currentLayer = layers[activeLayerIndex];
@@ -4293,7 +3623,7 @@ class OptUtil {
 
   IsTopMostVisibleLayer() {
     T3Util.Log('O.Opt isTopMostVisibleLayer - Input');
-    const layersManager = this.GetObjectPtr(this.layersManagerBlockId, false);
+    const layersManager = ObjectUtil.GetObjectPtr(this.layersManagerBlockId, false);
     const result = layersManager.activelayer === this.GetTopMostVisibleLayer();
     T3Util.Log('O.Opt isTopMostVisibleLayer - Output:', result);
     return result;
@@ -4301,7 +3631,7 @@ class OptUtil {
 
   GetTopMostVisibleLayer() {
     T3Util.Log('O.Opt getTopMostVisibleLayer - Input');
-    const layersManager = T3Gv.opt.GetObjectPtr(this.layersManagerBlockId, false);
+    const layersManager = ObjectUtil.GetObjectPtr(this.layersManagerBlockId, false);
     const layers = layersManager.layers;
     const totalLayers = layersManager.nlayers;
     for (let i = 0; i < totalLayers; ++i) {
@@ -4325,14 +3655,14 @@ class OptUtil {
     this.AddSVGObject(undefined, lastObjectId, false, shouldRenderSelectionStates);
 
     if (shouldRenderSelectionStates) {
-      this.RenderAllSVGSelectionStates();
+      SvgUtil.RenderAllSVGSelectionStates();
     }
   }
 
   ActiveLayerZList() {
     T3Util.Log('O.Opt ActiveLayerZList - Input');
 
-    const layersManager = T3Gv.opt.GetObjectPtr(this.layersManagerBlockId, false);
+    const layersManager = ObjectUtil.GetObjectPtr(this.layersManagerBlockId, false);
     const activeLayerZList = layersManager.layers[layersManager.activelayer].zList;
 
     T3Util.Log('O.Opt ActiveLayerZList - Output:', activeLayerZList);
@@ -4415,7 +3745,7 @@ class OptUtil {
           if (/*!this.isMobilePlatform &&*/ !T3Gv.docUtil.IsReadOnly()) {
             shapeContainer.svgObj.mouseover(function (event) {
               let elementId = this.SDGObj.GetID();
-              let drawingObj = T3Gv.opt.GetObjectPtr(elementId, false);
+              let drawingObj = ObjectUtil.GetObjectPtr(elementId, false);
               if (drawingObj) {
                 drawingObj.SetRolloverActions(svgDocument, shapeContainer, event);
               }
@@ -4462,7 +3792,7 @@ class OptUtil {
       dragPoint.y = 0;
     }
 
-    let sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sedSessionBlockId).Data;
+    let sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sdDataBlockId).Data;
 
     // If auto-grow is disabled by content header flags, constrain coordinates to session dimensions
     if (T3Gv.opt.contentHeader.flags & OptConstant.CntHeaderFlags.NoAuto) {
@@ -4482,7 +3812,7 @@ class OptUtil {
         T3Gv.opt.dragGotAutoResizeOldX.push(sessionData.dim.x);
 
         // Refresh session data from the preserved block
-        sessionData = T3Gv.stdObj.PreserveBlock(T3Gv.opt.sedSessionBlockId).Data;
+        sessionData = T3Gv.stdObj.PreserveBlock(T3Gv.opt.sdDataBlockId).Data;
         newDimension = {
           x: sessionData.dim.x +
             T3Gv.opt.contentHeader.Page.papersize.x -
@@ -4505,7 +3835,7 @@ class OptUtil {
         T3Gv.opt.dragGotAutoResizeRight &&
         dragPoint.x < T3Gv.opt.dragGotAutoResizeOldX.slice(-1).pop()
       ) {
-        sessionData = T3Gv.stdObj.PreserveBlock(T3Gv.opt.sedSessionBlockId).Data;
+        sessionData = T3Gv.stdObj.PreserveBlock(T3Gv.opt.sdDataBlockId).Data;
         newDimension = {
           x: T3Gv.opt.dragGotAutoResizeOldX.pop(),
           y: sessionData.dim.y
@@ -4525,7 +3855,7 @@ class OptUtil {
       if (dragPoint.y > sessionData.dim.y) {
         T3Gv.opt.dragGotAutoResizeOldY.push(sessionData.dim.y);
 
-        sessionData = T3Gv.stdObj.PreserveBlock(T3Gv.opt.sedSessionBlockId).Data;
+        sessionData = T3Gv.stdObj.PreserveBlock(T3Gv.opt.sdDataBlockId).Data;
         newDimension = {
           x: sessionData.dim.x,
           y: sessionData.dim.y +
@@ -4548,7 +3878,7 @@ class OptUtil {
         T3Gv.opt.dragGotAutoResizeBottom &&
         dragPoint.y < T3Gv.opt.dragGotAutoResizeOldY.slice(-1).pop()
       ) {
-        sessionData = T3Gv.stdObj.PreserveBlock(T3Gv.opt.sedSessionBlockId).Data;
+        sessionData = T3Gv.stdObj.PreserveBlock(T3Gv.opt.sdDataBlockId).Data;
         newDimension = {
           x: sessionData.dim.x,
           y: T3Gv.opt.dragGotAutoResizeOldY.pop()
@@ -4576,146 +3906,6 @@ class OptUtil {
       innerRect.y + innerRect.height <= outerRect.y + outerRect.height;
     T3Util.Log("O.Opt IsRectangleFullyEnclosed - Output:", isEnclosed);
     return isEnclosed;
-  }
-
-  GetLengthInRulerUnits(
-    lengthInUnits: number,
-    skipFeetConversion: boolean,
-    offset: number,
-    displayFlags: number
-  ): string {
-    T3Util.Log("O.Opt GetLengthInRulerUnits - Input:", { lengthInUnits, skipFeetConversion, offset, displayFlags });
-
-    // Get session data for ruler settings
-    let sessionData = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
-    let resultString = "";
-    let feetPart = 0;
-    let inchPart = 0;
-    let fractionalInches = 0;
-    let totalUnits = 0;
-    let tempFloor = 0;
-    let remainder = 0;
-    let fractionalDisplay = 0;
-    let denominator = 0;
-    let fractionString = "";
-    let sign = 1;
-    // Determine whether to show fractional inches by default
-    let showFractionalInches = false;
-    if (displayFlags) {
-      showFractionalInches = (displayFlags & NvConstant.DimensionFlags.ShowFractionalInches) > 0;
-    }
-    let useFeetAsInches = false;
-    if (displayFlags) {
-      useFeetAsInches = (displayFlags & NvConstant.DimensionFlags.ShowFeetAsInches) > 0;
-    }
-    // Adjust for offset if provided
-    if (offset) {
-      offset *= 100;
-      if (!T3Gv.docUtil.rulerConfig.useInches) {
-        offset /= OptConstant.Common.MetricConv;
-      }
-      lengthInUnits -= offset;
-    }
-    // If showing pixels, simply round the value
-    if (T3Gv.docUtil.rulerConfig.showpixels) {
-      resultString = String(Math.round(lengthInUnits));
-      T3Util.Log("O.Opt GetLengthInRulerUnits - Output:", resultString);
-      return resultString;
-    }
-    // Get converted length in display units
-    totalUnits = this.GetLengthInUnits(lengthInUnits);
-    // Process conversion if the settings use inches but display in feet and conversion is not skipped
-    if (
-      T3Gv.docUtil.rulerConfig.useInches &&
-      T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnit.Feet &&
-      !skipFeetConversion
-    ) {
-      if (totalUnits < 0) {
-        sign = -1;
-        totalUnits = -totalUnits;
-      }
-      feetPart = Math.floor(totalUnits / 1);
-      inchPart = 12 * (totalUnits - feetPart);
-      if (showFractionalInches) {
-        fractionalInches = inchPart - Math.floor(inchPart);
-        inchPart = Math.floor(inchPart);
-      }
-      // Adjust inches and feet if inches reach 12
-      if (Number(inchPart).toFixed() === "12") {
-        inchPart = 0;
-        feetPart++;
-      }
-      if (useFeetAsInches) {
-        inchPart += 12 * feetPart;
-        feetPart = 0;
-      }
-      // Process fractional part if any exists
-      if (fractionalInches > 0) {
-        denominator = this.GetFractionStringGranularity(sessionData);
-        fractionalDisplay = fractionalInches / (denominator);
-        fractionalDisplay = Math.round(fractionalDisplay);
-        if (fractionalDisplay >= 1 / denominator) {
-          fractionalDisplay = 0;
-          if (++inchPart !== 12 || useFeetAsInches) {
-            // No extra adjustment needed
-          } else {
-            feetPart++;
-            inchPart = 0;
-          }
-        }
-        if (fractionalDisplay > 0) {
-          // Simplify the fraction by dividing by 2 until not even
-          while (fractionalDisplay % 2 === 0) {
-            fractionalDisplay /= 2;
-            denominator *= 2;
-          }
-          fractionString = fractionalDisplay + '/' + Math.floor(1 / denominator);
-        }
-      }
-      feetPart *= sign;
-      if (feetPart !== 0) {
-        resultString = feetPart + "'";
-      }
-      if (fractionString.length > 0) {
-        resultString += ' ' + Number(inchPart).toFixed();
-        resultString += ' ' + fractionString;
-        resultString += '"';
-      } else if (inchPart > 0) {
-        inchPart = Math.round(inchPart);
-        resultString += ' ' + inchPart + '"';
-      }
-    }
-    // If display units are not feet, simply format the number with specified decimal places
-    else if (
-      T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnit.Inches ||
-      T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnit.M ||
-      T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnit.Cm ||
-      T3Gv.docUtil.rulerConfig.units === NvConstant.RulerUnit.Mm
-    ) {
-      resultString = totalUnits.toFixed(T3Gv.docUtil.rulerConfig.dp);
-    }
-    T3Util.Log("O.Opt GetLengthInRulerUnits - Output:", resultString);
-    return resultString;
-  }
-
-  GetLengthInUnits(length: number): number {
-    T3Util.Log("O.Opt GetLengthInUnits - Input:", { length });
-    const result = length * this.GetToUnits();
-    T3Util.Log("O.Opt GetLengthInUnits - Output:", result);
-    return result;
-  }
-
-  GetToUnits(): number {
-    T3Util.Log("O.Opt GetToUnits - Input");
-    let dpi = T3Gv.docUtil.DocObject().GetWorkArea().docDpi;
-    let conversionFactor = 0;
-    dpi = T3Gv.docUtil.rulerConfig.major;
-    conversionFactor = T3Gv.docUtil.rulerConfig.majorScale / dpi;
-    if (!T3Gv.docUtil.rulerConfig.useInches) {
-      conversionFactor *= T3Gv.docUtil.rulerConfig.metricConv;
-    }
-    T3Util.Log("O.Opt GetToUnits - Output:", conversionFactor);
-    return conversionFactor;
   }
 
   CancelOperation(): void {
@@ -4756,12 +3946,12 @@ class OptUtil {
   CancelObjectDraw(): void {
     T3Util.Log("O.Opt CancelObjectDraw - Input: No parameters");
 
-    const actionObject = this.GetObjectPtr(this.actionStoredObjectId, false);
+    const actionObject = ObjectUtil.GetObjectPtr(this.actionStoredObjectId, false);
     const isPolyLineOrContainer = actionObject instanceof PolyLine || actionObject instanceof PolyLineContainer;
 
     // Clear modal operation and release stamp if needed.
     this.SetModalOperation(OptConstant.OptTypes.None);
-    this.LM_StampPostRelease(false);
+    this.LMStampPostRelease(false);
 
     if (this.actionStoredObjectId >= 0 && !isPolyLineOrContainer) {
       this.Undo(true);
@@ -4772,7 +3962,7 @@ class OptUtil {
       this.actionSvgObject = null;
     } else {
       // Force update when there is an object, but it is a polyline type.
-      this.GetObjectPtr(this.actionStoredObjectId, true);
+      ObjectUtil.GetObjectPtr(this.actionStoredObjectId, true);
     }
 
     // Reset to default edit mode
@@ -4801,8 +3991,8 @@ class OptUtil {
     T3Util.Log("O.Opt CancelObjectDraw - Output: Object draw canceled.");
   }
 
-  LM_StampPostRelease(completeOperation: boolean): void {
-    T3Util.Log("O.Opt LM_StampPostRelease - Input:", { completeOperation });
+  LMStampPostRelease(completeOperation: boolean): void {
+    T3Util.Log("O.Opt LMStampPostRelease - Input:", { completeOperation });
 
     let hookUpdateStatus: number;
     let flowHookResult: boolean = false;
@@ -4884,7 +4074,7 @@ class OptUtil {
     // Reset linkParams
     this.linkParams = null;
 
-    T3Util.Log("O.Opt LM_StampPostRelease - Output: Operation completed");
+    T3Util.Log("O.Opt LMStampPostRelease - Output: Operation completed");
   }
 
   Undo(restoreSequence: boolean, cancelModalOperation?: boolean): boolean {
@@ -4913,17 +4103,17 @@ class OptUtil {
     }
 
     // Get session and layer data
-    const sessionObject = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+    const sessionObject = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
     const spellCheckEnabled = sessionObject.EnableSpellCheck;
-    const layersManager = T3Gv.opt.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
+    const layersManager = ObjectUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
     const activeLayerType = layersManager.layers[layersManager.activelayer].layertype;
-    const tedSession = this.GetObjectPtr(this.tedSessionBlockId, false);
+    const teData = ObjectUtil.GetObjectPtr(this.teDataBlockId, false);
 
     // Check if text editing is active; flush text and preserve undo state if necessary
-    const isTextEditingActive = tedSession.theActiveTextEditObjectID !== -1 &&
-      tedSession.theTELastOp !== NvConstant.TextElemLastOpt.Init &&
-      tedSession.theTELastOp !== NvConstant.TextElemLastOpt.Timeout &&
-      tedSession.theTELastOp !== NvConstant.TextElemLastOpt.Select;
+    const isTextEditingActive = teData.theActiveTextEditObjectID !== -1 &&
+      teData.theTELastOp !== NvConstant.TextElemLastOpt.Init &&
+      teData.theTELastOp !== NvConstant.TextElemLastOpt.Timeout &&
+      teData.theTELastOp !== NvConstant.TextElemLastOpt.Select;
     if (isTextEditingActive) {
       this.FlushTextToLMBlock();
       this.PreserveUndoState(false);
@@ -4949,7 +4139,7 @@ class OptUtil {
     this.UpdateLineHops(true);
 
     // Update spell check settings if changed
-    const sessionBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+    const sessionBlock = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
     if (spellCheckEnabled !== sessionBlock.EnableSpellCheck) {
       // SDUI.Commands.MainController.Document.SetSpellCheck(sessionBlock.EnableSpellCheck, false);
     }
@@ -4966,12 +4156,12 @@ class OptUtil {
     }
 
     // Ensure an active outline is selected if no selection exists
-    const selectedList = this.GetObjectPtr(this.theSelectedListBlockID, false);
-    const tedSessionAfter = this.GetObjectPtr(this.tedSessionBlockId, false);
-    if (tedSessionAfter.theActiveOutlineObjectID !== -1 && selectedList.length === 0) {
+    const selectedList = ObjectUtil.GetObjectPtr(this.theSelectedListBlockID, false);
+    const tDataAfter = ObjectUtil.GetObjectPtr(this.teDataBlockId, false);
+    if (tDataAfter.theActiveOutlineObjectID !== -1 && selectedList.length === 0) {
       const activeOutlineObjects: number[] = [];
-      activeOutlineObjects.push(tedSessionAfter.theActiveOutlineObjectID);
-      this.SelectObjects(activeOutlineObjects, false, false);
+      activeOutlineObjects.push(tDataAfter.theActiveOutlineObjectID);
+      SelectUtil.SelectObjects(activeOutlineObjects, false, false);
     }
 
     // Unregister text editor events, render objects and restore active text edit if necessary
@@ -4980,26 +4170,26 @@ class OptUtil {
     this.RenderAllSVGObjects();
     T3Gv.opt.noUndo = false;
 
-    if (tedSessionAfter.theActiveTextEditObjectID !== -1) {
+    if (tDataAfter.theActiveTextEditObjectID !== -1) {
       this.ResetActiveTextEditAfterUndo();
     }
 
     // Update display coordinates based on target selection if available
-    const targetSelect = T3Gv.opt.GetTargetSelect();
+    const targetSelect = SelectUtil.GetTargetSelect();
     if (targetSelect >= 0) {
-      const selectedObject = this.GetObjectPtr(targetSelect, false);
+      const selectedObject = ObjectUtil.GetObjectPtr(targetSelect, false);
       let dimensions = null;
       if (selectedObject) {
         dimensions = selectedObject.GetDimensionsForDisplay();
-        this.ShowFrame(true);
+        UIUtil.ShowFrame(true);
       }
-      T3Gv.opt.UpdateDisplayCoordinates(dimensions, null, null, selectedObject);
+      UIUtil.UpdateDisplayCoordinates(dimensions, null, null, selectedObject);
     } else {
-      this.ShowFrame(false);
+      UIUtil.ShowFrame(false);
     }
 
     // Update selection attributes and comments panels
-    this.UpdateSelectionAttributes(selectedList);
+    SelectUtil.UpdateSelectionAttributes(selectedList);
     // T3Gv.opt.CommentIdleTab();
     // T3Gv.opt.Comment_UpdatePanel(null);
     // T3Gv.opt.Comment_UpdateDropDown();
@@ -5115,7 +4305,7 @@ class OptUtil {
    */
   GetTargetNode(objectId) {
     // Get the object from the object store
-    const object = this.GetObjectPtr(objectId, false);
+    const object = ObjectUtil.GetObjectPtr(objectId, false);
 
     // If the object exists and has hooks, recursively follow the first hook
     if (object && object.hooks.length) {
@@ -5166,7 +4356,7 @@ class OptUtil {
     ];
     let moveBounds = { x: 0, y: 0, width: 0, height: 0 };
     const constantData = OptConstant;
-    let links = this.GetObjectPtr(this.linksBlockId, false);
+    let links = ObjectUtil.GetObjectPtr(this.linksBlockId, false);
     let isLinksModified = false;
 
     // Early return if no links exist
@@ -5180,7 +4370,7 @@ class OptUtil {
     T3Gv.opt.FixAnyCircularHooks();
 
     // Get session data and save original snap setting
-    const sessionData = this.GetObjectPtr(this.sedSessionBlockId, false);
+    const sessionData = ObjectUtil.GetObjectPtr(this.sdDataBlockId, false);
     const originalSnapEnabled = T3Gv.docUtil.docConfig.enableSnap;
 
     // Disable snapping during link updates
@@ -5192,7 +4382,7 @@ class OptUtil {
       if (links[linkIndex].flags & DSConstant.LinkFlags.SED_L_DELT) {
         // Ensure we're working with a modifiable copy of links
         if (!isLinksModified) {
-          links = this.GetObjectPtr(this.linksBlockId, true);
+          links = ObjectUtil.GetObjectPtr(this.linksBlockId, true);
           isLinksModified = true;
         }
 
@@ -5203,10 +4393,10 @@ class OptUtil {
       else if (
         links[linkIndex].flags & DSConstant.LinkFlags.SED_L_DELL ||
         links[linkIndex].flagss & DSConstant.LinkFlags.SED_L_BREAK ||
-        (hookObject = this.GetObjectPtr(links[linkIndex].hookid, false)) == null
+        (hookObject = ObjectUtil.GetObjectPtr(links[linkIndex].hookid, false)) == null
       ) {
         if (!isLinksModified) {
-          links = this.GetObjectPtr(this.linksBlockId, true);
+          links = ObjectUtil.GetObjectPtr(this.linksBlockId, true);
           isLinksModified = true;
         }
 
@@ -5241,7 +4431,7 @@ class OptUtil {
         linkHasMoveFlag = links[linkIndex].flags & DSConstant.LinkFlags.SED_L_MOVE;
 
         if (linkHasMoveFlag) {
-          targetObject = this.GetObjectPtr(links[linkIndex].targetid, false);
+          targetObject = ObjectUtil.GetObjectPtr(links[linkIndex].targetid, false);
 
           // If tree top is found, mark it for movement
           if (/*OptAhUtil.FindTreeTop(targetObject, linkHasMoveFlag, treeTopInfo)*/ 1 &&
@@ -5267,11 +4457,11 @@ class OptUtil {
         if (links[linkIndex].flags & DSConstant.LinkFlags.SED_L_MOVE) {
           // Ensure we're working with a modifiable copy of links
           if (!isLinksModified) {
-            links = this.GetObjectPtr(this.linksBlockId, true);
+            links = ObjectUtil.GetObjectPtr(this.linksBlockId, true);
             isLinksModified = true;
           }
 
-          hookObject = this.GetObjectPtr(links[linkIndex].hookid, true);
+          hookObject = ObjectUtil.GetObjectPtr(links[linkIndex].hookid, true);
 
           // If hook object is missing, mark link for deletion
           if (hookObject == null) {
@@ -5295,7 +4485,7 @@ class OptUtil {
             // Set hook object to not be visible when linked
             hookObject.LinkNotVisible();
 
-            hookTargetObject = this.GetObjectPtr(links[linkIndex].targetid, false);
+            hookTargetObject = ObjectUtil.GetObjectPtr(links[linkIndex].targetid, false);
 
             // Special handling for multiplicity objects
             if (hookObject.objecttype === NvConstant.FNObjectTypes.Multiplicity) {
@@ -5414,7 +4604,7 @@ class OptUtil {
                     needsBoundsCheck = true;
                     targetNodeId = this.GetTargetNode(links[linkIndex].hookid);
 
-                    targetObject = this.GetObjectPtr(targetNodeId, false);
+                    targetObject = ObjectUtil.GetObjectPtr(targetNodeId, false);
                     if (targetObject) {
                       targetObject.flags = Utils2.SetFlag(
                         targetObject.flags,
@@ -5459,7 +4649,7 @@ class OptUtil {
         else if (
           links[linkIndex].flags & DSConstant.LinkFlags.SED_L_DELL ||
           links[linkIndex].flagss & DSConstant.LinkFlags.SED_L_BREAK ||
-          (hookObject = this.GetObjectPtr(links[linkIndex].hookid, false)) == null
+          (hookObject = ObjectUtil.GetObjectPtr(links[linkIndex].hookid, false)) == null
         ) {
           this.DeleteLink(
             links,
@@ -5482,7 +4672,7 @@ class OptUtil {
       linkCount = zList.length;
 
       for (linkIndex = 0; linkIndex < linkCount; linkIndex++) {
-        currentObject = this.GetObjectPtr(zList[linkIndex], false);
+        currentObject = ObjectUtil.GetObjectPtr(zList[linkIndex], false);
 
         if (currentObject &&
           currentObject.flags & NvConstant.ObjFlags.Bounds) {
@@ -5546,7 +4736,6 @@ class OptUtil {
     return 0;
   }
 
-
   FixAnyCircularHooks(initialLinkObject?: any): void {
     T3Util.Log("O.Opt FixAnyCircularHooks - Input:", { initialLinkObject });
 
@@ -5554,7 +4743,7 @@ class OptUtil {
     const hookIds = initialLinkObject
       ? [initialLinkObject.BlockID]
       : (() => {
-        const links = T3Gv.opt.GetObjectPtr(T3Gv.opt.linksBlockId, false);
+        const links = ObjectUtil.GetObjectPtr(T3Gv.opt.linksBlockId, false);
         let ids: number[] = [];
         const linksCount = links.length;
         for (let i = 0; i < linksCount; i++) {
@@ -5582,7 +4771,7 @@ class OptUtil {
     ) {
       // Add current id to visited list
       visited.push(currentId);
-      const currentObject = T3Gv.opt.GetObjectPtr(currentId, false);
+      const currentObject = ObjectUtil.GetObjectPtr(currentId, false);
       if (!currentObject) return;
       const hooksCount = currentObject.hooks.length;
       for (let j = 0; j < hooksCount; j++) {
@@ -5617,11 +4806,11 @@ class OptUtil {
 
     // Process the found circular hook pairs
     (function processCircularHooks(hookPairs: Array<{ objectId: number; hookObjectId: number }>) {
-      const links = T3Gv.opt.GetObjectPtr(T3Gv.opt.linksBlockId, false);
+      const links = ObjectUtil.GetObjectPtr(T3Gv.opt.linksBlockId, false);
       const hookPairsCount = hookPairs.length;
       for (let i = 0; i < hookPairsCount; i++) {
-        const currentObj = T3Gv.opt.GetObjectPtr(hookPairs[i].objectId, true);
-        const hookObj = T3Gv.opt.GetObjectPtr(hookPairs[i].hookObjectId);
+        const currentObj = ObjectUtil.GetObjectPtr(hookPairs[i].objectId, true);
+        const hookObj = ObjectUtil.GetObjectPtr(hookPairs[i].hookObjectId);
         if (hookObj instanceof Connector) {
           T3Gv.opt.DeleteObjects([hookObj.BlockID], false);
           continue;
@@ -5636,7 +4825,6 @@ class OptUtil {
 
     T3Util.Log("O.Opt FixAnyCircularHooks - Output: Circular hooks fixed", { circularHookPairs });
   }
-
 
   PostObjectDraw(event) {
     T3Util.Log('O.Opt PostObjectDraw - Input:', event);
@@ -5674,7 +4862,6 @@ class OptUtil {
     return 0;
   }
 
-
   AddToDirtyList(objectId: number, isMoveOnly?: boolean) {
     T3Util.Log('O.Opt AddToDirtyList - Input:', { objectId, isMoveOnly });
 
@@ -5705,7 +4892,7 @@ class OptUtil {
     T3Util.Log('O.Opt PostObjectDrawCommon - Output: Operation completed');
   }
 
-  DynamicSnaps_UpdateGuides(e, t, a) {
+  DynamicSnapsUpdateGuides(e, t, a) {
 
   }
 
@@ -5762,10 +4949,10 @@ class OptUtil {
     T3Util.Log("O.Opt UpdateLineHops - Input:", { forceUpdate });
 
     // Retrieve the session object and check if hops are allowed
-    const session = this.GetObjectPtr(this.sedSessionBlockId, false);
+    const session = ObjectUtil.GetObjectPtr(this.sdDataBlockId, false);
     if (session.flags & OptConstant.SessionFlags.AllowHops) {
       this.HideHopTargets();
-      const visibleObjects = this.VisibleZList();
+      const visibleObjects = LayerUtil.VisibleZList();
       const totalVisible = visibleObjects.length;
 
       // Arrays to store candidate line IDs and candidate lines with hops
@@ -5782,7 +4969,7 @@ class OptUtil {
       // Iterate through all visible objects to find BaseLine objects that need hop updates
       for (let i = 0; i < totalVisible; i++) {
         const objId = visibleObjects[i];
-        const obj = this.GetObjectPtr(objId, false);
+        const obj = ObjectUtil.GetObjectPtr(objId, false);
         if (obj instanceof BaseLine && !(obj instanceof PolyLine)) {
           // Check if object is modified or force update is enabled.
           if ((obj.flags & NvConstant.ObjFlags.LineMod || forceUpdate) && modeFlag === -1) {
@@ -5810,7 +4997,7 @@ class OptUtil {
       if (hopLineCount && modeFlag === -3) {
         for (let j = startHopIndex; j < hopLineCount; j++) {
           const lineId = candidateLineHopIds[j];
-          const lineObject = this.GetObjectPtr(lineId, false);
+          const lineObject = ObjectUtil.GetObjectPtr(lineId, false);
 
           // Reset hop list on the line
           lineObject.hoplist.nhops = 0;
@@ -5830,7 +5017,7 @@ class OptUtil {
             }
             // If no link is found, check the candidate object's hooks for a link to the current object
             if (!linkFound) {
-              const candidateObj = this.GetObjectPtr(candidateLineIds[k], false);
+              const candidateObj = ObjectUtil.GetObjectPtr(candidateLineIds[k], false);
               for (let hook of candidateObj.hooks) {
                 if (hook.objid === lineId) {
                   linkFound = true;
@@ -5843,14 +5030,14 @@ class OptUtil {
               const rectLine = {};
               const rectCandidate = {};
               Utils2.CopyRect(rectLine, lineObject.r);
-              Utils2.CopyRect(rectCandidate, this.GetObjectPtr(candidateLineIds[k], false).r);
+              Utils2.CopyRect(rectCandidate, ObjectUtil.GetObjectPtr(candidateLineIds[k], false).r);
               if (rectLine["width"] === 0) rectLine["width"] = 1;
               if (rectLine["height"] === 0) rectLine["height"] = 1;
               if (rectCandidate["width"] === 0) rectCandidate["width"] = 1;
               if (rectCandidate["height"] === 0) rectCandidate["height"] = 1;
 
               if (Utils2.IntersectRect(rectLine, rectCandidate)) {
-                lineObject.CalcLineHops(this.GetObjectPtr(candidateLineIds[k], false), 0);
+                lineObject.CalcLineHops(ObjectUtil.GetObjectPtr(candidateLineIds[k], false), 0);
               }
             }
           }
@@ -5903,15 +5090,15 @@ class OptUtil {
     // Process if there are dirty objects.
     if (this.dirtyList.length !== 0) {
       // Get all visible object IDs and active visible object IDs.
-      const visibleObjectIds = this.VisibleZList();
-      const activeVisibleObjectIds = this.ActiveVisibleZList();
+      const visibleObjectIds = LayerUtil.VisibleZList();
+      const activeVisibleObjectIds = LayerUtil.ActiveVisibleZList();
 
       // Filter visible objects that are not flagged as "not visible".
       const filteredVisibleObjectIds = (function (objectIds: number[]): number[] {
         const result: number[] = [];
         const notVisibleFlag = NvConstant.ObjFlags.NotVisible;
         for (let index = 0; index < objectIds.length; index++) {
-          const objectRef = T3Gv.opt.GetObjectPtr(objectIds[index], false);
+          const objectRef = ObjectUtil.GetObjectPtr(objectIds[index], false);
           if (objectRef && (objectRef.flags & notVisibleFlag) === 0) {
             result.push(objectIds[index]);
           }
@@ -5944,7 +5131,7 @@ class OptUtil {
           }
           // If "move-only", call MoveSVG; otherwise add the SVG object.
           if (isMoveOnly) {
-            const drawingObject = this.GetObjectPtr(objectId, false);
+            const drawingObject = ObjectUtil.GetObjectPtr(objectId, false);
             if (drawingObject) {
               drawingObject.MoveSVG();
             }
@@ -5996,7 +5183,7 @@ class OptUtil {
     let needMinWidthEnforcement = false;
 
     // Get the layers manager to check layer settings
-    const layersManager = T3Gv.opt.GetObjectPtr(this.layersManagerBlockId, false);
+    const layersManager = ObjectUtil.GetObjectPtr(this.layersManagerBlockId, false);
 
     // Check for edge layers and their visibility
     if (layersManager.layers[layersManager.activelayer].flags & NvConstant.LayerFlags.UseEdges) {
@@ -6020,7 +5207,7 @@ class OptUtil {
 
     let newWidth;
     let newHeight;
-    let sessionData = this.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+    let sessionData = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
     let paperSize = T3Gv.opt.contentHeader.Page.papersize;
     let margins = T3Gv.opt.contentHeader.Page.margins;
     let pageWidth = paperSize.x - (margins.left + margins.right);
@@ -6179,7 +5366,7 @@ class OptUtil {
         shouldPreserve = false;
       }
 
-      sessionData = this.GetObjectPtr(T3Gv.opt.sedSessionBlockId, shouldPreserve);
+      sessionData = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, shouldPreserve);
       this.UpdateEdgeLayers([], sessionData.dim, newDocumentSize);
       sessionData.dim.x = newDocumentSize.x;
       sessionData.dim.y = newDocumentSize.y;
@@ -6203,7 +5390,7 @@ class OptUtil {
     T3Util.Log("O.Opt CalcAllObjectEnclosingRect - Input:", { shouldUseEdges, fitOptions });
 
     // Get all visible objects and their count
-    const visibleObjects = this.VisibleZList();
+    const visibleObjects = LayerUtil.VisibleZList();
     const visibleObjectCount = visibleObjects.length;
 
     // Default padding values
@@ -6211,7 +5398,7 @@ class OptUtil {
     let heightPadding = 0;
 
     // Get layers manager to check layer settings
-    const layersManager = T3Gv.opt.GetObjectPtr(this.layersManagerBlockId, false);
+    const layersManager = ObjectUtil.GetObjectPtr(this.layersManagerBlockId, false);
 
     // Initialize empty enclosing rectangle
     let enclosingRect = {
@@ -6247,11 +5434,11 @@ class OptUtil {
           heightPadding = 25;
 
           const objectsInEdgeLayer = objectsFromEdgeLayers.length;
-          const sessionData = this.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+          const sessionData = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
 
           // Check for annotations near the bottom of the document
           for (let i = 0; i < objectsInEdgeLayer; i++) {
-            objectData = T3Gv.opt.GetObjectPtr(objectsFromEdgeLayers[i], false);
+            objectData = ObjectUtil.GetObjectPtr(objectsFromEdgeLayers[i], false);
             if (objectData &&
               objectData.objecttype === NvConstant.FNObjectTypes.Annotation &&
               objectData.Frame.y + objectData.Frame.height >= sessionData.dim.y - OptConstant.Common.AnnoHotDist) {
@@ -6312,97 +5499,6 @@ class OptUtil {
     return enclosingRect;
   }
 
-  SelectObjects(objectsToSelect, isMultipleSelection?, preserveSelectionState?) {
-    T3Util.Log("O.Opt SelectObjects - Input:", { objectsToSelect, isMultipleSelection, preserveSelectionState });
-
-    let selectedIndex = -1;
-
-    if (objectsToSelect && objectsToSelect.length > 0) {
-      const tedSession = this.GetObjectPtr(this.tedSessionBlockId, false);
-
-      // Close text editing if active
-      if (tedSession.theActiveTextEditObjectID !== -1) {
-        this.DeactivateTextEdit(false, true);
-      }
-
-      // // Release table editing if active
-      // if (tedSession.theActiveTableObjectID !== -1) {
-      //   this.Table_Release(false);
-      // }
-
-      const selectedList = this.GetObjectPtr(this.theSelectedListBlockID, preserveSelectionState);
-      selectedIndex = this.GetTargetSelect();
-
-      // If not multiple selection mode, clear existing selection
-      if (!isMultipleSelection) {
-        this.SetDimensionVisibility(selectedList, false);
-        selectedList.length = 0;
-      }
-
-      // Handle current selection state
-      if (selectedIndex >= 0) {
-        const indexInSelectedList = $.inArray(selectedIndex, selectedList);
-        if (isMultipleSelection) {
-          if (indexInSelectedList >= 0) {
-            selectedIndex = -1;
-          }
-        } else {
-          if (indexInSelectedList < 0) {
-            selectedIndex = -1;
-          }
-        }
-      }
-
-      // Process each object to select
-      for (let i = 0; i < objectsToSelect.length; i++) {
-        let objectId = objectsToSelect[i];
-        const object = this.GetObjectPtr(objectId, false);
-
-        if (object) {
-          const indexInSelectedList = $.inArray(objectId, selectedList);
-
-          // If object not in selection list, add it
-          if (indexInSelectedList === -1) {
-            if (selectedIndex < 0) {
-              selectedIndex = objectId;
-            }
-            selectedList.push(objectId);
-          }
-          // If in multiple selection mode and object already selected, remove it
-          else if (isMultipleSelection) {
-            const objectInList = T3Gv.opt.GetObjectPtr(objectId, false);
-            if (objectInList) {
-              objectInList.ShowOrHideDimensions(false);
-            }
-            selectedList.splice(indexInSelectedList, 1);
-          }
-        }
-      }
-
-      // Ensure selectedIndex is valid
-      if (selectedIndex >= 0) {
-        const indexInSelectedList = $.inArray(selectedIndex, selectedList);
-        if (indexInSelectedList < 0) {
-          selectedIndex = -1;
-        }
-      }
-
-      // If no selection index but we have objects selected, use the first one
-      if (selectedIndex < 0 && selectedList.length > 0) {
-        selectedIndex = selectedList[0];
-      }
-
-      // Update the target selection
-      this.SetTargetSelect(selectedIndex, preserveSelectionState);
-      this.lastOpDuplicate = false;
-      this.UpdateSelectionAttributes(selectedList);
-      this.HideAllSVGSelectionStates();
-      this.RenderAllSVGSelectionStates();
-    }
-
-    T3Util.Log("O.Opt SelectObjects - Output:", { selectedIndex, selectedCount: objectsToSelect?.length || 0 });
-  }
-
   /**
    * Gets a list of objects to move based on specified criteria.
    *
@@ -6428,7 +5524,7 @@ class OptUtil {
     this.moveList = [];
 
     let objectsList, hookFlags, listCode, objectCount, enclosedObjects, enclosedCount, enclosedIndex;
-    const links = this.GetObjectPtr(this.linksBlockId, false);
+    const links = ObjectUtil.GetObjectPtr(this.linksBlockId, false);
 
     if (links == null) {
       T3Util.Log("O.Opt GetMoveList - Output: No links found, returning empty list");
@@ -6442,7 +5538,7 @@ class OptUtil {
 
     // Check for special move target handling
     if (objectId >= 0) {
-      currentObject = this.GetObjectPtr(objectId, false);
+      currentObject = ObjectUtil.GetObjectPtr(objectId, false);
 
       if (currentObject) {
         hookFlags = currentObject.GetHookFlags();
@@ -6460,12 +5556,12 @@ class OptUtil {
     if (useSelectedList || useVisibleList) {
       // Get either visible objects or selected objects based on flag
       objectsList = useVisibleList
-        ? this.ActiveVisibleZList().slice(0)
-        : this.GetObjectPtr(this.theSelectedListBlockID, false).slice(0);
+        ? LayerUtil.ActiveVisibleZList().slice(0)
+        : ObjectUtil.GetObjectPtr(this.theSelectedListBlockID, false).slice(0);
 
       // Process each object in the list
       for (index = 0; index < objectsList.length; index++) {
-        currentObject = this.GetObjectPtr(objectsList[index], false);
+        currentObject = ObjectUtil.GetObjectPtr(objectsList[index], false);
 
         if (currentObject) {
           // Handle special case for event labels
@@ -6493,7 +5589,7 @@ class OptUtil {
 
     // Process the target object if provided
     if (objectId >= 0) {
-      currentObject = this.GetObjectPtr(objectId, false);
+      currentObject = ObjectUtil.GetObjectPtr(objectId, false);
 
       if (currentObject && (currentObject.hooks.length === 0 || includeEnclosedObjects)) {
         this.moveList = this.GetHookList(
@@ -6512,7 +5608,7 @@ class OptUtil {
       objectCount = this.moveList.length;
 
       for (index = 0; index < objectCount; index++) {
-        currentObject = this.GetObjectPtr(this.moveList[index], false);
+        currentObject = ObjectUtil.GetObjectPtr(this.moveList[index], false);
 
         // Get objects enclosed by this object
         enclosedObjects = currentObject.GetListOfEnclosedObjects(true);
@@ -6682,7 +5778,7 @@ class OptUtil {
 
     // If no object ID provided, use the target selection
     if (objectId == null || objectId == -1) {
-      objectId = this.GetTargetSelect();
+      objectId = SelectUtil.GetTargetSelect();
     }
 
     // Exit if no valid object ID
@@ -6695,7 +5791,7 @@ class OptUtil {
     if (customRect) {
       objectRect = customRect;
     } else {
-      const object = this.GetObjectPtr(objectId, false);
+      const object = ObjectUtil.GetObjectPtr(objectId, false);
       if (object == null) {
         T3Util.Log("O.Opt ScrollObjectIntoView - Output: Object not found");
         return;
@@ -6795,7 +5891,7 @@ class OptUtil {
     this.actionSvgObject = null;
 
     // Force update of object data
-    this.GetObjectPtr(this.actionStoredObjectId, true);
+    ObjectUtil.GetObjectPtr(this.actionStoredObjectId, true);
 
     // Reset edit mode to default
     this.SetEditMode(NvConstant.EditState.Default);
@@ -6864,8 +5960,8 @@ class OptUtil {
   //   T3Util.Log("O.Opt UpdateTools - Output: Tool selection updated");
   // }
 
-  LM_MoveClick(event) {
-    T3Util.Log("O.Opt LM_MoveClick - Input:", event);
+  LMMoveClick(event) {
+    T3Util.Log("O.Opt LMMoveClick - Input:", event);
 
     if (
       T3Gv.opt.IsWheelClick(event) ||
@@ -6873,7 +5969,7 @@ class OptUtil {
     ) {
       EvtUtil.Evt_WorkAreaHammerDragStart(event);
       Utils2.StopPropagationAndDefaults(event);
-      T3Util.Log("O.Opt LM_MoveClick - Output: Wheel click or spacebar down detected, redirected to WorkAreaHammerDragStart");
+      T3Util.Log("O.Opt LMMoveClick - Output: Wheel click or spacebar down detected, redirected to WorkAreaHammerDragStart");
       return;
     }
 
@@ -6892,18 +5988,18 @@ class OptUtil {
       }
 
       // Set up the move operation
-      const setupResult = this.LM_SetupMove(event);
+      const setupResult = this.LMSetupMove(event);
 
       // Handle different setup results
       if (setupResult !== true) {
         if (setupResult === -1) {
           // Collab.UnLockMessages();
-          T3Util.Log("O.Opt LM_MoveClick - Output: Setup failed with -1, unlocked messages");
+          T3Util.Log("O.Opt LMMoveClick - Output: Setup failed with -1, unlocked messages");
           return;
         } else {
           // Collab.UnLockMessages();
           // Collab.UnBlockMessages();
-          T3Util.Log("O.Opt LM_MoveClick - Output: Setup failed, unlocked and unblocked messages");
+          T3Util.Log("O.Opt LMMoveClick - Output: Setup failed, unlocked and unblocked messages");
           return;
         }
       }
@@ -6920,11 +6016,11 @@ class OptUtil {
       T3Gv.opt.WorkAreaHammer.on('drag', EvtUtil.Evt_ShapeDrag);
       T3Gv.opt.WorkAreaHammer.on('dragend', EvtUtil.Evt_ShapeDragEnd);
 
-      T3Util.Log("O.Opt LM_MoveClick - Output: Move operation set up successfully");
+      T3Util.Log("O.Opt LMMoveClick - Output: Move operation set up successfully");
     } catch (error) {
-      T3Gv.opt.LM_Move_ExceptionCleanup(error);
+      T3Gv.opt.LMMoveExceptionCleanup(error);
       T3Gv.opt.ExceptionCleanup(error);
-      T3Util.Log("O.Opt LM_MoveClick - Error:", error);
+      T3Util.Log("O.Opt LMMoveClick - Error:", error);
       throw error;
     }
   }
@@ -6949,8 +6045,8 @@ class OptUtil {
     T3Util.Log("O.Opt HideOverlayLayer - Output: Overlay layer hidden");
   }
 
-  LM_SetupMove(event) {
-    T3Util.Log("O.Opt LM_SetupMove - Input:", event);
+  LMSetupMove(event) {
+    T3Util.Log("O.Opt LMSetupMove - Input:", event);
 
     // Variables for target tracking
     let svgElement;
@@ -6967,7 +6063,7 @@ class OptUtil {
     // Find the SVG element from the event target
     svgElement = this.svgObjectLayer.FindElementByDOMElement(event.currentTarget);
     if (!svgElement) {
-      T3Util.Log("O.Opt LM_SetupMove - Output: false (No SVG element found)");
+      T3Util.Log("O.Opt LMSetupMove - Output: false (No SVG element found)");
       return false;
     }
 
@@ -6978,9 +6074,9 @@ class OptUtil {
 
     // Get object ID and verify it's a valid drawing object
     const objectId = svgElement.GetID();
-    const drawingObjectRef = T3Gv.opt.GetObjectPtr(objectId, false);
+    const drawingObjectRef = ObjectUtil.GetObjectPtr(objectId, false);
     if (!(drawingObjectRef && drawingObjectRef instanceof BaseDrawObject)) {
-      T3Util.Log("O.Opt LM_SetupMove - Output: false (Not a valid drawing object)");
+      T3Util.Log("O.Opt LMSetupMove - Output: false (Not a valid drawing object)");
       return false;
     }
 
@@ -6988,7 +6084,7 @@ class OptUtil {
     if (this.bInDimensionEdit) {
       this.CloseEdit(false, true);
       this.bInDimensionEdit = false;
-      T3Util.Log("O.Opt LM_SetupMove - Output: false (Was in dimension edit)");
+      T3Util.Log("O.Opt LMSetupMove - Output: false (Was in dimension edit)");
       return false;
     }
 
@@ -6998,13 +6094,13 @@ class OptUtil {
       (targetElement.ID === OptConstant.SVGElementClass.DimText ||
         targetElement.ID === OptConstant.SVGElementClass.DimTextNoEdit)
     ) {
-      T3Util.Log("O.Opt LM_SetupMove - Output: false (Is dimension text)");
+      T3Util.Log("O.Opt LMSetupMove - Output: false (Is dimension text)");
       return false;
     }
 
     // Prevent moving icon elements
     if (targetElement instanceof Image && this.UserDataisIcon(targetElement.GetUserData())) {
-      T3Util.Log("O.Opt LM_SetupMove - Output: false (Is icon element)");
+      T3Util.Log("O.Opt LMSetupMove - Output: false (Is icon element)");
       return false;
     }
 
@@ -7018,7 +6114,7 @@ class OptUtil {
     if (this.crtOpt === OptConstant.OptTypes.FormatPainter) {
       targetId = svgElement.GetID();
       if (this.FormatPainterClick(targetId, event)) {
-        T3Util.Log("O.Opt LM_SetupMove - Output: false (Format painter handled click)");
+        T3Util.Log("O.Opt LMSetupMove - Output: false (Format painter handled click)");
         return false;
       }
       svgElement = this.svgObjectLayer.GetElementById(targetId);
@@ -7045,7 +6141,7 @@ class OptUtil {
       this.dragTargetId = OptAhUtil.SelectContainerParent(this.dragTargetId);
 
       targetObject = T3Gv.stdObj.GetObject(this.dragTargetId);
-      const isRightClick = this.IsRightClick(event);
+      const isRightClick = MouseUtil.IsRightClick(event);
 
       // Handle special cases for target object
       if (targetObject) {
@@ -7062,7 +6158,7 @@ class OptUtil {
           //     !isRightClick
           //   ) {
           //     T3Gv.opt.StartRubberBandSelect(event);
-          //     T3Util.Log("O.Opt LM_SetupMove - Output: false (Started rubber band select on swimlane)");
+          //     T3Util.Log("O.Opt LMSetupMove - Output: false (Started rubber band select on swimlane)");
           //     return false;
           //   }
           // } else
@@ -7073,7 +6169,7 @@ class OptUtil {
             !isRightClick
           ) {
             T3Gv.opt.StartRubberBandSelect(event);
-            T3Util.Log("O.Opt LM_SetupMove - Output: false (Started rubber band select on frame container)");
+            T3Util.Log("O.Opt LMSetupMove - Output: false (Started rubber band select on frame container)");
             return false;
           }
         }
@@ -7083,8 +6179,8 @@ class OptUtil {
         if (isRightClick) {
           isOneClickTextObject = false;
         } else if (drawingObject.flags & NvConstant.ObjFlags.Lock) {
-          this.SelectObjectFromClick(event, svgElement);
-          T3Util.Log("O.Opt LM_SetupMove - Output: false (Object is locked)");
+          SelectUtil.SelectObjectFromClick(event, svgElement);
+          T3Util.Log("O.Opt LMSetupMove - Output: false (Object is locked)");
           return false;
         }
       }
@@ -7143,7 +6239,7 @@ class OptUtil {
       switch (clickedElementId) {
         // case OptConstant.Common.GraphTextHit:
         //   this.Graph_SetupAction(event, this.dragTargetId, clickedElementId, clickedElementUserData);
-        //   T3Util.Log("O.Opt LM_SetupMove - Output: false (Graph text hit)");
+        //   T3Util.Log("O.Opt LMSetupMove - Output: false (Graph text hit)");
         //   return false;
 
         case OptConstant.SVGElementClass.BackgroundImage:
@@ -7154,7 +6250,7 @@ class OptUtil {
           // case OptConstant.Common.TableColZone:
           // const actionResult = this.Table_SetupAction(event, this.dragTargetId, clickedElementId, clickedElementUserData);
           // if (actionResult === true || actionResult === -1) {
-          //   T3Util.Log("O.Opt LM_SetupMove - Output: Setup action handled");
+          //   T3Util.Log("O.Opt LMSetupMove - Output: Setup action handled");
           //   return actionResult;
           // }
           break;
@@ -7162,25 +6258,25 @@ class OptUtil {
         // case OptConstant.Common.TableRowHitHidden:
         // case OptConstant.Common.TableRowHit:
         // case OptConstant.Common.TableRowSelection:
-        //   if (drawingObject && this.Table_HideUI(drawingObject)) {
-        //     T3Util.Log("O.Opt LM_SetupMove - Output: false (Table UI hidden)");
+        //   if (drawingObject && this.TableHideUI(drawingObject)) {
+        //     T3Util.Log("O.Opt LMSetupMove - Output: false (Table UI hidden)");
         //     return false;
         //   }
         //   const rowData = clickedElement.GetUserData();
         //   this.Table_SetupAction(event, this.dragTargetId, OptConstant.Common.TableRowHit, rowData);
-        //   T3Util.Log("O.Opt LM_SetupMove - Output: false (Table row action)");
+        //   T3Util.Log("O.Opt LMSetupMove - Output: false (Table row action)");
         //   return false;
 
         // case OptConstant.Common.TableColHit:
         // case OptConstant.Common.TableColHitHidden:
         // case OptConstant.Common.TableColSelection:
-        //   if (drawingObject && this.Table_HideUI(drawingObject)) {
-        //     T3Util.Log("O.Opt LM_SetupMove - Output: false (Table UI hidden)");
+        //   if (drawingObject && this.TableHideUI(drawingObject)) {
+        //     T3Util.Log("O.Opt LMSetupMove - Output: false (Table UI hidden)");
         //     return false;
         //   }
         //   const colData = clickedElement.GetUserData();
         //   this.Table_SetupAction(event, this.dragTargetId, OptConstant.Common.TableColHit, colData);
-        //   T3Util.Log("O.Opt LM_SetupMove - Output: false (Table column action)");
+        //   T3Util.Log("O.Opt LMSetupMove - Output: false (Table column action)");
         //   return false;
 
         case OptConstant.Common.HitAreas:
@@ -7189,34 +6285,34 @@ class OptUtil {
           if (event.gesture) {
             event.gesture.stopDetect();
           }
-          T3Util.Log("O.Opt LM_SetupMove - Output: false (Hit area click)");
+          T3Util.Log("O.Opt LMSetupMove - Output: false (Hit area click)");
           return false;
       }
 
       // Handle one-click text objects
       if (isOneClickTextObject) {
         T3Gv.opt.ActivateTextEdit(svgElement.svgObj.SDGObj, event, false);
-        T3Util.Log("O.Opt LM_SetupMove - Output: false (Activated text edit)");
+        T3Util.Log("O.Opt LMSetupMove - Output: false (Activated text edit)");
         return false;
       }
     }
 
     // // Close table editing if needed
     // if (tableObject && targetObject && this.Table_CloseEdit(targetObject, tableObject)) {
-    //   const selectedList = this.GetObjectPtr(this.theSelectedListBlockID, false);
+    //   const selectedList = ObjectUtil.GetObjectPtr(this.theSelectedListBlockID, false);
     //   this.UpdateSelectionAttributes(selectedList);
     // }
 
     // Handle selection
-    if (!this.SelectObjectFromClick(event, svgElement, true)) {
-      T3Util.Log("O.Opt LM_SetupMove - Output: false (Selection failed)");
+    if (!SelectUtil.SelectObjectFromClick(event, svgElement, true)) {
+      T3Util.Log("O.Opt LMSetupMove - Output: false (Selection failed)");
       return false;
     }
 
     // Get updated target object
     targetObject = T3Gv.stdObj.GetObject(this.dragTargetId);
     if (targetObject == null) {
-      T3Util.Log("O.Opt LM_SetupMove - Output: false (Target object is null)");
+      T3Util.Log("O.Opt LMSetupMove - Output: false (Target object is null)");
       return false;
     }
 
@@ -7224,12 +6320,12 @@ class OptUtil {
     drawingObject = targetObject.Data;
 
     // Hide selection states and prepare for drag operation
-    this.HideAllSVGSelectionStates();
+    SvgUtil.HideAllSVGSelectionStates();
     this.InitializeAutoGrowDrag();
 
     // Allow object to intercept the move operation
     if (drawingObject.InterceptMoveOperation(event)) {
-      T3Util.Log("O.Opt LM_SetupMove - Output: false (Move intercepted by object)");
+      T3Util.Log("O.Opt LMSetupMove - Output: false (Move intercepted by object)");
       return false;
     }
 
@@ -7284,7 +6380,7 @@ class OptUtil {
     let filteredObjects = [];
     for (let i = 0; i < objectCount; ++i) {
       const currentId = objectsToMove[i];
-      const currentObject = this.GetObjectPtr(currentId, false);
+      const currentObject = ObjectUtil.GetObjectPtr(currentId, false);
 
       if (currentObject &&
         !(currentObject instanceof Connector) &&
@@ -7296,7 +6392,7 @@ class OptUtil {
     // Filter objects: second pass - handle connector objects
     for (let i = 0; i < objectCount; ++i) {
       const currentId = objectsToMove[i];
-      const currentObject = this.GetObjectPtr(currentId, false);
+      const currentObject = ObjectUtil.GetObjectPtr(currentId, false);
 
       if (currentObject instanceof Connector) {
         // Use complex connector logic to determine if it should be included
@@ -7304,7 +6400,7 @@ class OptUtil {
           filteredObjects.push(currentId);
         } else if (currentObject.hooks.length) {
           const hookId = currentObject.hooks[0].objid;
-          const hookObject = this.GetObjectPtr(hookId);
+          const hookObject = ObjectUtil.GetObjectPtr(hookId);
 
           if (hookObject instanceof Connector) {
             if (!(currentObject.flags & NvConstant.ObjFlags.NotVisible)) {
@@ -7332,7 +6428,7 @@ class OptUtil {
     // Create bounding box list for all objects being moved
     for (let i = 0; i < objectCount; ++i) {
       const currentId = objectsToMove[i];
-      const currentObject = this.GetObjectPtr(currentId, false);
+      const currentObject = ObjectUtil.GetObjectPtr(currentId, false);
       const objectFrame = currentObject.GetSVGFrame();
 
       this.dragBBoxList.push(objectFrame);
@@ -7351,14 +6447,14 @@ class OptUtil {
     }
 
     // Setup move tracking
-    this.LM_MovePreTrack(objectsToMove, event);
+    this.LMMovePreTrack(objectsToMove, event);
 
-    T3Util.Log("O.Opt LM_SetupMove - Output: true (Move setup complete)");
+    T3Util.Log("O.Opt LMSetupMove - Output: true (Move setup complete)");
     return true;
   }
 
-  LM_Move_ExceptionCleanup(error) {
-    T3Util.Log('O.Opt LM_Move_ExceptionCleanup - Input:', error);
+  LMMoveExceptionCleanup(error) {
+    T3Util.Log('O.Opt LMMoveExceptionCleanup - Input:', error);
 
     // Clean up resources
     T3Gv.opt.linkParams = null;
@@ -7372,7 +6468,7 @@ class OptUtil {
     // Collab.UnLockMessages();
     // Collab.UnBlockMessages();
 
-    T3Util.Log('O.Opt LM_Move_ExceptionCleanup - Output: Cleanup completed');
+    T3Util.Log('O.Opt LMMoveExceptionCleanup - Output: Cleanup completed');
 
     // Re-throw the exception after cleanup
     throw error;
@@ -7393,10 +6489,10 @@ class OptUtil {
   GetEventShapeParent(objectId) {
     T3Util.Log('O.Opt GetEventShapeParent - Input:', objectId);
 
-    const object = T3Gv.opt.GetObjectPtr(objectId);
+    const object = ObjectUtil.GetObjectPtr(objectId);
 
     if (object && object.objecttype === NvConstant.FNObjectTypes.NgEventLabel) {
-      const associatedObject = T3Gv.opt.GetObjectPtr(object.associd);
+      const associatedObject = ObjectUtil.GetObjectPtr(object.associd);
 
       if (associatedObject && associatedObject.objecttype === NvConstant.FNObjectTypes.NgEvent) {
         T3Util.Log('O.Opt GetEventShapeParent - Output:', object.associd);
@@ -7424,7 +6520,7 @@ class OptUtil {
   //     p,
   //     d = T3Gv.opt.Table_GetActiveID();
   //   if (d >= 0) {
-  //     if ((a = this.GetObjectPtr(d, !1)) && a.GetTable) {
+  //     if ((a = ObjectUtil.GetObjectPtr(d, !1)) && a.GetTable) {
   //       var D,
   //         g,
   //         h = a.GetTable(!t);
@@ -7475,7 +6571,7 @@ class OptUtil {
   //           (h.select = - 1),
   //           h.rselect = - 1,
   //           h.cselect = - 1,
-  //           (p = this.GetObjectPtr(this.tedSessionBlockId, !1)).theActiveTableObjectIndex >= 0 &&
+  //           (p = ObjectUtil.GetObjectPtr(this.teDataBlockId, !1)).theActiveTableObjectIndex >= 0 &&
   //           m &&
   //           (
   //             T3Gv.opt.svgObjectLayer.RemoveElement(m),
@@ -7483,7 +6579,7 @@ class OptUtil {
   //           )
   //       }
   //     }
-  //     if (!e && !t) return p = this.GetObjectPtr(this.tedSessionBlockId, !0),
+  //     if (!e && !t) return p = ObjectUtil.GetObjectPtr(this.teDataBlockId, !0),
   //       this.ShowSVGSelectionState(p.theActiveTableObjectID, !0),
   //       p.theActiveTableObjectID = - 1,
   //       p.theActiveTableObjectIndex = - 1,
@@ -7491,233 +6587,6 @@ class OptUtil {
   //   }
   //   return !1
   // }
-
-  /**
- * Handles selection of an object when clicked
- * @param event - The click event
- * @param svgElement - The SVG element that was clicked
- * @param preserveSelection - Whether to preserve existing selection state
- * @returns Boolean indicating whether object was selected successfully
- */
-  SelectObjectFromClick(event, svgElement, preserveSelection) {
-    T3Util.Log('O.Opt SelectObjectFromClick - Input:', { event, svgElement, preserveSelection });
-
-    const visibleObjectCount = this.ActiveVisibleZList().length;
-    const shapeContainerType = NvConstant.FNObjectTypes.ShapeContainer;
-
-    // Exit if no visible objects or no SVG element provided
-    if (visibleObjectCount === 0) {
-      T3Util.Log('O.Opt SelectObjectFromClick - Output: false (no visible objects)');
-      return false;
-    }
-
-    if (svgElement === null) {
-      T3Util.Log('O.Opt SelectObjectFromClick - Output: false (no SVG element)');
-      return false;
-    }
-
-    // Get the object ID and corresponding data object
-    const objectId = svgElement.GetID();
-    const object = this.GetObjectPtr(objectId, false);
-
-    // Verify the object is a valid drawing object
-    if (!(object && object instanceof BaseDrawObject)) {
-      T3Util.Log('O.Opt SelectObjectFromClick - Output: false (not a drawing object)');
-      return false;
-    }
-
-    // Exclude shape container objects in cells
-    if (object && object.objecttype === shapeContainerType && this.ContainerIsInCell(object)) {
-      T3Util.Log('O.Opt SelectObjectFromClick - Output: false (container in cell)');
-      return false;
-    }
-
-    // Determine if this is a multiple selection operation
-    let isMultipleSelection = event.gesture.srcEvent.shiftKey ||
-      event.gesture.srcEvent.ctrlKey ||
-      T3Constant.DocContext.SelectionToolMultiple;
-
-    // Special case: Ctrl+Meta keys together cancel multiple selection
-    if (event.gesture.srcEvent.ctrlKey && event.gesture.srcEvent.metaKey) {
-      isMultipleSelection = false;
-    }
-
-    // Get the selected list and check if object is already selected
-    const selectedList = T3Gv.stdObj.GetObject(this.theSelectedListBlockID).Data;
-    var indexInSelectedList = $.inArray(objectId, selectedList);
-
-    // Prepare array with object to select
-    let objectsToSelect = [];
-    objectsToSelect.push(objectId);
-
-    // Handle object selection depending on whether it's already selected
-    if (indexInSelectedList == -1) {
-      // Object is not already selected - select it
-      this.SelectObjects(objectsToSelect, isMultipleSelection, false);
-      T3Util.Log('O.Opt SelectObjectFromClick - Output: true (object selected)');
-      return true;
-    }
-    else {
-      if (!isMultipleSelection) {
-        // Object is already selected and this isn't a multiple selection
-        return true;
-      }
-      else {
-        // Object is already selected and this is a multiple selection
-        this.SelectObjects(objectsToSelect, isMultipleSelection, false);
-        return !!preserveSelection;
-      }
-
-      // return !isMultipleSelection || (this.SelectObjects(objectsToSelect, isMultipleSelection, !1), !!preserveSelection);
-    }
-  }
-
-  /**
-   * Handles selection of an object when clicked
-   * @param event - The click event
-   * @param svgElement - The SVG element that was clicked
-   * @param preserveSelection - Whether to preserve existing selection state
-   * @returns Boolean indicating whether object was selected successfully
-   */
-  SelectObjectFromClick2(event, svgElement, preserveSelection) {
-    T3Util.Log('O.Opt SelectObjectFromClick - Input:', { event, svgElement, preserveSelection });
-
-    const visibleObjectCount = this.ActiveVisibleZList().length;
-    const shapeContainerType = NvConstant.FNObjectTypes.ShapeContainer;
-
-    // Exit if no visible objects or no SVG element provided
-    if (visibleObjectCount === 0) {
-      T3Util.Log('O.Opt SelectObjectFromClick - Output: false (no visible objects)');
-      return false;
-    }
-
-    if (svgElement === null) {
-      T3Util.Log('O.Opt SelectObjectFromClick - Output: false (no SVG element)');
-      return false;
-    }
-
-    // Get the object ID and corresponding data object
-    const objectId = svgElement.GetID();
-    const object = this.GetObjectPtr(objectId, false);
-
-    // Verify the object is a valid drawing object
-    if (!(object && object instanceof BaseDrawObject)) {
-      T3Util.Log('O.Opt SelectObjectFromClick - Output: false (not a drawing object)');
-      return false;
-    }
-
-    // Exclude shape container objects in cells
-    if (object && object.objecttype === shapeContainerType && this.ContainerIsInCell(object)) {
-      T3Util.Log('O.Opt SelectObjectFromClick - Output: false (container in cell)');
-      return false;
-    }
-
-    // Get the selected list and check if object is already selected
-    const selectedList = T3Gv.stdObj.GetObject(this.theSelectedListBlockID).Data;
-    const indexInSelectedList = $.inArray(objectId, selectedList);
-
-    // Prepare array with object to select
-    let objectsToSelect = [];
-    objectsToSelect.push(objectId);
-
-    // Determine if this is a multiple selection operation
-    let isMultipleSelection = event.gesture.srcEvent.shiftKey ||
-      event.gesture.srcEvent.ctrlKey ||
-      T3Constant.DocContext.SelectionToolMultiple;
-
-    // Special case: Ctrl+Meta keys together cancel multiple selection
-    if (event.gesture.srcEvent.ctrlKey && event.gesture.srcEvent.metaKey) {
-      isMultipleSelection = false;
-    }
-
-    // Handle object selection depending on whether it's already selected
-    if (indexInSelectedList == -1) {
-      // Object is not already selected - select it
-      this.SelectObjects(objectsToSelect, isMultipleSelection, false);
-      T3Util.Log('O.Opt SelectObjectFromClick - Output: true (object selected)');
-      return true;
-    } else if (!isMultipleSelection) {
-      // Object is already selected and this isn't a multiple selection
-      T3Util.Log('O.Opt SelectObjectFromClick - Output: false (already selected, not multiple selection)');
-      return false;
-    } else {
-      // Object is already selected and this is a multiple selection
-      this.SelectObjects(objectsToSelect, isMultipleSelection, false);
-      const result = !!preserveSelection;
-      T3Util.Log('O.Opt SelectObjectFromClick - Output:', result, '(multiple selection)');
-      return result;
-    }
-  }
-
-  SelectObjectFromClick1(event, svgElement, preserveSelection) {
-    T3Util.Log('O.Opt SelectObjectFromClick - Input:', { event, svgElement, preserveSelection });
-
-    const visibleObjectCount = this.ActiveVisibleZList().length;
-    const shapeContainerType = NvConstant.FNObjectTypes.ShapeContainer;
-
-    // Exit if no visible objects or no SVG element provided
-    if (visibleObjectCount === 0) {
-      T3Util.Log('O.Opt SelectObjectFromClick - Output: false (no visible objects)');
-      return false;
-    }
-
-    if (svgElement === null) {
-      T3Util.Log('O.Opt SelectObjectFromClick - Output: false (no SVG element)');
-      return false;
-    }
-
-    // Get the object ID and corresponding data object
-    const objectId = svgElement.GetID();
-    const object = this.GetObjectPtr(objectId, false);
-
-    // Verify the object is a valid drawing object
-    if (!(object && object instanceof BaseDrawObject)) {
-      T3Util.Log('O.Opt SelectObjectFromClick - Output: false (not a drawing object)');
-      return false;
-    }
-
-    // Exclude shape container objects in cells
-    if (object && object.objecttype === shapeContainerType && this.ContainerIsInCell(object)) {
-      T3Util.Log('O.Opt SelectObjectFromClick - Output: false (container in cell)');
-      return false;
-    }
-
-    // Get the selected list and check if object is already selected
-    const selectedList = T3Gv.stdObj.GetObject(this.theSelectedListBlockID).Data;
-    const indexInSelectedList = $.inArray(objectId, selectedList);
-
-    // Prepare array with object to select
-    const objectsToSelect = [];
-    objectsToSelect.push(objectId);
-
-    // Determine if this is a multiple selection operation
-    let isMultipleSelection = event.gesture.srcEvent.shiftKey ||
-      event.gesture.srcEvent.ctrlKey ||
-      T3Constant.DocContext.SelectionToolMultiple;
-
-    // Special case: Ctrl+Meta keys together cancel multiple selection
-    if (event.gesture.srcEvent.ctrlKey && event.gesture.srcEvent.metaKey) {
-      isMultipleSelection = false;
-    }
-
-    // Handle object selection depending on whether it's already selected
-    if (indexInSelectedList == -1) {
-      // Object is not already selected - select it
-      this.SelectObjects(objectsToSelect, isMultipleSelection, false);
-      T3Util.Log('O.Opt SelectObjectFromClick - Output: true (object selected)');
-      return true;
-    } else if (!isMultipleSelection) {
-      // Object is already selected and this isn't a multiple selection
-      T3Util.Log('O.Opt SelectObjectFromClick - Output: false (already selected, not multiple selection)');
-      return false;
-    } else {
-      // Object is already selected and this is a multiple selection
-      this.SelectObjects(objectsToSelect, isMultipleSelection, false);
-      const result = !!preserveSelection;
-      T3Util.Log('O.Opt SelectObjectFromClick - Output:', result, '(multiple selection)');
-      return result;
-    }
-  }
 
   IsLoneFlowchartShape(objectToCheck, resultContainer) {
     T3Util.Log("O.Opt IsLoneFlowchartShape - Input:", { objectToCheck, resultContainer });
@@ -7729,13 +6598,13 @@ class OptUtil {
     }
 
     // Get the connected object from the first hook
-    const connectedObject = this.GetObjectPtr(objectToCheck.hooks[0].objid, false);
+    const connectedObject = ObjectUtil.GetObjectPtr(objectToCheck.hooks[0].objid, false);
 
     // Check if this is a lone flowchart connector
     const isLoneFlowchart = !!(
       connectedObject &&
       connectedObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector &&
-      connectedObject._IsFlowChartConnector() &&
+      connectedObject.IsFlowChartConnector() &&
       connectedObject.hooks.length === 0 &&
       connectedObject.arraylist.hook.length === ConnectorDefines.NSkip + 1
     );
@@ -7763,13 +6632,13 @@ class OptUtil {
       (
         // Get connector object if not provided
         (connectorObject === null &&
-          (connectorObject = this.GetObjectPtr(objectData.hooks[0].objid, false))),
+          (connectorObject = ObjectUtil.GetObjectPtr(objectData.hooks[0].objid, false))),
 
         // Check if resultContainer exists and if connector object has valid hooks and parent
         resultContainer &&
         connectorObject &&
         connectorObject.hooks.length &&
-        (parentConnector = this.GetObjectPtr(connectorObject.hooks[0].objid, false)) &&
+        (parentConnector = ObjectUtil.GetObjectPtr(connectorObject.hooks[0].objid, false)) &&
         parentConnector.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector
       )
     );
@@ -7801,7 +6670,7 @@ class OptUtil {
 
     // Case 1: Check if object has hooks connecting to a genogram connector
     if (objectData && objectData.hooks.length) {
-      connectedObject = this.GetObjectPtr(objectData.hooks[0].objid, false);
+      connectedObject = ObjectUtil.GetObjectPtr(objectData.hooks[0].objid, false);
 
       if (connectedObject &&
         connectedObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
@@ -7824,7 +6693,7 @@ class OptUtil {
     }
     // Case 2: Check if object has a child array with a genogram connector
     else if ((childArrayID = this.FindChildArray(objectData.BlockID, -1)) >= 0 &&
-      (connectedObject = this.GetObjectPtr(childArrayID, false)).IsGenoConnector()) {
+      (connectedObject = ObjectUtil.GetObjectPtr(childArrayID, false)).IsGenoConnector()) {
       resultContainer.id = childArrayID;
       T3Util.Log("O.Opt IsGenogramPartner - Output: true (child genogram connector found)");
       return true;
@@ -7838,7 +6707,7 @@ class OptUtil {
     T3Util.Log("O.Opt FindChildArray - Input:", { objectId, excludeConnectorId });
 
     // Get the links block
-    const links = this.GetObjectPtr(this.linksBlockId, false);
+    const links = ObjectUtil.GetObjectPtr(this.linksBlockId, false);
 
     // Find the starting link index for this object
     const linkIndex = this.FindLink(links, objectId, true);
@@ -7855,7 +6724,7 @@ class OptUtil {
 
         // Check if this is not the excluded connector and is a connector
         if (hookId !== excludeConnectorId) {
-          const hookObject = this.GetObjectPtr(hookId, false);
+          const hookObject = ObjectUtil.GetObjectPtr(hookId, false);
 
           if (hookObject &&
             hookObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
@@ -7872,11 +6741,11 @@ class OptUtil {
     return -1;
   }
 
-  LM_MovePreTrack(objectsToMove, event) {
-    T3Util.Log("O.Opt LM_MovePreTrack - Input:", { objectsToMove, event });
+  LMMovePreTrack(objectsToMove, event) {
+    T3Util.Log("O.Opt LMMovePreTrack - Input:", { objectsToMove, event });
 
     // Get the session data
-    const sessionData = T3Gv.opt.GetObjectPtr(this.sedSessionBlockId, false);
+    const sessionData = ObjectUtil.GetObjectPtr(this.sdDataBlockId, false);
 
     // Check for alt key press
     const isAltKeyPressed = event.gesture && event.gesture.srcEvent && event.gesture.srcEvent.altKey;
@@ -7887,7 +6756,7 @@ class OptUtil {
 
     // Disable auto-insert if multiple objects are selected or alt key is pressed
     if (this.linkParams.AutoInsert) {
-      const selectedObjects = this.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
+      const selectedObjects = ObjectUtil.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
       if (selectedObjects.length > 1) {
         this.linkParams.AutoInsert = false;
       }
@@ -7898,7 +6767,7 @@ class OptUtil {
     }
 
     // Get the target object being dragged
-    const drawingObject = this.GetObjectPtr(this.dragTargetId, false);
+    const drawingObject = ObjectUtil.GetObjectPtr(this.dragTargetId, false);
     if (drawingObject) {
       // Store original object state for reference
       T3Gv.opt.ob = Utils1.DeepCopy(drawingObject);
@@ -7920,7 +6789,7 @@ class OptUtil {
       }
 
       // Get links and build the circular list
-      const links = this.GetObjectPtr(this.linksBlockId, false);
+      const links = ObjectUtil.GetObjectPtr(this.linksBlockId, false);
       this.linkParams.lpCircList = this.GetHookList(
         links,
         this.linkParams.lpCircList,
@@ -7961,7 +6830,7 @@ class OptUtil {
 
         if (snapTargetId >= 0) {
           // Get snap target rectangle
-          const targetRect = this.GetObjectPtr(snapTargetId, false).GetSnapRect();
+          const targetRect = ObjectUtil.GetObjectPtr(snapTargetId, false).GetSnapRect();
           const targetRectCopy = $.extend(true, {}, targetRect);
 
           // Initialize dynamic guides for snapping
@@ -7972,13 +6841,13 @@ class OptUtil {
           this.DynamicSnaps_GetSnapObjects(snapTargetId, targetRectCopy, dynamicGuides, objectIds, null, snapOptions);
 
           if (dynamicGuides) {
-            this.DynamicSnaps_UpdateGuides(dynamicGuides, snapTargetId, targetRectCopy);
+            this.DynamicSnapsUpdateGuides(dynamicGuides, snapTargetId, targetRectCopy);
           }
         }
       }
     }
 
-    T3Util.Log("O.Opt LM_MovePreTrack - Output: Link parameters initialized");
+    T3Util.Log("O.Opt LMMovePreTrack - Output: Link parameters initialized");
   }
 
   AllowAutoInsert() {
@@ -8006,7 +6875,7 @@ class OptUtil {
     T3Util.Log("O.Opt AllowSnapToShapes - Input: No parameters");
 
     // Get session data (unused in function but was in original code)
-    T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+    ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
 
     const result = T3Gv.docUtil.docConfig.snapToShapes;
     T3Util.Log("O.Opt AllowSnapToShapes - Output:", result);
@@ -8036,12 +6905,12 @@ class OptUtil {
    * @param event - The movement event
    * @param skipScrolling - Flag to indicate if scrolling should be skipped
    */
-  LM_MoveTrack(event, skipScrolling) {
-    T3Util.Log("O.Opt LM_MoveTrack - Input:", { event, skipScrolling });
+  LMMoveTrack(event, skipScrolling) {
+    T3Util.Log("O.Opt LMMoveTrack - Input:", { event, skipScrolling });
 
     // Prevent too frequent updates (throttling)
     if (Date.now() - this.eventTimestamp < 250) {
-      T3Util.Log("O.Opt LM_MoveTrack - Output: Throttled (skipping)");
+      T3Util.Log("O.Opt LMMoveTrack - Output: Throttled (skipping)");
       return;
     }
 
@@ -8053,8 +6922,8 @@ class OptUtil {
         // Check if we need to duplicate objects (Ctrl+drag)
         if (this.DragDuplicate(event)) {
           // Get selection list and session data
-          const selectedList = T3Gv.opt.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, true);
-          const sessionData = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, true);
+          const selectedList = ObjectUtil.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, true);
+          const sessionData = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, true);
 
           // Store current selection for duplication
           selectedList.length = 0;
@@ -8063,7 +6932,7 @@ class OptUtil {
           }
 
           // Get target object information
-          const targetObject = this.GetObjectPtr(this.dragTargetId, false);
+          const targetObject = ObjectUtil.GetObjectPtr(this.dragTargetId, false);
           let targetObjectBaseClass = -1;
           let targetObjectFrame = null;
 
@@ -8091,7 +6960,7 @@ class OptUtil {
 
           // Rebuild lists with duplicated objects
           for (let i = duplicatedObjects.length - 1; i >= 0; i--) {
-            const duplicatedObject = this.GetObjectPtr(duplicatedObjects[i], false);
+            const duplicatedObject = ObjectUtil.GetObjectPtr(duplicatedObjects[i], false);
             if (duplicatedObject) {
               this.moveList.push(duplicatedObjects[i]);
               this.linkParams.lpCircList.push(duplicatedObjects[i]);
@@ -8119,7 +6988,7 @@ class OptUtil {
         const objectCount = objectsToMove.length;
         for (let i = 0; i < objectCount; i++) {
           const objectId = objectsToMove[i];
-          const drawingObject = this.GetObjectPtr(objectId, false);
+          const drawingObject = ObjectUtil.GetObjectPtr(objectId, false);
 
           if (drawingObject) {
             const svgElement = this.svgObjectLayer.GetElementById(objectId);
@@ -8139,7 +7008,7 @@ class OptUtil {
     if (skipScrolling) {
       this.ResetAutoScrollTimer();
     } else if (!this.AutoScrollCommon(event, !isConnecting, 'HandleObjectDragDoAutoScroll')) {
-      T3Util.Log("O.Opt LM_MoveTrack - Output: Auto-scroll in progress");
+      T3Util.Log("O.Opt LMMoveTrack - Output: Auto-scroll in progress");
       return;
     }
 
@@ -8150,7 +7019,7 @@ class OptUtil {
     );
 
     // Process any adjustments from connection finding
-    const adjustedCoordinates = this.LM_MoveDuringTrack(docCoordinates, event);
+    const adjustedCoordinates = this.LMMoveDuringTrack(docCoordinates, event);
 
     // Handle the actual movement
     this.HandleObjectDragMoveCommon(
@@ -8160,7 +7029,7 @@ class OptUtil {
       event
     );
 
-    T3Util.Log("O.Opt LM_MoveTrack - Output: Objects moved to", adjustedCoordinates);
+    T3Util.Log("O.Opt LMMoveTrack - Output: Objects moved to", adjustedCoordinates);
   }
 
   /**
@@ -8168,8 +7037,8 @@ class OptUtil {
   * @param event - The release event
   * @param moveData - Optional data from a collaborative move
   */
-  LM_MoveRelease(event, moveData?) {
-    T3Util.Log("O.Opt LM_MoveRelease - Input:", { event, moveData });
+  LMMoveRelease(event, moveData?) {
+    T3Util.Log("O.Opt LMMoveRelease - Input:", { event, moveData });
 
     let waslastOpDuplicate = false;
 
@@ -8185,7 +7054,7 @@ class OptUtil {
     )) {
       // Handle dropping over custom library
       if (this.CheckDragIsOverCustomLibrary(event)) {
-        const selectedList = this.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
+        const selectedList = ObjectUtil.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
 
         // Add moved objects to selection if not already there
         for (let i = 0; i < this.moveList.length; i++) {
@@ -8203,12 +7072,12 @@ class OptUtil {
         this.RenderDirtySVGObjects();
       }
 
-      this.LM_MovePostRelease(false);
-      this.RenderAllSVGSelectionStates();
+      this.LMMovePostRelease(false);
+      SvgUtil.RenderAllSVGSelectionStates();
       this.moveList = null;
       // Collab.UnBlockMessages();
 
-      T3Util.Log("O.Opt LM_MoveRelease - Output: Early exit condition met");
+      T3Util.Log("O.Opt LMMoveRelease - Output: Early exit condition met");
       return;
     }
 
@@ -8216,7 +7085,7 @@ class OptUtil {
     const objectCount = this.moveList ? this.moveList.length : 0;
 
     if (objectCount === 0) {
-      T3Util.Log("O.Opt LM_MoveRelease - Output: No objects to move");
+      T3Util.Log("O.Opt LMMoveRelease - Output: No objects to move");
       return;
     }
 
@@ -8308,7 +7177,7 @@ class OptUtil {
     // }
 
     // Finalize the move operation
-    this.LM_MovePostRelease(true, moveData);
+    this.LMMovePostRelease(true, moveData);
 
     // // Send collaboration message if needed
     // if (collabMessage) {
@@ -8322,7 +7191,7 @@ class OptUtil {
     // Handle duplicate operation tracking
     if (!moveData && this.lastOpDuplicate) {
       waslastOpDuplicate = true;
-      const sessionData = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, true);
+      const sessionData = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, true);
       sessionData.dupdisp.x += this.dragDeltaX;
       sessionData.dupdisp.y += this.dragDeltaY;
     }
@@ -8337,7 +7206,7 @@ class OptUtil {
       this.moveList = null;
     }
 
-    T3Util.Log("O.Opt LM_MoveRelease - Output: Move operation completed");
+    T3Util.Log("O.Opt LMMoveRelease - Output: Move operation completed");
   }
 
   /**
@@ -8345,8 +7214,8 @@ class OptUtil {
    * @param completeOperation - Whether to complete the operation (true) or cancel (false)
    * @param moveData - Optional data from a collaborative move operation
    */
-  LM_MovePostRelease(completeOperation, moveData) {
-    T3Util.Log("O.Opt LM_MovePostRelease - Input:", { completeOperation, moveData });
+  LMMovePostRelease(completeOperation, moveData) {
+    T3Util.Log("O.Opt LMMovePostRelease - Input:", { completeOperation, moveData });
 
     let flowChartHookResult = false;
     const objectsToSelect = [];
@@ -8387,7 +7256,7 @@ class OptUtil {
     // Process the completed move if requested
     if (completeOperation) {
       // Get the target object that was dragged
-      let targetObject = this.GetObjectPtr(this.dragTargetId);
+      let targetObject = ObjectUtil.GetObjectPtr(this.dragTargetId);
 
       // Special handling for timeline events
       if (targetObject.objecttype === NvConstant.FNObjectTypes.NgEvent ||
@@ -8477,7 +7346,7 @@ class OptUtil {
       // Handle post-move selection
       if (!moveData && this.postMoveSelectId != null) {
         objectsToSelect.push(this.postMoveSelectId);
-        this.SelectObjects(objectsToSelect, false, false);
+        SelectUtil.SelectObjects(objectsToSelect, false, false);
         this.postMoveSelectId = null;
       }
     }
@@ -8496,7 +7365,7 @@ class OptUtil {
       this.dragBBoxList = [];
     }
 
-    T3Util.Log("O.Opt LM_MovePostRelease - Output: Move post-processing completed");
+    T3Util.Log("O.Opt LMMovePostRelease - Output: Move post-processing completed");
   }
 
   /**
@@ -8507,7 +7376,7 @@ class OptUtil {
     T3Util.Log("O.Opt HandleMultipleSelectionHooks - Input: No parameters");
 
     // Get selected objects
-    const selectedList = this.GetObjectPtr(this.theSelectedListBlockID, false);
+    const selectedList = ObjectUtil.GetObjectPtr(this.theSelectedListBlockID, false);
     if (selectedList.length <= 1) {
       T3Util.Log("O.Opt HandleMultipleSelectionHooks - Output: false (Only one object selected)");
       return false;
@@ -8520,12 +7389,12 @@ class OptUtil {
     let connectionPoints = [];
 
     // Get the target object that was dragged
-    const targetObject = this.GetObjectPtr(this.dragTargetId, false);
+    const targetObject = ObjectUtil.GetObjectPtr(this.dragTargetId, false);
 
     // Process connection when we have a valid connection index
     if (this.linkParams.ConnectIndex >= 0) {
       // Get the connection target object
-      connectObject = this.GetObjectPtr(this.linkParams.ConnectIndex, false);
+      connectObject = ObjectUtil.GetObjectPtr(this.linkParams.ConnectIndex, false);
 
       if (connectObject && connectObject instanceof ShapeContainer) {
         connectId = this.linkParams.ConnectIndex;
@@ -8542,7 +7411,7 @@ class OptUtil {
             objectId = selectedList[objectIndex];
 
             if (objectId !== this.dragTargetId) {
-              currentObject = this.GetObjectPtr(objectId, false);
+              currentObject = ObjectUtil.GetObjectPtr(objectId, false);
 
               // If this object also hooks to the same container
               if (currentObject.hooks.length &&
@@ -8590,7 +7459,7 @@ class OptUtil {
             objectId = selectedList[objectIndex];
 
             if (objectId !== this.dragTargetId) {
-              currentObject = this.GetObjectPtr(objectId, false);
+              currentObject = ObjectUtil.GetObjectPtr(objectId, false);
 
               if (connectObject.IsShapeContainer(currentObject)) {
                 objectsToUpdate.push(objectId);
@@ -8612,7 +7481,7 @@ class OptUtil {
     } else if (targetObject.hooks.length > 0) {
       // If target has hooks but no connection index, check if it's connected to a container
       connectId = targetObject.hooks[0].objid;
-      connectObject = this.GetObjectPtr(connectId, false);
+      connectObject = ObjectUtil.GetObjectPtr(connectId, false);
 
       if (connectObject && connectObject instanceof ShapeContainer) {
         // Find other objects hooked to the same container
@@ -8622,7 +7491,7 @@ class OptUtil {
           objectId = selectedList[objectIndex];
 
           if (objectId !== this.dragTargetId) {
-            currentObject = this.GetObjectPtr(objectId, false);
+            currentObject = ObjectUtil.GetObjectPtr(objectId, false);
 
             if (currentObject.hooks.length &&
               currentObject.hooks[0].objid === connectId) {
@@ -8697,7 +7566,7 @@ class OptUtil {
 
     // If ctrl key is pressed, check if the object type allows duplication
     if (isCtrlKeyPressed) {
-      const targetObject = this.GetObjectPtr(this.dragTargetId, false);
+      const targetObject = ObjectUtil.GetObjectPtr(this.dragTargetId, false);
       const objectTypes = NvConstant.FNObjectTypes;
       const objectSubTypes = NvConstant.ObjectSubTypes;
 
@@ -8724,8 +7593,8 @@ class OptUtil {
    * @param position - The current position to track
    * @returns The adjusted position based on connections and snapping
    */
-  LM_MoveDuringTrack(position) {
-    T3Util.Log("O.Opt LM_MoveDuringTrack - Input:", position);
+  LMMoveDuringTrack(position) {
+    T3Util.Log("O.Opt LMMoveDuringTrack - Input:", position);
 
     let hasConnection;
     let targetObject;
@@ -8738,14 +7607,14 @@ class OptUtil {
 
     // Early return if there's no valid drag target
     if (this.dragTargetId < 0) {
-      T3Util.Log("O.Opt LM_MoveDuringTrack - Output: Invalid drag target");
+      T3Util.Log("O.Opt LMMoveDuringTrack - Output: Invalid drag target");
       return position;
     }
 
     // Get the object being dragged
-    targetObject = this.GetObjectPtr(this.dragTargetId, false);
+    targetObject = ObjectUtil.GetObjectPtr(this.dragTargetId, false);
     if (targetObject == null) {
-      T3Util.Log("O.Opt LM_MoveDuringTrack - Output: Target object not found");
+      T3Util.Log("O.Opt LMMoveDuringTrack - Output: Target object not found");
       return position;
     }
 
@@ -8788,7 +7657,7 @@ class OptUtil {
     }
 
     // Get hook points for connections
-    hookPoints = this.Move_GetHookPoints(
+    hookPoints = this.MoveGetHookPoints(
       this.dragTargetId,
       targetObject,
       position.x - this.dragStartX,
@@ -8833,7 +7702,7 @@ class OptUtil {
         if (hasConnection) {
           position.x += this.dragDeltaX;
           position.y += this.dragDeltaY;
-          T3Util.Log("O.Opt LM_MoveDuringTrack - Output (drop connection):", position);
+          T3Util.Log("O.Opt LMMoveDuringTrack - Output (drop connection):", position);
           return position;
         }
       }
@@ -8860,7 +7729,7 @@ class OptUtil {
       }
     }
 
-    T3Util.Log("O.Opt LM_MoveDuringTrack - Output:", position);
+    T3Util.Log("O.Opt LMMoveDuringTrack - Output:", position);
     return position;
   }
 
@@ -8872,8 +7741,8 @@ class OptUtil {
    * @param deltaY - Change in Y position
    * @returns Array of hook points or null if hooking not allowed
    */
-  Move_GetHookPoints(objectId, drawingObject, deltaX, deltaY) {
-    T3Util.Log("O.Opt Move_GetHookPoints - Input:", {
+  MoveGetHookPoints(objectId, drawingObject, deltaX, deltaY) {
+    T3Util.Log("O.Opt MoveGetHookPoints - Input:", {
       objectId,
       drawingObject: drawingObject ? drawingObject.BlockID : null,
       deltaX,
@@ -8896,27 +7765,27 @@ class OptUtil {
 
     // Early return conditions
     if (drawingObject == null) {
-      T3Util.Log("O.Opt Move_GetHookPoints - Output: null (No drawing object)");
+      T3Util.Log("O.Opt MoveGetHookPoints - Output: null (No drawing object)");
       return null;
     }
 
     if (this.linkParams == null) {
-      T3Util.Log("O.Opt Move_GetHookPoints - Output: null (No link parameters)");
+      T3Util.Log("O.Opt MoveGetHookPoints - Output: null (No link parameters)");
       return null;
     }
 
     if (drawingObject.hooks && drawingObject.hooks.length === 2) {
-      T3Util.Log("O.Opt Move_GetHookPoints - Output: null (Object already has 2 hooks)");
+      T3Util.Log("O.Opt MoveGetHookPoints - Output: null (Object already has 2 hooks)");
       return null;
     }
 
     if (drawingObject.flags & NvConstant.ObjFlags.Assoc) {
-      T3Util.Log("O.Opt Move_GetHookPoints - Output: null (Object is associated)");
+      T3Util.Log("O.Opt MoveGetHookPoints - Output: null (Object is associated)");
       return null;
     }
 
     if (drawingObject.PreventLink()) {
-      T3Util.Log("O.Opt Move_GetHookPoints - Output: null (Object prevents linking)");
+      T3Util.Log("O.Opt MoveGetHookPoints - Output: null (Object prevents linking)");
       return null;
     }
 
@@ -8926,7 +7795,7 @@ class OptUtil {
     }
 
     // Get session data and check flags
-    const sessionData = this.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+    const sessionData = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
     if (sessionData) {
       // Check if attach-to-line is allowed
       allowDropOnLine = sessionData.flags & OptConstant.SessionFlags.AttLink &&
@@ -9012,7 +7881,7 @@ class OptUtil {
       perimeterPoints[i].y += deltaY;
     }
 
-    T3Util.Log("O.Opt Move_GetHookPoints - Output:", {
+    T3Util.Log("O.Opt MoveGetHookPoints - Output:", {
       pointCount: perimeterPoints.length,
       allowDropOnLine: this.linkParams.DropOnLine,
       allowJoin: this.linkParams.AllowJoin
@@ -9090,7 +7959,7 @@ class OptUtil {
     }
 
     // Get the target object being dragged
-    let targetObject = T3Gv.opt.GetObjectPtr(this.dragTargetId, false);
+    let targetObject = ObjectUtil.GetObjectPtr(this.dragTargetId, false);
     let snapOffset = { x: null, y: null };
     const currentPosition = { x: mouseX, y: mouseY };
 
@@ -9121,7 +7990,7 @@ class OptUtil {
 
       if (snapTargetId >= 0) {
         // Get snap target rectangle
-        objectRect = this.GetObjectPtr(snapTargetId, false).GetSnapRect();
+        objectRect = ObjectUtil.GetObjectPtr(snapTargetId, false).GetSnapRect();
         adjustedTargetRect = $.extend(true, {}, objectRect);
         adjustedTargetRect.x += T3Gv.opt.dragDeltaX;
         adjustedTargetRect.y += T3Gv.opt.dragDeltaY;
@@ -9221,7 +8090,7 @@ class OptUtil {
     }
 
     // Get session data and check if auto-grow is disabled
-    const sessionData = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+    const sessionData = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
 
     if (T3Gv.opt.contentHeader.flags & OptConstant.CntHeaderFlags.NoAuto) {
       // Constrain to document dimensions
@@ -9243,7 +8112,7 @@ class OptUtil {
     }
 
     // Get target selection ID
-    let targetSelectionId = this.GetTargetSelect();
+    let targetSelectionId = SelectUtil.GetTargetSelect();
     if (targetSelectionId < 0) {
       targetSelectionId = this.dragTargetId;
     }
@@ -9260,7 +8129,7 @@ class OptUtil {
 
       // Special handling for the target selection
       if (objectsToMove[index] === targetSelectionId) {
-        targetObject = this.GetObjectPtr(targetSelectionId, false);
+        targetObject = ObjectUtil.GetObjectPtr(targetSelectionId, false);
 
         let displayDimensions = {
           x: objectRect.x + T3Gv.opt.dragDeltaX,
@@ -9283,7 +8152,7 @@ class OptUtil {
         }
 
         // Update coordinates display
-        this.UpdateDisplayCoordinates(
+        UIUtil.UpdateDisplayCoordinates(
           displayDimensions,
           mousePosition,
           CursorConstant.CursorTypes.Move,
@@ -9291,35 +8160,35 @@ class OptUtil {
         );
 
         // Update selection attributes for the ribbon
-        const selectionAttributes = new SelectionAttributes();
-        selectionAttributes.left = displayDimensions.x;
-        selectionAttributes.top = displayDimensions.y;
+        const selectAttr = new SelectionAttr();
+        selectAttr.left = displayDimensions.x;
+        selectAttr.top = displayDimensions.y;
 
         // Check if we need to display dimensions as feet/inches
         const showFeetAsInches = targetObject.Dimensions & NvConstant.DimensionFlags.ShowFeetAsInches;
 
         // Format the dimensions as strings
-        selectionAttributes.widthstr = T3Constant.DocContext.CurrentWidth;
-        selectionAttributes.heightstr = T3Constant.DocContext.CurrentHeight;
-        selectionAttributes.leftstr = this.GetLengthInRulerUnits(
-          selectionAttributes.left,
+        selectAttr.widthstr = T3Constant.DocContext.CurrentWidth;
+        selectAttr.heightstr = T3Constant.DocContext.CurrentHeight;
+        selectAttr.leftstr = RulerUtil.GetLengthInRulerUnits(
+          selectAttr.left,
           false,
           T3Gv.docUtil.rulerConfig.originx,
           showFeetAsInches
         );
-        selectionAttributes.topstr = this.GetLengthInRulerUnits(
-          selectionAttributes.top,
+        selectAttr.topstr = RulerUtil.GetLengthInRulerUnits(
+          selectAttr.top,
           false,
           T3Gv.docUtil.rulerConfig.originy,
           showFeetAsInches
         );
 
         // Update ribbon dimensions (commented out as it's using SDUI)
-        // SDUI.Commands.MainController.UpdateRibbonDimensions(selectionAttributes);
+        // SDUI.Commands.MainController.UpdateRibbonDimensions(SelectionAttr);
 
         // Update guides display if they exist
         if (dynamicGuides) {
-          this.DynamicSnaps_UpdateGuides(dynamicGuides, snapTargetId, adjustedTargetRect);
+          this.DynamicSnapsUpdateGuides(dynamicGuides, snapTargetId, adjustedTargetRect);
         }
       }
 
@@ -9431,7 +8300,7 @@ class OptUtil {
   SetLinkFlag(targetId, flagValue) {
     T3Util.Log("O.Opt SetLinkFlag - Input:", { targetId, flagValue });
 
-    const links = this.GetObjectPtr(this.linksBlockId, false);
+    const links = ObjectUtil.GetObjectPtr(this.linksBlockId, false);
 
     if (links == null) {
       T3Util.Log("O.Opt SetLinkFlag - Output: 1 (links not found)");
@@ -9443,10 +8312,10 @@ class OptUtil {
 
     if (linkIndex >= 0) {
       // Get a preserved copy of the links for modification
-      const preservedLinks = this.GetObjectPtr(this.linksBlockId, true);
+      const preservedLinks = ObjectUtil.GetObjectPtr(this.linksBlockId, true);
 
       // Get the target object and ensure it exists
-      const targetObject = this.GetObjectPtr(targetId, true);
+      const targetObject = ObjectUtil.GetObjectPtr(targetId, true);
       if (targetObject == null) {
         T3Util.Log("O.Opt SetLinkFlag - Output: 1 (target object not found)");
         return 1;
@@ -9471,15 +8340,15 @@ class OptUtil {
      * @param objectId - ID of the object being resized
      * @param flagValue - Flag value to set
      */
-  Resize_SetLinkFlag(objectId, flagValue) {
-    T3Util.Log("O.Opt Resize_SetLinkFlag - Input:", { objectId, flagValue });
+  ResizeSetLinkFlag(objectId, flagValue) {
+    T3Util.Log("O.Opt ResizeSetLinkFlag - Input:", { objectId, flagValue });
 
-    const object = this.GetObjectPtr(objectId, false);
+    const object = ObjectUtil.GetObjectPtr(objectId, false);
 
     // If object has hooks, update the hook's link flag
     if (object && object.hooks.length) {
       const hookObjectId = object.hooks[0].objid;
-      const hookObject = this.GetObjectPtr(hookObjectId, false);
+      const hookObject = ObjectUtil.GetObjectPtr(hookObjectId, false);
 
       if (hookObject &&
         (hookObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector ||
@@ -9491,7 +8360,7 @@ class OptUtil {
     // Set the flag for the object itself
     this.SetLinkFlag(objectId, flagValue);
 
-    T3Util.Log("O.Opt Resize_SetLinkFlag - Output: Link flags updated");
+    T3Util.Log("O.Opt ResizeSetLinkFlag - Output: Link flags updated");
   }
 
   /**
@@ -9509,7 +8378,7 @@ class OptUtil {
     let hookFlags = 0;
     let connectionPoint = {};
     let targetPoints = [];
-    let links = this.GetObjectPtr(this.linksBlockId, true);
+    let links = ObjectUtil.GetObjectPtr(this.linksBlockId, true);
 
     // Exit if no links or object doesn't allow maintaining links
     if (!links || !drawingObject.AllowMaintainLink()) {
@@ -9526,7 +8395,7 @@ class OptUtil {
 
     // Process all links to this target
     while (linkIndex < links.length && links[linkIndex].targetid === targetId) {
-      hookObject = this.GetObjectPtr(links[linkIndex].hookid, false);
+      hookObject = ObjectUtil.GetObjectPtr(links[linkIndex].hookid, false);
 
       // Skip if hook object doesn't exist or has special flags
       if (!hookObject) {
@@ -9685,7 +8554,7 @@ class OptUtil {
     const svgElement = this.svgObjectLayer.GetElementById(drawingObject.tag);
 
     // Find the text element to check
-    if (this.GetObjectPtr(this.tedSessionBlockId, false).theActiveTextEditObjectID !== drawingObject.BlockID) {
+    if (ObjectUtil.GetObjectPtr(this.teDataBlockId, false).theActiveTextEditObjectID !== drawingObject.BlockID) {
       // const table = drawingObject.GetTable(false);
 
       // if (table) {
@@ -9747,7 +8616,7 @@ class OptUtil {
     const usableHeight = originalDimensions.y - 2 * edgeAnnotationDistance;
 
     // Get layers manager from the object store
-    const layersManager = T3Gv.opt.GetObjectPtr(this.layersManagerBlockId, false);
+    const layersManager = ObjectUtil.GetObjectPtr(this.layersManagerBlockId, false);
     const layers = layersManager.layers;
     const numberOfLayers = layersManager.nlayers;
 
@@ -9774,7 +8643,7 @@ class OptUtil {
           }
 
           // Get the object and check if it needs edge updates
-          currentObject = T3Gv.opt.GetObjectPtr(objectId, false);
+          currentObject = ObjectUtil.GetObjectPtr(objectId, false);
           if (currentObject) {
             // Determine which edges the object needs
             needsLeftEdge = currentObject.Frame.x < leftEdgeOffset;
@@ -9810,7 +8679,7 @@ class OptUtil {
     T3Util.Log("O.Opt ResizeSVGDocument - Input: No parameters");
 
     // Get the session data from stored object
-    const sessionData = T3Gv.stdObj.GetObject(this.sedSessionBlockId).Data;
+    const sessionData = T3Gv.stdObj.GetObject(this.sdDataBlockId).Data;
 
     // Resize the document to the dimensions specified in session data
     T3Gv.docUtil.ResizeDocument(sessionData.dim.x, sessionData.dim.y);
@@ -9822,8 +8691,8 @@ class OptUtil {
    * Handles clicks on test icons in the SVG document
    * @param event - The event that triggered the icon click
    */
-  LM_TestIconClick(event) {
-    T3Util.Log("O.Opt LM_TestIconClick - Input:", event);
+  LMTestIconClick(event) {
+    T3Util.Log("O.Opt LMTestIconClick - Input:", event);
 
     // Find the SVG element corresponding to the clicked DOM element
     const svgElement = this.svgObjectLayer.FindElementByDOMElement(event.currentTarget);
@@ -9834,11 +8703,11 @@ class OptUtil {
       const elementId = targetElement.GetID();
       const elementUserData = targetElement.GetUserData();
       const objectId = svgElement.GetID();
-      const drawingObject = T3Gv.opt.GetObjectPtr(objectId, false);
+      const drawingObject = ObjectUtil.GetObjectPtr(objectId, false);
 
       // Validate that we have a drawing object
       if (!(drawingObject && drawingObject instanceof BaseDrawObject)) {
-        T3Util.Log("O.Opt LM_TestIconClick - Output: false (no valid drawing object)");
+        T3Util.Log("O.Opt LMTestIconClick - Output: false (no valid drawing object)");
         return false;
       }
 
@@ -9858,11 +8727,11 @@ class OptUtil {
 
         default:
           // Handle shape icon click
-          this.LM_ShapeIconClick(event, objectId, elementId, elementUserData);
+          this.LMShapeIconClick(event, objectId, elementId, elementUserData);
       }
     }
 
-    T3Util.Log("O.Opt LM_TestIconClick - Output: Operation completed");
+    T3Util.Log("O.Opt LMTestIconClick - Output: Operation completed");
   }
 
   /**
@@ -9914,13 +8783,13 @@ class OptUtil {
    * @param userData - Additional data related to the icon
    * @returns True if the click was handled, false otherwise
    */
-  LM_ShapeIconClick(event, objectId, iconType, userData) {
-    T3Util.Log("O.Opt LM_ShapeIconClick - Input:", { event, objectId, iconType, userData });
+  LMShapeIconClick(event, objectId, iconType, userData) {
+    T3Util.Log("O.Opt LMShapeIconClick - Input:", { event, objectId, iconType, userData });
 
     // Get the object corresponding to the icon
-    let drawingObject = this.GetObjectPtr(objectId, false);
+    let drawingObject = ObjectUtil.GetObjectPtr(objectId, false);
     if (drawingObject == null) {
-      T3Util.Log("O.Opt LM_ShapeIconClick - Output: false (Object not found)");
+      T3Util.Log("O.Opt LMShapeIconClick - Output: false (Object not found)");
       return false;
     }
 
@@ -9935,13 +8804,13 @@ class OptUtil {
 
     // Prevent clicking on locked objects
     if (drawingObject.flags & NvConstant.ObjFlags.Lock) {
-      T3Util.Log("O.Opt LM_ShapeIconClick - Output: false (Object is locked)");
+      T3Util.Log("O.Opt LMShapeIconClick - Output: false (Object is locked)");
       return false;
     }
 
     // Only handle clicks in default edit mode
     if (this.GetEditMode() !== NvConstant.EditState.Default) {
-      T3Util.Log("O.Opt LM_ShapeIconClick - Output: false (Not in default edit mode)");
+      T3Util.Log("O.Opt LMShapeIconClick - Output: false (Not in default edit mode)");
       return false;
     }
 
@@ -9965,7 +8834,7 @@ class OptUtil {
         const cellForExpandedView = drawingObject.IsNoteCell(userData);
         expandedViewId = cellForExpandedView ? cellForExpandedView.ExpandedViewID : drawingObject.ExpandedViewID;
         T3Gv.opt.ShowExpandedView(expandedViewId, event);
-        T3Util.Log("O.Opt LM_ShapeIconClick - Output: false (Expanded view shown)");
+        T3Util.Log("O.Opt LMShapeIconClick - Output: false (Expanded view shown)");
         break;
 
       case OptConstant.ShapeIconType.Comment:
@@ -9981,7 +8850,7 @@ class OptUtil {
         }
 
         T3Gv.opt.EditComments(commentId);
-        T3Util.Log("O.Opt LM_ShapeIconClick - Output: false (Comment edit opened)");
+        T3Util.Log("O.Opt LMShapeIconClick - Output: false (Comment edit opened)");
         break;
 
       case OptConstant.ShapeIconType.Notes:
@@ -9998,19 +8867,19 @@ class OptUtil {
 
         // Toggle on the new note
         this.ToggleNote(objectId, cellForNote, userData);
-        T3Util.Log("O.Opt LM_ShapeIconClick - Output: true (Note toggled)");
+        T3Util.Log("O.Opt LMShapeIconClick - Output: true (Note toggled)");
         return true;
 
       // case OptConstant.ShapeIconType.ExpandTable:
       //   // Handle expand table icon
       //   const cellForExpand = drawingObject.IsNoteCell(userData);
-      //   T3Util.Log("O.Opt LM_ShapeIconClick - Output: false (Table expanded)");
+      //   T3Util.Log("O.Opt LMShapeIconClick - Output: false (Table expanded)");
       //   break;
 
       // case OptConstant.ShapeIconType.CollapseTable:
       //   // Handle collapse table icon
       //   const cellForCollapse = drawingObject.IsNoteCell(userData);
-      //   T3Util.Log("O.Opt LM_ShapeIconClick - Output: false (Table collapsed)");
+      //   T3Util.Log("O.Opt LMShapeIconClick - Output: false (Table collapsed)");
       //   break;
 
       case OptConstant.ShapeIconType.FieldData:
@@ -10023,16 +8892,16 @@ class OptUtil {
         }
 
         this.ToggleFieldedDataTooltip(objectId, isShiftPressed);
-        T3Util.Log("O.Opt LM_ShapeIconClick - Output: true (Field data tooltip toggled)");
+        T3Util.Log("O.Opt LMShapeIconClick - Output: true (Field data tooltip toggled)");
         return true;
 
       case OptConstant.ShapeIconType.Attachment:
         // Handle attachment icon (no action defined in original code)
-        T3Util.Log("O.Opt LM_ShapeIconClick - Output: true (Attachment icon clicked)");
+        T3Util.Log("O.Opt LMShapeIconClick - Output: true (Attachment icon clicked)");
         return true;
     }
 
-    T3Util.Log("O.Opt LM_ShapeIconClick - Output: false (Default return)");
+    T3Util.Log("O.Opt LMShapeIconClick - Output: false (Default return)");
     return false;
   }
 
@@ -10058,12 +8927,12 @@ class OptUtil {
     let selectedRange;
 
     const objectId = drawingElement.ID;
-    const textEditSession = this.GetObjectPtr(this.tedSessionBlockId, false);
+    const textEditSession = ObjectUtil.GetObjectPtr(this.teDataBlockId, false);
     const objectsToSelect = [];
     let eventData = {};
 
     // Check if the object exists and is not locked
-    drawingObject = this.GetObjectPtr(objectId, false);
+    drawingObject = ObjectUtil.GetObjectPtr(objectId, false);
     if (!drawingObject || !(drawingObject instanceof BaseDrawObject) ||
       (drawingObject.flags & NvConstant.ObjFlags.Lock)) {
       T3Util.Log('O.Opt ActivateTextEdit - Output: Object invalid or locked');
@@ -10099,10 +8968,10 @@ class OptUtil {
       }
 
       // Handle selection state
-      const selectedList = this.GetObjectPtr(this.theSelectedListBlockID, false);
+      const selectedList = ObjectUtil.GetObjectPtr(this.theSelectedListBlockID, false);
       if (selectedList.indexOf(objectId) === -1 || selectedList.length > 1) {
         objectsToSelect.push(objectId);
-        this.SelectObjects(objectsToSelect, false, true);
+        SelectUtil.SelectObjects(objectsToSelect, false, true);
         targetSelectionId = selectedList[0];
       } else {
         targetSelectionId = objectId;
@@ -10115,30 +8984,30 @@ class OptUtil {
     // Collab.BeginSecondaryEdit();
 
     // Get a preserved copy of the object
-    const preservedObject = this.GetObjectPtr(objectId, true);
+    const preservedObject = ObjectUtil.GetObjectPtr(objectId, true);
     const textObjectId = preservedObject.GetTextObject(event, false, eventData);
     let preservedTextEditSession;
 
     if (textObjectId != null) {
       // Prepare the text edit session
       if (!textData) {
-        preservedTextEditSession = this.GetObjectPtr(this.tedSessionBlockId, true);
+        preservedTextEditSession = ObjectUtil.GetObjectPtr(this.teDataBlockId, true);
       } else if (textData.EditorID === Collab.EditorID) {
-        const tempSession = this.GetObjectPtr(this.tedSessionBlockId, false);
+        const tempSession = ObjectUtil.GetObjectPtr(this.teDataBlockId, false);
         tempSession.theActiveTextEditObjectID = -1;
 
         const activeTableId = tempSession.theActiveTableObjectID;
         tempSession.theTEWasResized = false;
         tempSession.theTEWasEdited = false;
 
-        preservedTextEditSession = this.GetObjectPtr(this.tedSessionBlockId, true);
+        preservedTextEditSession = ObjectUtil.GetObjectPtr(this.teDataBlockId, true);
         preservedTextEditSession.theActiveTextEditObjectID = objectId;
         preservedTextEditSession.theActiveTableObjectID = activeTableId;
       } else {
-        const tempSession = this.GetObjectPtr(this.tedSessionBlockId, false);
+        const tempSession = ObjectUtil.GetObjectPtr(this.teDataBlockId, false);
         tempSession.EditorID = textData.EditorID;
 
-        preservedTextEditSession = this.GetObjectPtr(this.tedSessionBlockId, true);
+        preservedTextEditSession = ObjectUtil.GetObjectPtr(this.teDataBlockId, true);
         preservedTextEditSession.EditorID = Collab.EditorID;
       }
 
@@ -10147,7 +9016,7 @@ class OptUtil {
 
       // Create a new text object if needed
       if (textObjectId == -1) {
-        const updatedObject = this.GetObjectPtr(objectId, true);
+        const updatedObject = ObjectUtil.GetObjectPtr(objectId, true);
 
         // Create a new text object
         const newTextObject = new TextObject({});
@@ -10166,12 +9035,12 @@ class OptUtil {
           return;
         }
 
-        updatedObject.LM_AddSVGTextObject(this.svgDoc, svgElement);
+        updatedObject.LMAddSVGTextObject(this.svgDoc, svgElement);
         textObject = newTextBlock.Data;
       } else {
-        textObject = this.GetObjectPtr(textObjectId, true);
+        textObject = ObjectUtil.GetObjectPtr(textObjectId, true);
         if (!svgElement.textElem) {
-          preservedObject.LM_AddSVGTextObject(this.svgDoc, svgElement);
+          preservedObject.LMAddSVGTextObject(this.svgDoc, svgElement);
         }
       }
 
@@ -10380,7 +9249,7 @@ class OptUtil {
     try {
       // Set modal operation mode
       this.SetModalOperation(OptConstant.OptTypes.DragDrop);
-      this.GetObjectPtr(this.tedSessionBlockId, false);
+      ObjectUtil.GetObjectPtr(this.teDataBlockId, false);
       this.CloseEdit();
 
       // Store parameters for later use
@@ -10422,7 +9291,7 @@ class OptUtil {
       // T3Gv.opt.mainAppHammer.on('click', T3Gv.Evt_StampObjectDragEnd);
 
       // Initialize tracking and prepare for movement
-      this.LM_StampPreTrack();
+      this.LMStampPreTrack();
       this.InitializeAutoGrowDrag();
 
       T3Util.Log("O.Opt DragDropNewShape - Output: Drag and drop initialized");
@@ -10455,7 +9324,7 @@ class OptUtil {
 
     // Set modal operation to STAMP mode
     this.SetModalOperation(OptConstant.OptTypes.Stamp);
-    this.GetObjectPtr(this.tedSessionBlockId, false);
+    ObjectUtil.GetObjectPtr(this.teDataBlockId, false);
 
     // Close any active text editing
     this.DeactivateTextEdit(false);
@@ -10491,7 +9360,7 @@ class OptUtil {
     $(window).bind('click', T3Gv.Evt_LM_MouseStampObjectDone);
 
     // Prepare for stamping
-    this.LM_StampPreTrack();
+    this.LMStampPreTrack();
     this.InitializeAutoGrowDrag();
 
     T3Util.Log("O.Opt MouseStampNewShape - Output: Stamp operation initialized");
@@ -10579,7 +9448,7 @@ class OptUtil {
       if (this.moveList && this.moveList.length) {
         for (let i = 0; i < this.moveList.length; i++) {
           const objectId = this.moveList[i];
-          const drawingObject = this.GetObjectPtr(objectId, true);
+          const drawingObject = ObjectUtil.GetObjectPtr(objectId, true);
 
           if (drawingObject) {
             drawingObject.UpdateFrame(drawingObject.Frame);
@@ -10616,7 +9485,7 @@ class OptUtil {
         }
 
         // Get the updated object
-        this.GetObjectPtr(this.actionStoredObjectId, true);
+        ObjectUtil.GetObjectPtr(this.actionStoredObjectId, true);
       }
 
       // Include link parameters for collaboration
@@ -10683,7 +9552,7 @@ class OptUtil {
       this.stampShapeOffsetY = 0;
 
       // Finish the operation
-      this.LM_StampPostRelease(true);
+      this.LMStampPostRelease(true);
       this.DynamicSnapsRemoveGuides(this.dynamicGuides);
       this.dynamicGuides = null;
       this.dragBBoxList = [];
@@ -10725,7 +9594,7 @@ class OptUtil {
 
     // Handle the specific object if provided
     if (objectId) {
-      object = T3Gv.opt.GetObjectPtr(objectId, false);
+      object = ObjectUtil.GetObjectPtr(objectId, false);
 
       // Set flags if it's a closed polyline
       if (object &&
@@ -10743,13 +9612,13 @@ class OptUtil {
     // Process objects in the move list
     if (this.moveList && this.moveList.length) {
       for (let index = 0; index < this.moveList.length; index++) {
-        moveObject = this.GetObjectPtr(this.moveList[index], true);
+        moveObject = ObjectUtil.GetObjectPtr(this.moveList[index], true);
 
         // Check if the object has hooks
         if (moveObject && moveObject.hooks.length > 0) {
           // Process each hook
           for (let hookIndex = 0; hookIndex < moveObject.hooks.length; hookIndex++) {
-            const hookedObject = this.GetObjectPtr(moveObject.hooks[hookIndex].objid, false);
+            const hookedObject = ObjectUtil.GetObjectPtr(moveObject.hooks[hookIndex].objid, false);
 
             // Set flags if the hooked object is a filled closed polyline
             if (hookedObject &&
@@ -10782,7 +9651,7 @@ class OptUtil {
     // Clear modal operation state
     this.SetModalOperation(OptConstant.OptTypes.None);
     T3Constant.DocContext.SelectionToolSticky = false;
-    this.LM_StampPostRelease(false);
+    this.LMStampPostRelease(false);
 
     // Clean up stored object if one was created
     if (this.actionStoredObjectId >= 0) {
@@ -10844,7 +9713,7 @@ class OptUtil {
 
     // Clear modal operation state
     this.SetModalOperation(OptConstant.OptTypes.None);
-    this.LM_StampPostRelease(false);
+    this.LMStampPostRelease(false);
 
     // Clean up stored object if one was created
     if (this.actionStoredObjectId >= 0) {
@@ -10889,11 +9758,11 @@ class OptUtil {
   /**
      * Prepares for stamping an object onto the document
      */
-  LM_StampPreTrack() {
-    T3Util.Log("O.Opt LM_StampPreTrack - Input: No parameters");
+  LMStampPreTrack() {
+    T3Util.Log("O.Opt LMStampPreTrack - Input: No parameters");
 
     // Get the session data (not directly used in this function)
-    T3Gv.opt.GetObjectPtr(this.sedSessionBlockId, false);
+    ObjectUtil.GetObjectPtr(this.sdDataBlockId, false);
 
     // Initialize link parameters
     this.linkParams = new LinkParameters();
@@ -10906,7 +9775,7 @@ class OptUtil {
       this.linkParams.DropOnLine = true;
     }
 
-    T3Util.Log("O.Opt LM_StampPreTrack - Output: Link parameters initialized", {
+    T3Util.Log("O.Opt LMStampPreTrack - Output: Link parameters initialized", {
       autoInsert: this.linkParams.AutoInsert,
       dropOnLine: this.linkParams.DropOnLine || false
     });
@@ -11023,7 +9892,7 @@ class OptUtil {
         objectCount = this.moveList.length;
 
         for (objectIndex = 0; objectIndex < objectCount; objectIndex++) {
-          currentObject = this.GetObjectPtr(this.moveList[objectIndex], true);
+          currentObject = ObjectUtil.GetObjectPtr(this.moveList[objectIndex], true);
           if (currentObject) {
             currentObject.UpdateFrame(currentObject.Frame);
             frameData = Utils1.DeepCopy(currentObject.Frame);
@@ -11031,7 +9900,7 @@ class OptUtil {
           }
 
           // Get a fresh copy of the object
-          currentObject = this.GetObjectPtr(this.moveList[objectIndex], true);
+          currentObject = ObjectUtil.GetObjectPtr(this.moveList[objectIndex], true);
         }
       } else {
         // Handle a single object
@@ -11068,7 +9937,7 @@ class OptUtil {
         }
 
         // Get latest version of the action object
-        this.GetObjectPtr(this.actionStoredObjectId, true);
+        ObjectUtil.GetObjectPtr(this.actionStoredObjectId, true);
       }
 
       // // Prepare collaboration message data
@@ -11152,7 +10021,7 @@ class OptUtil {
       this.stampShapeOffsetY = 0;
 
       // Finish the stamp operation
-      this.LM_StampPostRelease(true);
+      this.LMStampPostRelease(true);
 
       // Send collaboration message if available
       // if (collabMessage) {
@@ -11204,7 +10073,7 @@ class OptUtil {
     // Add the new object
     if ((newObjectID = this.AddNewObject(this.drawShape, useDefaultStyle, false)) >= 0) {
       this.actionStoredObjectId = newObjectID;
-      let visibleZList = T3Gv.opt.VisibleZList();
+      let visibleZList = LayerUtil.VisibleZList();
       this.dragBBoxList = [];
       this.dragElementList = [];
 
@@ -11212,7 +10081,7 @@ class OptUtil {
       if (this.moveList && this.moveList.length) {
         for (let i = 0; i < this.moveList.length; i++) {
           let moveObjectID = this.moveList[i];
-          let moveObject = this.GetObjectPtr(moveObjectID, false);
+          let moveObject = ObjectUtil.GetObjectPtr(moveObjectID, false);
 
           if (moveObject) {
             let svgFrame = moveObject.GetSVGFrame();
@@ -11259,8 +10128,8 @@ class OptUtil {
       }
       // Handle objects with native data
       else if (hasNativeData) {
-        let newObject = this.GetObjectPtr(newObjectID, false);
-        let sessionBlock = T3Gv.opt.GetObjectPtr(this.sedSessionBlockId, false);
+        let newObject = ObjectUtil.GetObjectPtr(newObjectID, false);
+        let sessionBlock = ObjectUtil.GetObjectPtr(this.sdDataBlockId, false);
         let hasImageURL = newObject.ImageURL && newObject.ImageURL.length > 0;
 
         // Apply curvature if applicable
@@ -11282,8 +10151,8 @@ class OptUtil {
         this.linkParams.lpCircList.push(this.actionStoredObjectId);
       }
 
-      T3Gv.opt.ShowFrame(true);
-      T3Gv.opt.ShowXY(true);
+      UIUtil.ShowFrame(true);
+      UIUtil.ShowXY(true);
     }
 
     T3Util.Log(`O.Opt MouseAddNewShape - Output: New object created with ID:`, newObjectID);
@@ -11352,7 +10221,6 @@ class OptUtil {
     T3Util.Log("O.Opt MouseStampObjectMove - Output: Movement processed");
   }
 
-
   /**
    * Handles common logic for moving an object during stamping operations
    * @param mouseX - X coordinate of the mouse position
@@ -11400,8 +10268,8 @@ class OptUtil {
           }
 
           this.newObjectVisible = false;
-          T3Gv.opt.ShowFrame(false);
-          T3Gv.opt.ShowXY(false);
+          UIUtil.ShowFrame(false);
+          UIUtil.ShowXY(false);
         }
         T3Util.Log("O.Opt StampObjectMoveCommon - Output: Object outside viewport, hidden");
         return;
@@ -11422,13 +10290,13 @@ class OptUtil {
         }
 
         this.newObjectVisible = true;
-        T3Gv.opt.ShowFrame(true);
-        T3Gv.opt.ShowXY(true);
+        UIUtil.ShowFrame(true);
+        UIUtil.ShowXY(true);
       }
     }
 
     // Get the drawing object
-    drawingObject = this.GetObjectPtr(this.actionStoredObjectId, false);
+    drawingObject = ObjectUtil.GetObjectPtr(this.actionStoredObjectId, false);
     if (!drawingObject) {
       T3Util.Log("O.Opt StampObjectMoveCommon - Output: No valid drawing object");
       return;
@@ -11450,7 +10318,7 @@ class OptUtil {
 
       if (snapTargetId >= 0) {
         const dynamicGuides = new DynamicGuides();
-        const targetRect = this.GetObjectPtr(snapTargetId, false).GetSnapRect();
+        const targetRect = ObjectUtil.GetObjectPtr(snapTargetId, false).GetSnapRect();
 
         // Create a copy of the target rectangle centered at the current position
         const positionedRect = $.extend(true, {}, targetRect);
@@ -11582,11 +10450,11 @@ class OptUtil {
       drawingObject.SetShapeOrigin(objectRect.x + xOffset, objectRect.y + yOffset);
 
       // Apply any additional tracking logic
-      currentPosition = this.LM_StampDuringTrack(currentPosition, drawingObject);
+      currentPosition = this.LMStampDuringTrack(currentPosition, drawingObject);
 
       // Update display coordinates
       const dimensionsData = drawingObject.GetDimensionsForDisplay();
-      T3Gv.opt.UpdateDisplayCoordinates(
+      UIUtil.UpdateDisplayCoordinates(
         dimensionsData,
         currentPosition,
         CursorConstant.CursorTypes.Plus,
@@ -11594,7 +10462,7 @@ class OptUtil {
       );
 
       // Update selection attributes
-      const selectionAttrs = new SelectionAttributes();
+      const selectionAttrs = new SelectionAttr();
       selectionAttrs.left = dimensionsData.x;
       selectionAttrs.top = dimensionsData.y;
 
@@ -11603,13 +10471,13 @@ class OptUtil {
 
       selectionAttrs.widthstr = T3Constant.DocContext.CurrentWidth;
       selectionAttrs.heightstr = T3Constant.DocContext.CurrentHeight;
-      selectionAttrs.leftstr = this.GetLengthInRulerUnits(
+      selectionAttrs.leftstr = RulerUtil.GetLengthInRulerUnits(
         selectionAttrs.left,
         false,
         T3Gv.docUtil.rulerConfig.originx,
         showFeetAsInches
       );
-      selectionAttrs.topstr = this.GetLengthInRulerUnits(
+      selectionAttrs.topstr = RulerUtil.GetLengthInRulerUnits(
         selectionAttrs.top,
         false,
         T3Gv.docUtil.rulerConfig.originy,
@@ -11619,7 +10487,7 @@ class OptUtil {
       // Update all objects in the move list
       for (let i = 0; i < objectCount; ++i) {
         objectId = this.moveList[i];
-        const object = this.GetObjectPtr(objectId);
+        const object = ObjectUtil.GetObjectPtr(objectId);
 
         if (object) {
           if (objectId !== this.actionStoredObjectId) {
@@ -11637,7 +10505,7 @@ class OptUtil {
             object.SVGFragment) {
 
             if (!visibleList) {
-              visibleList = T3Gv.opt.VisibleZList();
+              visibleList = LayerUtil.VisibleZList();
             }
 
             listIndex = visibleList.indexOf(objectId);
@@ -11690,11 +10558,11 @@ class OptUtil {
       drawingObject.SetShapeOrigin(objectRect.x + xOffset, objectRect.y + yOffset);
 
       // Apply any additional tracking logic
-      currentPosition = this.LM_StampDuringTrack(currentPosition, drawingObject);
+      currentPosition = this.LMStampDuringTrack(currentPosition, drawingObject);
 
       // Update display coordinates
       const dimensionsData = drawingObject.GetDimensionsForDisplay();
-      T3Gv.opt.UpdateDisplayCoordinates(
+      UIUtil.UpdateDisplayCoordinates(
         dimensionsData,
         currentPosition,
         CursorConstant.CursorTypes.Move,
@@ -11702,7 +10570,7 @@ class OptUtil {
       );
 
       // Update selection attributes
-      const selectionAttrs = new SelectionAttributes();
+      const selectionAttrs = new SelectionAttr();
       selectionAttrs.left = dimensionsData.x;
       selectionAttrs.top = dimensionsData.y;
 
@@ -11711,13 +10579,13 @@ class OptUtil {
 
       selectionAttrs.widthstr = T3Constant.DocContext.CurrentWidth;
       selectionAttrs.heightstr = T3Constant.DocContext.CurrentHeight;
-      selectionAttrs.leftstr = this.GetLengthInRulerUnits(
+      selectionAttrs.leftstr = RulerUtil.GetLengthInRulerUnits(
         selectionAttrs.left,
         false,
         T3Gv.docUtil.rulerConfig.originx,
         showFeetAsInches
       );
-      selectionAttrs.topstr = this.GetLengthInRulerUnits(
+      selectionAttrs.topstr = RulerUtil.GetLengthInRulerUnits(
         selectionAttrs.top,
         false,
         T3Gv.docUtil.rulerConfig.originy,
@@ -11773,14 +10641,13 @@ class OptUtil {
         } else {
           // The next line is from the original code but the variable snapTargetId and
           // positionedRect aren't defined in this scope, so we won't update guides here
-          // this.DynamicSnaps_UpdateGuides(dynamicGuides, snapTargetId, positionedRect);
+          // this.DynamicSnapsUpdateGuides(dynamicGuides, snapTargetId, positionedRect);
         }
       }
     }
 
     T3Util.Log("O.Opt StampObjectMoveCommon - Output: Object positioned at", currentPosition);
   }
-
 
   /**
    * Sets and calculates the bounding rectangle for a shape
@@ -11837,7 +10704,7 @@ class OptUtil {
           );
           svgElement.SetID(shapeObject.BlockID);
           T3Gv.opt.svgObjectLayer.AddElement(svgElement, 0);
-          shapeObject.LM_AddSVGTextObject(T3Gv.opt.svgDoc, svgElement);
+          shapeObject.LMAddSVGTextObject(T3Gv.opt.svgDoc, svgElement);
         }
 
         if (svgElement) {
@@ -11918,31 +10785,31 @@ class OptUtil {
      * @param drawingObject - The drawing object being stamped
      * @returns The adjusted position based on connections
      */
-  LM_StampDuringTrack(position, drawingObject) {
-    T3Util.Log("O.Opt LM_StampDuringTrack - Input:", { position, drawingObject: drawingObject?.BlockID });
+  LMStampDuringTrack(position, drawingObject) {
+    T3Util.Log("O.Opt LMStampDuringTrack - Input:", { position, drawingObject: drawingObject?.BlockID });
 
     let hookPoints;
 
     // Early exit conditions
     if (this.actionStoredObjectId < 0) {
-      T3Util.Log("O.Opt LM_StampDuringTrack - Output: No action object ID", position);
+      T3Util.Log("O.Opt LMStampDuringTrack - Output: No action object ID", position);
       return position;
     }
 
     if (this.moveList && this.moveList.length) {
-      T3Util.Log("O.Opt LM_StampDuringTrack - Output: Using move list, returning original position", position);
+      T3Util.Log("O.Opt LMStampDuringTrack - Output: Using move list, returning original position", position);
       return position;
     }
 
     if (drawingObject == null) {
-      T3Util.Log("O.Opt LM_StampDuringTrack - Output: No drawing object", position);
+      T3Util.Log("O.Opt LMStampDuringTrack - Output: No drawing object", position);
       return position;
     }
 
     // Get hook points for the object
-    hookPoints = this.Move_GetHookPoints(this.actionStoredObjectId, drawingObject, 0, 0);
+    hookPoints = this.MoveGetHookPoints(this.actionStoredObjectId, drawingObject, 0, 0);
     if (!hookPoints) {
-      T3Util.Log("O.Opt LM_StampDuringTrack - Output: No hook points", position);
+      T3Util.Log("O.Opt LMStampDuringTrack - Output: No hook points", position);
       return position;
     }
 
@@ -11968,7 +10835,7 @@ class OptUtil {
         y: position.y + this.dragDeltaY
       };
 
-      T3Util.Log("O.Opt LM_StampDuringTrack - Output: Drop-on-line adjusted position", adjustedPosition);
+      T3Util.Log("O.Opt LMStampDuringTrack - Output: Drop-on-line adjusted position", adjustedPosition);
       return adjustedPosition;
     }
 
@@ -11995,14 +10862,13 @@ class OptUtil {
         y: position.y + this.dragDeltaY
       };
 
-      T3Util.Log("O.Opt LM_StampDuringTrack - Output: Connection/join adjusted position", adjustedPosition);
+      T3Util.Log("O.Opt LMStampDuringTrack - Output: Connection/join adjusted position", adjustedPosition);
       return adjustedPosition;
     }
 
-    T3Util.Log("O.Opt LM_StampDuringTrack - Output: No adjustments needed", position);
+    T3Util.Log("O.Opt LMStampDuringTrack - Output: No adjustments needed", position);
     return position;
   }
-
 
   /**
      * Rotates a rectangle by a specified angle around a center point
@@ -12092,7 +10958,6 @@ class OptUtil {
     return result;
   }
 
-
   /**
      * Finds all child connectors for an object
      * @param objectId - ID of the parent object
@@ -12138,7 +11003,7 @@ class OptUtil {
     let linkIndex, hookId, hookObject;
 
     // Use provided links list or get the default one
-    const links = linksList || this.GetObjectPtr(this.linksBlockId, false);
+    const links = linksList || ObjectUtil.GetObjectPtr(this.linksBlockId, false);
 
     // Use provided base class or default to connector
     baseClass = baseClass || OptConstant.DrawObjectBaseClass.Connector;
@@ -12152,7 +11017,7 @@ class OptUtil {
         // Check if this link is after the last found index and has the correct base class
         if (linkIndex > resultInfo.lindex &&
           (hookId = links[linkIndex].hookid,
-            (hookObject = this.GetObjectPtr(hookId, false)) &&
+            (hookObject = ObjectUtil.GetObjectPtr(hookId, false)) &&
             hookObject.DrawingObjectBaseClass === baseClass)) {
 
           // Update result information
@@ -12180,7 +11045,7 @@ class OptUtil {
     T3Util.Log("O.Opt SetObjectFrame - Input:", { objectId, newFrame });
 
     // Get a preserved copy of the object for modification
-    const targetObject = this.GetObjectPtr(objectId, true);
+    const targetObject = ObjectUtil.GetObjectPtr(objectId, true);
 
     if (targetObject == null) {
       T3Util.Log("O.Opt SetObjectFrame - Output: Failed to get object (1)");
@@ -12288,8 +11153,6 @@ class OptUtil {
 
     T3Util.Log("O.Opt ApplyProperties - Output: Properties applied");
   }
-
-
 
   /**
      * Calculates points along a Y-curve (vertical semi-ellipse)
@@ -12415,7 +11278,7 @@ class OptUtil {
       // Check if test point is within the triangle angles
       for (let j = 0; j < 3; j++) {
         // Get angle from triangle point to test point
-        const angleToTestPoint = this.SD_GetCounterClockwiseAngleBetween2Points(
+        const angleToTestPoint = this.GetCounterClockwiseAngleBetween2Points(
           trianglePoints[j],
           testPoint
         );
@@ -12425,12 +11288,12 @@ class OptUtil {
         const nextIndex = j + 1 < 3 ? j + 1 : 0;
 
         // Calculate angles to adjacent points
-        const angleToPrevPoint = this.SD_GetCounterClockwiseAngleBetween2Points(
+        const angleToPrevPoint = this.GetCounterClockwiseAngleBetween2Points(
           trianglePoints[j],
           trianglePoints[prevIndex]
         );
 
-        const angleToNextPoint = this.SD_GetCounterClockwiseAngleBetween2Points(
+        const angleToNextPoint = this.GetCounterClockwiseAngleBetween2Points(
           trianglePoints[j],
           trianglePoints[nextIndex]
         );
@@ -12539,7 +11402,7 @@ class OptUtil {
     let highlightId = null;
 
     // Get the drawing object
-    drawingObject = this.GetObjectPtr(objectId, false);
+    drawingObject = ObjectUtil.GetObjectPtr(objectId, false);
     if (drawingObject == null) {
       T3Util.Log("O.Opt HiliteConnect - Output: No drawing object found");
       return;
@@ -12600,12 +11463,12 @@ class OptUtil {
     var n, o, s, l, S, c, u, p, d, D, g, h, m, C, y, f = null, L = null, I = null, T = null, b = [], M = [], P = !1, R = [], A = !1, _ = OptConstant.ActionTriggerType.LineEnd, E = {
       x: 0,
       y: 0
-    }, w = {}, F = OptConstant.Common.KnobSize, v = -1, G = T3Gv.opt.ActiveVisibleZList(), N = !1;
+    }, w = {}, F = OptConstant.Common.KnobSize, v = -1, G = LayerUtil.ActiveVisibleZList(), N = !1;
 
-    f = this.GetObjectPtr(e, !0);
+    f = ObjectUtil.GetObjectPtr(e, !0);
     if (f == null) return -1;
 
-    L = this.GetObjectPtr(a, !0);
+    L = ObjectUtil.GetObjectPtr(a, !0);
     if (L == null) return -1;
 
     h = f.DataID;
@@ -12729,7 +11592,7 @@ class OptUtil {
           U.polylist.segs[U.polylist.segs.length - 1].param = f.IsReversed ? f.CurveAdjust : -f.CurveAdjust;
         } else if (lineType === OptConstant.LineType.ARCSEGLINE) {
 
-          var arcQuadrant = this.PolyLine_Pr_PolyLGetArcQuadrant(polyPoints[n - 1], polyPoints[n], 0);
+          var arcQuadrant = this.PolyLinePrPolyLGetArcQuadrant(polyPoints[n - 1], polyPoints[n], 0);
 
           U.polylist.segs[U.polylist.segs.length - 1].param = arcQuadrant.param;
           U.polylist.segs[U.polylist.segs.length - 1].ShortRef = arcQuadrant.ShortRef;
@@ -12795,7 +11658,7 @@ class OptUtil {
             case OptConstant.LineType.ARCSEGLINE:
               I.polylist.segs[0].LineType = T.LineType,
                 I.polylist.segs[0].param = 0,
-                g = I.Pr_PolyLGetArcQuadrant(b[n], b[n - 1], 0),
+                g = I.PrPolyLGetArcQuadrant(b[n], b[n - 1], 0),
                 I.polylist.segs[0].param = g.param,
                 I.polylist.segs[0].ShortRef = g.ShortRef;
               break;
@@ -12827,7 +11690,7 @@ class OptUtil {
           case OptConstant.LineType.ARCSEGLINE:
             I.polylist.segs[0].LineType = T.LineType,
               I.polylist.segs[0].param = 0,
-              g = I.Pr_PolyLGetArcQuadrant(b[o - 2], b[o - 1], 0),
+              g = I.PrPolyLGetArcQuadrant(b[o - 2], b[o - 1], 0),
               I.polylist.segs[0].param = g.param,
               I.polylist.segs[0].ShortRef = g.ShortRef;
             break;
@@ -12850,7 +11713,7 @@ class OptUtil {
                   w.x = b[n].x - I.StartPoint.x,
                   w.y = b[n].y - I.StartPoint.y,
                   I.polylist.segs[0].param = 0,
-                  g = I.Pr_PolyLGetArcQuadrant(b[n - 1], b[n], 0),
+                  g = I.PrPolyLGetArcQuadrant(b[n - 1], b[n], 0),
                   I.polylist.segs[0].param = g.param,
                   I.polylist.segs[0].ShortRef = g.ShortRef
             }
@@ -12893,7 +11756,7 @@ class OptUtil {
                 w.y = b[n].y - I.StartPoint.y,
                 d = I.polylist.segs.length,
                 I.polylist.segs[d - 1].param = 0,
-                g = I.Pr_PolyLGetArcQuadrant(b[n - 1], b[n], 0),
+                g = I.PrPolyLGetArcQuadrant(b[n - 1], b[n], 0),
                 I.polylist.segs[d - 1].param = g.param,
                 I.polylist.segs[d - 1].ShortRef = g.ShortRef
           }
@@ -12927,7 +11790,7 @@ class OptUtil {
             case OptConstant.LineType.ARCSEGLINE:
               d = I.polylist.segs.length,
                 I.polylist.segs[d - 1].param = 0,
-                g = I.Pr_PolyLGetArcQuadrant(b[n + 1], b[n], 0),
+                g = I.PrPolyLGetArcQuadrant(b[n + 1], b[n], 0),
                 I.polylist.segs[d - 1].param = g.param,
                 I.polylist.segs[d - 1].ShortRef = g.ShortRef
           }
@@ -12954,10 +11817,10 @@ class OptUtil {
         N = !0,
         T3Gv.opt.AddToDirtyList(c);
     else {
-      var O = T3Gv.opt.VisibleZList().indexOf(c);
+      var O = LayerUtil.VisibleZList().indexOf(c);
       O >= 0 && this.AddSVGObject(O, c, !0, !0)
     }
-    for ((I = T3Gv.opt.GetObjectPtr(c, !1)) && I.DataID < 0 && (I.DataID = h,
+    for ((I = ObjectUtil.GetObjectPtr(c, !1)) && I.DataID < 0 && (I.DataID = h,
       f.DataID === h ? (I.TextDirection = f.TextDirection,
         f.DataID = -1) : L.DataID === h && (I.TextDirection = L.TextDirection,
           L.DataID = -1),
@@ -12976,7 +11839,7 @@ class OptUtil {
       this.MaintainLink(c, I, null, _, !1),
       this.UpdateLinks(),
       R.push(c),
-      this.SelectObjects(R, !1, !0),
+      SelectUtil.SelectObjects(R, !1, !0),
       P && v >= 0) {
       var B = G.indexOf(c);
       G.splice(B, 1),
@@ -12989,7 +11852,6 @@ class OptUtil {
       c
   }
 
-
   /**
  * Determines the arc quadrant based on two points and an angle
  * @param startPoint - The starting point of the arc
@@ -12997,8 +11859,8 @@ class OptUtil {
  * @param arcAngle - The angle of the arc in radians
  * @returns Object containing quadrant parameters and reference
  */
-  PolyLine_Pr_PolyLGetArcQuadrant(startPoint, endPoint, arcAngle) {
-    T3Util.Log("O.Opt PolyLine_Pr_PolyLGetArcQuadrant - Input:", {
+  PolyLinePrPolyLGetArcQuadrant(startPoint, endPoint, arcAngle) {
+    T3Util.Log("O.Opt PolyLinePrPolyLGetArcQuadrant - Input:", {
       startPoint,
       endPoint,
       arcAngle
@@ -13075,29 +11937,9 @@ class OptUtil {
       }
     }
 
-    T3Util.Log("O.Opt PolyLine_Pr_PolyLGetArcQuadrant - Output:", result);
+    T3Util.Log("O.Opt PolyLinePrPolyLGetArcQuadrant - Output:", result);
     return result;
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   /**
   * Moves links from one object to another
@@ -13119,7 +11961,7 @@ class OptUtil {
     let sourceHookId, sourceHook, hookIndex, foundIndex, swapNeeded;
     let hookPoints = [];
     let hookInfo = {};
-    let linksList = this.GetObjectPtr(this.linksBlockId, true);
+    let linksList = ObjectUtil.GetObjectPtr(this.linksBlockId, true);
 
     // Check if links list exists
     if (linksList == null) {
@@ -13131,13 +11973,13 @@ class OptUtil {
     linkCount = linksList.length;
 
     // Check if target object exists
-    if (this.GetObjectPtr(sourceObjectId, false) == null) {
+    if (ObjectUtil.GetObjectPtr(sourceObjectId, false) == null) {
       T3Util.Log("O.Opt MoveLinks - Output: Failed (source object not found)");
       return 1;
     }
 
     // Check if source object exists
-    if ((targetObject = this.GetObjectPtr(targetObjectId, false)) == null) {
+    if ((targetObject = ObjectUtil.GetObjectPtr(targetObjectId, false)) == null) {
       T3Util.Log("O.Opt MoveLinks - Output: Failed (target object not found)");
       return 1;
     }
@@ -13164,7 +12006,7 @@ class OptUtil {
 
         if (sourceHookId >= 0) {
           // Get the hook object
-          sourceHook = this.GetObjectPtr(sourceHookId, true);
+          sourceHook = ObjectUtil.GetObjectPtr(sourceHookId, true);
 
           if (sourceHook == null) continue;
 
@@ -13294,7 +12136,6 @@ class OptUtil {
     return isTouchInterface;
   }
 
-
   /**
    * Deletes objects from the document
    * @param objectIds - Array of object IDs to delete
@@ -13306,7 +12147,7 @@ class OptUtil {
     let objectIndex, objectCount, objectId, svgElement, overlayId;
     let overlayElement, objectData, hookCount, hookId, hookObject;
     let parentObjects = [];
-    let layersManager = T3Gv.opt.GetObjectPtr(this.layersManagerBlockId, false);
+    let layersManager = ObjectUtil.GetObjectPtr(this.layersManagerBlockId, false);
 
     if (objectIds != null) {
       // Process each object ID in the array
@@ -13341,7 +12182,7 @@ class OptUtil {
             hookId = objectData.hooks[hookIndex].objid;
 
             if (hookId > 0) {
-              hookObject = this.GetObjectPtr(hookId, true);
+              hookObject = ObjectUtil.GetObjectPtr(hookId, true);
 
               if (hookObject) {
                 hookObject.ChangeTarget(
@@ -13385,7 +12226,7 @@ class OptUtil {
       for (objectIndex = 0; objectIndex < objectCount; objectIndex++) {
         switch (parentObjects[objectIndex].objecttype) {
           // case NvConstant.FNObjectTypes.SD_OBJT_NG_TIMELINE:
-          //   if (T3Gv.opt.GetObjectPtr(parentObjects[objectIndex].BlockID) != null) {
+          //   if (ObjectUtil.GetObjectPtr(parentObjects[objectIndex].BlockID) != null) {
           //     T3Gv.opt.Timeline_Format(parentObjects[objectIndex]);
           //   }
           //   break;
@@ -13404,7 +12245,7 @@ class OptUtil {
     T3Util.Log("O.Opt RemoveFromAllZLists - Input:", objectId);
 
     // Get the layers manager with preserved state
-    const layersManager = T3Gv.opt.GetObjectPtr(this.layersManagerBlockId, true);
+    const layersManager = ObjectUtil.GetObjectPtr(this.layersManagerBlockId, true);
     const numberOfLayers = layersManager.nlayers;
 
     // Search through all layers for the object
@@ -13431,7 +12272,7 @@ class OptUtil {
     T3Util.Log("O.Opt RemoveFromSelectedList - Input:", objectId);
 
     // Get the current selected list (without preserving state)
-    const selectedList = T3Gv.opt.GetObjectPtr(
+    const selectedList = ObjectUtil.GetObjectPtr(
       T3Gv.opt.theSelectedListBlockID,
       false
     );
@@ -13442,7 +12283,7 @@ class OptUtil {
     // Only proceed if the object is actually in the list
     if (objectIndex !== -1) {
       // Get a preserved copy of the selected list for modification
-      const preservedList = T3Gv.opt.GetObjectPtr(
+      const preservedList = ObjectUtil.GetObjectPtr(
         T3Gv.opt.theSelectedListBlockID,
         true
       );
@@ -13451,15 +12292,15 @@ class OptUtil {
       preservedList.splice(objectIndex, 1);
 
       // If this object was the target selection, clear the target selection
-      const sessionData = T3Gv.opt.GetObjectPtr(
-        T3Gv.opt.sedSessionBlockId,
+      const sessionData = ObjectUtil.GetObjectPtr(
+        T3Gv.opt.sdDataBlockId,
         false
       );
 
       if (objectId === sessionData.tselect) {
         // Get preserved session data and clear the target selection
-        const preservedSessionData = T3Gv.opt.GetObjectPtr(
-          T3Gv.opt.sedSessionBlockId,
+        const preservedSessionData = ObjectUtil.GetObjectPtr(
+          T3Gv.opt.sdDataBlockId,
           true
         );
         preservedSessionData.tselect = -1;
@@ -13476,7 +12317,7 @@ class OptUtil {
   ZList() {
     T3Util.Log("O.Opt ZList - Input: No parameters");
 
-    const layersManager = T3Gv.opt.GetObjectPtr(this.layersManagerBlockId, false);
+    const layersManager = ObjectUtil.GetObjectPtr(this.layersManagerBlockId, false);
     let allObjectIds = [];
 
     // Iterate through all layers from bottom to top (reverse order)
@@ -13509,8 +12350,8 @@ class OptUtil {
    * @param endPoint - The ending point
    * @returns The counter-clockwise angle in radians
    */
-  SD_GetCounterClockwiseAngleBetween2Points(startPoint, endPoint) {
-    T3Util.Log("O.Opt SD_GetCounterClockwiseAngleBetween2Points - Input:", { startPoint, endPoint });
+  GetCounterClockwiseAngleBetween2Points(startPoint, endPoint) {
+    T3Util.Log("O.Opt GetCounterClockwiseAngleBetween2Points - Input:", { startPoint, endPoint });
 
     const PI = NvConstant.Geometry.PI;
 
@@ -13536,7 +12377,7 @@ class OptUtil {
       angle += 2 * PI;
     }
 
-    T3Util.Log("O.Opt SD_GetCounterClockwiseAngleBetween2Points - Output:", angle);
+    T3Util.Log("O.Opt GetCounterClockwiseAngleBetween2Points - Output:", angle);
     return angle;
   }
 
@@ -13547,7 +12388,7 @@ class OptUtil {
   FrontMostLayerZListPreserve() {
     T3Util.Log("O.Opt FrontMostLayerZListPreserve - Input: No parameters");
 
-    const layersManager = T3Gv.opt.GetObjectPtr(this.layersManagerBlockId, true);
+    const layersManager = ObjectUtil.GetObjectPtr(this.layersManagerBlockId, true);
     const frontMostLayerZList = layersManager.layers[0].zList;
 
     T3Util.Log("O.Opt FrontMostLayerZListPreserve - Output: Retrieved front-most layer Z-list with",
@@ -13608,7 +12449,7 @@ class OptUtil {
       hookWasDeleted = false;
 
     // Get the object that owns the hook (with preserved state)
-    const sourceObject = this.GetObjectPtr(objectId, true);
+    const sourceObject = ObjectUtil.GetObjectPtr(objectId, true);
     if (sourceObject == null) {
       T3Util.Log("O.Opt UpdateHook - Output: Failed to get source object");
       return 1;
@@ -13621,7 +12462,7 @@ class OptUtil {
     }
 
     // Get links list (with preserved state)
-    const linksList = this.GetObjectPtr(this.linksBlockId, true);
+    const linksList = ObjectUtil.GetObjectPtr(this.linksBlockId, true);
     if (linksList == null) {
       T3Util.Log("O.Opt UpdateHook - Output: Failed to get links list");
       return 1;
@@ -13629,7 +12470,7 @@ class OptUtil {
 
     // Verify target object exists if provided
     if (targetObjectId >= 0) {
-      targetObject = this.GetObjectPtr(targetObjectId, true);
+      targetObject = ObjectUtil.GetObjectPtr(targetObjectId, true);
       if (targetObject == null) {
         T3Util.Log("O.Opt UpdateHook - Output: Failed to get target object");
         return 1;
@@ -13650,7 +12491,7 @@ class OptUtil {
       // Check if we need to replace an existing hook
       if (sourceObject.hooks[hookIndex].objid != targetObjectId || originalCellId != cellId) {
         // Get the previous target object
-        previousTargetObject = this.GetObjectPtr(sourceObject.hooks[hookIndex].objid, true);
+        previousTargetObject = ObjectUtil.GetObjectPtr(sourceObject.hooks[hookIndex].objid, true);
 
         if (previousTargetObject) {
           // Notify previous target that the connection is changing
@@ -13717,7 +12558,7 @@ class OptUtil {
       if (sourceObject.objecttype === NvConstant.FNObjectTypes.NgEvent &&
         sourceObject &&
         sourceObject.datasetElemID > -1) {
-        TODO.SDData.DeleteRow(sourceObject.datasetElemID);
+        TODO.STData.DeleteRow(sourceObject.datasetElemID);
         sourceObject.datasetElemID = -1;
       }
     }
@@ -13731,7 +12572,6 @@ class OptUtil {
     return 0;
   }
 
-
   /**
   * Changes a hook connection for a connector object
   * @param sourceObject - The source object containing the hook
@@ -13739,8 +12579,8 @@ class OptUtil {
   * @param isAdding - Whether the hook is being added (true) or removed (false)
   * @param hookData - Additional hook data
   */
-  CN_ChangeHook(sourceObject, hookIndex, isAdding, hookData) {
-    T3Util.Log("O.Opt CN_ChangeHook - Input:", {
+  CNChangeHook(sourceObject, hookIndex, isAdding, hookData) {
+    T3Util.Log("O.Opt CNChangeHook - Input:", {
       sourceObjectId: sourceObject.BlockID,
       hookIndex,
       isAdding,
@@ -13770,25 +12610,25 @@ class OptUtil {
         childConnectorId = OptAhUtil.GetParentConnector(sourceObject.BlockID, null);
         if (childConnectorId >= 0) {
           // Get the connector object
-          connectorObject = T3Gv.opt.GetObjectPtr(childConnectorId, false);
+          connectorObject = ObjectUtil.GetObjectPtr(childConnectorId, false);
           if (!connectorObject) {
-            T3Util.Log("O.Opt CN_ChangeHook - Output: Failed (no connector object)");
+            T3Util.Log("O.Opt CNChangeHook - Output: Failed (no connector object)");
             return;
           }
 
           // Skip special connector types
-          if (connectorObject._IsFlowChartConnector()) {
-            T3Util.Log("O.Opt CN_ChangeHook - Output: Skipped (flowchart connector)");
+          if (connectorObject.IsFlowChartConnector()) {
+            T3Util.Log("O.Opt CNChangeHook - Output: Skipped (flowchart connector)");
             return;
           }
 
           // if (connectorObject.objecttype === NvConstant.FNObjectTypes.SD_OBJT_CAUSEEFFECT_BRANCH) {
-          //   T3Util.Log("O.Opt CN_ChangeHook - Output: Skipped (cause-effect branch)");
+          //   T3Util.Log("O.Opt CNChangeHook - Output: Skipped (cause-effect branch)");
           //   return;
           // }
 
           // if (connectorObject.objecttype === NvConstant.FNObjectTypes.SD_OBJT_GENOGRAM_BRANCH) {
-          //   T3Util.Log("O.Opt CN_ChangeHook - Output: Skipped (genogram branch)");
+          //   T3Util.Log("O.Opt CNChangeHook - Output: Skipped (genogram branch)");
           //   return;
           // }
 
@@ -13798,12 +12638,12 @@ class OptUtil {
             hasCoManagerFlag &&
             connectorObject.arraylist.hook.length - SDJS.ConnectorDefines.NSkip >= 1
           ) {
-            T3Util.Log("O.Opt CN_ChangeHook - Output: Skipped (co-manager limit reached)");
+            T3Util.Log("O.Opt CNChangeHook - Output: Skipped (co-manager limit reached)");
             return;
           }
 
           if (connectorObject.IsAsstConnector()) {
-            T3Util.Log("O.Opt CN_ChangeHook - Output: Skipped (assistant connector)");
+            T3Util.Log("O.Opt CNChangeHook - Output: Skipped (assistant connector)");
             return;
           }
 
@@ -13837,11 +12677,11 @@ class OptUtil {
             connectorId = OptAhUtil.AddConnector(100, 100, connectorStyle, sourceObject.BlockID);
 
             if (connectorId >= 0) {
-              childConnector = T3Gv.opt.GetObjectPtr(connectorId, true);
+              childConnector = ObjectUtil.GetObjectPtr(connectorId, true);
             }
 
             if (!childConnector) {
-              T3Util.Log("O.Opt CN_ChangeHook - Output: Failed to create child connector");
+              T3Util.Log("O.Opt CNChangeHook - Output: Failed to create child connector");
               return;
             }
 
@@ -13874,7 +12714,7 @@ class OptUtil {
 
             // Update link flags and format the connector
             T3Gv.opt.SetLinkFlag(sourceObject.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
-            childConnector.Pr_Format(connectorId);
+            childConnector.PrFormat(connectorId);
             T3Gv.opt.AddToDirtyList(connectorId);
           }
 
@@ -13904,9 +12744,8 @@ class OptUtil {
       }
     }
 
-    T3Util.Log("O.Opt CN_ChangeHook - Output: Operation completed");
+    T3Util.Log("O.Opt CNChangeHook - Output: Operation completed");
   }
-
 
   /**
    * Inserts a link between two objects in the links list
@@ -13925,7 +12764,7 @@ class OptUtil {
     });
 
     // Get the hook object
-    const hookObject = this.GetObjectPtr(hookObjectId, false);
+    const hookObject = ObjectUtil.GetObjectPtr(hookObjectId, false);
 
     // Validation checks
     if (hookObject == null) {
@@ -13993,7 +12832,7 @@ class OptUtil {
     }
 
     // Get the drawing object and determine connection point dimensions
-    drawingObject = this.GetObjectPtr(objectId, false);
+    drawingObject = ObjectUtil.GetObjectPtr(objectId, false);
     if (drawingObject != null) {
       // Use different connection point sizes based on object type
       connectionRadius = drawingObject instanceof BaseLine
@@ -14087,7 +12926,6 @@ class OptUtil {
     return 0;
   }
 
-
   /**
      * Removes a hook connection from an object
      * @param objectId - ID of the object containing the hook
@@ -14099,7 +12937,7 @@ class OptUtil {
     T3Util.Log("O.Opt RemoveHook - Input:", { objectId, targetObjectId, targetCellId });
 
     // Get a preserved copy of the object for modification
-    const sourceObject = this.GetObjectPtr(objectId, true);
+    const sourceObject = ObjectUtil.GetObjectPtr(objectId, true);
 
     if (sourceObject == null) {
       T3Util.Log("O.Opt RemoveHook - Output: Failed to get object (1)");
@@ -14157,7 +12995,7 @@ class OptUtil {
     while (startLinkIndex < linksList.length && linksList[startLinkIndex].targetid == targetId) {
       // Get the ID of the hook object
       hookObjectId = linksList[startLinkIndex].hookid;
-      hookObject = this.GetObjectPtr(hookObjectId, false);
+      hookObject = ObjectUtil.GetObjectPtr(hookObjectId, false);
 
       if (hookObject) {
         // Default to no specific hook
@@ -14298,7 +13136,7 @@ class OptUtil {
     if (
       this.linkParams &&
       this.linkParams.ConnectIndex >= 0 &&
-      (connectedObject = this.GetObjectPtr(this.linkParams.ConnectIndex, false))
+      (connectedObject = ObjectUtil.GetObjectPtr(this.linkParams.ConnectIndex, false))
     ) {
       if (connectedObject.HookedObjectMoving) {
         connectedObject.HookedObjectMoving({
@@ -14316,7 +13154,7 @@ class OptUtil {
       for (index = 0; index < historyLength; index++) {
         // Skip the current connect index
         if (this.linkParams.ConnectIndexHistory[index] !== this.linkParams.ConnectIndex) {
-          connectedObject = this.GetObjectPtr(this.linkParams.ConnectIndexHistory[index], false);
+          connectedObject = ObjectUtil.GetObjectPtr(this.linkParams.ConnectIndexHistory[index], false);
 
           if (connectedObject && connectedObject.HookedObjectMoving) {
             connectedObject.HookedObjectMoving({
@@ -14340,7 +13178,7 @@ class OptUtil {
     T3Util.Log("O.Opt GetActiveTextEdit - Input: No parameters");
 
     let activeTextEditObjectId = null;
-    const textEditSession = this.GetObjectPtr(this.tedSessionBlockId, false);
+    const textEditSession = ObjectUtil.GetObjectPtr(this.teDataBlockId, false);
 
     if (textEditSession.theActiveTextEditObjectID != -1) {
       activeTextEditObjectId = textEditSession.theActiveTextEditObjectID;
@@ -14361,7 +13199,7 @@ class OptUtil {
 
     // Helper function to check if source object has a hook to target object
     function hasHookToTarget(sourceId, targetId) {
-      const sourceObject = T3Gv.opt.GetObjectPtr(sourceId, false);
+      const sourceObject = ObjectUtil.GetObjectPtr(sourceId, false);
 
       // Check each hook in the source object
       for (let hookIndex = 0; hookIndex < sourceObject.hooks.length; hookIndex++) {
@@ -14389,7 +13227,7 @@ class OptUtil {
     T3Util.Log("O.Opt VerifyLink - Input:", { sourceObjectId: sourceObject.BlockID, linkData });
 
     // Get the target object
-    const targetObject = this.GetObjectPtr(linkData.targetid, false);
+    const targetObject = ObjectUtil.GetObjectPtr(linkData.targetid, false);
     const linkFlags = DSConstant.LinkFlags;
 
     // Check if target object exists
@@ -14498,10 +13336,10 @@ class OptUtil {
     T3Util.Log("O.Opt CleanupHooks - Input:", { connectorId, shapeId });
 
     // Get the connector object
-    const connectorObject = this.GetObjectPtr(connectorId, false);
+    const connectorObject = ObjectUtil.GetObjectPtr(connectorId, false);
 
     // Get the shape object
-    const shapeObject = this.GetObjectPtr(shapeId, false);
+    const shapeObject = ObjectUtil.GetObjectPtr(shapeId, false);
 
     // Check if we have a valid connector and shape
     if (
@@ -14538,8 +13376,8 @@ class OptUtil {
      * @param resultPoint - Object to store intersection point coordinates
      * @returns True if the lines intersect, false otherwise
      */
-  Lines_Intersect(line1, line2, resultPoint) {
-    T3Util.Log("O.Opt Lines_Intersect - Input:", {
+  LinesIntersect(line1, line2, resultPoint) {
+    T3Util.Log("O.Opt LinesIntersect - Input:", {
       line1: { start: line1.StartPoint, end: line1.EndPoint },
       line2: { start: line2.StartPoint, end: line2.EndPoint }
     });
@@ -14571,28 +13409,28 @@ class OptUtil {
       resultPoint.x = tempPoint.x;
       resultPoint.y = tempPoint.y;
 
-      T3Util.Log("O.Opt Lines_Intersect - Output: Lines intersect at", resultPoint);
+      T3Util.Log("O.Opt LinesIntersect - Output: Lines intersect at", resultPoint);
       return true;
     }
 
-    T3Util.Log("O.Opt Lines_Intersect - Output: Lines do not intersect");
+    T3Util.Log("O.Opt LinesIntersect - Output: Lines do not intersect");
     return false;
   }
 
-  /**
-   * Determines if an object is a UI element that should be hidden in tables
-   * @param drawingObject - The drawing object to check
-   * @returns True if the object is a UI element, false otherwise
-   */
-  Table_HideUI(drawingObject) {
-    T3Util.Log("O.Opt Table_HideUI - Input:", drawingObject ? drawingObject.BlockID : null);
+  // /**
+  //  * Determines if an object is a UI element that should be hidden in tables
+  //  * @param drawingObject - The drawing object to check
+  //  * @returns True if the object is a UI element, false otherwise
+  //  */
+  // TableHideUI(drawingObject) {
+  //   T3Util.Log("O.Opt TableHideUI - Input:", drawingObject ? drawingObject.BlockID : null);
 
-    const objectTypes = NvConstant.FNObjectTypes;
-    const isUIElement = drawingObject.objecttype === objectTypes.UiElement;
+  //   const objectTypes = NvConstant.FNObjectTypes;
+  //   const isUIElement = drawingObject.objecttype === objectTypes.UiElement;
 
-    T3Util.Log("O.Opt Table_HideUI - Output:", isUIElement);
-    return isUIElement;
-  }
+  //   T3Util.Log("O.Opt TableHideUI - Output:", isUIElement);
+  //   return isUIElement;
+  // }
 
   /**
     * Creates an inflated outline around a polyline with specified thickness
@@ -14701,7 +13539,7 @@ class OptUtil {
       ];
 
       // Calculate the angle between the reference points and rotate to align horizontally
-      let angle = T3Gv.opt.SD_GetCounterClockwiseAngleBetween2Points(startRef, endRef);
+      let angle = T3Gv.opt.GetCounterClockwiseAngleBetween2Points(startRef, endRef);
       Utils3.RotatePointsAboutPoint(resultPoints[0], -angle, resultPoints);
 
       // Calculate the midpoint with proportional distance
@@ -14763,14 +13601,14 @@ class OptUtil {
 
     while (--outlineCount > 0 && --segmentCount > 0) {
       // Calculate angle between current segments
-      const currentAngle = T3Gv.opt.SD_GetCounterClockwiseAngleBetween2Points(
+      const currentAngle = T3Gv.opt.GetCounterClockwiseAngleBetween2Points(
         outlinePoints[outlineCount - 1],
         outlinePoints[outlineCount]
       );
 
       // Check if original and outline angles match
       if (!areAnglesClose(
-        T3Gv.opt.SD_GetCounterClockwiseAngleBetween2Points(
+        T3Gv.opt.GetCounterClockwiseAngleBetween2Points(
           points[segmentCount - 1],
           points[segmentCount]
         ),
@@ -14780,7 +13618,7 @@ class OptUtil {
         // Try to find a matching angle and insert interpolated points
         for (pointIndex = segmentCount - 1; pointIndex >= 0; pointIndex--) {
           if (areAnglesClose(
-            T3Gv.opt.SD_GetCounterClockwiseAngleBetween2Points(
+            T3Gv.opt.GetCounterClockwiseAngleBetween2Points(
               points[pointIndex],
               points[segmentCount]
             ),
@@ -15283,7 +14121,7 @@ class OptUtil {
     }
 
     // Get the source object
-    sourceObject = this.GetObjectPtr(objectId, false);
+    sourceObject = ObjectUtil.GetObjectPtr(objectId, false);
     if (sourceObject == null) {
       T3Util.Log("O.Opt GetTargetList - Output: Source object not found, returning original list");
       return targetList;
@@ -15303,7 +14141,7 @@ class OptUtil {
 
         // Update bounding rectangle if provided
         if (boundingRect) {
-          targetObject = this.GetObjectPtr(hookObjectId, false);
+          targetObject = ObjectUtil.GetObjectPtr(hookObjectId, false);
 
           // Only include visible objects in bounding rectangle calculation
           if (!(targetObject.flags & NvConstant.ObjFlags.NotVisible)) {
@@ -15347,8 +14185,8 @@ class OptUtil {
      * @param endPoint - The ending point
      * @returns The clockwise angle in degrees
      */
-  SD_GetClockwiseAngleBetween2PointsInDegrees(startPoint, endPoint) {
-    T3Util.Log("O.Opt SD_GetClockwiseAngleBetween2PointsInDegrees - Input:", { startPoint, endPoint });
+  GetClockwiseAngleBetween2PointsInDegrees(startPoint, endPoint) {
+    T3Util.Log("O.Opt GetClockwiseAngleBetween2PointsInDegrees - Input:", { startPoint, endPoint });
 
     const PI = NvConstant.Geometry.PI;
     let deltaX, deltaY, angleRadians;
@@ -15376,7 +14214,7 @@ class OptUtil {
     // Convert radians to degrees
     const angleDegrees = angleRadians * (180 / PI);
 
-    T3Util.Log("O.Opt SD_GetClockwiseAngleBetween2PointsInDegrees - Output:", angleDegrees);
+    T3Util.Log("O.Opt GetClockwiseAngleBetween2PointsInDegrees - Output:", angleDegrees);
     return angleDegrees;
   }
 
@@ -15950,8 +14788,8 @@ class OptUtil {
 
   RotateShapes(angleDegrees: number, selectionOverride?: any[]) {
     T3Util.Log("O.Opt RotateShapes - Input:", { angleDegrees, selectionOverride });
-    let selectedList = T3Gv.opt.GetObjectPtr(this.theSelectedListBlockID, false);
-    let sedSession = this.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+    let selectedList = ObjectUtil.GetObjectPtr(this.theSelectedListBlockID, false);
+    let sdData = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
     if (selectionOverride) {
       selectedList = selectionOverride;
     }
@@ -15962,7 +14800,7 @@ class OptUtil {
       let tempCounter = 0, removeIndex = 0, debugVal = null, deltaX = 0, deltaY = 0;
       // Check if any shape disallows rotation and log if found
       for (tempCounter = 0; tempCounter < totalSelected; tempCounter++) {
-        shape = this.GetObjectPtr(selectedList[tempCounter], false);
+        shape = ObjectUtil.GetObjectPtr(selectedList[tempCounter], false);
         if (shape.NoRotate()) {
           break;
         }
@@ -15972,7 +14810,7 @@ class OptUtil {
       } else {
         // Process PolyLineContainer groups
         for (tempCounter = 0; tempCounter < selectedList.length; tempCounter++) {
-          shape = this.GetObjectPtr(selectedList[tempCounter], false);
+          shape = ObjectUtil.GetObjectPtr(selectedList[tempCounter], false);
           if (shape instanceof PolyLineContainer) {
             let enclosedObjects = shape.GetListOfEnclosedObjects(false);
             if (enclosedObjects.length > 0) {
@@ -15988,7 +14826,7 @@ class OptUtil {
         // Rotate objects inside containers and other objects
         for (tempCounter = 0; tempCounter < selectedList.length; tempCounter++) {
           // Process for PolyLine and PolyLineContainer objects
-          shape = this.GetObjectPtr(selectedList[tempCounter], true);
+          shape = ObjectUtil.GetObjectPtr(selectedList[tempCounter], true);
           if (shape instanceof PolyLine && shape.rflags) {
             this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.Width, false);
             this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.Height, false);
@@ -16008,7 +14846,7 @@ class OptUtil {
             if (shape instanceof PolyLineContainer || shape.objecttype === NvConstant.FNObjectTypes.FlWall) {
               // Remove hooked objects related to container rotation
               for (removeIndex = selectedList.length - 1; removeIndex >= 0; removeIndex--) {
-                obj = T3Gv.opt.GetObjectPtr(selectedList[removeIndex], false);
+                obj = ObjectUtil.GetObjectPtr(selectedList[removeIndex], false);
                 if (obj && obj.hooks.length && obj.hooks[0].objid === shape.BlockID) {
                   selectedList.splice(removeIndex, 1);
                 }
@@ -16019,7 +14857,7 @@ class OptUtil {
         // Rotate remaining objects individually
         totalSelected = selectedList.length;
         for (tempCounter = 0; tempCounter < totalSelected; tempCounter++) {
-          shape = this.GetObjectPtr(selectedList[tempCounter], true);
+          shape = ObjectUtil.GetObjectPtr(selectedList[tempCounter], true);
           if (!(shape instanceof PolyLineContainer)) {
             this.SetLinkFlag(selectedList[tempCounter], DSConstant.LinkFlags.SED_L_MOVE);
             this.AddToDirtyList(selectedList[tempCounter]);
@@ -16069,11 +14907,11 @@ class OptUtil {
                 let rightBoundary = shape.r.x + shape.r.width;
                 let bottomBoundary = shape.r.y + shape.r.height;
                 let offsetX = 0, offsetY = 0;
-                if (rightBoundary > sedSession.dim.x) {
-                  offsetX = sedSession.dim.x - rightBoundary;
+                if (rightBoundary > sdData.dim.x) {
+                  offsetX = sdData.dim.x - rightBoundary;
                 }
-                if (bottomBoundary > sedSession.dim.y) {
-                  offsetY = sedSession.dim.y - bottomBoundary;
+                if (bottomBoundary > sdData.dim.y) {
+                  offsetY = sdData.dim.y - bottomBoundary;
                 }
                 if (shape.r.x < 0) {
                   offsetX = -shape.r.x;
@@ -16103,7 +14941,7 @@ class OptUtil {
     if (clearTimer) {
       this.ClearActionArrowTimer(objectId);
     } else {
-      const targetObject = T3Gv.opt.GetObjectPtr(objectId, false);
+      const targetObject = ObjectUtil.GetObjectPtr(objectId, false);
       if (targetObject) {
         targetObject.actionArrowHideTimerID = -1;
       }
@@ -16123,7 +14961,7 @@ class OptUtil {
   ClearActionArrowTimer(objectId: number) {
     T3Util.Log("O.Opt ClearActionArrowTimer - Input:", objectId);
     if (objectId >= 0) {
-      const targetObject = T3Gv.opt.GetObjectPtr(objectId, false);
+      const targetObject = ObjectUtil.GetObjectPtr(objectId, false);
       if (targetObject) {
         if (targetObject.actionArrowHideTimerID >= 0) {
           T3Gv.opt.actionArrowHideTimer.clearTimeout(targetObject.actionArrowHideTimerID);
@@ -16155,7 +14993,7 @@ class OptUtil {
 
     // If resetHighlight flag is true and there is a currently highlighted shape, reset its effects and cursors
     if (resetHighlight && this.curHiliteShape !== -1) {
-      const highlightedObject = this.GetObjectPtr(this.curHiliteShape, false);
+      const highlightedObject = ObjectUtil.GetObjectPtr(this.curHiliteShape, false);
       if (highlightedObject) {
         highlightedObject.SetRuntimeEffects(false);
         highlightedObject.ClearCursors();
@@ -16173,12 +15011,12 @@ class OptUtil {
     const numSelected = selectedObjects.length;
 
     if (numSelected !== 0) {
-      const targetSelected = this.GetTargetSelect();
+      const targetSelected = SelectUtil.GetTargetSelect();
       let targetAlignRect = null;
       let lineThickness = 0;
 
       if (targetSelected !== -1) {
-        const targetObject = this.GetObjectPtr(targetSelected, false);
+        const targetObject = ObjectUtil.GetObjectPtr(targetSelected, false);
         targetAlignRect = targetObject.GetAlignRect();
         lineThickness = targetObject.StyleRecord.Line.Thickness;
         let currentAlignRect, currentDirtyFrame;
@@ -16191,7 +15029,7 @@ class OptUtil {
             continue;
           }
           currentDirtyFrame = null;
-          currentObject = this.GetObjectPtr(selectedObjects[i], false);
+          currentObject = ObjectUtil.GetObjectPtr(selectedObjects[i], false);
 
           // Skip if object has hooks
           if (currentObject.hooks.length) {
@@ -16199,7 +15037,7 @@ class OptUtil {
           }
 
           alignmentPerformed = true;
-          currentObject = this.GetObjectPtr(selectedObjects[i], true);
+          currentObject = ObjectUtil.GetObjectPtr(selectedObjects[i], true);
 
           if (currentObject.FramezList && currentObject.FramezList.length) {
             currentDirtyFrame = currentObject.FramezList;
@@ -16327,7 +15165,7 @@ class OptUtil {
           if (nextSelect >= 0) {
             deleteList.push(nextSelect);
           } else {
-            this.SetTargetSelect(-1, true);
+            SelectUtil.SetTargetSelect(-1, true);
           }
         }
         // this.Comment_UpdatePanel(null);
@@ -16367,7 +15205,7 @@ class OptUtil {
     let helperValue: number = -1;
 
     for (currentIndex = 0; currentIndex < objectCount; currentIndex++) {
-      currentObj = T3Gv.opt.GetObjectPtr(objectIds[currentIndex], false);
+      currentObj = ObjectUtil.GetObjectPtr(objectIds[currentIndex], false);
       if (currentObj != null) {
         // Save the current object's id
         tempId = objectIds[currentIndex];
@@ -16388,7 +15226,7 @@ class OptUtil {
 
         if (currentObj.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
           hasContainerConnector = true;
-          if (currentObj._IsFlowChartConnector && currentObj._IsFlowChartConnector()) {
+          if (currentObj.IsFlowChartConnector && currentObj.IsFlowChartConnector()) {
             switch (currentObj.objecttype) {
               // case NvConstant.FNObjectTypes.SD_OBJT_BAD_STEPCHART_BRANCH:
               //   break;
@@ -16406,7 +15244,7 @@ class OptUtil {
           } else {
             // if (currentObj.objecttype === NvConstant.FNObjectTypes.SD_OBJT_CAUSEEFFECT_BRANCH) {
             //   if (typeof connectorHookCount === "undefined" && currentObj.hooks.length) {
-            //     tempObj = this.GetObjectPtr(currentObj.hooks[0].objid, false);
+            //     tempObj = ObjectUtil.GetObjectPtr(currentObj.hooks[0].objid, false);
             //     if (tempObj && tempObj.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
             //       connectorHookCount = tempObj.arraylist.hook.length - connectorDefines.SEDA_NSkip;
             //       if (connectorHookCount < 0) {
@@ -16448,7 +15286,7 @@ class OptUtil {
               OptAhUtil.GetConnectorTree(objectIds[currentIndex], objectIds);
               objectCount = objectIds.length;
               if (isForced && currentObj.hooks.length) {
-                tempObj = this.GetObjectPtr(currentObj.hooks[0].objid, false);
+                tempObj = ObjectUtil.GetObjectPtr(currentObj.hooks[0].objid, false);
                 if (tempObj && tempObj.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape && objectIds.indexOf(currentObj.hooks[0].objid) < 0) {
                   objectIds.push(currentObj.hooks[0].objid);
                 }
@@ -16461,7 +15299,7 @@ class OptUtil {
           parentConnector = OptAhUtil.GetParentConnector(objectIds[currentIndex], null);
           if (parentConnector >= 0) {
             hasContainerConnector = true;
-            tempObj = T3Gv.opt.GetObjectPtr(parentConnector, false);
+            tempObj = ObjectUtil.GetObjectPtr(parentConnector, false);
             if (tempObj) {
               let connectorEndInfo: any = {};
               if (this.IsConnectorEndShape(currentObj, tempObj, connectorEndInfo)) {
@@ -16493,10 +15331,10 @@ class OptUtil {
                 //   tempId = deleteInfo.parentshape;
                 // } else
 
-                if (tempObj._IsFlowChartConnector && tempObj._IsFlowChartConnector()) {
+                if (tempObj.IsFlowChartConnector && tempObj.IsFlowChartConnector()) {
                   childIds = [];
                   let childArray = T3Gv.opt.FindChildArray(objectIds[currentIndex], -1);
-                  let childObj = T3Gv.opt.GetObjectPtr(childArray, false);
+                  let childObj = ObjectUtil.GetObjectPtr(childArray, false);
                   if (childObj == null) {
                     childObj = tempObj;
                   }
@@ -16563,7 +15401,7 @@ class OptUtil {
             for (let j = 0; j < repeatCount; j++) {
               let childId = T3Gv.opt.FindChildArray(objectIds[currentIndex], childSearchIndex);
               if (childId >= 0) {
-                let childObj = this.GetObjectPtr(childId, true);
+                let childObj = ObjectUtil.GetObjectPtr(childId, true);
                 if (childObj && childObj.arraylist && (childObj.arraylist.hook.length <= connectorDefines.SEDA_NSkip || (childObj.flags & NvConstant.ObjFlags.NotVisible))) {
                   flagSkip = false;
                 }
@@ -16574,11 +15412,11 @@ class OptUtil {
                   for (let hookIndex = connectorDefines.SEDA_NSkip; hookIndex < hookCount; hookIndex++) {
                     let hookId = childObj.arraylist.hook[hookIndex].id;
                     if (objectIds.indexOf(hookId) < 0) {
-                      if (this.GetObjectPtr(hookId, false).DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape) {
+                      if (ObjectUtil.GetObjectPtr(hookId, false).DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape) {
                         flagSkip = true;
                         break;
                       }
-                      if (this.GetObjectPtr(hookId, false).DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
+                      if (ObjectUtil.GetObjectPtr(hookId, false).DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
                         alternateId = hookId;
                       }
                     }
@@ -16604,8 +15442,8 @@ class OptUtil {
             let allChildConnectors = T3Gv.opt.FindAllChildConnectors(tempId);
             for (let idx = 0; idx < childConnectorCount; idx++) {
               hasContainerConnector = true;
-              let childConnectorObj = this.GetObjectPtr(allChildConnectors[idx], false);
-              if (!(childConnectorObj && childConnectorObj._IsFlowChartConnector && childConnectorObj._IsFlowChartConnector())) {
+              let childConnectorObj = ObjectUtil.GetObjectPtr(allChildConnectors[idx], false);
+              if (!(childConnectorObj && childConnectorObj.IsFlowChartConnector && childConnectorObj.IsFlowChartConnector())) {
                 OptAhUtil.GetConnectorTree(allChildConnectors[idx], objectIds);
               }
             }
@@ -16626,7 +15464,7 @@ class OptUtil {
             }
             if (currentObj.associd >= 0) {
               let assocFlag: boolean = false;
-              let assocObj = this.GetObjectPtr(currentObj.associd, false);
+              let assocObj = ObjectUtil.GetObjectPtr(currentObj.associd, false);
               if (assocObj) {
                 if (assocObj.hooks.length && assocObj.hooks[0].hookpt === OptConstant.HookPts.KATD) {
                   assocFlag = true;
@@ -16700,7 +15538,7 @@ class OptUtil {
       M = [],
       P = [],
       R = [],
-      A = this.GetObjectPtr(this.linksBlockId, !1),
+      A = ObjectUtil.GetObjectPtr(this.linksBlockId, !1),
       _ = - 1,
       E = - 1,
       w = !1,
@@ -16766,7 +15604,7 @@ class OptUtil {
       i = 0;
       i < r;
       i++
-    ) if ((n = this.GetObjectPtr(b[i], !1)).AllowHeal()) for (M.push(b[i]), u = n.hooks.length, c = 0; c < u; c++) n.hooks[c].objid === g &&
+    ) if ((n = ObjectUtil.GetObjectPtr(b[i], !1)).AllowHeal()) for (M.push(b[i]), u = n.hooks.length, c = 0; c < u; c++) n.hooks[c].objid === g &&
       (
         P[M.length - 1] = n.hooks[c].connect,
         n.hooks[c].hookpt === G.SED_KTL ? R.push(n.segl.firstdir) : R.push(n.segl.lastdir)
@@ -16798,16 +15636,16 @@ class OptUtil {
     if (t && w) return 1;
     if (w) {
       if (
-        n = this.GetObjectPtr(M[0], !0),
-        o = this.GetObjectPtr(M[1], !0),
+        n = ObjectUtil.GetObjectPtr(M[0], !0),
+        o = ObjectUtil.GetObjectPtr(M[1], !0),
         1 === n.hooks.length &&
         2 === o.hooks.length
       ) {
         var U = M[0];
         M[0] = M[1],
           M[1] = U,
-          n = this.GetObjectPtr(M[0], !0),
-          o = this.GetObjectPtr(M[1], !0)
+          n = ObjectUtil.GetObjectPtr(M[0], !0),
+          o = ObjectUtil.GetObjectPtr(M[1], !0)
       }
       var J = Utils2.Pt2Rect(n.StartPoint, n.EndPoint),
         x = Utils2.Pt2Rect(o.StartPoint, o.EndPoint),
@@ -16866,7 +15704,7 @@ class OptUtil {
         2 === T &&
         function () {
           var t,
-            a = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, !1);
+            a = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, !1);
           Utils2.IsEqual(L.y, f.y, 2) ? (
             e.Frame.width + a.def.h_arraywidth,
             0,
@@ -17060,7 +15898,7 @@ class OptUtil {
       filterObjectType
     });
 
-    const links = this.GetObjectPtr(this.linksBlockId, false);
+    const links = ObjectUtil.GetObjectPtr(this.linksBlockId, false);
     const startIndex = this.FindLink(links, targetObjectId, true);
     const childObjectIds: number[] = [];
     const totalLinks = links.length;
@@ -17068,7 +15906,7 @@ class OptUtil {
     if (startIndex >= 0) {
       for (let index = startIndex; index < totalLinks && links[index].targetid === targetObjectId; index++) {
         const hookObjectId = links[index].hookid;
-        const hookObject = this.GetObjectPtr(hookObjectId, false);
+        const hookObject = ObjectUtil.GetObjectPtr(hookObjectId, false);
         if (hookObject) {
           if ((filterDrawingBaseClass != null && hookObject.DrawingObjectBaseClass !== filterDrawingBaseClass) ||
             (filterObjectType != null && hookObject.objecttype !== filterObjectType)) {
@@ -17112,12 +15950,12 @@ class OptUtil {
     }
 
     // Get the session data
-    const sessionData = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+    const sessionData = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
     const wasSpellCheckEnabled = sessionData.EnableSpellCheck;
     const hadNoRecentSymbols = false;// sessionData.RecentSymbols.length === 0;
 
     // Get text editing session
-    const textEditSession = this.GetObjectPtr(this.tedSessionBlockId, false);
+    const textEditSession = ObjectUtil.GetObjectPtr(this.teDataBlockId, false);
 
     // If active text editing is in progress, save it first
     if (textEditSession.theActiveTextEditObjectID !== -1 &&
@@ -17129,7 +15967,7 @@ class OptUtil {
     }
 
     // Get layers manager and remember current layer type
-    const layersManager = T3Gv.opt.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
+    const layersManager = ObjectUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
     const previousLayerType = layersManager.layers[layersManager.activelayer].layertype;
 
     // Clean up URLs before state change
@@ -17152,33 +15990,33 @@ class OptUtil {
     this.UpdateLineHops(true);
 
     // Get updated session data after state restoration
-    const updatedSessionData = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+    const updatDataData = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
 
     // // Update spell check if needed
-    // if (wasSpellCheckEnabled !== updatedSessionData.EnableSpellCheck) {
-    //   SDUI.Commands.MainController.Document.SetSpellCheck(updatedSessionData.EnableSpellCheck, false);
+    // if (wasSpellCheckEnabled !== updatDataData.EnableSpellCheck) {
+    //   SDUI.Commands.MainController.Document.SetSpellCheck(updatDataData.EnableSpellCheck, false);
     // }
 
     // Update rulers if changed
     const currentRulerSettings = T3Gv.docUtil.rulerConfig;
-    if (T3Gv.docUtil.RulersNotEqual(updatedSessionData.rulerConfig, currentRulerSettings)) {
-      T3Gv.docUtil.SetRulers(updatedSessionData.rulerConfig, true);
+    if (T3Gv.docUtil.RulersNotEqual(updatDataData.rulerConfig, currentRulerSettings)) {
+      T3Gv.docUtil.SetRulers(updatDataData.rulerConfig, true);
     }
 
     // Update page settings if changed
-    if (T3Gv.docUtil.PagesNotEqual(updatedSessionData.Page, T3Gv.opt.contentHeader.Page)) {
-      T3Gv.opt.contentHeader.Page = Utils1.DeepCopy(updatedSessionData.Page);
+    if (T3Gv.docUtil.PagesNotEqual(updatDataData.Page, T3Gv.opt.contentHeader.Page)) {
+      T3Gv.opt.contentHeader.Page = Utils1.DeepCopy(updatDataData.Page);
     }
 
     // Get the current selection list
-    const selectedList = this.GetObjectPtr(this.theSelectedListBlockID, false);
+    const selectedList = ObjectUtil.GetObjectPtr(this.theSelectedListBlockID, false);
 
     // Handle outline objects if needed
-    const updatedTextEditSession = this.GetObjectPtr(this.tedSessionBlockId, false);
+    const updatedTextEditSession = ObjectUtil.GetObjectPtr(this.teDataBlockId, false);
     if (updatedTextEditSession.theActiveOutlineObjectID !== -1 && selectedList.length === 0) {
       const objectsToSelect = [];
       objectsToSelect.push(updatedTextEditSession.theActiveOutlineObjectID);
-      this.SelectObjects(objectsToSelect, false, false);
+      SelectUtil.SelectObjects(objectsToSelect, false, false);
     }
 
     // Clean up text editor events and render all SVG objects
@@ -17188,7 +16026,7 @@ class OptUtil {
     T3Gv.opt.InUndo = false;
 
     // Get the updated session data
-    const newSessionData = this.GetObjectPtr(this.sedSessionBlockId, false);
+    const newSessionData = ObjectUtil.GetObjectPtr(this.sdDataBlockId, false);
 
     // Reset active text edit after undo if needed
     if (updatedTextEditSession.theActiveTextEditObjectID !== -1) {
@@ -17196,27 +16034,27 @@ class OptUtil {
     }
 
     // Update target selection display
-    const targetSelectionId = T3Gv.opt.GetTargetSelect();
+    const targetSelectionId = SelectUtil.GetTargetSelect();
     if (targetSelectionId >= 0) {
-      const targetObject = this.GetObjectPtr(targetSelectionId, false);
+      const targetObject = ObjectUtil.GetObjectPtr(targetSelectionId, false);
       let dimensionsForDisplay = null;
 
       if (targetObject) {
         dimensionsForDisplay = targetObject.GetDimensionsForDisplay();
-        this.ShowFrame(true);
+        UIUtil.ShowFrame(true);
       }
 
-      T3Gv.opt.UpdateDisplayCoordinates(dimensionsForDisplay, null, null, targetObject);
+      UIUtil.UpdateDisplayCoordinates(dimensionsForDisplay, null, null, targetObject);
     } else {
-      this.ShowFrame(false);
+      UIUtil.ShowFrame(false);
     }
 
     // Handle layer type changes
-    const updatedLayersManager = T3Gv.opt.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
+    const updatedLayersManager = ObjectUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
     const newLayerType = updatedLayersManager.layers[updatedLayersManager.activelayer].layertype;
 
     // Update selection attributes
-    this.UpdateSelectionAttributes(selectedList);
+    SelectUtil.UpdateSelectionAttributes(selectedList);
 
     // Save changed blocks if state wasn't open
     if (!isStateOpen) {
@@ -17240,11 +16078,11 @@ class OptUtil {
     try {
       let activeEditor;
       let tableObject;
-      const textEditSession = this.GetObjectPtr(this.tedSessionBlockId, false);
+      const textEditSession = ObjectUtil.GetObjectPtr(this.teDataBlockId, false);
       // const activeTableId = this.Table_GetActiveID();
 
       // if (activeTableId >= 0) {
-      //   tableObject = this.GetObjectPtr(activeTableId, false);
+      //   tableObject = ObjectUtil.GetObjectPtr(activeTableId, false);
       // }
 
       if ((textEditSession.theActiveTextEditObjectID !== -1 || this.bInNoteEdit)) {
@@ -17298,7 +16136,7 @@ class OptUtil {
       if (this.textClipboard &&
         this.textClipboard.text &&
         this.textClipboard.text !== '\r\n') {
-        if (this.GetTargetSelect() !== -1) {
+        if (SelectUtil.GetTargetSelect() !== -1) {
           this.TargetPasteText();
           T3Util.Log("O.Opt PasteObjects - Output: Text pasted to target");
           return;
@@ -17364,9 +16202,9 @@ class OptUtil {
     }
 
     // Get the target selection ID
-    const targetId = this.GetTargetSelect();
+    const targetId = SelectUtil.GetTargetSelect();
     if (targetId !== -1) {
-      const targetObject = this.GetObjectPtr(targetId, false);
+      const targetObject = ObjectUtil.GetObjectPtr(targetId, false);
       if (targetObject && targetObject.AllowTextEdit()) {
         // Begin secondary edit operation
         // Collab.BeginSecondaryEdit();
@@ -17661,13 +16499,13 @@ class OptUtil {
     // Build an action element id using the constant prefix and object id.
     const actionElementId = OptConstant.Common.Action + objectId;
     // Retrieve the currently target selected object id.
-    const targetSelection = this.GetTargetSelect();
+    const targetSelection = SelectUtil.GetTargetSelect();
     // Attempt to retrieve the overlay SVG element for the action.
     let overlayElement = this.svgOverlayLayer.GetElementById(actionElementId);
     // Retrieve the main SVG object element.
     const objectElement = this.svgObjectLayer.GetElementById(objectId);
     // Get the object data pointer.
-    const objectData = this.GetObjectPtr(objectId, false);
+    const objectData = ObjectUtil.GetObjectPtr(objectId, false);
 
     if (objectData !== null) {
       let eventProxy: any;
@@ -17692,7 +16530,7 @@ class OptUtil {
             hammerInstance.on('tap', Evt_ActionTriggerTap);
             hammerInstance.on('dragstart', ((currentObject) => {
               return (event: any) => {
-                currentObject.LM_ActionClick(event);
+                currentObject.LMActionClick(event);
                 return false;
               };
             })(objectData));
@@ -17737,7 +16575,7 @@ class OptUtil {
     // Only proceed if not in note edit mode.
     if (!this.bInNoteEdit) {
       // Collab.BeginSecondaryEdit();
-      const session = this.GetObjectPtr(this.tedSessionBlockId, false);
+      const session = ObjectUtil.GetObjectPtr(this.teDataBlockId, false);
       const previousOp = session.theTELastOp;
 
       // If there is an active text entry timer and the current operation is not a character,
@@ -17777,7 +16615,7 @@ class OptUtil {
         const activeEditor = this.svgDoc.GetActiveEdit();
         let runtimeText: string | null = null;
         let selectedRange: any = null;
-        const activeTextEditObj = this.GetObjectPtr(session.theActiveTextEditObjectID, false);
+        const activeTextEditObj = ObjectUtil.GetObjectPtr(session.theActiveTextEditObjectID, false);
 
         // Proceed only if there is a valid active text edit object
         if (activeTextEditObj && activeTextEditObj.DataID >= 0 && activeEditor) {
@@ -17787,7 +16625,7 @@ class OptUtil {
 
           if (runtimeText) {
             this.PreserveUndoState(false);
-            let textObject = this.GetObjectPtr(textDataId, false);
+            let textObject = ObjectUtil.GetObjectPtr(textDataId, false);
             if (textObject) {
               // Update text object with the current content and selection range.
               textObject.runtimeText = runtimeText;
@@ -17800,8 +16638,8 @@ class OptUtil {
                 TextParams.minHeight = activeEditor.minHeight;
 
                 // Retrieve updated objects
-                const activeTextEditObjUpdated = this.GetObjectPtr(session.theActiveTextEditObjectID, true);
-                textObject = this.GetObjectPtr(textDataId, true);
+                const activeTextEditObjUpdated = ObjectUtil.GetObjectPtr(session.theActiveTextEditObjectID, true);
+                textObject = ObjectUtil.GetObjectPtr(textDataId, true);
                 // const tableObject = activeTextEditObjUpdated.GetTable(true);
                 // Optionally process table related logic here if necessary.
               }
@@ -17810,7 +16648,7 @@ class OptUtil {
                 // Prepare collaboration message for text edit timeout.
                 const messageData: any = {};
                 messageData.BlockID = session.theActiveTextEditObjectID;
-                const messageTarget = T3Gv.opt.GetObjectPtr(messageData.BlockID, false);
+                const messageTarget = ObjectUtil.GetObjectPtr(messageData.BlockID, false);
                 // let tableObj: any = messageTarget.GetTable(false);
 
                 // if (tableObj) {
@@ -17862,7 +16700,7 @@ class OptUtil {
     T3Util.Log("O.Opt DeactivateTextEdit - Input:", { preventCompleteOperation, shouldCloseTable });
 
     let textDataId, objectIndex, cellCount;
-    let session = this.GetObjectPtr(this.tedSessionBlockId, false);
+    let session = ObjectUtil.GetObjectPtr(this.teDataBlockId, false);
     let operationRequired = false;
     // let tableSelectedIndex = null;
     let messageData = {};
@@ -17883,7 +16721,7 @@ class OptUtil {
     // Process only if there's an active text editing object
     if (session.theActiveTextEditObjectID != -1) {
       // Collab.BeginSecondaryEdit();
-      session = this.GetObjectPtr(this.tedSessionBlockId, true);
+      session = ObjectUtil.GetObjectPtr(this.teDataBlockId, true);
 
       let selectedRange;
       let isTextEmpty = false;
@@ -17891,7 +16729,7 @@ class OptUtil {
       let textEditor = this.svgDoc.GetActiveEdit();
       let runtimeText = null;
       let isNotInTable = session.theActiveTableObjectID < 0;
-      let drawingObject = this.GetObjectPtr(session.theActiveTextEditObjectID, true);
+      let drawingObject = ObjectUtil.GetObjectPtr(session.theActiveTextEditObjectID, true);
 
       if (drawingObject) {
         drawingObject.TableID < 0 && (isNotInTable = true);
@@ -17977,12 +16815,12 @@ class OptUtil {
 
         // Save text to the data object
         if (textDataId != -1) {
-          let textDataObject = this.GetObjectPtr(textDataId, false);
+          let textDataObject = ObjectUtil.GetObjectPtr(textDataId, false);
           if (textDataObject) {
             textDataObject.runtimeText = runtimeText;
             textDataObject.selrange = selectedRange;
 
-            textDataObject = this.GetObjectPtr(textDataId, true);
+            textDataObject = ObjectUtil.GetObjectPtr(textDataId, true);
 
             // Create collaboration message if enabled
             // if (Collab.AllowMessage()) {
@@ -18029,15 +16867,15 @@ class OptUtil {
           drawingObject = null;
 
           // Remove from selection list
-          const selectedList = this.GetObjectPtr(this.theSelectedListBlockID, true);
+          const selectedList = ObjectUtil.GetObjectPtr(this.theSelectedListBlockID, true);
           const indexInSelection = selectedList.indexOf(session.theActiveTextEditObjectID);
 
           if (indexInSelection >= 0) {
             selectedList.splice(indexInSelection, 1);
 
             // Reset target selection if needed
-            if (this.GetTargetSelect() === session.theActiveTextEditObjectID) {
-              this.SetTargetSelect(-1, true);
+            if (SelectUtil.GetTargetSelect() === session.theActiveTextEditObjectID) {
+              SelectUtil.SetTargetSelect(-1, true);
             }
           }
 
@@ -18046,7 +16884,7 @@ class OptUtil {
           // Remove text data from non-text-only objects
           const textDataBlock = T3Gv.stdObj.GetObject(textDataId);
 
-          drawingObject = this.GetObjectPtr(session.theActiveTextEditObjectID, true);
+          drawingObject = ObjectUtil.GetObjectPtr(session.theActiveTextEditObjectID, true);
           if (drawingObject) {
             drawingObject.SetTextObject(-1);
           }
@@ -18237,7 +17075,7 @@ class OptUtil {
       let associatedCount = associatedList.length;
 
       if (associatedCount !== 0) {
-        const visibleZList = this.VisibleZList();
+        const visibleZList = LayerUtil.VisibleZList();
         if (visibleZList.length >= 1) {
           // // Begin collaboration message if allowed.
           // if (Collab.AllowMessage()) {
@@ -18304,13 +17142,13 @@ class OptUtil {
   GetFrontBackLayersForSelected() {
     T3Util.Log("O.Opt GetFrontBackLayersForSelected - Input:", {});
 
-    const layerManager = T3Gv.opt.GetObjectPtr(this.layersManagerBlockId, false);
+    const layerManager = ObjectUtil.GetObjectPtr(this.layersManagerBlockId, false);
     const layers = layerManager.layers;
     const layerCount = layerManager.nlayers;
     let frontmostIndex = -1;
     let backmostIndex = 0;
 
-    const selectedObjects = this.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
+    const selectedObjects = ObjectUtil.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
     const selectedCount = selectedObjects.length;
 
     if (selectedCount === 0) {
@@ -18355,7 +17193,7 @@ class OptUtil {
   FindLayerForShapeID(shapeId: number): number {
     T3Util.Log("O.Opt FindLayerForShapeID - Input:", { shapeId });
 
-    const layerManager = T3Gv.opt.GetObjectPtr(this.layersManagerBlockId, false);
+    const layerManager = ObjectUtil.GetObjectPtr(this.layersManagerBlockId, false);
     const layers = layerManager.layers;
     const layerCount = layerManager.nlayers;
 
@@ -18391,7 +17229,7 @@ class OptUtil {
 
     for (let index = 0; index < totalIds; index++) {
       const objectId = listOfObjectIds[index];
-      const currentObject = this.GetObjectPtr(objectId, false);
+      const currentObject = ObjectUtil.GetObjectPtr(objectId, false);
 
       // Process only if skipContainerParents is not enabled
       // or if the current object does not have a container parent.
@@ -18409,7 +17247,7 @@ class OptUtil {
         }
 
         // If the object has an association (associd) and exists, add its associd.
-        if (currentObject && currentObject.associd >= 0 && this.GetObjectPtr(currentObject.associd, false)) {
+        if (currentObject && currentObject.associd >= 0 && ObjectUtil.GetObjectPtr(currentObject.associd, false)) {
           if (associatedIds.indexOf(currentObject.associd) < 0) {
             associatedIds.push(currentObject.associd);
           }
@@ -18443,7 +17281,7 @@ class OptUtil {
    */
   ZListPreserveForLayer(layerIndex: number) {
     T3Util.Log("O.Opt ZListPreserveForLayer - Input:", { layerIndex });
-    const layersManager = T3Gv.opt.GetObjectPtr(this.layersManagerBlockId, true);
+    const layersManager = ObjectUtil.GetObjectPtr(this.layersManagerBlockId, true);
     const result = layersManager.layers[layerIndex].zList;
     T3Util.Log("O.Opt ZListPreserveForLayer - Output:", result);
     return result;
@@ -18469,8 +17307,8 @@ class OptUtil {
     // this.collaboration.NoRedrawFromSameEditor = false;
 
     // Retrieve the lists of objects to be rendered
-    const visibleObjectList = this.VisibleZList();
-    const activeObjectList = this.ActiveVisibleZList();
+    const visibleObjectList = LayerUtil.VisibleZList();
+    const activeObjectList = LayerUtil.ActiveVisibleZList();
     const totalObjects = visibleObjectList.length;
 
     // Clear SVG layers and set the current background color
@@ -18488,7 +17326,7 @@ class OptUtil {
     }
 
     // Render selection states and clear the dirty list
-    this.RenderAllSVGSelectionStates();
+    SvgUtil.RenderAllSVGSelectionStates();
     this.ClearDirtyList();
 
     T3Util.Log("O.Opt RenderAllSVGObjects - Output: rendering complete");
@@ -18547,7 +17385,7 @@ class OptUtil {
     T3Util.Log("O.Opt SetBackgroundColor - Input:", {});
 
     // Retrieve the session object background and the document background element.
-    const sessionObject = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+    const sessionObject = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
     const backgroundElement = T3Gv.docUtil.GetBackground();
 
     if (sessionObject && backgroundElement) {
@@ -18600,10 +17438,10 @@ class OptUtil {
     }
 
     // Mark each visible object as dirty.
-    const visibleObjectList = this.VisibleZList();
+    const visibleObjectList = LayerUtil.VisibleZList();
     for (let i = 0, len = visibleObjectList.length; i < len; i++) {
       const objectId = visibleObjectList[i];
-      const currentObject = this.GetObjectPtr(objectId, false);
+      const currentObject = ObjectUtil.GetObjectPtr(objectId, false);
       if (currentObject && currentObject.DataID >= 0) {
         this.AddToDirtyList(objectId);
       }
@@ -18619,8 +17457,8 @@ class OptUtil {
   GetBackgroundTransparent(): boolean {
     T3Util.Log("O.Opt GetBackgroundTransparent - Input: no parameters");
 
-    const session = T3Gv.opt.GetObjectPtr(
-      T3Gv.opt.sedSessionBlockId,
+    const session = ObjectUtil.GetObjectPtr(
+      T3Gv.opt.sdDataBlockId,
       false
     );
     const backgroundElement = T3Gv.docUtil.GetBackground();
@@ -18691,7 +17529,7 @@ class OptUtil {
       const associatedCount = associatedList.length;
 
       if (associatedCount !== 0) {
-        const visibleZList = this.VisibleZList();
+        const visibleZList = LayerUtil.VisibleZList();
         if (visibleZList.length < 1) {
           T3Util.Log("O.Opt BringToFrontOfSpecificLayer - Output:", "No visible objects found");
           return;
@@ -18766,7 +17604,7 @@ class OptUtil {
     let objectRect;
     let hasNoRotateObject = false;
     let commentIds = [];
-    let visibleObjectList = this.ActiveVisibleZList();
+    let visibleObjectList = LayerUtil.ActiveVisibleZList();
 
     // If skipValidation is true, use the entire Z-list
     if (skipValidation) {
@@ -18845,12 +17683,12 @@ class OptUtil {
     }
 
     // Get the links list with preserved state
-    const linksList = this.GetObjectPtr(this.linksBlockId, true);
+    const linksList = ObjectUtil.GetObjectPtr(this.linksBlockId, true);
     let currentObject = null;
 
     // Adjust objects' positions relative to the group's bounding rectangle
     for (objectIndex = 0; objectIndex < filteredObjects.length; ++objectIndex) {
-      currentObject = T3Gv.opt.GetObjectPtr(filteredObjects[objectIndex], true);
+      currentObject = ObjectUtil.GetObjectPtr(filteredObjects[objectIndex], true);
 
       // Store comment IDs for later adjustment
       if (currentObject.CommentID >= 0) {
@@ -18978,7 +17816,7 @@ class OptUtil {
     }
 
     // Get the updated visible list
-    visibleObjectList = this.ActiveVisibleZList();
+    visibleObjectList = LayerUtil.ActiveVisibleZList();
     const updatedVisibleCount = visibleObjectList.length;
 
     // Convert group to native format if available
@@ -19012,7 +17850,7 @@ class OptUtil {
       const dimensionData = [];
 
       for (let i = 0, len = objectList.length; i < len; i++) {
-        const currentObject = T3Gv.opt.GetObjectPtr(objectList[i], true);
+        const currentObject = ObjectUtil.GetObjectPtr(objectList[i], true);
 
         // Save dimensions that need to be preserved
         if (
@@ -19039,7 +17877,7 @@ class OptUtil {
      */
     function restoreDimensions(objectList, dimensionData) {
       for (let i = 0, len = dimensionData.length; i < len; i++) {
-        const objectToRestore = T3Gv.opt.GetObjectPtr(
+        const objectToRestore = ObjectUtil.GetObjectPtr(
           objectList[dimensionData[i].index],
           true
         );
@@ -19062,7 +17900,7 @@ class OptUtil {
     T3Util.Log("O.Opt AllowGroup - Input:", objectIds);
 
     for (const objectId of objectIds) {
-      const currentObject = this.GetObjectPtr(objectId, false);
+      const currentObject = ObjectUtil.GetObjectPtr(objectId, false);
       if (currentObject) {
         // If object has a lock flag, grouping is not allowed.
         if (currentObject.flags & NvConstant.ObjFlags.Lock) {
@@ -19093,9 +17931,9 @@ class OptUtil {
 
     const allLinkedObjects = T3Gv.opt.ZList();
     for (let outerIndex = 0; outerIndex < linkedObjectIds.length; outerIndex++) {
-      const currentObject = T3Gv.opt.GetObjectPtr(linkedObjectIds[outerIndex], false);
+      const currentObject = ObjectUtil.GetObjectPtr(linkedObjectIds[outerIndex], false);
       for (let innerIndex = 0; innerIndex < allLinkedObjects.length; innerIndex++) {
-        const comparedObject = T3Gv.opt.GetObjectPtr(allLinkedObjects[innerIndex], false);
+        const comparedObject = ObjectUtil.GetObjectPtr(allLinkedObjects[innerIndex], false);
         if (comparedObject.associd === currentObject.BlockID && linkedObjectIds.indexOf(comparedObject.BlockID) === -1) {
           T3Util.Log("O.Opt IsLinkedOutside - Output:", true);
           return true;
@@ -19117,14 +17955,14 @@ class OptUtil {
   IsGroupNonDelete(): boolean {
     T3Util.Log("O.Opt IsGroupNonDelete - Input: no parameters");
 
-    const selectedObjects = T3Gv.opt.GetObjectPtr(
+    const selectedObjects = ObjectUtil.GetObjectPtr(
       T3Gv.opt.theSelectedListBlockID,
       false
     );
     let currentObject = null;
 
     for (let index = 0; index < selectedObjects.length; index++) {
-      currentObject = T3Gv.opt.GetObjectPtr(selectedObjects[index], false);
+      currentObject = ObjectUtil.GetObjectPtr(selectedObjects[index], false);
 
       // if (currentObject.subtype === NvConstant.FNObjectTypes.SD_SUBT_KANBAN_TABLE) {
       //   T3Util.Log("O.Opt IsGroupNonDelete - Output: true");
@@ -19139,7 +17977,7 @@ class OptUtil {
       // if (
       //   currentObject.objecttype === NvConstant.FNObjectTypes.SD_OBJT_TIMELINE_EVENT &&
       //   currentObject.hooks.length > 0 &&
-      //   T3Gv.opt.GetObjectPtr(currentObject.hooks[0].objid, false).objecttype === NvConstant.FNObjectTypes.SD_OBJT_TIMELINE
+      //   ObjectUtil.GetObjectPtr(currentObject.hooks[0].objid, false).objecttype === NvConstant.FNObjectTypes.SD_OBJT_TIMELINE
       // ) {
       //   T3Util.Log("O.Opt IsGroupNonDelete - Output: true");
       //   return true;
@@ -19165,7 +18003,7 @@ class OptUtil {
 
     for (let i = 0; i < objectIdList.length; i++) {
       const objectId = objectIdList[i];
-      const currentObject = T3Gv.opt.GetObjectPtr(objectId, false);
+      const currentObject = ObjectUtil.GetObjectPtr(objectId, false);
       if (currentObject != null) {
         const currentRect = useFrame
           ? currentObject.Frame
@@ -19192,7 +18030,7 @@ class OptUtil {
   UngroupSelectedShapes() {
     T3Util.Log("O.Opt UngroupSelectedShapes - Input: none");
 
-    const activeVisibleShapes = this.ActiveVisibleZList();
+    const activeVisibleShapes = LayerUtil.ActiveVisibleZList();
     if (activeVisibleShapes.length === 0) {
       T3Util.Log("O.Opt UngroupSelectedShapes - Output: false (no active visible shapes)");
       return false;
@@ -19207,7 +18045,7 @@ class OptUtil {
     let containsGroup = false;
     let currentShape = null;
     for (let index = 0; index < numSelectedShapes; index++) {
-      currentShape = T3Gv.opt.GetObjectPtr(selectedShapes[index], false);
+      currentShape = ObjectUtil.GetObjectPtr(selectedShapes[index], false);
       if (currentShape instanceof GroupSymbol) {
         containsGroup = true;
         break;
@@ -19224,10 +18062,10 @@ class OptUtil {
       //   const messageObject = {};
       //   const message = Collab.BuildMessage(NvConstant.CollabMessages.UngroupSelectedShapes, messageObject, true, true);
       // }
-      let currentSelectedShapes = T3Gv.opt.GetObjectPtr(this.theSelectedListBlockID, true).slice(0);
+      let currentSelectedShapes = ObjectUtil.GetObjectPtr(this.theSelectedListBlockID, true).slice(0);
       let resultShapeList: number[] = [];
       for (let index = 0; index < numSelectedShapes; index++) {
-        currentShape = T3Gv.opt.GetObjectPtr(currentSelectedShapes[index], false);
+        currentShape = ObjectUtil.GetObjectPtr(currentSelectedShapes[index], false);
         const shapeId = currentSelectedShapes[index];
         if (currentShape instanceof GroupSymbol) {
           resultShapeList = resultShapeList.concat(currentShape.ShapesInGroup);
@@ -19248,7 +18086,7 @@ class OptUtil {
       }
       if (containsGroup) {
         this.RenderAllSVGObjects();
-        this.SelectObjects(resultShapeList);
+        SelectUtil.SelectObjects(resultShapeList);
         // if (Collab.AllowMessage()) {
         //   const messageObject = {};
         //   if (Collab.IsSecondary() && Collab.CreateList.length) {
@@ -19281,7 +18119,7 @@ class OptUtil {
         T3Util.Log("O.Opt FindParentGroup - Output:", currentGroup);
         return currentGroup;
       }
-      child = T3Gv.opt.GetObjectPtr(groupArray[index], false);
+      child = ObjectUtil.GetObjectPtr(groupArray[index], false);
       if (child instanceof GroupSymbol && child.ShapesInGroup) {
         const parentGroup = T3Gv.opt.FindParentGroup(targetId, child);
         if (parentGroup) {
@@ -19321,7 +18159,7 @@ class OptUtil {
         : OptConstant.ExtraFlags.FlipVert;
 
       for (index = 0; index < count; index++) {
-        currentObject = this.GetObjectPtr(selectedObjects[index], false);
+        currentObject = ObjectUtil.GetObjectPtr(selectedObjects[index], false);
         if (currentObject.NoFlip()) {
           cannotFlipFound = true;
           break;
@@ -19334,7 +18172,7 @@ class OptUtil {
         //   Collab.BeginSecondaryEdit();
         // }
         for (index = 0; index < count; index++) {
-          currentObject = this.GetObjectPtr(selectedObjects[index], true);
+          currentObject = ObjectUtil.GetObjectPtr(selectedObjects[index], true);
           this.SetLinkFlag(selectedObjects[index], DSConstant.LinkFlags.SED_L_MOVE);
           if (currentObject.hooks.length) {
             this.SetLinkFlag(currentObject.hooks[0].objid, DSConstant.LinkFlags.SED_L_MOVE);
@@ -19670,13 +18508,13 @@ class OptUtil {
       T3Util.Log("O.Opt MakeSameSize - Output:", "Not enough objects selected");
       return;
     }
-    const targetObjectId = this.GetTargetSelect();
+    const targetObjectId = SelectUtil.GetTargetSelect();
     if (targetObjectId === -1) {
       T3Util.Log("O.Opt MakeSameSize - Output:", "No target object selected");
       return;
     }
     // Get target object's frame (deep-copy using jQuery.extend)
-    const targetObject = this.GetObjectPtr(targetObjectId, false);
+    const targetObject = ObjectUtil.GetObjectPtr(targetObjectId, false);
     const targetFrame = $.extend(true, {}, targetObject.Frame);
     const targetHeight = targetFrame.height;
     const targetWidth = targetFrame.width;
@@ -19689,7 +18527,7 @@ class OptUtil {
     for (let index = 0; index < selectedCount; ++index) {
       const objectId = selectedList[index];
       if (objectId === targetObjectId) continue;
-      const currentObject = this.GetObjectPtr(objectId, true);
+      const currentObject = ObjectUtil.GetObjectPtr(objectId, true);
       const originalFrame = Utils1.DeepCopy(currentObject.Frame);
       switch (sizeOption) {
         case 1:
@@ -19756,7 +18594,7 @@ class OptUtil {
 
     this.WorkAreaHammerTap = (tapEvent) => {
       try {
-        T3Gv.opt.SetUIAdaptation(tapEvent);
+        // T3Gv.opt.SetUIAdaptation(tapEvent);
         // if (Collab.AllowMessage()) {
         //   Collab.BeginSecondaryEdit();
         // }
@@ -19774,7 +18612,7 @@ class OptUtil {
     };
 
     this.WorkAreaHammer.on('tap', this.WorkAreaHammerTap);
-    this.LM_StampPreTrack();
+    this.LMStampPreTrack();
 
     T3Util.Log("O.Opt StampNewTextShapeOnTap - Output: Completed");
   }
@@ -19787,7 +18625,7 @@ class OptUtil {
   CancelObjectStampTextOnTap(event: any): void {
     T3Util.Log("O.Opt CancelObjectStampTextOnTap - Input:", event);
     this.SetModalOperation(OptConstant.OptTypes.None);
-    this.LM_StampPostRelease(false);
+    this.LMStampPostRelease(false);
     this.SetEditMode(NvConstant.EditState.Default);
     if (event) {
       this.WorkAreaHammer.on('tap', EvtUtil.Evt_WorkAreaHammerClick);
@@ -19815,7 +18653,7 @@ class OptUtil {
   StampTextObjectOnTapDone(event, optionalParam) {
     T3Util.Log("O.Opt StampTextObjectOnTapDone - Input:", { event, optionalParam });
 
-    T3Gv.opt.SetUIAdaptation(event);
+    // T3Gv.opt.SetUIAdaptation(event);
 
     let objectIds = [];
     let docCoords = this.svgDoc.ConvertWindowToDocCoords(
@@ -19852,7 +18690,7 @@ class OptUtil {
     let collaborationData = {};
     this.BuildCreateMessage(collaborationData, true);
 
-    this.GetObjectPtr(this.actionStoredObjectId, true);
+    ObjectUtil.GetObjectPtr(this.actionStoredObjectId, true);
     this.SetEditMode(NvConstant.EditState.Default);
 
     if (this.moveList && this.moveList.length) {
@@ -19881,7 +18719,7 @@ class OptUtil {
     this.stampShapeOffsetX = 0;
     this.stampShapeOffsetY = 0;
 
-    this.LM_StampPostRelease(true);
+    this.LMStampPostRelease(true);
 
     if (!isTextOnly) {
       objectIds.push(this.actionStoredObjectId);
@@ -20022,14 +18860,14 @@ class OptUtil {
     // References to objects and structures we'll need
     let newObject = null;
     let existingObject = null;
-    let linksList = T3Gv.opt.GetObjectPtr(this.linksBlockId, true);
+    let linksList = ObjectUtil.GetObjectPtr(this.linksBlockId, true);
 
     // Constants for flip operations
     const FLIP_VERTICAL = OptConstant.ExtraFlags.FlipVert;
     const FLIP_HORIZONTAL = OptConstant.ExtraFlags.FlipHoriz;
 
     // Get the group object
-    const groupObject = T3Gv.opt.GetObjectPtr(groupId, true);
+    const groupObject = ObjectUtil.GetObjectPtr(groupId, true);
 
     // Get the frame of the group and its center point
     const groupFrame = groupObject.Frame;
@@ -20068,7 +18906,7 @@ class OptUtil {
     // Process each shape in the group
     for (index = 0; index < shapeCount; ++index) {
       // Get the current shape from the group
-      const currentShape = T3Gv.opt.GetObjectPtr(shapesInGroup[index], true);
+      const currentShape = ObjectUtil.GetObjectPtr(shapesInGroup[index], true);
 
       // Track comment IDs
       if (currentShape.CommentID >= 0) {
@@ -20139,7 +18977,7 @@ class OptUtil {
 
       // Scale text if needed
       if (currentShape.DataID !== -1 && scaleY !== 1) {
-        const textStyles = T3Gv.opt.GetObjectPtr(currentShape.DataID, true).runtimeText.styles;
+        const textStyles = ObjectUtil.GetObjectPtr(currentShape.DataID, true).runtimeText.styles;
         const styleCount = textStyles.length;
 
         for (styleIndex = 0; styleIndex < styleCount; ++styleIndex) {
@@ -20167,7 +19005,7 @@ class OptUtil {
     // Maintain links for each shape
     for (index = 0; index < objectsForLinkMaintenance.length; index++) {
       T3Gv.opt.ob = objectsForLinkMaintenance[index];
-      existingObject = T3Gv.opt.GetObjectPtr(objectsForLinkMaintenance[index].BlockID, false);
+      existingObject = ObjectUtil.GetObjectPtr(objectsForLinkMaintenance[index].BlockID, false);
 
       const linkMode = maintainLinksFlag ? 2 : false;
 
@@ -20217,7 +19055,7 @@ class OptUtil {
      */
   RebuildLinks(linkList, objectId) {
     T3Util.Log("O.Opt RebuildLinks - Input:", { linkList, objectId });
-    const targetObject = T3Gv.opt.GetObjectPtr(objectId, false);
+    const targetObject = ObjectUtil.GetObjectPtr(objectId, false);
     if (targetObject && targetObject.hooks) {
       const hookCount = targetObject.hooks.length;
       for (let hookIndex = 0; hookIndex < hookCount; hookIndex++) {
@@ -20240,7 +19078,7 @@ class OptUtil {
     const layerIndex = this.FindLayerForShapeID(objectId);
     if (layerIndex >= 0) {
       // Retrieve the layers and get the current z-order list for the identified layer.
-      const layers = T3Gv.opt.GetObjectPtr(this.layersManagerBlockId, true).layers;
+      const layers = ObjectUtil.GetObjectPtr(this.layersManagerBlockId, true).layers;
       let currentZList = layers[layerIndex].zList;
 
       // Locate the index of the object in the z-order list.
@@ -20279,7 +19117,7 @@ class OptUtil {
       T3Gv.opt.cutFromButton = !isFromCutButton;
 
       // Check if we are in a text editing mode or note/dimension edit mode.
-      const textEditSession = this.GetObjectPtr(this.tedSessionBlockId, false);
+      const textEditSession = ObjectUtil.GetObjectPtr(this.teDataBlockId, false);
       if (
         textEditSession.theActiveTextEditObjectID !== -1 ||
         this.bInNoteEdit ||
@@ -20390,9 +19228,9 @@ class OptUtil {
       this.contentHeader.ClipboardType = T3Constant.ClipboardType.LM;
 
       // Refresh the selected objects list by removing any objects that are not visible.
-      const updatedSelectedObjects = this.GetObjectPtr(this.theSelectedListBlockID, false);
+      const updatedSelectedObjects = ObjectUtil.GetObjectPtr(this.theSelectedListBlockID, false);
       for (let i = updatedSelectedObjects.length - 1; i >= 0; i--) {
-        const currentObject = this.GetObjectPtr(updatedSelectedObjects[i], false);
+        const currentObject = ObjectUtil.GetObjectPtr(updatedSelectedObjects[i], false);
         if (currentObject && (currentObject.flags & NvConstant.ObjFlags.NotVisible)) {
           updatedSelectedObjects.splice(i, 1);
         }
@@ -20411,14 +19249,14 @@ class OptUtil {
   UpdateObjectLayerIndices(updateOptions: { TextureList: any }): void {
     T3Util.Log("O.Opt UpdateObjectLayerIndices - Input:", updateOptions);
 
-    const layersManager = T3Gv.opt.GetObjectPtr(this.layersManagerBlockId, false);
+    const layersManager = ObjectUtil.GetObjectPtr(this.layersManagerBlockId, false);
     const layers = layersManager.layers;
     const numLayers = layersManager.nlayers;
 
     for (let layerIndex = 0; layerIndex < numLayers; layerIndex++) {
       const zList = layers[layerIndex].zList;
       for (let objectIndex = 0, zListLength = zList.length; objectIndex < zListLength; objectIndex++) {
-        const currentObject = T3Gv.opt.GetObjectPtr(zList[objectIndex], false);
+        const currentObject = ObjectUtil.GetObjectPtr(zList[objectIndex], false);
         if (currentObject) {
           currentObject.Layer = layerIndex;
           currentObject.GetTextures(updateOptions.TextureList);
@@ -20540,7 +19378,7 @@ class OptUtil {
   CopyObjects(): any {
     T3Util.Log("O.Opt CopyObjects - Input:");
 
-    const activeTextEditorSession = this.GetObjectPtr(this.tedSessionBlockId, false);
+    const activeTextEditorSession = ObjectUtil.GetObjectPtr(this.teDataBlockId, false);
     // const activeTableId = this.Table_GetActiveID();
     let clipboardContent: any;
 
@@ -20579,8 +19417,8 @@ class OptUtil {
       this.textClipboard = null;
     }
 
-    const selectedObjectBlock = this.GetObjectPtr(this.theSelectedListBlockID, false);
-    this.UpdateSelectionAttributes(selectedObjectBlock);
+    const selectedObjectBlock = ObjectUtil.GetObjectPtr(this.theSelectedListBlockID, false);
+    SelectUtil.UpdateSelectionAttributes(selectedObjectBlock);
     clipboardContent = this.contentHeader.ClipboardBuffer;
     T3Util.Log("O.Opt CopyObjects - Output:", clipboardContent);
     return clipboardContent;
@@ -20597,8 +19435,8 @@ class OptUtil {
     let selectionContexts: any[] = [];
 
     // Check if there is an active text edit object in the TED session.
-    const tedSession = this.GetObjectPtr(this.tedSessionBlockId, false);
-    if (tedSession.theActiveTextEditObjectID !== -1) {
+    const teData = ObjectUtil.GetObjectPtr(this.teDataBlockId, false);
+    if (teData.theActiveTextEditObjectID !== -1) {
       optMng = OptAhUtil.GetGvSviOpt();
       if (optMng) {
         selectionContexts.push(DSConstant.Contexts.Text);
@@ -20635,7 +19473,7 @@ class OptUtil {
     // }
 
     // Handle default target selection.
-    let targetObjectId = this.GetTargetSelect();
+    let targetObjectId = SelectUtil.GetTargetSelect();
     if (targetObjectId === 0) {
       targetObjectId = -1;
     }
@@ -20704,7 +19542,7 @@ class OptUtil {
     if (activeEdit && activeEdit.IsActive()) {
       // Handle active text editor cases
       if (!this.bInNoteEdit) {
-        const textEditSession = this.GetObjectPtr(this.tedSessionBlockId, false);
+        const textEditSession = ObjectUtil.GetObjectPtr(this.teDataBlockId, false);
 
         if (textEditSession.theActiveTextEditObjectID !== -1) {
           switch (keyCode) {
@@ -20731,10 +19569,10 @@ class OptUtil {
       }
     } else if (keyCode === 32) { // Space key
       // Handle space key to activate text editing on selected objects
-      const targetId = this.GetTargetSelect();
+      const targetId = SelectUtil.GetTargetSelect();
 
       if (targetId !== -1) {
-        const targetObject = this.GetObjectPtr(targetId, false);
+        const targetObject = ObjectUtil.GetObjectPtr(targetId, false);
 
         if (targetObject && targetObject.AllowTextEdit()) {
           const svgElement = this.svgObjectLayer.GetElementById(targetId);
@@ -20777,7 +19615,7 @@ class OptUtil {
     if (activeEdit && activeEdit.IsActive()) {
       // Handle active text editor cases
       if (!this.bInNoteEdit) {
-        const textEditSession = this.GetObjectPtr(this.tedSessionBlockId, false);
+        const textEditSession = ObjectUtil.GetObjectPtr(this.teDataBlockId, false);
 
         if (textEditSession.theActiveTextEditObjectID !== -1) {
           this.RegisterLastTEOp(NvConstant.TextElemLastOpt.Char);
@@ -20791,10 +19629,10 @@ class OptUtil {
       }
     } else {
       // Handle initiating text edit on a selected object
-      const targetId = this.GetTargetSelect();
+      const targetId = SelectUtil.GetTargetSelect();
 
       if (targetId !== -1) {
-        const targetObject = this.GetObjectPtr(targetId, false);
+        const targetObject = ObjectUtil.GetObjectPtr(targetId, false);
 
         if (targetObject && targetObject.AllowTextEdit()) {
           const svgElement = this.svgObjectLayer.GetElementById(targetId);
@@ -21178,7 +20016,7 @@ class OptUtil {
     let objectCount = objectIds.length;
 
     for (objectIndex = 0; objectIndex < objectCount; ++objectIndex) {
-      currentObject = this.GetObjectPtr(objectIds[objectIndex], false);
+      currentObject = ObjectUtil.GetObjectPtr(objectIds[objectIndex], false);
 
       if (currentObject.ShapeType == OptConstant.ShapeType.GroupSymbol) {
         // For group symbols, recursively process their contained shapes
@@ -21246,7 +20084,7 @@ class OptUtil {
     const FLAG_TITLE_BLOCK = NvConstant.TextFlags.TitleBlock;
 
     // Use provided object list or get all visible objects
-    const visibleObjects = objectList || T3Gv.opt.VisibleZList();
+    const visibleObjects = objectList || LayerUtil.VisibleZList();
     const objectCount = visibleObjects.length;
 
     let unionRect;
@@ -21256,7 +20094,7 @@ class OptUtil {
 
     // Process each object
     for (let i = 0; i < objectCount; i++) {
-      currentObject = T3Gv.opt.GetObjectPtr(visibleObjects[i], false);
+      currentObject = ObjectUtil.GetObjectPtr(visibleObjects[i], false);
 
       if (currentObject != null) {
         isTitleBlock = false;
@@ -21302,7 +20140,7 @@ class OptUtil {
   RemoveAllActionArrows() {
     T3Util.Log("O.Opt RemoveAllActionArrows - Input: no parameters");
 
-    const visibleObjects = this.VisibleZList();
+    const visibleObjects = LayerUtil.VisibleZList();
 
     for (let i = 0; i < visibleObjects.length; i++) {
       this.RemoveActionArrows(visibleObjects[i], true);
@@ -21322,7 +20160,7 @@ class OptUtil {
   GetAutomationContext(optMng) {
     T3Util.Log("O.Opt GetAutomationContext - Input:", optMng);
 
-    const sessionObject = T3Gv.opt.GetObjectPtr(this.sedSessionBlockId, false);
+    const sessionObject = ObjectUtil.GetObjectPtr(this.sdDataBlockId, false);
     let automationContext = DSConstant.Contexts.Automation;
 
     if (optMng) {
@@ -21363,8 +20201,8 @@ class OptUtil {
     // Only proceed if there are selected objects
     if (this.AreSelectedObjects()) {
       // Get session object with preservation based on whether this is a repeat operation
-      const sessionObject = T3Gv.opt.GetObjectPtr(
-        T3Gv.opt.sedSessionBlockId,
+      const sessionObject = ObjectUtil.GetObjectPtr(
+        T3Gv.opt.sdDataBlockId,
         !this.lastOpDuplicate && !editOverride
       );
 
@@ -21384,7 +20222,7 @@ class OptUtil {
       }
 
       // Get the current selection list
-      const selectedList = T3Gv.opt.GetObjectPtr(
+      const selectedList = ObjectUtil.GetObjectPtr(
         T3Gv.opt.theSelectedListBlockID,
         false
       );
@@ -21404,7 +20242,7 @@ class OptUtil {
 
       if (copyResult && copyResult.buffer) {
         // Get the frame of the first copied object
-        const firstObjectFrame = this.GetObjectPtr(copyResult.zList[0], false).Frame;
+        const firstObjectFrame = ObjectUtil.GetObjectPtr(copyResult.zList[0], false).Frame;
 
         // Read and create duplicated objects from the buffer with displacement
         ShapeUtil.ReadSymbolFromBuffer(
@@ -21670,214 +20508,15 @@ class OptUtil {
      * @param error - The exception that was thrown
      * @throws Rethrows the passed exception after cleanup
      */
-  Export_ExceptionCleanup(error) {
-    T3Util.Log("O.Opt Export_ExceptionCleanup - Input:", error);
+  ExportExceptionCleanup(error) {
+    T3Util.Log("O.Opt ExportExceptionCleanup - Input:", error);
 
     // Simply rethrow the error after performing any necessary cleanup
     // Additional cleanup logic would be added here if needed
 
-    T3Util.Log("O.Opt Export_ExceptionCleanup - Output: Rethrowing exception");
+    T3Util.Log("O.Opt ExportExceptionCleanup - Output: Rethrowing exception");
     throw error;
   }
-
-  // /**
-  //  * Updates the selection attributes for a table
-  //  * @param tableId - The ID of the table
-  //  * @param skipUpdate - Whether to skip updating the selection state
-  //  */
-  // Table_UpdateSelectionAttributes(tableId, skipUpdate) {
-  //   T3Util.Log("O.Opt: Table_UpdateSelectionAttributes input:", {
-  //     tableId,
-  //     skipUpdate
-  //   });
-
-  //   // Local variables with better names
-  //   let cell;
-  //   let cellIndex;
-  //   let cellCount;
-  //   let selectedCellIndex;
-  //   let otherCell;
-  //   let selectedCell;
-  //   let isUiHidden = false;
-
-  //   // Constants for better readability
-  //   const tableObject = this.GetObjectPtr(tableId, false);
-  //   const selectFlag = NvConstant.Table_CellFlags.SDT_F_Select;
-  //   const noTextFlag = NvConstant.Table_CellFlags.SDT_F_NoText;
-  //   const textFace = TextConstant.TextFace;
-  //   const cellTypes = NvConstant.Table.CellTypes;
-
-  //   // Get the table data
-  //   let tableData = null;
-  //   if (tableObject) {
-  //     tableData = tableObject.GetTable(false);
-  //   }
-
-  //   // Validate selection index
-  //   if (tableData &&
-  //     tableData.select >= 0 &&
-  //     tableData.select >= tableData.cells.length) {
-  //     tableData.select = -1;
-  //   }
-
-  //   // Process selection if a cell is selected
-  //   if (tableData && tableData.select >= 0) {
-  //     // Get the selected cell
-  //     cell = tableData.cells[tableData.select];
-  //     selectedCellIndex = tableData.select;
-  //     selectedCell = cell;
-
-  //     // Update selection state
-  //     this.selectionState.lockedTableSelected = (tableData.flags & TODO.Table.TableFlags.SDT_TF_LOCK) > 0;
-
-  //     // Check if this is a special table in non-Builder application
-  //     if (SDUI.AppSettings.Application !== DSConstant.Application.Builder &&
-  //       tableObject.objecttype === NvConstant.FNObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER) {
-  //       this.selectionState.lockedTableSelected = true;
-  //     }
-
-  //     // Set initial selection state
-  //     this.selectionState.ncells_selected = 1;
-  //     this.selectionState.cell_notext = (cell.flags & noTextFlag) > 0;
-  //     this.selectionState.celltype = cell.celltype;
-  //     this.selectionState.cellflags = cell.flags;
-  //     this.selectionState.cellselected = true;
-
-  //     // Handle dataset element ID based on subtype
-  //     if (tableObject.subtype === NvConstant.ObjectSubTypes.SD_SUBT_TASK ||
-  //       tableObject.subtype === NvConstant.ObjectSubTypes.SD_SUBT_TASKMAP) {
-  //       this.selectionState.datasetElemID = tableObject.datasetElemID;
-  //     } else {
-  //       this.selectionState.datasetElemID = cell.datarecordID;
-  //     }
-
-  //     // Set paste state
-  //     let clipboardType = this.GetClipboardType();
-  //     if (clipboardType === T3Constant.ClipboardType.LM) {
-  //       clipboardType = T3Constant.ClipboardType.None;
-  //     }
-  //     this.selectionState.paste = clipboardType;
-
-  //     // Check if UI should be hidden
-  //     if (T3Gv.opt.Table_HideUI(tableObject)) {
-  //       this.selectionState.IsTargetTable = false;
-  //       this.selectionState.ntablesselected = 0;
-  //       this.selectionState.NTableRows = GlobalDatagOptions.newTableRows;
-  //       this.selectionState.NTableCols = GlobalDatagOptions.newTableCols;
-  //       this.selectionState.ncells_selected = 0;
-  //       isUiHidden = true;
-  //     }
-
-  //     // Handle special cell types
-  //     switch (selectedCell.celltype) {
-  //       case cellTypes.SDT_CT_MONTH_WITH_DAYS:
-  //       case cellTypes.SDT_CT_WEEK_WITH_DAYS:
-  //       case cellTypes.SDT_CT_QTR_WITH_MONTHS:
-  //       case cellTypes.SDT_CT_YR_WITH_MONTHS:
-  //       case cellTypes.SDT_CT_DAY_WITH_HOURS:
-  //       case cellTypes.SDT_CT_MONTHLY_CALENDAR_NAME:
-  //       case cellTypes.SDT_CT_YEARLY_CALENDAR_NAME:
-  //       case cellTypes.SDT_CT_PREFIX_COUNT:
-  //       case cellTypes.SDT_CT_SUBCOLHEADER:
-  //       case cellTypes.SDT_CT_ROWREPEATER:
-  //     }
-
-  //     // Exit early if skipUpdate is true
-  //     if (skipUpdate) {
-  //       T3Util.Log("O.Opt: Table_UpdateSelectionAttributes - skipping update");
-  //       return;
-  //     }
-
-  //     // Update text formatting attributes
-  //     this.selectionState.fontid = cell.Text.FontId;
-  //     this.selectionState.fontsize = cell.Text.FontSize;
-  //     this.selectionState.bold = (cell.Text.Face & textFace.Bold) > 0;
-  //     this.selectionState.italic = (cell.Text.Face & textFace.Italic) > 0;
-  //     this.selectionState.underline = (cell.Text.Face & textFace.Underline) > 0;
-  //     this.selectionState.superscript = (cell.Text.Face & textFace.Superscript) > 0;
-  //     this.selectionState.subscript = (cell.Text.Face & textFace.Subscript) > 0;
-  //     this.selectionState.cell_notext = (cell.flags & noTextFlag) > 0;
-  //     this.selectionState.celltype = cell.celltype;
-  //     this.selectionState.cellselected = true;
-  //     this.selectionState.cellflags = cell.flags;
-
-  //     // Check if cell has text data
-  //     if (cell.DataID >= 0) {
-  //       this.selectionState.selectionhastext = true;
-  //       this.selectionState.allowcopy = true;
-  //     }
-
-  //     // Process all other selected cells
-  //     cellCount = tableData.cells.length;
-  //     for (let i = 0; i < cellCount; i++) {
-  //       if (i !== selectedCellIndex) {
-  //         otherCell = tableData.cells[i];
-
-  //         // Check if cell has text data
-  //         if (otherCell.DataID >= 0) {
-  //           this.selectionState.selectionhastext = true;
-  //           this.selectionState.allowcopy = true;
-  //         }
-
-  //         // Check if the cell is selected
-  //         if (otherCell.flags & selectFlag) {
-  //           // Compare formatting with currently stored values
-  //           if (this.selectionState.fontid !== otherCell.Text.FontId) {
-  //             this.selectionState.fontid = -1;
-  //           }
-
-  //           if (this.selectionState.fontsize !== otherCell.Text.FontSize) {
-  //             this.selectionState.fontsize = -1;
-  //           }
-
-  //           if (this.selectionState.bold !== ((otherCell.Text.Face & textFace.Bold) > 0)) {
-  //             this.selectionState.bold = false;
-  //           }
-
-  //           if (this.selectionState.italic !== ((otherCell.Text.Face & textFace.Italic) > 0)) {
-  //             this.selectionState.italic = false;
-  //           }
-
-  //           if (this.selectionState.underline !== ((otherCell.Text.Face & textFace.Underline) > 0)) {
-  //             this.selectionState.underline = false;
-  //           }
-
-  //           if (this.selectionState.superscript !== ((otherCell.Text.Face & textFace.Superscript) > 0)) {
-  //             this.selectionState.superscript = false;
-  //           }
-
-  //           if (this.selectionState.subscript !== ((otherCell.Text.Face & textFace.Subscript) > 0)) {
-  //             this.selectionState.subscript = false;
-  //           }
-
-  //           if (this.selectionState.cell_notext !== ((otherCell.flags & noTextFlag) > 0)) {
-  //             this.selectionState.cell_notext = false;
-  //           }
-
-  //           if (this.selectionState.celltype !== otherCell.celltype) {
-  //             this.selectionState.celltype = 0;
-  //           }
-
-  //           if (this.selectionState.cellflags !== otherCell.cellflags) {
-  //             this.selectionState.cellflags = 0;
-  //           }
-
-  //           // Increment selected cell count if UI isn't hidden
-  //           if (!isUiHidden) {
-  //             this.selectionState.ncells_selected++;
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-
-  //   T3Util.Log("O.Opt: Table_UpdateSelectionAttributes output:", {
-  //     cellsSelected: this.selectionState.ncells_selected,
-  //     hasText: this.selectionState.selectionhastext,
-  //     cellType: this.selectionState.celltype
-  //   });
-  // }
-
 
   /**
    * Resets the active text edit after an undo operation
@@ -21887,10 +20526,10 @@ class OptUtil {
     T3Util.Log("O.Opt: ResetActiveTextEditAfterUndo called with text override:",
       runtimeTextOverride ? "provided" : "none");
 
-    const textEditSession = this.GetObjectPtr(this.tedSessionBlockId, false);
+    const textEditSession = ObjectUtil.GetObjectPtr(this.teDataBlockId, false);
 
     if (textEditSession.theActiveTextEditObjectID !== -1) {
-      const activeTextObject = this.GetObjectPtr(textEditSession.theActiveTextEditObjectID, false);
+      const activeTextObject = ObjectUtil.GetObjectPtr(textEditSession.theActiveTextEditObjectID, false);
 
       if (!activeTextObject) {
         T3Util.Log("O.Opt: ActiveTextObject not found, aborting");
@@ -21900,7 +20539,7 @@ class OptUtil {
       const dataId = activeTextObject.DataID;
 
       if (dataId !== -1) {
-        const textDataObject = this.GetObjectPtr(dataId, false);
+        const textDataObject = ObjectUtil.GetObjectPtr(dataId, false);
 
         if (textDataObject) {
           let runtimeText = textDataObject.runtimeText;
@@ -21968,8 +20607,8 @@ class OptUtil {
       skipLinkFlagUpdate
     });
 
-    const textEditSession = this.GetObjectPtr(this.tedSessionBlockId, false);
-    const shape = this.GetObjectPtr(shapeId, false);
+    const textEditSession = ObjectUtil.GetObjectPtr(this.teDataBlockId, false);
+    const shape = ObjectUtil.GetObjectPtr(shapeId, false);
 
     // Handle BaseShape objects
     if (shape instanceof Instance.Shape.BaseShape) {
@@ -22228,7 +20867,7 @@ class OptUtil {
 
                     // Update link flags
                     if (!skipLinkFlagUpdate) {
-                      this.Resize_SetLinkFlag(shapeId, DSConstant.LinkFlags.SED_L_MOVE);
+                      this.ResizeSetLinkFlag(shapeId, DSConstant.LinkFlags.SED_L_MOVE);
                     }
                   }
                 }
@@ -22261,8 +20900,8 @@ class OptUtil {
    * @param point - The point to be maintained in relative position
    * @returns The adjusted point position
    */
-  Lines_MaintainDistWithinSegment(targetLine, sourceLine, segmentIndex, point) {
-    T3Util.Log("O.Opt: Lines_MaintainDistWithinSegment inputs:", {
+  LinesMaintainDistWithinSegment(targetLine, sourceLine, segmentIndex, point) {
+    T3Util.Log("O.Opt: LinesMaintainDistWithinSegment inputs:", {
       targetLine: targetLine.BlockID || "unknown",
       sourceLine: sourceLine.BlockID || "unknown",
       segmentIndex,
@@ -22324,7 +20963,7 @@ class OptUtil {
     // Update the point
     point = rotatedPoints[0];
 
-    T3Util.Log("O.Opt: Lines_MaintainDistWithinSegment output:", {
+    T3Util.Log("O.Opt: LinesMaintainDistWithinSegment output:", {
       point: { x: point.x, y: point.y }
     });
 
@@ -22474,7 +21113,7 @@ class OptUtil {
       u = {};
     this.GetBlobImages(l, u);
     var p,
-      d = this.GetObjectPtr(T3Gv.opt.sedSessionBlockId, !1);
+      d = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, !1);
     if (
       n &&
         n.renderBounds ? p = n.renderBounds : e &&
@@ -22506,7 +21145,7 @@ class OptUtil {
       T3Gv.opt.RemoveAllActionArrows(),
       - 1 !== this.curHiliteShape
     ) {
-      var D = this.GetObjectPtr(this.curHiliteShape, !1);
+      var D = ObjectUtil.GetObjectPtr(this.curHiliteShape, !1);
       D &&
         (D.SetRuntimeEffects(!1), D.ClearCursors())
     }
@@ -22723,7 +21362,7 @@ class OptUtil {
                 C = e.getAttribute('_expnotett_'),
                 y = parseInt(C, 10),
                 f = null,
-                (L = T3Gv.opt.GetObjectPtr(y, !1)) &&
+                (L = ObjectUtil.GetObjectPtr(y, !1)) &&
                 L.runtimeText &&
                 (f = L.runtimeText.text),
                 f &&
@@ -22748,24 +21387,24 @@ class OptUtil {
                     u,
                     p,
                     d = parseInt(e, 10),
-                    D = T3Gv.opt.GetObjectPtr(d, !1),
+                    D = ObjectUtil.GetObjectPtr(d, !1),
                     g = [];
                   if (D && D.HasFieldData()) for (
                     t = D.GetFieldDataTable(),
                     a = D.GetFieldDataRecord(),
-                    r = TODO.SDData.FieldedDataGetFieldList(t, !0),
+                    r = TODO.STData.FieldedDataGetFieldList(t, !0),
                     i = 0;
                     i < r.length;
                     i++
                   ) n = r[i].fieldID,
                     o = r[i].name,
                     s = r[i].type,
-                    l = TODO.SDData.FieldedDataGetFieldValue(t, a, n),
+                    l = TODO.STData.FieldedDataGetFieldValue(t, a, n),
                     l = T3Gv.opt.ModifyFieldDataForDisplay(l, s),
-                    S = TODO.SDData.FieldedDataGetFieldStyle(t, a, n),
-                    p = T3Gv.opt.CleanShapeDataHyperlink(TODO.SDData.FieldedDataGetFieldHyperlink(t, a, n)),
+                    S = TODO.STData.FieldedDataGetFieldStyle(t, a, n),
+                    p = T3Gv.opt.CleanShapeDataHyperlink(TODO.STData.FieldedDataGetFieldHyperlink(t, a, n)),
                     c = u = '',
-                    s == TODO.SDData.FieldedDataTypes.HEADER &&
+                    s == TODO.STData.FieldedDataTypes.HEADER &&
                     (
                       p = '',
                       c = S + 'max-width:none;display:block;',
@@ -22792,7 +21431,7 @@ class OptUtil {
               (
                 d = function (e) {
                   var t = parseInt(e, 10),
-                    a = T3Gv.opt.GetObjectPtr(t, !1);
+                    a = ObjectUtil.GetObjectPtr(t, !1);
                   return a &&
                     (a = Utils2.UTF8_to_B64(a)),
                     a
@@ -23116,7 +21755,7 @@ class OptUtil {
 
     let svgElement;
     let currentObject;
-    const textEditSession = this.GetObjectPtr(this.theTEDSessionBlockID, false);
+    const textEditSession = ObjectUtil.GetObjectPtr(this.teDataBlockId, false);
     let textLength = 0;
     const shapeContainerType = ShapeConstant.ObjectTypes.ShapeContainer;
 
@@ -23141,7 +21780,7 @@ class OptUtil {
 
     // Handle active table edit mode
     if (textEditSession.theActiveTableObjectID >= 0) {
-      currentObject = this.GetObjectPtr(textEditSession.theActiveTableObjectID, true);
+      currentObject = ObjectUtil.GetObjectPtr(textEditSession.theActiveTableObjectID, true);
 
       if (currentObject) {
         const tableData = currentObject.GetTable(false);
@@ -23177,7 +21816,7 @@ class OptUtil {
     else {
       let objectIndex;
       const objectsToSelect = [];
-      let visibleObjects = this.ActiveVisibleZList();
+      let visibleObjects = LayerUtil.ActiveVisibleZList();
       visibleObjects = this.RemoveNotVisible(visibleObjects);
       const objectCount = visibleObjects.length;
       let filterCount = 0;
@@ -23188,7 +21827,7 @@ class OptUtil {
       }
 
       for (objectIndex = 0; objectIndex < objectCount; ++objectIndex) {
-        currentObject = this.GetObjectPtr(visibleObjects[objectIndex], false);
+        currentObject = ObjectUtil.GetObjectPtr(visibleObjects[objectIndex], false);
 
         // Skip container objects that are in cells
         if (currentObject.objecttype === shapeContainerType && this.ContainerIsInCell(currentObject)) {
@@ -23215,7 +21854,7 @@ class OptUtil {
         objectsToSelect.push(visibleObjects[objectIndex]);
       }
 
-      this.SelectObjects(objectsToSelect, false, false);
+      SelectUtil.SelectObjects(objectsToSelect, false, false);
       T3Util.Log("U.Util1 SelectAllObjects - Output: Selected", objectsToSelect.length, "objects");
     }
   }
@@ -23229,7 +21868,7 @@ class OptUtil {
       S = {};
     if (r) (i = r), (s = !0), (S = $.extend(!0, {}, i.Frame));
     else {
-      null == (i = this.GetObjectPtr(e, !1)).polylist
+      null == (i = ObjectUtil.GetObjectPtr(e, !1)).polylist
         ? ((i.polylist = i.GetPolyList()), (i.StartPoint = {}), (i.EndPoint = {}))
         : (s = !0);
       var c = T3Gv.stdObj.PreserveBlock(e);
@@ -23278,7 +21917,7 @@ class OptUtil {
       (this.AddToDirtyList(e),
         this.RenderDirtySVGObjects(),
         l.push(e),
-        this.SelectObjects(l, !1, !0)),
+        SelectUtil.SelectObjects(l, !1, !0)),
       (n.inside = $.extend(!0, {}, i.Frame)),
       n
     );
@@ -23286,7 +21925,7 @@ class OptUtil {
 
   PutInFrontofObject(e, t) {
     var a,
-      r = T3Gv.opt.GetObjectPtr(this.theLayersManagerBlockID, !0),
+      r = ObjectUtil.GetObjectPtr(this.theLayersManagerBlockID, !0),
       i = r.layers[r.activelayer].zList,
       n = i.indexOf(e),
       o = i.indexOf(t);
@@ -23322,7 +21961,7 @@ class OptUtil {
       y = new Point(),
       f = new Point(),
       L = [],
-      I = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, !1);
+      I = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, !1);
     for (D = I.hopdim.x, d = I.hopdim.y, r = g - 1; r >= 0; r--) if (!e.hoplist.hops[r].cons) {
       for (
         c = i = e.hoplist.hops[r].segment,
@@ -23455,7 +22094,6 @@ class OptUtil {
       npts: t
     }
   }
-
 
   ArcToChord(e, t, a, r, i) {
     var n,

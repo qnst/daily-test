@@ -80,7 +80,7 @@ class BitmapSymbol extends BaseSymbol {
     containerShape.isShape = true;
 
     if (this.DataID !== -1) {
-      this.LM_AddSVGTextObject(drawingContext, containerShape);
+      this.LMAddSVGTextObject(drawingContext, containerShape);
     }
 
     return containerShape;

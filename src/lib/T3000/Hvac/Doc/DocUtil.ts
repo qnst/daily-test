@@ -13,6 +13,9 @@ import DocConfig from '../Model/DocConfig'
 import OptConstant from '../Data/Constant/OptConstant'
 import CursorConstant from '../Data/Constant/CursorConstant'
 import T3Util from '../Util/T3Util'
+import ObjectUtil from '../Opt/Data/ObjectUtil'
+import MouseUtil from '../Event/MouseUtil'
+import SelectUtil from '../Opt/Opt/SelectUtil'
 
 /**
  * Represents a utility class for managing and configuring an SVG-based document.
@@ -740,7 +743,7 @@ class DocUtil {
     const workArea = this.svgDoc.GetWorkArea();
 
     // Get selected objects
-    const selectedObjects = T3Gv.opt.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
+    const selectedObjects = ObjectUtil.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
 
     // Calculate bounding rectangle for view centering
     let boundingRect = selectedObjects.length
@@ -807,7 +810,7 @@ class DocUtil {
     // Center view on content unless skipCentering is true
     if (!skipCentering) {
       const workArea = this.svgDoc.GetWorkArea();
-      const selectedObjects = T3Gv.opt.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
+      const selectedObjects = ObjectUtil.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
 
       // Get bounding rectangle of selection or entire document
       let boundingRect = selectedObjects.length
@@ -1125,7 +1128,7 @@ class DocUtil {
 
       // Store settings in session data if not propagating
       if (!shouldPropagate) {
-        sessionDataPointer = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, true);
+        sessionDataPointer = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, true);
         sessionDataPointer.rulerConfig = Utils1.DeepCopy(this.rulerConfig);
       }
 
@@ -1899,7 +1902,7 @@ class DocUtil {
     T3Util.Log("= U.DocUtil: RulerDragStart - Input:", { dragEvent });
 
     if (!T3Gv.docUtil.IsReadOnly()) {
-      if (T3Gv.opt.IsRightClick(dragEvent)) {
+      if (MouseUtil.IsRightClick(dragEvent)) {
         Utils2.StopPropagationAndDefaults(dragEvent);
         T3Util.Log("= U.DocUtil: RulerDragStart - Output: Right click detected, operation canceled");
         return;
@@ -2014,7 +2017,7 @@ class DocUtil {
     T3Util.Log("= U.DocUtil: RulerHandleDoubleClick - Input:", { clickEvent, isVerticalRuler, isIntersectionPoint });
 
     // Check if the event is not a right-click
-    if (!T3Gv.opt.IsRightClick(clickEvent)) {
+    if (!MouseUtil.IsRightClick(clickEvent)) {
       // Initialize new origin values using current ruler settings
       let originUpdates = {
         originx: this.rulerConfig.originx,
@@ -2058,8 +2061,8 @@ class DocUtil {
         this.ShowCoordinates(true);
 
         // Update selection attributes for the currently selected object(s)
-        const selectedObjects = T3Gv.opt.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
-        T3Gv.opt.UpdateSelectionAttributes(selectedObjects);
+        const selectedObjects = ObjectUtil.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
+        SelectUtil.UpdateSelectionAttributes(selectedObjects);
 
         T3Util.Log("= U.DocUtil: RulerHandleDoubleClick - Output:", { updatedOrigins: originUpdates, selectedObjects });
       }
@@ -2374,11 +2377,11 @@ class DocUtil {
    * @returns boolean - False if document is editable, true if read-only
    */
   IsReadOnly(): boolean {
-    T3Util.Log("= U.DocUtil: IsReadOnly - Input: Checking document read-only state");
+    // T3Util.Log("= U.DocUtil: IsReadOnly - Input: Checking document read-only state");
 
     const readOnlyState = false;
 
-    T3Util.Log("= U.DocUtil: IsReadOnly - Output:", readOnlyState);
+    // T3Util.Log("= U.DocUtil: IsReadOnly - Output:", readOnlyState);
     return readOnlyState;
   }
 

@@ -7,13 +7,13 @@ import Utils3 from "../Util/Utils3";
 import T3Gv from '../Data/T3Gv'
 import Point from '../Model/Point';
 import NvConstant from '../Data/Constant/NvConstant'
-import SelectionAttributes from '../Model/SelectionAttributes'
+import SelectionAttr from '../Model/SelectionAttr'
 import PathPoint from '../Model/PathPoint'
 import Rectangle from '../Model/Rectangle'
 import CRect from '../Model/CRect'
 import StepRect from '../Model/StepRect'
-import SEDAHook from '../Model/SEDAHook'
-import SEDArray from '../Model/SEDArray'
+import SDHook from '../Model/SDHook'
+import SDArray from '../Model/SDArray'
 import ArrowheadRecord from '../Model/ArrowheadRecord'
 import OptAhUtil from '../Opt/Opt/OptAhUtil';
 import Instance from '../Data/Instance/Instance';
@@ -24,6 +24,9 @@ import T3Constant from '../Data/Constant/T3Constant';
 import CursorConstant from '../Data/Constant/CursorConstant';
 import TextConstant from '../Data/Constant/TextConstant';
 import T3Util from '../Util/T3Util';
+import ObjectUtil from '../Opt/Data/ObjectUtil';
+import UIUtil from '../Opt/UI/UIUtil';
+import LayerUtil from '../Opt/Opt/LayerUtil';
 
 /**
  * Represents a connector drawing object that connects elements in a diagram.
@@ -89,7 +92,7 @@ class Connector extends BaseDrawObject {
     options.targflags = NvConstant.HookFlags.LcShape;
     options.hookflags = NvConstant.HookFlags.LcShape;
 
-    let arraylist = options.arraylist || new SEDArray();
+    let arraylist = options.arraylist || new SDArray();
 
     if (options.styleflags != null) {
       arraylist.styleflags = options.styleflags;
@@ -101,7 +104,7 @@ class Connector extends BaseDrawObject {
     arraylist.wd = options.arraywd == null ? OptConstant.ConnectorDefines.DefaultWd : options.arraywd;
     arraylist.curveparam = options.curveparam || 0;
 
-    var hook = new SEDAHook();
+    var hook = new SDHook();
     hook.startpoint.h = 0;
     hook.startpoint.v = 0;
     hook.endpoint.h = arraylist.wd;
@@ -139,11 +142,11 @@ class Connector extends BaseDrawObject {
     T3Util.Log('S.Connector: Output instance:', this);
   }
 
-  _IsChildOfAssistant() {
+  IsChildOfAssistant() {
     T3Util.Log('S.Connector: Checking if child of assistant. Hooks:', this.hooks);
 
     if (this.hooks.length) {
-      const firstHookObject = T3Gv.opt.GetObjectPtr(this.hooks[0].objid, false);
+      const firstHookObject = ObjectUtil.GetObjectPtr(this.hooks[0].objid, false);
       T3Util.Log('S.Connector: First hook object:', firstHookObject);
 
       if (firstHookObject && firstHookObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
@@ -161,7 +164,7 @@ class Connector extends BaseDrawObject {
     T3Util.Log('S.Connector: Checking link visibility.');
 
     const isCoManager = this.arraylist.styleflags & OptConstant.AStyles.CoManager;
-    const isChildOfAssistant = this._IsChildOfAssistant();
+    const isChildOfAssistant = this.IsChildOfAssistant();
 
     if (this.flags & NvConstant.ObjFlags.NotVisible) {
       if (!this.hooks.length || isCoManager || isChildOfAssistant) {
@@ -169,7 +172,7 @@ class Connector extends BaseDrawObject {
         return true;
       }
 
-      const firstHookObject = T3Gv.opt.GetObjectPtr(this.hooks[0].objid, false);
+      const firstHookObject = ObjectUtil.GetObjectPtr(this.hooks[0].objid, false);
       if (firstHookObject && (firstHookObject.flags & NvConstant.ObjFlags.NotVisible)) {
         T3Util.Log('S.Connector: Link is not visible due to first hook object visibility.');
         return true;
@@ -212,7 +215,7 @@ class Connector extends BaseDrawObject {
       this.StyleRecord.Fill.Paint.FillType !== NvConstant.FillTypes.Transparent &&
       this.StyleRecord.Fill.Paint.Color.toLowerCase() === currentColor.toLowerCase()
     ) {
-      T3Gv.opt.GetObjectPtr(this.BlockID, true);
+      ObjectUtil.GetObjectPtr(this.BlockID, true);
       this.StyleRecord.Fill.Paint.Color = newColor;
       T3Gv.opt.AddToDirtyList(this.BlockID);
     }
@@ -302,20 +305,20 @@ class Connector extends BaseDrawObject {
     T3Util.Log('S.Connector: Input svgDoc:', svgDoc, 'isHidden:', isHidden);
 
     let isCoManager = (this.arraylist.styleflags & OptConstant.AStyles.CoManager) > 0;
-    let isChildOfAssistant = this._IsChildOfAssistant();
-    let isFlowChartConnector = this._IsFlowChartConnector();
+    let isChildOfAssistant = this.IsChildOfAssistant();
+    let isFlowChartConnector = this.IsFlowChartConnector();
     let isGenoConnector = this.IsGenoConnector();
     let isCauseEffectMain = this.objecttype === NvConstant.FNObjectTypes.CauseEffectMain;
     let skipCount = OptConstant.ConnectorDefines.NSkip;
 
-    T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+    ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
 
     if (this.flags & NvConstant.ObjFlags.NotVisible) {
       if (this.hooks.length && !isCoManager && !isChildOfAssistant && !isFlowChartConnector && !isCauseEffectMain && !isGenoConnector) {
-        let firstHookObject = T3Gv.opt.GetObjectPtr(this.hooks[0].objid, false);
+        let firstHookObject = ObjectUtil.GetObjectPtr(this.hooks[0].objid, false);
         if (firstHookObject && !(firstHookObject.flags & NvConstant.ObjFlags.NotVisible)) {
           let shapeContainer = svgDoc.CreateShape(OptConstant.CSType.ShapeContainer);
-          this._CreateCollapseButton(svgDoc, shapeContainer, true);
+          this.CreateCollapseButton(svgDoc, shapeContainer, true);
           shapeContainer.ExcludeFromExport(true);
           T3Util.Log('S.Connector: Output shapeContainer:', shapeContainer);
           return shapeContainer;
@@ -372,7 +375,7 @@ class Connector extends BaseDrawObject {
     this.ApplyEffects(shapeContainer, false, true);
 
     if (!isCoManager && !isChildOfAssistant && !isFlowChartConnector && !isCauseEffectMain && !isGenoConnector) {
-      this._CreateCollapseButton(svgDoc, shapeContainer, false);
+      this.CreateCollapseButton(svgDoc, shapeContainer, false);
     }
 
     shapeContainer.isShape = true;
@@ -388,7 +391,7 @@ class Connector extends BaseDrawObject {
     T3Util.Log('S.Connector: Input svgDoc:', svgDoc, 'parentElement:', parentElement, 'iconParams:', iconParams);
 
     if (parentElement) {
-      const isFlowChartConnector = this._IsFlowChartConnector();
+      const isFlowChartConnector = this.IsFlowChartConnector();
       const frame = this.Frame;
       this.nIcons;
 
@@ -556,7 +559,7 @@ class Connector extends BaseDrawObject {
       endPoint.y = midPoint.y;
       resultPoints.push(new Point(endPoint.x, endPoint.y));
 
-      rotationAngle = T3Gv.opt.SD_GetCounterClockwiseAngleBetween2Points(
+      rotationAngle = T3Gv.opt.GetCounterClockwiseAngleBetween2Points(
         new Point(0, 0),
         new Point(this.Frame.width, this.Frame.height)
       );
@@ -568,7 +571,7 @@ class Connector extends BaseDrawObject {
     return resultPoints;
   }
 
-  _FindTextLabel(event) {
+  FindTextLabel(event) {
     T3Util.Log("S.Connector: _findTextLabel input:", event);
     // Get the polyline points for the connector shape
     const polyPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, false, false, null);
@@ -647,7 +650,7 @@ class Connector extends BaseDrawObject {
     const totalHooks = this.arraylist.hook.length;
     const isLinear = Boolean(this.arraylist.styleflags & OptConstant.AStyles.Linear);
     const textAlignment = ShapeUtil.TextAlignToWin(this.TextAlign);
-    const backgroundObj = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+    const backgroundObj = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
 
     // Update background color and fill based on text alignment
     this.StyleRecord.Fill.Paint.Color = backgroundObj.background.Paint.Color;
@@ -666,7 +669,7 @@ class Connector extends BaseDrawObject {
 
     if (totalHooks >= skipCount) {
       if (isLinear) {
-        lastTextHook = this._FindTextLabel();
+        lastTextHook = this.FindTextLabel();
       } else if (lastTextHook < skipCount) {
         lastTextHook = skipCount;
       }
@@ -695,7 +698,7 @@ class Connector extends BaseDrawObject {
     if (inputEvent === null && hookContext !== null) {
       hookIndex = hookContext.hookindex;
     } else {
-      hookIndex = this._FindTextLabel(inputEvent);
+      hookIndex = this.FindTextLabel(inputEvent);
       if (hookContext !== null) {
         hookContext.hookindex = hookIndex;
       }
@@ -844,8 +847,8 @@ class Connector extends BaseDrawObject {
     T3Util.Log('S.Connector: UpdateSVG output:', shapeElement);
   }
 
-  _CreateCollapseButton(svgDocument, parentElement, adjustCollapse) {
-    T3Util.Log("S.Connector: _CreateCollapseButton input:", { svgDocument, parentElement, adjustCollapse });
+  CreateCollapseButton(svgDocument, parentElement, adjustCollapse) {
+    T3Util.Log("S.Connector: CreateCollapseButton input:", { svgDocument, parentElement, adjustCollapse });
 
     // Define local variables with readable names
     let collapseButton;
@@ -939,7 +942,7 @@ class Connector extends BaseDrawObject {
       parentElement.AddElement(collapseButton);
     }
 
-    T3Util.Log("S.Connector: _CreateCollapseButton output:", { collapseButton });
+    T3Util.Log("S.Connector: CreateCollapseButton output:", { collapseButton });
   }
 
   CreateActionTriggers(svgDoc, targetId, extraParam, refId) {
@@ -987,7 +990,7 @@ class Connector extends BaseDrawObject {
     adjustedFrame.height += scaledKnobSize;
 
     // Get a target object pointer for further adjustments.
-    const targetObject = T3Gv.opt.GetObjectPtr(targetId, false);
+    const targetObject = ObjectUtil.GetObjectPtr(targetId, false);
 
     // Set the appropriate resize cursors based on orientation.
     let primaryCursor, secondaryCursor;
@@ -1169,7 +1172,7 @@ class Connector extends BaseDrawObject {
     }
 
     // Create connector adjustment knobs for further fine-tuning if allowed.
-    const stubIndex = this.Pr_GetStubIndex();
+    const stubIndex = this.PrGetStubIndex();
     if ((function (connector) {
       return true;//connector.objecttype !== NvConstant.FNObjectTypes.SD_OBJT_CAUSEEFFECT_BRANCH;
     })(this)) {
@@ -1543,8 +1546,111 @@ class Connector extends BaseDrawObject {
     return true;
   }
 
+  /**
+   * Handles right-click events on a connector shape
+   *
+   * This method processes right-click events on connectors, providing appropriate
+   * contextual menus based on the connector state. It determines whether the click
+   * was on text (for spell checking or text editing) or on the connector itself,
+   * and shows the relevant menu at the click location.
+   *
+   * @param event - The right-click event with gesture information
+   * @returns Boolean indicating if the event was handled successfully
+   */
   RightClick(event) {
+    // Convert window coordinates to document coordinates
+    const docCoords = T3Gv.opt.svgDoc.ConvertWindowToDocCoords(
+      event.gesture.center.clientX,
+      event.gesture.center.clientY
+    );
 
+    // Find the SVG element clicked on
+    const svgElement = T3Gv.opt.svgObjectLayer.FindElementByDOMElement(event.currentTarget);
+
+    // Attempt to select the object from the click event
+    if (!T3Gv.opt.SelectObjectFromClick(event, svgElement)) {
+      return false;
+    }
+
+    // Get the object ID and retrieve the object pointer
+    const targetId = svgElement.GetID();
+    const targetObject = T3Gv.opt.GetObjectPtr(targetId, false);
+
+    if (targetObject) {
+      // Check if there's a text object associated with this connector
+      if (targetObject.GetTextObject() >= 0) {
+        const textElement = svgElement.textElem;
+        if (textElement) {
+          // Check for spell checking at the click location
+          const spellCheckPosition = textElement.GetSpellAtLocation(
+            event.gesture.center.clientX,
+            event.gesture.center.clientY
+          );
+
+          // If a valid spell position was found, activate text editing
+          if (spellCheckPosition >= 0) {
+            T3Gv.opt.ActivateTextEdit(svgElement, event, true);
+          }
+        }
+      }
+
+      // Get connector style flags and properties
+      const styles = OptConstant.AStyles;
+      const isCoManager = targetObject.arraylist.styleflags & styles.SEDA_CoManager;
+      const isPerpendicular = (targetObject.arraylist.styleflags & styles.SEDA_PerpConn) > 0;
+      const skipHookCount = OptConstant.ConnectorDefines.NSkip;
+      const totalHookCount = targetObject.arraylist.hook.length;
+
+      // These checks have no effect in the original code (unused results)
+      // But keeping for compatibility
+      isPerpendicular && totalHookCount > skipHookCount + 1;
+      isCoManager && true;
+    }
+
+    // Initialize right-click parameters
+    T3Gv.opt.RightClickParams = new RightClickData();
+    T3Gv.opt.RightClickParams.TargetID = svgElement.GetID();
+    T3Gv.opt.RightClickParams.HitPt.x = docCoords.x;
+    T3Gv.opt.RightClickParams.HitPt.y = docCoords.y;
+    T3Gv.opt.RightClickParams.Locked = (this.flags & NvConstant.ObjFlags.Lock) > 0;
+
+    // Check if there's an active text edit
+    if (T3Gv.opt.GetActiveTextEdit() != null) {
+      const activeEdit = T3Gv.opt.svgDoc.GetActiveEdit();
+      let spellPosition = -1;
+
+      if (activeEdit) {
+        spellPosition = activeEdit.GetSpellAtLocation(
+          event.gesture.center.clientX,
+          event.gesture.center.clientY
+        );
+      }
+
+      // Show appropriate menu based on spell check position
+      if (spellPosition >= 0) {
+        // Show spell check menu at the click location
+        T3Gv.opt.svgDoc.GetSpellCheck().ShowSpellMenu(
+          activeEdit,
+          spellPosition,
+          event.gesture.center.clientX,
+          event.gesture.center.clientY
+        );
+      } else {
+        // Show text menu
+        SDUI.Commands.MainController.ShowContextualMenu(
+          SDUI.Resources.Controls.ContextMenus.TextMenu.Id.toLowerCase(),
+          event.gesture.center.clientX,
+          event.gesture.center.clientY
+        );
+      }
+    } else {
+      // Show connector menu
+      SDUI.Commands.MainController.ShowContextualMenu(
+        SDUI.Resources.Controls.ContextMenus.Connector.Id.toLowerCase(),
+        event.gesture.center.clientX,
+        event.gesture.center.clientY
+      );
+    }
   }
 
   HitAreaClick(hitAreaID) {
@@ -1559,15 +1665,15 @@ class Connector extends BaseDrawObject {
     //     BlockID: this.BlockID,
     //     theHitAreaID: hitAreaID
     //   };
-    //   connector = T3Gv.opt.GetObjectPtr(connector.BlockID, false);
+    //   connector = ObjectUtil.GetObjectPtr(connector.BlockID, false);
     // }
 
     switch (hitAreaID) {
       case OptConstant.HitAreaType.ConnCollapse:
-        connector._CollapseConnector(true, false, true);
+        connector.CollapseConnector(true, false, true);
         break;
       case OptConstant.HitAreaType.ConnExpand:
-        connector._CollapseConnector(false, false, true);
+        connector.CollapseConnector(false, false, true);
         break;
     }
 
@@ -2159,7 +2265,7 @@ class Connector extends BaseDrawObject {
   CanSnapToShapes() {
     T3Util.Log('S.Connector: CanSnapToShapes input');
 
-    const isFlowChartConnector = this._IsFlowChartConnector();
+    const isFlowChartConnector = this.IsFlowChartConnector();
     const hasNoHooks = this.hooks.length === 0;
     const hasSingleHook = this.arraylist.hook.length === OptConstant.ConnectorDefines.NSkip + 1;
 
@@ -2297,7 +2403,7 @@ class Connector extends BaseDrawObject {
     const isLinear = (this.arraylist.styleflags & styles.SEDA_Linear) > 0;
 
     hookCount = this.arraylist.hook.length - OptConstant.ConnectorDefines.NSkip;
-    backboneSegments = this.Pr_GetNBackBoneSegments();
+    backboneSegments = this.PrGetNBackBoneSegments();
 
     if (hasBothSides) {
       if (backboneSegments % 2) {
@@ -2338,7 +2444,7 @@ class Connector extends BaseDrawObject {
       }
     }
 
-    this.Pr_Format(this.BlockID);
+    this.PrFormat(this.BlockID);
 
     if (this.rflags) {
       this.rflags = Utils2.SetFlag(this.rflags, NvConstant.FloatingPointDim.Width, false);
@@ -2541,7 +2647,7 @@ class Connector extends BaseDrawObject {
     }
 
     // Retrieve necessary objects and constants
-    const sessionObject = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+    const sessionObject = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
     const svgContainer = T3Gv.opt.actionSvgObject;
     const shapeElement = svgContainer.GetElementById(OptConstant.SVGElementClass.Shape);
     const slopElement = svgContainer.GetElementById(OptConstant.SVGElementClass.Slop);
@@ -2578,12 +2684,12 @@ class Connector extends BaseDrawObject {
     const isFlowConnector = Boolean(this.arraylist.styleflags & styleFlags.SEDA_FlowConn);
 
     // Get connector configuration
-    const stubIndex = this.Pr_GetStubIndex();
-    const endShapeIndex = this.Pr_GetEndShapeIndex();
+    const stubIndex = this.PrGetStubIndex();
+    const endShapeIndex = this.PrGetEndShapeIndex();
     const isReverseLinear = isLinear && stubIndex === connectorDefines.A_Cr;
 
     // Calculate backbone segments
-    let backboneSegments = this.Pr_GetNBackBoneSegments();
+    let backboneSegments = this.PrGetNBackBoneSegments();
     if (isBalancedBothSides) {
       if (backboneSegments % 2) backboneSegments++;
       backboneSegments /= 2;
@@ -2827,7 +2933,7 @@ class Connector extends BaseDrawObject {
     this.arraylist.wd = connectorWidth;
 
     // Format connector based on adjustments
-    const formatResult = this.Pr_AdjustFormat(
+    const formatResult = this.PrAdjustFormat(
       deltaHorizontal,
       deltaVertical,
       gapOffset,
@@ -2992,13 +3098,13 @@ class Connector extends BaseDrawObject {
               height: T.y
             };
             const mousePos = { x: mouseX, y: mouseY };
-            T3Gv.opt.UpdateDisplayCoordinates(displayRect, mousePos, CursorConstant.CursorTypes.Grow, this);
+            UIUtil.UpdateDisplayCoordinates(displayRect, mousePos, CursorConstant.CursorTypes.Grow, this);
             break;
 
           case OptConstant.ActionTriggerType.ConnectorRerp:
             // Calculate tilt adjustment
             let tiltAdjustment = 0;
-            if (this._GetTilt()) {
+            if (this.GetTilt()) {
               tiltAdjustment = -offsetY;
             }
 
@@ -3027,7 +3133,7 @@ class Connector extends BaseDrawObject {
               height: T.y
             };
             const perpMousePos = { x: mouseX, y: mouseY };
-            T3Gv.opt.UpdateDisplayCoordinates(perpDisplayRect, perpMousePos, CursorConstant.CursorTypes.Grow, this);
+            UIUtil.UpdateDisplayCoordinates(perpDisplayRect, perpMousePos, CursorConstant.CursorTypes.Grow, this);
             break;
 
           default:
@@ -3059,7 +3165,7 @@ class Connector extends BaseDrawObject {
     let oldWidth;
     let oldHeight;
     let dimensionsChanged = false;
-    let backboneSegments = this.Pr_GetNBackBoneSegments();
+    let backboneSegments = this.PrGetNBackBoneSegments();
     const styles = OptConstant.AStyles;
 
     // Adjust backbone segments count for both sides style
@@ -3124,7 +3230,7 @@ class Connector extends BaseDrawObject {
 
     // If dimensions changed, reformat the connector
     if (dimensionsChanged) {
-      this.Pr_Format(this.BlockID);
+      this.PrFormat(this.BlockID);
     }
   }
 
@@ -3161,8 +3267,8 @@ class Connector extends BaseDrawObject {
    *
    * @param event - The event containing tracking information
    */
-  LM_ActionTrack(event) {
-    Instance.Shape.BaseLine.prototype.LM_ActionTrack.call(this, event);
+  LMActionTrack(event) {
+    Instance.Shape.BaseLine.prototype.LMActionTrack.call(this, event);
   }
 
   /**
@@ -3175,7 +3281,7 @@ class Connector extends BaseDrawObject {
    * @param event - The release event
    * @param skipCleanup - If true, skip cleanup operations
    */
-  LM_ActionRelease(event, skipCleanup) {
+  LMActionRelease(event, skipCleanup) {
     try {
       let targetObject, hookCount, hookIndex;
 
@@ -3203,7 +3309,7 @@ class Connector extends BaseDrawObject {
           // // Special handling for cause-effect branch connectors
           // if (this.objecttype === NvConstant.FNObjectTypes.SD_OBJT_CAUSEEFFECT_BRANCH) {
           //   if (this.hooks.length) {
-          //     targetObject = T3Gv.opt.GetObjectPtr(this.hooks[0].objid, true);
+          //     targetObject = ObjectUtil.GetObjectPtr(this.hooks[0].objid, true);
           //     if (targetObject &&
           //       targetObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector &&
           //       targetObject.arraylist.styleflags & OptConstant.AStyles.MatchSize) {
@@ -3226,7 +3332,7 @@ class Connector extends BaseDrawObject {
       }
 
       // Reformat the connector and update links
-      this.Pr_Format(T3Gv.opt.actionStoredObjectId);
+      this.PrFormat(T3Gv.opt.actionStoredObjectId);
       T3Gv.opt.SetLinkFlag(
         T3Gv.opt.actionStoredObjectId,
         DSConstant.LinkFlags.SED_L_MOVE
@@ -3235,15 +3341,15 @@ class Connector extends BaseDrawObject {
 
       // Cleanup if not skipped
       if (!skipCleanup) {
-        this.LM_ActionPostRelease(T3Gv.opt.actionStoredObjectId);
+        this.LMActionPostRelease(T3Gv.opt.actionStoredObjectId);
         T3Gv.opt.actionStoredObjectId = -1;
         T3Gv.opt.actionSvgObject = null;
       }
 
-      T3Gv.opt.ShowOverlayLayer();
+      LayerUtil.ShowOverlayLayer();
       T3Gv.opt.CompleteOperation(null);
     } catch (error) {
-      Instance.Shape.BaseShape.prototype.LM_ActionClick_ExceptionCleanup.call(this, error);
+      Instance.Shape.BaseShape.prototype.LMActionClickExpCleanup.call(this, error);
       T3Gv.opt.ExceptionCleanup(error);
       throw error;
     }
@@ -3259,8 +3365,8 @@ class Connector extends BaseDrawObject {
    * @param triggerType - The type of trigger associated with the action
    * @returns Result from base implementation
    */
-  LM_SetupActionClick(actionEvent, triggerType) {
-    return Instance.Shape.BaseLine.prototype.LM_SetupActionClick.call(this, actionEvent, triggerType);
+  LMSetupActionClick(actionEvent, triggerType) {
+    return Instance.Shape.BaseLine.prototype.LMSetupActionClick.call(this, actionEvent, triggerType);
   }
 
   /**
@@ -3272,8 +3378,8 @@ class Connector extends BaseDrawObject {
    * @param actionEvent - The action click event
    * @param triggerType - The type of trigger associated with the action
    */
-  LM_ActionClick(actionEvent, triggerType) {
-    Instance.Shape.BaseLine.prototype.LM_ActionClick.call(this, actionEvent, triggerType);
+  LMActionClick(actionEvent, triggerType) {
+    Instance.Shape.BaseLine.prototype.LMActionClick.call(this, actionEvent, triggerType);
   }
 
   /**
@@ -3284,12 +3390,12 @@ class Connector extends BaseDrawObject {
    *
    * @param error - The error that occurred during action click handling
    */
-  LM_ActionClick_ExceptionCleanup(error) {
-    Instance.Shape.BaseLine.prototype.LM_ActionClick_ExceptionCleanup.call(this, error);
+  LMActionClickExpCleanup(error) {
+    Instance.Shape.BaseLine.prototype.LMActionClickExpCleanup.call(this, error);
   }
 
-  LM_ActionPreTrack(actionEvent, triggerType) {
-    T3Util.Log("S.Connector: LM_ActionPreTrack input:", { actionEvent, triggerType });
+  LMActionPreTrack(actionEvent, triggerType) {
+    T3Util.Log("S.Connector: LMActionPreTrack input:", { actionEvent, triggerType });
 
     let currentHook,
       retrievedObject,
@@ -3303,7 +3409,7 @@ class Connector extends BaseDrawObject {
       localParameters = {},
       childHookList = [],
       connectorMultiplier = 1,
-      linksObject = T3Gv.opt.GetObjectPtr(T3Gv.opt.linksBlockId, false),
+      linksObject = ObjectUtil.GetObjectPtr(T3Gv.opt.linksBlockId, false),
       isBothSidesNoStagger = (this.arraylist.styleflags & OptConstant.AStyles.BothSides) &&
         ((this.arraylist.styleflags & OptConstant.AStyles.Stagger) === 0),
       isLinear = (this.arraylist.styleflags & OptConstant.AStyles.Linear) > 0,
@@ -3320,9 +3426,9 @@ class Connector extends BaseDrawObject {
           hookId = self.arraylist.hook[self.arraylist.hook.length - 1].id;
         }
       }
-      if (T3Gv.opt.GetObjectPtr(hookId, false)) {
+      if (ObjectUtil.GetObjectPtr(hookId, false)) {
         childHookList = []; // reset list
-        childHookList = T3Gv.opt.GetHookList(linksObject, childHookList, hookId, T3Gv.opt.GetObjectPtr(hookId, false), NvConstant.ListCodes.MoveHook, localParameters);
+        childHookList = T3Gv.opt.GetHookList(linksObject, childHookList, hookId, ObjectUtil.GetObjectPtr(hookId, false), NvConstant.ListCodes.MoveHook, localParameters);
         hookListLength = childHookList.length;
         let localConnectorElements = [];
         for (index = 0; index < hookListLength; index++) {
@@ -3403,8 +3509,8 @@ class Connector extends BaseDrawObject {
       T3Gv.opt.OldConnectorExtra = currentHook.extra;
     }
 
-    let stubIndex = this.Pr_GetStubIndex();
-    let endShapeIndex = this.Pr_GetEndShapeIndex();
+    let stubIndex = this.PrGetStubIndex();
+    let endShapeIndex = this.PrGetEndShapeIndex();
 
     switch (triggerType) {
       case OptConstant.ActionTriggerType.ConnectorAdj:
@@ -3457,7 +3563,7 @@ class Connector extends BaseDrawObject {
         break;
       case OptConstant.ActionTriggerType.ConnectorRerp:
       case OptConstant.ActionTriggerType.ConnectorHook:
-        retrievedObject = T3Gv.opt.GetObjectPtr(actionEvent, false);
+        retrievedObject = ObjectUtil.GetObjectPtr(actionEvent, false);
         if (retrievedObject && linksObject) {
           childHookList = T3Gv.opt.GetHookList(linksObject, childHookList, actionEvent, retrievedObject, NvConstant.ListCodes.ChildrenOnly, localParameters);
           totalHooks = childHookList.length;
@@ -3486,27 +3592,27 @@ class Connector extends BaseDrawObject {
         }
         break;
     }
-    T3Util.Log("S.Connector: LM_ActionPreTrack output:", true);
+    T3Util.Log("S.Connector: LMActionPreTrack output:", true);
     return true;
   }
 
-  LM_ActionDuringTrack(event) {
-    T3Util.Log('S.Connector: LM_ActionDuringTrack input:', event);
+  LMActionDuringTrack(event) {
+    T3Util.Log('S.Connector: LMActionDuringTrack input:', event);
 
     const result = event;
 
-    T3Util.Log('S.Connector: LM_ActionDuringTrack output:', result);
+    T3Util.Log('S.Connector: LMActionDuringTrack output:', result);
     return result;
   }
 
-  LM_ActionPostRelease(releasedConnectorId: number): void {
-    T3Util.Log("S.Connector: LM_ActionPostRelease input:", { releasedConnectorId });
+  LMActionPostRelease(releasedConnectorId: number): void {
+    T3Util.Log("S.Connector: LMActionPostRelease input:", { releasedConnectorId });
 
     T3Gv.opt.ConnectorList = [];
     T3Gv.opt.ConnectorWidthList = [];
     T3Gv.opt.SetEditMode(NvConstant.EditState.Default);
 
-    T3Util.Log("S.Connector: LM_ActionPostRelease output: completed");
+    T3Util.Log("S.Connector: LMActionPostRelease output: completed");
   }
 
   GetBestHook(targetObjectId, unusedParam, hookPosition) {
@@ -3556,7 +3662,7 @@ class Connector extends BaseDrawObject {
             : OptConstant.HookPts.AKCT;
           break;
         default:
-          objectPtr = T3Gv.opt.GetObjectPtr(targetObjectId, false);
+          objectPtr = ObjectUtil.GetObjectPtr(targetObjectId, false);
           if (objectPtr && objectPtr.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
             resultHook = objectPtr.vertical ? OptConstant.HookPts.LL : OptConstant.HookPts.LT;
           } else {
@@ -3568,7 +3674,7 @@ class Connector extends BaseDrawObject {
     } else {
       // Non-vertical connectors.
       if (!linearFlag) {
-        objectPtr = T3Gv.opt.GetObjectPtr(targetObjectId, false);
+        objectPtr = ObjectUtil.GetObjectPtr(targetObjectId, false);
         if (startLeftIndicator) {
           if (objectPtr && objectPtr.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
             resultHook = objectPtr.vertical ? OptConstant.HookPts.LB : OptConstant.HookPts.LR;
@@ -3599,7 +3705,7 @@ class Connector extends BaseDrawObject {
             : OptConstant.HookPts.AKCL;
           break;
         default:
-          objectPtr = T3Gv.opt.GetObjectPtr(targetObjectId, false);
+          objectPtr = ObjectUtil.GetObjectPtr(targetObjectId, false);
           if (objectPtr && objectPtr.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
             resultHook = objectPtr.vertical ? OptConstant.HookPts.LT : OptConstant.HookPts.LL;
           } else {
@@ -3855,14 +3961,14 @@ class Connector extends BaseDrawObject {
 
     const styleConstants = OptConstant.AStyles;
     const autoFormatFlags = Business.FlowChart.AutoFormatFlags;
-    const sessionObject = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+    const sessionObject = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
     const isLinear = (this.arraylist.styleflags & styleConstants.SEDA_Linear) > 0;
     const isFlowConnector = this.arraylist.styleflags & styleConstants.SEDA_FlowConn;
     let blockIdToUse = -1;
 
     if (sessionObject.flags & OptConstant.SessionFlags.AutoFormat && isFlowConnector) {
       const hookObjectId = this.hooks[0].objid;
-      const shapeObject = T3Gv.opt.GetObjectPtr(hookObjectId, false);
+      const shapeObject = ObjectUtil.GetObjectPtr(hookObjectId, false);
       if (shapeObject && shapeObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape) {
         if (isLinear) {
           if (!isUserInitiated) {
@@ -3902,7 +4008,7 @@ class Connector extends BaseDrawObject {
     const bothSides = this.arraylist.styleflags & OptConstant.AStyles.BothSides;
     const isLinear = this.arraylist.styleflags & OptConstant.AStyles.Linear;
     const isFlowConnector = this.arraylist.styleflags & OptConstant.AStyles.FlowConn;
-    const sessionObject = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+    const sessionObject = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
     const noTreeOverlap = sessionObject.flags & OptConstant.SessionFlags.NoTreeOverlap;
     const skipCount = OptConstant.ConnectorDefines.NSkip;
 
@@ -3925,11 +4031,11 @@ class Connector extends BaseDrawObject {
               if (bothSides) {
                 newHookIndexInfo.x++;
               }
-              this.Pr_AddHookedObject(targetHookId, newHookIndexInfo.x, storedTextId);
-              this.Pr_RemoveHookedObject(targetHookId, hookIndexFound);
+              this.PrAddHookedObject(targetHookId, newHookIndexInfo.x, storedTextId);
+              this.PrRemoveHookedObject(targetHookId, hookIndexFound);
             } else {
-              this.Pr_RemoveHookedObject(targetHookId, hookIndexFound);
-              this.Pr_AddHookedObject(targetHookId, newHookIndexInfo.x, storedTextId);
+              this.PrRemoveHookedObject(targetHookId, hookIndexFound);
+              this.PrAddHookedObject(targetHookId, newHookIndexInfo.x, storedTextId);
             }
             if (sessionObject.flags & OptConstant.SessionFlags.AutoFormat && isFlowConnector) {
               GlobalDatagFlowChartManager.AutoFormat(this, -1);
@@ -3937,7 +4043,7 @@ class Connector extends BaseDrawObject {
             }
           }
         } else {
-          this.Pr_AddHookedObject(targetHookId, newHookIndexInfo.x, -1);
+          this.PrAddHookedObject(targetHookId, newHookIndexInfo.x, -1);
           if (sessionObject.flags & OptConstant.SessionFlags.AutoFormat && isFlowConnector) {
             GlobalDatagFlowChartManager.AutoFormat(this, newHookIndexInfo.x);
           }
@@ -3949,10 +4055,10 @@ class Connector extends BaseDrawObject {
           T3Gv.opt.DeleteBlock(currentHook.textid);
           currentHook.textid = -1;
         }
-        this.Pr_RemoveHookedObject(targetHookId, hookIndexFound);
+        this.PrRemoveHookedObject(targetHookId, hookIndexFound);
 
         // Reset the subtype if the target object is a task.
-        const targetObject = T3Gv.opt.GetObjectPtr(targetHookId, true);
+        const targetObject = ObjectUtil.GetObjectPtr(targetHookId, true);
         // if (targetObject && targetObject.subtype === NvConstant.ObjectSubTypes.SD_SUBT_TASK) {
         //   targetObject.subtype = 0;
         // }
@@ -3986,9 +4092,9 @@ class Connector extends BaseDrawObject {
           }
         }
         if (this.arraylist.styleflags & OptConstant.AStyles.CoManager) {
-          this._CollapseCoManager(targetHookId);
+          this.CollapseCoManager(targetHookId);
         } else if (this.IsAsstConnector()) {
-          this._CollapseAssistant();
+          this.CollapseAssistant();
         }
       }
       T3Gv.opt.SetLinkFlag(connectorBlockId, DSConstant.LinkFlags.SED_L_MOVE);
@@ -4003,12 +4109,12 @@ class Connector extends BaseDrawObject {
           }
         );
       } else {
-        const objectPtr = T3Gv.opt.GetObjectPtr(connectorBlockId, true);
+        const objectPtr = ObjectUtil.GetObjectPtr(connectorBlockId, true);
         if (objectPtr && objectPtr.hooks.length) {
           T3Gv.opt.SetLinkFlag(objectPtr.hooks[0].objid, DSConstant.LinkFlags.SED_L_MOVE);
         }
       }
-      this.Pr_Format(connectorBlockId);
+      this.PrFormat(connectorBlockId);
       T3Gv.opt.AddToDirtyList(connectorBlockId);
     } else {
       this.flags = Utils2.SetFlag(this.flags, NvConstant.ObjFlags.Obj1, true);
@@ -4020,7 +4126,7 @@ class Connector extends BaseDrawObject {
     T3Util.Log("S.Connector: DeleteObject called with no input parameters");
 
     const styleConstants = OptConstant.AStyles;
-    const sessionObject = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+    const sessionObject = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
     const isFlowConnector = Boolean(this.arraylist.styleflags & styleConstants.SEDA_FlowConn);
     const autoFormatFlags = Business.FlowChart.AutoFormatFlags;
 
@@ -4042,7 +4148,7 @@ class Connector extends BaseDrawObject {
     // and there is at least one hook, then auto-format the associated shape.
     if (sessionObject.flags & OptConstant.SessionFlags.AutoFormat && isFlowConnector && this.hooks.length) {
       const firstHookObjectId = this.hooks[0].objid;
-      const firstHookObject = T3Gv.opt.GetObjectPtr(firstHookObjectId, false);
+      const firstHookObject = ObjectUtil.GetObjectPtr(firstHookObjectId, false);
       if (firstHookObject && firstHookObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape) {
         const shapeFormatType = GlobalDatagFlowChartManager.SED_ArrayShapeIsThreeWay(firstHookObject, -1, this.BlockID);
         T3Util.Log("S.Connector: Auto-format shape check returned format type", shapeFormatType, "for shape id", firstHookObjectId);
@@ -4103,7 +4209,7 @@ class Connector extends BaseDrawObject {
       }
 
       if (assistantId >= 0) {
-        const assistantObject = T3Gv.opt.GetObjectPtr(assistantId, false);
+        const assistantObject = ObjectUtil.GetObjectPtr(assistantId, false);
         if (assistantObject && assistantObject.arraylist && assistantObject.arraylist.hook.length <= OptConstant.ConnectorDefines.NSkip) {
           if (curveParams) {
             curveParams.index = hookIndex;
@@ -4141,7 +4247,7 @@ class Connector extends BaseDrawObject {
 
     if (isCoManager && output) {
       if (this.flags & NvConstant.ObjFlags.Obj1) {
-        this.Pr_Format(this.BlockID);
+        this.PrFormat(this.BlockID);
       }
 
       if (this.vertical) {
@@ -4175,7 +4281,7 @@ class Connector extends BaseDrawObject {
     if (hookIndex > 0 && hookIndex < totalHooks) {
       const childId = this.arraylist.hook[hookIndex].id;
       if (childId >= 0) {
-        const childObject = T3Gv.opt.GetObjectPtr(childId, false);
+        const childObject = ObjectUtil.GetObjectPtr(childId, false);
         if (childObject) {
           childFrame = Utils1.DeepCopy(childObject.Frame);
         }
@@ -4254,7 +4360,7 @@ class Connector extends BaseDrawObject {
 
     // If there's exactly one input point, and an object flag is set, then format first.
     if (numberOfInputPoints === 1 && this.flags & NvConstant.ObjFlags.Obj1) {
-      this.Pr_Format(formatParam);
+      this.PrFormat(formatParam);
     }
 
     // If the first input point has negative x then process as a special case.
@@ -4568,7 +4674,7 @@ class Connector extends BaseDrawObject {
         this.arraylist.hook[connectorDefines.A_Cr].gap = this.arraylist.hook[connectorDefines.A_Cl].gap;
         this.arraylist.hook[connectorDefines.A_Cl].gap = tempGap;
 
-        hookObject = T3Gv.opt.GetObjectPtr(this.arraylist.hook[connectorDefines.A_Cr].id, true);
+        hookObject = ObjectUtil.GetObjectPtr(this.arraylist.hook[connectorDefines.A_Cr].id, true);
         if (hookObject && hookObject.hooks.length) {
           hookObject.hooks[0].hookpt = OptConstant.HookPts.AKCT;
           hookObject.hooks[0].connect.x = -connectorDefines.A_Cr;
@@ -4581,7 +4687,7 @@ class Connector extends BaseDrawObject {
         this.arraylist.hook[connectorDefines.A_Cl].gap = this.arraylist.hook[connectorDefines.A_Cr].gap;
         this.arraylist.hook[connectorDefines.A_Cr].gap = tempGap;
 
-        hookObject = T3Gv.opt.GetObjectPtr(this.arraylist.hook[connectorDefines.A_Cl].id, true);
+        hookObject = ObjectUtil.GetObjectPtr(this.arraylist.hook[connectorDefines.A_Cl].id, true);
         if (hookObject && hookObject.hooks.length) {
           hookObject.hooks[0].hookpt = OptConstant.HookPts.AKCB;
           hookObject.hooks[0].connect.x = -connectorDefines.A_Cl;
@@ -4939,19 +5045,19 @@ class Connector extends BaseDrawObject {
     T3Util.Log("S.Connector: ChangeTextAttributes completed");
   }
 
-  _CollapseCoManager(connectorId) {
-    T3Util.Log("S.Connector: _CollapseCoManager called with connectorId:", connectorId);
+  CollapseCoManager(connectorId) {
+    T3Util.Log("S.Connector: CollapseCoManager called with connectorId:", connectorId);
 
     let remainingHooks = this.arraylist.hook.length - OptConstant.ConnectorDefines.NSkip;
     let objectsToDelete = [];
-    let parentObject = T3Gv.opt.GetObjectPtr(connectorId, true);
+    let parentObject = ObjectUtil.GetObjectPtr(connectorId, true);
 
     if (parentObject && remainingHooks >= 1) {
       let firstHookId = this.arraylist.hook[OptConstant.ConnectorDefines.NSkip].id;
       let childArrayId = T3Gv.opt.FindChildArray(connectorId, -1);
 
       if (childArrayId >= 0) {
-        let childObject = T3Gv.opt.GetObjectPtr(childArrayId, true);
+        let childObject = ObjectUtil.GetObjectPtr(childArrayId, true);
         if (childObject) {
           T3Gv.opt.UpdateHook(childArrayId, 0, firstHookId, childObject.hooks[0].hookpt, childObject.hooks[0].connect, null);
         }
@@ -4974,11 +5080,11 @@ class Connector extends BaseDrawObject {
 
       if (parentObjectId >= 0) {
         T3Gv.opt.UpdateHook(this.BlockID, 0, -1, this.hooks[0].hookpt, this.hooks[0].connect, null);
-        let parentObject = T3Gv.opt.GetObjectPtr(parentObjectId, false);
+        let parentObject = ObjectUtil.GetObjectPtr(parentObjectId, false);
 
         if (remainingHooks === 1) {
           let firstHookId = this.arraylist.hook[OptConstant.ConnectorDefines.NSkip].id;
-          let firstHookObject = T3Gv.opt.GetObjectPtr(firstHookId, true);
+          let firstHookObject = ObjectUtil.GetObjectPtr(firstHookId, true);
 
           if (firstHookObject && parentObject) {
             firstHookObject.hooks[0].hookpt = parentObject.GetBestHook(firstHookId, firstHookObject.hooks[0].hookpt, firstHookObject.hooks[0].connect);
@@ -4987,9 +5093,9 @@ class Connector extends BaseDrawObject {
 
           let childArrayId = T3Gv.opt.FindChildArray(firstHookId, -1);
           if (childArrayId >= 0) {
-            let childObject = T3Gv.opt.GetObjectPtr(childArrayId, true);
+            let childObject = ObjectUtil.GetObjectPtr(childArrayId, true);
             if (childObject) {
-              childObject._FixHook(false, true);
+              childObject.FixHook(false, true);
             }
           }
         }
@@ -4999,28 +5105,26 @@ class Connector extends BaseDrawObject {
       }
     }
 
-    T3Util.Log("S.Connector: _CollapseCoManager completed");
+    T3Util.Log("S.Connector: CollapseCoManager completed");
   }
 
-
-
-  _CollapseAssistant() {
-    T3Util.Log("S.Connector: _CollapseAssistant called");
+  CollapseAssistant() {
+    T3Util.Log("S.Connector: CollapseAssistant called");
 
     let remainingHooks = this.arraylist.hook.length - OptConstant.ConnectorDefines.NSkip;
     let objectsToDelete = [];
 
     if (remainingHooks === 1) {
       let assistantHook = this.arraylist.hook[OptConstant.ConnectorDefines.NSkip];
-      let assistantObject = T3Gv.opt.GetObjectPtr(assistantHook.id, true);
+      let assistantObject = ObjectUtil.GetObjectPtr(assistantHook.id, true);
 
       if (assistantObject && assistantObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
         let parentObjectId = this.hooks.length ? this.hooks[0].objid : -1;
 
         if (parentObjectId >= 0) {
-          assistantObject._FixHook(false, false);
+          assistantObject.FixHook(false, false);
 
-          let parentObject = T3Gv.opt.GetObjectPtr(parentObjectId, true);
+          let parentObject = ObjectUtil.GetObjectPtr(parentObjectId, true);
           if (parentObject && parentObject.IsCoManager()) {
             assistantObject.hooks[0].connect.y = -OptConstant.AStyles.CoManager;
           }
@@ -5054,12 +5158,10 @@ class Connector extends BaseDrawObject {
       }
     }
 
-    T3Util.Log("S.Connector: _CollapseAssistant completed");
+    T3Util.Log("S.Connector: CollapseAssistant completed");
   }
 
-
-
-  Pr_Format(e) {
+  PrFormat(e) {
     var t,
       a,
       r,
@@ -5116,7 +5218,7 @@ class Connector extends BaseDrawObject {
       ee = {},
       te = {},
       ae = {},
-      re = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, !1),
+      re = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, !1),
       ie = [],
       ne = !1,
       oe = {},
@@ -5172,7 +5274,7 @@ class Connector extends BaseDrawObject {
         q = this.arraylist.ht,
         K = this.arraylist.wd,
         this.hooks.length &&
-        (z = T3Gv.opt.GetObjectPtr(this.hooks[0].objid, !1)) &&
+        (z = ObjectUtil.GetObjectPtr(this.hooks[0].objid, !1)) &&
         (
           ne = z.IsCoManager(oe),
           z.IsAsstConnector() &&
@@ -5279,7 +5381,7 @@ class Connector extends BaseDrawObject {
         n.steps.splice(0),
         n.comanagerht = 0,
         n.isasst = !1,
-        (O = T3Gv.opt.GetObjectPtr(n.id, !1)) ? (
+        (O = ObjectUtil.GetObjectPtr(n.id, !1)) ? (
           C = (o = O.GetArrayRect(this.vertical)).h + o.hdist / 2,
           n.pr.h = C,
           n.pr.hdist = 0,
@@ -5301,7 +5403,7 @@ class Connector extends BaseDrawObject {
           (E = o.vdist),
           p &&
           (
-            (d = this._GetElementProfile(n.id, A, Se, null, Y, !1)) &&
+            (d = this.GetElementProfile(n.id, A, Se, null, Y, !1)) &&
             (
               n.pr.h = d.frame.h,
               n.pr.v = d.frame.v,
@@ -5335,7 +5437,7 @@ class Connector extends BaseDrawObject {
         this.objecttype === NvConstant.FNObjectTypes.CauseEffectMain &&
         (P = 0, R = 0),
         J
-      ) ie = this._FormatLinear(re, e, Se, H, ie, x, se),
+      ) ie = this.FormatLinear(re, e, Se, H, ie, x, se),
         y = H.x;
       else for (a = i; a < t; a++) T = (n = this.arraylist.hook[a]).gap,
         M = Se ? 0 : n.ogap,
@@ -5364,9 +5466,9 @@ class Connector extends BaseDrawObject {
               ),
               this._InsertStepIntoProfile(n.steps, j)
             ),
-            y = this._CompareSteps(ie, n.steps) + K + b,
+            y = this.CompareSteps(ie, n.steps) + K + b,
             u &&
-            (_ = this._CompareSteps(ie, u.steps) + K + b) > y &&
+            (_ = this.CompareSteps(ie, u.steps) + K + b) > y &&
             (y = _)
           ) : (y += b, y += T)
         ),
@@ -5391,15 +5493,15 @@ class Connector extends BaseDrawObject {
         ),
         v &&
         (n.endpoint.v = - n.endpoint.v, u && (u.endpoint.v = - u.endpoint.v)),
-        this._UpdateCurrentProfile(H, n, ce),
+        this.UpdateCurrentProfile(H, n, ce),
         u &&
-        this._UpdateCurrentProfile(H, u, ce),
+        this.UpdateCurrentProfile(H, u, ce),
         Se &&
         (
-          ie = a === i ? Utils1.DeepCopy(n.steps) : this._AddStepsToProfile(ie, n.steps, !1, !1, n.startpoint.h, 0),
+          ie = a === i ? Utils1.DeepCopy(n.steps) : this.AddStepsToProfile(ie, n.steps, !1, !1, n.startpoint.h, 0),
           u &&
           (
-            ie = this._AddStepsToProfile(ie, u.steps, !1, !1, u.startpoint.h, 0)
+            ie = this.AddStepsToProfile(ie, u.steps, !1, !1, u.startpoint.h, 0)
           )
         ),
         (a += I) < t - 1 &&
@@ -5414,24 +5516,24 @@ class Connector extends BaseDrawObject {
         l = this.arraylist.hook[OptConstant.ConnectorDefines.ACl],
         s = this.arraylist.hook[OptConstant.ConnectorDefines.ACr],
         l.id >= 0 &&
-        (O = T3Gv.opt.GetObjectPtr(l.id, !1)) &&
+        (O = ObjectUtil.GetObjectPtr(l.id, !1)) &&
         (
           C = (o = O.GetArrayRect(this.vertical)).h + o.hdist / 2,
           l.pr.h = C,
           l.pr.hdist = 0,
           l.pr.v = 0,
           l.pr.vdist = o.vdist,
-          this._UpdateCurrentProfile(H, l, ce)
+          this.UpdateCurrentProfile(H, l, ce)
         ),
         s.id >= 0 &&
-        (O = T3Gv.opt.GetObjectPtr(s.id, !1)) &&
+        (O = ObjectUtil.GetObjectPtr(s.id, !1)) &&
         (
           C = (o = O.GetArrayRect(this.vertical)).h + o.hdist / 2,
           s.pr.h = C,
           s.pr.hdist = 0,
           s.pr.v = 0,
           s.pr.vdist = o.vdist,
-          this._UpdateCurrentProfile(H, s, ce)
+          this.UpdateCurrentProfile(H, s, ce)
         ),
         0 === $ &&
         (l.gap = 0),
@@ -5458,7 +5560,7 @@ class Connector extends BaseDrawObject {
             f = S.gap,
             L = c.gap
           ) : (f = 0, L = 0),
-          w = this._GetTilt(),
+          w = this.GetTilt(),
           J &&
           (f = 0, L = 0, 0 === $ && (s.gap = 0)),
           this.hooks.length
@@ -5566,8 +5668,8 @@ class Connector extends BaseDrawObject {
         l.endpoint.v = 0
       }
       if (
-        this.arraylist.angle ? this._AdjustAngleConnector() : this.arraylist.tilt &&
-          this._AdjustTiltConnector(),
+        this.arraylist.angle ? this.AdjustAngleConnector() : this.arraylist.tilt &&
+          this.AdjustTiltConnector(),
         this.vertical ? (
           this.EndPoint.x = this.StartPoint.x + D.endpoint.v,
           this.EndPoint.y = ce ? this.StartPoint.y - y : this.StartPoint.y + y
@@ -5610,14 +5712,14 @@ class Connector extends BaseDrawObject {
           Se &&
           ie.length &&
           (ie[0].vend += 2 * q, ie[0].v -= 2 * q),
-          ie = this._AddCoManagerChildren(v, Se, ie)
+          ie = this.AddCoManagerChildren(v, Se, ie)
         ),
         (x || B) &&
-        (ie = this._AddAssistantChildren(v, Se, ie)),
+        (ie = this.AddAssistantChildren(v, Se, ie)),
         Se
       ) {
         if (G) {
-          for (V = (ie = this._BuildSideConnectorSteps()).length, a = 0; a < V; a++) N ||
+          for (V = (ie = this.BuildSideConnectorSteps()).length, a = 0; a < V; a++) N ||
             (v ? ie[a].hend = te.v : ie[a].h = te.v);
           j = new StepRect(
             - this.StyleRecord.Line.Thickness,
@@ -5678,8 +5780,8 @@ class Connector extends BaseDrawObject {
     }
   }
 
-  _GetAngleDisp(hook) {
-    T3Util.Log("S.Connector: _GetAngleDisp called with hook:", hook);
+  GetAngleDisp(hook) {
+    T3Util.Log("S.Connector: GetAngleDisp called with hook:", hook);
 
     const angleDisplacement = {
       start: 0,
@@ -5691,12 +5793,12 @@ class Connector extends BaseDrawObject {
       angleDisplacement.end = -hook.endpoint.h * this.arraylist.angle;
     }
 
-    T3Util.Log("S.Connector: _GetAngleDisp returning angleDisplacement:", angleDisplacement);
+    T3Util.Log("S.Connector: GetAngleDisp returning angleDisplacement:", angleDisplacement);
     return angleDisplacement;
   }
 
-  _AdjustAngleConnector() {
-    T3Util.Log("S.Connector: _AdjustAngleConnector called");
+  AdjustAngleConnector() {
+    T3Util.Log("S.Connector: AdjustAngleConnector called");
 
     const connectorDefines = OptConstant.ConnectorDefines;
     const minHooks = connectorDefines.SEDA_NSkip;
@@ -5708,35 +5810,35 @@ class Connector extends BaseDrawObject {
 
     // Adjust the back hook
     hook = this.arraylist.hook[connectorDefines.A_Bk];
-    angleDisp = this._GetAngleDisp(hook);
+    angleDisp = this.GetAngleDisp(hook);
     hook.startpoint.v += angleDisp.start;
     hook.endpoint.v -= angleDisp.end;
 
     // Adjust the left hook
     hook = this.arraylist.hook[connectorDefines.A_Cl];
-    angleDisp = this._GetAngleDisp(hook);
+    angleDisp = this.GetAngleDisp(hook);
     hook.startpoint.v += angleDisp.start;
     hook.endpoint.v -= angleDisp.end;
 
     // Adjust the right hook
     hook = this.arraylist.hook[connectorDefines.A_Cr];
-    angleDisp = this._GetAngleDisp(hook);
+    angleDisp = this.GetAngleDisp(hook);
     hook.startpoint.v -= angleDisp.start;
     hook.endpoint.v -= angleDisp.end;
 
     // Adjust remaining hooks
     for (let hookIndex = minHooks; hookIndex < totalHooks; hookIndex++) {
       hook = this.arraylist.hook[hookIndex];
-      angleDisp = this._GetAngleDisp(hook);
+      angleDisp = this.GetAngleDisp(hook);
       hook.startpoint.v -= angleDisp.end;
       hook.endpoint.v -= angleDisp.end;
     }
 
-    T3Util.Log("S.Connector: _AdjustAngleConnector completed");
+    T3Util.Log("S.Connector: AdjustAngleConnector completed");
   }
 
-  _GetTilt(height?: number): number {
-    T3Util.Log("S.Connector: _GetTilt called with height:", height);
+  GetTilt(height?: number): number {
+    T3Util.Log("S.Connector: GetTilt called with height:", height);
 
     let tiltValue = 0;
     if (this.arraylist.tilt) {
@@ -5748,15 +5850,15 @@ class Connector extends BaseDrawObject {
       }
     }
 
-    T3Util.Log("S.Connector: _GetTilt returning tiltValue:", tiltValue);
+    T3Util.Log("S.Connector: GetTilt returning tiltValue:", tiltValue);
     return tiltValue;
   }
 
-  _AdjustTiltConnector() {
-    T3Util.Log("S.Connector: _AdjustTiltConnector called");
+  AdjustTiltConnector() {
+    T3Util.Log("S.Connector: AdjustTiltConnector called");
 
     const minHooks = OptConstant.ConnectorDefines.NSkip;
-    const tiltValue = this._GetTilt();
+    const tiltValue = this.GetTilt();
 
     if (tiltValue) {
       const totalHooks = this.arraylist.hook.length;
@@ -5767,10 +5869,10 @@ class Connector extends BaseDrawObject {
       }
     }
 
-    T3Util.Log("S.Connector: _AdjustTiltConnector completed");
+    T3Util.Log("S.Connector: AdjustTiltConnector completed");
   }
 
-  _FormatLinear(
+  FormatLinear(
     session: any,
     unusedParam: any,
     useSteps: boolean,
@@ -5779,7 +5881,7 @@ class Connector extends BaseDrawObject {
     skipAdjustment: boolean,
     output: any
   ): StepRect[] {
-    T3Util.Log("S.Connector: _FormatLinear called with input:", {
+    T3Util.Log("S.Connector: FormatLinear called with input:", {
       session,
       useSteps,
       resultFrame,
@@ -5826,7 +5928,7 @@ class Connector extends BaseDrawObject {
         return isSwimlaneAdjust;
       })()
     ) {
-      const firstHookObject = T3Gv.opt.GetObjectPtr(this.hooks[0].objid, false);
+      const firstHookObject = ObjectUtil.GetObjectPtr(this.hooks[0].objid, false);
       if (firstHookObject) {
         const rectDifference = swimlaneHeight - firstHookObject.GetArrayRect(this.vertical).hdist;
         if (adjustLeft) {
@@ -5880,7 +5982,7 @@ class Connector extends BaseDrawObject {
         runningExtra += gapAdjustment;
       }
 
-      const leftAdjustment = this._GetLeftAdjustment(hook.id);
+      const leftAdjustment = this.GetLeftAdjustment(hook.id);
       hook.startpoint.h = currentX + rightAdjustment;
       hook.startpoint.v = 0;
       hook.endpoint.h = runningExtra;
@@ -5891,15 +5993,15 @@ class Connector extends BaseDrawObject {
         }
       }
       hook.endpoint.v = 0;
-      rightAdjustment = this._GetRightAdjustment(hook.id);
-      this._UpdateCurrentProfile(resultFrame, hook, false);
+      rightAdjustment = this.GetRightAdjustment(hook.id);
+      this.UpdateCurrentProfile(resultFrame, hook, false);
 
       if (useSteps) {
         // For the first hook use a deep copy, otherwise merge steps
         stepsBuffer =
           hookIndex === minHooks
             ? Utils1.DeepCopy(hook.steps)
-            : this._AddStepsToProfile(stepsBuffer, hook.steps, false, false, hook.endpoint.h, 0);
+            : this.AddStepsToProfile(stepsBuffer, hook.steps, false, false, hook.endpoint.h, 0);
         if (hook.steps.length) {
           if (hook.steps[0].v < minStepV) {
             minStepV = hook.steps[0].v;
@@ -5909,7 +6011,7 @@ class Connector extends BaseDrawObject {
             hook.steps[0].vend;
           }
         }
-        currentX = this._CompareSteps(stepsBuffer, hook.steps);
+        currentX = this.CompareSteps(stepsBuffer, hook.steps);
         runningExtra = (currentX - leftAdjustment) + connectorWidth;
       } else {
         let prevX = runningExtra;
@@ -5944,15 +6046,15 @@ class Connector extends BaseDrawObject {
     }
     resultFrame.x = currentX;
 
-    T3Util.Log("S.Connector: _FormatLinear output:", {
+    T3Util.Log("S.Connector: FormatLinear output:", {
       resultFrame,
       stepsBuffer,
     });
     return stepsBuffer;
   }
 
-  _AddCoManagerChildren(useStartPointFlag: boolean, copySteps: boolean, currentSteps: StepRect[]): StepRect[] {
-    T3Util.Log("S.Connector: _AddCoManagerChildren input:", { useStartPointFlag, copySteps, currentSteps });
+  AddCoManagerChildren(useStartPointFlag: boolean, copySteps: boolean, currentSteps: StepRect[]): StepRect[] {
+    T3Util.Log("S.Connector: AddCoManagerChildren input:", { useStartPointFlag, copySteps, currentSteps });
 
     const skipHooks = OptConstant.ConnectorDefines.NSkip;
     const totalHooks = this.arraylist.hook.length;
@@ -5970,19 +6072,19 @@ class Connector extends BaseDrawObject {
       }
 
       // Get profile for the co-manager hook
-      const elementProfile = this._GetElementProfile(coManagerHook.id, useStartPointFlag, copySteps, this, false, false);
+      const elementProfile = this.GetElementProfile(coManagerHook.id, useStartPointFlag, copySteps, this, false, false);
       if (elementProfile) {
         currentSteps = elementProfile.steps;
         this.arraylist.profile = elementProfile.frame;
       }
     }
 
-    T3Util.Log("S.Connector: _AddCoManagerChildren output:", currentSteps);
+    T3Util.Log("S.Connector: AddCoManagerChildren output:", currentSteps);
     return currentSteps;
   }
 
-  _AddAssistantChildren(useStartPointFlag: boolean, copySteps: boolean, currentSteps: StepRect[]): StepRect[] {
-    T3Util.Log("S.Connector: _AddAssistantChildren input:", { useStartPointFlag, copySteps, currentSteps });
+  AddAssistantChildren(useStartPointFlag: boolean, copySteps: boolean, currentSteps: StepRect[]): StepRect[] {
+    T3Util.Log("S.Connector: AddAssistantChildren input:", { useStartPointFlag, copySteps, currentSteps });
 
     // Rename local variables for clarity
     let totalHooks = this.arraylist.hook.length;
@@ -5994,7 +6096,7 @@ class Connector extends BaseDrawObject {
     // Find the first assistant connector hook (child connector)
     for (let index = skipHooks; index < totalHooks; index++) {
       const hook = this.arraylist.hook[index];
-      const hookedObject = T3Gv.opt.GetObjectPtr(hook.id, false);
+      const hookedObject = ObjectUtil.GetObjectPtr(hook.id, false);
       if (hookedObject &&
         hookedObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
         assistantHookIndex = index;
@@ -6017,7 +6119,7 @@ class Connector extends BaseDrawObject {
       }
 
       // Get profile for the assistant connector hook
-      const elementProfile = this._GetElementProfile(assistantHook.id, useStartPointFlag, copySteps, this, false, true);
+      const elementProfile = this.GetElementProfile(assistantHook.id, useStartPointFlag, copySteps, this, false, true);
       if (elementProfile) {
         // If reverse column is enabled, swap the vertical frame values
         if (reverseColumnFlag) {
@@ -6062,12 +6164,12 @@ class Connector extends BaseDrawObject {
       }
     }
 
-    T3Util.Log("S.Connector: _AddAssistantChildren output:", currentSteps);
+    T3Util.Log("S.Connector: AddAssistantChildren output:", currentSteps);
     return currentSteps;
   }
 
-  _CompareSteps(existingSteps: StepRect[], newSteps: StepRect[]): number {
-    T3Util.Log("S.Connector: _CompareSteps called with", {
+  CompareSteps(existingSteps: StepRect[], newSteps: StepRect[]): number {
+    T3Util.Log("S.Connector: CompareSteps called with", {
       existingSteps: JSON.stringify(existingSteps),
       newSteps: JSON.stringify(newSteps)
     });
@@ -6108,11 +6210,11 @@ class Connector extends BaseDrawObject {
       }
     }
 
-    T3Util.Log("S.Connector: _CompareSteps returning output:", longestDifference);
+    T3Util.Log("S.Connector: CompareSteps returning output:", longestDifference);
     return longestDifference;
   }
 
-  _AddStepsToProfile(
+  AddStepsToProfile(
     existingSteps: StepRect[],
     newSteps: StepRect[],
     transform: boolean,
@@ -6120,7 +6222,7 @@ class Connector extends BaseDrawObject {
     offset: number,
     newOffset: number
   ): StepRect[] {
-    T3Util.Log("S.Connector: _AddStepsToProfile called with", {
+    T3Util.Log("S.Connector: AddStepsToProfile called with", {
       existingSteps: JSON.stringify(existingSteps),
       newSteps: JSON.stringify(newSteps),
       transform,
@@ -6141,7 +6243,7 @@ class Connector extends BaseDrawObject {
       for (let i = 0; i < existingLength; i++) {
         resultSteps.push(new StepRect(existingSteps[i].h, existingSteps[i].v, offset, existingSteps[i].vend));
       }
-      T3Util.Log("S.Connector: _AddStepsToProfile output", JSON.stringify(resultSteps));
+      T3Util.Log("S.Connector: AddStepsToProfile output", JSON.stringify(resultSteps));
       return resultSteps;
     }
 
@@ -6281,12 +6383,12 @@ class Connector extends BaseDrawObject {
     }
     resultSteps.length = resultSteps.length >= mergeIndex ? mergeIndex : resultSteps.length;
 
-    T3Util.Log("S.Connector: _AddStepsToProfile output", JSON.stringify(resultSteps));
+    T3Util.Log("S.Connector: AddStepsToProfile output", JSON.stringify(resultSteps));
     return resultSteps;
   }
 
-  _BuildSideConnectorSteps() {
-    T3Util.Log("S.Connector: _BuildSideConnectorSteps called, total hooks =", this.arraylist.hook.length);
+  BuildSideConnectorSteps() {
+    T3Util.Log("S.Connector: BuildSideConnectorSteps called, total hooks =", this.arraylist.hook.length);
 
     const multiplier = 1;
     let resultSteps: StepRect[] = [];
@@ -6339,7 +6441,7 @@ class Connector extends BaseDrawObject {
         const currentHook = this.arraylist.hook[hookIndex];
         const hookEndpointV = currentHook.endpoint.v;
 
-        resultSteps = this._AddStepsToProfile(
+        resultSteps = this.AddStepsToProfile(
           resultSteps,
           currentHook.steps,
           true,
@@ -6350,12 +6452,12 @@ class Connector extends BaseDrawObject {
       }
     }
 
-    T3Util.Log("S.Connector: _BuildSideConnectorSteps completed with output:", JSON.stringify(resultSteps));
+    T3Util.Log("S.Connector: BuildSideConnectorSteps completed with output:", JSON.stringify(resultSteps));
     return resultSteps;
   }
 
-  _insertStepIntoProfile(profileSteps: StepRect[], newStep: StepRect): void {
-    T3Util.Log("S.Connector: _insertStepIntoProfile called with", {
+  InsertStepIntoProfile(profileSteps: StepRect[], newStep: StepRect): void {
+    T3Util.Log("S.Connector: InsertStepIntoProfile called with", {
       profileSteps: JSON.stringify(profileSteps),
       newStep: JSON.stringify(newStep)
     });
@@ -6372,11 +6474,11 @@ class Connector extends BaseDrawObject {
       profileSteps[index].vend += verticalOffset;
     }
 
-    T3Util.Log("S.Connector: _insertStepIntoProfile completed with output", JSON.stringify(profileSteps));
+    T3Util.Log("S.Connector: InsertStepIntoProfile completed with output", JSON.stringify(profileSteps));
   }
 
-  _UpdateCurrentProfile(profile: Rectangle, hook: any, flag: boolean): void {
-    T3Util.Log("S.Connector: _UpdateCurrentProfile called with", {
+  UpdateCurrentProfile(profile: Rectangle, hook: any, flag: boolean): void {
+    T3Util.Log("S.Connector: UpdateCurrentProfile called with", {
       profile: JSON.stringify(profile),
       hook: JSON.stringify(hook),
       flag
@@ -6405,17 +6507,17 @@ class Connector extends BaseDrawObject {
       profile.vdist = newValue;
     }
 
-    T3Util.Log("S.Connector: _UpdateCurrentProfile completed with output", JSON.stringify(profile));
+    T3Util.Log("S.Connector: UpdateCurrentProfile completed with output", JSON.stringify(profile));
   }
 
-  _GetFullShapeProfile(
+  GetFullShapeProfile(
     targetObjectId: number,
     offsetX: number,
     offsetY: number,
     resultRect: Rectangle,
     updateUnion: boolean
   ): void {
-    T3Util.Log("S.Connector: _GetFullShapeProfile called with", {
+    T3Util.Log("S.Connector: GetFullShapeProfile called with", {
       targetObjectId,
       offsetX,
       offsetY,
@@ -6424,7 +6526,7 @@ class Connector extends BaseDrawObject {
     });
 
     // Local variables with descriptive names
-    let mainObject: any = T3Gv.opt.GetObjectPtr(targetObjectId, false);
+    let mainObject: any = ObjectUtil.GetObjectPtr(targetObjectId, false);
     const skipHookCount = OptConstant.ConnectorDefines.NSkip;
     // Structure to hold child info (index, id and hook point)
     let childInfo = { lindex: -1, id: -1, hookpt: 0 };
@@ -6446,7 +6548,7 @@ class Connector extends BaseDrawObject {
 
       // Loop while a child object is found
       while (T3Gv.opt.FindChildArrayByIndex(targetObjectId, childInfo) > 0) {
-        let childObject: any = T3Gv.opt.GetObjectPtr(childInfo.id, false);
+        let childObject: any = ObjectUtil.GetObjectPtr(childInfo.id, false);
         if (!childObject) {
           break;
         }
@@ -6471,7 +6573,7 @@ class Connector extends BaseDrawObject {
         // Process each hook beyond the skip count
         for (let hookIndex = skipHookCount; hookIndex < childHookCount; hookIndex++) {
           let currentHook = childObject.arraylist.hook[hookIndex];
-          let hookedObj = T3Gv.opt.GetObjectPtr(currentHook.id, false);
+          let hookedObj = ObjectUtil.GetObjectPtr(currentHook.id, false);
           if (hookedObj) {
             let hookedPoint = hookedObj.HookToPoint(hookedObj.hooks[0].hookpt, null);
             hookPoints = [];
@@ -6481,29 +6583,29 @@ class Connector extends BaseDrawObject {
               let newOffsetX = offsetX + perimPoints[0].x - hookedPoint.x;
               let newOffsetY = offsetY + perimPoints[0].y - hookedPoint.y;
               // Recursive call with new offsets; do not update union with child objects recursively
-              childObject._GetFullShapeProfile(currentHook.id, newOffsetX, newOffsetY, resultRect, false);
+              childObject.GetFullShapeProfile(currentHook.id, newOffsetX, newOffsetY, resultRect, false);
             }
           }
         }
       }
     }
 
-    T3Util.Log("S.Connector: _GetFullShapeProfile completed with resultRect:", resultRect);
+    T3Util.Log("S.Connector: GetFullShapeProfile completed with resultRect:", resultRect);
   }
 
-  _GetRightAdjustment(hookedObjectId: number): number {
-    T3Util.Log("S.Connector: _GetRightAdjustment called with hookedObjectId:", hookedObjectId);
+  GetRightAdjustment(hookedObjectId: number): number {
+    T3Util.Log("S.Connector: GetRightAdjustment called with hookedObjectId:", hookedObjectId);
 
     const hookPoints = OptConstant.HookPts;
-    const hookedObject = T3Gv.opt.GetObjectPtr(hookedObjectId, false);
+    const hookedObject = ObjectUtil.GetObjectPtr(hookedObjectId, false);
 
     if (hookedObject == null) {
-      T3Util.Log("S.Connector: _GetRightAdjustment returning output: 0 (hookedObject is null)");
+      T3Util.Log("S.Connector: GetRightAdjustment returning output: 0 (hookedObject is null)");
       return 0;
     }
 
     if (hookedObject.hooks.length === 0) {
-      T3Util.Log("S.Connector: _GetRightAdjustment returning output: 0 (hookedObject has no hooks)");
+      T3Util.Log("S.Connector: GetRightAdjustment returning output: 0 (hookedObject has no hooks)");
       return 0;
     }
 
@@ -6550,28 +6652,28 @@ class Connector extends BaseDrawObject {
       }
     }
 
-    T3Util.Log("S.Connector: _GetRightAdjustment returning output:", adjustment);
+    T3Util.Log("S.Connector: GetRightAdjustment returning output:", adjustment);
     return adjustment;
   }
 
-  _GetLeftAdjustment(hookObjectId: number): number {
-    T3Util.Log("S.Connector: _GetLeftAdjustment called with hookObjectId:", hookObjectId);
+  GetLeftAdjustment(hookObjectId: number): number {
+    T3Util.Log("S.Connector: GetLeftAdjustment called with hookObjectId:", hookObjectId);
 
     const hookPointsConstants = OptConstant.HookPts;
-    const hookedObject = T3Gv.opt.GetObjectPtr(hookObjectId, false);
+    const hookedObject = ObjectUtil.GetObjectPtr(hookObjectId, false);
 
     if (hookedObject == null) {
-      T3Util.Log("S.Connector: _GetLeftAdjustment returning 0 because hookedObject is null");
+      T3Util.Log("S.Connector: GetLeftAdjustment returning 0 because hookedObject is null");
       return 0;
     }
 
     if (hookedObject.DrawingObjectBaseClass !== OptConstant.DrawObjectBaseClass.Shape) {
-      T3Util.Log("S.Connector: _GetLeftAdjustment returning 0 because hookedObject is not of type SHAPE");
+      T3Util.Log("S.Connector: GetLeftAdjustment returning 0 because hookedObject is not of type SHAPE");
       return 0;
     }
 
     if (hookedObject.hooks.length === 0) {
-      T3Util.Log("S.Connector: _GetLeftAdjustment returning 0 because hookedObject has no hooks");
+      T3Util.Log("S.Connector: GetLeftAdjustment returning 0 because hookedObject has no hooks");
       return 0;
     }
 
@@ -6602,11 +6704,11 @@ class Connector extends BaseDrawObject {
       }
     }
 
-    T3Util.Log("S.Connector: _GetLeftAdjustment returning leftAdjustment:", leftAdjustment);
+    T3Util.Log("S.Connector: GetLeftAdjustment returning leftAdjustment:", leftAdjustment);
     return leftAdjustment;
   }
 
-  _GetElementProfile(
+  GetElementProfile(
     targetObjectId: number,
     useStartPointFlag: boolean,
     copySteps: boolean,
@@ -6614,7 +6716,7 @@ class Connector extends BaseDrawObject {
     useFullShapeProfile: boolean,
     ignoreGenoFlag: boolean
   ) {
-    T3Util.Log("S.Connector: _GetElementProfile called with", {
+    T3Util.Log("S.Connector: GetElementProfile called with", {
       targetObjectId,
       useStartPointFlag,
       copySteps,
@@ -6638,7 +6740,7 @@ class Connector extends BaseDrawObject {
 
     const styles = OptConstant.AStyles;
     const hookSkipCount = OptConstant.ConnectorDefines.NSkip;
-    const targetObj = T3Gv.opt.GetObjectPtr(targetObjectId, false);
+    const targetObj = ObjectUtil.GetObjectPtr(targetObjectId, false);
     if (targetObj == null) return null;
 
     // Determine some flags from this connector's properties
@@ -6661,7 +6763,7 @@ class Connector extends BaseDrawObject {
           resultProfile.frame.v = this.arraylist.hook[hookSkipCount].pr.v;
         }
         resultProfile.steps.push(new StepRect(-resultProfile.frame.h, -resultProfile.frame.v, resultProfile.frame.hdist, resultProfile.frame.vdist));
-        T3Util.Log("S.Connector: _GetElementProfile output", resultProfile);
+        T3Util.Log("S.Connector: GetElementProfile output", resultProfile);
         return resultProfile;
       }
 
@@ -6704,7 +6806,7 @@ class Connector extends BaseDrawObject {
           }
         }
       }
-      T3Util.Log("S.Connector: _GetElementProfile output", resultProfile);
+      T3Util.Log("S.Connector: GetElementProfile output", resultProfile);
       return resultProfile;
     }
 
@@ -6738,7 +6840,7 @@ class Connector extends BaseDrawObject {
         hookPoint = targetObj.HookToPoint(targetObj.hooks[0].hookpt, null);
         perimPoint = Utils2.Pt2CPoint(hookPoint, this.vertical);
         if (useFullShapeProfile) {
-          this._GetFullShapeProfile(targetObjectId, 0, 0, tempProfile, true);
+          this.GetFullShapeProfile(targetObjectId, 0, 0, tempProfile, true);
           rectConverted = Utils2.Rect2CRect(tempProfile, this.vertical);
         } else {
           rectConverted = targetObj.GetArrayRect(this.vertical);
@@ -6760,7 +6862,7 @@ class Connector extends BaseDrawObject {
       hookPoint = targetObj.HookToPoint(targetObj.hooks[0].hookpt, null);
       perimPoint = Utils2.Pt2CPoint(hookPoint, this.vertical);
       if (useFullShapeProfile) {
-        this._GetFullShapeProfile(targetObjectId, 0, 0, tempProfile, true);
+        this.GetFullShapeProfile(targetObjectId, 0, 0, tempProfile, true);
         rectConverted = Utils2.Rect2CRect(tempProfile, this.vertical);
       } else {
         rectConverted = targetObj.GetArrayRect(this.vertical);
@@ -6781,7 +6883,7 @@ class Connector extends BaseDrawObject {
     // Process children profile if available and if current connector is not linear, co-manager, or assistant
     childObjectId = T3Gv.opt.FindChildArray(targetObjectId, -1);
     if (!isLinear && !isCoManager && !isAssistant && childObjectId >= 0) {
-      const childObj = T3Gv.opt.GetObjectPtr(childObjectId, false);
+      const childObj = ObjectUtil.GetObjectPtr(childObjectId, false);
       if (childObj && childObj.hooks.length && childObj.arraylist.hook.length - OptConstant.ConnectorDefines.NSkip > 0 &&
         (childObj.flags & NvConstant.ObjFlags.NotVisible) === 0) {
         pointArray = [];
@@ -6889,18 +6991,18 @@ class Connector extends BaseDrawObject {
       }
     }
 
-    T3Util.Log("S.Connector: _GetElementProfile output", resultProfile);
+    T3Util.Log("S.Connector: GetElementProfile output", resultProfile);
     return resultProfile;
   }
 
-  Pr_AdjustHooks(startIndex: number, offsetAdjustment: number) {
-    T3Util.Log("S.Connector: Pr_AdjustHooks called with startIndex:", startIndex, "offsetAdjustment:", offsetAdjustment);
+  PrAdjustHooks(startIndex: number, offsetAdjustment: number) {
+    T3Util.Log("S.Connector: PrAdjustHooks called with startIndex:", startIndex, "offsetAdjustment:", offsetAdjustment);
     const skipHooksCount = OptConstant.ConnectorDefines.NSkip;
     const totalHooks = this.arraylist.hook.length;
     for (let index = startIndex; index < totalHooks; index++) {
       const currentHook = this.arraylist.hook[index];
       if (currentHook.id >= 0) {
-        const hookedObject = T3Gv.opt.GetObjectPtr(currentHook.id, true);
+        const hookedObject = ObjectUtil.GetObjectPtr(currentHook.id, true);
         if (hookedObject && hookedObject.hooks.length) {
           hookedObject.hooks[0].connect.x = index - skipHooksCount;
           const previousHookPoint = hookedObject.hooks[0].hookpt;
@@ -6909,13 +7011,13 @@ class Connector extends BaseDrawObject {
         }
       }
     }
-    T3Util.Log("S.Connector: Pr_AdjustHooks completed");
+    T3Util.Log("S.Connector: PrAdjustHooks completed");
   }
 
-  Pr_AddHookedObject(objectId, hookPoint, textId) {
-    T3Util.Log("S.Connector: Pr_AddHookedObject called with objectId:", objectId, "hookPoint:", hookPoint, "textId:", textId);
+  PrAddHookedObject(objectId, hookPoint, textId) {
+    T3Util.Log("S.Connector: PrAddHookedObject called with objectId:", objectId, "hookPoint:", hookPoint, "textId:", textId);
     let currentHookCount, tempHook, insertIndex;
-    let newHook = new SEDAHook();
+    let newHook = new SDHook();
     let useStub = false;
     const styles = OptConstant.AStyles;
     const bothSides = (this.arraylist.styleflags & styles.SEDA_BothSides) || (this.arraylist.styleflags & styles.SEDA_PerpConn) === 0;
@@ -6925,7 +7027,7 @@ class Connector extends BaseDrawObject {
     if (this.arraylist != null) {
       // Reset match size length
       this.arraylist.matchsizelen = 0;
-      let targetObject = T3Gv.opt.GetObjectPtr(objectId, false);
+      let targetObject = ObjectUtil.GetObjectPtr(objectId, false);
 
       if (hookPoint === OptConstant.ConnectorDefines.StubHookPt) {
         hookPoint = 0;
@@ -6933,7 +7035,7 @@ class Connector extends BaseDrawObject {
       } else {
         if (hookPoint === -1 || hookPoint === -2) {
           this.arraylist.hook[-hookPoint].id = objectId;
-          T3Util.Log("S.Connector: Pr_AddHookedObject early exit for negative hookPoint:", hookPoint);
+          T3Util.Log("S.Connector: PrAddHookedObject early exit for negative hookPoint:", hookPoint);
           return;
         }
         if (targetObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector &&
@@ -6951,7 +7053,7 @@ class Connector extends BaseDrawObject {
         // Ensure a minimum number of hooks exist
         if (currentHookCount < OptConstant.ConnectorDefines.NSkip) {
           for (let i = currentHookCount; i < OptConstant.ConnectorDefines.NSkip; i++) {
-            let tempNewHook = new SEDAHook();
+            let tempNewHook = new SDHook();
             if (bothSides) {
               if (this.arraylist.hook.length !== 1 || isLinear || isRadial) {
                 tempNewHook.gap = this.arraylist.wd;
@@ -6995,21 +7097,21 @@ class Connector extends BaseDrawObject {
         this.arraylist.hook.splice(insertIndex, 0, newHook);
         currentHookCount = this.arraylist.hook.length;
         if (useStub) {
-          this.Pr_AdjustHooks(insertIndex, 0);
+          this.PrAdjustHooks(insertIndex, 0);
         } else {
-          targetObject = T3Gv.opt.GetObjectPtr(objectId, true);
+          targetObject = ObjectUtil.GetObjectPtr(objectId, true);
           if (targetObject) {
             targetObject.SetHookAlign(targetObject.hooks[0].hookpt, targetObject.hooks[0].hookpt);
           }
         }
-        this.Pr_AdjustHooks(insertIndex + 1, 1);
+        this.PrAdjustHooks(insertIndex + 1, 1);
       }
     }
-    T3Util.Log("S.Connector: Pr_AddHookedObject completed with objectId:", objectId);
+    T3Util.Log("S.Connector: PrAddHookedObject completed with objectId:", objectId);
   }
 
-  Pr_RemoveHookedObject(objectId, hookIndex) {
-    T3Util.Log("S.Connector: Pr_RemoveHookedObject called with objectId:", objectId, "hookIndex:", hookIndex);
+  PrRemoveHookedObject(objectId, hookIndex) {
+    T3Util.Log("S.Connector: PrRemoveHookedObject called with objectId:", objectId, "hookIndex:", hookIndex);
 
     let removedExtra = 0;
     if (this.arraylist != null) {
@@ -7043,14 +7145,14 @@ class Connector extends BaseDrawObject {
       }
 
       // Adjust hooks after removal
-      this.Pr_AdjustHooks(hookIndex, -1);
+      this.PrAdjustHooks(hookIndex, -1);
     }
 
-    T3Util.Log("S.Connector: Pr_RemoveHookedObject completed for hookIndex:", hookIndex);
+    T3Util.Log("S.Connector: PrRemoveHookedObject completed for hookIndex:", hookIndex);
   }
 
-  Pr_GetNBackBoneSegments(): number {
-    T3Util.Log("S.Connector: Pr_GetNBackBoneSegments() called, input: none");
+  PrGetNBackBoneSegments(): number {
+    T3Util.Log("S.Connector: PrGetNBackBoneSegments() called, input: none");
 
     let backboneSegmentCount = this.arraylist.hook.length - OptConstant.ConnectorDefines.NSkip;
 
@@ -7059,13 +7161,13 @@ class Connector extends BaseDrawObject {
     }
 
     const result = backboneSegmentCount - 1;
-    T3Util.Log("S.Connector: Pr_GetNBackBoneSegments() returning output:", result);
+    T3Util.Log("S.Connector: PrGetNBackBoneSegments() returning output:", result);
 
     return result;
   }
 
-  Pr_GetStubIndex() {
-    T3Util.Log("S.Connector: Pr_GetStubIndex called");
+  PrGetStubIndex() {
+    T3Util.Log("S.Connector: PrGetStubIndex called");
 
     let stubIndex = 0;
     const styles = OptConstant.AStyles;
@@ -7085,12 +7187,12 @@ class Connector extends BaseDrawObject {
       }
     }
 
-    T3Util.Log("S.Connector: Pr_GetStubIndex returning output:", stubIndex);
+    T3Util.Log("S.Connector: PrGetStubIndex returning output:", stubIndex);
     return stubIndex;
   }
 
-  Pr_GetEndShapeIndex() {
-    T3Util.Log("S.Connector: Pr_GetEndShapeIndex called");
+  PrGetEndShapeIndex() {
+    T3Util.Log("S.Connector: PrGetEndShapeIndex called");
 
     let endShapeIndex = 0;
     const styles = OptConstant.AStyles;
@@ -7109,11 +7211,11 @@ class Connector extends BaseDrawObject {
       }
     }
 
-    T3Util.Log("S.Connector: Pr_GetEndShapeIndex returning output:", endShapeIndex);
+    T3Util.Log("S.Connector: PrGetEndShapeIndex returning output:", endShapeIndex);
     return endShapeIndex;
   }
 
-  Pr_AdjustFormat(e, t, a, r, i, n, o, s) {
+  PrAdjustFormat(e, t, a, r, i, n, o, s) {
     var l,
       S,
       c,
@@ -7597,7 +7699,7 @@ class Connector extends BaseDrawObject {
         )
     }
     if (t) {
-      var N = this._GetTilt();
+      var N = this.GetTilt();
       for (l = OptConstant.ConnectorDefines.NSkip; l < S; l++) c = this.arraylist.hook[l],
         C &&
           L ? c.endpoint.v -= t : c.endpoint.v += t,
@@ -7637,8 +7739,8 @@ class Connector extends BaseDrawObject {
     }
   }
 
-  Pr_GetShapeConnectorInfo(hookDetails) {
-    T3Util.Log("S.Connector: Pr_GetShapeConnectorInfo called with input:", hookDetails);
+  PrGetShapeConnectorInfo(hookDetails) {
+    T3Util.Log("S.Connector: PrGetShapeConnectorInfo called with input:", hookDetails);
 
     let firstHook;
     let connectionAdjustment;
@@ -7681,7 +7783,7 @@ class Connector extends BaseDrawObject {
     //         polyType: 'vertical'
     //       };
     //       knobInfoList.push(connectionAdjustment);
-    //       T3Util.Log("S.Connector: Pr_GetShapeConnectorInfo returning output:", knobInfoList);
+    //       T3Util.Log("S.Connector: PrGetShapeConnectorInfo returning output:", knobInfoList);
     //       return knobInfoList;
     //     case -1:
     //       connectionAdjustment = {
@@ -7692,10 +7794,10 @@ class Connector extends BaseDrawObject {
     //         polyType: 'vertical'
     //       };
     //       knobInfoList.push(connectionAdjustment);
-    //       T3Util.Log("S.Connector: Pr_GetShapeConnectorInfo returning output:", knobInfoList);
+    //       T3Util.Log("S.Connector: PrGetShapeConnectorInfo returning output:", knobInfoList);
     //       return knobInfoList;
     //     default:
-    //       T3Util.Log("S.Connector: Pr_GetShapeConnectorInfo returning output:", knobInfoList);
+    //       T3Util.Log("S.Connector: PrGetShapeConnectorInfo returning output:", knobInfoList);
     //       return knobInfoList;
     //   }
     // }
@@ -7862,12 +7964,12 @@ class Connector extends BaseDrawObject {
       }
     }
 
-    T3Util.Log("S.Connector: Pr_GetShapeConnectorInfo returning output:", knobInfoList);
+    T3Util.Log("S.Connector: PrGetShapeConnectorInfo returning output:", knobInfoList);
     return knobInfoList;
   }
 
-  _GetConnectorOrientation(isReversed: boolean) {
-    T3Util.Log("S.Connector: _GetConnectorOrientation called with isReversed:", isReversed);
+  GetConnectorOrientation(isReversed: boolean) {
+    T3Util.Log("S.Connector: GetConnectorOrientation called with isReversed:", isReversed);
 
     const styles = OptConstant.AStyles;
     let startLeft = Boolean(this.arraylist.styleflags & styles.SEDA_StartLeft);
@@ -7890,22 +7992,22 @@ class Connector extends BaseDrawObject {
       orientation = startLeft ? Instance.Shape.ConnectorDir.ORG_VERTICALUP : Instance.Shape.ConnectorDir.ORG_VERTICALDOWN;
     }
 
-    T3Util.Log("S.Connector: _GetConnectorOrientation result:", orientation);
+    T3Util.Log("S.Connector: GetConnectorOrientation result:", orientation);
     return orientation;
   }
 
-  _IsFlowChartConnector(): boolean {
-    T3Util.Log("S.Connector: _IsFlowChartConnector called");
+  IsFlowChartConnector(): boolean {
+    T3Util.Log("S.Connector: IsFlowChartConnector called");
 
     const styles = OptConstant.AStyles;
     const isFlowChartConnector = (this.arraylist.styleflags & styles.SEDA_FlowConn) > 0;
 
-    T3Util.Log("S.Connector: _IsFlowChartConnector result:", isFlowChartConnector);
+    T3Util.Log("S.Connector: IsFlowChartConnector result:", isFlowChartConnector);
     return isFlowChartConnector;
   }
 
-  _IsOrgChartConnector(allowedTypes: number[]): boolean {
-    T3Util.Log("S.Connector: _IsOrgChartConnector called with allowedTypes:", allowedTypes);
+  IsOrgChartConnector(allowedTypes: number[]): boolean {
+    T3Util.Log("S.Connector: IsOrgChartConnector called with allowedTypes:", allowedTypes);
 
     let isOrgChartType = (this.objecttype === 0);
 
@@ -7918,24 +8020,24 @@ class Connector extends BaseDrawObject {
       }
     }
 
-    const isOrgChartConnector = !this._IsFlowChartConnector() && isOrgChartType;
-    T3Util.Log("S.Connector: _IsOrgChartConnector result:", isOrgChartConnector);
+    const isOrgChartConnector = !this.IsFlowChartConnector() && isOrgChartType;
+    T3Util.Log("S.Connector: IsOrgChartConnector result:", isOrgChartConnector);
     return isOrgChartConnector;
   }
 
-  _IsCauseAndEffectChartConnector(): boolean {
-    T3Util.Log("S.Connector: _IsCauseAndEffectChartConnector called");
+  IsCauseAndEffectChartConnector(): boolean {
+    T3Util.Log("S.Connector: IsCauseAndEffectChartConnector called");
 
     const objectTypes = NvConstant.FNObjectTypes;
     const isCauseAndEffectChartConnector = this.objecttype === objectTypes.CauseEffectMain;
     // || this.objecttype === objectTypes.SD_OBJT_CAUSEEFFECT_BRANCH;
 
-    T3Util.Log("S.Connector: _IsCauseAndEffectChartConnector result:", isCauseAndEffectChartConnector);
+    T3Util.Log("S.Connector: IsCauseAndEffectChartConnector result:", isCauseAndEffectChartConnector);
     return isCauseAndEffectChartConnector;
   }
 
-  _IsOrgChartTypeConnector(): boolean {
-    T3Util.Log("S.Connector: _IsOrgChartTypeConnector called");
+  IsOrgChartTypeConnector(): boolean {
+    T3Util.Log("S.Connector: IsOrgChartTypeConnector called");
 
     const objectTypes = NvConstant.FNObjectTypes;
     let isOrgChartConnector = false;
@@ -7952,13 +8054,13 @@ class Connector extends BaseDrawObject {
         isOrgChartConnector = false;
     }
 
-    T3Util.Log("S.Connector: _IsOrgChartTypeConnector result:", isOrgChartConnector);
+    T3Util.Log("S.Connector: IsOrgChartTypeConnector result:", isOrgChartConnector);
     return isOrgChartConnector;
   }
 
-  _FixHook(preserveOriginalPosition: boolean, forceCoManagerUpdate: boolean) {
+  FixHook(preserveOriginalPosition: boolean, forceCoManagerUpdate: boolean) {
     T3Util.Log(
-      "S.Connector: _FixHook called with preserveOriginalPosition:",
+      "S.Connector: FixHook called with preserveOriginalPosition:",
       preserveOriginalPosition,
       "forceCoManagerUpdate:",
       forceCoManagerUpdate
@@ -7983,7 +8085,7 @@ class Connector extends BaseDrawObject {
     if (this.hooks.length) {
       // If not preserving original position, check if the hooked object is a co-manager.
       if (!preserveOriginalPosition) {
-        const hookedObject = T3Gv.opt.GetObjectPtr(this.hooks[0].objid, false);
+        const hookedObject = ObjectUtil.GetObjectPtr(this.hooks[0].objid, false);
         if (hookedObject && hookedObject.IsCoManager(null)) {
           if (!forceCoManagerUpdate) {
             applyCoManagerAdjustment = true;
@@ -8067,15 +8169,15 @@ class Connector extends BaseDrawObject {
     }
 
     T3Util.Log(
-      "S.Connector: _FixHook completed with hook position:",
+      "S.Connector: FixHook completed with hook position:",
       this.hooks[0].connect,
       "hook point:",
       this.hooks[0].hookpt
     );
   }
 
-  _SetDirection(invertStyle: boolean, toggleOrientation: boolean, propagate: boolean): void {
-    T3Util.Log("S.Connector: _SetDirection called with invertStyle:", invertStyle, "toggleOrientation:", toggleOrientation, "propagate:", propagate);
+  SetDirection(invertStyle: boolean, toggleOrientation: boolean, propagate: boolean): void {
+    T3Util.Log("S.Connector: SetDirection called with invertStyle:", invertStyle, "toggleOrientation:", toggleOrientation, "propagate:", propagate);
 
     const styles = OptConstant.AStyles;
     const skipCount = OptConstant.ConnectorDefines.NSkip;
@@ -8114,7 +8216,7 @@ class Connector extends BaseDrawObject {
       } else {
         // If CoManager flag is set and propagate is true, get the first hook object.
         if (isCoManager && propagate) {
-          const firstHookObj = T3Gv.opt.GetObjectPtr(this.hooks[0].objid, false);
+          const firstHookObj = ObjectUtil.GetObjectPtr(this.hooks[0].objid, false);
           if (firstHookObj && ((firstHookObj.arraylist.styleflags & styles.SEDA_BothSides) ||
             ((firstHookObj.arraylist.styleflags & styles.SEDA_PerpConn) === 0))) {
             // Nothing extra to be done here.
@@ -8140,36 +8242,36 @@ class Connector extends BaseDrawObject {
     T3Gv.opt.SetLinkFlag(this.BlockID, DSConstant.LinkFlags.SED_L_MOVE | DSConstant.LinkFlags.SED_L_CHANGE);
     this.flags = Utils2.SetFlag(this.flags, NvConstant.ObjFlags.Obj1, true);
     // Fix the hook based on the propagate flag.
-    this._FixHook(propagate, false);
+    this.FixHook(propagate, false);
 
     // Iterate over all hooks starting from the skipCount.
     for (let index = skipCount; index < hookCount; index++) {
       const currentHook = this.arraylist.hook[index];
-      const hookedObject = T3Gv.opt.GetObjectPtr(currentHook.id, true);
+      const hookedObject = ObjectUtil.GetObjectPtr(currentHook.id, true);
       if (hookedObject && hookedObject.hooks.length) {
         // Update hook point for the hooked object.
         hookedObject.hooks[0].hookpt = this.GetBestHook(currentHook.id, hookedObject.hooks[0].hookpt, hookedObject.hooks[0].connect);
         T3Gv.opt.SetLinkFlag(currentHook.id, DSConstant.LinkFlags.SED_L_MOVE);
         if (hookedObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
           // Recursively set direction for connector type objects.
-          hookedObject._SetDirection(invertStyle, toggleOrientation, true);
+          hookedObject.SetDirection(invertStyle, toggleOrientation, true);
         } else {
           const childId = T3Gv.opt.FindChildArray(currentHook.id, -1);
           if (childId >= 0) {
-            const childObj = T3Gv.opt.GetObjectPtr(childId, true);
+            const childObj = ObjectUtil.GetObjectPtr(childId, true);
             if (childObj) {
-              childObj._SetDirection(invertStyle, toggleOrientation, false);
+              childObj.SetDirection(invertStyle, toggleOrientation, false);
             }
           }
         }
       }
     }
 
-    T3Util.Log("S.Connector: _SetDirection completed");
+    T3Util.Log("S.Connector: SetDirection completed");
   }
 
-  _SetSpacing(adjustPrimaryDimension: boolean, spacingValue: number) {
-    T3Util.Log("S.Connector: _SetSpacing called with adjustPrimaryDimension:", adjustPrimaryDimension, "spacingValue:", spacingValue);
+  SetSpacing(adjustPrimaryDimension: boolean, spacingValue: number) {
+    T3Util.Log("S.Connector: SetSpacing called with adjustPrimaryDimension:", adjustPrimaryDimension, "spacingValue:", spacingValue);
 
     let effectiveSpacing: number = spacingValue;
     let hookCount: number = this.arraylist.hook.length;
@@ -8294,11 +8396,11 @@ class Connector extends BaseDrawObject {
       }
     }
 
-    T3Util.Log("S.Connector: _SetSpacing completed");
+    T3Util.Log("S.Connector: SetSpacing completed");
   }
 
-  _CollapseConnector(collapseState, updateLinkFlags, propagateCollapse) {
-    T3Util.Log("S.Connector: _CollapseConnector called with collapseState:", collapseState, "updateLinkFlags:", updateLinkFlags, "propagateCollapse:", propagateCollapse);
+  CollapseConnector(collapseState, updateLinkFlags, propagateCollapse) {
+    T3Util.Log("S.Connector: CollapseConnector called with collapseState:", collapseState, "updateLinkFlags:", updateLinkFlags, "propagateCollapse:", propagateCollapse);
 
     var obj,
       childObj,
@@ -8347,10 +8449,10 @@ class Connector extends BaseDrawObject {
       var totalHooks = this.arraylist.hook.length;
       for (var i = OptConstant.ConnectorDefines.NSkip; i < totalHooks; i++) {
         if (this.arraylist.hook[i].id >= 0 &&
-          (obj = T3Gv.opt.GetObjectPtr(this.arraylist.hook[i].id, true))) {
+          (obj = ObjectUtil.GetObjectPtr(this.arraylist.hook[i].id, true))) {
           switch (obj.DrawingObjectBaseClass) {
             case OptConstant.DrawObjectBaseClass.Connector:
-              obj._CollapseConnector(collapseState, updateLinkFlags, propagateCollapse);
+              obj.CollapseConnector(collapseState, updateLinkFlags, propagateCollapse);
               break;
             default:
               if (propagateCollapse || collapseState) {
@@ -8368,20 +8470,20 @@ class Connector extends BaseDrawObject {
               }
               childId = T3Gv.opt.FindChildArray(this.arraylist.hook[i].id, -1);
               if (childId >= 0) {
-                T3Gv.opt.GetObjectPtr(childId, true)._CollapseConnector(collapseState, updateLinkFlags, false);
+                ObjectUtil.GetObjectPtr(childId, true).CollapseConnector(collapseState, updateLinkFlags, false);
                 nextChildId = T3Gv.opt.FindChildArray(this.arraylist.hook[i].id, childId);
                 if (nextChildId >= 0) {
-                  T3Gv.opt.GetObjectPtr(nextChildId, true)._CollapseConnector(collapseState, updateLinkFlags, false);
+                  ObjectUtil.GetObjectPtr(nextChildId, true).CollapseConnector(collapseState, updateLinkFlags, false);
                 }
               }
           }
         }
       }
       T3Gv.opt.DeSelect(deselectedList);
-      this.Pr_Format(this.BlockID);
+      this.PrFormat(this.BlockID);
     }
 
-    T3Util.Log("S.Connector: _CollapseConnector completed for BlockID:", this.BlockID, "with collapseState:", collapseState);
+    T3Util.Log("S.Connector: CollapseConnector completed for BlockID:", this.BlockID, "with collapseState:", collapseState);
   }
 
   MatchSize(applyNewWidth: boolean, newWidth: number) {
@@ -8409,7 +8511,7 @@ class Connector extends BaseDrawObject {
 
     // Iterate through the hooks starting from skipCount
     for (hookIndex = skipCount; hookIndex < totalHooks; hookIndex++) {
-      currentConnector = T3Gv.opt.GetObjectPtr(this.arraylist.hook[hookIndex].id, false);
+      currentConnector = ObjectUtil.GetObjectPtr(this.arraylist.hook[hookIndex].id, false);
       if (currentConnector && currentConnector.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
         // Use the width from the first connector; if different, set mismatch flag and update refWidth if larger
         if (refWidth === undefined) {
@@ -8461,7 +8563,7 @@ class Connector extends BaseDrawObject {
       maxCombined = undefined;
       combinedMismatch = true;
       for (hookIndex = 0; hookIndex < totalMatches; hookIndex++) {
-        currentConnector = T3Gv.opt.GetObjectPtr(matchList[hookIndex].cobj.BlockID, true);
+        currentConnector = ObjectUtil.GetObjectPtr(matchList[hookIndex].cobj.BlockID, true);
         currentConnector.arraylist.matchsizelen = 0;
         T3Gv.opt.SetLinkFlag(currentConnector.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
         // Determine the new stub index for formatting
@@ -8469,7 +8571,7 @@ class Connector extends BaseDrawObject {
           currentConnector.hooks[0].hookpt === hookPoints.SED_LT)
           ? connectorDefines.A_Cl : connectorDefines.A_Cr;
         currentConnector.arraylist.hook[newStubIndex].gap = refWidth;
-        currentConnector.Pr_Format(currentConnector.BlockID);
+        currentConnector.PrFormat(currentConnector.BlockID);
 
         const backboneDistance = currentConnector.arraylist.hook[connectorDefines.A_Bk].endpoint.h -
           currentConnector.arraylist.hook[connectorDefines.A_Bk].startpoint.h;
@@ -8494,10 +8596,10 @@ class Connector extends BaseDrawObject {
       if (!widthMismatch) {
         maxCombined = undefined;
         for (hookIndex = 0; hookIndex < totalMatches; hookIndex++) {
-          currentConnector = T3Gv.opt.GetObjectPtr(matchList[hookIndex].cobj.BlockID, true);
+          currentConnector = ObjectUtil.GetObjectPtr(matchList[hookIndex].cobj.BlockID, true);
           currentConnector.arraylist.matchsizelen = 0;
           T3Gv.opt.SetLinkFlag(currentConnector.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
-          currentConnector.Pr_Format(currentConnector.BlockID);
+          currentConnector.PrFormat(currentConnector.BlockID);
           matchList[hookIndex].bkdist = currentConnector.arraylist.hook[connectorDefines.A_Bk].endpoint.h -
             currentConnector.arraylist.hook[connectorDefines.A_Bk].startpoint.h;
           matchList[hookIndex].stubdist = Math.abs(
@@ -8517,7 +8619,7 @@ class Connector extends BaseDrawObject {
         if (!Utils2.IsEqual(totalDistance, maxCombined)) {
           currentConnector = matchList[hookIndex].cobj;
           currentConnector.arraylist.matchsizelen = maxCombined;
-          currentConnector.Pr_Format(currentConnector.BlockID);
+          currentConnector.PrFormat(currentConnector.BlockID);
         }
       }
     }
@@ -8561,7 +8663,6 @@ class Connector extends BaseDrawObject {
     T3Util.Log("S.Connector: Field data allowed:", isAllowed);
     return isAllowed;
   }
-
 }
 
 export default Connector

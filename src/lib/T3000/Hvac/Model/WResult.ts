@@ -1,5 +1,5 @@
 
-import WindowSettings from './WindowSettings'
+import WinSetting from './WinSetting'
 
 /**
  * Represents the result container for HVAC document processing operations.
@@ -38,7 +38,7 @@ class WResult {
   public sdp: any;
   public tLMB: any;
   public ctp: any;
-  public WindowSettings: any;
+  public WinSetting: any;
   public docDpi: number;
   public fontlist: any[];
   public lpStyles: any[];
@@ -79,7 +79,7 @@ class WResult {
     this.sdp = null;                   // Session data pointer
     this.tLMB = null;                  // Layer manager block reference
     this.ctp = null;                   // Content header pointer
-    this.WindowSettings = new WindowSettings();
+    this.WinSetting = new WinSetting();
     this.docDpi = 100;
 
     // Style and font information

@@ -17,7 +17,7 @@ import NvConstant from '../Data/Constant/NvConstant'
 import PolyList from '../Model/PolyList'
 import PolySeg from '../Model/PolySeg'
 import HitResult from '../Model/HitResult'
-import SelectionAttributes from '../Model/SelectionAttributes'
+import SelectionAttr from '../Model/SelectionAttr'
 import DSConstant from '../Opt/DS/DSConstant';
 import OptConstant from '../Data/Constant/OptConstant';
 import BConstant from '../Basic/B.Constant';
@@ -25,6 +25,10 @@ import CursorConstant from '../Data/Constant/CursorConstant';
 import TextConstant from '../Data/Constant/TextConstant';
 import StyleConstant from '../Data/Constant/StyleConstant';
 import T3Util from '../Util/T3Util';
+import ObjectUtil from '../Opt/Data/ObjectUtil';
+import UIUtil from '../Opt/UI/UIUtil';
+import RulerUtil from '../Opt/UI/RulerUtil';
+import SelectUtil from '../Opt/Opt/SelectUtil';
 
 /**
  * Represents a polyline shape with multiple connected segments.
@@ -130,7 +134,7 @@ class PolyLine extends BaseLine {
     const frame = this.Frame;
     let styleRecord = this.StyleRecord;
 
-    styleRecord = this.SVGTokenizerHook(styleRecord) || T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false)?.def.style;
+    styleRecord = this.SVGTokenizerHook(styleRecord) || ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false)?.def.style;
 
     const strokeColor = styleRecord.Line.Paint.Color;
     let strokeWidth = styleRecord.Line.Thickness;
@@ -204,7 +208,7 @@ class PolyLine extends BaseLine {
     }
 
     if (this.DataID >= 0) {
-      this.LM_AddSVGTextObject(svgDoc, shapeContainer);
+      this.LMAddSVGTextObject(svgDoc, shapeContainer);
     }
 
     if (this.polylist && this.polylist.segs && this.polylist.segs.length > 1) {
@@ -302,7 +306,7 @@ class PolyLine extends BaseLine {
       endPoint.x = centerPoint.x + totalLength / 2;
       endPoint.y = centerPoint.y;
       dimensionPoints.push(new Point(endPoint.x, endPoint.y));
-      var angle = T3Gv.opt.SD_GetCounterClockwiseAngleBetween2Points(new Point(0, 0), new Point(this.Frame.width, this.Frame.height));
+      var angle = T3Gv.opt.GetCounterClockwiseAngleBetween2Points(new Point(0, 0), new Point(this.Frame.width, this.Frame.height));
       Utils3.RotatePointsAboutPoint(centerPoint, angle, dimensionPoints);
     } else {
       dimensionPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, true, true, false, null);
@@ -358,14 +362,14 @@ class PolyLine extends BaseLine {
     if (dimensionsInfo.wdDim === dimensionType || dimensionsInfo.wdDim + 2 === dimensionType) {
       if (this.rflags & NvConstant.FloatingPointDim.Width) {
         dimensionValue = this.GetDimensionLengthFromValue(this.rwd);
-        const result = this.GetLengthInRulerUnits(dimensionValue);
+        const result = RulerUtil.GetLengthInRulerUnits(dimensionValue);
         T3Util.Log("S.PolyLine: GetDimensionFloatingPointValue output", result);
         return result;
       }
     } else if ((dimensionsInfo.htDim === dimensionType || dimensionsInfo.htDim + 2 === dimensionType) &&
       (this.rflags & NvConstant.FloatingPointDim.Height)) {
       dimensionValue = this.GetDimensionLengthFromValue(this.rht);
-      const result = this.GetLengthInRulerUnits(dimensionValue);
+      const result = RulerUtil.GetLengthInRulerUnits(dimensionValue);
       T3Util.Log("S.PolyLine: GetDimensionFloatingPointValue output", result);
       return result;
     }
@@ -937,7 +941,7 @@ class PolyLine extends BaseLine {
 
     // Get the segment where the corner was hit.
     const cornerSegmentIndex = this.PolyHitSeg(cornerPoint);
-    const linksObject = T3Gv.opt.GetObjectPtr(T3Gv.opt.linksBlockId, false);
+    const linksObject = ObjectUtil.GetObjectPtr(T3Gv.opt.linksBlockId, false);
     let hookList: any[] = [];
 
     // If no svgElement provided, get by BlockID.
@@ -1108,7 +1112,7 @@ class PolyLine extends BaseLine {
       this.UpdateDrawing(svgElement);
       if (this.DataID != -1) {
         const mainElement = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
-        this.LM_ResizeSVGTextObject(mainElement, this, this.Frame);
+        this.LMResizeSVGTextObject(mainElement, this, this.Frame);
       }
 
       T3Gv.opt.ShowSVGSelectionState(svgElement.GetID(), true);
@@ -1175,7 +1179,7 @@ class PolyLine extends BaseLine {
     paddedFrame.height += adjustedKnobSize;
 
     // Get the target object pointer (if exists) for hooks checking later.
-    let targetObj = T3Gv.opt.GetObjectPtr(targetObject, false);
+    let targetObj = ObjectUtil.GetObjectPtr(targetObject, false);
 
     // The width and height of the group shape are based on the frame dimensions plus padding.
     let groupWidth = frame.width + adjustedKnobSize;
@@ -1385,7 +1389,7 @@ class PolyLine extends BaseLine {
       }
       // For PARABOLA and ARCSEGLINE segments, create adjustment knobs similarly.
       else if (this.polylist.segs[segmentIndex].LineType === OptConstant.LineType.PARABOLA) {
-        let parabolaAdjPoint = this.Pr_PolyLGetParabolaAdjPoint(true, segmentIndex);
+        let parabolaAdjPoint = this.PrPolyLGetParabolaAdjPoint(true, segmentIndex);
         if (parabolaAdjPoint) {
           knobProps.x = parabolaAdjPoint.x + this.StartPoint.x - frame.x;
           knobProps.y = parabolaAdjPoint.y + this.StartPoint.y - frame.y;
@@ -1395,7 +1399,7 @@ class PolyLine extends BaseLine {
         }
       }
       else if (this.polylist.segs[segmentIndex].LineType === OptConstant.LineType.ARCSEGLINE) {
-        let ellipseAdjPoint = this.Pr_PolyLGetEllipseAdjPoint(true, segmentIndex);
+        let ellipseAdjPoint = this.PrPolyLGetEllipseAdjPoint(true, segmentIndex);
         knobProps.x = ellipseAdjPoint.x + this.StartPoint.x - frame.x;
         knobProps.y = ellipseAdjPoint.y + this.StartPoint.y - frame.y;
         let ellipseKnob = this.GenericKnob(knobProps);
@@ -1501,7 +1505,7 @@ class PolyLine extends BaseLine {
         switch (this.polylist.segs[segIndex].LineType) {
           case OptConstant.LineType.PARABOLA:
             if (this.polylist.segs[segIndex].param !== 0 && segIndex > 0) {
-              tempParabolaAdj = this.Pr_PolyLGetParabolaAdjPoint(true, segIndex);
+              tempParabolaAdj = this.PrPolyLGetParabolaAdjPoint(true, segIndex);
               if (tempParabolaAdj) {
                 tempParabolaAdj.x += this.StartPoint.x;
                 tempParabolaAdj.y += this.StartPoint.y;
@@ -1514,7 +1518,7 @@ class PolyLine extends BaseLine {
             break;
           case OptConstant.LineType.ARCLINE:
             if (this.polylist.segs[segIndex].param !== 0 && segIndex > 0) {
-              tempArcResult = this.Pr_PolyLGetArc(segIndex, offsetPoint);
+              tempArcResult = this.PrPolyLGetArc(segIndex, offsetPoint);
               tempAdjPoints[segIndex] = tempArcResult.pt;
             }
             break;
@@ -1535,17 +1539,17 @@ class PolyLine extends BaseLine {
             this.polylist.segs[segIndex].pt.y *= scaleY;
             if (this.polylist.segs[segIndex].param !== 0 && segIndex > 0) {
               let scaledParabolaAdj = { x: tempAdjPoints[segIndex].x * scaleX, y: tempAdjPoints[segIndex].y * scaleY };
-              this.Pr_PolyLGetParabolaParam(scaledParabolaAdj, segIndex);
+              this.PrPolyLGetParabolaParam(scaledParabolaAdj, segIndex);
             }
             break;
           case OptConstant.LineType.ARCLINE:
             this.polylist.segs[segIndex].pt.x *= scaleX;
             this.polylist.segs[segIndex].pt.y *= scaleY;
             if (this.polylist.segs[segIndex].param !== 0 && segIndex > 0) {
-              tempArcResult = this.Pr_PolyLGetArc(segIndex, scaledOffset);
+              tempArcResult = this.PrPolyLGetArc(segIndex, scaledOffset);
               arcAdjPoints.x = tempAdjPoints[segIndex].x * scaleX;
               arcAdjPoints.y = tempAdjPoints[segIndex].y * scaleY;
-              this.Pr_PolyLGetArcParam(tempArcResult.arcobj, arcAdjPoints, segIndex);
+              this.PrPolyLGetArcParam(tempArcResult.arcobj, arcAdjPoints, segIndex);
             }
             break;
           default:
@@ -1673,20 +1677,20 @@ class PolyLine extends BaseLine {
                 const docScale = T3Gv.opt.svgDoc.docInfo.docScale;
                 let nurbsPointCount = Math.floor(totalLength / 8 * docScale);
                 nurbsPointCount = nurbsPointCount < pointCount ? pointCount : nurbsPointCount;
-                const nurbsPoints = this.Pr_GetNURBSPoints(i, nurbsPointCount, startX, startY, scaleX, scaleY);
+                const nurbsPoints = this.PrGetNURBSPoints(i, nurbsPointCount, startX, startY, scaleX, scaleY);
                 polyPoints = polyPoints.concat(nurbsPoints);
               }
               break;
             case OptConstant.LineType.QUADBEZ:
-              const quadBezierPoints = this.Pr_GetQuadraticBezierPoints(i, pointCount, startX, startY, scaleX, scaleY);
+              const quadBezierPoints = this.PrGetQuadraticBezierPoints(i, pointCount, startX, startY, scaleX, scaleY);
               polyPoints = polyPoints.concat(quadBezierPoints);
               break;
             case OptConstant.LineType.CUBEBEZ:
-              const cubicBezierPoints = this.Pr_GetCubicBezierPoints(i, pointCount, startX, startY, scaleX, scaleY);
+              const cubicBezierPoints = this.PrGetCubicBezierPoints(i, pointCount, startX, startY, scaleX, scaleY);
               polyPoints = polyPoints.concat(cubicBezierPoints);
               break;
             case OptConstant.LineType.ELLIPSE:
-              const ellipticalArcPoints = this.Pr_GetEllipticalArcPoints(i, pointCount, startX, startY, scaleX, scaleY);
+              const ellipticalArcPoints = this.PrGetEllipticalArcPoints(i, pointCount, startX, startY, scaleX, scaleY);
               polyPoints = polyPoints.concat(ellipticalArcPoints);
               break;
             case OptConstant.LineType.SPLINE:
@@ -1700,17 +1704,17 @@ class PolyLine extends BaseLine {
                 const docScale = T3Gv.opt.svgDoc.docInfo.docScale;
                 let splinePointCount = Math.floor(totalSplineLength / 8 * docScale);
                 splinePointCount = splinePointCount < pointCount ? pointCount : splinePointCount;
-                const splinePoints = this.Pr_GetSPLINEPoints(i, splinePointCount, startX, startY, scaleX, scaleY);
+                const splinePoints = this.PrGetSPLINEPoints(i, splinePointCount, startX, startY, scaleX, scaleY);
                 polyPoints = polyPoints.concat(splinePoints);
               }
               break;
             case OptConstant.LineType.PARABOLA:
-              const parabolaPoints = this.Pr_GetParabolaPoints(pointCount, true, i, this.polylist.segs[i].param, this.polylist.segs[i].ShortRef, scaleX, scaleY);
+              const parabolaPoints = this.PrGetParabolaPoints(pointCount, true, i, this.polylist.segs[i].param, this.polylist.segs[i].ShortRef, scaleX, scaleY);
               polyPoints = polyPoints.concat(parabolaPoints);
               polyPoints.push(new Point(this.polylist.segs[i].pt.x * scaleX + startX, this.polylist.segs[i].pt.y * scaleY + startY));
               break;
             case OptConstant.LineType.ARCSEGLINE:
-              const arcSegmentPoints = this.Pr_GetEllipsePoints(pointCount, true, i, this.polylist.segs[i].param, this.polylist.segs[i].ShortRef, scaleX, scaleY);
+              const arcSegmentPoints = this.PrGetEllipsePoints(pointCount, true, i, this.polylist.segs[i].param, this.polylist.segs[i].ShortRef, scaleX, scaleY);
               polyPoints = polyPoints.concat(arcSegmentPoints);
               polyPoints.push(new Point(this.polylist.segs[i].pt.x * scaleX + startX, this.polylist.segs[i].pt.y * scaleY + startY));
               break;
@@ -1860,12 +1864,12 @@ class PolyLine extends BaseLine {
           this.polylist.segs[segmentIndex].pt.y = y - this.StartPoint.y;
 
           if (this.polylist.segs[segmentIndex].LineType === OptConstant.LineType.ARCSEGLINE) {
-            arcParams = this.Pr_PolyLGetArcQuadrant(this.polylist.segs[segmentIndex - 1].pt, this.polylist.segs[segmentIndex].pt, this.polylist.segs[segmentIndex].param);
+            arcParams = this.PrPolyLGetArcQuadrant(this.polylist.segs[segmentIndex - 1].pt, this.polylist.segs[segmentIndex].pt, this.polylist.segs[segmentIndex].param);
             this.polylist.segs[segmentIndex].ShortRef = arcParams.ShortRef;
           }
 
           if (segmentIndex < segmentCount - 1 && this.polylist.segs[segmentIndex + 1].LineType === OptConstant.LineType.ARCSEGLINE) {
-            arcParams = this.Pr_PolyLGetArcQuadrant(this.polylist.segs[segmentIndex].pt, this.polylist.segs[segmentIndex + 1].pt, this.polylist.segs[segmentIndex + 1].param);
+            arcParams = this.PrPolyLGetArcQuadrant(this.polylist.segs[segmentIndex].pt, this.polylist.segs[segmentIndex + 1].pt, this.polylist.segs[segmentIndex + 1].param);
             this.polylist.segs[segmentIndex + 1].ShortRef = arcParams.ShortRef;
           }
         }
@@ -1874,12 +1878,12 @@ class PolyLine extends BaseLine {
           case OptConstant.LineType.PARABOLA:
             arcParams.x = x;
             arcParams.y = y;
-            this.Pr_PolyLGetParabolaParam(arcParams, segmentIndex);
+            this.PrPolyLGetParabolaParam(arcParams, segmentIndex);
             break;
           case OptConstant.LineType.ARCSEGLINE:
             arcParams.x = x;
             arcParams.y = y;
-            this.Pr_PolyLGetEllipseParam(arcParams, segmentIndex, event);
+            this.PrPolyLGetEllipseParam(arcParams, segmentIndex, event);
             break;
           case OptConstant.LineType.ARCLINE:
             if (this.arcobj) {
@@ -1892,11 +1896,11 @@ class PolyLine extends BaseLine {
 
       const updatedPoint = { x, y };
       const dimensions = this.GetDimensionsForDisplay();
-      T3Gv.opt.UpdateDisplayCoordinates(dimensions, updatedPoint, CursorConstant.CursorTypes.Grow, this);
+      UIUtil.UpdateDisplayCoordinates(dimensions, updatedPoint, CursorConstant.CursorTypes.Grow, this);
       this.UpdateDrawing(event);
 
       if (this.DataID !== -1) {
-        this.LM_ResizeSVGTextObject(event, this, this.Frame);
+        this.LMResizeSVGTextObject(event, this, this.Frame);
       }
     }
 
@@ -1962,7 +1966,7 @@ class PolyLine extends BaseLine {
 
     if (boundingRect.x >= 0 && boundingRect.y >= 0) {
       if (T3Gv.opt.contentHeader.flags & OptConstant.CntHeaderFlags.NoAuto) {
-        const sessionBlock = T3Gv.opt.GetObjectPtr(T3Gv.opt.sedSessionBlockId, false);
+        const sessionBlock = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
         if (boundingRect.x + boundingRect.width > sessionBlock.dim.x || boundingRect.y + boundingRect.height > sessionBlock.dim.y) {
           return;
         }
@@ -2083,7 +2087,7 @@ class PolyLine extends BaseLine {
         this.EndPoint.x = newX;
         this.EndPoint.y = newY;
         if (this.polylist.segs[segmentCount - 1].LineType === OptConstant.LineType.ARCSEGLINE) {
-          arcParams = this.Pr_PolyLGetArcQuadrant(this.polylist.segs[segmentCount - 2].pt, this.polylist.segs[segmentCount - 1].pt, this.polylist.segs[segmentCount - 1].param);
+          arcParams = this.PrPolyLGetArcQuadrant(this.polylist.segs[segmentCount - 2].pt, this.polylist.segs[segmentCount - 1].pt, this.polylist.segs[segmentCount - 1].param);
           this.polylist.segs[segmentCount - 1].ShortRef = arcParams.ShortRef;
         }
         break;
@@ -2109,7 +2113,7 @@ class PolyLine extends BaseLine {
         }
         switch (this.polylist.segs[1].LineType) {
           case OptConstant.LineType.ARCSEGLINE:
-            arcParams = this.Pr_PolyLGetArcQuadrant(this.polylist.segs[0].pt, this.polylist.segs[1].pt, this.polylist.segs[1].param);
+            arcParams = this.PrPolyLGetArcQuadrant(this.polylist.segs[0].pt, this.polylist.segs[1].pt, this.polylist.segs[1].param);
             this.polylist.segs[1].ShortRef = arcParams.ShortRef;
             break;
           case OptConstant.LineType.QUADBEZ:
@@ -2132,14 +2136,14 @@ class PolyLine extends BaseLine {
     if (event) {
       this.UpdateDrawing(event);
       if (this.DataID !== -1) {
-        this.LM_ResizeSVGTextObject(event, this, this.Frame);
+        this.LMResizeSVGTextObject(event, this, this.Frame);
       }
     } else {
       this.CalcFrame();
     }
 
     const dimensions = this.GetDimensionsForDisplay();
-    T3Gv.opt.UpdateDisplayCoordinates(dimensions, newPoint, CursorConstant.CursorTypes.Grow, this);
+    UIUtil.UpdateDisplayCoordinates(dimensions, newPoint, CursorConstant.CursorTypes.Grow, this);
 
     T3Util.Log('S.PolyLine: AdjustLine output', { StartPoint: this.StartPoint, EndPoint: this.EndPoint, Frame: this.Frame });
   }
@@ -2219,7 +2223,7 @@ class PolyLine extends BaseLine {
       for (let i = 0; i < segmentCount; i++) {
         points.push(new Point(this.polylist.segs[i].pt.x, this.polylist.segs[i].pt.y + offsetY));
         if (this.polylist.segs[i].LineType === OptConstant.LineType.PARABOLA) {
-          parabolaAdjPoints[i] = this.Pr_PolyLGetParabolaAdjPoint(false, i);
+          parabolaAdjPoints[i] = this.PrPolyLGetParabolaAdjPoint(false, i);
           parabolaAdjPoints[i].y -= frame.y;
         }
       }
@@ -2244,7 +2248,7 @@ class PolyLine extends BaseLine {
       for (let i = 0; i < segmentCount; i++) {
         points.push(new Point(this.polylist.segs[i].pt.x + offsetX, this.polylist.segs[i].pt.y));
         if (this.polylist.segs[i].LineType === OptConstant.LineType.PARABOLA && i > 0) {
-          parabolaAdjPoints[i] = this.Pr_PolyLGetParabolaAdjPoint(false, i);
+          parabolaAdjPoints[i] = this.PrPolyLGetParabolaAdjPoint(false, i);
           parabolaAdjPoints[i].x -= frame.x;
         }
       }
@@ -2270,14 +2274,14 @@ class PolyLine extends BaseLine {
             this.polylist.segs[i].param = -this.polylist.segs[i].param;
             break;
           case OptConstant.LineType.ARCSEGLINE:
-            const arcQuadrant = this.Pr_PolyLGetArcQuadrant(this.polylist.segs[i - 1].pt, this.polylist.segs[i].pt, this.polylist.segs[i].param);
+            const arcQuadrant = this.PrPolyLGetArcQuadrant(this.polylist.segs[i - 1].pt, this.polylist.segs[i].pt, this.polylist.segs[i].param);
             this.polylist.segs[i].ShortRef = arcQuadrant.ShortRef;
             break;
           case OptConstant.LineType.PARABOLA:
             if (parabolaAdjPoints[i]) {
               tempPoint.x = parabolaAdjPoints[i].x;
               tempPoint.y = parabolaAdjPoints[i].y;
-              this.Pr_PolyLGetParabolaParam(tempPoint, i);
+              this.PrPolyLGetParabolaParam(tempPoint, i);
             }
             break;
           case OptConstant.LineType.ELLIPSE:
@@ -2377,7 +2381,7 @@ class PolyLine extends BaseLine {
     T3Util.Log("S.PolyLine: GetTargetPoints input", { hookPoint, hookFlags, targetObjectID });
 
     const HookPts = OptConstant.HookPts;
-    if (targetObjectID != null && targetObjectID >= 0 && T3Gv.opt.GetObjectPtr(targetObjectID, false).DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape) {
+    if (targetObjectID != null && targetObjectID >= 0 && ObjectUtil.GetObjectPtr(targetObjectID, false).DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape) {
       switch (hookPoint.id) {
         case HookPts.KTC:
         case HookPts.KBC:
@@ -2491,7 +2495,7 @@ class PolyLine extends BaseLine {
       return perimeterPoints;
     }
 
-    let targetObject = T3Gv.opt.GetObjectPtr(targetObjectID, false);
+    let targetObject = ObjectUtil.GetObjectPtr(targetObjectID, false);
 
     if (targetObject && targetObject.objecttype === NvConstant.FNObjectTypes.Multiplicity && hookPoints) {
       let baseLine, polyPoints = this.GetPolyPoints(1, false, true, false, null), segmentInfo = {}, polyPointsLength = polyPoints.length;
@@ -2737,10 +2741,10 @@ class PolyLine extends BaseLine {
       if (T3Gv.opt.LineCheckPoint(tempObject, point)) return true;
 
       if (targetObject.polylist.segs.length === this.polylist.segs.length) {
-        T3Gv.opt.Lines_MaintainDistWithinSegment(this, targetObject, segmentIndex, point);
+        T3Gv.opt.LinesMaintainDistWithinSegment(this, targetObject, segmentIndex, point);
         return true;
       } else {
-        return T3Gv.opt.Lines_Intersect(tempObject, drawingObject, point) || T3Gv.opt.Lines_MaintainDist(tempObject, tempHitResult, actionType, point), true;
+        return T3Gv.opt.LinesIntersect(tempObject, drawingObject, point) || T3Gv.opt.Lines_MaintainDist(tempObject, tempHitResult, actionType, point), true;
       }
     }
 
@@ -2771,7 +2775,7 @@ class PolyLine extends BaseLine {
     let hookedPoint: any = null;
     let loopIndex = 0;
 
-    targetObject = T3Gv.opt.GetObjectPtr(objectTargetID, false);
+    targetObject = ObjectUtil.GetObjectPtr(objectTargetID, false);
     if (
       this.TextFlags & NvConstant.TextFlags.HorizText &&
       targetObject instanceof BaseShape
@@ -2814,26 +2818,26 @@ class PolyLine extends BaseLine {
     });
   }
 
-  LM_DrawPreTrack(event) {
-    T3Util.Log("S.PolyLine: LM_DrawPreTrack input", { event });
+  LMDrawPreTrack(event) {
+    T3Util.Log("S.PolyLine: LMDrawPreTrack input", { event });
 
     if (
       T3Gv.opt.linkParams &&
       (T3Gv.opt.linkParams.ConnectIndex >= 0 ||
         T3Gv.opt.linkParams.JoinIndex >= 0)
     ) {
-      this.LM_DrawRelease();
-      T3Util.Log("S.PolyLine: LM_DrawPreTrack output", false);
+      this.LMDrawRelease();
+      T3Util.Log("S.PolyLine: LMDrawPreTrack output", false);
       return false;
     } else {
-      super.LM_DrawPreTrack(event);
-      T3Util.Log("S.PolyLine: LM_DrawPreTrack output", true);
+      super.LMDrawPreTrack(event);
+      T3Util.Log("S.PolyLine: LMDrawPreTrack output", true);
       return true;
     }
   }
 
-  LM_DrawClick_ExceptionCleanup(event: any): void {
-    T3Util.Log("S.PolyLine: LM_DrawClick_ExceptionCleanup input", { event });
+  LMDrawClickExceptionCleanup(event: any): void {
+    T3Util.Log("S.PolyLine: LMDrawClickExceptionCleanup input", { event });
 
     T3Gv.opt.UnbindActionClickHammerEvents();
 
@@ -2848,11 +2852,11 @@ class PolyLine extends BaseLine {
     T3Gv.opt.actionSvgObject = null;
     T3Gv.opt.WorkAreaHammer.on("dragstart", EvtUtil.Evt_WorkAreaHammerDragStart);
 
-    T3Util.Log("S.PolyLine: LM_DrawClick_ExceptionCleanup output", {});
+    T3Util.Log("S.PolyLine: LMDrawClickExceptionCleanup output", {});
   }
 
-  LM_DrawClick(initialX: number, initialY: number) {
-    T3Util.Log("S.PolyLine: LM_DrawClick input", { initialX, initialY });
+  LMDrawClick(initialX: number, initialY: number) {
+    T3Util.Log("S.PolyLine: LMDrawClick input", { initialX, initialY });
     try {
       // Initialize the frame and points
       this.Frame.x = initialX;
@@ -2900,25 +2904,25 @@ class PolyLine extends BaseLine {
         );
         $(window).bind("mousemove", function (mouseEvent) {
           try {
-            self.LM_DrawTrack(mouseEvent);
+            self.LMDrawTrack(mouseEvent);
           } catch (error) {
-            self.LM_DrawClick_ExceptionCleanup(error);
+            self.LMDrawClickExceptionCleanup(error);
             T3Gv.opt.ExceptionCleanup(error);
             throw error;
           }
         });
       }
 
-      T3Util.Log("S.PolyLine: LM_DrawClick output", { message: "Click handled successfully" });
+      T3Util.Log("S.PolyLine: LMDrawClick output", { message: "Click handled successfully" });
     } catch (error) {
-      this.LM_DrawClick_ExceptionCleanup(error);
+      this.LMDrawClickExceptionCleanup(error);
       T3Gv.opt.ExceptionCleanup(error);
       throw error;
     }
   }
 
-  LM_DrawRelease(event) {
-    T3Util.Log("S.PolyLine: LM_DrawRelease input", { event });
+  LMDrawRelease(event) {
+    T3Util.Log("S.PolyLine: LMDrawRelease input", { event });
 
     // Stop gesture detection if available
     if (event && event.gesture) {
@@ -2982,14 +2986,14 @@ class PolyLine extends BaseLine {
     //   Collab.BuildMessage(NvConstant.CollabMessages.AddLine, messagePayload, false);
     // }
 
-    this.LM_DrawPostRelease(T3Gv.opt.actionStoredObjectId);
+    this.LMDrawPostRelease(T3Gv.opt.actionStoredObjectId);
     T3Gv.opt.PostObjectDraw();
 
-    T3Util.Log("S.PolyLine: LM_DrawRelease output", { segmentCount, segmentDistance });
+    T3Util.Log("S.PolyLine: LMDrawRelease output", { segmentCount, segmentDistance });
   }
 
-  LM_DrawExtend(event: any) {
-    T3Util.Log("S.PolyLine: LM_DrawExtend input", event);
+  LMDrawExtend(event: any) {
+    T3Util.Log("S.PolyLine: LMDrawExtend input", event);
 
     // If there is an active link (either ConnectIndex or JoinIndex is set), release the drawing.
     if (
@@ -2997,7 +3001,7 @@ class PolyLine extends BaseLine {
       (T3Gv.opt.linkParams.ConnectIndex >= 0 ||
         T3Gv.opt.linkParams.JoinIndex >= 0)
     ) {
-      this.LM_DrawRelease(event);
+      this.LMDrawRelease(event);
     } else {
       // Convert the gesture center coordinates from window to document space.
       let documentCoordinates = T3Gv.opt.svgDoc.ConvertWindowToDocCoords(
@@ -3025,16 +3029,118 @@ class PolyLine extends BaseLine {
 
         // If the maximum number of segments is reached, release the drawing.
         if (this.polylist.segs.length >= OptConstant.Common.MaxPolySegs) {
-          this.LM_DrawRelease(event);
+          this.LMDrawRelease(event);
         }
       }
     }
 
-    T3Util.Log("S.PolyLine: LM_DrawExtend output", { polySegments: this.polylist.segs });
+    T3Util.Log("S.PolyLine: LMDrawExtend output", { polySegments: this.polylist.segs });
   }
 
+  /**
+   * Handles right-click events on polyline objects
+   *
+   * This function processes right-click gestures on polyline elements, determining
+   * the appropriate context menu to display based on the element type and state.
+   * It handles text editing functionality, spell checking, and different context
+   * menus for polylines, walls, and text objects.
+   *
+   * @param event - The event object containing gesture data and coordinates
+   * @returns Boolean indicating if the right-click was handled successfully
+   */
   RightClick(event) {
+    let object, spellIndex;
 
+    // Convert window coordinates to document coordinates
+    const docCoordinates = T3Gv.opt.svgDoc.ConvertWindowToDocCoords(
+      event.gesture.center.clientX,
+      event.gesture.center.clientY
+    );
+
+    const hitResult = new HitResult(-1, 0, null);
+    const targetElement = T3Gv.opt.svgObjectLayer.FindElementByDOMElement(event.currentTarget);
+
+    // Attempt to select the object first
+    if (!T3Gv.opt.SelectObjectFromClick(event, targetElement)) {
+      return false;
+    }
+
+    const elementId = targetElement.GetID();
+
+    // Check for text objects and handle text-related interactions
+    if ((object = T3Gv.opt.GetObjectPtr(elementId, false)) && object.GetTextObject() >= 0) {
+      const textElement = targetElement.textElem;
+
+      if (textElement) {
+        spellIndex = textElement.GetSpellAtLocation(
+          event.gesture.center.clientX,
+          event.gesture.center.clientY
+        );
+
+        if (spellIndex >= 0) {
+          T3Gv.opt.ActivateTextEdit(targetElement, event, true);
+        }
+      }
+    }
+
+    // Prepare right-click parameters for context menu
+    T3Gv.opt.RightClickParams = new T3Gv.opt.RightClickData();
+    T3Gv.opt.RightClickParams.TargetID = targetElement.GetID();
+    T3Gv.opt.RightClickParams.HitPt.x = docCoordinates.x;
+    T3Gv.opt.RightClickParams.HitPt.y = docCoordinates.y;
+    T3Gv.opt.RightClickParams.Locked = (this.flags & NvConstant.ObjFlags.Lock) > 0;
+
+    // Perform hit testing
+    this.Hit(docCoordinates, false, false, hitResult);
+
+    if (hitResult.hitcode) {
+      T3Gv.opt.RightClickParams.segment = hitResult.segment;
+    }
+
+    // Handle active text editing context
+    const activeTextEdit = T3Gv.opt.GetActiveTextEdit();
+    if (activeTextEdit != null) {
+      const editElement = T3Gv.opt.svgDoc.GetActiveEdit();
+      spellIndex = -1;
+
+      if (editElement) {
+        spellIndex = editElement.GetSpellAtLocation(
+          event.gesture.center.clientX,
+          event.gesture.center.clientY
+        );
+      }
+
+      // Show appropriate text menu - spell checking or standard text menu
+      if (spellIndex >= 0) {
+        T3Gv.opt.svgDoc.GetSpellCheck().ShowSpellMenu(
+          editElement,
+          spellIndex,
+          event.gesture.center.clientX,
+          event.gesture.center.clientY
+        );
+      } else {
+        SDUI.Commands.MainController.ShowContextualMenu(
+          SDUI.Resources.Controls.ContextMenus.TextMenu.Id.toLowerCase(),
+          event.gesture.center.clientX,
+          event.gesture.center.clientY
+        );
+      }
+    } else {
+      // Show object-specific context menu
+      if (this.objecttype === NvConstant.FNObjectTypes.FlWall) {
+        SDUI.Commands.MainController.ShowContextualMenu(
+          SDUI.Resources.Controls.ContextMenus.PolyWall.Id.toLowerCase(),
+          event.gesture.center.clientX,
+          event.gesture.center.clientY
+        );
+      } else {
+        SDUI.Commands.MainController.ShowContextualMenu(
+          SDUI.Resources.Controls.ContextMenus.PolyLine.Id.toLowerCase(),
+          event.gesture.center.clientX,
+          event.gesture.center.clientY
+        );
+      }
+    }
   }
 
   WriteShapeData(outputStream, options, usePolyListDimensions) {
@@ -3280,7 +3386,7 @@ class PolyLine extends BaseLine {
     T3Util.Log("S.PolyLine: WriteShapeData output");
   }
 
-  Pr_GetNURBSPoints(
+  PrGetNURBSPoints(
     startSegmentIndex: number,
     numPoints: number,
     xOffset: number,
@@ -3288,7 +3394,7 @@ class PolyLine extends BaseLine {
     scaleX: number,
     scaleY: number
   ): Point[] {
-    T3Util.Log("S.PolyLine: Pr_GetNURBSPoints input", { startSegmentIndex, numPoints, xOffset, yOffset, scaleX, scaleY });
+    T3Util.Log("S.PolyLine: PrGetNURBSPoints input", { startSegmentIndex, numPoints, xOffset, yOffset, scaleX, scaleY });
 
     // Internal helper: Compute the NURBS basis functions.
     function computeNURBSBasis(): Float64Array {
@@ -3483,11 +3589,11 @@ class PolyLine extends BaseLine {
       }
     }
 
-    T3Util.Log("S.PolyLine: Pr_GetNURBSPoints output", resultPoints);
+    T3Util.Log("S.PolyLine: PrGetNURBSPoints output", resultPoints);
     return resultPoints;
   }
 
-  Pr_GetSPLINEPoints(
+  PrGetSPLINEPoints(
     startSegmentIndex: number,
     numPoints: number,
     xOffset: number,
@@ -3495,7 +3601,7 @@ class PolyLine extends BaseLine {
     scaleX: number,
     scaleY: number
   ): Point[] {
-    T3Util.Log("S.PolyLine: Pr_GetSPLINEPoints input", {
+    T3Util.Log("S.PolyLine: PrGetSPLINEPoints input", {
       startSegmentIndex,
       numPoints,
       xOffset,
@@ -3655,11 +3761,11 @@ class PolyLine extends BaseLine {
       // In a full implementation, you would iterate over the remaining knot spans to compute more points.
     }
 
-    T3Util.Log("S.PolyLine: Pr_GetSPLINEPoints output", splinePoints);
+    T3Util.Log("S.PolyLine: PrGetSPLINEPoints output", splinePoints);
     return splinePoints;
   }
 
-  Pr_GetQuadraticBezierPoints(
+  PrGetQuadraticBezierPoints(
     startIndex: number,
     pointCount: number,
     xOffset: number,
@@ -3667,7 +3773,7 @@ class PolyLine extends BaseLine {
     scaleX: number,
     scaleY: number
   ): Point[] {
-    T3Util.Log("S.PolyLine: Pr_GetQuadraticBezierPoints input", {
+    T3Util.Log("S.PolyLine: PrGetQuadraticBezierPoints input", {
       startIndex,
       pointCount,
       xOffset,
@@ -3698,11 +3804,11 @@ class PolyLine extends BaseLine {
       t += step;
     }
 
-    T3Util.Log("S.PolyLine: Pr_GetQuadraticBezierPoints output", resultPoints);
+    T3Util.Log("S.PolyLine: PrGetQuadraticBezierPoints output", resultPoints);
     return resultPoints;
   }
 
-  Pr_GetCubicBezierPoints(
+  PrGetCubicBezierPoints(
     startSegmentIndex: number,
     pointCount: number,
     xOffset: number,
@@ -3710,7 +3816,7 @@ class PolyLine extends BaseLine {
     scaleX: number,
     scaleY: number
   ): Point[] {
-    T3Util.Log("S.PolyLine: Pr_GetCubicBezierPoints input", {
+    T3Util.Log("S.PolyLine: PrGetCubicBezierPoints input", {
       startSegmentIndex,
       pointCount,
       xOffset,
@@ -3760,11 +3866,11 @@ class PolyLine extends BaseLine {
       t += tStep;
     }
 
-    T3Util.Log("S.PolyLine: Pr_GetCubicBezierPoints output", bezierPoints);
+    T3Util.Log("S.PolyLine: PrGetCubicBezierPoints output", bezierPoints);
     return bezierPoints;
   }
 
-  Pr_GetEllipticalArcPoints(
+  PrGetEllipticalArcPoints(
     segmentIndex: number,
     pointCount: number,
     xOffset: number,
@@ -3772,7 +3878,7 @@ class PolyLine extends BaseLine {
     scaleX: number,
     scaleY: number
   ) {
-    T3Util.Log("S.PolyLine: Pr_GetEllipticalArcPoints input", {
+    T3Util.Log("S.PolyLine: PrGetEllipticalArcPoints input", {
       segmentIndex,
       pointCount,
       xOffset,
@@ -3795,7 +3901,7 @@ class PolyLine extends BaseLine {
     if ((x2 === x1 && y2 === y1) || (x2 === x3 && y2 === y3)) {
       points.push(new Point(x1 * scaleX + xOffset, y1 * scaleY + yOffset));
       points.push(new Point(x3 * scaleX + xOffset, y3 * scaleY + yOffset));
-      T3Util.Log("S.PolyLine: Pr_GetEllipticalArcPoints output", points);
+      T3Util.Log("S.PolyLine: PrGetEllipticalArcPoints output", points);
       return points;
     }
 
@@ -3836,7 +3942,7 @@ class PolyLine extends BaseLine {
     if (arcDirection === 0) {
       points.push(new Point(x2 * scaleX + xOffset, y2 * scaleY + yOffset));
       points.push(new Point(x3 * scaleX + xOffset, y3 * scaleY + yOffset));
-      T3Util.Log("S.PolyLine: Pr_GetEllipticalArcPoints output", points);
+      T3Util.Log("S.PolyLine: PrGetEllipticalArcPoints output", points);
       return points;
     }
 
@@ -3993,12 +4099,12 @@ class PolyLine extends BaseLine {
       pointCount
     );
 
-    T3Util.Log("S.PolyLine: Pr_GetEllipticalArcPoints output", arcPoints);
+    T3Util.Log("S.PolyLine: PrGetEllipticalArcPoints output", arcPoints);
     return arcPoints;
   }
 
-  Pr_GetParabolaPoints(numPoints, isClosed, segmentIndex, param, shortRef, scaleX, scaleY) {
-    T3Util.Log("S.PolyLine: Pr_GetParabolaPoints input", { numPoints, isClosed, segmentIndex, param, shortRef, scaleX, scaleY });
+  PrGetParabolaPoints(numPoints, isClosed, segmentIndex, param, shortRef, scaleX, scaleY) {
+    T3Util.Log("S.PolyLine: PrGetParabolaPoints input", { numPoints, isClosed, segmentIndex, param, shortRef, scaleX, scaleY });
 
     let deltaX, deltaY, distance, center = {}, isRotated = false, points = [], parabolaPoints = [];
     let startX = this.StartPoint.x - this.Frame.x;
@@ -4012,7 +4118,7 @@ class PolyLine extends BaseLine {
     if (Math.abs(param) < 1) {
       parabolaPoints.push(new Point(this.polylist.segs[segmentIndex - 1].pt.x * scaleX + startX, this.polylist.segs[segmentIndex - 1].pt.y * scaleY + startY));
       parabolaPoints.push(new Point(this.polylist.segs[segmentIndex].pt.x * scaleX + startX, this.polylist.segs[segmentIndex].pt.y * scaleY + startY));
-      T3Util.Log("S.PolyLine: Pr_GetParabolaPoints output", parabolaPoints);
+      T3Util.Log("S.PolyLine: PrGetParabolaPoints output", parabolaPoints);
       return parabolaPoints;
     }
 
@@ -4024,7 +4130,7 @@ class PolyLine extends BaseLine {
     distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
     if (distance < 1) {
-      T3Util.Log("S.PolyLine: Pr_GetParabolaPoints output", parabolaPoints);
+      T3Util.Log("S.PolyLine: PrGetParabolaPoints output", parabolaPoints);
       return parabolaPoints;
     }
 
@@ -4073,12 +4179,12 @@ class PolyLine extends BaseLine {
       parabolaPoints.push(new Point(x + midX + startX, y + midY + startY));
     }
 
-    T3Util.Log("S.PolyLine: Pr_GetParabolaPoints output", parabolaPoints);
+    T3Util.Log("S.PolyLine: PrGetParabolaPoints output", parabolaPoints);
     return parabolaPoints;
   }
 
-  Pr_PolyLGetParabolaAdjPoint(event, segmentIndex) {
-    T3Util.Log("S.PolyLine: Pr_PolyLGetParabolaAdjPoint input", { event, segmentIndex });
+  PrPolyLGetParabolaAdjPoint(event, segmentIndex) {
+    T3Util.Log("S.PolyLine: PrPolyLGetParabolaAdjPoint input", { event, segmentIndex });
 
     let deltaX, deltaY, distance, param, shortRef, center = {}, isRotated = false, points = [], adjPoint = {};
 
@@ -4090,7 +4196,7 @@ class PolyLine extends BaseLine {
     distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
     if (distance < 1) {
-      T3Util.Log("S.PolyLine: Pr_PolyLGetParabolaAdjPoint output", adjPoint);
+      T3Util.Log("S.PolyLine: PrPolyLGetParabolaAdjPoint output", adjPoint);
       return adjPoint;
     }
 
@@ -4126,12 +4232,12 @@ class PolyLine extends BaseLine {
       adjPoint.y += this.StartPoint.y;
     }
 
-    T3Util.Log("S.PolyLine: Pr_PolyLGetParabolaAdjPoint output", adjPoint);
+    T3Util.Log("S.PolyLine: PrPolyLGetParabolaAdjPoint output", adjPoint);
     return adjPoint;
   }
 
-  Pr_PolyLGetParabolaParam(event, segmentIndex) {
-    T3Util.Log("S.PolyLine: Pr_PolyLGetParabolaParam input", { event, segmentIndex });
+  PrPolyLGetParabolaParam(event, segmentIndex) {
+    T3Util.Log("S.PolyLine: PrPolyLGetParabolaParam input", { event, segmentIndex });
 
     let deltaX, deltaY, distance, rotationAngle, sinAngle, cosAngle, center = {}, direction = 1, points = [];
 
@@ -4172,11 +4278,11 @@ class PolyLine extends BaseLine {
       this.polylist.segs[segmentIndex].ShortRef = adjustedShortRef / 6;
     }
 
-    T3Util.Log("S.PolyLine: Pr_PolyLGetParabolaParam output", { param: this.polylist.segs[segmentIndex].param, ShortRef: this.polylist.segs[segmentIndex].ShortRef });
+    T3Util.Log("S.PolyLine: PrPolyLGetParabolaParam output", { param: this.polylist.segs[segmentIndex].param, ShortRef: this.polylist.segs[segmentIndex].ShortRef });
   }
 
-  Pr_PolyLGetArc(segmentIndex, offset) {
-    T3Util.Log("S.PolyLine: Pr_PolyLGetArc input", { segmentIndex, offset });
+  PrPolyLGetArc(segmentIndex, offset) {
+    T3Util.Log("S.PolyLine: PrPolyLGetArc input", { segmentIndex, offset });
 
     let arcLine, radiusAndCenter, startPoint = {}, endPoint = {}, centerPoint = {}, result = {
       arcObject: null,
@@ -4216,12 +4322,12 @@ class PolyLine extends BaseLine {
     result.arcObject = arcObject;
     result.point = centerPoint;
 
-    T3Util.Log("S.PolyLine: Pr_PolyLGetArc output", result);
+    T3Util.Log("S.PolyLine: PrPolyLGetArc output", result);
     return result;
   }
 
-  Pr_PolyLGetArcParam(shape, targetPoint, segmentIndex) {
-    T3Util.Log("S.PolyLine: Pr_PolyLGetArcParam input", { shape, targetPoint, segmentIndex });
+  PrPolyLGetArcParam(shape, targetPoint, segmentIndex) {
+    T3Util.Log("S.PolyLine: PrPolyLGetArcParam input", { shape, targetPoint, segmentIndex });
 
     if (shape) {
       shape.ModifyShape(null, targetPoint.x, targetPoint.y, -1, 0);
@@ -4232,11 +4338,11 @@ class PolyLine extends BaseLine {
       }
     }
 
-    T3Util.Log("S.PolyLine: Pr_PolyLGetArcParam output", this.polylist.segs[segmentIndex].param);
+    T3Util.Log("S.PolyLine: PrPolyLGetArcParam output", this.polylist.segs[segmentIndex].param);
   }
 
-  Pr_GetEllipsePoints(numPoints, isClosed, segmentIndex, rotationAngle, arcQuadrant, scaleX, scaleY) {
-    T3Util.Log("S.PolyLine: Pr_GetEllipsePoints input", { numPoints, isClosed, segmentIndex, rotationAngle, arcQuadrant, scaleX, scaleY });
+  PrGetEllipsePoints(numPoints, isClosed, segmentIndex, rotationAngle, arcQuadrant, scaleX, scaleY) {
+    T3Util.Log("S.PolyLine: PrGetEllipsePoints input", { numPoints, isClosed, segmentIndex, rotationAngle, arcQuadrant, scaleX, scaleY });
 
     let deltaX, deltaY, distance, center = {}, sinAngle, cosAngle, adjustedAngle, rotatedPoints = [], ellipsePoints = [], tempPoint = {};
     let startX = this.StartPoint.x - this.Frame.x;
@@ -4260,7 +4366,7 @@ class PolyLine extends BaseLine {
     if (distance < 1) {
       ellipsePoints.push(new Point(this.polylist.segs[segmentIndex - 1].pt.x * scaleX + startX, this.polylist.segs[segmentIndex - 1].pt.y * scaleY + startY));
       ellipsePoints.push(new Point(this.polylist.segs[segmentIndex].pt.x * scaleX + startX, this.polylist.segs[segmentIndex].pt.y * scaleY + startY));
-      T3Util.Log("S.PolyLine: Pr_GetEllipsePoints output", ellipsePoints);
+      T3Util.Log("S.PolyLine: PrGetEllipsePoints output", ellipsePoints);
       return ellipsePoints;
     }
 
@@ -4297,7 +4403,7 @@ class PolyLine extends BaseLine {
     if (width < 0.0001) {
       ellipsePoints.push(new Point(this.polylist.segs[segmentIndex - 1].pt.x * scaleX + startX, this.polylist.segs[segmentIndex - 1].pt.y * scaleY + startY));
       ellipsePoints.push(new Point(this.polylist.segs[segmentIndex].pt.x * scaleX + startX, this.polylist.segs[segmentIndex].pt.y * scaleY + startY));
-      T3Util.Log("S.PolyLine: Pr_GetEllipsePoints output", ellipsePoints);
+      T3Util.Log("S.PolyLine: PrGetEllipsePoints output", ellipsePoints);
       return ellipsePoints;
     }
 
@@ -4315,12 +4421,12 @@ class PolyLine extends BaseLine {
       ellipsePoints.push(new Point(tempPoint.x * scaleX + startX, tempPoint.y * scaleY + startY));
     }
 
-    T3Util.Log("S.PolyLine: Pr_GetEllipsePoints output", ellipsePoints);
+    T3Util.Log("S.PolyLine: PrGetEllipsePoints output", ellipsePoints);
     return ellipsePoints;
   }
 
-  Pr_PolyLGetEllipseAdjPoint(event, segmentIndex) {
-    T3Util.Log("S.PolyLine: Pr_PolyLGetEllipseAdjPoint input", { event, segmentIndex });
+  PrPolyLGetEllipseAdjPoint(event, segmentIndex) {
+    T3Util.Log("S.PolyLine: PrPolyLGetEllipseAdjPoint input", { event, segmentIndex });
 
     let sinAngle, cosAngle, adjustedAngle, rotatedPoints = [], center = {}, ellipseAdjPoint = {};
 
@@ -4352,12 +4458,12 @@ class PolyLine extends BaseLine {
       ellipseAdjPoint.y += this.StartPoint.y;
     }
 
-    T3Util.Log("S.PolyLine: Pr_PolyLGetEllipseAdjPoint output", ellipseAdjPoint);
+    T3Util.Log("S.PolyLine: PrPolyLGetEllipseAdjPoint output", ellipseAdjPoint);
     return ellipseAdjPoint;
   }
 
-  Pr_PolyLGetEllipseParam(event, segmentIndex, svgDocument) {
-    T3Util.Log("S.PolyLine: Pr_PolyLGetEllipseParam input", { event, segmentIndex, svgDocument });
+  PrPolyLGetEllipseParam(event, segmentIndex, svgDocument) {
+    T3Util.Log("S.PolyLine: PrPolyLGetEllipseParam input", { event, segmentIndex, svgDocument });
 
     let deltaX, deltaY, slope, angle, quadrant, ellipseAdjPoint, polyPoints = [], boundingRect = {}, ellipseAxesElement = {};
 
@@ -4385,12 +4491,12 @@ class PolyLine extends BaseLine {
 
       this.polylist.segs[segmentIndex].param = angle;
 
-      quadrant = this.Pr_PolyLGetArcQuadrant(polyPoints[0], polyPoints[1], angle);
+      quadrant = this.PrPolyLGetArcQuadrant(polyPoints[0], polyPoints[1], angle);
       if (quadrant.ShortRef !== this.polylist.segs[segmentIndex].ShortRef) {
         this.polylist.segs[segmentIndex].ShortRef = quadrant.ShortRef;
       }
 
-      ellipseAdjPoint = this.Pr_PolyLGetEllipseAdjPoint(true, segmentIndex);
+      ellipseAdjPoint = this.PrPolyLGetEllipseAdjPoint(true, segmentIndex);
       polyPoints.pop();
       polyPoints.splice(1, 0, ellipseAdjPoint);
 
@@ -4420,11 +4526,11 @@ class PolyLine extends BaseLine {
       }
     }
 
-    T3Util.Log("S.PolyLine: Pr_PolyLGetEllipseParam output", { polyPoints, boundingRect, ellipseAxesElement });
+    T3Util.Log("S.PolyLine: PrPolyLGetEllipseParam output", { polyPoints, boundingRect, ellipseAxesElement });
   }
 
-  Pr_PolyLGetArcQuadrant(startPoint, endPoint, angle) {
-    T3Util.Log("S.PolyLine: Pr_PolyLGetArcQuadrant input", { startPoint, endPoint, angle });
+  PrPolyLGetArcQuadrant(startPoint, endPoint, angle) {
+    T3Util.Log("S.PolyLine: PrPolyLGetArcQuadrant input", { startPoint, endPoint, angle });
 
     let sinAngle, cosAngle, adjustedAngle, rotatedPoints = [], result = { param: 0, ShortRef: 0 }, center = {};
 
@@ -4470,7 +4576,7 @@ class PolyLine extends BaseLine {
       }
     }
 
-    T3Util.Log("S.PolyLine: Pr_PolyLGetArcQuadrant output", result);
+    T3Util.Log("S.PolyLine: PrPolyLGetArcQuadrant output", result);
     return result;
   }
 
@@ -4533,7 +4639,7 @@ class PolyLine extends BaseLine {
       totalLength = Math.abs(polyPoints[0].x - polyPoints[1].x);
     }
 
-    const result = this.GetLengthInRulerUnits(totalLength);
+    const result = RulerUtil.GetLengthInRulerUnits(totalLength);
     T3Util.Log("S.PolyLine: GetDimensionTextForPoints output", result);
     return result;
   }
@@ -4583,14 +4689,13 @@ class PolyLine extends BaseLine {
     return boundingBoxes;
   }
 
-
   GetAreaWidthAndHeightText(polyPoints) {
     T3Util.Log("S.PolyLine: GetAreaWidthAndHeightText input", { polyPoints });
 
     let width, height, widthIndex, heightIndex, angle, result = "";
 
     if (this.polylist && this.polylist.closed && T3Gv.opt.IsRectangularPolygon(polyPoints)) {
-      angle = T3Gv.opt.SD_GetCounterClockwiseAngleBetween2Points(polyPoints[0], polyPoints[1]);
+      angle = T3Gv.opt.GetCounterClockwiseAngleBetween2Points(polyPoints[0], polyPoints[1]);
 
       if (angle < Math.PI / 4 || angle > 1.5 * Math.PI || (angle > 0.75 * Math.PI && angle < 1.25 * Math.PI)) {
         widthIndex = 1;
@@ -4603,7 +4708,7 @@ class PolyLine extends BaseLine {
       width = Utils2.GetDistanceBetween2Points(polyPoints[widthIndex - 1], polyPoints[widthIndex]);
       height = Utils2.GetDistanceBetween2Points(polyPoints[heightIndex - 1], polyPoints[heightIndex]);
 
-      result = this.GetLengthInRulerUnits(height) + " x " + this.GetLengthInRulerUnits(width);
+      result = RulerUtil.GetLengthInRulerUnits(height) + " x " + RulerUtil.GetLengthInRulerUnits(width);
     }
 
     T3Util.Log("S.PolyLine: GetAreaWidthAndHeightText output", result);
@@ -4620,7 +4725,7 @@ class PolyLine extends BaseLine {
       return;
     }
 
-    T3Gv.opt.GetObjectPtr(this.BlockID, true);
+    ObjectUtil.GetObjectPtr(this.BlockID, true);
     const originalState = Utils1.DeepCopy(this);
 
     segmentPoints.push(new Point(this.polylist.segs[segmentIndex - 1].pt.x, this.polylist.segs[segmentIndex - 1].pt.y));
@@ -4631,7 +4736,7 @@ class PolyLine extends BaseLine {
     segmentPoints[1].y += this.StartPoint.y;
 
     const initialPoint = new Point(segmentPoints[1].x, segmentPoints[1].y);
-    rotationAngle = T3Gv.opt.SD_GetCounterClockwiseAngleBetween2Points(segmentPoints[0], segmentPoints[1]);
+    rotationAngle = T3Gv.opt.GetCounterClockwiseAngleBetween2Points(segmentPoints[0], segmentPoints[1]);
     Utils3.RotatePointsAboutPoint(segmentPoints[0], -rotationAngle, segmentPoints);
 
     if (this.Dimensions & NvConstant.DimensionFlags.InteriorAngles) {
@@ -4647,7 +4752,7 @@ class PolyLine extends BaseLine {
       }
       previousSegmentPoints[1].x += this.StartPoint.x;
       previousSegmentPoints[1].y += this.StartPoint.y;
-      counterClockwiseAngle = T3Gv.opt.SD_GetCounterClockwiseAngleBetween2Points(previousSegmentPoints[0], previousSegmentPoints[1]);
+      counterClockwiseAngle = T3Gv.opt.GetCounterClockwiseAngleBetween2Points(previousSegmentPoints[0], previousSegmentPoints[1]);
       Utils3.RotatePointsAboutPoint(segmentPoints[0], counterClockwiseAngle, segmentPoints);
     } else {
       counterClockwiseAngle = 0;
@@ -4699,7 +4804,7 @@ class PolyLine extends BaseLine {
 
     this.UpdateDrawing(event);
     if (this.DataID !== -1) {
-      this.LM_ResizeSVGTextObject(event, this, this.Frame);
+      this.LMResizeSVGTextObject(event, this, this.Frame);
     }
 
     T3Util.Log('S.PolyLine: SetSegmentAngle output', true);
@@ -4983,7 +5088,7 @@ class PolyLine extends BaseLine {
 
     this.UpdateDrawing(event);
     if (this.DataID !== -1) {
-      this.LM_ResizeSVGTextObject(event, this, this.Frame);
+      this.LMResizeSVGTextObject(event, this, this.Frame);
     }
 
     T3Util.Log("S.PolyLine: UpdateDimensionFromText output", { Frame: this.Frame, StartPoint: this.StartPoint, EndPoint: this.EndPoint });
@@ -5019,7 +5124,7 @@ class PolyLine extends BaseLine {
     this.ResetAutoScrollTimer();
     T3Gv.opt.AddToDirtyList(this.BlockID);
     T3Gv.opt.RenderDirtySVGObjects();
-    T3Gv.opt.SelectObjects([this.BlockID], false, true);
+    SelectUtil.SelectObjects([this.BlockID], false, true);
 
     T3Util.Log("S.PolyLine: CancelObjectDraw output", true);
     return true;
@@ -5097,7 +5202,7 @@ class PolyLine extends BaseLine {
     // Check that consecutive angles are nearly 90 degrees.
     let previousAngle = 0;
     for (let index = 0; index < polyPoints.length - 1 && isRectangle; index++) {
-      let currentAngle = T3Gv.opt.SD_GetCounterClockwiseAngleBetween2Points(polyPoints[index], polyPoints[index + 1]);
+      let currentAngle = T3Gv.opt.GetCounterClockwiseAngleBetween2Points(polyPoints[index], polyPoints[index + 1]);
       if (index > 0) {
         let angleDifference = currentAngle - previousAngle;
         if (angleDifference < 0) {
@@ -5132,7 +5237,7 @@ class PolyLine extends BaseLine {
     }
 
     // Determine dimensions based on the angle of the first side.
-    let firstSideAngle = T3Gv.opt.SD_GetCounterClockwiseAngleBetween2Points(polyPoints[0], polyPoints[1]);
+    let firstSideAngle = T3Gv.opt.GetCounterClockwiseAngleBetween2Points(polyPoints[0], polyPoints[1]);
     let wdDimension: number, htDimension: number;
     if (firstSideAngle < Math.PI / 4 || firstSideAngle > 1.5 * Math.PI || (firstSideAngle > 0.75 * Math.PI && firstSideAngle < 1.25 * Math.PI)) {
       wdDimension = 1;
@@ -5345,7 +5450,7 @@ class PolyLine extends BaseLine {
     } else {
       this.UpdateDrawing(event);
       if (this.DataID !== -1) {
-        this.LM_ResizeSVGTextObject(event, this, this.Frame);
+        this.LMResizeSVGTextObject(event, this, this.Frame);
       }
     }
 
@@ -5363,7 +5468,7 @@ class PolyLine extends BaseLine {
         this.OffsetShape(offset.x, offset.y);
         const enclosedObjects = this.GetListOfEnclosedObjects(false);
         for (let idx = 0; idx < enclosedObjects.length; idx++) {
-          T3Gv.opt.GetObjectPtr(enclosedObjects[idx], true).OffsetShape(offset.x, offset.y);
+          ObjectUtil.GetObjectPtr(enclosedObjects[idx], true).OffsetShape(offset.x, offset.y);
           T3Gv.opt.SetLinkFlag(enclosedObjects[idx], DSConstant.LinkFlags.SED_L_MOVE);
           T3Gv.opt.AddToDirtyList(enclosedObjects[idx]);
         }
@@ -5376,19 +5481,19 @@ class PolyLine extends BaseLine {
         this.EndPoint = Utils1.DeepCopy(originalEndPoint);
         this.UpdateDrawing(event);
         if (this.DataID !== -1) {
-          this.LM_ResizeSVGTextObject(event, this, this.Frame);
+          this.LMResizeSVGTextObject(event, this, this.Frame);
         }
       }
     }
 
     // Update the display coordinates.
     const displayDimensions = this.GetDimensionsForDisplay();
-    const selectionAttrs = new SelectionAttributes();
+    const selectionAttrs = new SelectionAttr();
     selectionAttrs.width = displayDimensions.width;
     selectionAttrs.height = displayDimensions.height;
     selectionAttrs.left = displayDimensions.x;
     selectionAttrs.top = displayDimensions.y;
-    T3Gv.opt.UpdateDisplayCoordinates(
+    UIUtil.UpdateDisplayCoordinates(
       displayDimensions,
       targetPoint,
       CursorConstant.CursorTypes.Grow,
@@ -5467,7 +5572,6 @@ class PolyLine extends BaseLine {
     T3Util.Log("S.PolyLine: GetSegmentAdjustAngle output:", adjustedAngle);
     return adjustedAngle;
   }
-
 }
 
 export default PolyLine

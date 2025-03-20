@@ -214,7 +214,7 @@ class Rect extends BaseShape {
 
     // Add text if there's data
     if (this.DataID >= 0) {
-      this.LM_AddSVGTextObject(renderer, shapeContainer);
+      this.LMAddSVGTextObject(renderer, shapeContainer);
     }
 
     return shapeContainer;
@@ -258,16 +258,16 @@ class Rect extends BaseShape {
     const cornerSize = this.RRectGetCornerSize();
     let polyPoints;
     if (cornerSize > 0) {
-      polyPoints = this.RRect_GetPolyPoints(event, type, arg, rect, index);
+      polyPoints = this.RRectGetPolyPoints(event, type, arg, rect, index);
     } else {
-      polyPoints = this.BaseDrawingObject_GetPolyPoints(event, type, arg, rect, index);
+      polyPoints = this.BaseDrawingObjectGetPolyPoints(event, type, arg, rect, index);
     }
     T3Util.Log("= S.Rect GetPolyPoints Output:", polyPoints);
     return polyPoints;
   }
 
-  RRect_GetPolyPoints(event, type, arg, rect, index) {
-    T3Util.Log("= S.Rect RRect_GetPolyPoints Input:", { event, type, arg, rect, index });
+  RRectGetPolyPoints(event, type, arg, rect, index) {
+    T3Util.Log("= S.Rect RRectGetPolyPoints Input:", { event, type, arg, rect, index });
 
     let points = [];
     let frameCopy = {};
@@ -314,12 +314,12 @@ class Rect extends BaseShape {
       }
     }
 
-    T3Util.Log("= S.Rect RRect_GetPolyPoints Output:", points);
+    T3Util.Log("= S.Rect RRectGetPolyPoints Output:", points);
     return points;
   }
 
-  BaseDrawingObject_GetPolyPoints(event, type, arg, rect, index) {
-    T3Util.Log("= S.Rect BaseDrawingObject_GetPolyPoints Input:", { event, type, arg, rect, index });
+  BaseDrawingObjectGetPolyPoints(event, type, arg, rect, index) {
+    T3Util.Log("= S.Rect BaseDrawingObjectGetPolyPoints Input:", { event, type, arg, rect, index });
 
     let points = [];
     let frameCopy = {};
@@ -344,7 +344,7 @@ class Rect extends BaseShape {
       }
     }
 
-    T3Util.Log("= S.Rect BaseDrawingObject_GetPolyPoints Output:", points);
+    T3Util.Log("= S.Rect BaseDrawingObjectGetPolyPoints Output:", points);
     return points;
   }
 
@@ -410,7 +410,7 @@ class Rect extends BaseShape {
     const cornerSize = this.RRectGetCornerSize();
     let result;
     if (cornerSize > 0) {
-      result = this.RRect_SetShapeIndent(indentOptions);
+      result = this.RRectSetShapeIndent(indentOptions);
     } else {
       this.left_sindent = 0;
       this.right_sindent = 0;
@@ -422,8 +422,8 @@ class Rect extends BaseShape {
     return result;
   }
 
-  RRect_SetShapeIndent(indentOptions) {
-    T3Util.Log("= S.Rect RRect_SetShapeIndent Input:", indentOptions);
+  RRectSetShapeIndent(indentOptions) {
+    T3Util.Log("= S.Rect RRectSetShapeIndent Input:", indentOptions);
 
     let width = this.inside.width;
     let height = this.inside.height;
@@ -454,7 +454,7 @@ class Rect extends BaseShape {
     this.tindent.right = this.right_sindent * width / scaleRight;
     this.tindent.bottom = this.bottom_sindent * height / scaleBottom;
 
-    T3Util.Log("= S.Rect RRect_SetShapeIndent Output:", {
+    T3Util.Log("= S.Rect RRectSetShapeIndent Output:", {
       left_sindent: this.left_sindent,
       top_sindent: this.top_sindent,
       right_sindent: this.right_sindent,
@@ -529,7 +529,6 @@ class Rect extends BaseShape {
     this.SetShapeProperties(shapeProperties);
     T3Util.Log("= S.Rect ApplyCurvature Output: Shape properties updated");
   }
-
 }
 
 export default Rect;

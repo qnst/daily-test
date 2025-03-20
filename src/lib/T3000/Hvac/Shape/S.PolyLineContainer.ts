@@ -15,6 +15,10 @@ import DSConstant from '../Opt/DS/DSConstant';
 import OptConstant from '../Data/Constant/OptConstant';
 import CursorConstant from '../Data/Constant/CursorConstant';
 import T3Util from '../Util/T3Util';
+import ObjectUtil from '../Opt/Data/ObjectUtil';
+import LayerUtil from '../Opt/Opt/LayerUtil';
+import SvgUtil from '../Opt/Opt/SvgUtil';
+import SelectUtil from '../Opt/Opt/SelectUtil';
 
 /**
  * A container class representing a polyline shape that can contain other objects.
@@ -160,7 +164,7 @@ class PolyLineContainer extends PolyLine {
                   existingKnobPos,
                   new Point(this.polylist.segs[i].pt.x, this.polylist.segs[i].pt.y)
                 ];
-                angle = T3Gv.opt.SD_GetCounterClockwiseAngleBetween2Points(points[0], points[2]);
+                angle = T3Gv.opt.GetCounterClockwiseAngleBetween2Points(points[0], points[2]);
                 Utils3.RotatePointsAboutPoint(points[1], -angle, points);
                 const newPoint = new Point(points[1].x, points[1].y);
                 const bbox = existingKnob.GetGeometryBBox();
@@ -234,7 +238,7 @@ class PolyLineContainer extends PolyLine {
     const boundingBox = {};
     const shapePoints = shape.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, false, false);
 
-    if (T3Gv.opt.ActiveVisibleZList().indexOf(shape.BlockID) < 0) {
+    if (LayerUtil.ActiveVisibleZList().indexOf(shape.BlockID) < 0) {
       return false;
     }
 
@@ -296,21 +300,21 @@ class PolyLineContainer extends PolyLine {
         selectedObjects.push(this.BlockID);
 
         for (let i = 0; i < zList.length; i++) {
-          const obj = T3Gv.opt.GetObjectPtr(zList[i], false);
+          const obj = ObjectUtil.GetObjectPtr(zList[i], false);
           if (this.BlockID === obj.BlockID || obj.hooks.length) continue;
           if (this.MostlyContains(obj)) selectedObjects.push(obj.BlockID);
         }
 
-        T3Gv.opt.SelectObjects(selectedObjects, false, false);
+        SelectUtil.SelectObjects(selectedObjects, false, false);
         T3Gv.opt.postMoveSelectId = this.BlockID;
-        T3Gv.opt.HideAllSVGSelectionStates();
+        SvgUtil.HideAllSVGSelectionStates();
         T3Util.Log("= S.PolyLineContainer: Output selectedObjects:", selectedObjects);
         return false;
       }
 
       return false;
     } catch (error) {
-      this.LM_ActionClick_ExceptionCleanup(error);
+      this.LMActionClickExpCleanup(error);
       T3Gv.opt.ExceptionCleanup(error);
       throw error;
     }
@@ -333,7 +337,7 @@ class PolyLineContainer extends PolyLine {
 
     const actionTriggerType = OptConstant.ActionTriggerType.MovePolySeg;
     T3Gv.opt.actionTriggerId = actionTriggerType;
-    this.LM_ActionPreTrack(elementID, actionTriggerType);
+    this.LMActionPreTrack(elementID, actionTriggerType);
     T3Gv.opt.actionSvgObject = svgElement;
 
     let docCoords = T3Gv.opt.svgDoc.ConvertWindowToDocCoords(event.gesture.center.clientX, event.gesture.center.clientY);
@@ -353,7 +357,7 @@ class PolyLineContainer extends PolyLine {
 
     T3Gv.opt.actionBBox = $.extend(true, {}, svgFrame);
     T3Gv.opt.actionNewBBox = $.extend(true, {}, svgFrame);
-    T3Gv.opt.HideAllSVGSelectionStates();
+    SvgUtil.HideAllSVGSelectionStates();
     T3Gv.opt.actionStartX = startX;
     T3Gv.opt.actionStartY = startY;
 
@@ -627,11 +631,11 @@ class PolyLineContainer extends PolyLine {
       handleMovePolySeg(T3Gv.opt.actionTriggerData.hitSegment);
     }
 
-    this.BaseLine_AfterModifyShape(event, triggerType);
+    this.BaseLineAfterModifyShape(event, triggerType);
     T3Util.Log("= S.PolyLineContainer: Output result:", true);
   }
 
-  BaseLine_AfterModifyShape(event, triggerType) {
+  BaseLineAfterModifyShape(event, triggerType) {
     T3Util.Log("= S.PolyLineContainer: Input parameters:", event, triggerType);
 
     if (T3Gv.opt.actionSvgObject) {
@@ -681,7 +685,7 @@ class PolyLineContainer extends PolyLine {
 
     segmentIndex = dimensionData.segment;
     T3Gv.opt.ob = originalState;
-    T3Gv.opt.GetObjectPtr(this.BlockID, true);
+    ObjectUtil.GetObjectPtr(this.BlockID, true);
     T3Gv.opt.ShowSVGSelectionState(this.BlockID, false);
 
     dimensionValue = this.GetDimensionValueFromString(text, segmentIndex);
@@ -799,7 +803,7 @@ class PolyLineContainer extends PolyLine {
 
     this.UpdateDrawing(event);
     if (this.DataID !== -1) {
-      this.LM_ResizeSVGTextObject(event, this, this.Frame);
+      this.LMResizeSVGTextObject(event, this, this.Frame);
     }
 
     T3Util.Log("= S.PolyLineContainer: Output result:", true);
@@ -809,7 +813,7 @@ class PolyLineContainer extends PolyLine {
     T3Util.Log("= S.PolyLineContainer: Getting dimensions for display");
 
     if (this.objecttype !== NvConstant.FNObjectTypes.FlWall) {
-      const dimensions = this.BaseLine_GetDimensions();
+      const dimensions = this.BaseLineGetDimensions();
       T3Util.Log("= S.PolyLineContainer: Output dimensions:", dimensions);
       return dimensions;
     }
@@ -829,7 +833,7 @@ class PolyLineContainer extends PolyLine {
     return result;
   }
 
-  BaseLine_GetDimensions() {
+  BaseLineGetDimensions() {
     T3Util.Log("= S.PolyLineContainer: Getting base line dimensions");
 
     let deltaX = this.EndPoint.x - this.StartPoint.x;
@@ -885,13 +889,13 @@ class PolyLineContainer extends PolyLine {
         slopElement.SetCursor(CursorConstant.CursorType.CROSSHAIR);
       }
     } else {
-      this.BaseShape_SetCursors();
+      this.BaseShapeSetCursors();
     }
 
     T3Util.Log("= S.PolyLineContainer: Cursors set");
   }
 
-  BaseShape_SetCursors() {
+  BaseShapeSetCursors() {
     T3Util.Log("= S.PolyLineContainer: Setting cursors");
 
     const svgElement = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
@@ -910,7 +914,7 @@ class PolyLineContainer extends PolyLine {
           // if (table) {
           //   T3Gv.opt.Table_SetCursors(svgElement, this, table, true);
           // }
-          this.BaseDrawingObject_SetCursors();
+          this.BaseDrawingObjectSetCursors();
 
           if (isOneClick) {
             const shapeElement = svgElement.GetElementById(OptConstant.SVGElementClass.Shape);
@@ -934,13 +938,13 @@ class PolyLineContainer extends PolyLine {
         break;
 
       default:
-        this.BaseDrawingObject_SetCursors();
+        this.BaseDrawingObjectSetCursors();
     }
 
     T3Util.Log("= S.PolyLineContainer: Cursors set");
   }
 
-  BaseDrawingObject_SetCursors() {
+  BaseDrawingObjectSetCursors() {
     T3Util.Log("= S.PolyLineContainer: Setting cursors");
 
     const svgElement = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
@@ -1016,7 +1020,7 @@ class PolyLineContainer extends PolyLine {
   GetListOfEnclosedObjects(includeHooks: boolean, includeSelf: boolean) {
     T3Util.Log("= S.PolyLineContainer: Input parameters:", includeHooks, includeSelf);
 
-    const visibleZList = T3Gv.opt.ActiveVisibleZList();
+    const visibleZList = LayerUtil.ActiveVisibleZList();
     const enclosedObjects: number[] = [];
 
     if (!this.polylist.closed) {
@@ -1027,7 +1031,7 @@ class PolyLineContainer extends PolyLine {
     this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, true, true, null);
 
     for (let i = 0; i < visibleZList.length; i++) {
-      const obj = T3Gv.opt.GetObjectPtr(visibleZList[i], false);
+      const obj = ObjectUtil.GetObjectPtr(visibleZList[i], false);
       if (this.BlockID !== obj.BlockID) {
         const isHooked = includeSelf && obj.hooks.length === 1 && obj.hooks[0].objid === this.BlockID;
         if ((!includeHooks && obj.hooks.length) || this.MostlyContains(obj) || isHooked) {
@@ -1060,7 +1064,7 @@ class PolyLineContainer extends PolyLine {
   RotateAllInContainer(event, rotationAngle) {
     T3Util.Log("= S.PolyLineContainer: Input parameters:", event, rotationAngle);
 
-    T3Gv.opt.ActiveVisibleZList();
+    LayerUtil.ActiveVisibleZList();
     let enclosedObjects = [];
     T3Gv.stdObj.PreserveBlock(T3Gv.opt.theSelectedListBlockID);
     let selectedObject = T3Gv.stdObj.GetObject(T3Gv.opt.theSelectedListBlockID);
@@ -1087,25 +1091,25 @@ class PolyLineContainer extends PolyLine {
 
       T3Gv.opt.rotateStartRotation = startRotation;
       T3Gv.opt.rotateEndRotation = endRotation;
-      T3Gv.opt.SelectObjects(enclosedObjects, false, false);
+      SelectUtil.SelectObjects(enclosedObjects, false, false);
       T3Gv.opt.ob = {};
 
       T3Util.Log("= S.PolyLineContainer: Output enclosedObjects:", enclosedObjects);
       return enclosedObjects;
     }
 
-    T3Gv.opt.SelectObjects(enclosedObjects, false, false);
+    SelectUtil.SelectObjects(enclosedObjects, false, false);
     let groupID = T3Gv.opt.GroupSelectedShapes(true, null, false, false, false);
     selectedData = T3Gv.stdObj.GetObject(T3Gv.opt.theSelectedListBlockID).Data;
 
-    let groupObject = T3Gv.opt.GetObjectPtr(groupID, true);
+    let groupObject = ObjectUtil.GetObjectPtr(groupID, true);
     T3Gv.opt.svgObjectLayer.GetElementById(groupObject.BlockID).SetRotation(rotationAngle);
     groupObject.RotationAngle = rotationAngle;
     T3Gv.opt.UngroupShape(groupID, true);
 
     let lastObjectID = enclosedObjects.pop();
-    T3Gv.opt.SelectObjects(originalData, false, false);
-    let lastObject = T3Gv.opt.GetObjectPtr(lastObjectID, false);
+    SelectUtil.SelectObjects(originalData, false, false);
+    let lastObject = ObjectUtil.GetObjectPtr(lastObjectID, false);
     lastObject.UpdateFrame();
 
     if (lastObject && (lastObject.r.x < 0 || lastObject.r.y < 0)) {
@@ -1158,7 +1162,7 @@ class PolyLineContainer extends PolyLine {
       endPoint.x = center.x + totalLength / 2;
       endPoint.y = center.y;
       dimensionPoints.push(new Point(endPoint.x, endPoint.y));
-      const angle = T3Gv.opt.SD_GetCounterClockwiseAngleBetween2Points(new Point(0, 0), new Point(this.Frame.width, this.Frame.height));
+      const angle = T3Gv.opt.GetCounterClockwiseAngleBetween2Points(new Point(0, 0), new Point(this.Frame.width, this.Frame.height));
       Utils3.RotatePointsAboutPoint(center, angle, dimensionPoints);
     } else {
       polyPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, true, true, false, null);
@@ -1204,7 +1208,7 @@ class PolyLineContainer extends PolyLine {
           continue;
         }
 
-        const obj = T3Gv.opt.GetObjectPtr(zList[i], false);
+        const obj = ObjectUtil.GetObjectPtr(zList[i], false);
         if (obj instanceof PolyLineContainer) {
           const startSegment = hitSegment >= 0 ? hitSegment : 1;
           const endSegment = hitSegment >= 0 ? hitSegment + 1 : polyPoints.length;
@@ -1232,7 +1236,7 @@ class PolyLineContainer extends PolyLine {
 
               const deltaX = snapPointCopy.x - point.x;
               const deltaY = snapPointCopy.y - point.y;
-              const angle = T3Gv.opt.SD_GetCounterClockwiseAngleBetween2Points(polyPoints[j - 1], polyPoints[j]);
+              const angle = T3Gv.opt.GetCounterClockwiseAngleBetween2Points(polyPoints[j - 1], polyPoints[j]);
               let angleInDegrees = (angle / (2 * Math.PI)) * 360;
 
               if (angleInDegrees > 180) {

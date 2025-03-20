@@ -8,6 +8,7 @@ import ShapeUtil from '../Opt/Shape/ShapeUtil';
 import DSConstant from '../Opt/DS/DSConstant';
 import OptConstant from '../Data/Constant/OptConstant';
 import T3Util from '../Util/T3Util';
+import ObjectUtil from '../Opt/Data/ObjectUtil';
 
 /**
  * A specialized symbol class for rendering 3D symbols in T3000 applications.
@@ -74,30 +75,6 @@ class D3Symbol extends BaseSymbol {
     T3Util.Log("S.D3Symbol: Output options after initialization:", options);
   }
 
-  static DefaultD3Settings(inputSettings) {
-    T3Util.Log("S.D3Symbol: Input settings:", inputSettings);
-
-    let defaultSettings = {
-      moduleID: null,
-      renderSettings: {},
-      publicAttributes: []
-    };
-
-    if (inputSettings) {
-      defaultSettings = $.extend(true, defaultSettings, inputSettings);
-    }
-
-    T3Util.Log("S.D3Symbol: Output settings:", defaultSettings);
-    return defaultSettings;
-  }
-
-  static DefaultStyleParams = [
-    'fillColor',
-    'strokeColor',
-    'strokeWidth',
-    'textColor'
-  ]
-
   CreateShape(svgDocument, applyHiddenEventBehavior) {
     T3Util.Log("S.D3Symbol: Enter CreateShape with parameters:", { svgDocument, applyHiddenEventBehavior });
 
@@ -140,7 +117,7 @@ class D3Symbol extends BaseSymbol {
     this.RenderControl(svgDocument, shapeContainer);
 
     if (this.DataID !== -1) {
-      this.LM_AddSVGTextObject(svgDocument, shapeContainer);
+      this.LMAddSVGTextObject(svgDocument, shapeContainer);
     }
 
     const flipHorizontally = (this.extraflags & OptConstant.ExtraFlags.FlipHoriz) > 0;
@@ -234,7 +211,7 @@ class D3Symbol extends BaseSymbol {
       return;
     }
 
-    const fieldList = TODO.SDData.FieldedDataGetFieldList(this.fieldDataTableID, true);
+    const fieldList = TODO.STData.FieldedDataGetFieldList(this.fieldDataTableID, true);
 
     // Parse a dataMap string like "fieldName:start:flags" into an object
     const parseDataMapString = (dataMapString: string): { name: string; start: number; flags: string | null } => {
@@ -298,7 +275,7 @@ class D3Symbol extends BaseSymbol {
     };
 
     // // Retrieve the field data table
-    // const fieldDataTable = TODO.SDData.GetFieldedDataTable(this.fieldDataTableID);
+    // const fieldDataTable = TODO.STData.GetFieldedDataTable(this.fieldDataTableID);
     // if (!fieldDataTable) {
     //   T3Util.Log("S.D3Symbol: MapData - No field data table found.");
     //   return;
@@ -342,7 +319,7 @@ class D3Symbol extends BaseSymbol {
                 const field = fieldList[idx];
                 const value = parsedMap.flags === "label"
                   ? field.name
-                  : TODO.SDData.FieldedDataGetFieldValue(this.fieldDataTableID, elementID, field.fieldID);
+                  : TODO.STData.FieldedDataGetFieldValue(this.fieldDataTableID, elementID, field.fieldID);
                 if (typeof value !== "undefined") {
                   valueForField.push(value);
                 }
@@ -352,7 +329,7 @@ class D3Symbol extends BaseSymbol {
               const field = fieldList[fieldIndex as number];
               const value = parsedMap.flags === "label"
                 ? field.name
-                : TODO.SDData.FieldedDataGetFieldValue(this.fieldDataTableID, elementID, field.fieldID);
+                : TODO.STData.FieldedDataGetFieldValue(this.fieldDataTableID, elementID, field.fieldID);
               if (typeof value !== "undefined") {
                 valueForField = value;
               }
@@ -387,7 +364,7 @@ class D3Symbol extends BaseSymbol {
 
     const renderSettings = this.d3Settings ? this.d3Settings.renderSettings : null;
     if (renderSettings && renderSettings[paramName]) {
-      T3Gv.opt.GetObjectPtr(this.BlockID, true);
+      ObjectUtil.GetObjectPtr(this.BlockID, true);
       renderSettings[paramName].value = paramValue;
       renderSettings[paramName].dataMap = null;
       this.UpdateSizeFromSettings();
@@ -510,7 +487,7 @@ class D3Symbol extends BaseSymbol {
 
     const renderSettings = this.d3Settings ? this.d3Settings.renderSettings : null;
     if (renderSettings && renderSettings[paramName]) {
-      T3Gv.opt.GetObjectPtr(this.BlockID, true);
+      ObjectUtil.GetObjectPtr(this.BlockID, true);
       renderSettings[paramName].dataMap = dataMap;
       this.UpdateSizeFromSettings();
       T3Gv.opt.AddToDirtyList(this.BlockID);
@@ -684,6 +661,29 @@ class D3Symbol extends BaseSymbol {
     return false;
   }
 
+  static DefaultD3Settings(inputSettings) {
+    T3Util.Log("S.D3Symbol: Input settings:", inputSettings);
+
+    let defaultSettings = {
+      moduleID: null,
+      renderSettings: {},
+      publicAttributes: []
+    };
+
+    if (inputSettings) {
+      defaultSettings = $.extend(true, defaultSettings, inputSettings);
+    }
+
+    T3Util.Log("S.D3Symbol: Output settings:", defaultSettings);
+    return defaultSettings;
+  }
+
+  static DefaultStyleParams = [
+    'fillColor',
+    'strokeColor',
+    'strokeWidth',
+    'textColor'
+  ]
 }
 
 export default D3Symbol

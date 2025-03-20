@@ -1267,7 +1267,6 @@ class DSUtil {
       .readStruct(structDefinition);
   }
 
-
   /**
    * Parses text font data from a binary buffer
    * @param buffer - The binary buffer containing text font data
@@ -1363,7 +1362,6 @@ class DSUtil {
         'uint32'
       ]);
   }
-
 
   /**
    * Parses gradient data from a binary buffer
@@ -2191,7 +2189,6 @@ class DSUtil {
 
     return new T3DataStream(buffer, null, T3DataStream.LITTLE_ENDIAN).readStruct(structDefinition);
   }
-
 }
 
 export default DSUtil
