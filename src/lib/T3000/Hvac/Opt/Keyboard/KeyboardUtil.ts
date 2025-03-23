@@ -89,6 +89,8 @@ class KeyboardUtil {
       T3Util.Log('U.KeyboardUtil: Command execution complete', this.Name);
       return result;
     };
+
+    return this;
   }
 }
 

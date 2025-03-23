@@ -10,6 +10,7 @@ import NvConstant from '../Data/Constant/NvConstant'
 import PolygonConstant from '../Opt/Polygon/PolygonConstant';
 import OptConstant from '../Data/Constant/OptConstant';
 import T3Util from '../Util/T3Util';
+import PolyUtil from '../Opt/Opt/PolyUtil';
 
 /**
  * Represents an oval shape in the HVAC visualization system.
@@ -163,7 +164,7 @@ class Oval extends BaseShape {
       height: frameCopy.height
     };
 
-    T3Gv.opt.PolyYCurve(points, topHalf, curveType, 0, 0, 0, 0, false);
+    PolyUtil.PolyYCurve(points, topHalf, curveType, 0, 0, 0, 0, false);
     points.pop();
 
     let bottomHalf = {
@@ -173,7 +174,7 @@ class Oval extends BaseShape {
       height: -frameCopy.height
     };
 
-    T3Gv.opt.PolyYCurve(points, bottomHalf, curveType, 0, 0, 0, 0, true);
+    PolyUtil.PolyYCurve(points, bottomHalf, curveType, 0, 0, 0, 0, true);
     points.pop();
 
     if (!frame) {

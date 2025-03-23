@@ -11,6 +11,7 @@ import DataOpt from '../Opt/Data/DataOpt';
 import EvtOpt from '../Event/EvtOpt';
 import KeyboardOpt from '../Opt/Keyboard/KeyboardOpt';
 import UserOpt from '../Opt/User/UserOpt';
+import SvgUtil from '../Opt/Opt/SvgUtil';
 
 /**
  * Extends the global Window interface to include T3000 HVAC application references
@@ -66,7 +67,7 @@ class T3Opt {
    */
   public evtOpt: EvtOpt;
 
-  public keyBoardOpt: KeyboardOpt;
+  // public keyBoardOpt: KeyboardOpt;
 
   public userOpt: UserOpt;
 
@@ -75,7 +76,7 @@ class T3Opt {
    */
   constructor() {
     this.evtOpt = new EvtOpt();
-    this.keyBoardOpt = new KeyboardOpt();
+    // this.keyBoardOpt = new KeyboardOpt();
     this.userOpt = new UserOpt();
   }
 
@@ -105,7 +106,7 @@ class T3Opt {
     window.onkeypress = KeyboardOpt.OnKeyPress;
 
     // Build keyboard commands
-    this.keyBoardOpt.BuildCommands();
+    // this.keyBoardOpt.BuildCommands();
 
     // Expose handlers to window for external access
     window.docUtil = T3Gv.docUtil;
@@ -124,7 +125,7 @@ class T3Opt {
     DataOpt.InitStoredData();
 
     // Render all SVG objects
-    T3Gv.opt.RenderAllSVGObjects();
+    SvgUtil.RenderAllSVGObjects();
 
     this.userOpt.Initialize();
   }

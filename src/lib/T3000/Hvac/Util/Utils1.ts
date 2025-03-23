@@ -6,8 +6,45 @@ import T3Gv from '../Data/T3Gv'
 import SegmentData from '../Model/SegmentData'
 import $ from 'jquery'
 import StateConstant from '../Data/State/StateConstant'
+import { Dialog } from 'quasar'
 
 class Utils1 {
+
+  /**
+   * Displays an alert message to the user
+   * @param message - The message to display (replaces "Error: " if provided)
+   * @param additionalText - Additional text to append to the message
+   * @param okCallback - Callback function to execute when the user acknowledges the alert
+   */
+  static Alert(message, additionalText, okCallback) {
+    // Earlier in the code, add Dialog to the imports
+
+    // Then in the Alert method:
+    let displayMessage = "Error: ";
+
+    if (message) {
+      displayMessage = message;
+    }
+
+    if (additionalText) {
+      displayMessage += additionalText;
+    }
+
+    Dialog.create({
+      title: 'Alert',
+      message: displayMessage,
+      ok: {
+        label: 'OK',
+        color: 'primary',
+        handler: () => {
+          if (typeof okCallback === 'function') {
+            okCallback();
+          }
+        }
+      },
+      persistent: true
+    });
+  }
 
   /**
    * Checks if a value is an object

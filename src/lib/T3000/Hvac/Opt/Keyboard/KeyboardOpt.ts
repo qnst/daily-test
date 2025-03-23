@@ -39,8 +39,8 @@ import SvgUtil from "../Opt/SvgUtil"
  *   this.keyboardUtil.BuildCommand(
  *     'SaveAs',
  *     this.keyContext.All,
- *     this.keyModifierKeys.Ctrl_Shift,
- *     this.keyConstants.Keys.S,
+ *     KeyboardConstant.ModifierKeys.Ctrl_Shift,
+ *     KeyboardConstant.Keys.S,
  *     this.toolUtil.SaveAs,
  *     this.toolUtil
  *   )
@@ -48,64 +48,7 @@ import SvgUtil from "../Opt/SvgUtil"
  */
 class KeyboardOpt {
 
-  public KeyboardCommands: any;
-  public toolUtil: ToolUtil;
-  public keyboardUtil: KeyboardUtil;
-  public keyConstants: any;
-  public keyContext: any;
-  public keyModifierKeys: any;
-  public docUtil: DocUtil;
-
   constructor() {
-    this.KeyboardCommands = { All: [], ReadOnly: [], Text: [], WallOpt: [], Automation: [], AutomationNoCtrl: [], Navigation: [] };
-    this.toolUtil = new ToolUtil();
-    this.keyboardUtil = new KeyboardUtil();
-    this.docUtil = new DocUtil();
-    this.keyConstants = KeyboardConstant;
-    this.keyContext = this.keyConstants.Contexts;
-    this.keyModifierKeys = this.keyConstants.ModifierKeys;
-  }
-
-  BuildCommands() {
-
-    this.KeyboardCommands.All = [
-      this.keyboardUtil.BuildCommand('Copy', this.keyContext.All, this.keyModifierKeys.Ctrl, this.keyConstants.Keys.C, this.toolUtil.Copy, this.toolUtil),
-      this.keyboardUtil.BuildCommand('Cut', this.keyContext.All, this.keyModifierKeys.Ctrl, this.keyConstants.Keys.X, this.toolUtil.Cut, this.toolUtil),
-      this.keyboardUtil.BuildCommand('Paste', this.keyContext.All, this.keyModifierKeys.Ctrl, this.keyConstants.Keys.V, this.toolUtil.Paste, this.toolUtil),
-      this.keyboardUtil.BuildCommand('Undo', this.keyContext.All, this.keyModifierKeys.Ctrl, this.keyConstants.Keys.Z, this.toolUtil.Undo, this.toolUtil),
-      this.keyboardUtil.BuildCommand('Redo', this.keyContext.All, this.keyModifierKeys.Ctrl, this.keyConstants.Keys.Y, this.toolUtil.Redo, this.toolUtil),
-      this.keyboardUtil.BuildCommand('SelectAll', this.keyContext.All, this.keyModifierKeys.Ctrl, this.keyConstants.Keys.A, this.toolUtil.SelectAllObjects, this.toolUtil),
-      this.keyboardUtil.BuildCommand('Delete', this.keyContext.All, this.keyModifierKeys.None, this.keyConstants.Keys.Delete, this.toolUtil.DeleteSelectedObjects, this.toolUtil),
-      // this.keyboardUtil.BuildCommand('Cancel', this.keyContext.All, this.keyModifierKeys.None, this.keyConstants.Keys.Escape, this.toolUtil.CancelOperation, this.toolUtil),
-      this.keyboardUtil.BuildCommand('Group', this.keyContext.All, this.keyModifierKeys.Ctrl, this.keyConstants.Keys.G, this.toolUtil.GroupSelectedShapes, this.toolUtil),
-      this.keyboardUtil.BuildCommand('Ungroup', this.keyContext.All, this.keyModifierKeys.Ctrl_Shift, this.keyConstants.Keys.G, this.toolUtil.UnGroupSelectedShapes, this.toolUtil),
-      this.keyboardUtil.BuildCommand('Duplicate', this.keyContext.All, this.keyModifierKeys.Ctrl, this.keyConstants.Keys.D, this.toolUtil.Duplicate, this.toolUtil),
-      this.keyboardUtil.BuildCommand('Save', this.keyContext.All, this.keyModifierKeys.Ctrl, this.keyConstants.Keys.S, this.toolUtil.Save, this.toolUtil),
-      this.keyboardUtil.BuildCommand('ZoomIn', this.keyContext.All, this.keyModifierKeys.Ctrl, this.keyConstants.Keys.Add, this.docUtil.ZoomIn, this.docUtil),
-      this.keyboardUtil.BuildCommand('ZoomOut', this.keyContext.All, this.keyModifierKeys.Ctrl, this.keyConstants.Keys.Subtract, this.docUtil.ZoomOut, this.docUtil),
-      this.keyboardUtil.BuildCommand('ZoomIn', this.keyContext.All, this.keyModifierKeys.Ctrl, this.keyConstants.Keys.Equal_Sign, this.docUtil.ZoomIn, this.docUtil),
-      this.keyboardUtil.BuildCommand('ZoomOut', this.keyContext.All, this.keyModifierKeys.Ctrl, this.keyConstants.Keys.Dash, this.docUtil.ZoomOut, this.docUtil)
-    ];
-
-    this.KeyboardCommands.ReadOnly = [
-      this.keyboardUtil.BuildCommand('ZoomIn', this.keyContext.All, this.keyModifierKeys.Ctrl, this.keyConstants.Keys.Add, this.docUtil.ZoomIn, this.docUtil),
-      this.keyboardUtil.BuildCommand('ZoomOut', this.keyContext.All, this.keyModifierKeys.Ctrl, this.keyConstants.Keys.Subtract, this.docUtil.ZoomOut, this.docUtil),
-      this.keyboardUtil.BuildCommand('ZoomIn', this.keyContext.All, this.keyModifierKeys.Ctrl, this.keyConstants.Keys.Equal_Sign, this.docUtil.ZoomIn, this.docUtil),
-      this.keyboardUtil.BuildCommand('ZoomOut', this.keyContext.All, this.keyModifierKeys.Ctrl, this.keyConstants.Keys.Dash, this.docUtil.ZoomOut, this.docUtil)
-    ];
-
-    this.KeyboardCommands.Text = [
-      this.keyboardUtil.BuildCommand('Copy', this.keyContext.Text, this.keyModifierKeys.Ctrl, this.keyConstants.Keys.C, this.toolUtil.Copy, this.toolUtil),
-      this.keyboardUtil.BuildCommand('Cut', this.keyContext.Text, this.keyModifierKeys.Ctrl, this.keyConstants.Keys.X, this.toolUtil.Cut, this.toolUtil),
-      this.keyboardUtil.BuildCommand('Paste', this.keyContext.Text, this.keyModifierKeys.Ctrl, this.keyConstants.Keys.V, this.toolUtil.Paste, this.toolUtil),
-      this.keyboardUtil.BuildCommand('Undo', this.keyContext.Text, this.keyModifierKeys.Ctrl, this.keyConstants.Keys.Z, this.toolUtil.Undo, this.toolUtil),
-      this.keyboardUtil.BuildCommand('Redo', this.keyContext.Text, this.keyModifierKeys.Ctrl, this.keyConstants.Keys.Y, this.toolUtil.Redo, this.toolUtil)
-    ];
-
-    this.KeyboardCommands.WallOpt = [];
-    this.KeyboardCommands.Automation = [];
-    this.KeyboardCommands.AutomationNoCtrl = [];
-    this.KeyboardCommands.Navigation = [];
   }
 
   /**
@@ -113,33 +56,51 @@ class KeyboardOpt {
    * @param context - The context for which to retrieve commands
    * @returns Array of keyboard commands for the specified context
    */
-  GetCommandsInContext(context) {
+  static GetCommandsInContext(context, kybUtil, toolUtil, docUtil) {
     T3Util.Log('U.KeyboardUtil: Getting commands for context', context);
 
     let commands = [];
 
     switch (context) {
-      case this.keyContext.All:
-        commands = this.KeyboardCommands.All;
+      case KeyboardConstant.Contexts.All:
+        commands.push(new KeyboardUtil().BuildCommand('Copy', KeyboardConstant.Contexts.All, KeyboardConstant.ModifierKeys.Ctrl, KeyboardConstant.Keys.C, toolUtil.Copy, toolUtil));
+        commands.push(new KeyboardUtil().BuildCommand('Cut', KeyboardConstant.Contexts.All, KeyboardConstant.ModifierKeys.Ctrl, KeyboardConstant.Keys.X, toolUtil.Cut, toolUtil));
+        commands.push(new KeyboardUtil().BuildCommand('Paste', KeyboardConstant.Contexts.All, KeyboardConstant.ModifierKeys.Ctrl, KeyboardConstant.Keys.V, toolUtil.Paste, toolUtil));
+        commands.push(new KeyboardUtil().BuildCommand('Undo', KeyboardConstant.Contexts.All, KeyboardConstant.ModifierKeys.Ctrl, KeyboardConstant.Keys.Z, toolUtil.Undo, toolUtil));
+        commands.push(new KeyboardUtil().BuildCommand('Redo', KeyboardConstant.Contexts.All, KeyboardConstant.ModifierKeys.Ctrl, KeyboardConstant.Keys.Y, toolUtil.Redo, toolUtil));
+        commands.push(new KeyboardUtil().BuildCommand('SelectAll', KeyboardConstant.Contexts.All, KeyboardConstant.ModifierKeys.Ctrl, KeyboardConstant.Keys.A, toolUtil.SelectAllObjects, toolUtil));
+        commands.push(new KeyboardUtil().BuildCommand('Delete', KeyboardConstant.Contexts.All, KeyboardConstant.ModifierKeys.None, KeyboardConstant.Keys.Delete, toolUtil.DeleteSelectedObjects, toolUtil));
+        commands.push(new KeyboardUtil().BuildCommand('Cancel', KeyboardConstant.Contexts.All, KeyboardConstant.ModifierKeys.None, KeyboardConstant.Keys.Escape, toolUtil.CancelOperation, toolUtil));
+        commands.push(new KeyboardUtil().BuildCommand('Group', KeyboardConstant.Contexts.All, KeyboardConstant.ModifierKeys.Ctrl, KeyboardConstant.Keys.G, toolUtil.GroupSelected, toolUtil));
+        commands.push(new KeyboardUtil().BuildCommand('Ungroup', KeyboardConstant.Contexts.All, KeyboardConstant.ModifierKeys.Ctrl_Shift, KeyboardConstant.Keys.G, toolUtil.UnGroupSelected, toolUtil));
+        commands.push(new KeyboardUtil().BuildCommand('Duplicate', KeyboardConstant.Contexts.All, KeyboardConstant.ModifierKeys.Ctrl, KeyboardConstant.Keys.D, toolUtil.Duplicate, toolUtil));
+        commands.push(new KeyboardUtil().BuildCommand('Save', KeyboardConstant.Contexts.All, KeyboardConstant.ModifierKeys.Ctrl, KeyboardConstant.Keys.S, toolUtil.Save, toolUtil));
+        commands.push(new KeyboardUtil().BuildCommand('ZoomIn', KeyboardConstant.Contexts.All, KeyboardConstant.ModifierKeys.Ctrl, KeyboardConstant.Keys.Add, docUtil.ZoomIn, docUtil));
+        commands.push(new KeyboardUtil().BuildCommand('ZoomOut', KeyboardConstant.Contexts.All, KeyboardConstant.ModifierKeys.Ctrl, KeyboardConstant.Keys.Subtract, docUtil.ZoomOut, docUtil));
+        commands.push(new KeyboardUtil().BuildCommand('ZoomIn', KeyboardConstant.Contexts.All, KeyboardConstant.ModifierKeys.Ctrl, KeyboardConstant.Keys.Equal_Sign, docUtil.ZoomIn, docUtil));
+        commands.push(new KeyboardUtil().BuildCommand('ZoomOut', KeyboardConstant.Contexts.All, KeyboardConstant.ModifierKeys.Ctrl, KeyboardConstant.Keys.Dash, docUtil.ZoomOut, docUtil));
         break;
-      case this.keyContext.ReadOnly:
-        commands = this.KeyboardCommands.ReadOnly;
+      case KeyboardConstant.Contexts.ReadOnly:
+        commands.push(new KeyboardUtil().BuildCommand('ZoomIn', KeyboardConstant.Contexts.All, KeyboardConstant.ModifierKeys.Ctrl, KeyboardConstant.Keys.Add, docUtil.ZoomIn, docUtil));
+        commands.push(new KeyboardUtil().BuildCommand('ZoomOut', KeyboardConstant.Contexts.All, KeyboardConstant.ModifierKeys.Ctrl, KeyboardConstant.Keys.Subtract, docUtil.ZoomOut, docUtil));
+        commands.push(new KeyboardUtil().BuildCommand('ZoomIn', KeyboardConstant.Contexts.All, KeyboardConstant.ModifierKeys.Ctrl, KeyboardConstant.Keys.Equal_Sign, docUtil.ZoomIn, docUtil));
+        commands.push(new KeyboardUtil().BuildCommand('ZoomOut', KeyboardConstant.Contexts.All, KeyboardConstant.ModifierKeys.Ctrl, KeyboardConstant.Keys.Dash, docUtil.ZoomOut, docUtil));
         break;
-      case this.keyContext.Automation:
-        commands = this.KeyboardCommands.Automation;
+      case KeyboardConstant.Contexts.Automation:
         break;
-      case this.keyContext.AutomationNoCtrl:
-        commands = this.KeyboardCommands.AutomationNoCtrl;
+      case KeyboardConstant.Contexts.AutomationNoCtrl:
         break;
-      case this.keyContext.WallOpt:
-        commands = this.KeyboardCommands.WallOpt;
+      case KeyboardConstant.Contexts.WallOpt:
         break;
-      case this.keyContext.Text:
-      case this.KeyboardCommands.DimensionText:
-        commands = this.KeyboardCommands.Text;
+      case KeyboardConstant.Contexts.Text:
+      case KeyboardConstant.Contexts.DimensionText:
+        commands.push(new KeyboardUtil().BuildCommand('Copy', KeyboardConstant.Contexts.Text, KeyboardConstant.ModifierKeys.Ctrl, KeyboardConstant.Keys.C, toolUtil.Copy, toolUtil));
+        commands.push(new KeyboardUtil().BuildCommand('Cut', KeyboardConstant.Contexts.Text, KeyboardConstant.ModifierKeys.Ctrl, KeyboardConstant.Keys.X, toolUtil.Cut, toolUtil));
+        commands.push(new KeyboardUtil().BuildCommand('Paste', KeyboardConstant.Contexts.Text, KeyboardConstant.ModifierKeys.Ctrl, KeyboardConstant.Keys.V, toolUtil.Paste, toolUtil));
+        commands.push(new KeyboardUtil().BuildCommand('Undo', KeyboardConstant.Contexts.Text, KeyboardConstant.ModifierKeys.Ctrl, KeyboardConstant.Keys.Z, toolUtil.Undo, toolUtil));
+        commands.push(new KeyboardUtil().BuildCommand('Redo', KeyboardConstant.Contexts.Text, KeyboardConstant.ModifierKeys.Ctrl, KeyboardConstant.Keys.Y, toolUtil.Redo, toolUtil));
         break;
-      case this.keyContext.Navigation:
-        commands = this.KeyboardCommands.Navigation;
+      case KeyboardConstant.Contexts.Navigation:
         break;
     }
 
@@ -220,8 +181,9 @@ class KeyboardOpt {
     let contexts = [];
     let contextCount = 0;
     let index = 0;
-    let keyboardOpt = new KeyboardOpt();
     let toolUtil = new ToolUtil();
+    let kybUtil = new KeyboardUtil();
+    let docUtil = new DocUtil();
 
     // Check if arrows are used and shape insert should be disabled
     const disableArrowShapeInsert = (
@@ -282,7 +244,7 @@ class KeyboardOpt {
       // Process each context to find matching keyboard commands
       for (let contextIndex = 0; contextIndex < contextCount; contextIndex++) {
         const currentContext = contexts[contextIndex];
-        const contextCommands = keyboardOpt.GetCommandsInContext(currentContext);
+        const contextCommands = KeyboardOpt.GetCommandsInContext(currentContext, kybUtil, toolUtil, docUtil);
         const commandCount = contextCommands.length;
 
         // Try to find and execute a command matching the key combination

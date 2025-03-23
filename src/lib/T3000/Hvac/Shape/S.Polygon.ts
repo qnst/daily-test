@@ -15,9 +15,14 @@ import DSConstant from '../Opt/DS/DSConstant';
 import OptConstant from '../Data/Constant/OptConstant';
 import T3Timer from '../Util/T3Timer';
 import T3Util from '../Util/T3Util';
-import ObjectUtil from '../Opt/Data/ObjectUtil';
+import DataUtil from '../Opt/Data/DataUtil';
 import UIUtil from '../Opt/UI/UIUtil';
 import RulerUtil from '../Opt/UI/RulerUtil';
+import OptCMUtil from '../Opt/Opt/OptCMUtil';
+import DrawUtil from '../Opt/Opt/DrawUtil';
+import PolyUtil from '../Opt/Opt/PolyUtil';
+import ToolActUtil from '../Opt/Opt/ToolActUtil';
+import TextUtil from '../Opt/Opt/TextUtil';
 
 /**
  * Represents a polygon shape that can be rendered in SVG.
@@ -554,7 +559,7 @@ class Polygon extends BaseShape {
     const dimension = OptConstant.Common.DimMax;
 
     if (objectID >= 0) {
-      const object = ObjectUtil.GetObjectPtr(objectID, false);
+      const object = DataUtil.GetObjectPtr(objectID, false);
     }
 
     if (foundTableTarget) {
@@ -681,7 +686,7 @@ class Polygon extends BaseShape {
 
       for (let i = 0; i < pointsLength; i++) {
         if (pointsArray[i].x < dimension / 4) {
-          intersectionCount = T3Gv.opt.PolyGetIntersect(polyPoints, perimeterPoints[i].y, defaultPoint, null, false);
+          intersectionCount = PolyUtil.PolyGetIntersect(polyPoints, perimeterPoints[i].y, defaultPoint, null, false);
           if (intersectionCount) {
             perimeterPoints[i].x = defaultPoint[0];
             if (intersectionCount > 1 && defaultPoint[1] < perimeterPoints[i].x) {
@@ -689,7 +694,7 @@ class Polygon extends BaseShape {
             }
           }
         } else if (pointsArray[i].x > 3 * dimension / 4) {
-          intersectionCount = T3Gv.opt.PolyGetIntersect(polyPoints, perimeterPoints[i].y, defaultPoint, null, false);
+          intersectionCount = PolyUtil.PolyGetIntersect(polyPoints, perimeterPoints[i].y, defaultPoint, null, false);
           if (intersectionCount) {
             perimeterPoints[i].x = defaultPoint[0];
             if (intersectionCount > 1 && defaultPoint[1] > perimeterPoints[i].x) {
@@ -697,7 +702,7 @@ class Polygon extends BaseShape {
             }
           }
         } else if (pointsArray[i].y < dimension / 4) {
-          intersectionCount = T3Gv.opt.PolyGetIntersect(polyPoints, perimeterPoints[i].x, defaultPoint, null, true);
+          intersectionCount = PolyUtil.PolyGetIntersect(polyPoints, perimeterPoints[i].x, defaultPoint, null, true);
           if (intersectionCount) {
             perimeterPoints[i].y = defaultPoint[0];
             if (intersectionCount > 1 && defaultPoint[1] < perimeterPoints[i].y) {
@@ -705,7 +710,7 @@ class Polygon extends BaseShape {
             }
           }
         } else if (pointsArray[i].y > 3 * dimension / 4) {
-          intersectionCount = T3Gv.opt.PolyGetIntersect(polyPoints, perimeterPoints[i].x, defaultPoint, null, true);
+          intersectionCount = PolyUtil.PolyGetIntersect(polyPoints, perimeterPoints[i].x, defaultPoint, null, true);
           if (intersectionCount) {
             perimeterPoints[i].y = defaultPoint[0];
             if (intersectionCount > 1 && defaultPoint[1] > perimeterPoints[i].y) {
@@ -797,7 +802,7 @@ class Polygon extends BaseShape {
 
     if (this.NeedsSIndentCount) {
       polygonPoints = this.GetPolyPoints(OptConstant.Common.MaxPolyPoints, true, false, false, null);
-      indentValues = T3Gv.opt.GuessTextIndents(polygonPoints, this.Frame);
+      indentValues = TextUtil.GuessTextIndents(polygonPoints, this.Frame);
       this.left_sindent = indentValues.left_sindent;
       this.right_sindent = indentValues.right_sindent;
       this.top_sindent = indentValues.top_sindent;
@@ -891,7 +896,7 @@ class Polygon extends BaseShape {
     const shapeTypes = PolygonConstant.ShapeTypes;
     const dimension = OptConstant.Common.DimMax;
 
-    this.VertexArray = T3Gv.opt.FlipVertexArray(this.VertexArray, flipType);
+    this.VertexArray = ToolActUtil.FlipVertexArray(this.VertexArray, flipType);
 
     if (this.polylist) {
       Instance.Shape.PolyLine.prototype.Flip.call(this, flipType);
@@ -965,13 +970,13 @@ class Polygon extends BaseShape {
       }
     }
 
-    T3Gv.opt.SetLinkFlag(
+    OptCMUtil.SetLinkFlag(
       this.BlockID,
       DSConstant.LinkFlags.SED_L_MOVE | DSConstant.LinkFlags.SED_L_CHANGE
     );
 
     if (this.hooks.length) {
-      T3Gv.opt.SetLinkFlag(this.hooks[0].objid, DSConstant.LinkFlags.SED_L_MOVE);
+      OptCMUtil.SetLinkFlag(this.hooks[0].objid, DSConstant.LinkFlags.SED_L_MOVE);
     }
 
     this.NeedsSIndentCount = true;
@@ -1062,7 +1067,7 @@ class Polygon extends BaseShape {
 
     const extraFlags = this.extraflags;
     if (extraFlags & (OptConstant.ExtraFlags.FlipHoriz | OptConstant.ExtraFlags.FlipVert) && vectors) {
-      vectors = T3Gv.opt.FlipVertexArray(vectors, extraFlags);
+      vectors = ToolActUtil.FlipVertexArray(vectors, extraFlags);
     }
 
     T3Util.Log('S.Polygon: RegenerateVectors output:', vectors);
@@ -1190,7 +1195,7 @@ class Polygon extends BaseShape {
     T3Util.Log('S.Polygon: SetSegmentAngle input:', { segmentIndex, angle, additionalParams });
 
     T3Gv.opt.ShapeToPolyLine(this.BlockID, false, true);
-    const polygonObject = ObjectUtil.GetObjectPtr(this.BlockID, false);
+    const polygonObject = DataUtil.GetObjectPtr(this.BlockID, false);
     polygonObject.SetSegmentAngle(segmentIndex, angle, additionalParams);
     T3Gv.opt.PolyLineToShape(this.BlockID);
 
@@ -1207,7 +1212,7 @@ class Polygon extends BaseShape {
     }
 
     T3Gv.opt.ShapeToPolyLine(this.BlockID, false, true);
-    const polygonObject = ObjectUtil.GetObjectPtr(this.BlockID, false);
+    const polygonObject = DataUtil.GetObjectPtr(this.BlockID, false);
     polygonObject.DimensionLineDeflectionAdjust(event, target, angle, radius, index);
     T3Gv.opt.PolyLineToShape(this.BlockID);
 
@@ -1250,18 +1255,18 @@ class Polygon extends BaseShape {
 
     if (userData.angleChange) {
       this.UpdateLineAngleDimensionFromText(svgElement, text, userData);
-      T3Gv.opt.AddToDirtyList(this.BlockID);
+      DataUtil.AddToDirtyList(this.BlockID);
       if (this.Frame.x < 0 || this.Frame.y < 0) {
         T3Gv.opt.ScrollObjectIntoView(this.BlockID, false);
       }
-      T3Gv.opt.CompleteOperation(null);
+      DrawUtil.CompleteOperation(null);
       T3Util.Log('S.Polygon: UpdateDimensionFromTextObj output: angleChange handled');
       return;
     }
 
     if (this.polylist && (this.extraflags & OptConstant.ExtraFlags.SideKnobs) > 0) {
       T3Gv.opt.ShapeToPolyLine(this.BlockID, false, true);
-      ObjectUtil.GetObjectPtr(this.BlockID, false).UpdateDimensionFromText(svgElement, text, userData);
+      DataUtil.GetObjectPtr(this.BlockID, false).UpdateDimensionFromText(svgElement, text, userData);
       T3Gv.opt.PolyLineToShape(this.BlockID);
     } else {
       Instance.Shape.BaseShape.prototype.UpdateDimensionFromTextObj.call(this, textObj, textData);

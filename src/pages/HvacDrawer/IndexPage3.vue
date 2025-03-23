@@ -277,90 +277,90 @@
 }
 
 .cur-anchor {
-  cursor: url("../sdui/cursors/anchor.cur"), pointer
+  cursor: url("../style/cursors/anchor.cur"), pointer
 }
 
 .cur-paint {
-  cursor: url("../sdui/cursors/paint.cur"), default
+  cursor: url("../style/cursors/paint.cur"), default
 }
 
 .cur-rotate {
-  cursor: url("../sdui/cursors/rotate.cur"), move
+  cursor: url("../style/cursors/rotate.cur"), move
 }
 
 .cur-droplib,
 .addSymbolCursor,
 .addSymbolCursor button,
 .addSymbolCursor button label {
-  cursor: url("../sdui/cursors/droplib.cur"), copy
+  cursor: url("../style/cursors/droplib.cur"), copy
 }
 
 .cur-pencil-x {
-  cursor: url("../sdui/cursors/pencil-x.cur"), pointer
+  cursor: url("../style/cursors/pencil-x.cur"), pointer
 }
 
 .cur-pencil {
-  cursor: url("../sdui/cursors/edit.cur"), pointer
+  cursor: url("../style/cursors/edit.cur"), pointer
 }
 
 .cur-pencil-close {
-  cursor: url("../sdui/cursors/edit-close.cur"), pointer
+  cursor: url("../style/cursors/edit-close.cur"), pointer
 }
 
 .cur-add {
-  cursor: url("../sdui/cursors/cur1012.cur"), pointer
+  cursor: url("../style/cursors/cur1012.cur"), pointer
 }
 
 .cur-stamp {
-  cursor: url("../sdui/cursors/cur1036.cur"), pointer
+  cursor: url("../style/cursors/cur1012.cur"), pointer
 }
 
 .cur-arr-down {
-  cursor: url("../sdui/cursors/cur1022.cur"), pointer
+  cursor: url("../style/cursors/cur1022.cur"), pointer
 }
 
 .cur-arr-right {
-  cursor: url("../sdui/cursors/cur1023.cur"), pointer
+  cursor: url("../style/cursors/cur1023.cur"), pointer
 }
 
 .cur-brush {
-  cursor: url("../sdui/cursors/cur1025.cur"), pointer
+  cursor: url("../style/cursors/cur1025.cur"), pointer
 }
 
 .cur-brush-edit {
-  cursor: url("../sdui/cursors/cur1026.cur"), pointer
+  cursor: url("../style/cursors/cur1026.cur"), pointer
 }
 
 .cur-brush-cell {
-  cursor: url("../sdui/cursors/cur1027.cur"), pointer
+  cursor: url("../style/cursors/cur1027.cur"), pointer
 }
 
 .cur-brush-table {
-  cursor: url("../sdui/cursors/cur1028.cur"), pointer
+  cursor: url("../style/cursors/cur1028.cur"), pointer
 }
 
 .cur-add-right {
-  cursor: url("../sdui/cursors/cur1048.cur"), pointer
+  cursor: url("../style/cursors/cur1048.cur"), pointer
 }
 
 .cur-add-left {
-  cursor: url("../sdui/cursors/cur1049.cur"), pointer
+  cursor: url("../style/cursors/cur1049.cur"), pointer
 }
 
 .cur-add-up {
-  cursor: url("../sdui/cursors/cur1050.cur"), pointer
+  cursor: url("../style/cursors/cur1050.cur"), pointer
 }
 
 .cur-add-down {
-  cursor: url("../sdui/cursors/cur1051.cur"), pointer
+  cursor: url("../style/cursors/cur1051.cur"), pointer
 }
 
 .cur-add-plus {
-  cursor: url("../sdui/cursors/cur1045.cur"), pointer
+  cursor: url("../style/cursors/cur1045.cur"), pointer
 }
 
 .cur-crosshair {
-  cursor: url("../sdui/cursors/crosshair.svg") 18 18, pointer
+  cursor: url("../style/cursors/crosshair.svg") 18 18, pointer
 }
 </style>
 
@@ -375,10 +375,9 @@
 
     <div id="main-app">
       <div id="main-panel" class="main-panel">
-        <div id="main-toolbar" class="main-toolbar">
-          <!-- top bar -->
+        <!-- <div id="main-toolbar" class="main-toolbar">
           <NewTopBar :locked="locked" @lockToggle="lockToggle" @navGoBack="navGoBack" />
-        </div>
+        </div> -->
         <div class="main-area">
           <div id="left-panel" class="left-panel">
             <!-- left bar -->

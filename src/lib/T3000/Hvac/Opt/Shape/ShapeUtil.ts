@@ -1,45 +1,50 @@
 
 
-import Utils2 from '../../Util/Utils2'
-import T3Gv from '../../Data/T3Gv'
-import T3DataStream from '../../Util/T3DataStream'
-import Utils1 from '../../Util/Utils1'
-import Utils3 from '../../Util/Utils3'
 import $ from 'jquery'
-import RulerConfig from '../../Model/RulerConfig'
-import PolygonShapeGenerator from "../Polygon/PolygonUtil"
-import QuickStyle from '../../Model/QuickStyle'
-import SDData from '../../Model/SDData'
-import LayersManager from '../../Model/LayersManager'
-import Point from '../../Model/Point'
-import Instance from '../../Data/Instance/Instance'
 import NvConstant from '../../Data/Constant/NvConstant'
-import PaintData from '../../Model/PaintData'
+import OptConstant from '../../Data/Constant/OptConstant'
+import ShapeConstant from '../../Data/Constant/ShapeConstant'
+import StyleConstant from '../../Data/Constant/StyleConstant'
+import TextConstant from '../../Data/Constant/TextConstant'
+import Instance from '../../Data/Instance/Instance'
+import StateConstant from '../../Data/State/StateConstant'
+import T3Gv from '../../Data/T3Gv'
+import BlockHeader from '../../Model/BlockHeader'
 import FontRecord from '../../Model/FontRecord'
-import SDGraphDefault from '../../Model/SDGraphDefault'
-import OutsideEffectData from '../../Model/OutsideEffectData'
-import PolySeg from '../../Model/PolySeg'
-import Link from '../../Model/Link'
 import Hook from '../../Model/Hook'
-import Rectangle from '../../Model/Rectangle'
 import Layer from '../../Model/Layer'
+import LayersManager from '../../Model/LayersManager'
+import Link from '../../Model/Link'
+import OutsideEffectData from '../../Model/OutsideEffectData'
+import PaintData from '../../Model/PaintData'
+import Point from '../../Model/Point'
+import PolyGeomMd from '../../Model/PolyGeomMd'
+import PolySeg from '../../Model/PolySeg'
+import QuickStyle from '../../Model/QuickStyle'
+import Rectangle from '../../Model/Rectangle'
+import RulerConfig from '../../Model/RulerConfig'
+import SDData from '../../Model/SDData'
+import SDGraphDefault from '../../Model/SDGraphDefault'
+import TextObject from '../../Model/TextObject'
 import TextureList from '../../Model/TextureList'
-import PolygonConstant from '../Polygon/PolygonConstant'
 import TextureScale from '../../Model/TextureScale'
 import WinSetting from '../../Model/WinSetting'
 import WResult from '../../Model/WResult'
-import BlockHeader from '../../Model/BlockHeader'
-import StateConstant from '../../Data/State/StateConstant'
-import OptConstant from '../../Data/Constant/OptConstant'
-import PolyGeomMd from '../../Model/PolyGeomMd'
-import TextConstant from '../../Data/Constant/TextConstant'
-import StyleConstant from '../../Data/Constant/StyleConstant'
+import T3DataStream from '../../Util/T3DataStream'
+import Utils1 from '../../Util/Utils1'
+import Utils2 from '../../Util/Utils2'
+import Utils3 from '../../Util/Utils3'
+import DataUtil from '../Data/DataUtil'
+import DSConstant from '../DS/DSConstant'
 import DSStruct from '../DS/DSStruct'
 import DSUtil from '../DS/DSUtil'
-import TextObject from '../../Model/TextObject'
-import DSConstant from '../DS/DSConstant'
-import ShapeConstant from '../../Data/Constant/ShapeConstant'
-import ObjectUtil from '../Data/ObjectUtil'
+import SvgUtil from '../Opt/SvgUtil'
+import PolygonConstant from '../Polygon/PolygonConstant'
+import PolygonShapeGenerator from "../Polygon/PolygonUtil"
+import LayerUtil from '../Opt/LayerUtil'
+import UIUtil from '../UI/UIUtil'
+import ToolActUtil from '../Opt/ToolActUtil'
+import ExportUtil from '../Opt/ExportUtil'
 
 class ShapeUtil {
 
@@ -561,7 +566,7 @@ class ShapeUtil {
     let result = new ShapeUtil.Result();
 
     let formattedTextObject = null;
-    let sessionBlock = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, true);
+    let sessionBlock = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, true);
     let objectsToRemove = [];
 
     result.isTemplate = false;
@@ -610,12 +615,12 @@ class ShapeUtil {
     }
 
     if (errorCode !== ShapeUtil.Errors.WaitingForCallBack) {
-      const isPlanningDocument = T3Gv.opt.IsPlanningDocument();
-      const layersManager = ObjectUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, true);
+      const isPlanningDocument = UIUtil.IsPlanningDocument();
+      const layersManager = DataUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, true);
 
       objectCount = result.zList.length;
       for (index = 0; index < objectCount; index++) {
-        object = ObjectUtil.GetObjectPtr(result.zList[index], false);
+        object = DataUtil.GetObjectPtr(result.zList[index], false);
 
         // if (object.objecttype === NvConstant.FNObjectTypes.SD_OBJT_BPMN_POOL) {
         //   DSUtil.ConvertBPMNPool(object);
@@ -642,7 +647,7 @@ class ShapeUtil {
         //   object.InitialGroupBounds.x = 1;
         // }
 
-        T3Gv.opt.AddToDirtyList(result.zList[index]);
+        DataUtil.AddToDirtyList(result.zList[index]);
 
         if (object && (object.flags & NvConstant.ObjFlags.NotVisible) === 0) {
           selectedObjects.selectedList.push(result.zList[index]);
@@ -658,7 +663,7 @@ class ShapeUtil {
       }
 
       if (objectsToRemove.length) {
-        T3Gv.opt.DeleteObjects(objectsToRemove);
+        DataUtil.DeleteObjects(objectsToRemove);
       }
 
       // FROM SDData_Transfer
@@ -668,7 +673,7 @@ class ShapeUtil {
 
       linksCount = result.links.length;
       if (!skipLinks && linksCount > 0) {
-        let linksBlock = ObjectUtil.GetObjectPtr(T3Gv.opt.linksBlockId, true);
+        let linksBlock = DataUtil.GetObjectPtr(T3Gv.opt.linksBlockId, true);
         for (index = 0; index < linksCount; index++) {
           linksBlock.push(result.links[index]);
         }
@@ -681,7 +686,7 @@ class ShapeUtil {
       // Calculate bounding rectangle for all objects
       let objectWithBoundsCount = 0;
       for (index = 0; index < objectCount; index++) {
-        object = ObjectUtil.GetObjectPtr(result.zList[index], false);
+        object = DataUtil.GetObjectPtr(result.zList[index], false);
         if (object && (object.flags & NvConstant.ObjFlags.NotVisible) === 0) {
           if (objectWithBoundsCount === 0) {
             boundingRect = new Rectangle(object.r.x, object.r.y, object.r.width, object.r.height);
@@ -704,7 +709,7 @@ class ShapeUtil {
         // Apply offset if needed
         if (offsetX || offsetY) {
           for (index = 0; index < objectCount; index++) {
-            object = ObjectUtil.GetObjectPtr(result.zList[index], false);
+            object = DataUtil.GetObjectPtr(result.zList[index], false);
             if (object && (object.flags & NvConstant.ObjFlags.NotVisible) === 0) {
               object.OffsetShape(offsetX, offsetY);
             }
@@ -745,7 +750,7 @@ class ShapeUtil {
           }
 
           if (newWidth || newHeight) {
-            const layersManagerBlock = ObjectUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
+            const layersManagerBlock = DataUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
             const layerCount = layersManagerBlock.nlayers;
             let activeLayerUsesEdges = false;
             let anyVisibleLayerUsesEdges = false;
@@ -771,7 +776,7 @@ class ShapeUtil {
           } else if (offsetX || offsetY) {
             // If we need to shift objects to stay within bounds
             for (index = 0; index < objectCount; index++) {
-              object = ObjectUtil.GetObjectPtr(result.zList[index], false);
+              object = DataUtil.GetObjectPtr(result.zList[index], false);
               if (object && (object.flags & NvConstant.ObjFlags.NotVisible) === 0) {
                 object.OffsetShape(-offsetX, -offsetY);
               }
@@ -785,7 +790,7 @@ class ShapeUtil {
       }
 
       if (renderObjects) {
-        T3Gv.opt.RenderDirtySVGObjects();
+        SvgUtil.RenderDirtySVGObjects();
       } else if (objectCount === 1) {
         T3Gv.opt.RenderDirtySVGObjectsNoSetMouse();
       }
@@ -1054,7 +1059,7 @@ class ShapeUtil {
       objectCount = result.zList.length;
       for (objectIndex = 0; objectIndex < objectCount; objectIndex++) {
         objectId = result.zList[objectIndex];
-        object = ObjectUtil.GetObjectPtr(objectId, false);
+        object = DataUtil.GetObjectPtr(objectId, false);
 
         if (!object) continue;
 
@@ -1274,8 +1279,8 @@ class ShapeUtil {
               object.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.Transparent;
               object.StyleRecord.Line.Thickness = 0;
 
-              const parentId = T3Gv.opt.SD_GetVisioTextParent(object.BlockID);
-              textParent = ObjectUtil.GetObjectPtr(parentId, false);
+              const parentId = -1;// T3Gv.opt.SD_GetVisioTextParent(object.BlockID);
+              textParent = DataUtil.GetObjectPtr(parentId, false);
 
               if (textParent) {
                 textParent.just = object.just;
@@ -1300,7 +1305,7 @@ class ShapeUtil {
           }
 
           // Render and resize text
-          T3Gv.opt.AddSVGObject(null, objectId, true, false);
+          SvgUtil.AddSVGObject(null, objectId, true, false);
           T3Gv.opt.TextResizeCommon(objectId, false, true);
           svgElement = T3Gv.opt.svgObjectLayer.GetElementById(objectId);
 
@@ -1438,7 +1443,7 @@ class ShapeUtil {
     for (let idIndex = 0; idIndex < idMapLength; idIndex++) {
       if (idMap[idIndex]) {
         objectId = idMap[idIndex];
-        currentObject = ObjectUtil.GetObjectPtr(objectId, false);
+        currentObject = DataUtil.GetObjectPtr(objectId, false);
 
         // Process hooks for each object
         if (currentObject && currentObject.hooks) {
@@ -1455,7 +1460,7 @@ class ShapeUtil {
               // Insert link if needed
               if (links.length === 0 && !ignoreErrors) {
                 if (linksBlock == null) {
-                  linksBlock = ObjectUtil.GetObjectPtr(T3Gv.opt.linksBlockId, true);
+                  linksBlock = DataUtil.GetObjectPtr(T3Gv.opt.linksBlockId, true);
                 }
                 T3Gv.opt.InsertLink(linksBlock, objectId, currentHook, DSConstant.LinkFlags.SED_L_MOVE);
               }
@@ -1467,7 +1472,7 @@ class ShapeUtil {
                 currentObject.LineType === OptConstant.LineType.SEGLINE &&
                 currentObject.segl) {
 
-                targetObject = ObjectUtil.GetObjectPtr(currentObject.hooks[currentHook].objid, false);
+                targetObject = DataUtil.GetObjectPtr(currentObject.hooks[currentHook].objid, false);
 
                 // Adjust connection point for rotated objects
                 if (targetObject.RotationAngle) {
@@ -3720,7 +3725,7 @@ class ShapeUtil {
 
             // If not a Visio callout, perform additional check
             if (!isVisioCallout) {
-              const targetObject = ObjectUtil.GetObjectPtr(
+              const targetObject = DataUtil.GetObjectPtr(
                 resultObject.IDMap[hookData.objid],
                 false
               );
@@ -4115,7 +4120,7 @@ class ShapeUtil {
         case r.cText:
           if (a.textonline >= 0) if (a.textonline < a.objectcount) {
             if ((S = a.IDMap[a.textonline]) >= 0) if (
-              (l = ObjectUtil.GetObjectPtr(S, !1)) &&
+              (l = DataUtil.GetObjectPtr(S, !1)) &&
               l.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector
             ) l = n;
             else {
@@ -4622,7 +4627,7 @@ class ShapeUtil {
         if (resultObject.textonline >= 0 &&
           resultObject.textonline < resultObject.objectcount &&
           (objectWithData = resultObject.IDMap[resultObject.textonline]) >= 0 &&
-          (objectPtr = ObjectUtil.GetObjectPtr(objectWithData, false))) {
+          (objectPtr = DataUtil.GetObjectPtr(objectWithData, false))) {
 
           // Handle different object types differently
           switch (objectPtr.DrawingObjectBaseClass) {
@@ -4649,7 +4654,7 @@ class ShapeUtil {
         }
 
         // Apply text alignment to the referenced text object
-        const textObject = ObjectUtil.GetObjectPtr(targetObject.DataID, false);
+        const textObject = DataUtil.GetObjectPtr(targetObject.DataID, false);
         if (textObject) {
           const textAlignment = ShapeUtil.TextAlignToJust(targetObject.TextAlign);
           T3Gv.opt.SetTextAlignment(textObject, textAlignment.vjust, null);
@@ -4983,7 +4988,7 @@ class ShapeUtil {
     // Apply flipping to vertex array if needed
     const flipFlags = OptConstant.ExtraFlags.FlipHoriz | OptConstant.ExtraFlags.FlipVert;
     if ((extraFlags & flipFlags) && vertexArray) {
-      vertexArray = T3Gv.opt.FlipVertexArray(vertexArray, extraFlags);
+      vertexArray = ToolActUtil.FlipVertexArray(vertexArray, extraFlags);
     }
 
     // Create and return the appropriate shape instance
@@ -5088,7 +5093,7 @@ class ShapeUtil {
       skipTextLink = true;
 
       if ((destinationID = resultObject.IDMap[sourceData.associd]) >= 0) {
-        targetObject = ObjectUtil.GetObjectPtr(destinationID, false);
+        targetObject = DataUtil.GetObjectPtr(destinationID, false);
 
         if (targetObject && targetObject.DataID >= 0) {
           skipTextLink = false;
@@ -5482,8 +5487,8 @@ class ShapeUtil {
     const result = new WResult();
 
     // Get current session, layer manager and content header
-    result.sdp = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
-    result.tLMB = ObjectUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
+    result.sdp = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
+    result.tLMB = DataUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
     result.ctp = T3Gv.opt.contentHeader;
 
     // Mark as selection-only operation
@@ -5504,7 +5509,7 @@ class ShapeUtil {
     result.richGradients = T3Gv.opt.richGradients;
 
     // Update layer information for selected objects
-    T3Gv.opt.UpdateObjectLayerIndices(result);
+    LayerUtil.UpdateObjectLayerIndices(result);
 
     // Write objects to buffer with selection-only flag
     return ShapeUtil.WriteBuffer(result, true, true, ignoreDataCheck);
@@ -6709,7 +6714,7 @@ class ShapeUtil {
         if (lastConnectorIndex >= 0) {
           // Process connector text
           rectObject.associd = connectorBlockId;
-          connectorObject = ObjectUtil.GetObjectPtr(resultObject.UniqueMap[lastConnectorIndex], false);
+          connectorObject = DataUtil.GetObjectPtr(resultObject.UniqueMap[lastConnectorIndex], false);
 
           let isLinearConnector = connectorObject.arraylist.styleflags & OptConstant.AStyles.Linear;
           textAlign = ShapeUtil.TextAlignToWin(connectorObject.TextAlign);
@@ -6745,7 +6750,7 @@ class ShapeUtil {
           }
         } else {
           // Handle text for non-connector objects
-          currentObject = ObjectUtil.GetObjectPtr(resultObject.UniqueMap[uniqueMapIndex - 1], false);
+          currentObject = DataUtil.GetObjectPtr(resultObject.UniqueMap[uniqueMapIndex - 1], false);
 
           if (currentObject && currentObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Line) {
             // Handle line text
@@ -6783,7 +6788,7 @@ class ShapeUtil {
         }
       } else {
         // Handle regular objects
-        currentObject = ObjectUtil.GetObjectPtr(objectId, false);
+        currentObject = DataUtil.GetObjectPtr(objectId, false);
 
         if (currentObject) {
           if (currentObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
@@ -7109,7 +7114,7 @@ class ShapeUtil {
     objectsProcessed = 0;
     for (index = 0; index < objectCount; index++) {
       // Get object and add its style to the style list
-      currentObject = ObjectUtil.GetObjectPtr(resultObject.zList[index], false);
+      currentObject = DataUtil.GetObjectPtr(resultObject.zList[index], false);
       currentObject.tstyleindex = addUniqueStyle(currentObject.StyleRecord);
 
       // Handle table cell styles if this object has a table
@@ -8194,7 +8199,7 @@ class ShapeUtil {
         connectPoint.y = drawingObject.hooks[hookIndex].connect.y;
 
         // Get target object and adjust connection point if it's reversed
-        targetObject = ObjectUtil.GetObjectPtr(drawingObject.hooks[hookIndex].objid, false);
+        targetObject = DataUtil.GetObjectPtr(drawingObject.hooks[hookIndex].objid, false);
         if (ShapeUtil.LineIsReversed(targetObject, resultObject, true)) {
           connectPoint.x = centerDimension - connectPoint.x;
           connectPoint.y = centerDimension - connectPoint.y;
@@ -8791,9 +8796,9 @@ class ShapeUtil {
       const objectCount = stateObjects.length;
 
       // Initialize result object with document context
-      resultObject.sdp = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
+      resultObject.sdp = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
       resultObject.ctp = T3Gv.opt.contentHeader;
-      resultObject.tLMB = ObjectUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
+      resultObject.tLMB = DataUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
       resultObject.fontlist = T3Gv.opt.contentHeader.FontList;
       resultObject.richGradients = T3Gv.opt.richGradients;
       resultObject.WriteBlocks = true;
@@ -9031,7 +9036,7 @@ class ShapeUtil {
         }
       }
     } catch (error) {
-      T3Gv.opt.ExportExceptionCleanup(error);
+      ExportUtil.ExportExceptionCleanup(error);
     }
   }
 
@@ -9323,7 +9328,7 @@ class ShapeUtil {
     dataStream.writeStruct(DSConstant.LongValueStruct, idData);
 
     // Write native binary data to the block
-    ShapeUtil.writeNativeByteArray(dataStream, nativeObject.Data);
+    DSUtil.writeNativeByteArray(dataStream, nativeObject.Data);
 
     // Finalize the block
     ShapeUtil.WriteLength(dataStream, codeOffset);

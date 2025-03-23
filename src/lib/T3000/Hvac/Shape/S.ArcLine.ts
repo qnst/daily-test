@@ -15,8 +15,10 @@ import OptConstant from '../Data/Constant/OptConstant'
 import CursorConstant from '../Data/Constant/CursorConstant'
 import T3Util from '../Util/T3Util'
 import TextConstant from '../Data/Constant/TextConstant'
-import ObjectUtil from '../Opt/Data/ObjectUtil'
+import DataUtil from '../Opt/Data/DataUtil'
 import UIUtil from '../Opt/UI/UIUtil'
+import OptCMUtil from '../Opt/Opt/OptCMUtil'
+import HookUtil from '../Opt/Opt/HookUtil'
 
 /**
  * ArcLine class represents a curved line segment in the T3000 HVAC drawing system.
@@ -409,7 +411,7 @@ class ArcLine extends BaseLine {
     let height = rect.height + adjustedKnobSize;
 
     // Get target object to check for hook overrides.
-    let targetObject = ObjectUtil.GetObjectPtr(targetId, false);
+    let targetObject = DataUtil.GetObjectPtr(targetId, false);
 
     // Adjust the rectangle boundaries.
     let adjustedRect = $.extend(true, {}, rect);
@@ -902,14 +904,14 @@ class ArcLine extends BaseLine {
       }
 
       if (T3Gv.opt.ob.Frame) {
-        T3Gv.opt.MaintainLink(
+        HookUtil.MaintainLink(
           this.BlockID,
           this,
           T3Gv.opt.ob,
           OptConstant.ActionTriggerType.Rotate
         );
       }
-      T3Gv.opt.SetLinkFlag(this.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
+      OptCMUtil.SetLinkFlag(this.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
     }
 
     // Reset the backup object
@@ -986,7 +988,7 @@ class ArcLine extends BaseLine {
     // If selection dimensions demand, mark the object as dirty.
     if ((this.Dimensions & NvConstant.DimensionFlags.Select) ||
       (this.Dimensions & NvConstant.DimensionFlags.Always)) {
-      T3Gv.opt.AddToDirtyList(this.BlockID);
+      DataUtil.AddToDirtyList(this.BlockID);
     }
 
     // Regenerate the arc shape and resize the SVG text object if applicable.
@@ -1368,7 +1370,7 @@ class ArcLine extends BaseLine {
     if (
       targetId != null &&
       targetId >= 0 &&
-      ObjectUtil.GetObjectPtr(targetId, false).DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape
+      DataUtil.GetObjectPtr(targetId, false).DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape
     ) {
       switch (hookElement.id) {
         case hookPts.KTC:
@@ -1480,7 +1482,7 @@ class ArcLine extends BaseLine {
     }
 
     // Retrieve the target object, then delegate if it is of a specific type.
-    const refObject = ObjectUtil.GetObjectPtr(targetId, false);
+    const refObject = DataUtil.GetObjectPtr(targetId, false);
     if (refObject && refObject.objecttype === NvConstant.FNObjectTypes.Multiplicity) {
       resultPoints = super.GetPerimPts(event, hooks, param3, param4, param5, targetId);
       T3Util.Log("= S.ArcLine GetPerimPts output (Multiplicity):", resultPoints);

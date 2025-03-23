@@ -1,5 +1,3 @@
-
-
 import BaseSymbol from './S.BaseSymbol'
 import Utils1 from '../Util/Utils1';
 import Utils2 from "../Util/Utils2";
@@ -14,7 +12,7 @@ import TextConstant from '../Data/Constant/TextConstant';
 import StyleConstant from '../Data/Constant/StyleConstant';
 import T3Util from '../Util/T3Util';
 import Instance from '../Data/Instance/Instance';
-import ObjectUtil from '../Opt/Data/ObjectUtil';
+import DataUtil from '../Opt/Data/DataUtil';
 
 /**
  * Represents an SVG Fragment Symbol that can be inserted into documents as a reusable graphical element.
@@ -100,11 +98,11 @@ class SVGFragmentSymbol extends BaseSymbol {
     const width = frame.width;
     const height = frame.height;
 
-    container.SetSize(width, height);
-    container.SetPos(frame.x, frame.y);
-
     symbol.SetSize(width, height);
     symbol.SetScale(width / this.InitialGroupBounds.width, height / this.InitialGroupBounds.height);
+
+    container.SetSize(width, height);
+    container.SetPos(frame.x, frame.y);
 
     // Apply mirror/flip effects if needed
     const flipHorizontal = (this.extraflags & OptConstant.ExtraFlags.FlipHoriz) > 0;
@@ -276,7 +274,7 @@ class SVGFragmentSymbol extends BaseSymbol {
     if (shapeElement) {
       const shapeID = shapeElement.GetID();
       if (shapeID >= 0) {
-        const shapeObject = ObjectUtil.GetObjectPtr(shapeID, false);
+        const shapeObject = DataUtil.GetObjectPtr(shapeID, false);
         this.prevBBox = $.extend(true, {}, this.Frame);
         const offset = this.Resize(shapeElement, newBoundingBox, shapeObject);
         T3Util.Log("= S.SVGFragmentSymbol | ResizeInTextEdit Output:", { offset });
@@ -495,7 +493,7 @@ class SVGFragmentSymbol extends BaseSymbol {
     connectorData = (function (obj: any) {
       let hook, result = null;
       if (obj.hooks.length) {
-        hook = ObjectUtil.GetObjectPtr(obj.hooks[0].objid, false);
+        hook = DataUtil.GetObjectPtr(obj.hooks[0].objid, false);
         if (hook && hook.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
           result = hook.PrGetShapeConnectorInfo(obj.hooks[0]);
         } else if (hook && hook instanceof Instance.Shape.ShapeContainer) {
@@ -566,8 +564,8 @@ class SVGFragmentSymbol extends BaseSymbol {
     // Check conditions for adding rotation knob
     const tooSmallForRotation = this.Frame.width < 44,
       hasConnectorHooks = this.hooks.length > 0 &&
-        (ObjectUtil.GetObjectPtr(this.hooks[0].objid, false) ?
-          ObjectUtil.GetObjectPtr(this.hooks[0].objid, false).DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector
+        (DataUtil.GetObjectPtr(this.hooks[0].objid, false) ?
+          DataUtil.GetObjectPtr(this.hooks[0].objid, false).DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector
           : false);
 
     if (

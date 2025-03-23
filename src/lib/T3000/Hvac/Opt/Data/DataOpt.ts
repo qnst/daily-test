@@ -193,6 +193,16 @@ class DataOpt {
           const polygonData = plainToInstance(Instance.Shape.Polygon, objectData);
           storedObject.Data = polygonData;
         }
+
+        if (objectData.ShapeType === "GroupSymbol") {
+          const groupSymbolData = plainToInstance(Instance.Shape.GroupSymbol, objectData);
+          storedObject.Data = groupSymbolData;
+        }
+
+        if (objectData.ShapeType === "SVGFragmentSymbol") {
+          const svgFragmentSymbolData = plainToInstance(Instance.Shape.SVGFragmentSymbol, objectData);
+          storedObject.Data = svgFragmentSymbolData;
+        }
       }
 
       if (objectData.DrawingObjectBaseClass === 3) {

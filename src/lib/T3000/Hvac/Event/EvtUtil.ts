@@ -3,7 +3,6 @@
 import T3Gv from '../Data/T3Gv';
 import Utils2 from '../Util/Utils2';
 import $ from 'jquery';
-import BaseDrawObject from '../Shape/S.BaseDrawObject'
 import Instance from '../Data/Instance/Instance'
 import NvConstant from '../Data/Constant/NvConstant'
 import RightClickMd from '../Model/RightClickMd'
@@ -12,9 +11,13 @@ import DocUtil from '../Doc/DocUtil';
 import OptConstant from '../Data/Constant/OptConstant';
 import T3Util from '../Util/T3Util';
 import MouseUtil from './MouseUtil';
-import ObjectUtil from '../Opt/Data/ObjectUtil';
+import DataUtil from '../Opt/Data/DataUtil';
 import SelectUtil from '../Opt/Opt/SelectUtil';
 import UIUtil from '../Opt/UI/UIUtil';
+import OptCMUtil from '../Opt/Opt/OptCMUtil';
+import TextUtil from '../Opt/Opt/TextUtil';
+import LMEvtUtil from '../Opt/Opt/LMEvtUtil';
+import DrawUtil from '../Opt/Opt/DrawUtil';
 
 /**
  * Utility class for handling various user interaction events on an SVG document.
@@ -115,7 +118,7 @@ class EvtUtil {
 
     // For left-clicks, clear selection
     if (!isRightClick) {
-      T3Gv.opt.ClearSelectionClick();
+      SelectUtil.ClearSelectionClick();
     }
 
     // Allow typing in work area
@@ -200,7 +203,7 @@ class EvtUtil {
     T3Gv.opt.WorkAreaHammer.off("dragend");
 
     // Restore default edit mode
-    T3Gv.opt.SetEditMode(NvConstant.EditState.Default);
+    OptCMUtil.SetEditMode(NvConstant.EditState.Default);
 
     T3Util.Log("E.Evt WorkAreaHammerPanEnd output: pan state reset, edit mode restored to default");
     return false;
@@ -229,7 +232,7 @@ class EvtUtil {
 
     // Check if we should start panning instead of selection
     const shouldPan = /*T3Gv.opt.isMobilePlatform ||*/
-      T3Gv.opt.IsWheelClick(event) ||
+      LMEvtUtil.IsWheelClick(event) ||
       T3Constant.DocContext.SpacebarDown;
 
     if (shouldPan) {
@@ -267,7 +270,7 @@ class EvtUtil {
       }
 
       // Start rubber band selection
-      T3Gv.opt.StartRubberBandSelect(event);
+      SelectUtil.StartRubberBandSelect(event);
 
       T3Util.Log("E.Evt WorkAreaHammerDragStart output: rubber band selection started");
       return false;
@@ -297,7 +300,7 @@ class EvtUtil {
       // }
 
       // If auto-scrolling is in progress and returns false, exit early
-      if (!T3Gv.opt.AutoScrollCommon(
+      if (!DrawUtil.AutoScrollCommon(
         event,
         false,
         'RubberBandSelectDoAutoScroll'
@@ -314,7 +317,7 @@ class EvtUtil {
       T3Util.Log("E.Evt RubberBandDrag processing: coordinates", documentCoordinates);
 
       // Update the rubber band selection shape
-      T3Gv.opt.RubberBandSelectMoveCommon(
+      SelectUtil.RubberBandSelectMoveCommon(
         documentCoordinates.x,
         documentCoordinates.y
       );
@@ -322,7 +325,7 @@ class EvtUtil {
       T3Util.Log("E.Evt RubberBandDrag output: rubber band updated");
     } catch (error) {
       // Handle exceptions during rubber band selection
-      T3Gv.opt.RubberBandSelectExceptionCleanup(error);
+      SelectUtil.RubberBandSelectExceptionCleanup(error);
       T3Gv.opt.ExceptionCleanup(error);
       T3Util.Log("E.Evt RubberBandDrag error:", error);
       throw error;
@@ -342,15 +345,15 @@ class EvtUtil {
 
     try {
       // Clean up event handlers used for rubber band selection
-      T3Gv.opt.UnbindRubberBandHammerEvents();
-      T3Gv.opt.ResetAutoScrollTimer();
+      SelectUtil.UnbindRubberBandHammerEvents();
+      DrawUtil.ResetAutoScrollTimer();
 
       // Get the final rubber band selection area
       const rubberBandFrame = T3Gv.opt.rubberBandFrame;
 
       // Select all objects within the selection rectangle
       // If shift key is pressed, add to existing selection instead of replacing
-      T3Gv.opt.SelectAllInRect(
+      SelectUtil.SelectAllInRect(
         rubberBandFrame,
         event.gesture.srcEvent.shiftKey
       );
@@ -369,7 +372,7 @@ class EvtUtil {
 
     } catch (error) {
       // Clean up if an error occurs during selection
-      T3Gv.opt.RubberBandSelectExceptionCleanup(error);
+      SelectUtil.RubberBandSelectExceptionCleanup(error);
       T3Gv.opt.ExceptionCleanup(error);
       T3Util.Log("E.Evt RubberBandDragEnd error:", error);
       throw error;
@@ -398,7 +401,7 @@ class EvtUtil {
       // T3Gv.opt.SetUIAdaptation(hammerEvent);
 
       // Start the drawing operation
-      T3Gv.opt.StartNewObjectDraw(hammerEvent);
+      DrawUtil.StartNewObjectDraw(hammerEvent);
 
       T3Util.Log("E.Evt WorkAreaHammerDrawStart output: drawing started");
     } else {
@@ -457,7 +460,7 @@ class EvtUtil {
         T3Util.Log("E.Evt DrawRelease output: drawing completed");
       } catch (error) {
         // Clean up in case of errors during draw completion
-        T3Gv.opt.CancelOperation();
+        OptCMUtil.CancelOperation();
         drawableObject.LMDrawClickExceptionCleanup(error);
         T3Gv.opt.ExceptionCleanup(error);
 
@@ -506,11 +509,11 @@ class EvtUtil {
       switch (T3Gv.opt.crtOpt) {
         case OptConstant.OptTypes.None:
           // Check for hyperlink hits or process normal tap
-          if (!T3Gv.opt.CheckTextHyperlinkHit(shape, tapEvent)) {
-            T3Gv.opt.LMTestIconClick(tapEvent);
+          if (!TextUtil.CheckTextHyperlinkHit(shape, tapEvent)) {
+            LMEvtUtil.LMTestIconClick(tapEvent);
 
             // Handle rollover actions if not in read-only mode
-            if (T3Gv.opt.GetUIAdaptation(tapEvent) && !T3Gv.docUtil.IsReadOnly()) {
+            if (UIUtil.GetUIAdaptation(tapEvent) && !T3Gv.docUtil.IsReadOnly()) {
               shapeElement = T3Gv.opt.svgObjectLayer.GetElementById(shape.tag);
               shape.SetRolloverActions(T3Gv.opt.svgDoc, shapeElement);
             }
@@ -527,12 +530,12 @@ class EvtUtil {
         case OptConstant.OptTypes.StampTextOnTap:
           // Handle text editing in stamp text mode
           if (!T3Gv.opt.stampSticky) {
-            T3Gv.opt.CancelObjectStampTextOnTap(true);
+            DrawUtil.CancelObjectStampTextOnTap(true);
           }
 
           if (shape.AllowTextEdit()) {
             shapeElement = T3Gv.opt.svgObjectLayer.GetElementById(shape.tag);
-            T3Gv.opt.ActivateTextEdit(shapeElement.svgObj.SDGObj, tapEvent, false);
+            TextUtil.ActivateTextEdit(shapeElement.svgObj.SDGObj, tapEvent, false);
           }
 
           T3Util.Log("E.Evt ShapeTap output: text edit activated in stamp mode");
@@ -587,7 +590,7 @@ class EvtUtil {
         case OptConstant.OptTypes.FormatPainter:
           // Normal drag operation - start movement
           Utils2.StopPropagationAndDefaults(event);
-          T3Gv.opt.LMMoveClick(event);
+          LMEvtUtil.LMMoveClick(event);
           T3Util.Log("E.Evt ShapeDragStart output: move operation started");
           return false;
 
@@ -629,10 +632,10 @@ class EvtUtil {
 
           try {
             // Clean up any active move operation
-            T3Gv.opt.LMMoveRelease(event);
+            LMEvtUtil.LMMoveRelease(event);
           } catch (error) {
             // Handle exceptions during move release
-            T3Gv.opt.LMMoveExceptionCleanup(error);
+            LMEvtUtil.LMMoveExceptionCleanup(error);
             T3Gv.opt.ExceptionCleanup(error);
             T3Util.Log("E.Evt ShapeHold error:", error);
             throw error;
@@ -666,10 +669,10 @@ class EvtUtil {
 
       // Get the object using its ID
       const shapeBlockId = shape.BlockID;
-      const objectPtr = ObjectUtil.GetObjectPtr(shapeBlockId, false);
+      const objectPtr = DataUtil.GetObjectPtr(shapeBlockId, false);
 
       // Validate that we have a valid drawing object
-      if (!(objectPtr && objectPtr instanceof BaseDrawObject)) {
+      if (!(objectPtr && objectPtr instanceof Instance.Shape.BaseDrawObject)) {
         T3Util.Log("E.Evt ShapeDoubleTap output: invalid object");
         return false;
       }
@@ -742,7 +745,7 @@ class EvtUtil {
 
           // Default behavior: activate text editing
           const shapeElement = T3Gv.opt.svgObjectLayer.GetElementById(shape.tag);
-          T3Gv.opt.ActivateTextEdit(shapeElement.svgObj.SDGObj, event);
+          TextUtil.ActivateTextEdit(shapeElement.svgObj.SDGObj, event);
           T3Util.Log("E.Evt ShapeDoubleTap output: text editor activated");
           return false;
 
@@ -770,15 +773,15 @@ class EvtUtil {
 
     try {
       // Check if dragging over custom library
-      let isOverCustomLibrary = T3Gv.opt.CheckDragIsOverCustomLibrary(event);
+      let isOverCustomLibrary = DrawUtil.CheckDragIsOverCustomLibrary(event);
 
       // Track the movement of the shape
-      T3Gv.opt.LMMoveTrack(event, isOverCustomLibrary);
+      LMEvtUtil.LMMoveTrack(event, isOverCustomLibrary);
 
       T3Util.Log("E.Evt ShapeDrag output: shape position updated");
     } catch (error) {
       // Clean up in case of errors during movement
-      T3Gv.opt.LMMoveExceptionCleanup(error);
+      LMEvtUtil.LMMoveExceptionCleanup(error);
       T3Gv.opt.ExceptionCleanup(error);
 
       T3Util.Log("E.Evt ShapeDrag error:", error);
@@ -800,12 +803,12 @@ class EvtUtil {
 
     try {
       // Complete the movement operation
-      T3Gv.opt.LMMoveRelease(event);
+      LMEvtUtil.LMMoveRelease(event);
 
       T3Util.Log("E.Evt ShapeDragEnd output: shape movement completed");
     } catch (error) {
       // Clean up in case of errors during move completion
-      T3Gv.opt.LMMoveExceptionCleanup(error);
+      LMEvtUtil.LMMoveExceptionCleanup(error);
       T3Gv.opt.ExceptionCleanup(error);
 
       T3Util.Log("E.Evt ShapeDragEnd error:", error);
@@ -865,7 +868,7 @@ class EvtUtil {
     T3Util.Log("E.Evt StampObjectDrag input:", event);
 
     // Move the stamp object to follow the drag position
-    T3Gv.opt.StampObjectMove(event);
+    DrawUtil.StampObjectMove(event);
 
     T3Util.Log("E.Evt StampObjectDrag output: stamp object position updated");
     return true;
@@ -880,7 +883,7 @@ class EvtUtil {
     T3Util.Log("E.Evt MouseStampObjectMove input:", mouseEvent);
 
     // Move the stamp object to follow the mouse position
-    T3Gv.opt.MouseStampObjectMove(mouseEvent);
+    DrawUtil.MouseStampObjectMove(mouseEvent);
 
     T3Util.Log("E.Evt MouseStampObjectMove output: stamp object position updated");
   };
@@ -898,7 +901,7 @@ class EvtUtil {
       T3Util.Log("E.Evt MouseStampObjectDone input:", mouseEvent);
 
       // Process the stamp completion and place the object
-      T3Gv.opt.MouseStampObjectDone(mouseEvent, stampObject);
+      DrawUtil.MouseStampObjectDone(mouseEvent, stampObject);
 
       T3Util.Log("E.Evt MouseStampObjectDone output: object placement completed");
       return true;
@@ -918,7 +921,7 @@ class EvtUtil {
       T3Util.Log("E.Evt StampObjectDragEnd input:", event);
 
       // Process the drag completion and place the stamp object
-      T3Gv.opt.DragDropObjectDone(event, stampObject);
+      DrawUtil.DragDropObjectDone(event, stampObject);
       // T3Gv.opt.MouseStampObjectDone(event, stampObject);
 
       T3Util.Log("E.Evt StampObjectDragEnd output: object placement completed");
@@ -977,9 +980,9 @@ class EvtUtil {
     event.gesture.stopDetect();
 
     // Cancel any active selections or moves
-    T3Gv.opt.RubberBandSelect_Cancel();
+    SelectUtil.RubberBandSelectCancel();
     if (T3Gv.opt.moveList && T3Gv.opt.moveList.length) {
-      T3Gv.opt.LMMoveRelease(event);
+      LMEvtUtil.LMMoveRelease(event);
     }
 
     // Get work area and cursor position
@@ -1032,15 +1035,15 @@ class EvtUtil {
     T3Util.Log("E.Evt WorkAreaHammerPan input:", event);
 
     // Cancel any active rubber band selection
-    T3Gv.opt.RubberBandSelect_Cancel();
+    SelectUtil.RubberBandSelectCancel();
 
     // Release any active move operation
     if (T3Gv.opt.moveList && T3Gv.opt.moveList.length) {
-      T3Gv.opt.LMMoveRelease(event);
+      LMEvtUtil.LMMoveRelease(event);
     }
 
     // Set edit mode to indicate grabbing/panning
-    T3Gv.opt.SetEditMode(NvConstant.EditState.Grab);
+    OptCMUtil.SetEditMode(NvConstant.EditState.Grab);
 
     // Prevent default browser behavior
     Utils2.StopPropagationAndDefaults(event);
@@ -1110,10 +1113,10 @@ class EvtUtil {
     event.gesture.stopDetect();
 
     // Cancel any active selections or moves
-    T3Gv.opt.RubberBandSelect_Cancel();
+    T3Gv.opt.RubberBandSelectCancel();
     if (T3Gv.opt.moveList &&
       T3Gv.opt.moveList.length) {
-      T3Gv.opt.LMMoveRelease(event);
+      LMEvtUtil.LMMoveRelease(event);
     }
 
     // Get work area and cursor position
@@ -1330,7 +1333,7 @@ class EvtUtil {
         T3Util.Log("E.Evt PolyLineDrawExtend output: polyline extended");
       } catch (error) {
         // Clean up in case of errors
-        T3Gv.opt.CancelOperation();
+        OptCMUtil.CancelOperation();
         polyLineObject.LMDrawClickExceptionCleanup(error);
         T3Gv.opt.ExceptionCleanup(error);
 

@@ -8,7 +8,8 @@ import ShapeUtil from '../Opt/Shape/ShapeUtil';
 import DSConstant from '../Opt/DS/DSConstant';
 import OptConstant from '../Data/Constant/OptConstant';
 import T3Util from '../Util/T3Util';
-import ObjectUtil from '../Opt/Data/ObjectUtil';
+import DataUtil from '../Opt/Data/DataUtil';
+import TextUtil from '../Opt/Opt/TextUtil';
 
 /**
  * A specialized symbol class for rendering 3D symbols in T3000 applications.
@@ -364,11 +365,11 @@ class D3Symbol extends BaseSymbol {
 
     const renderSettings = this.d3Settings ? this.d3Settings.renderSettings : null;
     if (renderSettings && renderSettings[paramName]) {
-      ObjectUtil.GetObjectPtr(this.BlockID, true);
+      DataUtil.GetObjectPtr(this.BlockID, true);
       renderSettings[paramName].value = paramValue;
       renderSettings[paramName].dataMap = null;
       this.UpdateSizeFromSettings();
-      T3Gv.opt.AddToDirtyList(this.BlockID);
+      DataUtil.AddToDirtyList(this.BlockID);
     }
 
     T3Util.Log("S.D3Symbol: SetParamValue - Updated renderSettings:", renderSettings);
@@ -393,7 +394,7 @@ class D3Symbol extends BaseSymbol {
           frame,
           this
         );
-        T3Gv.opt.AddToDirtyList(this.BlockID);
+        DataUtil.AddToDirtyList(this.BlockID);
       }
 
       T3Util.Log("S.D3Symbol: UpdateSizeFromSettings - New size:", newSize);
@@ -487,10 +488,10 @@ class D3Symbol extends BaseSymbol {
 
     const renderSettings = this.d3Settings ? this.d3Settings.renderSettings : null;
     if (renderSettings && renderSettings[paramName]) {
-      ObjectUtil.GetObjectPtr(this.BlockID, true);
+      DataUtil.GetObjectPtr(this.BlockID, true);
       renderSettings[paramName].dataMap = dataMap;
       this.UpdateSizeFromSettings();
-      T3Gv.opt.AddToDirtyList(this.BlockID);
+      DataUtil.AddToDirtyList(this.BlockID);
     }
 
     T3Util.Log("S.D3Symbol: SetDataMap - Updated renderSettings:", renderSettings);
@@ -619,14 +620,14 @@ class D3Symbol extends BaseSymbol {
   ChangeTextAttributes(newText, newFont, newSize, newColor, newAlignment, newWeight, newStyle, newDecoration) {
     T3Util.Log("S.D3Symbol: ChangeTextAttributes - Input:", { newText, newFont, newSize, newColor, newAlignment, newWeight, newStyle, newDecoration });
 
-    if (T3Gv.opt.GetActiveTextEdit() === this.BlockID) {
+    if (TextUtil.GetActiveTextEdit() === this.BlockID) {
       newFont = null;
     } else {
       newText = null;
     }
 
     Instance.Shape.BaseDrawObject.prototype.ChangeTextAttributes.call(this, newText, newFont, newSize, newColor, newAlignment, newWeight, newStyle, newDecoration);
-    T3Gv.opt.AddToDirtyList(this.BlockID);
+    DataUtil.AddToDirtyList(this.BlockID);
 
     T3Util.Log("S.D3Symbol: ChangeTextAttributes - Completed");
   }
@@ -651,7 +652,7 @@ class D3Symbol extends BaseSymbol {
     if (!fieldDataTableID || this.fieldDataTableID === fieldDataTableID) {
       Instance.Shape.BaseDrawObject.prototype.RefreshFromFieldData.call(this, fieldDataTableID);
       this.UpdateSizeFromSettings();
-      T3Gv.opt.AddToDirtyList(this.BlockID);
+      DataUtil.AddToDirtyList(this.BlockID);
 
       T3Util.Log("S.D3Symbol: RefreshFromFieldData - Output: true");
       return true;

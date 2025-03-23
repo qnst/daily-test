@@ -2,7 +2,6 @@
 
 import ArcLine from "../../Shape/S.ArcLine"
 import ArcSegmentedLine from "../../Shape/S.ArcSegmentedLine"
-import BaseDrawObject from "../../Shape/S.BaseDrawObject"
 import BaseLine from "../../Shape/S.BaseLine"
 import BaseShape from "../../Shape/S.BaseShape"
 import BaseSymbol from "../../Shape/S.BaseSymbol"
@@ -21,7 +20,7 @@ import RRect from "../../Shape/S.RRect"
 import SegmentedLine from "../../Shape/S.SegmentedLine"
 import ShapeContainer from "../../Shape/S.ShapeContainer"
 import SVGFragmentSymbol from "../../Shape/S.SVGFragmentSymbol"
-
+import BaseDrawObject from "../../Shape/S.BaseDrawObject"
 
 /**
  * The Shape object is a centralized registry for various shape and symbol implementations

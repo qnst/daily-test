@@ -151,7 +151,7 @@ class ToolOpt {
   GroupAct(event) {
     T3Util.Log('O.ToolOpt.GroupAct - Input:', { event });
 
-    this.tul.GroupSelectedShapes();
+    this.tul.GroupSelected();
 
     T3Util.Log('O.ToolOpt.GroupAct - Output: Grouped selected shapes');
   }
@@ -164,7 +164,7 @@ class ToolOpt {
   UnGroupAct(event) {
     T3Util.Log('O.ToolOpt.UngroupAct - Input:', { event });
 
-    this.tul.UnGroupSelectedShapes();
+    this.tul.UnGroupSelected();
 
     T3Util.Log('O.ToolOpt.UngroupAct - Output: Ungrouped selected shapes');
   }

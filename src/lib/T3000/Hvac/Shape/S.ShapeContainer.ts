@@ -13,7 +13,10 @@ import DSConstant from '../Opt/DS/DSConstant';
 import OptConstant from '../Data/Constant/OptConstant';
 import CursorConstant from '../Data/Constant/CursorConstant';
 import T3Util from '../Util/T3Util';
-import ObjectUtil from '../Opt/Data/ObjectUtil';
+import DataUtil from '../Opt/Data/DataUtil';
+import OptCMUtil from '../Opt/Opt/OptCMUtil';
+import DrawUtil from '../Opt/Opt/DrawUtil';
+import HookUtil from '../Opt/Opt/HookUtil';
 
 /**
  * A shape container that manages collections of child shapes in various layout arrangements.
@@ -113,7 +116,7 @@ class ShapeContainer extends Rect {
     // Reject shapes that already have a parent frame
     if (
       shapeToCheck.ParentFrameID >= 0 &&
-      ObjectUtil.GetObjectPtr(shapeToCheck.ParentFrameID, false)
+      DataUtil.GetObjectPtr(shapeToCheck.ParentFrameID, false)
     ) {
       T3Util.Log("= S.ShapeContainer IsShapeContainer - Output:", false);
       return false;
@@ -404,7 +407,7 @@ class ShapeContainer extends Rect {
         const index = row * containerList.nacross + col;
         let widthValue: number;
         if (list[index].id >= 0) {
-          const obj = ObjectUtil.GetObjectPtr(list[index].id, false);
+          const obj = DataUtil.GetObjectPtr(list[index].id, false);
           if (!obj) continue;
           widthValue = obj.Frame.width;
         } else {
@@ -555,7 +558,7 @@ class ShapeContainer extends Rect {
         if (closest < 0) {
           someVariable = target ? target.Data.SymbolID : "currentSymbolId";
           const newId = T3Gv.baseOpt.AddSymbol(someVariable);
-          const newObj = ObjectUtil.GetObjectPtr(newId, true);
+          const newObj = DataUtil.GetObjectPtr(newId, true);
           const childWidth = containerList.childwidth;
           const childHeight = containerList.childheight;
           const newFrame = {
@@ -567,19 +570,19 @@ class ShapeContainer extends Rect {
           newObj.UpdateFrame(newFrame);
           newObj.sizedim.width = childWidth;
           newObj.sizedim.height = childHeight;
-          T3Gv.opt.AddToDirtyList(newId);
+          DataUtil.AddToDirtyList(newId);
         } else {
           const duplicatedId = T3Gv.baseOpt.DuplicateShape(closest, true, false);
-          T3Gv.opt.AddToDirtyList(duplicatedId);
+          DataUtil.AddToDirtyList(duplicatedId);
         }
 
         const hookLocation = { x: colIndex, y: rowIndex };
         const hookPointID = OptConstant.HookPts.KCT;
         const createdIds: any[] = [];
-        T3Gv.opt.UpdateHook(closest < 0 ? someVariable : closest, -1, this.BlockID, hookPointID, hookLocation, null);
+        HookUtil.UpdateHook(closest < 0 ? someVariable : closest, -1, this.BlockID, hookPointID, hookLocation, null);
         createdIds.push(closest < 0 ? someVariable : closest);
-        T3Gv.opt.SetLinkFlag(this.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
-        T3Gv.opt.CompleteOperation(createdIds);
+        OptCMUtil.SetLinkFlag(this.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
+        DrawUtil.CompleteOperation(createdIds);
       }
     }
 
@@ -789,7 +792,7 @@ class ShapeContainer extends Rect {
       } else {
         // Point is beyond existing items, calculate extension position
         itemIndex = containerItemCount - 1;
-        const childObject = ObjectUtil.GetObjectPtr(containerItems[itemIndex].id, false);
+        const childObject = DataUtil.GetObjectPtr(containerItems[itemIndex].id, false);
 
         if (containerList.Arrangement === containerArrangement.Row) {
           // Row arrangement - extend horizontally
@@ -888,12 +891,12 @@ class ShapeContainer extends Rect {
       for (; currentIndex < totalItems; currentIndex++) {
         runningY += listItems[currentIndex].extra;
         listItems[currentIndex].pt = { x: startX, y: runningY };
-        const childObject = ObjectUtil.GetObjectPtr(listItems[currentIndex].id, false);
+        const childObject = DataUtil.GetObjectPtr(listItems[currentIndex].id, false);
 
         if (childObject) {
           // Update position if needed
           if (childObject.Frame.y !== runningY) {
-            T3Gv.opt.SetLinkFlag(childObject.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
+            OptCMUtil.SetLinkFlag(childObject.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
           }
 
           // Track maximum width for the column
@@ -928,18 +931,18 @@ class ShapeContainer extends Rect {
       let needsUpdate = false;
       for (let j = startIndex; j < currentIndex; j++) {
         listItems[j].pt.x += finalColumnWidth / 2;
-        const currentObject = ObjectUtil.GetObjectPtr(listItems[j].id, false);
+        const currentObject = DataUtil.GetObjectPtr(listItems[j].id, false);
         if (
           currentObject &&
           (currentObject.Frame.x + currentObject.Frame.width / 2) !== (containerInstance.Frame.x + listItems[j].pt.x)
         ) {
-          T3Gv.opt.SetLinkFlag(currentObject.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
+          OptCMUtil.SetLinkFlag(currentObject.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
           needsUpdate = true;
         }
       }
 
       if (needsUpdate) {
-        T3Gv.opt.SetLinkFlag(containerInstance.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
+        OptCMUtil.SetLinkFlag(containerInstance.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
       }
 
       return { start: currentIndex, colwidth: finalColumnWidth, top: runningY };
@@ -965,13 +968,13 @@ class ShapeContainer extends Rect {
       for (; currentIndex < totalItems; currentIndex++) {
         runningX += listItems[currentIndex].extra;
         listItems[currentIndex].pt = { x: runningX, y: currentBaseY };
-        const childObject = ObjectUtil.GetObjectPtr(listItems[currentIndex].id, false);
+        const childObject = DataUtil.GetObjectPtr(listItems[currentIndex].id, false);
         let objectWidth: number, objectHeight: number;
 
         if (childObject) {
           // Update position if needed
           if (childObject.Frame.y / 2 !== currentBaseY) {
-            T3Gv.opt.SetLinkFlag(childObject.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
+            OptCMUtil.SetLinkFlag(childObject.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
           }
           objectWidth = childObject.Frame.width;
           objectHeight = childObject.Frame.height;
@@ -1012,18 +1015,18 @@ class ShapeContainer extends Rect {
       let needsUpdate = false;
       for (let j = startIndex; j < currentIndex; j++) {
         listItems[j].pt.y += finalRowHeight / 2;
-        const currentObject = ObjectUtil.GetObjectPtr(listItems[j].id, false);
+        const currentObject = DataUtil.GetObjectPtr(listItems[j].id, false);
         if (
           currentObject &&
           (currentObject.Frame.y + currentObject.Frame.height / 2) !== (basePoint.y + listItems[j].pt.y)
         ) {
-          T3Gv.opt.SetLinkFlag(currentObject.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
+          OptCMUtil.SetLinkFlag(currentObject.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
           needsUpdate = true;
         }
       }
 
       if (needsUpdate) {
-        T3Gv.opt.SetLinkFlag(containerInstance.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
+        OptCMUtil.SetLinkFlag(containerInstance.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
       }
 
       return { start: currentIndex, rowht: finalRowHeight, left: runningX };
@@ -1065,7 +1068,7 @@ class ShapeContainer extends Rect {
             if (item.id == null) {
               item.id = -1;
             }
-            const childObject = ObjectUtil.GetObjectPtr(item.id, false);
+            const childObject = DataUtil.GetObjectPtr(item.id, false);
             const widthValue = childObject ? childObject.Frame.width : containerList.childwidth;
             const heightValue = childObject ? childObject.Frame.height : containerList.childheight;
 
@@ -1176,13 +1179,13 @@ class ShapeContainer extends Rect {
         }
 
         this.TRectToFrame(containerFrame, true);
-        T3Gv.opt.AddToDirtyList(this.BlockID);
+        DataUtil.AddToDirtyList(this.BlockID);
 
         // Update connected container if present
-        const connectedObject = this.hooks.length ? ObjectUtil.GetObjectPtr(this.hooks[0].objid, false) : null;
+        const connectedObject = this.hooks.length ? DataUtil.GetObjectPtr(this.hooks[0].objid, false) : null;
         if (connectedObject && connectedObject instanceof ShapeContainer) {
           connectedObject.flags = Utils2.SetFlag(connectedObject.flags, NvConstant.ObjFlags.Obj1, true);
-          T3Gv.opt.SetLinkFlag(connectedObject.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
+          OptCMUtil.SetLinkFlag(connectedObject.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
         }
 
         // Apply offsets if needed
@@ -1504,7 +1507,7 @@ class ShapeContainer extends Rect {
     }
 
     if (targetShapeId != null) {
-      const targetObject = ObjectUtil.GetObjectPtr(targetShapeId, false);
+      const targetObject = DataUtil.GetObjectPtr(targetShapeId, false);
       targetObject.OnDisconnect(targetShapeId, this);
 
       let targetPosition, rowIndex, dummyData;
@@ -1704,7 +1707,7 @@ class ShapeContainer extends Rect {
           );
 
           // Mark container for layout update
-          T3Gv.opt.SetLinkFlag(this.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
+          OptCMUtil.SetLinkFlag(this.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
         }
 
         let offsetX = 0,
@@ -1738,7 +1741,7 @@ class ShapeContainer extends Rect {
               OptConstant.ObjMoreFlags.ContainerChild,
               false
             );
-            T3Gv.opt.SetLinkFlag(this.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
+            OptCMUtil.SetLinkFlag(this.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
           }
         }
 
@@ -1754,12 +1757,12 @@ class ShapeContainer extends Rect {
             for (let row = 0; row < container.ndown; row++) {
               for (let col = 0; col < container.nacross; col++) {
                 const idx = row * container.nacross + col;
-                const obj = ObjectUtil.GetObjectPtr(listRef[idx].id, false);
+                const obj = DataUtil.GetObjectPtr(listRef[idx].id, false);
 
                 if (obj && obj.hooks.length) {
                   const hook = obj.hooks[0].connect;
                   if (hook.x !== col || hook.y !== row) {
-                    const objFront = ObjectUtil.GetObjectPtr(listRef[idx].id, true);
+                    const objFront = DataUtil.GetObjectPtr(listRef[idx].id, true);
                     objFront.hooks[0].connect.x = col;
                     objFront.hooks[0].connect.y = row;
                   }
@@ -1778,7 +1781,7 @@ class ShapeContainer extends Rect {
             const listRef = currentContainerList.List;
 
             for (let j = 0, len = listRef.length; j < len; j++) {
-              const obj = ObjectUtil.GetObjectPtr(listRef[j].id, true);
+              const obj = DataUtil.GetObjectPtr(listRef[j].id, true);
               if (obj && obj.hooks.length) {
                 obj.hooks[0].connect.y = j;
               }

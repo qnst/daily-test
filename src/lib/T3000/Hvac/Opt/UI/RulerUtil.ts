@@ -1,9 +1,11 @@
-import NvConstant from "../../Data/Constant/NvConstant";
-import OptConstant from "../../Data/Constant/OptConstant";
-import T3Gv from "../../Data/T3Gv";
-import T3Util from "../../Util/T3Util";
-import ObjectUtil from "../Data/ObjectUtil";
 
+
+import T3Gv from '../../Data/T3Gv';
+import '../../Util/T3Hammer';
+import NvConstant from '../../Data/Constant/NvConstant';
+import OptConstant from "../../Data/Constant/OptConstant";
+import T3Util from "../../Util/T3Util";
+import DataUtil from "../Data/DataUtil";
 
 class RulerUtil {
 
@@ -23,7 +25,7 @@ class RulerUtil {
   ): string {
     T3Util.Log("O.Opt GetLengthInRulerUnits - Input:", { lengthInUnits, skipFeetConversion, offset, displayFlags });
 
-    const sessionData = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
+    const sessionData = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
     let resultString = "";
     let feetPart = 0;
     let inchPart = 0;
@@ -198,6 +200,35 @@ class RulerUtil {
       return 1;
     }
   }
+
+  /**
+   * Determines the appropriate denominator for fractional inch measurements based on current ruler scale
+   * This function calculates what denominator should be used when displaying measurements as fractions.
+   * For smaller ruler scales (more zoomed in), it uses larger denominators for finer precision.
+   * For larger scales (more zoomed out), it uses smaller denominators for simpler fractions.
+   *
+   * @returns The denominator to use for fractional measurements (1, 2, 4, 8, or 16)
+   */
+  static GetFractionDenominator() {
+    let denominator;
+    const rulerScale = T3Gv.docUtil.rulerConfig.majorScale;
+
+    // Determine denominator based on ruler scale
+    if (rulerScale <= 1) {
+      denominator = 16;  // Use 16ths of an inch at smallest scale
+    } else if (rulerScale <= 2) {
+      denominator = 8;   // Use 8ths of an inch
+    } else if (rulerScale <= 4) {
+      denominator = 4;   // Use 4ths of an inch (quarters)
+    } else if (rulerScale <= 8) {
+      denominator = 2;   // Use halves of an inch
+    } else {
+      denominator = 1;   // Use whole inches at largest scale
+    }
+
+    return denominator;
+  }
+
 }
 
 export default RulerUtil

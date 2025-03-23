@@ -22,11 +22,20 @@ import OptConstant from '../Data/Constant/OptConstant';
 import CursorConstant from '../Data/Constant/CursorConstant';
 import TextConstant from '../Data/Constant/TextConstant';
 import T3Util from '../Util/T3Util';
-import ObjectUtil from "../Opt/Data/ObjectUtil";
+import DataUtil from "../Opt/Data/DataUtil";
 import RightClickMd from "../Model/RightClickMd";
 import UIUtil from "../Opt/UI/UIUtil";
 import LayerUtil from "../Opt/Opt/LayerUtil";
 import RulerUtil from "../Opt/UI/RulerUtil";
+import OptCMUtil from "../Opt/Opt/OptCMUtil";
+import SvgUtil from "../Opt/Opt/SvgUtil";
+import DrawUtil from "../Opt/Opt/DrawUtil";
+import HookUtil from "../Opt/Opt/HookUtil";
+import LMEvtUtil from "../Opt/Opt/LMEvtUtil";
+import SelectUtil from "../Opt/Opt/SelectUtil";
+import ToolActUtil from "../Opt/Opt/ToolActUtil";
+import PolyUtil from "../Opt/Opt/PolyUtil";
+import TextUtil from "../Opt/Opt/TextUtil";
 
 /**
  * Represents a base line object in the T3000 drawing system.
@@ -286,12 +295,12 @@ class BaseLine extends BaseDrawObject {
   }
 
   GuideDistanceOnly(): any {
-    T3Util.Log("= S.BaseLine: Guide_DistanceOnly called");
+    T3Util.Log("= S.BaseLine: GuideDistanceOnly called");
 
     const isFloorPlanWall = this.objecttype === NvConstant.FNObjectTypes.FlWall;
     const result = isFloorPlanWall ? NvConstant.Guide_DistanceTypes.PolyWall : false;
 
-    T3Util.Log("= S.BaseLine: Guide_DistanceOnly returning", result);
+    T3Util.Log("= S.BaseLine: GuideDistanceOnly returning", result);
     return result;
   }
 
@@ -760,7 +769,7 @@ class BaseLine extends BaseDrawObject {
         this.AdjustLineStart(svgElement, this.StartPoint.x + widthDifference, this.StartPoint.y + heightDifference, 0, true);
       }
 
-      T3Gv.opt.SetLinkFlag(this.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
+      OptCMUtil.SetLinkFlag(this.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
     } else {
       this.UpdateDimensions(newWidth);
     }
@@ -895,8 +904,8 @@ class BaseLine extends BaseDrawObject {
     }
 
     this.CalcFrame(true);
-    T3Gv.opt.SetLinkFlag(blockID, DSConstant.LinkFlags.SED_L_MOVE);
-    T3Gv.opt.AddToDirtyList(blockID);
+    OptCMUtil.SetLinkFlag(blockID, DSConstant.LinkFlags.SED_L_MOVE);
+    DataUtil.AddToDirtyList(blockID);
 
     T3Util.Log("= S.BaseLine: LinkGrow updated StartPoint:", this.StartPoint, "EndPoint:", this.EndPoint);
   }
@@ -1245,7 +1254,7 @@ class BaseLine extends BaseDrawObject {
     }
 
     // Perform auto-grow drag adjustments
-    const adjustedCoords = T3Gv.opt.DoAutoGrowDrag(docCoords);
+    const adjustedCoords = DrawUtil.DoAutoGrowDrag(docCoords);
     T3Util.Log("= S.BaseLine: Adjusted coordinates after auto-grow drag:", adjustedCoords);
 
     // Scroll to the new position
@@ -1342,7 +1351,7 @@ class BaseLine extends BaseDrawObject {
       T3Gv.opt.PinTrackPoint(n);
     }
 
-    const adjustedCoords = T3Gv.opt.DoAutoGrowDrag(n);
+    const adjustedCoords = DrawUtil.DoAutoGrowDrag(n);
     let trackCoords = this.LMActionDuringTrack(adjustedCoords);
 
     t = T3Gv.opt.linkParams && T3Gv.opt.linkParams.ConnectIndex >= 0;
@@ -1376,7 +1385,7 @@ class BaseLine extends BaseDrawObject {
     T3Util.Log("= S.BaseLine: LMActionRelease called with event:", event, "isSecondary:", isSecondary);
 
     if (!isSecondary) {
-      T3Gv.opt.UnbindActionClickHammerEvents();
+      LMEvtUtil.UnbindActionClickHammerEvents();
       this.ResetAutoScrollTimer();
 
       // if (Collab.AllowMessage()) {
@@ -1449,9 +1458,9 @@ class BaseLine extends BaseDrawObject {
       default:
 
         if (T3Gv.opt.ob.Frame) {
-          T3Gv.opt.MaintainLink(T3Gv.opt.actionStoredObjectId, this, T3Gv.opt.ob, T3Gv.opt.actionTriggerId);
+          HookUtil.MaintainLink(T3Gv.opt.actionStoredObjectId, this, T3Gv.opt.ob, T3Gv.opt.actionTriggerId);
           T3Gv.opt.ob = {};
-          T3Gv.opt.SetLinkFlag(T3Gv.opt.actionStoredObjectId, DSConstant.LinkFlags.SED_L_MOVE);
+          OptCMUtil.SetLinkFlag(T3Gv.opt.actionStoredObjectId, DSConstant.LinkFlags.SED_L_MOVE);
           T3Gv.opt.UpdateLinks();
         }
     }
@@ -1459,7 +1468,7 @@ class BaseLine extends BaseDrawObject {
     this.LMActionPostRelease(T3Gv.opt.actionStoredObjectId);
 
     if (this.HyperlinkText !== "" || this.NoteID !== -1 || this.CommentID !== -1 || this.HasFieldData()) {
-      T3Gv.opt.AddToDirtyList(T3Gv.opt.actionStoredObjectId);
+      DataUtil.AddToDirtyList(T3Gv.opt.actionStoredObjectId);
     }
 
     if (!isSecondary) {
@@ -1468,7 +1477,7 @@ class BaseLine extends BaseDrawObject {
     }
 
     LayerUtil.ShowOverlayLayer();
-    T3Gv.opt.CompleteOperation(null);
+    DrawUtil.CompleteOperation(null);
 
     T3Util.Log("= S.BaseLine: LMActionRelease completed");
   }
@@ -1479,7 +1488,7 @@ class BaseLine extends BaseDrawObject {
     let objectPtr, sessionPtr, linkParams, hookIndex = -1;
 
     // Retrieve the object pointer for the given actionStoredObjectID
-    objectPtr = ObjectUtil.GetObjectPtr(actionStoredObjectID, false);
+    objectPtr = DataUtil.GetObjectPtr(actionStoredObjectID, false);
     if (!objectPtr) {
       T3Util.Log("= S.BaseLine: LMActionPreTrack - objectPtr not found");
       return;
@@ -1530,7 +1539,7 @@ class BaseLine extends BaseDrawObject {
     T3Gv.opt.linkParams = linkParams;
 
     // Retrieve the session pointer
-    sessionPtr = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
+    sessionPtr = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
 
     // Set ArraysOnly flag if linking is not allowed
     if (!this.AllowLink()) {
@@ -1554,10 +1563,10 @@ class BaseLine extends BaseDrawObject {
     }
 
     // Retrieve the links block object pointer
-    const linksBlockPtr = ObjectUtil.GetObjectPtr(T3Gv.opt.linksBlockId, false);
+    const linksBlockPtr = DataUtil.GetObjectPtr(T3Gv.opt.linksBlockId, false);
 
     // Get the hook list for circular targets
-    linkParams.lpCircList = T3Gv.opt.GetHookList(
+    linkParams.lpCircList = HookUtil.GetHookList(
       linksBlockPtr,
       linkParams.lpCircList,
       actionStoredObjectID,
@@ -1592,7 +1601,7 @@ class BaseLine extends BaseDrawObject {
         T3Gv.opt.dragDeltaX = 0;
         T3Gv.opt.dragDeltaY = 0;
 
-        if (T3Gv.opt.FindConnect(
+        if (SelectUtil.FindConnect(
           T3Gv.opt.actionStoredObjectId,
           this,
           points,
@@ -1617,7 +1626,7 @@ class BaseLine extends BaseDrawObject {
     // Check if the rectangle's x or y coordinates are negative
     if (this.r.x < 0 || this.r.y < 0) {
       T3Util.Log("= S.BaseLine: Rectangle coordinates are negative, performing undo operation");
-      T3Gv.opt.Undo();
+      ToolActUtil.Undo();
       // Collab.UnLockMessages();
       // Collab.UnBlockMessages();
       return;
@@ -1626,12 +1635,12 @@ class BaseLine extends BaseDrawObject {
     // Maintain link if the frame is defined
     if (T3Gv.opt.ob.Frame) {
       T3Util.Log("= S.BaseLine: Maintaining link with frame:", T3Gv.opt.ob.Frame);
-      T3Gv.opt.MaintainLink(blockID, this, T3Gv.opt.ob, OptConstant.ActionTriggerType.Rotate);
+      HookUtil.MaintainLink(blockID, this, T3Gv.opt.ob, OptConstant.ActionTriggerType.Rotate);
       T3Gv.opt.ob = {};
     }
 
     // Set link flag and update links
-    T3Gv.opt.SetLinkFlag(blockID, DSConstant.LinkFlags.SED_L_MOVE);
+    OptCMUtil.SetLinkFlag(blockID, DSConstant.LinkFlags.SED_L_MOVE);
     T3Gv.opt.UpdateLinks();
 
     T3Util.Log("= S.BaseLine: AfterRotateShape completed for blockID:", blockID);
@@ -1649,7 +1658,7 @@ class BaseLine extends BaseDrawObject {
     }
 
     if (T3Gv.opt.ob.Frame) {
-      T3Gv.opt.MaintainLink(blockID, this, T3Gv.opt.ob, actionTriggerID);
+      HookUtil.MaintainLink(blockID, this, T3Gv.opt.ob, actionTriggerID);
       T3Gv.opt.ob = {};
       T3Util.Log("= S.BaseLine: Maintained link and reset ob.Frame");
     }
@@ -1660,7 +1669,7 @@ class BaseLine extends BaseDrawObject {
       T3Util.Log("= S.BaseLine: Reset floating point dimensions flags");
     }
 
-    T3Gv.opt.SetLinkFlag(blockID, DSConstant.LinkFlags.SED_L_MOVE);
+    OptCMUtil.SetLinkFlag(blockID, DSConstant.LinkFlags.SED_L_MOVE);
     T3Gv.opt.UpdateLinks();
     T3Util.Log("= S.BaseLine: Set link flag and updated links");
 
@@ -1676,13 +1685,13 @@ class BaseLine extends BaseDrawObject {
     T3Util.Log("= S.BaseLine: LMActionPostRelease called with blockID:", blockID);
 
     // Set edit mode to default
-    T3Gv.opt.SetEditMode(NvConstant.EditState.Default);
+    OptCMUtil.SetEditMode(NvConstant.EditState.Default);
 
     // Check if linkParams is not null
     if (T3Gv.opt.linkParams) {
       // Handle HiliteConnect
       if (T3Gv.opt.linkParams.HiliteConnect >= 0) {
-        T3Gv.opt.HiliteConnect(
+        HookUtil.HiliteConnect(
           T3Gv.opt.linkParams.HiliteConnect,
           T3Gv.opt.linkParams.ConnectPt,
           false,
@@ -1696,7 +1705,7 @@ class BaseLine extends BaseDrawObject {
 
       // Handle HiliteJoin
       if (T3Gv.opt.linkParams.HiliteJoin >= 0) {
-        T3Gv.opt.HiliteConnect(
+        HookUtil.HiliteConnect(
           T3Gv.opt.linkParams.HiliteJoin,
           T3Gv.opt.linkParams.ConnectPt,
           false,
@@ -1709,7 +1718,7 @@ class BaseLine extends BaseDrawObject {
 
       // Handle JoinIndex
       if (T3Gv.opt.linkParams.JoinIndex >= 0) {
-        T3Gv.opt.PolyLJoin(
+        PolyUtil.PolyLJoin(
           T3Gv.opt.linkParams.JoinIndex,
           T3Gv.opt.linkParams.JoinData,
           blockID,
@@ -1717,7 +1726,7 @@ class BaseLine extends BaseDrawObject {
           false
         );
       } else if (T3Gv.opt.linkParams.ConnectIndex >= 0 || T3Gv.opt.linkParams.InitialHook >= 0) {
-        T3Gv.opt.UpdateHook(
+        HookUtil.UpdateHook(
           blockID,
           T3Gv.opt.linkParams.InitialHook,
           T3Gv.opt.linkParams.ConnectIndex,
@@ -1728,7 +1737,7 @@ class BaseLine extends BaseDrawObject {
       }
 
       // Set link flag and update links
-      T3Gv.opt.SetLinkFlag(blockID, DSConstant.LinkFlags.SED_L_MOVE);
+      OptCMUtil.SetLinkFlag(blockID, DSConstant.LinkFlags.SED_L_MOVE);
       T3Gv.opt.UpdateLinks();
 
       // Clear linkParams
@@ -1792,7 +1801,7 @@ class BaseLine extends BaseDrawObject {
       coords = T3Gv.docUtil.SnapToGrid(coords);
     }
 
-    coords = T3Gv.opt.DoAutoGrowDrag(coords);
+    coords = DrawUtil.DoAutoGrowDrag(coords);
     const startX = coords.x;
     const startY = coords.y;
 
@@ -1813,7 +1822,7 @@ class BaseLine extends BaseDrawObject {
 
     T3Gv.opt.actionBBox = $.extend(true, {}, svgFrame);
     T3Gv.opt.actionNewBBox = $.extend(true, {}, svgFrame);
-    T3Gv.opt.HideOverlayLayer();
+    LayerUtil.HideOverlayLayer();
     T3Gv.opt.actionStartX = startX;
     T3Gv.opt.actionStartY = startY;
 
@@ -1861,7 +1870,7 @@ class BaseLine extends BaseDrawObject {
     T3Util.Log("= S.BaseLine: LMActionClickExpCleanup called with error:", error);
 
     // Unbind action click hammer events
-    T3Gv.opt.UnbindActionClickHammerEvents();
+    LMEvtUtil.UnbindActionClickHammerEvents();
 
     // Reset auto scroll timer
     this.ResetAutoScrollTimer();
@@ -1885,14 +1894,14 @@ class BaseLine extends BaseDrawObject {
 
     try {
       const blockID = this.BlockID;
-      const objectPtr = ObjectUtil.GetObjectPtr(blockID, false);
+      const objectPtr = DataUtil.GetObjectPtr(blockID, false);
 
       if (!(objectPtr && objectPtr instanceof BaseDrawObject)) {
         T3Util.Log("= S.BaseLine: LMActionClick - objectPtr is not an instance of BaseDrawObject");
         return false;
       }
 
-      T3Gv.opt.InitializeAutoGrowDrag(0, blockID);
+      DrawUtil.InitializeAutoGrowDrag(0, blockID);
 
       if (!this.LMSetupActionClick(event, isSecondary)) {
         T3Util.Log("= S.BaseLine: LMActionClick - LMSetupActionClick returned false");
@@ -1901,7 +1910,7 @@ class BaseLine extends BaseDrawObject {
 
       // Collab.BeginSecondaryEdit();
 
-      const actionObjectPtr = ObjectUtil.GetObjectPtr(blockID, false);
+      const actionObjectPtr = DataUtil.GetObjectPtr(blockID, false);
       T3Gv.opt.WorkAreaHammer.on('drag', EvtUtil.Evt_ActionTrackHandlerFactory(actionObjectPtr));
       T3Gv.opt.WorkAreaHammer.on('dragend', EvtUtil.Evt_ActionReleaseHandlerFactory(actionObjectPtr));
 
@@ -1934,7 +1943,7 @@ class BaseLine extends BaseDrawObject {
     }
 
     if (T3Gv.opt.contentHeader.flags & OptConstant.CntHeaderFlags.NoAuto) {
-      const sessionObject = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
+      const sessionObject = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
       if (rotatedStartPoint.x > sessionObject.dim.x || rotatedStartPoint.y > sessionObject.dim.y || rotatedEndPoint.x > sessionObject.dim.x || rotatedEndPoint.y > sessionObject.dim.y) {
         T3Util.Log("= S.BaseLine: Rotation resulted in coordinates outside session dimensions, returning false");
         return false;
@@ -1973,8 +1982,8 @@ class BaseLine extends BaseDrawObject {
 
   AllowLink() {
 
-    const layersManager = ObjectUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
-    const session = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
+    const layersManager = DataUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
+    const session = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
 
     const useEdges = layersManager && layersManager.activelayer >= 0 && (layersManager.layers[layersManager.activelayer].flags & NvConstant.LayerFlags.UseEdges);
     const fromOverlayLayer = T3Gv.opt.fromOverlayLayer;
@@ -2080,7 +2089,7 @@ class BaseLine extends BaseDrawObject {
     }
 
     if (hookIndex >= 0) {
-      const targetObject = ObjectUtil.GetObjectPtr(hookIndex, false);
+      const targetObject = DataUtil.GetObjectPtr(hookIndex, false);
       if (targetObject && targetObject.objecttype === NvConstant.FNObjectTypes.Multiplicity) {
         let offsetX = 5;
         let offsetY = 5;
@@ -2221,7 +2230,7 @@ class BaseLine extends BaseDrawObject {
     const hookPts = OptConstant.HookPts;
 
     if (targetID != null && targetID >= 0) {
-      const targetObject = ObjectUtil.GetObjectPtr(targetID, false);
+      const targetObject = DataUtil.GetObjectPtr(targetID, false);
 
       if (targetObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape) {
         switch (hookPoint.id) {
@@ -2343,7 +2352,7 @@ class BaseLine extends BaseDrawObject {
     const HookPts = OptConstant.HookPts;
 
     if (targetID != null && targetID >= 0) {
-      const targetObject = ObjectUtil.GetObjectPtr(targetID, false);
+      const targetObject = DataUtil.GetObjectPtr(targetID, false);
 
       if (targetObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape) {
         switch (hookPoint.id) {
@@ -2382,7 +2391,7 @@ class BaseLine extends BaseDrawObject {
         T3Util.Log("= S.BaseLine: Handling NgEvent");
 
         if (this.hooks.length) {
-          const hookObject = ObjectUtil.GetObjectPtr(this.hooks[0].objid, false);
+          const hookObject = DataUtil.GetObjectPtr(this.hooks[0].objid, false);
 
           // if (hookObject && hookObject.objecttype === NvConstant.FNObjectTypes.SD_OBJT_NG_TIMELINE) {
           //   T3Util.Log("= S.BaseLine: Returning NG timeline object:", hookObject);
@@ -2420,8 +2429,8 @@ class BaseLine extends BaseDrawObject {
     const spacing = { width: null, height: null };
 
     if (this.hooks.length === 2) {
-      const hook1 = ObjectUtil.GetObjectPtr(this.hooks[0].objid, false);
-      const hook2 = ObjectUtil.GetObjectPtr(this.hooks[1].objid, false);
+      const hook1 = DataUtil.GetObjectPtr(this.hooks[0].objid, false);
+      const hook2 = DataUtil.GetObjectPtr(this.hooks[1].objid, false);
 
       if (rect.width < rect.height) {
         spacing.height = Math.abs(this.StartPoint.y - this.EndPoint.y);
@@ -2499,7 +2508,7 @@ class BaseLine extends BaseDrawObject {
     let isEndPointAtOrigin = false;
 
     // Get the target object from the object pointer
-    const targetObject = ObjectUtil.GetObjectPtr(targetObjectId, false);
+    const targetObject = DataUtil.GetObjectPtr(targetObjectId, false);
 
     // Handle target objects that are shapes
     if (targetObject && targetObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape) {
@@ -2756,7 +2765,7 @@ class BaseLine extends BaseDrawObject {
     T3Util.Log("= S.BaseLine: ChangeTarget called with e:", e, "targetId:", targetId, "a:", a, "r:", r, "i:", i, "n:", n);
 
     let apparentAngle = 0;
-    let targetObj: any = ObjectUtil.GetObjectPtr(targetId, false);
+    let targetObj: any = DataUtil.GetObjectPtr(targetId, false);
 
     if (this.TextFlags & NvConstant.TextFlags.HorizText &&
       targetObj instanceof Instance.Shape.BaseShape) {
@@ -2770,18 +2779,18 @@ class BaseLine extends BaseDrawObject {
       if (Math.abs(targetRotation - apparentAngle) > 2 &&
         Math.abs(targetRotation - (apparentAngle - 180)) > 2) {
         targetObj.RotationAngle = apparentAngle;
-        T3Gv.opt.SetLinkFlag(
+        OptCMUtil.SetLinkFlag(
           this.BlockID,
           DSConstant.LinkFlags.SED_L_MOVE | DSConstant.LinkFlags.SED_L_CHANGE
         );
-        T3Gv.opt.AddToDirtyList(targetId);
+        DataUtil.AddToDirtyList(targetId);
         T3Util.Log("= S.BaseLine: ChangeTarget updated targetObj.RotationAngle to:", apparentAngle);
       } else {
         T3Util.Log("= S.BaseLine: ChangeTarget rotation difference within tolerance, no update performed");
       }
     }
 
-    T3Gv.opt.AddToDirtyList(this.BlockID);
+    DataUtil.AddToDirtyList(this.BlockID);
     T3Util.Log("= S.BaseLine: ChangeTarget completed for BlockID:", this.BlockID);
   }
 
@@ -2851,7 +2860,7 @@ class BaseLine extends BaseDrawObject {
       }
 
       if (inflatedStartPoint && Utils2.pointInRect(inflatedStartPoint, point)) {
-        const targetObject = ObjectUtil.GetObjectPtr(hitResult.objectid, false);
+        const targetObject = DataUtil.GetObjectPtr(hitResult.objectid, false);
         if (!(targetObject && targetObject.polylist && targetObject.polylist.closed)) {
           if (hitResult) {
             hitResult.hitcode = NvConstant.HitCodes.PLApp;
@@ -2865,7 +2874,7 @@ class BaseLine extends BaseDrawObject {
       }
 
       if (inflatedEndPoint && Utils2.pointInRect(inflatedEndPoint, point)) {
-        const targetObject = ObjectUtil.GetObjectPtr(hitResult.objectid, false);
+        const targetObject = DataUtil.GetObjectPtr(hitResult.objectid, false);
         if (!(targetObject && targetObject.polylist && targetObject.polylist.closed)) {
           if (hitResult) {
             hitResult.hitcode = NvConstant.HitCodes.PLApp;
@@ -2921,7 +2930,7 @@ class BaseLine extends BaseDrawObject {
     T3Util.Log("= S.BaseLine: Converted window coords to docCoords:", docCoords);
 
     // Adjust the document coordinates for auto-grow drag
-    docCoords = T3Gv.opt.DoAutoGrowDrag(docCoords);
+    docCoords = DrawUtil.DoAutoGrowDrag(docCoords);
     T3Util.Log("= S.BaseLine: After DoAutoGrowDrag, docCoords:", docCoords);
 
     // Scroll the document to the new position
@@ -3014,7 +3023,7 @@ class BaseLine extends BaseDrawObject {
     }
 
     // Adjust the point for auto-grow dragging
-    trackPoint = T3Gv.opt.DoAutoGrowDrag(trackPoint);
+    trackPoint = DrawUtil.DoAutoGrowDrag(trackPoint);
     T3Util.Log("= S.BaseLine: After DoAutoGrowDrag, trackPoint:", trackPoint);
 
     // Auto-scroll and process new object drawing
@@ -3036,7 +3045,7 @@ class BaseLine extends BaseDrawObject {
     T3Util.Log("= S.BaseLine: CancelObjectDraw called");
 
     // Unbind click hammer events
-    T3Gv.opt.UnbindActionClickHammerEvents();
+    LMEvtUtil.UnbindActionClickHammerEvents();
 
     // Handle the lineStamp flag: if set, unbind mousemove on non-mobile platforms
     if (T3Gv.opt.lineStamp) {
@@ -3122,7 +3131,7 @@ class BaseLine extends BaseDrawObject {
 
       // Unbind click events and re-bind tap events on the work area hammer
       if (T3Gv.opt.WorkAreaHammer) {
-        T3Gv.opt.UnbindActionClickHammerEvents();
+        LMEvtUtil.UnbindActionClickHammerEvents();
         T3Gv.opt.WorkAreaHammer.on("tap", EvtUtil.Evt_WorkAreaHammerClick);
       }
       if (event && event.gesture) {
@@ -3153,9 +3162,9 @@ class BaseLine extends BaseDrawObject {
 
       // Execute post drawing routines
       if (postReleaseResult) {
-        T3Gv.opt.PostObjectDraw(null);
+        DrawUtil.PostObjectDraw(null);
       } else {
-        T3Gv.opt.PostObjectDraw(this.LMDrawRelease);
+        DrawUtil.PostObjectDraw(this.LMDrawRelease);
       }
 
       // Unbind temporary mousemove events if set via lineStamp, then reset flag
@@ -3173,7 +3182,7 @@ class BaseLine extends BaseDrawObject {
       }
       T3Util.Log("= S.BaseLine: LMDrawRelease output: completed successfully");
     } catch (error) {
-      T3Gv.opt.CancelOperation();
+      OptCMUtil.CancelOperation();
       this.LMDrawClickExceptionCleanup(error);
       T3Gv.opt.ExceptionCleanup(error);
       console.error("= S.BaseLine: LMDrawRelease encountered error:", error);
@@ -3186,7 +3195,7 @@ class BaseLine extends BaseDrawObject {
 
     // Initialize variables with readable names
     let hookFlags = this.GetHookFlags();
-    let sessionObj = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
+    let sessionObj = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
     let linksBlockObj: any;
     let hookList: Array<{ x: number; y: number; id?: number }> = [{ x: 0, y: 0 }];
     let extraData: any = {}; // for GetHookList
@@ -3211,11 +3220,11 @@ class BaseLine extends BaseDrawObject {
         T3Gv.opt.dragDeltaX = 0;
         T3Gv.opt.dragDeltaY = 0;
 
-        linksBlockObj = ObjectUtil.GetObjectPtr(T3Gv.opt.linksBlockId, false);
+        linksBlockObj = DataUtil.GetObjectPtr(T3Gv.opt.linksBlockId, false);
 
         // Try to find a connection using the hook list
         if (
-          T3Gv.opt.FindConnect(
+          SelectUtil.FindConnect(
             T3Gv.opt.actionStoredObjectId,
             this,
             hookList,
@@ -3247,7 +3256,7 @@ class BaseLine extends BaseDrawObject {
           this.EndPoint.y = this.StartPoint.y;
 
           // Get circular target hook list
-          T3Gv.opt.linkParams.lpCircList = T3Gv.opt.GetHookList(
+          T3Gv.opt.linkParams.lpCircList = HookUtil.GetHookList(
             linksBlockObj,
             T3Gv.opt.linkParams.lpCircList,
             T3Gv.opt.linkParams.SConnectIndex,
@@ -3265,7 +3274,7 @@ class BaseLine extends BaseDrawObject {
           T3Gv.opt.linkParams.JoinIndex = -1;
           T3Gv.opt.linkParams.JoinData = 0;
           T3Gv.opt.linkParams.JoinSourceData = 0;
-          T3Gv.opt.linkParams.lpCircList = T3Gv.opt.GetHookList(
+          T3Gv.opt.linkParams.lpCircList = HookUtil.GetHookList(
             linksBlockObj,
             T3Gv.opt.linkParams.lpCircList,
             T3Gv.opt.linkParams.SJoinIndex,
@@ -3316,7 +3325,7 @@ class BaseLine extends BaseDrawObject {
     T3Gv.opt.dragDeltaY = 0;
 
     // Attempt to find a connection; if found, adjust e.x and e.y
-    if (T3Gv.opt.FindConnect(
+    if (SelectUtil.FindConnect(
       T3Gv.opt.actionStoredObjectId,
       this,
       hookPoints,
@@ -3335,7 +3344,7 @@ class BaseLine extends BaseDrawObject {
       T3Gv.opt.linkParams.JoinIndex < 0
     ) {
       // Get the candidate join object
-      let joinObject = ObjectUtil.GetObjectPtr(T3Gv.opt.linkParams.SJoinIndex);
+      let joinObject = DataUtil.GetObjectPtr(T3Gv.opt.linkParams.SJoinIndex);
       // Check if the join candidate is a PolyLine
       if (this.checkIfPolyLine(joinObject)) {
         hitResult = new HitResult(-1, 0, null);
@@ -3354,15 +3363,15 @@ class BaseLine extends BaseDrawObject {
           T3Gv.opt.linkParams.JoinData = hitResult.segment;
           if (T3Gv.opt.linkParams.HiliteJoin < 0) {
             T3Gv.opt.linkParams.hiliteJoin = joinObject.BlockID;
-            if (T3Gv.opt.GetEditMode() != NvConstant.EditState.LinkJoin) {
-              T3Gv.opt.SetEditMode(NvConstant.EditState.LinkJoin, null, false);
+            if (OptCMUtil.GetEditMode() != NvConstant.EditState.LinkJoin) {
+              OptCMUtil.SetEditMode(NvConstant.EditState.LinkJoin, null, false);
               joinObject.SetCursors();
-              T3Gv.opt.SetEditMode(NvConstant.EditState.LinkJoin, null, false);
+              OptCMUtil.SetEditMode(NvConstant.EditState.LinkJoin, null, false);
             }
           }
         } else {
           if (T3Gv.opt.linkParams.HiliteJoin >= 0) {
-            T3Gv.opt.HiliteConnect(
+            HookUtil.HiliteConnect(
               T3Gv.opt.linkParams.HiliteJoin,
               T3Gv.opt.linkParams.ConnectPt,
               false,
@@ -3372,7 +3381,7 @@ class BaseLine extends BaseDrawObject {
             );
             T3Gv.opt.linkParams.HiliteJoin = -1;
           }
-          T3Gv.opt.SetEditMode(NvConstant.EditState.Default);
+          OptCMUtil.SetEditMode(NvConstant.EditState.Default);
         }
       }
     }
@@ -3390,7 +3399,7 @@ class BaseLine extends BaseDrawObject {
 
       // Process SHiliteConnect: if set, clear after hiliting using SConnectPt
       if (lp.SHiliteConnect >= 0) {
-        T3Gv.opt.HiliteConnect(
+        HookUtil.HiliteConnect(
           lp.SHiliteConnect,
           lp.SConnectPt,
           false,
@@ -3404,7 +3413,7 @@ class BaseLine extends BaseDrawObject {
 
       // Process HiliteConnect: if set, clear after hiliting using ConnectPt
       if (lp.HiliteConnect >= 0) {
-        T3Gv.opt.HiliteConnect(
+        HookUtil.HiliteConnect(
           lp.HiliteConnect,
           lp.ConnectPt,
           false,
@@ -3418,7 +3427,7 @@ class BaseLine extends BaseDrawObject {
 
       // Process SHiliteJoin: if set, hilite join in "join" mode then clear
       if (lp.SHiliteJoin >= 0) {
-        T3Gv.opt.HiliteConnect(
+        HookUtil.HiliteConnect(
           lp.SHiliteJoin,
           lp.SConnectPt,
           false,
@@ -3431,7 +3440,7 @@ class BaseLine extends BaseDrawObject {
 
       // Process HiliteJoin: if set, hilite join using ConnectPt then clear
       if (lp.HiliteJoin >= 0) {
-        T3Gv.opt.HiliteConnect(
+        HookUtil.HiliteConnect(
           lp.HiliteJoin,
           lp.ConnectPt,
           false,
@@ -3443,11 +3452,11 @@ class BaseLine extends BaseDrawObject {
       }
 
       // Reset edit mode to default
-      T3Gv.opt.SetEditMode(NvConstant.EditState.Default);
+      OptCMUtil.SetEditMode(NvConstant.EditState.Default);
 
       // If SJoinIndex is set then perform PolyLJoin on the join information
       if (lp.SJoinIndex >= 0) {
-        let joinResult = T3Gv.opt.PolyLJoin(
+        let joinResult = PolyUtil.PolyLJoin(
           lp.SJoinIndex,
           lp.SJoinData,
           actionTarget,
@@ -3462,7 +3471,7 @@ class BaseLine extends BaseDrawObject {
             lp.ConnectIndex = -1;
           }
           // Determine JoinSourceData based on the equality of EndPoint and the join object's StartPoint
-          const joinObj = ObjectUtil.GetObjectPtr(joinResult, false);
+          const joinObj = DataUtil.GetObjectPtr(joinResult, false);
           if (Utils2.EqualPt(this.EndPoint, joinObj.StartPoint)) {
             lp.JoinSourceData = 1;
           } else {
@@ -3476,7 +3485,7 @@ class BaseLine extends BaseDrawObject {
 
       // If JoinIndex is set, call PolyLJoin and check for a return value of -2
       if (lp.JoinIndex >= 0) {
-        result = (T3Gv.opt.PolyLJoin(
+        result = (PolyUtil.PolyLJoin(
           lp.JoinIndex,
           lp.JoinData,
           actionTarget,
@@ -3486,7 +3495,7 @@ class BaseLine extends BaseDrawObject {
       }
       // Otherwise, if ConnectIndex is set, update the hook using the stored parameters
       else if (lp.ConnectIndex >= 0) {
-        T3Gv.opt.UpdateHook(
+        HookUtil.UpdateHook(
           actionTarget,
           lp.InitialHook,
           lp.ConnectIndex,
@@ -3513,7 +3522,7 @@ class BaseLine extends BaseDrawObject {
   LMDrawClickExceptionCleanup(event) {
     T3Util.Log("= S.BaseLine: LMDrawClickExceptionCleanup called with input:", event);
 
-    T3Gv.opt.UnbindActionClickHammerEvents();
+    LMEvtUtil.UnbindActionClickHammerEvents();
 
     if (T3Gv.opt.lineStamp) {
       if (!T3Gv.opt.isMobilePlatform && T3Gv.opt.WorkAreaHammer) {
@@ -3635,7 +3644,7 @@ class BaseLine extends BaseDrawObject {
       this.StyleRecord.Fill.Paint.Color === currentColor
     ) {
       T3Util.Log("= S.BaseLine: Condition met. Updating background color.");
-      ObjectUtil.GetObjectPtr(this.BlockID, true);
+      DataUtil.GetObjectPtr(this.BlockID, true);
       this.StyleRecord.Fill.Paint.Color = newColor;
       T3Util.Log("= S.BaseLine: Background color updated to:", this.StyleRecord.Fill.Paint.Color);
     } else {
@@ -3735,7 +3744,7 @@ class BaseLine extends BaseDrawObject {
 
     // Get text alignment settings and session object
     const textAlignWin = ShapeUtil.TextAlignToWin(this.TextAlign);
-    const sessionObj = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
+    const sessionObj = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
 
     // Update the fill color based on the session background
     this.StyleRecord.Fill.Paint.Color = sessionObj.background.Paint.Color;
@@ -4358,7 +4367,7 @@ class BaseLine extends BaseDrawObject {
 
       // Check for a hook in the linked object (for example, if a hook with SED_KTL exists)
       let hookIndex: number;
-      const linkedObject = ObjectUtil.GetObjectPtr(triggerTarget, false);
+      const linkedObject = DataUtil.GetObjectPtr(triggerTarget, false);
       if (linkedObject && linkedObject.hooks) {
         for (hookIndex = 0; hookIndex < linkedObject.hooks.length; hookIndex++) {
           if (linkedObject.hooks[hookIndex].hookpt === OptConstant.HookPts.KTL) {
@@ -4699,7 +4708,7 @@ class BaseLine extends BaseDrawObject {
     let aggregate: boolean = false;
 
     // Get the session object using the SDDataBlockID
-    const session = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
+    const session = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
 
     // Process only if the session allows hops
     if ((session.flags & OptConstant.SessionFlags.AllowHops) !== 0) {
@@ -4904,14 +4913,14 @@ class BaseLine extends BaseDrawObject {
     T3Util.Log("= S.BaseLine: Found target element:", targetElement);
 
     // Select the object from the click; if not selected, exit
-    if (!T3Gv.opt.SelectObjectFromClick(event, targetElement)) {
+    if (!SelectUtil.SelectObjectFromClick(event, targetElement)) {
       T3Util.Log("= S.BaseLine: RightClick - selection failed, returning false");
       return false;
     }
 
     // Retrieve the object via its ID
     const objectId = targetElement.GetID();
-    let objectPointer = ObjectUtil.GetObjectPtr(objectId, false);
+    let objectPointer = DataUtil.GetObjectPtr(objectId, false);
     T3Util.Log("= S.BaseLine: Retrieved object:", objectPointer);
 
     // If the object has a text component, check for spell location and activate text edit if needed
@@ -4935,7 +4944,7 @@ class BaseLine extends BaseDrawObject {
     T3Util.Log("= S.BaseLine: Set Right click param:", T3Gv.opt.rClickParam);
 
     // Handle active text editing - show spell menu or context menu as appropriate
-    if (T3Gv.opt.GetActiveTextEdit() != null) {
+    if (TextUtil.GetActiveTextEdit() != null) {
       const activeEditElement = T3Gv.opt.svgDoc.GetActiveEdit();
       let spellIndex = -1;
 
@@ -5096,23 +5105,23 @@ class BaseLine extends BaseDrawObject {
     T3Util.Log("= S.BaseLine: UpdateDimensionFromText completed");
 
     // Set link flag for the current block
-    T3Gv.opt.SetLinkFlag(this.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
+    OptCMUtil.SetLinkFlag(this.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
     T3Util.Log("= S.BaseLine: Set link flag for BlockID", this.BlockID);
 
     // Set link flag for each hooked object
     for (let i = 0; i < this.hooks.length; i++) {
-      T3Gv.opt.SetLinkFlag(this.hooks[i].objid, DSConstant.LinkFlags.SED_L_MOVE);
+      OptCMUtil.SetLinkFlag(this.hooks[i].objid, DSConstant.LinkFlags.SED_L_MOVE);
       T3Util.Log("= S.BaseLine: Set link flag for hook object with id", this.hooks[i].objid);
     }
 
     // If hyperlink, note, comment, or field data exists, add this block to the dirty list
     if (this.HyperlinkText !== "" || this.NoteID !== -1 || this.CommentID !== -1 || this.HasFieldData()) {
-      T3Gv.opt.AddToDirtyList(this.BlockID);
+      DataUtil.AddToDirtyList(this.BlockID);
       T3Util.Log("= S.BaseLine: Added BlockID to dirty list", this.BlockID);
     }
 
     // Complete the current operation
-    T3Gv.opt.CompleteOperation(null);
+    DrawUtil.CompleteOperation(null);
     T3Util.Log("= S.BaseLine: Completed operation for BlockID", this.BlockID);
 
     // If frame coordinates are negative, scroll the object into view
@@ -5150,8 +5159,8 @@ class BaseLine extends BaseDrawObject {
 
     // If the computed dimension length is invalid, mark dirty and re-render, then exit.
     if (dimensionLength < 0) {
-      T3Gv.opt.AddToDirtyList(this.BlockID);
-      T3Gv.opt.RenderDirtySVGObjects();
+      DataUtil.AddToDirtyList(this.BlockID);
+      SvgUtil.RenderDirtySVGObjects();
       T3Util.Log("= S.BaseLine: UpdateDimensionFromText output: invalid dimensionLength (< 0), early return");
       return;
     }
@@ -5160,14 +5169,14 @@ class BaseLine extends BaseDrawObject {
     this.UpdateDimensions(dimensionLength, null, null);
 
     // Set link flags for this object.
-    T3Gv.opt.SetLinkFlag(
+    OptCMUtil.SetLinkFlag(
       this.BlockID,
       DSConstant.LinkFlags.SED_L_MOVE | DSConstant.LinkFlags.SED_L_CHANGE
     );
 
     // Set link flags for each hooked object.
     for (hookIndex = 0; hookIndex < this.hooks.length; hookIndex++) {
-      T3Gv.opt.SetLinkFlag(
+      OptCMUtil.SetLinkFlag(
         this.hooks[hookIndex].objid,
         DSConstant.LinkFlags.SED_L_MOVE | DSConstant.LinkFlags.SED_L_CHANGE
       );

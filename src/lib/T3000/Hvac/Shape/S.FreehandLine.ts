@@ -11,8 +11,10 @@ import Point from '../Model/Point';
 import OptConstant from '../Data/Constant/OptConstant';
 import CursorConstant from '../Data/Constant/CursorConstant';
 import T3Util from '../Util/T3Util';
-import ObjectUtil from '../Opt/Data/ObjectUtil';
+import DataUtil from '../Opt/Data/DataUtil';
 import UIUtil from '../Opt/UI/UIUtil';
+import LMEvtUtil from '../Opt/Opt/LMEvtUtil';
+import DrawUtil from '../Opt/Opt/DrawUtil';
 
 /**
  * Represents a freehand line shape that consists of multiple connected points.
@@ -238,7 +240,7 @@ class FreehandLine extends BaseLine {
     styleRecord = this.SVGTokenizerHook(styleRecord);
 
     if (styleRecord == null) {
-      let sessionObject = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
+      let sessionObject = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
       if (sessionObject) {
         styleRecord = sessionObject.def.style;
       }
@@ -323,7 +325,7 @@ class FreehandLine extends BaseLine {
     let height = frame.height;
 
     // Get object pointer based on blockId
-    ObjectUtil.GetObjectPtr(blockId, false);
+    DataUtil.GetObjectPtr(blockId, false);
 
     // Adjust frame dimensions to account for knob size
     width += scaledKnobSize;
@@ -529,7 +531,7 @@ class FreehandLine extends BaseLine {
       T3Gv.opt.actionBBox = savedActionBBox;
       T3Gv.opt.actionNewBBox = savedActionNewBBox;
 
-      T3Gv.opt.AddToDirtyList(this.BlockID);
+      DataUtil.AddToDirtyList(this.BlockID);
 
       // Update flags if necessary
       if (this.rflags) {
@@ -729,7 +731,7 @@ class FreehandLine extends BaseLine {
       event.gesture.stopDetect();
     }
 
-    T3Gv.opt.UnbindActionClickHammerEvents();
+    LMEvtUtil.UnbindActionClickHammerEvents();
 
     if (!T3Gv.opt.isMobilePlatform) {
       $(window).unbind('mousemove');
@@ -771,7 +773,7 @@ class FreehandLine extends BaseLine {
     shapeAttributes.Actions = [];
 
     this.LMDrawPostRelease(T3Gv.opt.actionStoredObjectId);
-    T3Gv.opt.PostObjectDraw();
+    DrawUtil.PostObjectDraw();
   }
 
   /**

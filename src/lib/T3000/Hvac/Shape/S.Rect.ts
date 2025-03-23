@@ -10,6 +10,7 @@ import NvConstant from '../Data/Constant/NvConstant'
 import PolygonConstant from '../Opt/Polygon/PolygonConstant';
 import OptConstant from '../Data/Constant/OptConstant';
 import T3Util from '../Util/T3Util';
+import PolyUtil from '../Opt/Opt/PolyUtil';
 
 /**
  * Represents a rectangle shape that can be rendered with various styles and properties.
@@ -285,25 +286,25 @@ class Rect extends BaseShape {
     cornerRect.y = 0;
     cornerRect.width = cornerSize;
     cornerRect.height = 2 * cornerSize;
-    T3Gv.opt.PolyYCurve(points, cornerRect, event / 2, 0, 0, 0, cornerSize, true);
+    PolyUtil.PolyYCurve(points, cornerRect, event / 2, 0, 0, 0, cornerSize, true);
 
     cornerRect.x = 0;
     cornerRect.y = frameCopy.height - 2 * cornerSize;
     cornerRect.width = cornerSize;
     cornerRect.height = 2 * cornerSize;
-    T3Gv.opt.PolyYCurve(points, cornerRect, event / 2, 0, 0, cornerSize, 0, true);
+    PolyUtil.PolyYCurve(points, cornerRect, event / 2, 0, 0, cornerSize, 0, true);
 
     cornerRect.x = frameCopy.width - cornerSize;
     cornerRect.y = frameCopy.height;
     cornerRect.width = cornerSize;
     cornerRect.height = -2 * cornerSize;
-    T3Gv.opt.PolyYCurve(points, cornerRect, event / 2, 0, 0, 0, -cornerSize, false);
+    PolyUtil.PolyYCurve(points, cornerRect, event / 2, 0, 0, 0, -cornerSize, false);
 
     cornerRect.x = frameCopy.width - cornerSize;
     cornerRect.y = 2 * cornerSize;
     cornerRect.width = cornerSize;
     cornerRect.height = -2 * cornerSize;
-    T3Gv.opt.PolyYCurve(points, cornerRect, event / 2, 0, 0, -cornerSize, 0, false);
+    PolyUtil.PolyYCurve(points, cornerRect, event / 2, 0, 0, -cornerSize, 0, false);
 
     points.push(new Point(points[0].x, points[0].y));
 

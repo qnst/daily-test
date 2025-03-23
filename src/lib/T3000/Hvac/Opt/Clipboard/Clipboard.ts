@@ -5,7 +5,8 @@ import T3Gv from '../../Data/T3Gv'
 import base64js from 'base64-js'
 import T3Constant from '../../Data/Constant/T3Constant'
 import T3Util from '../../Util/T3Util'
-import ObjectUtil from '../Data/ObjectUtil'
+import DataUtil from '../Data/DataUtil'
+import ToolActUtil from '../Opt/ToolActUtil'
 
 /**
  * A utility class for handling clipboard operations with cross-browser and cross-platform support.
@@ -258,9 +259,9 @@ class Clipboard {
 
     // Process the appropriate clipboard action
     if (clipboardAction === "cut") {
-      T3Gv.opt.CutObjects(true);
+      ToolActUtil.CutObjects(true);
     } else if (clipboardAction === "copy") {
-      T3Gv.opt.CopyObjects();
+      ToolActUtil.CopyObjects();
     }
 
     // Update the timestamp to track clipboard operations
@@ -335,7 +336,7 @@ class Clipboard {
    */
   static GenerateImageInfo1() {
     const imageInfo = {};
-    const selectedObjects = ObjectUtil.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
+    const selectedObjects = DataUtil.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
 
     if (!selectedObjects || selectedObjects.length === 0) {
       return Promise.resolve(null);
@@ -376,7 +377,7 @@ class Clipboard {
 
   static GenerateImageInfo() {
     const e = {},
-      t = ObjectUtil.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, !1);
+      t = DataUtil.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, !1);
     return t &&
       0 !== t.length ? function (e) {
         return new Promise(
@@ -612,13 +613,13 @@ class Clipboard {
   static PasteFromUIaction() {
     // On mobile devices, execute paste directly
     if (this.isMobileDevice) {
-      T3Gv.opt.PasteObjects();
+      ToolActUtil.PasteObjects();
       return;
     }
 
     // If this is a paste from the same system, use direct paste
     if (this.IsSameSystemPaste()) {
-      T3Gv.opt.PasteObjects();
+      ToolActUtil.PasteObjects();
       return;
     }
 
@@ -862,7 +863,7 @@ class Clipboard {
 
       // Clear clipboard buffer and execute paste
       T3Gv.opt.contentHeader.ClipboardBuffer = null;
-      T3Gv.opt.PasteObjects();
+      ToolActUtil.PasteObjects();
       return;
     }
 
@@ -872,7 +873,7 @@ class Clipboard {
     }
 
     // Execute paste operation
-    T3Gv.opt.PasteObjects();
+    ToolActUtil.PasteObjects();
   }
 
   /**

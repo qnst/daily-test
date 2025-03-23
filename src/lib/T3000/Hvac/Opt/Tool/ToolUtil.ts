@@ -24,9 +24,14 @@ import PolygonConstant from "../Polygon/PolygonConstant"
 import OptConstant from "../../Data/Constant/OptConstant"
 import T3Util from "../../Util/T3Util"
 import TextConstant from "../../Data/Constant/TextConstant"
-import ObjectUtil from "../Data/ObjectUtil"
+import DataUtil from "../Data/DataUtil"
 import SelectUtil from "../Opt/SelectUtil"
 import SvgUtil from "../Opt/SvgUtil"
+import TextUtil from "../Opt/TextUtil"
+import OptCMUtil from "../Opt/OptCMUtil"
+import DrawUtil from "../Opt/DrawUtil"
+import ToolActUtil from "../Opt/ToolActUtil"
+import LMEvtUtil from "../Opt/LMEvtUtil"
 
 class ToolUtil {
 
@@ -75,7 +80,7 @@ class ToolUtil {
     T3Util.Log("O.ToolOpt CancelOperation input:", skipMessageHandling);
 
     this.SetSelectionTool(ToolConstant.Tools.Select, false);
-    T3Gv.opt.CancelOperation();
+    OptCMUtil.CancelOperation();
 
     if (!skipMessageHandling) {
       // Collab.UnLockMessages();
@@ -107,18 +112,18 @@ class ToolUtil {
     var wallThickness = thickness * T3Gv.docUtil.rulerConfig.major /
       (T3Gv.docUtil.rulerConfig.majorScale * conversionFactor);
 
-    var sessionBlock = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
+    var sessionBlock = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
 
     if (!Utils2.IsEqual(sessionBlock.def.wallThickness, wallThickness, 0.01) || wallObj) {
       T3Gv.opt.CloseEdit(true, true);
-      sessionBlock = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, true);
+      sessionBlock = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, true);
 
       if (!wallObj) {
         sessionBlock.def.wallThickness = wallThickness;
       }
 
-      var sessionBlock = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
-      T3Gv.opt.CompleteOperation(null);
+      var sessionBlock = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
+      DrawUtil.CompleteOperation(null);
     }
 
     T3Util.Log("O.ToolOpt SetDefaultWallThickness output: void");
@@ -167,7 +172,7 @@ class ToolUtil {
     let cancelOperation = false;
 
     // Prepare for drag-drop or stamp operation
-    T3Gv.opt.PreDragDropOrStamp();
+    DrawUtil.PreDragDropOrStamp();
 
     // Set up the context and callback
     context = this;
@@ -338,7 +343,7 @@ class ToolUtil {
       return lineShape;
     }
 
-    T3Gv.opt.DrawNewObject(lineShape, event);
+    DrawUtil.DrawNewObject(lineShape, event);
     T3Util.Log("O.ToolOpt DrawNewLine output: void");
   }
 
@@ -402,7 +407,7 @@ class ToolUtil {
     T3Util.Log("O.ToolOpt StampRectangle input:", isDragDropMode, isSquare);
 
     let width, height;
-    const sessionBlock = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
+    const sessionBlock = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
 
     // Set dimensions based on whether we want a square or rectangle
     if (isSquare) {
@@ -436,7 +441,7 @@ class ToolUtil {
     const rectangleShape = new Rect(shapeAttributes);
 
     // Use mouse stamp method to place the shape
-    T3Gv.opt.MouseStampNewShape(rectangleShape, true, true, true, null, null);
+    DrawUtil.MouseStampNewShape(rectangleShape, true, true, true, null, null);
 
     T3Util.Log("O.ToolOpt StampRectangle output: void");
   }
@@ -451,7 +456,7 @@ class ToolUtil {
     T3Util.Log("O.ToolOpt StampRoundRect input:", isDragDropMode, isSquare);
 
     let width, height;
-    const sessionBlock = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
+    const sessionBlock = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
 
     // Set dimensions based on whether we want a square or rectangle
     if (isSquare) {
@@ -485,7 +490,7 @@ class ToolUtil {
     const roundRectShape = new RRect(shapeAttributes);
 
     // Use mouse stamp method to place the shape
-    T3Gv.opt.MouseStampNewShape(roundRectShape, true, true, true, null, null);
+    DrawUtil.MouseStampNewShape(roundRectShape, true, true, true, null, null);
 
     T3Util.Log("O.ToolOpt StampRoundRect output: void");
   }
@@ -543,7 +548,7 @@ class ToolUtil {
     const ovalShape = new Oval(shapeAttributes);
 
     // Use mouse stamp method to place the shape
-    T3Gv.opt.MouseStampNewShape(ovalShape, true, true, true, null, null);
+    DrawUtil.MouseStampNewShape(ovalShape, true, true, true, null, null);
 
     T3Util.Log("O.ToolOpt StampCircle output: void");
   }
@@ -558,7 +563,7 @@ class ToolUtil {
     T3Util.Log("O.ToolOpt StampTextLabel input:", isDragDropMode, skipTargetCheck);
 
     // Get the text edit session block
-    var textEditSession = ObjectUtil.GetObjectPtr(T3Gv.opt.teDataBlockId, false);
+    var textEditSession = DataUtil.GetObjectPtr(T3Gv.opt.teDataBlockId, false);
 
     // Check if we need to handle existing active text editing
     if (skipTargetCheck || textEditSession.theActiveTextEditObjectID == -1) {
@@ -566,7 +571,7 @@ class ToolUtil {
       if (!skipTargetCheck) {
         var targetID = SelectUtil.GetTargetSelect();
         if (targetID >= 0) {
-          var targetObject = ObjectUtil.GetObjectPtr(targetID, false);
+          var targetObject = DataUtil.GetObjectPtr(targetID, false);
           if (targetObject && targetObject.AllowTextEdit()) {
             var svgElement = T3Gv.opt.svgObjectLayer.GetElementById(targetID);
             T3Gv.opt.ActivateTextEdit(svgElement);
@@ -620,7 +625,7 @@ class ToolUtil {
     textShape.StyleRecord.Text = textStyle.Text;
 
     // Calculate text metrics for proper sizing
-    var initialTextStyle = T3Gv.opt.CalcDefaultInitialTextStyle(textShape.StyleRecord.Text);
+    var initialTextStyle = TextUtil.CalcDefaultInitialTextStyle(textShape.StyleRecord.Text);
     var textMetrics = T3Gv.opt.svgDoc.CalcStyleMetrics(initialTextStyle);
 
     // Set shape offset and height
@@ -704,7 +709,7 @@ class ToolUtil {
     }
 
     // Stamp the shape onto the canvas
-    T3Gv.opt.MouseStampNewShape(newShape, true, true, true, null, null);
+    DrawUtil.MouseStampNewShape(newShape, true, true, true, null, null);
 
     T3Util.Log("U.ToolUtil.StampShape - Output: Shape stamped successfully");
   }
@@ -719,7 +724,7 @@ class ToolUtil {
 
     try {
       T3Gv.opt.CloseEdit();
-      T3Gv.opt.RotateShapes(parseInt(rotationAngle, 10));
+      ToolActUtil.RotateShapes(parseInt(rotationAngle, 10));
     } catch (error) {
       T3Gv.opt.ExceptionCleanup(error);
       throw error;
@@ -738,7 +743,7 @@ class ToolUtil {
 
     try {
       T3Gv.opt.CloseEdit();
-      T3Gv.opt.AlignShapes(alignmentType);
+      ToolActUtil.AlignShapes(alignmentType);
     } catch (error) {
       T3Gv.opt.ExceptionCleanup(error);
       throw error;
@@ -756,7 +761,7 @@ class ToolUtil {
 
     try {
       T3Gv.opt.CloseEdit();
-      T3Gv.opt.DeleteSelectedObjects();
+      ToolActUtil.DeleteSelectedObjects();
     } catch (error) {
       T3Gv.opt.ExceptionCleanup(error);
       throw error;
@@ -773,7 +778,7 @@ class ToolUtil {
     T3Util.Log("O.ToolOpt Undo input: no parameters");
 
     try {
-      T3Gv.opt.Undo();
+      ToolActUtil.Undo();
     } catch (error) {
       throw error;
       T3Gv.opt.ExceptionCleanup(error);
@@ -791,7 +796,7 @@ class ToolUtil {
     T3Util.Log("O.ToolOpt Redo input: no parameters");
 
     try {
-      T3Gv.opt.Redo();
+      ToolActUtil.Redo();
     } catch (error) {
       T3Gv.opt.ExceptionCleanup(error);
       throw error;
@@ -845,7 +850,7 @@ class ToolUtil {
       }
 
       if (!clipboardSuccess) {
-        T3Gv.opt.CutObjects();
+        ToolActUtil.CutObjects();
       }
     } catch (error) {
       T3Gv.opt.RestorePrimaryStateManager();
@@ -889,7 +894,7 @@ class ToolUtil {
 
     try {
       T3Gv.opt.CloseEdit();
-      T3Gv.opt.SendToBackOf();
+      ToolActUtil.SendToBackOf();
     } catch (error) {
       T3Gv.opt.ExceptionCleanup(error);
       throw error;
@@ -907,7 +912,7 @@ class ToolUtil {
 
     try {
       T3Gv.opt.CloseEdit();
-      T3Gv.opt.BringToFrontOf();
+      DrawUtil.BringToFrontOf();
     } catch (error) {
       T3Gv.opt.ExceptionCleanup(error);
       throw error;
@@ -920,37 +925,37 @@ class ToolUtil {
    * Groups the currently selected shapes together
    * @returns void
    */
-  GroupSelectedShapes() {
-    T3Util.Log("O.ToolOpt GroupSelectedShapes input: no parameters");
+  GroupSelected() {
+    T3Util.Log("O.ToolOpt GroupSelected input: no parameters");
 
     try {
       T3Gv.opt.CloseEdit();
       // Parameters: autoAddShapes, additionalObjects, createOuterFrame, preserveOriginals, createVisualGroup
-      T3Gv.opt.GroupSelectedShapes(false, null, false, false, true);
+      ToolActUtil.GroupSelected(false, null, false, false, true);
     } catch (error) {
       T3Gv.opt.ExceptionCleanup(error);
       throw error;
     }
 
-    T3Util.Log("O.ToolOpt GroupSelectedShapes output: void");
+    T3Util.Log("O.ToolOpt GroupSelected output: void");
   }
 
   /**
    * Ungroups the currently selected grouped shapes
    * @returns void
    */
-  UnGroupSelectedShapes() {
-    T3Util.Log("O.ToolOpt UngroupSelectedShapes input: no parameters");
+  UnGroupSelected() {
+    T3Util.Log("O.ToolOpt UnGroupSelected input: no parameters");
 
     try {
       T3Gv.opt.CloseEdit();
-      T3Gv.opt.UngroupSelectedShapes();
+      ToolActUtil.UnGroupSelected();
     } catch (error) {
       T3Gv.opt.ExceptionCleanup(error);
       throw error;
     }
 
-    T3Util.Log("O.ToolOpt UngroupSelectedShapes output: void");
+    T3Util.Log("O.ToolOpt UnGroupSelected output: void");
   }
 
   /**
@@ -962,7 +967,7 @@ class ToolUtil {
 
     try {
       T3Gv.opt.CloseEdit();
-      T3Gv.opt.FlipShapes(OptConstant.ExtraFlags.FlipHoriz);
+      ToolActUtil.FlipShapes(OptConstant.ExtraFlags.FlipHoriz);
     } catch (error) {
       T3Gv.opt.ExceptionCleanup(error);
       throw error;
@@ -980,7 +985,7 @@ class ToolUtil {
 
     try {
       T3Gv.opt.CloseEdit();
-      T3Gv.opt.FlipShapes(OptConstant.ExtraFlags.FlipVert);
+      ToolActUtil.FlipShapes(OptConstant.ExtraFlags.FlipVert);
     } catch (error) {
       T3Gv.opt.ExceptionCleanup(error);
       throw error;
@@ -999,7 +1004,7 @@ class ToolUtil {
 
     try {
       T3Gv.opt.CloseEdit();
-      T3Gv.opt.MakeSameSize(parseInt(dimensionType, 10));
+      ToolActUtil.MakeSameSize(parseInt(dimensionType, 10));
     } catch (error) {
       T3Gv.opt.ExceptionCleanup(error);
     }
@@ -1015,7 +1020,7 @@ class ToolUtil {
     T3Util.Log("O.ToolOpt GetSelectionContext input: no parameters");
 
     try {
-      const context = T3Gv.opt.GetSelectionContext();
+      const context = SelectUtil.GetSelectionContext();
       T3Util.Log("O.ToolOpt GetSelectionContext output:", context);
       return context;
     } catch (error) {
@@ -1031,7 +1036,7 @@ class ToolUtil {
     T3Util.Log("O.ToolOpt IsActiveTextEdit input: no parameters");
 
     try {
-      const textEditSession = ObjectUtil.GetObjectPtr(T3Gv.opt.teDataBlockId, false);
+      const textEditSession = DataUtil.GetObjectPtr(T3Gv.opt.teDataBlockId, false);
       const isActive = textEditSession.theActiveTextEditObjectID !== -1;
 
       T3Util.Log("O.ToolOpt IsActiveTextEdit output:", isActive);
@@ -1053,7 +1058,7 @@ class ToolUtil {
     T3Util.Log("O.ToolOpt HandleKeyDown input:", keyEvent, targetElement, eventModifier);
 
     try {
-      const result = T3Gv.opt.HandleKeyDown(keyEvent, targetElement, eventModifier);
+      const result = LMEvtUtil.HandleKeyDown(keyEvent, targetElement, eventModifier);
       T3Util.Log("O.ToolOpt HandleKeyDown output:", result);
       return result;
     } catch (error) {
@@ -1089,7 +1094,7 @@ class ToolUtil {
     T3Util.Log("O.ToolOpt HandleKeyPress input:", keyEvent, targetElement);
 
     try {
-      const result = T3Gv.opt.HandleKeyPress(keyEvent, targetElement);
+      const result = LMEvtUtil.HandleKeyPress(keyEvent, targetElement);
       T3Util.Log("O.ToolOpt HandleKeyPress output:", result);
       return result;
     } catch (error) {
@@ -1128,7 +1133,7 @@ class ToolUtil {
     const pumpSymbolSVG = '<g><g fill="##FillColor=#7F7F7F##" transform="translate(0,0)"><g class="pump"> <circle stroke="##LineColor=#000000##" cy="16" cx="15.955" r="9.9609003" class="pump-background" /> <g transform="translate(16,16)"> <path d="M -5,8.1369 V -8.1191 L 9.078,0.0091 Z" class="rotating-middle" stroke="##LineColor=#000000##" stroke-width="##LineThick=1##"/></g></g></g></g>';
     const heatPumpSymbolSVG = '<g class="heat-pump" stroke-linejoin="round" stroke="#000" transform="translate(0,0)" fill="currentColor"> <rect class="inner" height="123.718" width="27.718" y="2.141" x="-36.859" stroke-width="1.0868"></rect> <g transform="matrix(1.0276 0 0 1.0276 -39.441 -.44130)" stroke-linecap="round" stroke-miterlimit="1" stroke-width="1.3509"> <path d="m16.234 16.944 8.6837-6.894-8.6837-6.894v3.447h-13.152v6.894h13.152z" fill="#ce2824"></path> <path d="m15.766 28.844-8.6837-6.894 8.6837-6.894v3.447h13.152v6.894h-13.152z" fill="#3238db"></path></g></g>';
 
-    const test1 = $`
+    const test1 = `
     <g><g width="13.667" height="10.167" transform="scale(1,1) translate(0,20.833)"><g stroke="##LineColor=#000000##"
     opacity="1" stroke-width="##LineThick=1##" stroke-dasharray="none" width="13.667"
     height="10.167" transform="scale(1,1) translate(0,0)" fill="##FillColor=#FFFFFF##"
@@ -1148,15 +1153,51 @@ class ToolUtil {
 
     const test2 = '<g><g width="13.667" height = "10.167" transform = "scale(1,1) translate(0,20.833)" > <g stroke="##LineColor=#000000##" opacity = "1" stroke-width="##LineThick=1##" stroke-dasharray="none" width = "13.667" height = "10.167" transform = "scale(1,1) translate(0,0)" fill = "##FillColor=#FFFFFF##" fill-opacity="1" stroke-opacity="1" > <rect width="13.667" height = "10.167" /> </g></g > <g width="13.667" height = "10.167" transform = "scale(1,1) translate(56.833,21.167)" > <g stroke="##LineColor=#000000##" opacity = "1" stroke-width="##LineThick=1##" stroke-dasharray="none" width = "13.667" height = "10.167" transform = "scale(1,1) translate(0,0)" fill = "##FillColor=#FFFFFF##" fill-opacity="1" stroke-opacity="1" > <rect width="13.667" height = "10.167" /> </g></g > <g width="13.667" height = "10.167" transform = "rotate(270,34.667,6.75) scale(1,1) translate(27.833,1.667)" > <g stroke="##LineColor=#000000##" opacity = "1" stroke-width="##LineThick=1##" stroke-dasharray="none" width = "13.667" height = "10.167" transform = "scale(1,1) translate(0,0)" fill = "##FillColor=#FFFFFF##" fill-opacity="1" stroke-opacity="1" > <rect width="13.667" height = "10.167" /> </g></g > <g width="46.167" height = "25.5" transform = "scale(1,1) translate(12,12.667)" > <g stroke="##LineColor=#000000##" opacity = "1" stroke-width="##LineThick=1##" stroke-dasharray="none" width = "46.167" height = "25.5" transform = "scale(1,1) translate(0,0)" fill = "##FillColor=#FFFFFF##" fill-opacity="1" stroke-opacity="1" > <rect width="46.167" height = "25.5" /> </g></g > </g>';
 
+    // const boiler = `
+    //   <path
+    //     style="
+    //       fill: ##FillColor=#28c3c6##;
+    //       fill-opacity: 1;
+    //       fill-rule: nonzero;
+    //       stroke:##LineColor=#000000##;
+    //       stroke-width: 1;
+    //       stroke-linecap: butt;
+    //       stroke-linejoin: miter;
+    //       stroke-miterlimit: 4;
+    //       stroke-dasharray: none;
+    //       stroke-opacity: 1;
+    //     "
+    //     d="m 2,15 8,-7 0,-7 12,0 0,7 8,7 0,16 -28,0 z"
+    //   ></path>
+    // `;
+
+    const boiler = `
+      <path
+        style="
+          fill: ##FillColor=#28c3c6##;
+          fill-opacity: 1;
+          fill-rule: nonzero;
+          stroke:##LineColor=#000000##;
+          stroke-width: 1;
+          stroke-linecap: butt;
+          stroke-linejoin: miter;
+          stroke-miterlimit: 4;
+          stroke-dasharray: none;
+          stroke-opacity: 1;
+        "
+        d="m 3.714,27.855 14.856,-12.999 0,-12.999 22.284,0 0,12.999 14.856,12.999 0,29.712 -51.996,0 z"
+      ></path>
+    `;
+
     let initialX = -1000;
     let initialY = -1000;
 
     // Create a new SVG Fragment Symbol
     const symbolObject = new SVGFragmentSymbol({
-      // Frame: { x: -1017, y: -1027, width: 27, height: 27 },
-      // hookflags: 257,
-      // moreflags: 64,
-      // targflags: 3,
+      Frame: { x: -1000, y: -1000, width: 60, height: 60 },
+      hookflags: 257,
+      moreflags: 64,
+      targflags: 3,
       // SymbolData: {
       //   ScalingData: {
       //     Dimensions: { X: 159, Y: 161, x: 159, y: 161, },
@@ -1200,26 +1241,151 @@ class ToolUtil {
       //     { X: 76, Y: 7500, x: 76, y: 7500, }
       //   ]
       // },
-      // InitialGroupBounds: { x: 0, y: 0, width: 27, height: 27 },
+      InitialGroupBounds: { x: 0, y: 0, width: 30, height: 30 },
 
-      Frame: {
-        x: 1000,// initialX,
-        y: 1000,// initialY,
-        width: 40, //OptConstant.Common.ShapeWidth,
-        height: 40,// OptConstant.Common.ShapeHeight
-      },
-      TextGrow: NvConstant.TextGrowBehavior.ProPortional,
-      ObjGrow: OptConstant.GrowBehavior.ProPortional,
-      InitialGroupBounds: { x: 1000, y: 1000, width: 40, height: 40 },
+      // Frame: {
+      //   x: -1000,// initialX,
+      //   y: -1000,// initialY,
+      //   width: 120, //OptConstant.Common.ShapeWidth,
+      //   height: 120,// OptConstant.Common.ShapeHeight
+      // },
+      // TextGrow: NvConstant.TextGrowBehavior.ProPortional,
+      // ObjGrow: OptConstant.GrowBehavior.ProPortional,
+      // InitialGroupBounds: { x: 0, y: 0, width: 60, height: 60 },
     });
     symbolObject.StyleRecord = new QuickStyle();
 
     // Use the heat pump SVG fragment
-    symbolObject.SVGFragment = pumpSymbolSVG;
+
+    // Convert multiline SVG to a single line, removing newlines but preserving structure
+    const testSvgString = boiler.replace(/\n\s*/g, ' ').trim();
+    console.log("D.D testSvgString", testSvgString);
+
+    const newTest1_inline = `
+    <g><g width=\"13.667\" height=\"10.167\" transform=\"scale(1,1) translate(0,20.833)\"><g stroke=\"##LINECOLOR=#000000##\" opacity=\"1\" stroke-width=\"##LINETHICK=1##\" stroke-dasharray=\"none\" width=\"13.667\" height=\"10.167\" transform=\"scale(1,1) translate(0,0)\" fill=\"##FILLCOLOR=#FFFFFF##\" fill-opacity=\"1\" stroke-opacity=\"1\"><rect width=\"13.667\" height=\"10.167\"/></g></g><g width=\"13.667\" height=\"10.167\" transform=\"scale(1,1) translate(56.833,21.167)\"><g stroke=\"##LINECOLOR=#000000##\" opacity=\"1\" stroke-width=\"##LINETHICK=1##\" stroke-dasharray=\"none\" width=\"13.667\" height=\"10.167\" transform=\"scale(1,1) translate(0,0)\" fill=\"##FILLCOLOR=#FFFFFF##\" fill-opacity=\"1\" stroke-opacity=\"1\"><rect width=\"13.667\" height=\"10.167\"/></g></g><g width=\"13.667\" height=\"10.167\" transform=\"rotate(270,34.667,6.75) scale(1,1) translate(27.833,1.667)\"><g stroke=\"##LINECOLOR=#000000##\" opacity=\"1\" stroke-width=\"##LINETHICK=1##\" stroke-dasharray=\"none\" width=\"13.667\" height=\"10.167\" transform=\"scale(1,1) translate(0,0)\" fill=\"##FILLCOLOR=#FFFFFF##\" fill-opacity=\"1\" stroke-opacity=\"1\"><rect width=\"13.667\" height=\"10.167\"/></g></g><g width=\"46.167\" height=\"25.5\" transform=\"scale(1,1) translate(12,12.667)\"><g stroke=\"##LINECOLOR=#000000##\" opacity=\"1\" stroke-width=\"##LINETHICK=1##\" stroke-dasharray=\"none\" width=\"46.167\" height=\"25.5\" transform=\"scale(1,1) translate(0,0)\" fill=\"##FILLCOLOR=#FFFFFF##\" fill-opacity=\"1\" stroke-opacity=\"1\"><rect width=\"46.167\" height=\"25.5\"/></g></g></g>
+    `;
+
+    const newTest1 =
+      `
+        <g>
+        <g width="13.667" height="10.167" transform="scale(1,1) translate(0,20.833)">
+            <g stroke="##LineColor=#000000##" opacity="1" stroke-width="##LineThick=1##" stroke-dasharray="none"
+                width="13.667" height="10.167" transform="scale(1,1) translate(0,0)" fill="##FillColor=#FFFFFF##"
+                fill-opacity="1" stroke-opacity="1">
+                <rect width="13.667" height="10.167" />
+            </g>
+        </g>
+        <g width="13.667" height="10.167" transform="scale(1,1) translate(56.833,21.167)">
+            <g stroke="##LineColor=#000000##" opacity="1" stroke-width="##LineThick=1##" stroke-dasharray="none"
+                width="13.667" height="10.167" transform="scale(1,1) translate(0,0)" fill="##FillColor=#FFFFFF##"
+                fill-opacity="1" stroke-opacity="1">
+                <rect width="13.667" height="10.167" />
+            </g>
+        </g>
+        <g width="13.667" height="10.167" transform="rotate(270,34.667,6.75) scale(1,1) translate(27.833,1.667)">
+            <g stroke="##LineColor=#000000##" opacity="1" stroke-width="##LineThick=1##" stroke-dasharray="none"
+                width="13.667" height="10.167" transform="scale(1,1) translate(0,0)" fill="##FillColor=#FFFFFF##"
+                fill-opacity="1" stroke-opacity="1">
+                <rect width="13.667" height="10.167" />
+            </g>
+        </g>
+        <g width="46.167" height="25.5" transform="scale(1,1) translate(12,12.667)">
+            <g stroke="##LineColor=#000000##" opacity="1" stroke-width="##LineThick=1##" stroke-dasharray="none"
+                width="46.167" height="25.5" transform="scale(1,1) translate(0,0)" fill="##FillColor=#FFFFFF##"
+                fill-opacity="1" stroke-opacity="1">
+                <rect width="46.167" height="25.5" />
+            </g>
+        </g>
+        </g>
+    `;
+
+    // symbolObject.Frame = { x: 30.416666666666742, y: 256.5, width: 72.5, height: 39.666666666666664 };
+
+    // symbolObject.InitialGroupBounds = {
+    //   "width": 71.5,
+    //   "height": 39.167,
+    //   "x": 351.16666666666663,
+    //   "y": 528
+    // };
+
+    // symbolObject.Frame = { x: -1000, y: -1000, width: 72.5, height: 39.666666666666664 };
+
+    // symbolObject.InitialGroupBounds = {
+    //   "width": 71.5,
+    //   "height": 39.167,
+    //   "x": -1000,
+    //   "y": -1000
+    // };
+
+    symbolObject.Frame = { x: -1000, y: -1000, width: 60, height: 60 };
+
+    symbolObject.InitialGroupBounds = {
+      width: 60,
+      height: 60,
+      x: -1000,
+      y: -1000
+    };
+
+    // symbolObject.r = {
+    //   x: 30.416666666666742,
+    //   y: 256.5,
+    //   width: 72.5,
+    //   height: 39.666666666666664
+    // };
+
+    // symbolObject.inside = {
+    //   x: 30.416666666666742,
+    //   y: 256.5,
+    //   width: 72.5,
+    //   height: 39.666666666666664
+    // };
+
+    // symbolObject.trect = {
+    //   "x": 30.416666666666742,
+    //   "y": 256.5,
+    //   "width": 72.5,
+    //   "height": 39.666666666666664
+    // };
+
+    // symbolObject.rtop = 3168;
+    // symbolObject.rleft = 2107;
+    // symbolObject.rbottom = 3406;
+    // symbolObject.rright = 2542;
+    // symbolObject.rwd = 435;
+    // symbolObject.rht = 238;
+
+    // symbolObject.attachpoint = {
+    //   "x": 14447,
+    //   "y": 19411
+    // };
+
+    // symbolObject.sizedim = {
+    //   "width": 72.5,
+    //   "height": 39.666666666666664
+    // };
+
+    // symbolObject.ConnectPoints = [
+    //   {
+    //     "x": 276,
+    //     "y": 19411
+    //   },
+    //   {
+    //     "x": 14447,
+    //     "y": 378
+    //   },
+    //   {
+    //     "x": 29447,
+    //     "y": 19411
+    //   }
+    // ];
+
+
+
+    symbolObject.SVGFragment = boiler;
 
     // Add the symbol to the drawing using drag-drop mode
     if (symbolObject) {
-      T3Gv.opt.DragDropNewShape(symbolObject, true, true, false, null, null);
+      DrawUtil.DragDropNewShape(symbolObject, true, true, false, null, null);
       // T3Gv.opt.MouseStampNewShape(symbolObject, true, true, false, null, null);
     }
 
@@ -1314,7 +1480,7 @@ class ToolUtil {
       return segmentedLineShape;
     }
 
-    T3Gv.opt.DrawNewObject(segmentedLineShape, eventObject);
+    DrawUtil.DrawNewObject(segmentedLineShape, eventObject);
     T3Util.Log("O.ToolOpt DrawNewSegLine output: void");
   }
 
@@ -1405,7 +1571,7 @@ class ToolUtil {
       return arcSegmentedLineShape;
     }
 
-    T3Gv.opt.DrawNewObject(arcSegmentedLineShape, eventObject);
+    DrawUtil.DrawNewObject(arcSegmentedLineShape, eventObject);
     T3Util.Log("O.ToolOpt DrawNewArcSegLine output: void");
   }
 
@@ -1501,7 +1667,7 @@ class ToolUtil {
       return polyLineShape;
     }
 
-    T3Gv.opt.DrawNewObject(polyLineShape, eventObject);
+    DrawUtil.DrawNewObject(polyLineShape, eventObject);
     T3Util.Log("O.ToolOpt DrawNewPolyLine output: void");
   }
 
@@ -1517,7 +1683,7 @@ class ToolUtil {
 
     let attributes;
     const sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sdDataBlockId).Data;
-    const sessionBlock = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
+    const sessionBlock = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
     const isVerticalText = 0 == (sessionData.def.textflags & NvConstant.TextFlags.HorizText);
 
     // Create attributes from reference or defaults
@@ -1570,7 +1736,7 @@ class ToolUtil {
       return polyLineContainerShape;
     }
 
-    T3Gv.opt.DrawNewObject(polyLineContainerShape, eventObject);
+    DrawUtil.DrawNewObject(polyLineContainerShape, eventObject);
     T3Util.Log("O.ToolOpt DrawNewPolyLineContainer output: void");
   }
 
@@ -1633,7 +1799,7 @@ class ToolUtil {
       return freehandLineShape;
     }
 
-    T3Gv.opt.DrawNewObject(freehandLineShape, eventObject);
+    DrawUtil.DrawNewObject(freehandLineShape, eventObject);
     T3Util.Log("O.ToolOpt DrawNewFreehandLine output: void");
   }
 
@@ -1724,7 +1890,7 @@ class ToolUtil {
       return arcLineShape;
     }
 
-    T3Gv.opt.DrawNewObject(arcLineShape, eventObject);
+    DrawUtil.DrawNewObject(arcLineShape, eventObject);
     T3Util.Log("O.ToolOpt DrawNewArcLine output: void");
   }
 

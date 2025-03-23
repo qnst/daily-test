@@ -8,6 +8,7 @@ import $ from 'jquery';
 import OptConstant from '../Data/Constant/OptConstant';
 import CursorConstant from '../Data/Constant/CursorConstant';
 import T3Util from '../Util/T3Util';
+import OptCMUtil from '../Opt/Opt/OptCMUtil';
 
 /**
  * Represents a base symbol shape in the T3000 HVAC visualization system.
@@ -280,7 +281,7 @@ class BaseSymbol extends BaseShape {
       }
     }
 
-    T3Gv.opt.SetEditMode(NvConstant.EditState.Default);
+    OptCMUtil.SetEditMode(NvConstant.EditState.Default);
     T3Gv.opt.UpdateLinks();
     T3Gv.opt.linkParams = null;
 

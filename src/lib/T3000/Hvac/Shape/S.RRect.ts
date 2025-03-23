@@ -5,13 +5,14 @@ import Utils2 from "../Util/Utils2";
 import Utils3 from "../Util/Utils3";
 import T3Gv from '../Data/T3Gv'
 import Point from '../Model/Point'
-import BaseDrawObject from './S.BaseDrawObject'
 import $ from 'jquery'
 import NvConstant from '../Data/Constant/NvConstant'
 import PolygonConstant from '../Opt/Polygon/PolygonConstant';
 import OptConstant from '../Data/Constant/OptConstant';
 import T3Util from '../Util/T3Util';
 import UIUtil from '../Opt/UI/UIUtil';
+import Instance from '../Data/Instance/Instance';
+import PolyUtil from '../Opt/Opt/PolyUtil';
 
 /**
  * Represents a rounded rectangle shape in the T3000 HVAC system.
@@ -399,7 +400,7 @@ class RRect extends BaseShape {
     tempRect.height = 2 * cornerSize;
 
     // Top-left corner
-    T3Gv.opt.PolyYCurve(
+    PolyUtil.PolyYCurve(
       pointsArray,
       tempRect,
       divisionCount / 2,
@@ -415,7 +416,7 @@ class RRect extends BaseShape {
     tempRect.y = rectCopy.height - 2 * cornerSize;
     tempRect.width = cornerSize;
     tempRect.height = 2 * cornerSize;
-    T3Gv.opt.PolyYCurve(
+    PolyUtil.PolyYCurve(
       pointsArray,
       tempRect,
       divisionCount / 2,
@@ -431,7 +432,7 @@ class RRect extends BaseShape {
     tempRect.y = rectCopy.height;
     tempRect.width = cornerSize;
     tempRect.height = -2 * cornerSize;
-    T3Gv.opt.PolyYCurve(
+    PolyUtil.PolyYCurve(
       pointsArray,
       tempRect,
       divisionCount / 2,
@@ -447,7 +448,7 @@ class RRect extends BaseShape {
     tempRect.y = 2 * cornerSize;
     tempRect.width = cornerSize;
     tempRect.height = -2 * cornerSize;
-    T3Gv.opt.PolyYCurve(
+    PolyUtil.PolyYCurve(
       pointsArray,
       tempRect,
       divisionCount / 2,
@@ -564,7 +565,7 @@ class RRect extends BaseShape {
       // Double === todo
       T3Util.Log("= S.RRect: GetPerimPts output:", outputPoints);
       // Return from base
-      return new BaseDrawObject(this).GetPerimPts(
+      return new Instance.Shape.BaseDrawObject(this).GetPerimPts(
         eventObj,
         hookPoints,
         anchorType,
@@ -647,7 +648,7 @@ class RRect extends BaseShape {
           outputPoints[idx].x -= cornerFactor;
           outputPoints[idx].y -= cornerFactor;
         } else if (hookPoints[idx].x < baseDim / 4) {
-          const count = T3Gv.opt.PolyGetIntersect(
+          const count = PolyUtil.PolyGetIntersect(
             polyPoints,
             outputPoints[idx].y,
             tmpIntersect,
@@ -661,7 +662,7 @@ class RRect extends BaseShape {
             }
           }
         } else if (hookPoints[idx].x > (3 * baseDim) / 4) {
-          const count = T3Gv.opt.PolyGetIntersect(
+          const count = PolyUtil.PolyGetIntersect(
             polyPoints,
             outputPoints[idx].y,
             tmpIntersect,
@@ -675,7 +676,7 @@ class RRect extends BaseShape {
             }
           }
         } else if (hookPoints[idx].y < baseDim / 4) {
-          const count = T3Gv.opt.PolyGetIntersect(
+          const count = PolyUtil.PolyGetIntersect(
             polyPoints,
             outputPoints[idx].x,
             tmpIntersect,
@@ -689,7 +690,7 @@ class RRect extends BaseShape {
             }
           }
         } else if (hookPoints[idx].y > (3 * baseDim) / 4) {
-          const count = T3Gv.opt.PolyGetIntersect(
+          const count = PolyUtil.PolyGetIntersect(
             polyPoints,
             outputPoints[idx].x,
             tmpIntersect,

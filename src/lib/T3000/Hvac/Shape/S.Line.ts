@@ -13,8 +13,12 @@ import DSConstant from '../Opt/DS/DSConstant';
 import OptConstant from '../Data/Constant/OptConstant';
 import CursorConstant from '../Data/Constant/CursorConstant';
 import T3Util from '../Util/T3Util';
-import ObjectUtil from '../Opt/Data/ObjectUtil';
+import DataUtil from '../Opt/Data/DataUtil';
 import UIUtil from '../Opt/UI/UIUtil';
+import OptCMUtil from '../Opt/Opt/OptCMUtil';
+import DrawUtil from '../Opt/Opt/DrawUtil';
+import PolyUtil from '../Opt/Opt/PolyUtil';
+import HookUtil from '../Opt/Opt/HookUtil';
 
 /**
  * Represents a line shape in the T3000 HVAC drawing system.
@@ -236,7 +240,7 @@ class Line extends BaseLine {
     let styleRecord = this.StyleRecord;
 
     if (styleRecord == null) {
-      let sessionBlock = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
+      let sessionBlock = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
       if (sessionBlock) {
         styleRecord = sessionBlock.def.style;
       }
@@ -344,7 +348,7 @@ class Line extends BaseLine {
     let isDimensionTextActive = false;
 
     if (!(this.flags & NvConstant.ObjFlags.Lock) && shapeContainer) {
-      if (T3Gv.opt.GetEditMode() === NvConstant.EditState.Default) {
+      if (OptCMUtil.GetEditMode() === NvConstant.EditState.Default) {
         const shapeElement = shapeContainer.GetElementById(OptConstant.SVGElementClass.Shape);
         if (shapeElement) {
           if (this.objecttype === NvConstant.FNObjectTypes.FrameContainer) {
@@ -687,7 +691,7 @@ class Line extends BaseLine {
       }
 
       if (T3Gv.opt.ob.Frame) {
-        T3Gv.opt.MaintainLink(
+        HookUtil.MaintainLink(
           this.BlockID,
           this,
           T3Gv.opt.ob,
@@ -695,7 +699,7 @@ class Line extends BaseLine {
         );
       }
 
-      T3Gv.opt.SetLinkFlag(this.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
+      OptCMUtil.SetLinkFlag(this.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
     }
 
     T3Gv.opt.ob = {};
@@ -747,8 +751,8 @@ class Line extends BaseLine {
       }
 
       this.CalcFrame();
-      T3Gv.opt.MaintainLink(this.BlockID, this, T3Gv.opt.ob, OptConstant.ActionTriggerType.ModifyShape);
-      T3Gv.opt.SetLinkFlag(this.BlockID, DSConstant.LinkFlags.SED_L_MOVE | DSConstant.LinkFlags.SED_L_CHANGE);
+      HookUtil.MaintainLink(this.BlockID, this, T3Gv.opt.ob, OptConstant.ActionTriggerType.ModifyShape);
+      OptCMUtil.SetLinkFlag(this.BlockID, DSConstant.LinkFlags.SED_L_MOVE | DSConstant.LinkFlags.SED_L_CHANGE);
       T3Gv.opt.UpdateLinks();
 
       const newLineData = {
@@ -761,12 +765,12 @@ class Line extends BaseLine {
       };
 
       const newLine = new Instance.Shape.Line(newLineData);
-      const newBlockID = T3Gv.opt.AddNewObject(newLine, false, true);
+      const newBlockID = DrawUtil.AddNewObject(newLine, false, true);
       const joinID = isStartPoint
-        ? T3Gv.opt.PolyLJoin(newBlockID, OptConstant.HookPts.KTL, this.BlockID, OptConstant.HookPts.KTL, false)
-        : T3Gv.opt.PolyLJoin(newBlockID, OptConstant.HookPts.KTL, this.BlockID, OptConstant.HookPts.KTR, false);
+        ? PolyUtil.PolyLJoin(newBlockID, OptConstant.HookPts.KTL, this.BlockID, OptConstant.HookPts.KTL, false)
+        : PolyUtil.PolyLJoin(newBlockID, OptConstant.HookPts.KTL, this.BlockID, OptConstant.HookPts.KTR, false);
 
-      const joinedObject = ObjectUtil.GetObjectPtr(joinID, false);
+      const joinedObject = DataUtil.GetObjectPtr(joinID, false);
       const joinedElement = T3Gv.opt.svgObjectLayer.GetElementById(joinID);
 
       let dimensionText = Number(T3Gv.docUtil.rulerConfig.majorScale).toString();
@@ -784,7 +788,7 @@ class Line extends BaseLine {
       }
 
       joinedObject.UpdateDimensionFromText(joinedElement, dimensionText, { segment: 2 });
-      T3Gv.opt.AddToDirtyList(this.BlockID);
+      DataUtil.AddToDirtyList(this.BlockID);
 
       // Collab.ClearCreateList();
       // Collab.AddToCreateList(joinID);
@@ -796,7 +800,7 @@ class Line extends BaseLine {
       //   Collab.BuildMessage(NvConstant.CollabMessages.AddCorner, message, false);
       // }
 
-      T3Gv.opt.CompleteOperation(null);
+      DrawUtil.CompleteOperation(null);
     }
 
     T3Util.Log('S.Line - Output:', { newPoints, tempPoints, isStartPoint });
@@ -845,7 +849,7 @@ class Line extends BaseLine {
     }
 
     if (shouldAdjust) {
-      ObjectUtil.GetObjectPtr(this.BlockID, true);
+      DataUtil.GetObjectPtr(this.BlockID, true);
       if (deltaX || deltaY) {
         this.OffsetShape(deltaX, deltaY);
       }
@@ -854,7 +858,7 @@ class Line extends BaseLine {
         if (offsetY) newHeight = this.Frame.height + offsetY;
         this.SetSize(newWidth, newHeight, 0);
       }
-      T3Gv.opt.AddToDirtyList(this.BlockID);
+      DataUtil.AddToDirtyList(this.BlockID);
     }
 
     T3Util.Log('S.Line - Output:', { offsetX, offsetY, newWidth, newHeight, deltaX, deltaY, shouldAdjust });

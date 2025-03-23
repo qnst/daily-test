@@ -13,9 +13,12 @@ import DocConfig from '../Model/DocConfig'
 import OptConstant from '../Data/Constant/OptConstant'
 import CursorConstant from '../Data/Constant/CursorConstant'
 import T3Util from '../Util/T3Util'
-import ObjectUtil from '../Opt/Data/ObjectUtil'
+import DataUtil from '../Opt/Data/DataUtil'
 import MouseUtil from '../Event/MouseUtil'
 import SelectUtil from '../Opt/Opt/SelectUtil'
+import RulerUtil from '../Opt/UI/RulerUtil'
+import UIUtil from '../Opt/UI/UIUtil'
+import LMEvtUtil from '../Opt/Opt/LMEvtUtil'
 
 /**
  * Represents a utility class for managing and configuring an SVG-based document.
@@ -131,9 +134,9 @@ class DocUtil {
     this.docConfig.showPageDivider = true;
 
     // Snap settings
-    this.docConfig.enableSnap = false;
+    this.docConfig.enableSnap = true;
     this.docConfig.centerSnap = true;
-    this.docConfig.snapToShapes = false;
+    this.docConfig.snapToShapes = true;
 
     // Zoom and scale controls
     this.docConfig.zoom = true;
@@ -194,7 +197,7 @@ class DocUtil {
 
     // Initialize ruler configuration
     this.rulerConfig = new RulerConfig();
-    this.rulerConfig.fractionaldenominator = T3Gv.opt.GetFractionDenominator();
+    this.rulerConfig.fractionaldenominator = RulerUtil.GetFractionDenominator();
     this.UpdateRulerVisibility();
 
     // Bind mouse move event handler
@@ -675,7 +678,7 @@ class DocUtil {
    * @param skipUIUpdate - If true, skips updating UI components like rulers and grid
    * @returns void
    */
-  ResizeDocument(width, height, skipUIUpdate): void {
+  ResizeDocument(width, height, skipUIUpdate?): void {
     T3Util.Log("= U.DocUtil: ResizeDocument - Input:", { width, height, skipUIUpdate });
 
     if (this.svgDoc) {
@@ -743,7 +746,7 @@ class DocUtil {
     const workArea = this.svgDoc.GetWorkArea();
 
     // Get selected objects
-    const selectedObjects = ObjectUtil.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
+    const selectedObjects = DataUtil.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
 
     // Calculate bounding rectangle for view centering
     let boundingRect = selectedObjects.length
@@ -810,7 +813,7 @@ class DocUtil {
     // Center view on content unless skipCentering is true
     if (!skipCentering) {
       const workArea = this.svgDoc.GetWorkArea();
-      const selectedObjects = ObjectUtil.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
+      const selectedObjects = DataUtil.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
 
       // Get bounding rectangle of selection or entire document
       let boundingRect = selectedObjects.length
@@ -948,7 +951,7 @@ class DocUtil {
   IdleZoomUI(): void {
     T3Util.Log("= U.DocUtil: IdleZoomUI - Input: Updating zoom UI");
 
-    T3Gv.opt.UpdateDocumentScale();
+    UIUtil.UpdateDocumentScale();
 
     T3Util.Log("= U.DocUtil: IdleZoomUI - Output: Zoom UI updated");
   }
@@ -1128,7 +1131,7 @@ class DocUtil {
 
       // Store settings in session data if not propagating
       if (!shouldPropagate) {
-        sessionDataPointer = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, true);
+        sessionDataPointer = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, true);
         sessionDataPointer.rulerConfig = Utils1.DeepCopy(this.rulerConfig);
       }
 
@@ -1925,7 +1928,7 @@ class DocUtil {
 
     Utils2.StopPropagationAndDefaults(dragEvent);
 
-    if (T3Gv.opt.IsCtrlClick(dragEvent)) {
+    if (LMEvtUtil.IsCtrlClick(dragEvent)) {
       Utils2.StopPropagationAndDefaults(dragEvent);
       T3Gv.docUtil.RulerHandleDoubleClick(dragEvent, false, true);
       T3Util.Log("= U.DocUtil: RulerTopDrag - Output: Handled as double click");
@@ -1949,7 +1952,7 @@ class DocUtil {
     // Stop event propagation and defaults
     Utils2.StopPropagationAndDefaults(dragEvent);
 
-    if (T3Gv.opt.IsCtrlClick(dragEvent)) {
+    if (LMEvtUtil.IsCtrlClick(dragEvent)) {
       T3Util.Log("= U.DocUtil: RulerLeftDrag - Ctrl click detected");
       Utils2.StopPropagationAndDefaults(dragEvent);
       T3Gv.docUtil.RulerHandleDoubleClick(dragEvent, true, false);
@@ -1975,7 +1978,7 @@ class DocUtil {
     Utils2.StopPropagationAndDefaults(event);
 
     // Check if Ctrl-click is detected
-    if (T3Gv.opt.IsCtrlClick(event)) {
+    if (LMEvtUtil.IsCtrlClick(event)) {
       T3Util.Log("= U.DocUtil: RulerCenterDrag - Ctrl click detected, invoking double click handler");
       Utils2.StopPropagationAndDefaults(event);
       T3Gv.docUtil.RulerHandleDoubleClick(event, true, true);
@@ -2061,7 +2064,7 @@ class DocUtil {
         this.ShowCoordinates(true);
 
         // Update selection attributes for the currently selected object(s)
-        const selectedObjects = ObjectUtil.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
+        const selectedObjects = DataUtil.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
         SelectUtil.UpdateSelectionAttributes(selectedObjects);
 
         T3Util.Log("= U.DocUtil: RulerHandleDoubleClick - Output:", { updatedOrigins: originUpdates, selectedObjects });
@@ -2458,7 +2461,7 @@ class DocUtil {
     // Only proceed if zoom percentage is positive and we're not in idle state
     if (zoomPercentage > 0 && !this.inZoomIdle && T3Gv.opt) {
       // Convert percentage to factor (e.g., 100% -> 1.0)
-      T3Gv.opt.SetDocumentScale(zoomPercentage / 100, eventSource);
+      UIUtil.SetDocumentScale(zoomPercentage / 100, eventSource);
       T3Util.Log("O.DocOpt - SetZoomLevel - Applied zoom factor:", zoomPercentage / 100);
     } else {
       T3Util.Log("O.DocOpt - SetZoomLevel - Zoom not applied. Conditions not met:", {
@@ -2490,7 +2493,7 @@ class DocUtil {
     if (T3Gv.opt) {
       const zoomFactor = this.docConfig.zoomLevels[zoomIndex] / 100;
       T3Util.Log("O.DocOpt - SetZoomLevelByIndex - Setting zoom factor:", zoomFactor);
-      T3Gv.opt.SetDocumentScale(zoomFactor);
+      UIUtil.SetDocumentScale(zoomFactor);
     } else {
       T3Util.Log("O.DocOpt - SetZoomLevelByIndex - OptManager not available, zoom not applied");
     }

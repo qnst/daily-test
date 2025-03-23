@@ -15,9 +15,12 @@ import PolygonConstant from '../Polygon/PolygonConstant'
 import DSConstant from '../DS/DSConstant'
 import OptConstant from '../../Data/Constant/OptConstant'
 import T3Util from '../../Util/T3Util'
-import ObjectUtil from '../Data/ObjectUtil'
+import DataUtil from '../Data/DataUtil'
 import LayerUtil from '../Opt/LayerUtil'
 import SelectUtil from '../Opt/SelectUtil'
+import OptCMUtil from '../Opt/OptCMUtil'
+import DrawUtil from '../Opt/DrawUtil'
+import UIUtil from '../UI/UIUtil'
 
 class WallOpt {
 
@@ -120,15 +123,15 @@ class WallOpt {
     };
 
     // Get current selection and create a copy to restore after adding the wall
-    const selectionList = ObjectUtil.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
+    const selectionList = DataUtil.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
     const currentSelection = Utils1.DeepCopy(selectionList);
 
     // Create a new wall line
     const wallLine = new Line(wallParameters);
 
     // Draw the new wall and update UI state
-    T3Gv.opt.DrawNewObject(wallLine, true);
-    T3Gv.opt.SetEditMode(NvConstant.EditState.Edit);
+    DrawUtil.DrawNewObject(wallLine, true);
+    OptCMUtil.SetEditMode(NvConstant.EditState.Edit);
     SelectUtil.SelectObjects(currentSelection, false, false);
 
     T3Util.Log('U.WallUtil AddWall output:', { wallLine });
@@ -164,24 +167,24 @@ class WallOpt {
       this.ToggleAddingWalls();
 
       // Get currently selected objects
-      let selectedObjects = ObjectUtil.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
+      let selectedObjects = DataUtil.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
 
       if (selectedObjects && selectedObjects.length > 0) {
         // Reset object draw state and selection properties
-        T3Gv.opt.ResetObjectDraw();
+        DrawUtil.ResetObjectDraw();
         // T3Constant.DocContext.SelectionToolSticky = false;
         T3Gv.wallOpt.PostObjectDrawHook();
       } else {
         // Cancel current modal operation
-        T3Gv.opt.CancelOperation();
+        OptCMUtil.CancelOperation();
       }
 
       // Set edit mode to default
-      T3Gv.opt.SetEditMode(NvConstant.EditState.Default);
+      OptCMUtil.SetEditMode(NvConstant.EditState.Default);
 
       // Re-select any previously selected objects
       let objectsToSelect = [];
-      selectedObjects = ObjectUtil.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
+      selectedObjects = DataUtil.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
 
       if (selectedObjects && selectedObjects.length > 0) {
         objectsToSelect = Utils1.DeepCopy(selectedObjects);
@@ -194,7 +197,7 @@ class WallOpt {
           T3Gv.wallOpt.AddCornerCancel();
           break;
         default:
-          T3Gv.opt.CancelOperation();
+          OptCMUtil.CancelOperation();
       }
     }
 
@@ -258,11 +261,11 @@ class WallOpt {
   AddCornerCancel() {
     T3Util.Log('U.WallUtil AddCornerCancel input: none');
 
-    T3Gv.opt.SetEditMode(NvConstant.EditState.Default);
-    T3Gv.opt.CancelOperation();
-    T3Gv.opt.ResetObjectDraw();
+    OptCMUtil.SetEditMode(NvConstant.EditState.Default);
+    OptCMUtil.CancelOperation();
+    DrawUtil.ResetObjectDraw();
     T3Gv.wallOpt.PostObjectDrawHook();
-    T3Gv.opt.SetEditMode(NvConstant.EditState.Default);
+    OptCMUtil.SetEditMode(NvConstant.EditState.Default);
 
     T3Util.Log('U.WallUtil AddCornerCancel output: completed');
   }
@@ -301,18 +304,18 @@ class WallOpt {
       }
 
       // Get the target object and add corner if it's valid
-      const targetObject = ObjectUtil.GetObjectPtr(targetId, true);
+      const targetObject = DataUtil.GetObjectPtr(targetId, true);
 
       if (targetObject && typeof targetObject.AddCorner === 'function') {
         targetObject.AddCorner(targetElement, hitPoint);
       }
 
       // Reset application state
-      T3Gv.opt.SetEditMode(NvConstant.EditState.Default);
-      T3Gv.opt.CancelOperation();
-      T3Gv.opt.ResetObjectDraw();
+      OptCMUtil.SetEditMode(NvConstant.EditState.Default);
+      OptCMUtil.CancelOperation();
+      DrawUtil.ResetObjectDraw();
       T3Gv.wallOpt.PostObjectDrawHook();
-      T3Gv.opt.SetEditMode(NvConstant.EditState.Default);
+      OptCMUtil.SetEditMode(NvConstant.EditState.Default);
 
       T3Util.Log('U.WallUtil AddCorner output: false');
       return false;
@@ -334,8 +337,8 @@ class WallOpt {
   //   this.StopAddingWalls();
 
   //   // Reset editor state
-  //   T3Gv.opt.SetEditMode(NvConstant.EditState.Default);
-  //   T3Gv.opt.CancelOperation();
+  //   OptCMUtil.SetEditMode(NvConstant.EditState.Default);
+  //   OptCMUtil.CancelOperation();
 
   //   // Enable polyline container movement mode
   //   T3Constant.DocContext.PolyLineContainerMoveMode = true;
@@ -355,14 +358,14 @@ class WallOpt {
 
     this.StopAddingWalls();
     T3Gv.opt.CloseEdit();
-    T3Gv.opt.CancelOperation();
-    T3Gv.opt.SetEditMode(NvConstant.EditState.Edit);
+    OptCMUtil.CancelOperation();
+    OptCMUtil.SetEditMode(NvConstant.EditState.Edit);
 
     const visibleObjectIds = LayerUtil.ActiveVisibleZList();
 
     for (let i = 0; i < visibleObjectIds.length; i++) {
       const objectId = visibleObjectIds[i];
-      const object = ObjectUtil.GetObjectPtr(objectId, false);
+      const object = DataUtil.GetObjectPtr(objectId, false);
 
       if (!(object.flags & NvConstant.ObjFlags.Lock)) {
         if (object.objecttype === NvConstant.FNObjectTypes.FlWall) {
@@ -371,7 +374,7 @@ class WallOpt {
       }
     }
 
-    T3Gv.opt.SetModalOperation(OptConstant.OptTypes.AddCorner);
+    UIUtil.SetModalOperation(OptConstant.OptTypes.AddCorner);
 
     T3Util.Log('U.WallUtil AddCornerStart output: completed');
   }
@@ -459,7 +462,7 @@ class WallOpt {
     };
 
     const measureLine = new Line(measureLineParams);
-    T3Gv.opt.DrawNewObject(measureLine, false);
+    DrawUtil.DrawNewObject(measureLine, false);
 
     T3Util.Log('U.WallUtil AddMeasureLine output: completed');
   }
@@ -530,7 +533,7 @@ class WallOpt {
     const measureAreaRect = new Instance.Shape.Rect(measureAreaParams);
 
     // Add the area measurement to the document
-    T3Gv.opt.DrawNewObject(measureAreaRect, false);
+    DrawUtil.DrawNewObject(measureAreaRect, false);
 
     T3Util.Log('U.WallUtil AddMeasureArea output: completed');
   }
@@ -596,7 +599,7 @@ class WallOpt {
   //       event.gesture.center.clientY
   //     );
   //     const targetElement = T3Gv.opt.svgObjectLayer.FindElementByDOMElement(event.currentTarget);
-  //     const targetObject = ObjectUtil.GetObjectPtr(targetElement.GetID(), false);
+  //     const targetObject = DataUtil.GetObjectPtr(targetElement.GetID(), false);
 
   //     // Perform hit testing
   //     if (targetObject) {
@@ -608,17 +611,17 @@ class WallOpt {
   //       // If the polyline is closed, prepare it for splitting
   //       if (targetObject.polylist.closed) {
   //         // Collab.BeginSecondaryEdit();
-  //         ObjectUtil.GetObjectPtr(targetObject.BlockID, true);
+  //         DataUtil.GetObjectPtr(targetObject.BlockID, true);
   //         targetObject.MaintainDimensionThroughPolygonOpennessChange(false);
   //       }
 
   //       // Split the polyline at the hit segment
   //       T3Gv.opt.PolyLSplit(targetObject.BlockID, hitInfo.segment);
-  //       T3Gv.opt.SetEditMode(NvConstant.EditState.Default);
+  //       OptCMUtil.SetEditMode(NvConstant.EditState.Default);
   //     }
 
   //     // Clean up and reset state
-  //     T3Gv.opt.CancelOperation();
+  //     OptCMUtil.CancelOperation();
   //     T3Gv.opt.PostObjectDraw();
 
   //     T3Util.Log('U.WallUtil SplitWall output: false');
@@ -639,8 +642,8 @@ class WallOpt {
 
   //   this.StopAddingWalls();
   //   T3Gv.opt.CloseEdit();
-  //   T3Gv.opt.CancelOperation();
-  //   T3Gv.opt.SetEditMode(
+  //   OptCMUtil.CancelOperation();
+  //   OptCMUtil.SetEditMode(
   //     NvConstant.EditState.Edit,
   //     CursorConstant.CursorType.ALIAS
   //   );
@@ -649,7 +652,7 @@ class WallOpt {
 
   //   for (let i = 0; i < visibleObjectIds.length; i++) {
   //     const objectId = visibleObjectIds[i];
-  //     const object = ObjectUtil.GetObjectPtr(objectId, false);
+  //     const object = DataUtil.GetObjectPtr(objectId, false);
 
   //     if (!(object.flags & NvConstant.ObjFlags.Lock)) {
   //       if (object.objecttype === NvConstant.FNObjectTypes.FlWall) {
@@ -673,7 +676,7 @@ class WallOpt {
 
     const visibleObjectIds = LayerUtil.ActiveVisibleZList();
     let compareObject = null;
-    const targetObject = ObjectUtil.GetObjectPtr(objectId, false);
+    const targetObject = DataUtil.GetObjectPtr(objectId, false);
 
     // Helper function to check if one object is contained within another
     function isObjectContained(containerObject, contentObject) {
@@ -717,7 +720,7 @@ class WallOpt {
         const currentObjectId = visibleObjectIds[i];
 
         if (objectId !== currentObjectId) {
-          compareObject = ObjectUtil.GetObjectPtr(currentObjectId, false);
+          compareObject = DataUtil.GetObjectPtr(currentObjectId, false);
 
           if (compareObject instanceof PolyLineContainer && isObjectContained(compareObject, targetObject)) {
             const targetIndex = visibleObjectIds.indexOf(targetObject.BlockID);

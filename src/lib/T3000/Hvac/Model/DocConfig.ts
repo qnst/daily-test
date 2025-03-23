@@ -64,7 +64,7 @@ class DocConfig {
   public spellCheck: boolean = true;
   public spellDict: boolean = true;
   public spellFlags: boolean = true;
-  public snapToShapes: boolean = false
+  public snapToShapes: boolean = true
 }
 
 export default DocConfig

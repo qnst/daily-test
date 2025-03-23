@@ -19,7 +19,8 @@ import TextConstant from '../Data/Constant/TextConstant';
 import StyleConstant from '../Data/Constant/StyleConstant';
 import T3Util from '../Util/T3Util';
 import DSUtil from '../Opt/DS/DSUtil';
-import ObjectUtil from '../Opt/Data/ObjectUtil';
+import DataUtil from '../Opt/Data/DataUtil';
+import OptCMUtil from '../Opt/Opt/OptCMUtil';
 
 /**
  * Represents a group symbol that contains multiple shapes treated as a single entity.
@@ -131,7 +132,7 @@ class GroupSymbol extends BaseSymbol {
 
       for (let idx = 0; idx < totalShapes; ++idx) {
         let shapeId = this.ShapesInGroup[idx];
-        shapeObj = ObjectUtil.GetObjectPtr(shapeId, false);
+        shapeObj = DataUtil.GetObjectPtr(shapeId, false);
         originalDimensions = shapeObj.Dimensions;
         shapeObj.Dimensions = 0;
 
@@ -289,7 +290,7 @@ class GroupSymbol extends BaseSymbol {
         }
 
         for (let index = 0; index < shapesCount; ++index) {
-          let shapeObject = ObjectUtil.GetObjectPtr(shapesGroup[index], true);
+          let shapeObject = DataUtil.GetObjectPtr(shapesGroup[index], true);
           if (shapeObject && (shapeObject.colorfilter & StyleConstant.ColorFilters.NCText) === 0) {
             let childShapeElement = shapeElement.GetElementById(shapeObject.BlockID);
             // Remember current dimensions to check for changes after update
@@ -314,7 +315,7 @@ class GroupSymbol extends BaseSymbol {
         }
 
         if (frameSizeChanged) {
-          T3Gv.opt.AddToDirtyList(this.BlockID);
+          DataUtil.AddToDirtyList(this.BlockID);
           const scaleWidth = this.Frame.width / this.InitialGroupBounds.width;
           const scaleHeight = this.Frame.height / this.InitialGroupBounds.height;
           if (!isNaN(scaleWidth) && !isNaN(scaleHeight)) {
@@ -334,7 +335,7 @@ class GroupSymbol extends BaseSymbol {
     T3Util.Log("S.GroupSymbol - GetTextures input:", textureList);
     const totalShapes = this.ShapesInGroup.length;
     for (let index = 0; index < totalShapes; index++) {
-      const shapeObject = ObjectUtil.GetObjectPtr(this.ShapesInGroup[index], false);
+      const shapeObject = DataUtil.GetObjectPtr(this.ShapesInGroup[index], false);
       if (shapeObject) {
         shapeObject.GetTextures(textureList);
       }
@@ -560,7 +561,7 @@ class GroupSymbol extends BaseSymbol {
     const connectorInfo = (function (currentObject) {
       let hookInfo = null;
       if (currentObject.hooks.length) {
-        const hookTarget = ObjectUtil.GetObjectPtr(currentObject.hooks[0].objid, false);
+        const hookTarget = DataUtil.GetObjectPtr(currentObject.hooks[0].objid, false);
         if ((hookTarget && hookTarget.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) ||
           (hookTarget && hookTarget instanceof Instance.Shape.ShapeContainer)) {
           hookInfo = hookTarget.PrGetShapeConnectorInfo(currentObject.hooks[0]);
@@ -628,7 +629,7 @@ class GroupSymbol extends BaseSymbol {
     const isNarrow = frame.width < 44;
     let hasConnectorHook = this.hooks.length > 0;
     if (hasConnectorHook) {
-      const hookObject = ObjectUtil.GetObjectPtr(this.hooks[0].objid, false);
+      const hookObject = DataUtil.GetObjectPtr(this.hooks[0].objid, false);
       if (hookObject && hookObject.DrawingObjectBaseClass !== OptConstant.DrawObjectBaseClass.Connector) {
         hasConnectorHook = false;
       }
@@ -683,7 +684,7 @@ class GroupSymbol extends BaseSymbol {
     }
 
     for (let index = 0; index < this.ShapesInGroup.length; index++) {
-      const shapeObject = ObjectUtil.GetObjectPtr(this.ShapesInGroup[index], false);
+      const shapeObject = DataUtil.GetObjectPtr(this.ShapesInGroup[index], false);
       if (shapeObject.ContainsText()) {
         T3Util.Log("S.GroupSymbol - ContainsText output:", true);
         return true;
@@ -706,13 +707,13 @@ class GroupSymbol extends BaseSymbol {
       for (let idx = 0; idx < shapesCount; idx++) {
         const shapeID = this.ShapesInGroup[idx];
         result.zList.push(shapeID);
-        const shapeObj = ObjectUtil.GetObjectPtr(shapeID, false);
+        const shapeObj = DataUtil.GetObjectPtr(shapeID, false);
         shapeObj.layer = this.Layer;
         shapeObj.GetTextures(result.TextureList);
       }
 
-      result.sdp = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
-      result.tLMB = ObjectUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
+      result.sdp = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
+      result.tLMB = DataUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
       result.ctp = T3Gv.opt.contentHeader;
       result.GroupOffset.x = 0;
       result.GroupOffset.y = 0;
@@ -771,13 +772,13 @@ class GroupSymbol extends BaseSymbol {
       for (let i = 0; i < numShapes; i++) {
         const shapeId = this.ShapesInGroup[i];
         nativeStorageResult.zList.push(shapeId);
-        shapeObj = ObjectUtil.GetObjectPtr(shapeId, false);
+        shapeObj = DataUtil.GetObjectPtr(shapeId, false);
         shapeObj.layer = this.Layer;
         shapeObj.GetTextures(nativeStorageResult.TextureList);
       }
 
-      nativeStorageResult.sdp = ObjectUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
-      nativeStorageResult.tLMB = ObjectUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
+      nativeStorageResult.sdp = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
+      nativeStorageResult.tLMB = DataUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
       nativeStorageResult.ctp = T3Gv.opt.contentHeader;
 
       if (this.InitialGroupBounds.x > 0 || this.InitialGroupBounds.y > 0) {
@@ -808,7 +809,7 @@ class GroupSymbol extends BaseSymbol {
     const shapesInGroup = this.ShapesInGroup;
     const count = shapesInGroup.length;
     for (let index = 0; index < count; index++) {
-      const shapeObject = ObjectUtil.GetObjectPtr(shapesInGroup[index], false);
+      const shapeObject = DataUtil.GetObjectPtr(shapesInGroup[index], false);
       if (shapeObject) {
         const storeObject = T3Gv.stdObj.GetObject(shapesInGroup[index]);
         shapeObject.DeleteObject();
@@ -831,7 +832,7 @@ class GroupSymbol extends BaseSymbol {
 
     // // Delete Table object if exists
     // if (this.TableID !== -1) {
-    //   let tablePointer = ObjectUtil.GetObjectPtr(this.TableID, true);
+    //   let tablePointer = DataUtil.GetObjectPtr(this.TableID, true);
     //   if (tablePointer) {
     //     T3Gv.opt.Table_DeleteObject(tablePointer);
     //   }
@@ -871,7 +872,7 @@ class GroupSymbol extends BaseSymbol {
       if (currentObject) {
         currentObject.Delete();
       }
-      if (T3Gv.opt.IsBlobURL(this.ImageURL)) {
+      if (OptCMUtil.IsBlobURL(this.ImageURL)) {
         T3Gv.opt.DeleteURL(this.ImageURL);
       }
     }
@@ -897,7 +898,7 @@ class GroupSymbol extends BaseSymbol {
 
     // Update hooked object's dimension lines if applicable
     if (this.hooks.length) {
-      hookObject = ObjectUtil.GetObjectPtr(this.hooks[0].objid, false);
+      hookObject = DataUtil.GetObjectPtr(this.hooks[0].objid, false);
       if (hookObject && hookObject.objecttype === NvConstant.FNObjectTypes.FlWall && !(hookObject.Dimensions & NvConstant.DimensionFlags.HideHookedObjDimensions)) {
         hooksBackup = Utils1.DeepCopy(this.hooks);
         this.hooks = [];
@@ -920,7 +921,7 @@ class GroupSymbol extends BaseSymbol {
 
     if (this.HasFieldData() && (!fieldDataTableId || this.fieldDataTableID === fieldDataTableId)) {
       // Retrieve the object pointer for the current BlockID (forcing load)
-      ObjectUtil.GetObjectPtr(this.BlockID, true);
+      DataUtil.GetObjectPtr(this.BlockID, true);
 
       if (shouldRemove) {
         if (this.fieldDataElemID < 0) {
@@ -937,7 +938,7 @@ class GroupSymbol extends BaseSymbol {
       this.dataStyleOverride = null;
 
       // Mark the Block as dirty so it gets refreshed
-      T3Gv.opt.AddToDirtyList(this.BlockID);
+      DataUtil.AddToDirtyList(this.BlockID);
 
       // Refresh from field data
       this.BaseDrawObjectRefreshFromFieldData();
@@ -971,7 +972,7 @@ class GroupSymbol extends BaseSymbol {
     }
 
     if (TODO.STData.FieldedDataHasRulesForRecord(this.fieldDataTableID, this.fieldDataElemID)) {
-      T3Gv.opt.AddToDirtyList(this.BlockID);
+      DataUtil.AddToDirtyList(this.BlockID);
       needsRefresh = true;
     }
 
@@ -1041,7 +1042,7 @@ class GroupSymbol extends BaseSymbol {
     const shapesList = this.ShapesInGroup;
     const totalShapes = shapesList.length;
     for (let i = 0; i < totalShapes; i++) {
-      const shapeObject = ObjectUtil.GetObjectPtr(shapesList[i], false);
+      const shapeObject = DataUtil.GetObjectPtr(shapesList[i], false);
       if (shapeObject) {
         shapeObject.RemoveFieldData(fieldKey, fieldValue);
       }
@@ -1061,7 +1062,7 @@ class GroupSymbol extends BaseSymbol {
     }
 
     for (let index = 0; index < totalShapes; ++index) {
-      const shapeObject = ObjectUtil.GetObjectPtr(shapesInGroup[index], false);
+      const shapeObject = DataUtil.GetObjectPtr(shapesInGroup[index], false);
       if (shapeObject && shapeObject.HasFieldDataInText(fieldData)) {
         T3Util.Log("S.GroupSymbol - HasFieldDataInText output:", true);
         return true;
@@ -1084,7 +1085,7 @@ class GroupSymbol extends BaseSymbol {
     }
 
     for (let index = 0; index < shapesCount; index++) {
-      const shapeObject = ObjectUtil.GetObjectPtr(shapesInGroup[index], false);
+      const shapeObject = DataUtil.GetObjectPtr(shapesInGroup[index], false);
       if (shapeObject && shapeObject.HasFieldDataRules(criteria)) {
         T3Util.Log("S.GroupSymbol - HasFieldDataRules output:", true);
         return true;
@@ -1108,7 +1109,7 @@ class GroupSymbol extends BaseSymbol {
 
     // Check each shape in the group
     for (let index = 0; index < totalShapes; index++) {
-      const shapeObj = ObjectUtil.GetObjectPtr(groupShapes[index], false);
+      const shapeObj = DataUtil.GetObjectPtr(groupShapes[index], false);
       if (shapeObj && shapeObj.HasFieldDataForTable(tableId)) {
         T3Util.Log("S.GroupSymbol - HasFieldDataForTable output:", true);
         return true;
@@ -1133,7 +1134,7 @@ class GroupSymbol extends BaseSymbol {
       return false;
     }
     for (let index = 0; index < totalShapes; ++index) {
-      const shapeObject = ObjectUtil.GetObjectPtr(shapesInGroup[index], false);
+      const shapeObject = DataUtil.GetObjectPtr(shapesInGroup[index], false);
       if (shapeObject && shapeObject.HasFieldDataRecord(fieldKey, fieldValue, recordId)) {
         T3Util.Log("S.GroupSymbol - HasFieldDataRecord output:", true);
         return true;
@@ -1159,7 +1160,7 @@ class GroupSymbol extends BaseSymbol {
     }
 
     if (this.HasFieldDataRules(fieldData)) {
-      T3Gv.opt.AddToDirtyList(this.BlockID);
+      DataUtil.AddToDirtyList(this.BlockID);
       needsRefresh = true;
     }
 
@@ -1173,7 +1174,7 @@ class GroupSymbol extends BaseSymbol {
     Instance.Shape.BaseSymbol.prototype.RemapDataFields.call(this, fieldData);
     const shapesGroup = this.ShapesInGroup;
     for (let index = 0; index < shapesGroup.length; index++) {
-      const shapeObject = ObjectUtil.GetObjectPtr(shapesGroup[index], false);
+      const shapeObject = DataUtil.GetObjectPtr(shapesGroup[index], false);
       if (shapeObject) {
         shapeObject.RemapDataFields(fieldData);
       }
