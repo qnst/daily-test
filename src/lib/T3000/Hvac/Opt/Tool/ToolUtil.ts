@@ -598,8 +598,8 @@ class ToolUtil {
       Frame: {
         x: 0,
         y: 0,
-        width: 0,
-        height: 0
+        width: 100,
+        height: 100
       },
       TMargins: {
         top: 0,
@@ -1441,9 +1441,97 @@ class ToolUtil {
     //   }
     // ];
 
+    const RoomHumidity =
+      `
 
 
-    symbolObject.SVGFragment = boiler;
+ <g transform="translate(0,0)">
+        <circle r="30" cy="30" cx="30"
+        style="
+                opacity: 1;
+                fill: ##FillColor=#FFFFFF##;
+                fill-opacity: 1;
+                fill-rule: nonzero;
+                stroke:##FillColor=#000000##;
+                stroke-width: 0.764198;
+                stroke-linecap: butt;
+                stroke-linejoin: round;
+                stroke-miterlimit: 4;
+                stroke-dasharray: none;
+                stroke-opacity: 1;
+              "/>
+        <g transform="matrix(1,0,0,1,46,43)"
+        style="
+                font-style: normal;
+                font-weight: normal;
+                font-size: 51px;
+                line-height: 125%;
+                font-family: Sans;
+                letter-spacing: 0px;
+                word-spacing: 0px;
+                fill:##FillColor=#000000##;
+                fill-opacity: 1;
+                stroke: none;
+                stroke-width: 1px;
+                stroke-linecap: butt;
+                stroke-linejoin: miter;
+                stroke-opacity: 1;
+              ">
+            <path
+                d="m -29.828843,-32.840076 h 5.075651 v 15.377717 h 18.4432096 v -15.377717 h 5.0756516 V 4.6745172 H -6.3099824 V -13.190771 H -24.753192 V 4.6745172 h -5.075651 z" />
+        </g>
+    </g>
+      `;
+
+
+    const RoomTemperature =
+      `
+    <g transform="matrix(0.76419842,0,0,0.76419842,-3.2187002,-3.2187002)">
+      <circle
+        r="11.288136"
+        cy="16"
+        cx="16"
+        style="
+          opacity: 1;
+          fill:  ##FillColor=#FFFFFF##;
+          fill-opacity: 1;
+          fill-rule: nonzero;
+          stroke:##FillColor=#000000##;
+          stroke-width: 1;
+          stroke-linecap: butt;
+          stroke-linejoin: round;
+          stroke-miterlimit: 4;
+          stroke-dasharray: none;
+          stroke-opacity: 1;
+        "
+      />
+      <g
+        transform="translate(32.100664,13.086915)"
+        style="
+          font-style: normal;
+          font-weight: normal;
+          font-size: 20.2897px;
+          line-height: 125%;
+          font-family: Sans;
+          letter-spacing: 0px;
+          word-spacing: 0px;
+          fill:##FillColor=#000000##;
+          fill-opacity: 1;
+          stroke: none;
+          stroke-width: 1px;
+          stroke-linecap: butt;
+          stroke-linejoin: miter;
+          stroke-opacity: 1;
+        "
+      >
+        <path
+          d="m -22.356997,-4.4825641 h 12.5126658 v 1.6842067 H -15.095093 V 10.308734 h -2.011141 V -2.7983574 h -5.250763 z"
+        />
+      </g>
+    </g>
+    `;
+
+    symbolObject.SVGFragment = RoomHumidity;
 
     // Add the symbol to the drawing using drag-drop mode
     if (symbolObject) {

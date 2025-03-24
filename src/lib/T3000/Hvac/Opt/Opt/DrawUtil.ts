@@ -2007,7 +2007,7 @@ class DrawUtil {
     SelectUtil.ClearAnySelection(false);
     OptCMUtil.SetEditMode(NvConstant.EditState.Text);
 
-    this.WorkAreaHammerTap = (tapEvent) => {
+    const WorkAreaHammerTap = (tapEvent) => {
       try {
         // T3Gv.opt.SetUIAdaptation(tapEvent);
         // if (Collab.AllowMessage()) {
@@ -2026,7 +2026,7 @@ class DrawUtil {
       }
     };
 
-    T3Gv.opt.WorkAreaHammer.on('tap', this.WorkAreaHammerTap);
+    T3Gv.opt.WorkAreaHammer.on('tap', WorkAreaHammerTap);
     LMEvtUtil.LMStampPreTrack();
 
     T3Util.Log("O.Opt StampNewTextShapeOnTap - Output: Completed");

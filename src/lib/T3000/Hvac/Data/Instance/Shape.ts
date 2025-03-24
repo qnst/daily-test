@@ -21,6 +21,7 @@ import SegmentedLine from "../../Shape/S.SegmentedLine"
 import ShapeContainer from "../../Shape/S.ShapeContainer"
 import SVGFragmentSymbol from "../../Shape/S.SVGFragmentSymbol"
 import BaseDrawObject from "../../Shape/S.BaseDrawObject"
+import BitmapImporter from "../../Shape/S.BitmapImporter"
 
 /**
  * The Shape object is a centralized registry for various shape and symbol implementations
@@ -197,7 +198,9 @@ const Shape = {
    * SVG fragment symbol for including vector graphics in diagrams
    * Allows for scalable vector elements to be included in drawings
    */
-  SVGFragmentSymbol
+  SVGFragmentSymbol,
+
+  BitmapImporter
 }
 
 export default Shape

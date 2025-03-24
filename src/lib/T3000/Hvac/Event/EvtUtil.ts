@@ -1222,9 +1222,9 @@ class EvtUtil {
               SelectUtil.UpdateSelectionAttributes(null);
 
               if (event.gesture) {
-                T3Gv.opt.TERegisterEvents(textElement.svgObj.SDGObj, event.gesture.srcEvent);
+                TextUtil.TERegisterEvents(textElement.svgObj.SDGObj, event.gesture.srcEvent);
               } else {
-                T3Gv.opt.TERegisterEvents(textElement.svgObj.SDGObj, event);
+                TextUtil.TERegisterEvents(textElement.svgObj.SDGObj, event);
               }
 
               event.stopPropagation();
@@ -1292,9 +1292,9 @@ class EvtUtil {
 
               // Register text editing event handlers
               if (event.gesture) {
-                T3Gv.opt.TERegisterEvents(textElement, event.gesture.srcEvent);
+                TextUtil.TERegisterEvents(textElement, event.gesture.srcEvent);
               } else {
-                T3Gv.opt.TERegisterEvents(textElement, event);
+                TextUtil.TERegisterEvents(textElement, event);
               }
 
               event.stopPropagation();

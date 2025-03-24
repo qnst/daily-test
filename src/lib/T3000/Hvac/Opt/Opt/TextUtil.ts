@@ -35,7 +35,7 @@ class TextUtil {
    * @param preventCompleteOperation - If true, prevents triggering a complete operation
    * @param shouldCloseTable - If true, closes the associated table after deactivation
    */
-  static DeactivateTextEdit(preventCompleteOperation, shouldCloseTable?) {
+  static DeactivateTextEdit(preventCompleteOperation?, shouldCloseTable?) {
     T3Util.Log("O.Opt DeactivateTextEdit - Input:", { preventCompleteOperation, shouldCloseTable });
 
     let textDataId, objectIndex, cellCount;
@@ -1947,6 +1947,41 @@ class TextUtil {
       T3Util.Log("O.Opt TEDragEndHandler - Output: Mouse up handled and messages unblocked");
       return false;
     };
+  }
+
+  /**
+   * Deletes the text object associated with the target object.
+   * If no target is provided, it uses the currently selected target.
+   * This function removes the text data from the object and deletes the text data block.
+   *
+   * @param targetId - The ID of the target object whose text should be deleted, defaults to current target if null
+   */
+  static DeleteTargetTextObject(targetId) {
+    // If no target ID provided, get the currently selected target
+    if (targetId == null) {
+      targetId = SelectUtil.GetTargetSelect();
+    }
+
+    // Only proceed if we have a valid target ID
+    if (targetId >= 0) {
+      // Get a modifiable reference to the target object
+      const targetObject = DataUtil.GetObjectPtr(targetId, true);
+      const textDataId = targetObject.DataID;
+
+      // If the object has associated text data
+      if (textDataId != -1) {
+        // Get the text data block
+        const textDataBlock = T3Gv.stdObj.GetObject(textDataId);
+
+        // Remove the association between the object and text data
+        targetObject.SetTextObject(-1);
+
+        // Delete the text data block if it exists
+        if (textDataBlock) {
+          textDataBlock.Delete();
+        }
+      }
+    }
   }
 }
 

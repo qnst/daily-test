@@ -1183,7 +1183,7 @@ class BaseDrawObject {
         tempObj.Delete();
       }
       if (OptCMUtil.IsBlobURL(this.ImageURL)) {
-        T3Gv.opt.DeleteURL(this.ImageURL);
+        OptCMUtil.DeleteURL(this.ImageURL);
       }
     }
 

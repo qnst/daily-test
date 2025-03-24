@@ -2,7 +2,6 @@ import OptConstant from "../../Data/Constant/OptConstant";
 import TextConstant from "../../Data/Constant/TextConstant";
 import T3Gv from "../../Data/T3Gv";
 import DynamicHit from "../../Model/DynamicHit";
-import T3Util from "../../Util/T3Util";
 import Utils1 from "../../Util/Utils1";
 import Utils2 from "../../Util/Utils2";
 import DataUtil from "../Data/DataUtil";
@@ -219,7 +218,7 @@ class DynamicUtil {
       let intersectionPoints = [], hits = [];
 
       // Get polygon points from the object
-      const polyPoints = objectToCheck.GetPolyPoints(
+      const polyPoints = lineStart.GetPolyPoints(
         OptConstant.Common.MaxPolyPoints,
         false,
         false,
@@ -344,14 +343,14 @@ class DynamicUtil {
       const textJustification = TextConstant.TextJust;
 
       // Process Room guide type
-      if (guideDistanceType === OptConstant.Common.GuideDistanceTypes.Room) {
+      if (guideDistanceType === OptConstant.GuideDistanceTypes.Room) {
         let objectFrame = Utils1.DeepCopy(objectToProcess.Frame);
         const borderThickness = objectToProcess.StyleRecord.Line.BThick;
 
         // Adjust rectangle by border thickness
         Utils2.InflateRect(objectFrame, -borderThickness, -borderThickness);
 
-        if (LayerUtil.IsRectEnclosed(objectFrame, objectBounds)) {
+        if (Utils2.IsRectangleFullyEnclosed(objectFrame, objectBounds)) {
           // Check horizontal center line intersections
           const horizontalStart = { x: leftEdge, y: centerY };
           const horizontalEnd = { x: rightEdge, y: centerY };
@@ -447,8 +446,8 @@ class DynamicUtil {
       }
 
       // Process PolyWall or Room guide types
-      if (guideDistanceType === DataUtil.Defines.GuideDistanceTypes.PolyWall ||
-        guideDistanceType === DataUtil.Defines.GuideDistanceTypes.Room) {
+      if (guideDistanceType === OptConstant.GuideDistanceTypes.PolyWall ||
+        guideDistanceType === OptConstant.GuideDistanceTypes.Room) {
 
         // Check if center Y is within bounds
         if (centerY >= topEdge && centerY <= bottomEdge) {
@@ -557,7 +556,7 @@ class DynamicUtil {
         }
       }
       // Process Vertical_Wall guide type
-      else if (guideDistanceType === DataUtil.Defines.GuideDistanceTypes.Vertical_Wall) {
+      else if (guideDistanceType === OptConstant.GuideDistanceTypes.Vertical_Wall) {
         let objectFrame = Utils1.DeepCopy(objectToProcess.Frame);
         const borderThickness = objectToProcess.StyleRecord.Line.BThick;
 
@@ -601,7 +600,7 @@ class DynamicUtil {
         }
       }
       // Process Horizontal_Wall guide type
-      else if (guideDistanceType === DataUtil.Defines.GuideDistanceTypes.Horizontal_Wall) {
+      else if (guideDistanceType === OptConstant.GuideDistanceTypes.Horizontal_Wall) {
         let objectFrame = Utils1.DeepCopy(objectToProcess.Frame);
         const borderThickness = objectToProcess.StyleRecord.Line.BThick;
 

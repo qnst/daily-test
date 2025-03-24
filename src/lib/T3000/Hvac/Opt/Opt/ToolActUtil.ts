@@ -326,7 +326,7 @@ class ToolActUtil {
 
             // Delete the image URL if it's a blob URL
             if (OptCMUtil.IsBlobURL(drawingObject.ImageURL)) {
-              this.DeleteURL(drawingObject.ImageURL);
+              OptCMUtil.DeleteURL(drawingObject.ImageURL);
             }
           }
         }
@@ -340,7 +340,7 @@ class ToolActUtil {
             // Delete the current image URL if it's a blob URL and different from the next state
             if (OptCMUtil.IsBlobURL(drawingObject.ImageURL) &&
               storedObject.Data.ImageURL !== drawingObject.ImageURL) {
-              this.DeleteURL(drawingObject.ImageURL);
+              OptCMUtil.DeleteURL(drawingObject.ImageURL);
             }
           }
         }

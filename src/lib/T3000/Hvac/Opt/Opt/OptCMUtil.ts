@@ -687,6 +687,22 @@ class OptCMUtil {
     T3Util.Log('O.Opt GetEditMode - Output:', currentEditMode);
     return currentEditMode;
   }
+
+  /**
+   * Revokes a blob URL to free browser resources
+   * This function releases the reference to a blob URL that was previously created
+   * with URL.createObjectURL(). This helps prevent memory leaks when blob URLs
+   * are no longer needed.
+   *
+   * @param url - The blob URL to revoke
+   * @returns void
+   */
+  static DeleteURL(url) {
+    const urlAPI = window.URL || window.webkitURL;
+    if (urlAPI && urlAPI.revokeObjectURL) {
+      urlAPI.revokeObjectURL(url);
+    }
+  }
 }
 
 export default OptCMUtil

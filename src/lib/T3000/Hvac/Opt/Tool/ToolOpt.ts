@@ -406,6 +406,74 @@ class ToolOpt {
 
     T3Util.Log('O.ToolOpt.DragDropSymbolAct - Output: Handled symbol drag and drop');
   }
+
+  /**
+   * Sets or imports a background image for the canvas
+   * @param event - The event or image data for the background
+   * @param isLayerImage - Flag determining whether to import as a layer image (true) or set as background (false)
+   * @returns void
+   */
+  LibSetBackgroundImageAct(event, isLayerImage) {
+    T3Util.Log('O.ToolOpt.LibSetBackgroundImageAct - Input:', { event, isLayerImage });
+
+    try {
+      // Close any ongoing edits first
+      T3Gv.opt.CloseEdit(true, true);
+
+      // const imgUrl = "https://tse2-mm.cn.bing.net/th/id/OIP-C.MBfLtlEN6uCfRHikngEd3QHaO3?rs=1&pid=ImgDetMain";
+      const imgUrl = "C:\\Users\\Double\\Desktop\\RE5cNdq.jpg";
+
+      // Create a file input element to select an image
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = 'image/*';
+
+      fileInput.onchange = (e) => {
+        const file = fileInput.files?.[0];
+        if (!file) {
+          T3Util.Log('O.ToolOpt.LibSetBackgroundImageAct - Error: No file selected');
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = () => {
+          const fileDataUrl = reader.result as string;
+
+          if (isLayerImage) {
+            T3Gv.opt.ImportBackgroundLayerImage(file);
+          } else {
+            T3Gv.opt.SetBackgroundImage(file);
+          }
+
+          T3Util.Log('O.ToolOpt.LibSetBackgroundImageAct - Output: Set background image', { asLayer: isLayerImage });
+        };
+
+        reader.onerror = () => {
+          T3Util.Log('O.ToolOpt.LibSetBackgroundImageAct - Error: Failed to read file');
+        };
+
+        reader.readAsDataURL(file);
+      };
+
+      // Open file dialog
+      fileInput.click();
+
+      // Use the hardcoded URL as a fallback
+      let fileDataUrl = imgUrl;
+
+
+      // if (isLayerImage) {
+      //   T3Gv.opt.ImportBackgroundLayerImage(fileDataUrl);
+      // } else {
+      //   T3Gv.opt.SetBackgroundImage(fileDataUrl);
+      // }
+
+      T3Util.Log('O.ToolOpt.LibSetBackgroundImageAct - Output: Set background image', { asLayer: isLayerImage });
+    } catch (error) {
+      T3Gv.opt.ExceptionCleanup(error);
+      T3Util.Log('O.ToolOpt.LibSetBackgroundImageAct - Error:', error);
+    }
+  }
 }
 
 export default ToolOpt

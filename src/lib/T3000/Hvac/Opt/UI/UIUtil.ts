@@ -393,19 +393,19 @@ class UIUtil {
     T3Gv.opt.svgDoc = T3Gv.docUtil.DocObject();
 
     // Add and configure the object layer (main content layer)
-    T3Gv.opt.svgObjectLayer = T3Gv.opt.svgDoc.AddLayer('svgObjectLayer');
-    T3Gv.opt.svgDoc.SetDocumentLayer('svgObjectLayer');
+    T3Gv.opt.svgObjectLayer = T3Gv.opt.svgDoc.AddLayer('svg-object-layer');
+    T3Gv.opt.svgDoc.SetDocumentLayer('svg-object-layer');
 
     // Add and configure the overlay layer (for UI elements)
-    T3Gv.opt.svgOverlayLayer = T3Gv.opt.svgDoc.AddLayer('svgOverlayLayer');
+    T3Gv.opt.svgOverlayLayer = T3Gv.opt.svgDoc.AddLayer('svg-overlay-layer');
     T3Gv.opt.svgOverlayLayer.ExcludeFromExport(true);
 
     // Add and configure the highlight layer (for highlighting elements)
-    T3Gv.opt.svgHighlightLayer = T3Gv.opt.svgDoc.AddLayer('svgHighlightLayer');
+    T3Gv.opt.svgHighlightLayer = T3Gv.opt.svgDoc.AddLayer('svg-highlight-layer');
     T3Gv.opt.svgHighlightLayer.ExcludeFromExport(true);
 
     // Add and configure the collaboration layer
-    T3Gv.opt.svgCollabLayer = T3Gv.opt.svgDoc.AddLayer('svgCollabLayer');
+    T3Gv.opt.svgCollabLayer = T3Gv.opt.svgDoc.AddLayer('svg-collab-layer');
     T3Gv.opt.svgCollabLayer.ExcludeFromExport(true);
     T3Gv.opt.svgCollabLayer.AllowScaling(false);
 
@@ -500,18 +500,18 @@ class UIUtil {
         };
         const textureId = fillSettings.Texture;
 
-        // Check if the texture exists in the texture list.
-        if (T3Gv.opt.TextureList.Textures[textureId]) {
-          const textureInfo = T3Gv.opt.TextureList.Textures[textureId];
-          textureFill.dim = textureInfo.dim;
-          textureFill.url = textureInfo.ImageURL;
-          textureFill.scale = T3Gv.opt.CalcTextureScale(fillSettings.TextureScale, textureFill.dim.x);
-          sessionObject.background.Paint.TextureScale.Scale = textureFill.scale;
-          if (!textureFill.url) {
-            textureFill.url = Constants.FilePath_CMSRoot + Constants.FilePath_Textures + textureInfo.filename;
-          }
-          backgroundElement.SetTextureFill(textureFill);
-        }
+        // // Check if the texture exists in the texture list.
+        // if (T3Gv.opt.TextureList.Textures[textureId]) {
+        //   const textureInfo = T3Gv.opt.TextureList.Textures[textureId];
+        //   textureFill.dim = textureInfo.dim;
+        //   textureFill.url = textureInfo.ImageURL;
+        //   textureFill.scale = T3Gv.opt.CalcTextureScale(fillSettings.TextureScale, textureFill.dim.x);
+        //   sessionObject.background.Paint.TextureScale.Scale = textureFill.scale;
+        //   if (!textureFill.url) {
+        //     textureFill.url = Constants.FilePath_CMSRoot + Constants.FilePath_Textures + textureInfo.filename;
+        //   }
+        //   backgroundElement.SetTextureFill(textureFill);
+        // }
       } else {
         backgroundElement.SetFillColor('none');
       }
@@ -608,12 +608,14 @@ class UIUtil {
 
     let isTouchInterface = false;
 
-    // Check if we're already on a mobile platform
-    if (T3Gv.opt.isMobilePlatform) {
-      isTouchInterface = true;
-    }
-    // Handle gesture events (from Hammer.js)
-    else if (event.gesture) {
+    // // Check if we're already on a mobile platform
+    // if (T3Gv.opt.isMobilePlatform) {
+    //   isTouchInterface = true;
+    // }
+    // // Handle gesture events (from Hammer.js)
+    // else
+
+    if (event.gesture) {
       // Check for pointer events
       if ('onpointerdown' in window) {
         if (event.gesture.srcEvent instanceof PointerEvent && event.gesture.srcEvent.pointerType == 'touch') {

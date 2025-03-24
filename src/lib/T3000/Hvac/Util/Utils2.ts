@@ -3,6 +3,7 @@ import $ from 'jquery'
 import Point from '../Model/Point'
 import Style from '../Basic/B.Element.Style';
 import T3Gv from '../Data/T3Gv';
+import T3Util from './T3Util';
 
 class Utils2 {
 
@@ -1321,6 +1322,15 @@ class Utils2 {
     return $('<div>').text(text).html();
   }
 
+  static IsRectangleFullyEnclosed(outerRect: { x: number; y: number; width: number; height: number }, innerRect: { x: number; y: number; width: number; height: number }): boolean {
+    T3Util.Log("O.Opt IsRectangleFullyEnclosed - Input:", { outerRect, innerRect });
+    const isEnclosed = innerRect.x >= outerRect.x &&
+      innerRect.x + innerRect.width <= outerRect.x + outerRect.width &&
+      innerRect.y >= outerRect.y &&
+      innerRect.y + innerRect.height <= outerRect.y + outerRect.height;
+    T3Util.Log("O.Opt IsRectangleFullyEnclosed - Output:", isEnclosed);
+    return isEnclosed;
+  }
 }
 
 export default Utils2

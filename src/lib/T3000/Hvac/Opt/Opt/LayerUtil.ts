@@ -7,6 +7,11 @@ import '../../Util/T3Hammer';
 import T3Util from "../../Util/T3Util";
 import DataUtil from "../Data/DataUtil";
 import SvgUtil from "./SvgUtil";
+import Utils2 from '../../Util/Utils2';
+import SelectUtil from './SelectUtil';
+import OptConstant from '../../Data/Constant/OptConstant';
+import Instance from '../../Data/Instance/Instance';
+import DrawUtil from './DrawUtil';
 
 class LayerUtil {
 
@@ -425,6 +430,179 @@ class LayerUtil {
     return allObjectIds;
   }
 
+  /**
+   * Makes a specified layer active by its index
+   * This function handles the UI and system changes needed when switching between layers,
+   * including special handling for different layer types like MindMap or Gantt charts.
+   * It also updates the session settings and adjusts the selected objects list.
+   *
+   * @param layerIndex - Index of the layer to make active
+   */
+  static MakeLayerActiveByIndex(layerIndex: number): void {
+    T3Util.Log("O.Opt MakeLayerActiveByIndex - Input:", { layerIndex });
+
+    // Close any active editing operations
+    const listManager = DataUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
+    listManager.CloseEdit();
+
+    // Handle layer tab visibility in the session
+    const session = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
+    if (session.moreflags & NvConstant.SessionMoreFlags.HideLayerTabs) {
+      const sessionPreserved = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, true);
+      sessionPreserved.moreflags = Utils2.SetFlag(
+        sessionPreserved.moreflags,
+        NvConstant.SessionMoreFlags.HideLayerTabs,
+        false
+      );
+    }
+
+    // Get the layers manager data
+    const layersManager = DataUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
+    const totalLayers = layersManager.nlayers;
+    const layers = layersManager.layers;
+    const currentActiveLayerType = layers[layersManager.activelayer].layertype;
+
+    // Proceed if the layer index is valid
+    if (layerIndex >= 0 && layerIndex < totalLayers) {
+      // // Handle special case when switching from a MindMap layer
+      // if (currentActiveLayerType === NvConstant.LayerTypes.MindMap) {
+      //   T3Util.CommitVisualOutline();
+      // }
+
+      // Update the active layer index
+      const layersManagerPreserved = DataUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, true);
+      layersManagerPreserved.activelayer = layerIndex;
+
+      // Handle specific layer type activations
+      const newLayerType = layers[layerIndex].layerType;
+      switch (newLayerType) {
+        // case NvConstant.LayerTypes.MindMap:
+        //   this.LoadMindMapTools();
+        //   break;
+        // case NvConstant.LayerTypes.Gantt:
+        //   this.LoadGanttChartTools();
+        //   break;
+      }
+
+      // Update selection for the new active layer
+      this.AdjustSelectedListAfterLayerChange();
+    }
+
+    T3Util.Log("O.Opt MakeLayerActiveByIndex - Output: Layer activated");
+  }
+
+  /**
+   * Adjusts the selected objects list when the active layer changes
+   * This function ensures that only objects in visible or active layers remain selected
+   * after changing which layer is active. It also updates the target selection if needed.
+   * @returns void
+   */
+  static AdjustSelectedListAfterLayerChange(): void {
+    T3Util.Log("O.Opt AdjustSelectedListAfterLayerChange - Input");
+
+    // Get the current selected objects list with preservation
+    const selectedList = DataUtil.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, true);
+    const currentTargetSelection = SelectUtil.GetTargetSelect();
+    const selectedCount = selectedList.length;
+    const filteredSelection = [];
+
+    // Close any active editing operation
+    T3Gv.opt.CloseEdit();
+
+    // Get list of all objects in active and visible layers
+    const visibleObjectsList = this.ActiveVisibleZList();
+
+    // Filter the selected objects to only include those in visible layers
+    for (let index = 0; index < selectedCount; ++index) {
+      const objectId = selectedList[index];
+      if (visibleObjectsList.indexOf(objectId) !== -1) {
+        filteredSelection.push(objectId);
+      }
+    }
+
+    // Update target selection if it's no longer in a visible layer
+    if (visibleObjectsList.indexOf(currentTargetSelection) === -1) {
+      SelectUtil.SetTargetSelect(-1);
+    }
+
+    // Update the selected list if changes were made
+    const filteredCount = filteredSelection.length;
+    if (selectedCount !== filteredCount) {
+      // Clear the current selection array and rebuild it
+      selectedList.length = 0;
+      for (let index = 0; index < filteredCount; ++index) {
+        selectedList.push(filteredSelection[index]);
+      }
+    }
+
+    T3Util.Log("O.Opt AdjustSelectedListAfterLayerChange - Output: Selection adjusted");
+  }
+
+  /**
+   * Adds a new layer to the front of the layer stack
+   * @param layerName - The name of the new layer
+   * @param isVisible - Whether the layer should be visible
+   * @param isActive - Whether the layer should be active
+   * @returns Boolean indicating whether the layer was successfully added
+   */
+  static AddNewLayerAtFront(layerName: string, isVisible: boolean, isActive: boolean): boolean {
+    const layersManager = DataUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, true);
+
+    // Check if maximum layer limit has been reached
+    if (layersManager.nlayers >= OptConstant.Common.MaxTotalLayers) {
+      // SDJS.Utils.Alert(SDUI.Resources.Strings.MaxLayersReached, null);
+      return false;
+    }
+
+    // Create a new layer instance
+    const newLayer = new Instance.Shape.Layer;
+    newLayer.name = layerName;
+    newLayer.flags = 0;
+
+    // Set visibility flag if requested
+    if (isVisible) {
+      newLayer.flags |= NvConstant.LayerFlags.Visible;
+    }
+
+    // Set active flag if requested
+    if (isActive) {
+      newLayer.flags |= NvConstant.LayerFlags.Active;
+    }
+
+    // Add the new layer to the front of the stack
+    layersManager.layers.unshift(newLayer);
+    layersManager.nlayers++;
+
+    return true;
+  }
+
+  /**
+   * Rotates the layer stack by moving the top layer to the bottom
+   * This function shifts the frontmost layer to the end of the layer array,
+   * effectively rotating the layer stack. It also updates selections and
+   * redraws the canvas to reflect the changes.
+   *
+   * @param skipDrawComplete - If true, skips the DrawUtil.CompleteOperation call
+   * @returns void
+   */
+  static RotateLayerStack(skipDrawComplete: boolean): void {
+    // Close any active editing operations
+    T3Gv.opt.CloseEdit();
+
+    // Get layers and rotate by moving the first layer to the end
+    const layers = DataUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, true).layers;
+    const topLayer = layers.shift();
+    layers.push(topLayer);
+
+    // Update selection and redraw
+    this.AdjustSelectedListAfterLayerChange();
+    SvgUtil.RenderAllSVGObjects();
+
+    // Complete the drawing operation unless skipped
+    if (!skipDrawComplete) {
+      DrawUtil.CompleteOperation(null);
+    }
+  }
 }
 
 export default LayerUtil

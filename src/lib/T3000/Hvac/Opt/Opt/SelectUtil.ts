@@ -239,7 +239,7 @@ class SelectUtil {
    * @param targetId - The object ID to set as the target selection
    * @param preserveSession - Whether to preserve the current session data
    */
-  static SetTargetSelect(targetId: number, preserveSession: boolean) {
+  static SetTargetSelect(targetId: number, preserveSession?: boolean) {
     T3Util.Log("O.Opt SetTargetSelect - Input:", { targetId, preserveSession });
 
     // Get session data
@@ -647,7 +647,7 @@ class SelectUtil {
             }
 
             // Add to selection if fully enclosed by the selection rectangle
-            if (T3Gv.opt.IsRectangleFullyEnclosed(searchRect, objectFrame)) {
+            if (Utils2.IsRectangleFullyEnclosed(searchRect, objectFrame)) {
               selectedObjects.push(filteredObjects[i]);
             }
           }
@@ -1571,7 +1571,7 @@ class SelectUtil {
 
         if (previousPoint.x != T3Gv.opt.linkParams.ConnectPt.x ||
           previousPoint.y != T3Gv.opt.linkParams.ConnectPt.y) {
-          this.MoveConnectHilite(
+          HookUtil.MoveConnectHilite(
             T3Gv.opt.linkParams.ConnectIndex,
             T3Gv.opt.linkParams.ConnectPt,
             T3Gv.opt.linkParams.ConnectInside

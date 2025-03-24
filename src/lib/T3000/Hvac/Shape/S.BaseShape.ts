@@ -1770,8 +1770,8 @@ class BaseShape extends BaseDrawObject {
     // Calculate distance moved from action start point
     const startX = T3Gv.opt.actionStartX;
     const startY = T3Gv.opt.actionStartY;
-    const deltaX = mouseX - startX;
-    const deltaY = mouseY - startY;
+    let deltaX = mouseX - startX;
+    let deltaY = mouseY - startY;
 
     // Clone the original bounding box to preserve it
     const originalBBox = $.extend(true, {}, T3Gv.opt.actionBBox);
@@ -2028,7 +2028,7 @@ class BaseShape extends BaseDrawObject {
         }
 
         // Convert shape to polyline for manipulation
-        T3Gv.opt.ShapeToPolyLine(this.BlockID, true, true);
+        OptCMUtil.ShapeToPolyLine(this.BlockID, true, true);
         shapeObject = DataUtil.GetObjectPtr(this.BlockID, false);
 
         // Move the polygon segment to the new position
@@ -2057,7 +2057,7 @@ class BaseShape extends BaseDrawObject {
 
           // If text doesn't fit, revert the movement
           if (minDimensions.height > textRect.height || textFitWidth > textRect.width) {
-            T3Gv.opt.ShapeToPolyLine(this.BlockID, true, true);
+            OptCMUtil.ShapeToPolyLine(this.BlockID, true, true);
             const revertObject = DataUtil.GetObjectPtr(this.BlockID, false);
             cursorPosition.x = T3Gv.opt.actionTableLastX;
             cursorPosition.y = T3Gv.opt.actionTableLastY;

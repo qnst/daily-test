@@ -49,6 +49,9 @@ import CursorConstant from '../../Data/Constant/CursorConstant';
 import T3Constant from '../../Data/Constant/T3Constant';
 import RulerUtil from '../UI/RulerUtil';
 import DynamicUtil from './DynamicUtil';
+import DSUtil from '../DS/DSUtil';
+import Style from '../../Basic/B.Element.Style';
+import ImageRecord from '../../Model/ImageRecord';
 
 /**
  * Utility class for managing SVG optimization and editor functionality in the T3000 application.
@@ -134,7 +137,7 @@ class OptUtil {
    * Variables for tracking the current editing action
    */
   public noUndo: boolean;            // Flag to disable undo recording
-  public actionStoredObjectId: number;  // ID of the object being acted upon
+  public actionStoredObjectId: string;  // ID of the object being acted upon
   public actionSvgObject: any;       // SVG object being acted upon
   public actionTriggerId: number;    // ID of the action trigger
   public actionTriggerData: any;  // Data associated with the trigger
@@ -379,6 +382,9 @@ class OptUtil {
   public forcedotted: any;
   public ob: any;
   public PastePoint: any;
+
+  public actionTableLastX: any;
+  public actionTableLastY: any;
 
   //#endregion
 
@@ -1443,16 +1449,6 @@ class OptUtil {
     return true;
   }
 
-  IsRectangleFullyEnclosed(outerRect: { x: number; y: number; width: number; height: number }, innerRect: { x: number; y: number; width: number; height: number }): boolean {
-    T3Util.Log("O.Opt IsRectangleFullyEnclosed - Input:", { outerRect, innerRect });
-    const isEnclosed = innerRect.x >= outerRect.x &&
-      innerRect.x + innerRect.width <= outerRect.x + outerRect.width &&
-      innerRect.y >= outerRect.y &&
-      innerRect.y + innerRect.height <= outerRect.y + outerRect.height;
-    T3Util.Log("O.Opt IsRectangleFullyEnclosed - Output:", isEnclosed);
-    return isEnclosed;
-  }
-
   UnbindDragDropOrStamp() {
     T3Util.Log('O.Opt UnbindDragDropOrStamp - Input: No parameters');
 
@@ -2057,7 +2053,7 @@ class OptUtil {
     };
 
     // Check if object is already fully visible and we don't need to center it
-    if (this.IsRectangleFullyEnclosed(visibleRect, objectRect) && !shouldCenterObject) {
+    if (Utils2.IsRectangleFullyEnclosed(visibleRect, objectRect) && !shouldCenterObject) {
       T3Util.Log("O.Opt ScrollObjectIntoView - Output: Object already visible");
       return;
     }
@@ -6086,7 +6082,7 @@ class OptUtil {
     T3Util.Log("O.Opt RubberBandSelectDoAutoScroll - Input: starting auto scroll");
 
     // Schedule auto-scroll callback to run every 100ms
-    T3Gv.opt.autoScrollTimerId = T3Gv.opt.autoScrollTimer.setTimeout(this.RubberBandSelectDoAutoScroll, 100);
+    T3Gv.opt.autoScrollTimerId = T3Gv.opt.autoScrollTimer.setTimeout("RubberBandSelectDoAutoScroll", 100);
 
     // Convert window coordinates (autoScrollXPos, autoScrollYPos) to document coordinates
     const documentCoords = T3Gv.opt.svgDoc.ConvertWindowToDocCoords(
@@ -6102,6 +6098,571 @@ class OptUtil {
     // Move the rubber band selection rectangle based on the new coordinates
     SelectUtil.RubberBandSelectMoveCommon(documentCoords.x, documentCoords.y);
     T3Util.Log("O.Opt RubberBandSelectDoAutoScroll - Output: Rubber band selection moved");
+  }
+
+  /**
+   * Imports an image as a background layer in the document
+   * This function handles creating a background layer if one doesn't exist,
+   * or clearing an existing background layer before adding a new image.
+   *
+   * @param imageUrl - URL of the image to be imported as background
+   * @param importOptions - Optional settings for image import
+   * @returns void
+   */
+  ImportBackgroundLayerImage(imageUrl, importOptions) {
+    T3Util.Log("O.Opt ImportBackgroundLayerImage - Input:", { imageUrl, importOptions });
+
+    let layerIndex;
+    let existingObjects;
+    let backgroundLayerIndex = -1;
+
+    // Function to set background after layer is ready
+    const setBackgroundImage = () => {
+      // Make the background layer active
+      LayerUtil.MakeLayerActiveByIndex(backgroundLayerIndex);
+
+      // Allow adding objects to this layer
+      layersManager.layers[backgroundLayerIndex].flags = Utils2.SetFlag(
+        layersManager.layers[backgroundLayerIndex].flags,
+        NvConstant.LayerFlags.NoAdd,
+        false
+      );
+
+      // Set the background image
+      T3Gv.opt.SetBackgroundImage(imageUrl, true, importOptions, true);
+    };
+
+    // Get the layers manager
+    let layersManager = DataUtil.GetObjectPtr(this.layersManagerBlockId, false);
+
+    if (layersManager) {
+      // Find if a background layer already exists
+      for (layerIndex = 0; layerIndex < layersManager.layers.length; layerIndex++) {
+        if (layersManager.layers[layerIndex].layertype === NvConstant.LayerTypes.Background) {
+          backgroundLayerIndex = layerIndex;
+          break;
+        }
+      }
+
+      // If collaborating, ensure we're working with a modifiable copy
+      if (/*Collab.AllowMessage() && (Collab.BeginSecondaryEdit(),*/false) {
+        layersManager = DataUtil.GetObjectPtr(this.layersManagerBlockId, true);
+      }
+
+      // If no background layer exists, create one
+      if (backgroundLayerIndex < 0) {
+        LayerUtil.AddNewLayerAtFront("Background Layer", true, false);
+        LayerUtil.RotateLayerStack(true);
+        backgroundLayerIndex = layersManager.layers.length - 1;
+        layersManager.layers[backgroundLayerIndex].layertype = NvConstant.LayerTypes.Background;
+      } else {
+        // Check if background layer already has objects
+        existingObjects = layersManager.layers[backgroundLayerIndex].zList;
+
+        if (existingObjects.length > 0 && importOptions == null) {
+          // Ask for confirmation before deleting existing background
+          // UIUtil.ShowMessageBox(
+          //   "Delete existing image?",
+          //   0,
+          //   () => {
+          //     LayerUtil.DeleteObjects(existingObjects);
+          //     setBackgroundImage();
+          //   }
+          // );
+          return;
+        }
+
+        // Clear any selected objects
+        this.CloseEdit(true);
+      }
+
+      // Set the background image
+      setBackgroundImage();
+    }
+
+    T3Util.Log("O.Opt ImportBackgroundLayerImage - Output: Background layer updated");
+  }
+
+  /**
+   * Sets a background image for the document or a selected object
+   * This function handles different scenarios:
+   * - Setting an image as document background
+   * - Replacing an image in an existing shape
+   * - Creating a new image shape
+   * - Handling SVG and bitmap images
+   *
+   * @param imageUrl - URL of the image to set
+   * @param replaceExisting - Whether to replace an existing image
+   * @param importData - Optional data for import process or collaboration
+   * @param isBackground - Whether this is a background image
+   * @param callback - Optional callback function
+   */
+  SetBackgroundImage(imageUrl, replaceExisting, importData, isBackground, callback) {
+    T3Util.Log("O.Opt SetBackgroundImage - Input:", {
+      imageUrl,
+      replaceExisting,
+      hasImportData: !!importData,
+      isBackground,
+      hasCallback: !!callback
+    });
+
+    let selectedObject;
+    let objectDimensions;
+    let shouldReplaceExistingImage = false;
+    let imageSourceUrl = "";
+    let imageBlob = null;
+    let imageBlobBytes = null;
+    let self = this;
+
+    // Default target dimensions
+    let targetReplaceExisting = replaceExisting;
+    let targetWidth = 800;
+    let targetHeight = 800;
+
+    // // Object types and subtypes that can't receive background images
+    // const excludedObjectTypes = [OptConstant.ObjectTypes.GanttChart];
+    // const excludedObjectSubtypes = [
+    //   OptConstant.ObjectSubTypes.TaskMap,
+    //   OptConstant.ObjectSubTypes.Task
+    // ];
+
+    // Function to add a new image shape
+    const createImageShape = (width, height, skipRendering) => {
+      let newObjectId;
+      let newObjectList = [];
+
+      // Only proceed if dimensions are valid
+      if (!skipRendering && width > 0 && height > 0) {
+        let imageHeight = height;
+        let imageWidth = width;
+
+        // If collaborating, ensure we're in secondary edit mode
+        /*if (Collab.AllowMessage()) {
+          Collab.BeginSecondaryEdit();
+        }*/
+
+        // Calculate position to center the image in work area
+        const centerPosition = self.CalcWorkAreaCenterUL(imageWidth, imageHeight);
+
+        // Create a transparent style for the image container
+        const transparentStyle = new QuickStyle();
+        transparentStyle.Name = "";
+        transparentStyle.Line.Thickness = 0;
+        transparentStyle.Fill.Paint.FillType = NvConstant.FillTypes.Transparent;
+
+        // Create data for the new rectangle object
+        const rectangleData = {
+          Frame: {
+            x: centerPosition.x,
+            y: centerPosition.y,
+            width: imageWidth,
+            height: imageHeight
+          },
+          TextGrow: NvConstant.TextGrowBehavior.ProPortional,
+          ImageURL: imageSourceUrl,
+          StyleRecord: transparentStyle,
+          ObjGrow: OptConstant.GrowBehavior.ProPortional,
+          flags: NvConstant.ObjFlags.ImageOnly,
+          extraflags: OptConstant.ExtraFlags.NoColor
+        };
+
+        // Create the rectangle object
+        const rectangleObject = new Instance.Shape.Rect(rectangleData);
+
+        if (rectangleObject) {
+          // Set image data in the object
+          const imageDir = DSUtil.GetImageDir(imageBlob);
+          rectangleObject.SetBlobBytes(imageBlobBytes, imageDir);
+
+          // Handle SVG dimensions
+          if (imageDir === StyleConstant.ImageDir.Svg) {
+            rectangleObject.SVGDim = {
+              width: width,
+              height: height
+            };
+          }
+        }
+
+        // Add the new object to the document
+        newObjectId = DrawUtil.AddNewObject(rectangleObject, false, true);
+
+        // Handle collaboration
+        /*if (Collab.AddNewBlockToSecondary) {
+          Collab.AddNewBlockToSecondary(newObjectId);
+        }
+
+        // Get collaboration list if needed
+        let collaborationList = [];
+        if (Collab.IsSecondary()) {
+          collaborationList = collaborationList.concat(Collab.CreateList);
+        }*/
+
+        // Update object properties
+        const newObject = DataUtil.GetObjectPtr(newObjectId, false);
+        if (newObject) {
+          newObject.TextFlags = NvConstant.TextFlags.AttachB;
+          newObject.ImageHeader = new ImageRecord();
+          newObjectList.push(newObjectId);
+        }
+
+        // Send collaboration message if needed
+        /*if (Collab.AllowMessage()) {
+          if (isBackground == null) {
+            isBackground = false;
+          }
+
+          const messageData = {
+            ImageDir: imageDir,
+            bytes: imageBlobBytes,
+            width: width,
+            height: height,
+            background: isBackground
+          };
+
+          if (collaborationList) {
+            messageData.CreateList = collaborationList;
+          }
+
+          Collab.BuildMessage(
+            OptConstant.CollabMessages.AddShape_ImportPicture,
+            messageData,
+            false
+          );
+        }*/
+
+        // Handle background layer flags
+        const layersManager = DataUtil.GetObjectPtr(this.layersManagerBlockId, false);
+        if (layersManager &&
+          layersManager.layers[layersManager.activelayer].layertype === NvConstant.LayerTypes.Background) {
+
+          // Get writable copy of layers manager
+          const writableLayersManager = DataUtil.GetObjectPtr(this.layersManagerBlockId, true);
+          // Set NoAdd flag on background layer
+          writableLayersManager.layers[writableLayersManager.activelayer].flags =
+            Utils2.SetFlag(
+              writableLayersManager.layers[writableLayersManager.activelayer].flags,
+              NvConstant.LayerFlags.NoAdd,
+              true
+            );
+        }
+
+        // Render all objects if this is a background image
+        if (isBackground) {
+          SvgUtil.RenderAllSVGObjects();
+        }
+
+        // Complete the operation
+        DrawUtil.CompleteOperation(newObjectList);
+      }
+    };
+
+    // Function to process the image after it's loaded
+    const processLoadedImage = (url, blob, bytes, messageData) => {
+      try {
+        // Store image data
+        imageSourceUrl = url;
+        imageBlob = blob;
+        imageBlobBytes = bytes;
+
+        let svgDimensions;
+        let isSvgImage = false;
+        let targetObjectId;
+
+        let excludedObjectTypes;
+        let excludedObjectSubtypes;
+        let canReplaceImage;
+
+        // Check if image is SVG
+        const imageDir = messageData ?
+          messageData.Data.ImageDir :
+          DSUtil.GetImageDir(blob);
+
+        if (imageDir === StyleConstant.ImageDir.Svg) {
+          isSvgImage = true;
+          svgDimensions = Utils2.ParseSVGDimensions(bytes);
+        }
+
+        // Handle message data
+        if (messageData) {
+          targetObjectId = messageData.Data.BlockID;
+        } else {
+          // Get selected object ID
+          targetObjectId = SelectUtil.GetTargetSelect();
+          canReplaceImage = false;
+
+          // Force new object creation if isBackground is true
+          if (isBackground) {
+            targetObjectId = -1;
+          }
+
+          // Check if selected object can have its image replaced
+          if (targetObjectId >= 0) {
+            selectedObject = DataUtil.GetObjectPtr(targetObjectId, false);
+
+            // Check if object is of compatible type
+            if (excludedObjectTypes.indexOf(selectedObject.objecttype) < 0 &&
+              excludedObjectSubtypes.indexOf(selectedObject.subtype) < 0) {
+
+              // Only shapes that aren't symbols and don't have existing symbls can have images replaced
+              if (selectedObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape &&
+                !(selectedObject instanceof Instance.Shape.BaseSymbol) &&
+                !selectedObject.SymbolURL) {
+
+                canReplaceImage = targetReplaceExisting;
+              }
+            } else {
+              // Reset to create new image shape
+              targetObjectId = -1;
+              canReplaceImage = false;
+            }
+          }
+        }
+
+        // Process based on target object and replace flag
+        if (canReplaceImage || messageData) {
+          selectedObject = DataUtil.GetObjectPtr(targetObjectId, false);
+
+          // Handle table objects differently
+          if (selectedObject.GetTable(false)) {
+            // Import picture into table cell
+            /*this.Table_ImportPicture(
+              targetObjectId,
+              url,
+              imageDir,
+              bytes,
+              svgDimensions,
+              null,
+              callback
+            );*/
+          } else {
+            // Begin secondary edit mode if needed
+            /*if (Collab.AllowMessage()) {
+              Collab.BeginSecondaryEdit();
+            }*/
+
+            // Get writable copy of the object
+            selectedObject = DataUtil.GetObjectPtr(targetObjectId, true);
+
+            // Set SVG dimensions if needed
+            if (isSvgImage) {
+              selectedObject.SVGDim = svgDimensions;
+            }
+
+            // Delete existing text in the object
+            TextUtil.DeleteTargetTextObject(targetObjectId);
+
+            // Clean up existing blob URL if needed
+            if (OptCMUtil.IsBlobURL && OptCMUtil.IsBlobURL(selectedObject.ImageURL)) {
+              OptCMUtil.DeleteURL(selectedObject.ImageURL);
+              selectedObject.ImageURL = "";
+            }
+
+            // Set new image URL
+            selectedObject.ImageURL = url;
+
+            // Store the blob bytes with proper image directory
+            const imageDir = DSUtil.GetImageDir(imageBlob);
+            selectedObject.StyleRecord.Fill.Paint.Opacity = 1;
+            selectedObject.SetBlobBytes(bytes, imageDir);
+
+            // Update image header and text flags
+            selectedObject.ImageHeader = new ImageRecord();
+            selectedObject.TextFlags = Utils2.SetFlag(
+              selectedObject.TextFlags,
+              NvConstant.TextFlags.None,
+              true
+            );
+
+            // Mark object as dirty for rendering
+            DataUtil.AddToDirtyList(targetObjectId);
+
+            // Handle collaboration message
+            /*if (Collab.AllowMessage()) {
+              const messageData = {
+                BlockID: targetObjectId,
+                ImageDir: imageDir,
+                bytes: bytes
+              };
+
+              // Add SVG dimensions if needed
+              messageData.SVGDim = Utils1.DeepCopy(svgDimensions);
+
+              Collab.BuildMessage(
+                OptConstant.CollabMessages.Shape_ImportPicture,
+                messageData,
+                false
+              );
+            }*/
+
+            // Complete the operation
+            DrawUtil.CompleteOperation(null);
+          }
+        } else {
+          // Create new image shape
+          if (isSvgImage) {
+            createImageShape(svgDimensions.width, svgDimensions.height, null);
+          } else {
+            // Calculate size for bitmap images
+            Style.CalcImageSize(url, createImageShape);
+          }
+        }
+      } catch (error) {
+        throw error
+        this.ExceptionCleanup(error);
+      }
+    };
+
+    let excludedObjectTypes;
+    let excludedObjectSubtypes;
+
+    // Main processing logic starts here
+    if (importData) {
+      // Handle collaboration message
+      // const messageTypes = OptConstant.CollabMessages;
+
+      // switch (importData.MessageType) {
+      //   case messageTypes.Shape_ImportPicture:
+      //   case messageTypes.OrgAddPicture:
+      //     processLoadedImage(
+      //       importData.Data.url,
+      //       importData.Data.blob,
+      //       importData.Data.Bytes,
+      //       importData
+      //     );
+      //     break;
+
+      //   case messageTypes.AddShape_ImportPicture:
+      //     // Extract data from message
+      //     imageBlob = importData.Data.blob;
+      //     imageSourceUrl = importData.Data.url;
+      //     imageBlobBytes = importData.Data.Bytes;
+
+      //     // Create image shape with dimensions from message
+      //     createImageShape(importData.Data.width, importData.Data.height, false);
+      //     break;
+      // }
+    } else {
+      // Handle direct image import
+      let targetObjectId = SelectUtil.GetTargetSelect();
+
+      // Check if we should replace an image in the selected object
+      if (replaceExisting === 0) {
+        shouldReplaceExistingImage = false;
+        targetReplaceExisting = true;
+
+        if (targetObjectId >= 0) {
+          selectedObject = DataUtil.GetObjectPtr(targetObjectId, false);
+
+          // Check if object can receive an image
+          if (excludedObjectTypes.indexOf(selectedObject.objecttype) < 0 &&
+            excludedObjectSubtypes.indexOf(selectedObject.subtype) < 0) {
+
+            // Check if object is a valid shape for image replacement
+            if (selectedObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape &&
+              !(selectedObject instanceof Instance.Shape.BaseSymbol) &&
+              !selectedObject.SymbolURL &&
+              selectedObject.ImageURL !== "" &&
+              selectedObject.GetTable(false) == null) {
+
+              // Open bitmap insert dialog
+              /*UIUtil.InsertBitmapController.SetFile(imageUrl);
+              UIUtil.ShowModal("InsertBitmap");*/
+              return;
+            }
+          } else {
+            targetObjectId = -1;
+          }
+        }
+      }
+
+      // Calculate target dimensions based on selected object
+      if (targetObjectId >= 0) {
+        selectedObject = DataUtil.GetObjectPtr(targetObjectId, false);
+
+        if (selectedObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape &&
+          !(selectedObject instanceof Instance.Shape.BaseSymbol) &&
+          !selectedObject.SymbolURL) {
+
+          shouldReplaceExistingImage = targetReplaceExisting;
+        }
+
+        // Get dimensions from object or table
+        if (shouldReplaceExistingImage) {
+          selectedObject = DataUtil.GetObjectPtr(targetObjectId, false);
+
+          // if (selectedObject.GetTable(false)) {
+          //   objectDimensions = this.Table_GetImportPictureDim(targetObjectId);
+          //   if (objectDimensions) {
+          //     targetWidth = objectDimensions.x;
+          //     targetHeight = objectDimensions.y;
+          //   }
+          // } else
+
+          {
+            targetWidth = selectedObject.Frame.width;
+            targetHeight = selectedObject.Frame.height;
+          }
+        }
+      }
+
+      // Create bitmap importer and load the image
+      const bitmapImporter = new Instance.Shape.BitmapImporter();
+      if (bitmapImporter) {
+        bitmapImporter.ImportBitmap(
+          imageUrl,
+          targetWidth,
+          targetHeight,
+          this.bitmapImportDPI,
+          processLoadedImage
+        );
+      }
+    }
+
+    T3Util.Log("O.Opt SetBackgroundImage - Output: Background image set");
+  }
+
+  /**
+   * Calculates the upper-left coordinates to center an object in the work area
+   * This function finds the position where an object with the given dimensions
+   * would be centered in the current view of the work area.
+   *
+   * The function:
+   * 1. Calculates the center point of the current view
+   * 2. Adjusts for the object dimensions to find upper-left position
+   * 3. Converts window coordinates to document coordinates
+   * 4. Ensures minimum position of 10,10 to avoid edge placement
+   *
+   * @param width - The width of the object to center
+   * @param height - The height of the object to center
+   * @returns Object with x,y coordinates in document space for upper-left position
+   */
+  CalcWorkAreaCenterUL(width, height) {
+    const svgDoc = this.svgDoc;
+
+    // Calculate the center point in window coordinates
+    const windowCenterX =
+      svgDoc.docInfo.dispX +
+      svgDoc.docInfo.dispWidth / 2 -
+      (width / 2) * svgDoc.docInfo.docToScreenScale;
+
+    const windowCenterY =
+      svgDoc.docInfo.dispY +
+      svgDoc.docInfo.dispHeight / 2 -
+      (height / 2) * svgDoc.docInfo.docToScreenScale;
+
+    // Convert window coordinates to document coordinates
+    const docCoords = svgDoc.ConvertWindowToDocCoords(windowCenterX, windowCenterY);
+
+    // Ensure minimum positioning of 10,10
+    if (docCoords.x < 10) {
+      docCoords.x = 10;
+    }
+
+    if (docCoords.y < 10) {
+      docCoords.y = 10;
+    }
+
+    return docCoords;
   }
 }
 
