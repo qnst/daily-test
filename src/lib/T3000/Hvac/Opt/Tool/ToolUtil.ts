@@ -574,14 +574,14 @@ class ToolUtil {
           var targetObject = DataUtil.GetObjectPtr(targetID, false);
           if (targetObject && targetObject.AllowTextEdit()) {
             var svgElement = T3Gv.opt.svgObjectLayer.GetElementById(targetID);
-            T3Gv.opt.ActivateTextEdit(svgElement);
+            TextUtil.ActivateTextEdit(svgElement);
             T3Util.Log("O.ToolOpt StampTextLabel output: void - activated edit on existing text");
             return;
           }
         }
       }
     } else {
-      T3Gv.opt.DeactivateTextEdit();
+      TextUtil.DeactivateTextEdit();
     }
 
     // Get session data and default text style
@@ -635,11 +635,11 @@ class ToolUtil {
 
     // Deactivate text edit if not in drag-drop mode
     if (!isDragDropMode) {
-      T3Gv.opt.DeactivateTextEdit(false);
+      TextUtil.DeactivateTextEdit(false);
     }
 
     // Stamp the text shape and activate text editing
-    T3Gv.opt.StampNewTextShapeOnTap(
+    DrawUtil.StampNewTextShapeOnTap(
       textShape,
       false,
       false,
@@ -650,6 +650,68 @@ class ToolUtil {
     );
 
     T3Util.Log("O.ToolOpt StampTextLabel output: void");
+  }
+
+  StampCallback(e, t) {
+    if (t.bActivateText) {
+      var a = T3Gv.opt.svgObjectLayer.GetElementById(e);
+      TextUtil.ActivateTextEdit(a)
+    }
+  }
+
+  StampTextLabelV0(e, t) {
+    SDUI.Commands.MainController.Selection.SetSelectionTool(SDUI.Resources.Tools.Tool_Text, e);
+    var a = gListManager.GetObjectPtr(gListManager.theTEDSessionBlockID, !1);
+    if (t || -1 == a.theActiveTextEditObjectID) {
+      if (!t) {
+        var r = gListManager.GetTargetSelect();
+        if (r >= 0) {
+          var i = gListManager.GetObjectPtr(r, !1);
+          if (i && i.AllowTextEdit()) {
+            var n = gListManager.svgObjectLayer.GetElementById(r);
+            return gListManager.ActivateTextEdit(n),
+              void gListManager.UpdateTools()
+          }
+        }
+      }
+    } else
+      gListManager.DeactivateTextEdit();
+    var o = objectStore.GetObject(gListManager.theSEDSessionBlockID).Data
+      , s = SDUI.Resources.FindStyle(SDJS.ListManager.Defines.TextBlockStyle);
+    null == s && (s = o.def.style);
+    var l = {
+      StyleRecord: $.extend(!0, {}, s),
+      Frame: {
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0
+      },
+      TMargins: {
+        top: 0,
+        left: 0,
+        bottom: 0,
+        right: 0
+      },
+      TextGrow: SDJS.ListManager.TextGrowBehavior.HORIZONTAL,
+      TextAlign: SDJS.ListManager.TextAlign.LEFT,
+      flags: SDJS.ListManager.ObjFlags.SEDO_TextOnly
+    };
+    null == l.StyleRecord.Line && (l.StyleRecord.Line = SDJS.Editor.DeepCopy(s.Border)),
+      l.StyleRecord.Line.Thickness = 0;
+    var S = new SDJS.ListManager.Rect(l)
+      , c = SDJS.Editor.DeepCopy(o.def.style);
+    c.Text.Paint = SDJS.Editor.DeepCopy(s.Text.Paint),
+      S.StyleRecord.Text = c.Text;
+    var u = gListManager.CalcDefaultInitialTextStyle(S.StyleRecord.Text)
+      , p = gListManager.svgDoc.CalcStyleMetrics(u);
+    gListManager.stampShapeOffsetX = 0,
+      gListManager.stampShapeOffsetY = p.ascent,
+      S.Frame.height = p.height,
+      e || gListManager.DeactivateTextEdit(!1),
+      gListManager.StampNewTextShapeOnTap(S, !1, !1, !1, e, this.StampCallback, {
+        bActivateText: !0
+      })
   }
 
   /**

@@ -1595,7 +1595,7 @@ class Connector extends BaseDrawObject {
 
           // If a valid spell position was found, activate text editing
           if (spellCheckPosition >= 0) {
-            T3Gv.opt.ActivateTextEdit(svgElement, event, true);
+            TextUtil.ActivateTextEdit(svgElement, event, true);
           }
         }
       }
@@ -8650,7 +8650,7 @@ class Connector extends BaseDrawObject {
           const textElement = svgElement.GetElementById(OptConstant.SVGElementClass.Text, i);
           if (textElement && textElement.GetText(0).search(searchText) >= 0) {
             this.arraylist.lasttexthook = i;
-            T3Gv.opt.ActivateTextEdit(svgElement);
+            TextUtil.ActivateTextEdit(svgElement);
             textElement.SetSelectedRange(textElement.GetText(0).search(searchText), textElement.GetText(0).search(searchText) + length);
             T3Util.Log("S.Connector: FoundText found text at hook index:", i);
             return true;

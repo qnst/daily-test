@@ -7232,7 +7232,7 @@ class BaseShape extends BaseDrawObject {
               }
 
               if (spellCheckIndex >= 0 || canEditText) {
-                T3Gv.opt.ActivateTextEdit(svgElement, event, true);
+                TextUtil.ActivateTextEdit(svgElement, event, true);
                 // activeTableId = T3Gv.opt.Table_GetActiveID();
               }
             }

@@ -27,6 +27,7 @@ import OptCMUtil from "./OptCMUtil";
 import SvgUtil from "./SvgUtil";
 import HookUtil from './HookUtil';
 import ToolActUtil from './ToolActUtil';
+import TextUtil from './TextUtil';
 
 class SelectUtil {
 
@@ -128,7 +129,7 @@ class SelectUtil {
 
       // Close text editing if active
       if (textEditData.theActiveTextEditObjectID !== -1) {
-        this.DeactivateTextEdit(false, true);
+        TextUtil.DeactivateTextEdit(false, true);
       }
 
       // Get the current selection list

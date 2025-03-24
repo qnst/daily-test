@@ -672,9 +672,9 @@ class ToolActUtil {
           activeEditor = T3Gv.opt.svgDoc.GetActiveEdit();
           if (activeEditor) {
             // Collab.BeginSecondaryEdit();
-            this.RegisterLastTEOp(NvConstant.TextElemLastOpt.Paste);
+            TextUtil.RegisterLastTEOp(NvConstant.TextElemLastOpt.Paste);
             activeEditor.Paste(T3Gv.opt.textClipboard, true);
-            this.RegisterLastTEOp(NvConstant.TextElemLastOpt.Timeout);
+            TextUtil.RegisterLastTEOp(NvConstant.TextElemLastOpt.Timeout);
           }
         }
         T3Util.Log("O.Opt PasteObjects - Output: Text pasted in text editor");
@@ -1370,11 +1370,11 @@ class ToolActUtil {
         if (activeTextEditor) {
           T3Gv.opt.textClipboard = activeTextEditor.Copy(true);
           // Collab.BeginSecondaryEdit();
-          this.RegisterLastTEOp(NvConstant.TextElemLastOpt.Cut);
+          TextUtil.RegisterLastTEOp(NvConstant.TextElemLastOpt.Cut);
           activeTextEditor.Delete();
           T3Gv.opt.contentHeader.ClipboardBuffer = null;
           T3Gv.opt.contentHeader.ClipboardType = T3Constant.ClipboardType.Text;
-          this.RegisterLastTEOp(NvConstant.TextElemLastOpt.Timeout);
+          TextUtil.RegisterLastTEOp(NvConstant.TextElemLastOpt.Timeout);
         }
         T3Util.Log("O.Opt CutObjects - Output:", "Text cut completed.");
         return;

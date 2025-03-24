@@ -1123,7 +1123,7 @@ class PolyLine extends BaseLine {
         this.LMResizeSVGTextObject(mainElement, this, this.Frame);
       }
 
-      T3Gv.opt.ShowSVGSelectionState(svgElement.GetID(), true);
+      SvgUtil.ShowSVGSelectionState(svgElement.GetID(), true);
       // if (Collab.AllowMessage()) {
       //   Collab.BuildMessage(NvConstant.CollabMessages.AddCorner, { BlockID: this.BlockID, point: { x: cornerPoint.x, y: cornerPoint.y } }, false);
       // }
@@ -3086,7 +3086,7 @@ class PolyLine extends BaseLine {
         );
 
         if (spellIndex >= 0) {
-          T3Gv.opt.ActivateTextEdit(targetElement, event, true);
+          TextUtil.ActivateTextEdit(targetElement, event, true);
         }
       }
     }
@@ -5024,7 +5024,7 @@ class PolyLine extends BaseLine {
     }
 
     const segmentIndex = dimensionData.segment;
-    T3Gv.opt.ShowSVGSelectionState(this.BlockID, false);
+    SvgUtil.ShowSVGSelectionState(this.BlockID, false);
 
     const dimensionValue = this.GetDimensionValueFromString(dimensionText, segmentIndex);
     if (dimensionValue >= 0) {

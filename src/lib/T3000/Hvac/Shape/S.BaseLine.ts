@@ -4930,7 +4930,7 @@ class BaseLine extends BaseDrawObject {
         const spellIndex = textElement.GetSpellAtLocation(event.gesture.center.clientX, event.gesture.center.clientY);
         T3Util.Log("= S.BaseLine: Spell index at location:", spellIndex);
         if (spellIndex >= 0) {
-          T3Gv.opt.ActivateTextEdit(targetElement, event, true);
+          TextUtil.ActivateTextEdit(targetElement, event, true);
         }
       }
     }
@@ -5084,7 +5084,7 @@ class BaseLine extends BaseDrawObject {
     T3Gv.stdObj.PreserveBlock(this.BlockID);
 
     // Hide the SVG selection state for this block
-    T3Gv.opt.ShowSVGSelectionState(this.BlockID, false);
+    SvgUtil.ShowSVGSelectionState(this.BlockID, false);
 
     // Retrieve the SVG element for this block
     const svgElement = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);

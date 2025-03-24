@@ -27,6 +27,7 @@ import SvgUtil from "./SvgUtil";
 import HookUtil from './HookUtil';
 import PolyUtil from './PolyUtil';
 import DynamicUtil from './DynamicUtil';
+import TextUtil from './TextUtil';
 
 class LMEvtUtil {
 
@@ -1222,7 +1223,7 @@ class LMEvtUtil {
 
       // Handle one-click text objects
       if (isOneClickTextObject) {
-        T3Gv.opt.ActivateTextEdit(svgElement.svgObj.SDGObj, event, false);
+        TextUtil.ActivateTextEdit(svgElement.svgObj.SDGObj, event, false);
         T3Util.Log("O.Opt LMSetupMove - Output: false (Activated text edit)");
         return false;
       }
@@ -1543,13 +1544,13 @@ class LMEvtUtil {
             case KeyboardConstant.Keys.Up_Arrow:
             case KeyboardConstant.Keys.Down_Arrow:
               if (textEditSession.theTELastOp !== NvConstant.TextElemLastOpt.Init) {
-                this.RegisterLastTEOp(NvConstant.TextElemLastOpt.Select);
+                TextUtil.RegisterLastTEOp(NvConstant.TextElemLastOpt.Select);
               }
               break;
 
             case KeyboardConstant.Keys.Backspace:
             case KeyboardConstant.Keys.Delete:
-              this.RegisterLastTEOp(NvConstant.TextElemLastOpt.Char);
+              TextUtil.RegisterLastTEOp(NvConstant.TextElemLastOpt.Char);
               break;
           }
         }
@@ -1568,13 +1569,13 @@ class LMEvtUtil {
 
         if (targetObject && targetObject.AllowTextEdit()) {
           const svgElement = T3Gv.opt.svgObjectLayer.GetElementById(targetId);
-          this.ActivateTextEdit(svgElement);
+          TextUtil.ActivateTextEdit(svgElement);
 
           activeEdit = T3Gv.opt.svgDoc.GetActiveEdit();
           const textLength = activeEdit.GetText().length;
 
           activeEdit.SetSelectedRange(textLength, textLength);
-          this.RegisterLastTEOp(NvConstant.TextElemLastOpt.Char);
+          TextUtil.RegisterLastTEOp(NvConstant.TextElemLastOpt.Char);
           activeEdit.HandleKeyDownEvent(event);
 
           T3Util.Log("O.Opt HandleKeyDown - Output: true (space activated text edit)");
@@ -1610,7 +1611,7 @@ class LMEvtUtil {
         const textEditSession = DataUtil.GetObjectPtr(T3Gv.opt.teDataBlockId, false);
 
         if (textEditSession.theActiveTextEditObjectID !== -1) {
-          this.RegisterLastTEOp(NvConstant.TextElemLastOpt.Char);
+          TextUtil.RegisterLastTEOp(NvConstant.TextElemLastOpt.Char);
         }
       }
 
@@ -1628,14 +1629,14 @@ class LMEvtUtil {
 
         if (targetObject && targetObject.AllowTextEdit()) {
           const svgElement = T3Gv.opt.svgObjectLayer.GetElementById(targetId);
-          this.ActivateTextEdit(svgElement);
+          TextUtil.ActivateTextEdit(svgElement);
 
           activeEdit = T3Gv.opt.svgDoc.GetActiveEdit();
 
           if (activeEdit) {
             const textLength = activeEdit.GetText().length;
             activeEdit.SetSelectedRange(0, textLength);
-            this.RegisterLastTEOp(NvConstant.TextElemLastOpt.Char);
+            TextUtil.RegisterLastTEOp(NvConstant.TextElemLastOpt.Char);
             activeEdit.HandleKeyPressEvent(event);
 
             T3Util.Log("O.Opt HandleKeyPress - Output: true (activated text edit)");
@@ -1649,92 +1650,12 @@ class LMEvtUtil {
     return false;
   }
 
-  /**
-     * Returns a handler function for drag start events.
-     * This factory logs the provided drag handler and returns a function that handles mouse down events.
-     * @param mouseDragHandler - The drag handler object with a method HandleMouseDown.
-     * @returns A function to handle the mouse down event.
-     */
-  static TEDragStartFactory(mouseDragHandler: any) {
-    T3Util.Log("O.Opt TEDragStartFactory - Input:", { mouseDragHandler });
-    return function (pointerEvent: any) {
-      T3Util.Log("O.Opt TEDragStartHandler - Input:", { pointerEvent });
-      pointerEvent.preventDefault();
-      pointerEvent.stopPropagation();
-      pointerEvent.gesture.preventDefault();
-      pointerEvent.gesture.stopPropagation();
-      // Call the handler's mouse down method.
-      mouseDragHandler.HandleMouseDown(pointerEvent);
-      T3Util.Log("O.Opt TEDragStartHandler - Output: Mouse down handled");
-      return false;
-    };
-  }
 
-  /**
-   * Returns a handler function for click area drag start events.
-   * This factory logs the provided click area handler and returns a function that handles mouse down events in the click area.
-   * @param clickAreaHandler - The click area handler object with a method HandleMouseDown.
-   * @returns A function to handle the mouse down event for the click area.
-   */
-  static TEClickAreaDragStartFactory(clickAreaHandler: any) {
-    T3Util.Log("O.Opt TEClickAreaDragStartFactory - Input:", { clickAreaHandler });
-    return function (pointerEvent: any) {
-      T3Util.Log("O.Opt TEClickAreaDragStartHandler - Input:", { pointerEvent });
-      pointerEvent.preventDefault();
-      pointerEvent.stopPropagation();
-      pointerEvent.gesture.preventDefault();
-      pointerEvent.gesture.stopPropagation();
-      // Call the handler's mouse down method.
-      clickAreaHandler.HandleMouseDown(pointerEvent);
-      T3Util.Log("O.Opt TEClickAreaDragStartHandler - Output: Mouse down handled");
-      return false;
-    };
-  }
 
-  /**
-     * Returns a handler function for drag move events.
-     * This factory logs the provided move handler and returns a function that handles mouse move events.
-     * @param dragMoveHandler - The drag move handler object with a method HandleMouseMove.
-     * @returns A function to handle the mouse move event.
-     */
-  static TEDragFactory(dragMoveHandler: any) {
-    T3Util.Log("O.Opt TEDragFactory - Input:", { dragMoveHandler });
-    return function (pointerEvent: any) {
-      T3Util.Log("O.Opt TEDragHandler - Input:", { pointerEvent });
-      pointerEvent.preventDefault();
-      pointerEvent.stopPropagation();
-      pointerEvent.gesture.preventDefault();
-      pointerEvent.gesture.stopPropagation();
-      // Call the handler's mouse move method.
-      dragMoveHandler.HandleMouseMove(pointerEvent);
-      T3Util.Log("O.Opt TEDragHandler - Output: Mouse move handled");
-      return false;
-    };
-  }
 
-  /**
-   * Returns a handler function for drag end events.
-   * This factory logs the provided end handler and returns a function that handles mouse up events.
-   * After the mouse up event is processed, it calls Collab.UnBlockMessages to unblock collaborator messages.
-   * @param dragEndHandler - The drag end handler object with a method HandleMouseUp.
-   * @returns A function to handle the mouse up event.
-   */
-  static TEDragEndFactory(dragEndHandler: any) {
-    T3Util.Log("O.Opt TEDragEndFactory - Input:", { dragEndHandler });
-    return function (pointerEvent: any) {
-      T3Util.Log("O.Opt TEDragEndHandler - Input:", { pointerEvent });
-      pointerEvent.preventDefault();
-      pointerEvent.stopPropagation();
-      pointerEvent.gesture.preventDefault();
-      pointerEvent.gesture.stopPropagation();
-      // Call the handler's mouse up method.
-      dragEndHandler.HandleMouseUp(pointerEvent);
-      T3Util.Log("O.Opt TEDragEndHandler - Calling Collab.UnBlockMessages()");
-      // Collab.UnBlockMessages();
-      T3Util.Log("O.Opt TEDragEndHandler - Output: Mouse up handled and messages unblocked");
-      return false;
-    };
-  }
+
+
+
 
   /**
    * Handles clicks on test icons in the SVG document

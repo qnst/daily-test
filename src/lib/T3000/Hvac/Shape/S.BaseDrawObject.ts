@@ -1534,7 +1534,7 @@ class BaseDrawObject {
         const selectedFormat = textElement.GetSelectedFormat();
         if (selectedFormat) {
           if (returnTextFormat) {
-            txtFmtData.FontSize = T3Gv.opt.FontSizeToPoints(selectedFormat.size);
+            txtFmtData.FontSize = TextUtil.FontSizeToPoints(selectedFormat.size);
             txtFmtData.FontId = -1;// T3Gv.opt.GetFontIdByName(selectedFormat.font);
             txtFmtData.FontName = selectedFormat.font;
             isBold = (selectedFormat.weight === 'bold');
@@ -2286,7 +2286,7 @@ class BaseDrawObject {
     T3Util.Log("= S.BaseDrawObject: UpdateDimensionsFromTextForHookedObject input:", { textObject, text, hookedObjectInfo });
 
     const segmentIndex = hookedObjectInfo.segment;
-    T3Gv.opt.ShowSVGSelectionState(this.BlockID, false);
+    SvgUtil.ShowSVGSelectionState(this.BlockID, false);
 
     const dimensionLength = this.GetDimensionLengthFromString(text, segmentIndex);
     if (dimensionLength <= 0) {
@@ -6448,7 +6448,7 @@ class BaseDrawObject {
           const textContent = textElement.GetText(0);
           const foundIndex = textContent.search(searchText);
           if (foundIndex >= 0) {
-            T3Gv.opt.ActivateTextEdit(svgElement);
+            TextUtil.ActivateTextEdit(svgElement);
             textElement.SetSelectedRange(foundIndex, foundIndex + selectionLength);
             found = true;
           }

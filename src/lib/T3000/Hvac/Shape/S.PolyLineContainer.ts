@@ -691,7 +691,7 @@ class PolyLineContainer extends PolyLine {
     segmentIndex = dimensionData.segment;
     T3Gv.opt.ob = originalState;
     DataUtil.GetObjectPtr(this.BlockID, true);
-    T3Gv.opt.ShowSVGSelectionState(this.BlockID, false);
+    SvgUtil.ShowSVGSelectionState(this.BlockID, false);
 
     dimensionValue = this.GetDimensionValueFromString(text, segmentIndex);
     if (dimensionValue >= 0) {

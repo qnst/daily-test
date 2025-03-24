@@ -92,10 +92,10 @@ class OptUtil {
    */
   public svgDocId: string;           // Selector for the SVG container element
   public svgDoc: Document;           // Reference to the SVG document
-  public svgObjectLayer: any;        // Main layer for drawing content
-  public svgOverlayLayer: any;       // Layer for UI elements (not exported)
-  public svgHighlightLayer: any;     // Layer for selection highlighting
-  public svgCollabLayer: any;        // Layer for collaboration indicators
+  public svgObjectLayer: Document;        // Main layer for drawing content
+  public svgOverlayLayer: Document;       // Layer for UI elements (not exported)
+  public svgHighlightLayer: Document;     // Layer for selection highlighting
+  public svgCollabLayer: Document;        // Layer for collaboration indicators
   public sVGroot: any;               // Root SVG DOM element
 
   /**
@@ -1169,7 +1169,7 @@ class OptUtil {
 
     const teData = DataUtil.GetObjectPtr(this.teDataBlockId, false);
     if (teData.theActiveTextEditObjectID !== -1) {
-      this.DeactivateTextEdit(skipShapeClose, closeOption);
+      TextUtil.DeactivateTextEdit(skipShapeClose, closeOption);
     } else {
       const activeEdit = this.svgDoc.GetActiveEdit();
       if (activeEdit != null && activeEdit.ID === OptConstant.SVGElementClass.DimText) {
@@ -2287,7 +2287,7 @@ class OptUtil {
   //       }
   //     }
   //     if (!e && !t) return p = DataUtil.GetObjectPtr(this.teDataBlockId, !0),
-  //       this.ShowSVGSelectionState(p.theActiveTableObjectID, !0),
+  //       SvgUtil.ShowSVGSelectionState(p.theActiveTableObjectID, !0),
   //       p.theActiveTableObjectID = - 1,
   //       p.theActiveTableObjectIndex = - 1,
   //       !0
@@ -5009,33 +5009,33 @@ class OptUtil {
   }
 
   SetVirtualKeyboardLifter(editor: any) {
-    T3Util.Log("O.Opt SetVirtualKeyboardLifter - Input:", editor);
+    // T3Util.Log("O.Opt SetVirtualKeyboardLifter - Input:", editor);
 
-    if (T3Gv.opt.isAndroid || T3Gv.gDebugMobileTextDialog) {
-      editor.SetVirtualKeyboardHook(
-        function (editorInstance: any, proxyElement: any) {
-          T3Util.Log("O.Opt MobileTextDialogTrigger Callback - Input:", editorInstance, proxyElement);
-          T3Gv.opt.MobileTextDialogTrigger(editorInstance, proxyElement);
-          T3Util.Log("O.Opt MobileTextDialogTrigger Callback - Output");
-        },
-        null
-      );
-    } else {
-      if (!T3Gv.opt.workAreaTextInputProxy) {
-        T3Gv.opt.workAreaTextInputProxy = $('#T3TouchProxy');
-      }
-      T3Gv.opt.workAreaTextInputProxy.val('');
-      editor.SetVirtualKeyboardHook(
-        function (editorInstance: any, proxyElement: any) {
-          T3Util.Log("O.Opt VirtualKeyboardLifter Callback - Input:", editorInstance, proxyElement);
-          T3Gv.opt.VirtualKeyboardLifter(editorInstance, proxyElement);
-          T3Util.Log("O.Opt VirtualKeyboardLifter Callback - Output");
-        },
-        T3Gv.opt.workAreaTextInputProxy
-      );
-    }
+    // if (T3Gv.opt.isAndroid || T3Gv.gDebugMobileTextDialog) {
+    //   editor.SetVirtualKeyboardHook(
+    //     function (editorInstance: any, proxyElement: any) {
+    //       T3Util.Log("O.Opt MobileTextDialogTrigger Callback - Input:", editorInstance, proxyElement);
+    //       T3Gv.opt.MobileTextDialogTrigger(editorInstance, proxyElement);
+    //       T3Util.Log("O.Opt MobileTextDialogTrigger Callback - Output");
+    //     },
+    //     null
+    //   );
+    // } else {
+    //   if (!T3Gv.opt.workAreaTextInputProxy) {
+    //     T3Gv.opt.workAreaTextInputProxy = $('#T3TouchProxy');
+    //   }
+    //   T3Gv.opt.workAreaTextInputProxy.val('');
+    //   editor.SetVirtualKeyboardHook(
+    //     function (editorInstance: any, proxyElement: any) {
+    //       T3Util.Log("O.Opt VirtualKeyboardLifter Callback - Input:", editorInstance, proxyElement);
+    //       T3Gv.opt.VirtualKeyboardLifter(editorInstance, proxyElement);
+    //       T3Util.Log("O.Opt VirtualKeyboardLifter Callback - Output");
+    //     },
+    //     T3Gv.opt.workAreaTextInputProxy
+    //   );
+    // }
 
-    T3Util.Log("O.Opt SetVirtualKeyboardLifter - Output: hook set");
+    // T3Util.Log("O.Opt SetVirtualKeyboardLifter - Output: hook set");
   }
 
   VirtualKeyboardLifter(element: any, isActive: boolean) {

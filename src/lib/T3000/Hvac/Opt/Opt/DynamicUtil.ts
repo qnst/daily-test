@@ -1052,9 +1052,9 @@ class DynamicUtil {
         const labelId = elementId + "label";
         const backgroundId = elementId + "back";
 
-        const guideElement = T3Gv.opt.svgHighlightLayer.GetElementByID(elementId);
-        const labelElement = T3Gv.opt.svgHighlightLayer.GetElementByID(labelId);
-        const backgroundElement = T3Gv.opt.svgHighlightLayer.GetElementByID(backgroundId);
+        const guideElement = T3Gv.opt.svgHighlightLayer.GetElementById(elementId);
+        const labelElement = T3Gv.opt.svgHighlightLayer.GetElementById(labelId);
+        const backgroundElement = T3Gv.opt.svgHighlightLayer.GetElementById(backgroundId);
 
         if (guideElement) T3Gv.opt.svgHighlightLayer.RemoveElement(guideElement);
         if (labelElement) T3Gv.opt.svgHighlightLayer.RemoveElement(labelElement);
@@ -1080,7 +1080,7 @@ class DynamicUtil {
           const centerPattern = 12 * lineScale + "," + 6 * lineScale;
 
           let textElement, labelText;
-          let guideElement = T3Gv.opt.svgHighlightLayer.GetElementByID(elementId);
+          let guideElement = T3Gv.opt.svgHighlightLayer.GetElementById(elementId);
           let isCenterGuide = false;
           let displayText = null;
 
@@ -1310,8 +1310,8 @@ class DynamicUtil {
 
             // Create or update label text
             if (displayText) {
-              textElement = T3Gv.opt.svgHighlightLayer.GetElementByID(labelId);
-              let backgroundElement = T3Gv.opt.svgHighlightLayer.GetElementByID(backgroundId);
+              textElement = T3Gv.opt.svgHighlightLayer.GetElementById(labelId);
+              let backgroundElement = T3Gv.opt.svgHighlightLayer.GetElementById(backgroundId);
 
               if (textElement == null) {
                 // Create background for text
@@ -1353,8 +1353,8 @@ class DynamicUtil {
               );
             } else {
               // Remove text and background if no text to display
-              textElement = T3Gv.opt.svgHighlightLayer.GetElementByID(labelId);
-              const backgroundElement = T3Gv.opt.svgHighlightLayer.GetElementByID(backgroundId);
+              textElement = T3Gv.opt.svgHighlightLayer.GetElementById(labelId);
+              const backgroundElement = T3Gv.opt.svgHighlightLayer.GetElementById(backgroundId);
 
               if (textElement) T3Gv.opt.svgHighlightLayer.RemoveElement(textElement);
               if (backgroundElement) T3Gv.opt.svgHighlightLayer.RemoveElement(backgroundElement);
@@ -1430,9 +1430,9 @@ class DynamicUtil {
           const backgroundId = guideKey + "back";
 
           // Get elements from SVG highlight layer
-          const guideElement = T3Gv.opt.svgHighlightLayer.GetElementByID(guideKey);
-          const labelElement = T3Gv.opt.svgHighlightLayer.GetElementByID(labelId);
-          const backgroundElement = T3Gv.opt.svgHighlightLayer.GetElementByID(backgroundId);
+          const guideElement = T3Gv.opt.svgHighlightLayer.GetElementById(guideKey);
+          const labelElement = T3Gv.opt.svgHighlightLayer.GetElementById(labelId);
+          const backgroundElement = T3Gv.opt.svgHighlightLayer.GetElementById(backgroundId);
 
           // Remove main guide elements if they exist
           if (guideElement) T3Gv.opt.svgHighlightLayer.RemoveElement(guideElement);
@@ -1451,9 +1451,9 @@ class DynamicUtil {
               const otherHitBackgroundId = guideKey + otherHit.ID.toString() + "back";
 
               // Get other hit elements
-              const otherHitElement = T3Gv.opt.svgHighlightLayer.GetElementByID(guideKey + otherHit.ID.toString());
-              const otherHitLabelElement = T3Gv.opt.svgHighlightLayer.GetElementByID(otherHitLabelId);
-              const otherHitBackgroundElement = T3Gv.opt.svgHighlightLayer.GetElementByID(otherHitBackgroundId);
+              const otherHitElement = T3Gv.opt.svgHighlightLayer.GetElementById(guideKey + otherHit.ID.toString());
+              const otherHitLabelElement = T3Gv.opt.svgHighlightLayer.GetElementById(otherHitLabelId);
+              const otherHitBackgroundElement = T3Gv.opt.svgHighlightLayer.GetElementById(otherHitBackgroundId);
 
               // Remove other hit elements if they exist
               if (otherHitElement) T3Gv.opt.svgHighlightLayer.RemoveElement(otherHitElement);

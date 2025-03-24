@@ -17,6 +17,7 @@ import DataUtil from '../Opt/Data/DataUtil';
 import OptCMUtil from '../Opt/Opt/OptCMUtil';
 import DrawUtil from '../Opt/Opt/DrawUtil';
 import HookUtil from '../Opt/Opt/HookUtil';
+import TextUtil from '../Opt/Opt/TextUtil';
 
 /**
  * A shape container that manages collections of child shapes in various layout arrangements.
@@ -457,7 +458,7 @@ class ShapeContainer extends Rect {
         ) {
           const svgElement = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
           T3Util.Log("= S.ShapeContainer DoubleClick - Output: activating text edit.");
-          T3Gv.opt.ActivateTextEdit(svgElement.svgObj.SDGObj, event);
+          TextUtil.ActivateTextEdit(svgElement.svgObj.SDGObj, event);
           return;
         }
 

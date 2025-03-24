@@ -1332,7 +1332,7 @@ class DrawUtil {
                 (null == u && (u = gListManager.VisibleZList()),
                   (c = u.indexOf(p)),
                   this.AddSVGObject(c, p, !0, !1),
-                  (d = gListManager.svgObjectLayer.GetElementByID(p))),
+                  (d = gListManager.svgObjectLayer.GetElementById(p))),
                 d && d.SetPos(o.x + s, o.y + l);
             }
         } else {
@@ -2018,7 +2018,7 @@ class DrawUtil {
         const activeCount = activeLayerZList.length;
         T3Gv.opt.actionStoredObjectId = activeLayerZList[activeCount - 1];
         T3Gv.opt.actionSvgObject = T3Gv.opt.svgObjectLayer.GetElementById(T3Gv.opt.actionStoredObjectId);
-        T3Gv.opt.StampTextObjectOnTapDone(tapEvent, operation);
+        this.StampTextObjectOnTapDone(tapEvent, operation);
       } catch (error) {
         OptCMUtil.CancelOperation();
         T3Gv.opt.ExceptionCleanup(error);
