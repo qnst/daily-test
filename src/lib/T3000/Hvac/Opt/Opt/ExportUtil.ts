@@ -12,6 +12,7 @@ import Utils3 from "../../Util/Utils3";
 import DataUtil from "../Data/DataUtil";
 import DSConstant from "../DS/DSConstant";
 import LayerUtil from './LayerUtil';
+import DSUtil from '../DS/DSUtil';
 
 class ExportUtil {
 
@@ -459,7 +460,7 @@ class ExportUtil {
           0 == Z.toLowerCase().indexOf('blob:') &&
           u[Z]
         ) Y = u[Z],
-          pe = 'data:' + DSConstant.GetImageBlobType(Y.ImageDir) + ';base64,' + Utils2.ArrayBufferToBase64(Y.Bytes),
+          pe = 'data:' + DSUtil.GetImageBlobType(Y.ImageDir) + ';base64,' + Utils2.ArrayBufferToBase64(Y.Bytes),
           X.setAttribute('xlink:href', pe);
         else if (
           0 === Z.toLowerCase().indexOf(Constants.FilePath_CMSRoot.toLowerCase())
@@ -890,14 +891,14 @@ class ExportUtil {
         }
 
         let isBinaryImage = false;
-        let imageType = DSConstant.GetImageBlobType(StyleConstant.ImageDir.Svg);
+        let imageType = DSUtil.GetImageBlobType(StyleConstant.ImageDir.Svg);
 
         // Determine image type from extension
         if (imageUrl.toLowerCase().indexOf('.png') > 0) {
-          imageType = DSConstant.GetImageBlobType(StyleConstant.ImageDir.Png);
+          imageType = DSUtil.GetImageBlobType(StyleConstant.ImageDir.Png);
           isBinaryImage = true;
         } else if (imageUrl.toLowerCase().indexOf('.jpg') > 0) {
-          imageType = DSConstant.GetImageBlobType(StyleConstant.ImageDir.Jpg);
+          imageType = DSUtil.GetImageBlobType(StyleConstant.ImageDir.Jpg);
           isBinaryImage = true;
         }
 
@@ -914,7 +915,7 @@ class ExportUtil {
                 imageBytes[0] === 255 &&
                 imageBytes[1] === 216 &&
                 imageBytes[2] === 255) {
-                imageType = DSConstant.GetImageBlobType(StyleConstant.ImageDir.Jpg);
+                imageType = DSUtil.GetImageBlobType(StyleConstant.ImageDir.Jpg);
                 formatDetected = true;
               }
 
@@ -929,13 +930,13 @@ class ExportUtil {
                 imageBytes[5] === 10 &&
                 imageBytes[6] === 26 &&
                 imageBytes[7] === 10) {
-                imageType = DSConstant.GetImageBlobType(StyleConstant.ImageDir.Png);
+                imageType = DSUtil.GetImageBlobType(StyleConstant.ImageDir.Png);
                 formatDetected = true;
               }
 
               // Default to SVG if no binary format detected
               if (!formatDetected) {
-                imageType = DSConstant.GetImageBlobType(StyleConstant.ImageDir.Svg);
+                imageType = DSUtil.GetImageBlobType(StyleConstant.ImageDir.Svg);
               }
             }
 

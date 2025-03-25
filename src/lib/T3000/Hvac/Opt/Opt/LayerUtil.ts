@@ -353,7 +353,7 @@ class LayerUtil {
     const layers = layersManager.layers;
     const activeLayerIndex = layersManager.activelayer;
     let currentLayer = layers[activeLayerIndex];
-    if (/*(currentLayer.flags & NvConstant.LayerFlags.NoAdd) */true/*|| (currentLayer.flags & additionalLayerFlag)*/) {
+    if ((currentLayer.flags & NvConstant.LayerFlags.NoAdd) || (currentLayer.flags & additionalLayerFlag)) {
       const totalLayers = layers.length;
       for (let index = 0; index < totalLayers; index++) {
         if ((layers[index].flags & NvConstant.LayerFlags.NoAdd) === 0) {
@@ -380,7 +380,7 @@ class LayerUtil {
    */
   static DirtyObjectsOnLayer(layerIndex, layerData) {
     const objectList = layerData.zList;
-    const objectCount = objectList.length;
+    const objectCount = objectList?.length ?? 0;
 
     for (let objectIndex = 0; objectIndex < objectCount; ++objectIndex) {
       DataUtil.AddToDirtyList(objectList[objectIndex]);

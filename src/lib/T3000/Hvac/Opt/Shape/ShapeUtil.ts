@@ -1648,7 +1648,7 @@ class ShapeUtil {
    * @param scaleFactor - The scaling factor to apply
    * @returns The converted coordinate value with proper scaling applied
    */
-  static ToSDJSCoords(coordinateValue, scaleFactor) {
+  static ToSDJSCoords(coordinateValue, scaleFactor, isExtra?) {
     let convertedValue = scaleFactor * coordinateValue;
 
     // Handle case where scaling results in zero, but original value isn't zero
@@ -1666,7 +1666,7 @@ class ShapeUtil {
    * @returns A rectangle object with x, y, width, and height properties
    */
   static ToSDJSRect(winRect, scaleFactor) {
-    const rect = {};
+    let rect: any = {};
 
     // Convert position
     rect.x = winRect.left * scaleFactor;
@@ -6951,8 +6951,8 @@ class ShapeUtil {
 
       // Write layer object list when writing blocks
       if (resultObject.WriteBlocks) {
-        layerListData.n = currentLayer.zList.length;
-        layerListData.zList = currentLayer.zList;
+        layerListData.n = currentLayer?.zList?.length ?? 0;
+        layerListData.zList = currentLayer?.zList ?? [];
 
         const listCodeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cLayerList);
         dataStream.writeStruct(DSConstant.LayerListStruct, layerListData);
@@ -9771,7 +9771,7 @@ class ShapeUtil {
         const flipFlags = OptConstant.ExtraFlags;
 
         // Handle flipping operations
-        if (drawingObject.extraflags & (flipFlags.SEDE_FlipHoriz | flipFlags.SEDE_FlipVert)) {
+        if (drawingObject.extraflags & (flipFlags.FlipHoriz | flipFlags.FlipVert)) {
           if (isPolygon) {
             drawingObject.StartPoint = startPoint;
             drawingObject.EndPoint = endPoint;
@@ -9789,8 +9789,8 @@ class ShapeUtil {
           }
 
           // Clear flip flags after applying
-          drawingObject.extraflags = Utils2.SetFlag(drawingObject.extraflags, flipFlags.SEDE_FlipHoriz, false);
-          drawingObject.extraflags = Utils2.SetFlag(drawingObject.extraflags, flipFlags.SEDE_FlipVert, false);
+          drawingObject.extraflags = Utils2.SetFlag(drawingObject.extraflags, flipFlags.FlipHoriz, false);
+          drawingObject.extraflags = Utils2.SetFlag(drawingObject.extraflags, flipFlags.FlipVert, false);
         }
 
         // Update start and end points
@@ -10230,58 +10230,128 @@ class ShapeUtil {
       new Uint8Array(n.buffer)
   }
 
-  static WriteText(e, t, a, r, i, n) {
-    var o, s;
-    if (r ? (o = r,
-      s = r.ID) : i ? t ? (o = T3Gv.stdObj.GetObject(t.NoteID),
-        s = t.NoteID) : a && (o = T3Gv.stdObj.GetObject(a.NoteID),
-          s = a.NoteID) : t ? (o = T3Gv.stdObj.GetObject(t.DataID),
-            s = t.DataID) : a && (o = T3Gv.stdObj.GetObject(a.DataID),
-              s = a.DataID),
-      null != o) {
-      var l, S, c, u, p, d, D, g, h, m, C, y, f, L, I, T, b = o.Data.runtimeText, M = [], P = [];
-      if (!b) {
-        if (!r)
-          return;
-        b = T3Gv.opt.svgDoc.CreateShape(OptConstant.CSType.Text).GetRuntimeText()
+  /**
+   * Writes text content to a data stream in SDF format
+   *
+   * This function serializes text content with formatting to a binary data stream.
+   * It handles character styles, paragraph formatting, hyperlinks, and data fields.
+   * The function supports both standard text and comments/notes, applying appropriate
+   * encoding and structure based on the document format (standard, Visio, or Windows).
+   *
+   * @param dataStream - The data stream to write the text content to
+   * @param drawingObject - The drawing object that may contain text (optional)
+   * @param containerObject - The container object that may contain text (optional)
+   * @param textBlock - The text block object containing text content (optional)
+   * @param isComment - Flag indicating whether this is a comment/note
+   * @param resultObject - Object containing formatting context and serialization settings
+   */
+  static WriteText(dataStream, drawingObject, containerObject, textBlock, isComment, resultObject) {
+    // Determine the text source object and its ID
+    let textSourceObject, textSourceId;
+
+    if (textBlock) {
+      // Use provided text block directly
+      textSourceObject = textBlock;
+      textSourceId = textBlock.ID;
+    } else if (isComment) {
+      // Get comment/note text
+      if (drawingObject) {
+        textSourceObject = T3Gv.stdObj.GetObject(drawingObject.NoteID);
+        textSourceId = drawingObject.NoteID;
+      } else if (containerObject) {
+        textSourceObject = T3Gv.stdObj.GetObject(containerObject.NoteID);
+        textSourceId = containerObject.NoteID;
       }
-      for (C = [],
-        0,
-        d = 0,
-        c = b.charStyles.length,
-        M = new Array(c),
-        l = 0; l < c; l++)
-        M[l] = d;
-      for (l = 0; l < b.paraInfo.length; l++)
-        for (d = ShapeUtil.PStyleListAdd(C, b.paraInfo[l].pStyle),
-          S = b.paraInfo[l].offset; S < c; S++)
-          M[S] = d;
-      if (m = [],
-        u = -1,
-        D = -1,
-        0 === c)
-        u = 0,
-          D = b.paraInfo[0],
-          m.push({
-            style: 0,
-            para: D,
-            offset: 0
-          });
-      else
-        for (l = 0; l < c; l++)
-          u == b.charStyles[l] && D == M[l] || (u = b.charStyles[l],
-            D = M[l],
-            m.push({
-              style: u,
-              para: D,
-              offset: l
-            }));
-      if (n.WriteVisio || n.WriteWin32) {
-        var R = {
-          InstID: s,
-          nruns: m.length,
-          nstyles: C.length,
-          nchar: b.text.length,
+    } else {
+      // Get regular text data
+      if (drawingObject) {
+        textSourceObject = T3Gv.stdObj.GetObject(drawingObject.DataID);
+        textSourceId = drawingObject.DataID;
+      } else if (containerObject) {
+        textSourceObject = T3Gv.stdObj.GetObject(containerObject.DataID);
+        textSourceId = containerObject.DataID;
+      }
+    }
+
+    // Only proceed if we have a valid text source
+    if (textSourceObject != null) {
+      let styleIndex, paraIndex, charStyleCount, currStyle, currParaStyle;
+      let styleOffset, stylePosition, styleBucketIndex, charStyle, paraStyle;
+      let runtimeText = textSourceObject.Data.runtimeText;
+      let paragraphStyles = [];
+      let dataFields = [];
+
+      // Create default text if not provided
+      if (!runtimeText) {
+        if (!textBlock) {
+          return;
+        }
+        runtimeText = T3Gv.opt.svgDoc.CreateShape(OptConstant.CSType.Text).GetRuntimeText();
+      }
+
+      // Create style mapping arrays
+      let styleOffsets = [];
+      // let stylePosition = 0;
+      charStyleCount = runtimeText.charStyles.length;
+      styleOffsets = new Array(charStyleCount);
+
+      // Initialize style offsets for each character
+      for (styleIndex = 0; styleIndex < charStyleCount; styleIndex++) {
+        styleOffsets[styleIndex] = stylePosition;
+      }
+
+      // Map paragraph styles to characters
+      for (paraIndex = 0; paraIndex < runtimeText.paraInfo.length; paraIndex++) {
+        stylePosition = ShapeUtil.PStyleListAdd(paragraphStyles, runtimeText.paraInfo[paraIndex].pStyle);
+
+        // Apply this paragraph style to all characters in the paragraph
+        for (styleIndex = runtimeText.paraInfo[paraIndex].offset; styleIndex < charStyleCount; styleIndex++) {
+          styleOffsets[styleIndex] = stylePosition;
+        }
+      }
+
+      // Build style change records by finding transitions
+      let styleChanges = [];
+      let currentCharStyle = -1;
+      let currentParaStyle = -1;
+
+      // Handle empty text case
+      if (charStyleCount === 0) {
+        currentCharStyle = 0;
+        currentParaStyle = runtimeText.paraInfo[0];
+        styleChanges.push({
+          style: 0,
+          para: currentParaStyle,
+          offset: 0
+        });
+      } else {
+        // Record style changes at each transition point
+        for (styleIndex = 0; styleIndex < charStyleCount; styleIndex++) {
+          if (currentCharStyle != runtimeText.charStyles[styleIndex] ||
+            currentParaStyle != styleOffsets[styleIndex]) {
+
+            currentCharStyle = runtimeText.charStyles[styleIndex];
+            currentParaStyle = styleOffsets[styleIndex];
+            styleChanges.push({
+              style: currentCharStyle,
+              para: currentParaStyle,
+              offset: styleIndex
+            });
+          }
+        }
+      }
+
+      // Create text header structure based on format
+      let textHeader;
+      let headerStruct;
+
+      if (resultObject.WriteVisio || resultObject.WriteWin32) {
+        // Windows/Visio format with expanded header
+        textHeader = {
+          InstID: textSourceId,
+          nruns: styleChanges.length,
+          nstyles: paragraphStyles.length,
+          nchar: runtimeText.text.length,
           flags: 2,
           margins: {
             left: 0,
@@ -10292,206 +10362,441 @@ class ShapeUtil {
           nlinks: 0,
           nlinkchar: 0,
           markupobjid: -1
+        };
+        headerStruct = DSConstant.LongText8Struct;
+
+        // Count hyperlinks and their character lengths
+        textHeader.nlinks = runtimeText.hyperlinks.length;
+        for (styleIndex = 0; styleIndex < runtimeText.hyperlinks.length; styleIndex++) {
+          textHeader.nlinkchar += runtimeText.hyperlinks[styleIndex].length + 1;
         }
-          , A = DSConstant.LongText8Struct;
-        for (R.nlinks = b.hyperlinks.length,
-          l = 0; l < b.hyperlinks.length; l++)
-          R.nlinkchar += b.hyperlinks[l].length + 1
-      } else
-        R = {
-          InstID: s,
-          nstyles: C.length
-        },
-          A = DSConstant.SDF_LONGTEXT8_Struct_8;
-      for (i ? (p = ShapeUtil.WriteCode(e, DSConstant.OpNameCode.cComment),
-        e.writeStruct(A, R),
-        ShapeUtil.WriteLength(e, p)) : (p = ShapeUtil.WriteCode(e, DSConstant.OpNameCode.cLongText8),
-          e.writeStruct(A, R),
-          ShapeUtil.WriteLength(e, p)),
-        p = ShapeUtil.WriteCode(e, DSConstant.OpNameCode.cTextChar),
-        h = String(b.text).replace(/\n/g, "\r"),
-        e.writeUCS2String(h, T3DataStream.LITTLE_ENDIAN),
-        ShapeUtil.WriteLength(e, p),
-        p = ShapeUtil.WriteCode(e, DSConstant.OpNameCode.cTextRun),
-        y = {
-          nruns: m.length
-        },
-        e.writeStruct(DSConstant.SDF_TEXTRUNS_Header, y),
-        l = 0; l < m.length; l++)
-        f = {
-          ncodes: 9,
-          offset: m[l].offset
-        },
-          u = b.styles[m[l].style],
-          D = m[l].para,
-          u.dataField && f.ncodes++,
-          e.writeStruct(DSConstant.TextChangeHeader, f),
-          L = {
-            code: TextConstant.TextStyleCodes.Font,
-            value: ShapeUtil.GetFontID(u.font, n.fontlist)
-          },
-          e.writeStruct(DSConstant.TextCodeStruct, L),
-          n.WriteVisio || n.WriteWin32 ? (L = {
+      } else {
+        // Standard format with compact header
+        textHeader = {
+          InstID: textSourceId,
+          nstyles: paragraphStyles.length
+        };
+        headerStruct = DSConstant.SDF_LONGTEXT8_Struct_8;
+      }
+
+      // Write appropriate header based on content type
+      let codeOffset;
+      if (isComment) {
+        codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cComment);
+        dataStream.writeStruct(headerStruct, textHeader);
+        ShapeUtil.WriteLength(dataStream, codeOffset);
+      } else {
+        codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cLongText8);
+        dataStream.writeStruct(headerStruct, textHeader);
+        ShapeUtil.WriteLength(dataStream, codeOffset);
+      }
+
+      // Write text content with CR line endings
+      codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cTextChar);
+      let textContent = String(runtimeText.text).replace(/\n/g, "\r");
+      dataStream.writeUCS2String(textContent, T3DataStream.LITTLE_ENDIAN);
+      ShapeUtil.WriteLength(dataStream, codeOffset);
+
+      // Write text runs header
+      codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cTextRun);
+      let runsHeader = {
+        nruns: styleChanges.length
+      };
+      dataStream.writeStruct(DSConstant.SDF_TEXTRUNS_Header, runsHeader);
+
+      // Write each text run with its styles
+      for (styleIndex = 0; styleIndex < styleChanges.length; styleIndex++) {
+        let runHeader = {
+          ncodes: 9, // Base number of style codes
+          offset: styleChanges[styleIndex].offset
+        };
+
+        // Get character and paragraph style for this run
+        currStyle = runtimeText.styles[styleChanges[styleIndex].style];
+        currParaStyle = styleChanges[styleIndex].para;
+
+        // Add data field if present
+        if (currStyle.dataField) {
+          runHeader.ncodes++;
+        }
+
+        // Write run header
+        dataStream.writeStruct(DSConstant.TextChangeHeader, runHeader);
+
+        // Write font ID
+        let styleCode = {
+          code: TextConstant.TextStyleCodes.Font,
+          value: ShapeUtil.GetFontID(currStyle.font, resultObject.fontlist)
+        };
+        dataStream.writeStruct(DSConstant.TextCodeStruct, styleCode);
+
+        // Write font size (different formats for Visio vs standard)
+        if (resultObject.WriteVisio || resultObject.WriteWin32) {
+          styleCode = {
             code: TextConstant.TextStyleCodes.Size,
-            value: ShapeUtil.TextSizeToPointSize(u.size, n)
-          },
-            e.writeStruct(DSConstant.TextCodeStruct, L)) : (L = {
-              code: TextConstant.TextStyleCodes.SizeFloat,
-              value: u.size
-            },
-              e.writeStruct(DSConstant.TextCodeStructFloat, L)),
-          L = {
-            code: TextConstant.TextStyleCodes.Face,
-            value: 0
-          },
-          "bold" == u.weight && (L.value += TextConstant.TextFace.Bold),
-          "italic" == u.style && (L.value += TextConstant.TextFace.Italic),
-          "underline" == u.decoration ? L.value += TextConstant.TextFace.Under : "line-through" == u.decoration && (L.value += TextConstant.TextFace.Strike),
-          e.writeStruct(DSConstant.TextCodeStruct, L),
-          L = {
-            code: TextConstant.TextStyleCodes.Extra,
-            value: 0
-          },
-          "sub" == u.baseOffset ? L.value = DSConstant.ToUInt32(-1) : "super" == u.baseOffset && (L.value = 1),
-          e.writeStruct(DSConstant.TextCodeStruct, L),
-          L = {
-            code: TextConstant.TextStyleCodes.PaintType,
-            value: 1
-          },
-          e.writeStruct(DSConstant.TextCodeStruct, L),
-          L = {
-            code: TextConstant.TextStyleCodes.Color,
-            value: ShapeUtil.HTMLColorToWin(u.color, u.colorTrans)
-          },
-          e.writeStruct(DSConstant.TextCodeStruct, L),
-          L = {
-            code: TextConstant.TextStyleCodes.Flags,
-            value: u.spError ? TextConstant.TextFlags.BadSpell : 0
-          },
-          e.writeStruct(DSConstant.TextCodeStruct, L),
-          L = {
-            code: TextConstant.TextStyleCodes.StyleId,
-            value: D
-          },
-          e.writeStruct(DSConstant.TextCodeStruct, L),
-          L = {
-            code: TextConstant.TextStyleCodes.LinkId,
-            value: ShapeUtil.ToUInt32(u.hyperlink)
-          },
-          e.writeStruct(DSConstant.TextCodeStruct, L),
-          u.dataField && ((g = P.indexOf(u.dataField)) < 0 && (g = P.length,
-            P.push(u.dataField)),
-            L = {
-              code: TextConstant.TextStyleCodes.DataId,
-              value: g
-            },
-            e.writeStruct(DSConstant.TextCodeStruct, L));
-      for (ShapeUtil.WriteLength(e, p),
-        l = 0; l < C.length; l++) {
-        switch (p = ShapeUtil.WriteCode(e, DSConstant.OpNameCode.cTextStyle),
-        I = {
-          index: l,
-          ncodes: 7
-        },
-        e.writeStruct(DSConstant.SDF_TEXTSTYLE_Header, I),
-        T = {
+            value: ShapeUtil.TextSizeToPointSize(currStyle.size, resultObject)
+          };
+          dataStream.writeStruct(DSConstant.TextCodeStruct, styleCode);
+        } else {
+          styleCode = {
+            code: TextConstant.TextStyleCodes.SizeFloat,
+            value: currStyle.size
+          };
+          dataStream.writeStruct(DSConstant.TextCodeStructFloat, styleCode);
+        }
+
+        // Write font face attributes (bold, italic, underline, strikethrough)
+        styleCode = {
+          code: TextConstant.TextStyleCodes.Face,
+          value: 0
+        };
+
+        if (currStyle.weight == "bold") {
+          styleCode.value += TextConstant.TextFace.Bold;
+        }
+
+        if (currStyle.style == "italic") {
+          styleCode.value += TextConstant.TextFace.Italic;
+        }
+
+        if (currStyle.decoration == "underline") {
+          styleCode.value += TextConstant.TextFace.Under;
+        } else if (currStyle.decoration == "line-through") {
+          styleCode.value += TextConstant.TextFace.Strike;
+        }
+
+        dataStream.writeStruct(DSConstant.TextCodeStruct, styleCode);
+
+        // Write baseline offset (subscript/superscript)
+        styleCode = {
+          code: TextConstant.TextStyleCodes.Extra,
+          value: 0
+        };
+
+        if (currStyle.baseOffset == "sub") {
+          styleCode.value = DSConstant.ToUInt32(-1);
+        } else if (currStyle.baseOffset == "super") {
+          styleCode.value = 1;
+        }
+
+        dataStream.writeStruct(DSConstant.TextCodeStruct, styleCode);
+
+        // Write paint type (always solid color for now)
+        styleCode = {
+          code: TextConstant.TextStyleCodes.PaintType,
+          value: 1
+        };
+        dataStream.writeStruct(DSConstant.TextCodeStruct, styleCode);
+
+        // Write color with transparency
+        styleCode = {
+          code: TextConstant.TextStyleCodes.Color,
+          value: ShapeUtil.HTMLColorToWin(currStyle.color, currStyle.colorTrans)
+        };
+        dataStream.writeStruct(DSConstant.TextCodeStruct, styleCode);
+
+        // Write text flags (spell check errors)
+        styleCode = {
+          code: TextConstant.TextStyleCodes.Flags,
+          value: currStyle.spError ? TextConstant.TextFlags.BadSpell : 0
+        };
+        dataStream.writeStruct(DSConstant.TextCodeStruct, styleCode);
+
+        // Write style ID reference
+        styleCode = {
+          code: TextConstant.TextStyleCodes.StyleId,
+          value: currParaStyle
+        };
+        dataStream.writeStruct(DSConstant.TextCodeStruct, styleCode);
+
+        // Write hyperlink ID reference
+        styleCode = {
+          code: TextConstant.TextStyleCodes.LinkId,
+          value: ShapeUtil.ToUInt32(currStyle.hyperlink)
+        };
+        dataStream.writeStruct(DSConstant.TextCodeStruct, styleCode);
+
+        // Write data field reference if present
+        if (currStyle.dataField) {
+          let dataFieldIndex = dataFields.indexOf(currStyle.dataField);
+
+          if (dataFieldIndex < 0) {
+            dataFieldIndex = dataFields.length;
+            dataFields.push(currStyle.dataField);
+          }
+
+          styleCode = {
+            code: TextConstant.TextStyleCodes.DataId,
+            value: dataFieldIndex
+          };
+          dataStream.writeStruct(DSConstant.TextCodeStruct, styleCode);
+        }
+      }
+
+      ShapeUtil.WriteLength(dataStream, codeOffset);
+
+      // Write paragraph styles
+      for (styleIndex = 0; styleIndex < paragraphStyles.length; styleIndex++) {
+        // Begin style definition
+        codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cTextStyle);
+
+        let styleHeader = {
+          index: styleIndex,
+          ncodes: 7 // Number of style properties
+        };
+        dataStream.writeStruct(DSConstant.SDF_TEXTSTYLE_Header, styleHeader);
+
+        // Write justification/alignment
+        let styleProperty = {
           code: StyleConstant.ParaStyleCodes.Just,
           value: 0
-        },
-        C[l].just) {
+        };
+
+        switch (paragraphStyles[styleIndex].just) {
           case "left":
-            T.value = TextConstant.TextJust.Left;
+            styleProperty.value = TextConstant.TextJust.Left;
             break;
           case "right":
-            T.value = TextConstant.TextJust.Right;
+            styleProperty.value = TextConstant.TextJust.Right;
             break;
           default:
-            T.value = TextConstant.TextJust.Center
+            styleProperty.value = TextConstant.TextJust.Center;
         }
-        switch (e.writeStruct(DSConstant.StyleCodeStruct, T),
-        T.code = StyleConstant.ParaStyleCodes.Bullet,
-        C[l].bullet) {
+        dataStream.writeStruct(DSConstant.StyleCodeStruct, styleProperty);
+
+        // Write bullet style
+        styleProperty.code = StyleConstant.ParaStyleCodes.Bullet;
+
+        switch (paragraphStyles[styleIndex].bullet) {
           case "hround":
-            T.value = 1;
+            styleProperty.value = 1;
             break;
           case "sround":
-            T.value = 2;
+            styleProperty.value = 2;
             break;
           case "hsquare":
-            T.value = 3;
+            styleProperty.value = 3;
             break;
           case "ssquare":
-            T.value = 4;
+            styleProperty.value = 4;
             break;
           case "diamond":
-            T.value = 5;
+            styleProperty.value = 5;
             break;
           case "chevron":
-            T.value = 6;
+            styleProperty.value = 6;
             break;
           case "check":
-            T.value = 7;
+            styleProperty.value = 7;
             break;
           case "plus":
-            T.value = 8;
+            styleProperty.value = 8;
             break;
           default:
-            T.value = 0
+            styleProperty.value = 0;
         }
-        e.writeStruct(DSConstant.StyleCodeStruct, T),
-          T.code = StyleConstant.ParaStyleCodes.Spacing,
-          C[l].spacing < 0 ? T.value = ShapeUtil.ToSDWinCoords(C[l].spacing, n.coordScaleFactor) : T.value = Math.round(100 * C[l].spacing),
-          e.writeStruct(DSConstant.StyleCodeStruct, T),
-          T.code = StyleConstant.ParaStyleCodes.Pindent,
-          T.value = ShapeUtil.ToSDWinCoords(C[l].pindent, n.coordScaleFactor),
-          e.writeStruct(DSConstant.StyleCodeStruct, T),
-          ShapeUtil.WriteLength(e, p),
-          T.code = StyleConstant.ParaStyleCodes.Lindent,
-          T.value = ShapeUtil.ToSDWinCoords(C[l].bindent ? C[l].bindent : C[l].lindent, n.coordScaleFactor),
-          e.writeStruct(DSConstant.StyleCodeStruct, T),
-          ShapeUtil.WriteLength(e, p),
-          T.code = StyleConstant.ParaStyleCodes.Rindent,
-          T.value = ShapeUtil.ToSDWinCoords(C[l].rindent, n.coordScaleFactor),
-          e.writeStruct(DSConstant.StyleCodeStruct, T),
-          ShapeUtil.WriteLength(e, p),
-          T.code = StyleConstant.ParaStyleCodes.TabSpace,
-          T.value = ShapeUtil.ToSDWinCoords(C[l].tabspace, n.coordScaleFactor),
-          e.writeStruct(DSConstant.StyleCodeStruct, T),
-          ShapeUtil.WriteLength(e, p)
+        dataStream.writeStruct(DSConstant.StyleCodeStruct, styleProperty);
+
+        // Write line spacing
+        styleProperty.code = StyleConstant.ParaStyleCodes.Spacing;
+
+        if (paragraphStyles[styleIndex].spacing < 0) {
+          styleProperty.value = ShapeUtil.ToSDWinCoords(
+            paragraphStyles[styleIndex].spacing,
+            resultObject.coordScaleFactor
+          );
+        } else {
+          styleProperty.value = Math.round(100 * paragraphStyles[styleIndex].spacing);
+        }
+        dataStream.writeStruct(DSConstant.StyleCodeStruct, styleProperty);
+
+        // Write paragraph indentation
+        styleProperty.code = StyleConstant.ParaStyleCodes.Pindent;
+        styleProperty.value = ShapeUtil.ToSDWinCoords(
+          paragraphStyles[styleIndex].pindent,
+          resultObject.coordScaleFactor
+        );
+        dataStream.writeStruct(DSConstant.StyleCodeStruct, styleProperty);
+        ShapeUtil.WriteLength(dataStream, codeOffset);
+
+        // Write left indentation (or bullet indentation)
+        styleProperty.code = StyleConstant.ParaStyleCodes.Lindent;
+        styleProperty.value = ShapeUtil.ToSDWinCoords(
+          paragraphStyles[styleIndex].bindent ?
+            paragraphStyles[styleIndex].bindent :
+            paragraphStyles[styleIndex].lindent,
+          resultObject.coordScaleFactor
+        );
+        dataStream.writeStruct(DSConstant.StyleCodeStruct, styleProperty);
+        ShapeUtil.WriteLength(dataStream, codeOffset);
+
+        // Write right indentation
+        styleProperty.code = StyleConstant.ParaStyleCodes.Rindent;
+        styleProperty.value = ShapeUtil.ToSDWinCoords(
+          paragraphStyles[styleIndex].rindent,
+          resultObject.coordScaleFactor
+        );
+        dataStream.writeStruct(DSConstant.StyleCodeStruct, styleProperty);
+        ShapeUtil.WriteLength(dataStream, codeOffset);
+
+        // Write tab spacing
+        styleProperty.code = StyleConstant.ParaStyleCodes.TabSpace;
+        styleProperty.value = ShapeUtil.ToSDWinCoords(
+          paragraphStyles[styleIndex].tabspace,
+          resultObject.coordScaleFactor
+        );
+        dataStream.writeStruct(DSConstant.StyleCodeStruct, styleProperty);
+        ShapeUtil.WriteLength(dataStream, codeOffset);
       }
-      for (l = 0; l < b.hyperlinks.length; l++)
-        p = ShapeUtil.WriteCode(e, DSConstant.OpNameCode.cTextLink),
-          e.writeUint16(l),
-          e.writeUint16(2),
-          e.writeUCS2String(b.hyperlinks[l], T3DataStream.LITTLE_ENDIAN, b.hyperlinks[l].length + 1),
-          ShapeUtil.WriteLength(e, p);
-      for (l = 0; l < P.length; l++)
-        p = ShapeUtil.WriteCode(e, DSConstant.OpNameCode.cTextData),
-          e.writeUint16(l),
-          e.writeUCS2String(P[l], T3DataStream.LITTLE_ENDIAN, P[l].length + 1),
-          ShapeUtil.WriteLength(e, p);
-      i ? e.writeUint16(DSConstant.OpNameCode.cCommentEnd) : e.writeUint16(DSConstant.OpNameCode.cTextEnd)
+
+      // Write hyperlinks
+      for (styleIndex = 0; styleIndex < runtimeText.hyperlinks.length; styleIndex++) {
+        codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cTextLink);
+        dataStream.writeUint16(styleIndex);
+        dataStream.writeUint16(2); // Link type (standard URL)
+        dataStream.writeUCS2String(
+          runtimeText.hyperlinks[styleIndex],
+          T3DataStream.LITTLE_ENDIAN,
+          runtimeText.hyperlinks[styleIndex].length + 1
+        );
+        ShapeUtil.WriteLength(dataStream, codeOffset);
+      }
+
+      // Write data fields
+      for (styleIndex = 0; styleIndex < dataFields.length; styleIndex++) {
+        codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cTextData);
+        dataStream.writeUint16(styleIndex);
+        dataStream.writeUCS2String(
+          dataFields[styleIndex],
+          T3DataStream.LITTLE_ENDIAN,
+          dataFields[styleIndex].length + 1
+        );
+        ShapeUtil.WriteLength(dataStream, codeOffset);
+      }
+
+      // Write appropriate end marker
+      if (isComment) {
+        dataStream.writeUint16(DSConstant.OpNameCode.cCommentEnd);
+      } else {
+        dataStream.writeUint16(DSConstant.OpNameCode.cTextEnd);
+      }
     }
   }
 
-  static TextSizeToPointSize(e, t) {
-    var a = 0;
-    t ? a = t.docDpi : a = T3Gv.opt.svgDoc.GetWorkArea().docDpi;
-    return Math.round(72 * e / a)
+  /**
+   * Converts a font size from device pixels to typographic point size
+   *
+   * This function converts a font size expressed in device-independent units (based on the
+   * document DPI) to a standard typographic point size (72 points per inch). It properly
+   * handles the scaling based on the current document resolution to ensure consistent
+   * text appearance across different display environments.
+   *
+   * @param fontSize - The font size in device-independent units
+   * @param resultObject - Object containing document DPI information (optional)
+   * @returns The font size in points (rounded to the nearest integer)
+   */
+  static TextSizeToPointSize(fontSize, resultObject) {
+    let documentDpi = 0;
+
+    if (resultObject) {
+      documentDpi = resultObject.docDpi;
+    } else {
+      documentDpi = T3Gv.opt.svgDoc.GetWorkArea().docDpi;
+    }
+
+    return Math.round(72 * fontSize / documentDpi);
   }
 
-  static ToUInt32(e) {
-    return e >>> 0
+  /**
+   * Converts a value to an unsigned 32-bit integer
+   *
+   * This function performs a zero-fill right shift operation to ensure the value
+   * is treated as an unsigned 32-bit integer. This is important for file format
+   * compatibility where certain values must be represented as unsigned integers.
+   *
+   * @param value - The value to convert to an unsigned 32-bit integer
+   * @returns The value as an unsigned 32-bit integer
+   */
+  static ToUInt32(value) {
+    return value >>> 0;
   }
 
-  static PStyleListAdd(e, t) {
-    var a, r;
-    for (r = e.length,
-      a = 0; a < r; a++)
-      if (e[a].just == t.just && e[a].bullet == t.bullet && e[a].spacing == t.spacing && e[a].pindent == t.pindent && e[a].lindent == t.lindent && e[a].rindent == t.rindent && e[a].bindent == t.bindent && e[a].tabspace == t.tabspace)
-        return a;
-    return e.push(t),
-      r
+  /**
+   * Adds a paragraph style to a style list if it doesn't already exist
+   *
+   * This function checks if a paragraph style with identical properties already exists
+   * in the style list. If found, it returns the index of the matching style.
+   * If not found, it adds the new style to the list and returns its index.
+   * This prevents duplicate styles and maintains a clean style list.
+   *
+   * @param styleList - The list of paragraph styles to check and potentially modify
+   * @param newStyle - The paragraph style to add if not already present
+   * @returns The index of the style in the list (either existing or newly added)
+   */
+  static PStyleListAdd(styleList, newStyle) {
+    let styleIndex, styleCount;
+
+    styleCount = styleList.length;
+    for (styleIndex = 0; styleIndex < styleCount; styleIndex++) {
+      if (styleList[styleIndex].just == newStyle.just &&
+        styleList[styleIndex].bullet == newStyle.bullet &&
+        styleList[styleIndex].spacing == newStyle.spacing &&
+        styleList[styleIndex].pindent == newStyle.pindent &&
+        styleList[styleIndex].lindent == newStyle.lindent &&
+        styleList[styleIndex].rindent == newStyle.rindent &&
+        styleList[styleIndex].bindent == newStyle.bindent &&
+        styleList[styleIndex].tabspace == newStyle.tabspace) {
+        return styleIndex;
+      }
+    }
+
+    styleList.push(newStyle);
+    return styleCount;
+  }
+
+  /**
+   * Writes an image block to a buffer in SDF format
+   *
+   * This function serializes image data into a structured block with proper headers
+   * and metadata. It includes the image's identifier, type information, and binary
+   * content. The function creates a complete image block that can be embedded in
+   * an SDF document or used standalone.
+   *
+   * @param imageObject - The image object containing the binary data and metadata
+   * @param resultObject - Object containing serialization context and state information
+   * @param blockIndex - The index of this block in the document sequence
+   * @returns A Uint8Array containing the serialized image block
+   */
+  static WriteImageBlock(imageObject, resultObject, blockIndex) {
+    const buffer = new ArrayBuffer(10);
+    const dataStream = new T3DataStream(buffer);
+
+    dataStream.endianness = T3DataStream.LITTLE_ENDIAN;
+
+    this.WriteBlockWrapper(
+      dataStream,
+      resultObject.state,
+      resultObject.delta,
+      ShapeUtil.BlockIDs.Image,
+      imageObject.ID,
+      blockIndex,
+      resultObject.nblocks,
+      resultObject.BlockAction
+    );
+
+    const codeOffset = ShapeUtil.WriteCode(dataStream, DSConstant.OpNameCode.cImageBlock);
+
+    const imageMetadata = {
+      value: imageObject.ID,
+      type: imageObject.Data.ImageDir
+    };
+
+    dataStream.writeStruct(DSConstant.LONGVALUE2_Struct, imageMetadata);
+    DSUtil.writeNativeByteArray(dataStream, imageObject.Data.Bytes);
+
+    this.WriteLength(dataStream, codeOffset);
+
+    return new Uint8Array(dataStream.buffer);
   }
 }
 

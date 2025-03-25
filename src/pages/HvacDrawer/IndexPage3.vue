@@ -3,7 +3,7 @@
   margin-left: 0px;
   position: absolute;
   width: 100%;
-  background-color: rgb(223, 178, 178);
+  /* background-color: rgb(223, 178, 178); */
 }
 
 #main-toolbar {
@@ -14,9 +14,9 @@
   z-index: 1;
   width: 100%;
   max-height: none;
-  background-color: #fff;
+  /* background-color: #fff; */
   height: 93px;
-  background-color: antiquewhite;
+  /* background-color: antiquewhite; */
 }
 
 .left-panel {
@@ -27,16 +27,16 @@
   left: 0px;
   right: 0;
   overflow: hidden;
-  background-color: #f5f5f5;
+  /* background-color: #f5f5f5; */
   width: 105px;
   border-right: 1px solid #ddd;
   z-index: 4;
-  background-color: brown;
+  /* background-color: brown; */
 }
 
 .main-panel {
   margin-left: 0px;
-  background-color: cornsilk;
+  /* background-color: cornsilk; */
 }
 
 #work-area {
@@ -49,14 +49,14 @@
   padding-left: 105px;
   margin-top: 93px;
   width: auto;
-  background-color: #40e4e4;
+  /* background-color: #40e4e4; */
 }
 
 #document-area {
   position: relative;
-  background-color: #e3e4e5;
+  /* background-color: #e3e4e5; */
   height: 100%;
-  background-color: rgb(227, 153, 190);
+  /* background-color: rgb(227, 153, 190); */
 }
 
 .document-ruler-corner {
@@ -65,14 +65,14 @@
   user-select: none;
   left: 99px;
   top: 0px;
-  background-color: #ebeced;
+  /* background-color: #ebeced; */
   overflow: hidden;
   position: absolute;
-  background-color: rgb(229, 112, 112);
+  /* background-color: rgb(229, 112, 112); */
 }
 
 .document-ruler-top {
-  background-color: #ebeced;
+  /* background-color: #ebeced; */
   overflow: hidden;
   position: absolute;
   user-select: none;
@@ -81,11 +81,11 @@
   /* width: 976.8px; */
   width: 100%;
   height: 20px;
-  background-color: rgb(166, 166, 223);
+  /* background-color: rgb(166, 166, 223); */
 }
 
 .document-ruler-left {
-  background-color: #ebeced;
+  /* background-color: #ebeced; */
   overflow: hidden;
   position: absolute;
   user-select: none;
@@ -94,13 +94,13 @@
   width: 20px;
   /* height: 175.4px; */
   height: auto;
-  background-color: yellow;
+  /* background-color: yellow; */
 }
 
 #svg-area {
   scrollbar-width: thin;
   position: absolute;
-  background-color: #fff;
+  /* background-color: #fff; */
   left: 119px;
   top: 20px;
   /* width: 976.8px; */
@@ -109,7 +109,7 @@
   height: auto;
   overflow: hidden scroll;
   user-select: none;
-  background-color: lightseagreen;
+  background-color: #20b2aa;
 }
 
 .doc-toolbar {
@@ -125,7 +125,7 @@
   width: auto;
   position: absolute;
   left: 0;
-  background-color: aqua;
+  /* background-color: #00ffff; */
 }
 </style>
 
@@ -516,6 +516,121 @@
               &nbsp;
               <button id="btn_try_AreaMeasure">AreaMeasure</button>
 
+              <br />
+              &nbsp;
+              <button id="btn_try_Lib_Select">Select</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_Box">Box</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_Text">Text</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_Icon">Icon</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_SwitchIcon">Switch Icon</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_Led">Led</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_RoomHumidity">Room Humidity</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_RoomTemperature">Room Temperature</button>
+
+
+              &nbsp;
+              <button id="btn_try_Lib_Temperature">Temperature</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_Boiler">Boiler</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_HeatPump">Heat Pump</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_Pump">Heat Pump</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_ValueThreeWay">Value Three-Way</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_ValueTwoWay">Value Two-Way</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_Duct">Duct</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_Fan">Fan</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_CoolingCoil">Cooling Coil</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_HeatingCoil">Heating Coil</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_Filter">Filter</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_Humidifier">Humidifier</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_Humidity">Humidity</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_Pressure">Pressure</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_Damper">Damper</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_Temperature2">Temperature 2</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_ThermalWheel">Thermal Wheel</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_Enthalpy">Enthalpy</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_Flow">Flow</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_Guage">Guage</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_Dial">Dial</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_Value">Value</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_IconWithTitle">Icon with Title</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_SetBackgroundColor">Background Color</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_SetBackgroundImage">Background Image</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_ImportSVGSymbol">Import SVG Symbol</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_Lock">Lock</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_AddNote">Add Note</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_AddComment">Add Comment</button>
+
+              &nbsp;
+              <button id="btn_try_Lib_Hyperlink">Hyperlink</button>
             </div>
 
 
@@ -898,7 +1013,7 @@ onMounted(() => {
   documentAreaPosition.value.vRuler = { width: 20, height: div.clientHeight };
   documentAreaPosition.value.hvGrid = { width: div.clientWidth, height: div.clientHeight };
 
-  console.log('Document Area Position:', documentAreaPosition.value);
+  //console.log('Document Area Position:', documentAreaPosition.value);
 });
 
 // Lifecycle hook for component unmount

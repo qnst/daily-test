@@ -5,6 +5,11 @@ import NvConstant from "../../Data/Constant/NvConstant"
 import ToolUtil from './ToolUtil'
 import T3Util from "../../Util/T3Util";
 import OptConstant from "../../Data/Constant/OptConstant";
+import SelectUtil from "../Opt/SelectUtil";
+import DataUtil from "../Data/DataUtil";
+import StyleConstant from "../../Data/Constant/StyleConstant";
+import DrawUtil from "../Opt/DrawUtil";
+import UIUtil from "../UI/UIUtil";
 
 class ToolOpt {
 
@@ -473,6 +478,146 @@ class ToolOpt {
       T3Gv.opt.ExceptionCleanup(error);
       T3Util.Log('O.ToolOpt.LibSetBackgroundImageAct - Error:', error);
     }
+  }
+
+  /**
+   * Locks the selected object or right-clicked object
+   * @param isRightClick - Flag indicating if the action was triggered by a right-click
+   * @returns void
+   */
+  LibLockAct(isRightClick) {
+    T3Util.Log('O.ToolOpt.LibLockAct - Input:', { isRightClick });
+
+    try {
+      // Determine the target to lock based on whether this is a right-click action
+      const targetId = isRightClick
+        ? T3Gv.opt.rClickParam?.targetId
+        : SelectUtil.GetTargetSelect();
+
+      // Close any open edits first
+      T3Gv.opt.CloseEdit(true);
+
+      // Lock the target object
+      T3Gv.opt.Lock(targetId, true);
+
+      T3Util.Log('O.ToolOpt.LibLockAct - Output: Locked object with ID', targetId);
+    } catch (error) {
+      T3Gv.opt.ExceptionCleanup(error);
+      T3Util.Log('O.ToolOpt.LibLockAct - Error:', error);
+    }
+  }
+
+  /**
+   * Sets the background color for the canvas
+   * @param color - The color to set as the background
+   * @returns void
+   */
+  LibSetBackgroundColorAct(color) {
+    T3Util.Log('O.ToolOpt.LibSetBackgroundColorAct - Input:', { color });
+
+    try {
+      // Close any ongoing edits first
+      T3Gv.opt.CloseEdit(true, true);
+
+      // // Begin collaborative editing if enabled
+      // if (SDJS.Collab.AllowMessage()) {
+      //   SDJS.Collab.BeginSecondaryEdit();
+      // }
+
+      // Get the current data object
+      const dataObject = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, true);
+
+      // Get the current background color
+      let currentColor = dataObject.background.Paint.Color;
+
+      // If background is transparent, treat current color as white
+      if (dataObject.background.Paint.FillType === NvConstant.FillTypes.Transparent) {
+        currentColor = NvConstant.Colors.White;
+      }
+
+      // Handle transparent color case
+      let displayColor = color;
+      if (color === NvConstant.Colors.Trans) {
+        displayColor = NvConstant.Colors.White;
+      }
+
+      // Update the UI text color to complement the new background
+      UIUtil.ChangeBackgroundTextColor(displayColor, currentColor);
+
+      // Set the background properties based on color choice
+      if (color === NvConstant.Colors.Trans) {
+        dataObject.background.Paint.FillType = NvConstant.FillTypes.Transparent;
+        dataObject.background.Paint.Color = NvConstant.Colors.White;
+      } else {
+        dataObject.background.Paint.FillType = NvConstant.FillTypes.Solid;
+        dataObject.background.Paint.Color = color;
+      }
+
+      // Set opacity to fully opaque
+      dataObject.background.Paint.Opacity = 1;
+
+      // Apply the background color change
+      UIUtil.SetBackgroundColor();
+
+      // // Handle collaborative messaging if enabled
+      // if (SDJS.Collab.AllowMessage()) {
+      //   const message = {
+      //     color: color
+      //   };
+      //   SDJS.Collab.BuildMessage(SDJS.ListManager.CollabMessages.SetBackgroundColor, message, false);
+      // }
+
+      // Complete the operation
+      DrawUtil.CompleteOperation();
+
+      T3Util.Log('O.ToolOpt.LibSetBackgroundColorAct - Output: Set background color', color);
+    } catch (error) {
+      T3Gv.opt.ExceptionCleanup(error);
+      T3Util.Log('O.ToolOpt.LibSetBackgroundColorAct - Error:', error);
+    }
+  }
+
+  LibImportSVGSymbolAct(e) {
+    try {
+      T3Gv.opt.CloseEdit();
+
+      // Create a file input element to select an image
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = 'image/*';
+
+      fileInput.onchange = (e) => {
+        const file = fileInput.files?.[0];
+        if (!file) {
+          T3Util.Log('O.ToolOpt.LibSetBackgroundImageAct - Error: No file selected');
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = () => {
+          const fileDataUrl = reader.result as string;
+
+          T3Gv.opt.ImportSVGSymbol(file)
+          T3Util.Log('O.ToolOpt.LibSetBackgroundImageAct - Output: Set background image', { e: e });
+        };
+
+        reader.onerror = () => {
+          T3Util.Log('O.ToolOpt.LibSetBackgroundImageAct - Error: Failed to read file');
+        };
+
+        reader.readAsDataURL(file);
+      };
+
+      // Open file dialog
+      fileInput.click();
+
+    } catch (e) {
+      T3Gv.opt.ExceptionCleanup(e)
+    }
+  }
+
+  LibToolShape(symbolType, useDragDrop) {
+    this.tul.ToolDragDropSymbol(symbolType, useDragDrop);
   }
 }
 

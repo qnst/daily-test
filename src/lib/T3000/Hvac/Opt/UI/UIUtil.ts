@@ -870,6 +870,15 @@ class UIUtil {
     }
   }
 
+  static ChangeBackgroundTextColor(e, t) {
+    if (e !== t) {
+      var a, r, i, n = LayerUtil.ZList();
+      for (a = n.length,
+        r = 0; r < a; r++)
+        (i = DataUtil.GetObjectPtr(n[r], !1)) && i.ChangeBackgroundColor(e, t)
+    }
+  }
+
 }
 
 export default UIUtil

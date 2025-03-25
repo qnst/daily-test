@@ -17,6 +17,7 @@ import UIUtil from "../UI/UIUtil";
 import DrawUtil from "./DrawUtil";
 import SelectUtil from "./SelectUtil";
 import SvgUtil from "./SvgUtil";
+import DSUtil from '../DS/DSUtil';
 
 class OptCMUtil {
 
@@ -309,8 +310,8 @@ class OptCMUtil {
               if (objectInstance) {
                 objectData = objectInstance.Data;
                 blobBytes = objectData.GetBlobBytes();
-                imageType = DSConstant.GetImageBlobType(blobBytes.ImageDir);
-                objectData.ImageURL = T3Gv.opt.MakeURL(null, blobBytes.Bytes, imageType);
+                imageType = DSUtil.GetImageBlobType(blobBytes.ImageDir);
+                objectData.ImageURL = DSUtil.MakeURL(null, blobBytes.Bytes, imageType);
               }
             }
           }
@@ -346,8 +347,8 @@ class OptCMUtil {
 
               if (objectData.BlobBytesID >= 0 && this.IsBlobURL(objectData.ImageURL)) {
                 blobBytes = objectData.GetBlobBytes();
-                imageType = DSConstant.GetImageBlobType(blobBytes.ImageDir);
-                objectData.ImageURL = T3Gv.opt.MakeURL(null, blobBytes.Bytes, imageType);
+                imageType = DSUtil.GetImageBlobType(blobBytes.ImageDir);
+                objectData.ImageURL = DSUtil.MakeURL(null, blobBytes.Bytes, imageType);
               }
             }
           }
@@ -368,10 +369,10 @@ class OptCMUtil {
                   blobBytes = objectData.GetBlobBytes();
 
                   if (blobBytes) {
-                    imageType = DSConstant.GetImageBlobType(blobBytes.ImageDir);
+                    imageType = DSUtil.GetImageBlobType(blobBytes.ImageDir);
 
                     if (this.IsBlobURL(objectData.ImageURL)) {
-                      objectData.ImageURL = T3Gv.opt.MakeURL(null, blobBytes.Bytes, imageType);
+                      objectData.ImageURL = DSUtil.MakeURL(null, blobBytes.Bytes, imageType);
                     }
                   }
                 }
@@ -386,10 +387,10 @@ class OptCMUtil {
               blobBytes = objectData.GetBlobBytes();
 
               if (blobBytes) {
-                imageType = DSConstant.GetImageBlobType(blobBytes.ImageDir);
+                imageType = DSUtil.GetImageBlobType(blobBytes.ImageDir);
 
                 if (this.IsBlobURL(objectData.ImageURL)) {
-                  objectData.ImageURL = T3Gv.opt.MakeURL(null, blobBytes.Bytes, imageType);
+                  objectData.ImageURL = DSUtil.MakeURL(null, blobBytes.Bytes, imageType);
                 }
               }
             }

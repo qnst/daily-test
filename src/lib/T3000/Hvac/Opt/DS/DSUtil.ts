@@ -2189,6 +2189,40 @@ class DSUtil {
 
     return new T3DataStream(buffer, null, T3DataStream.LITTLE_ENDIAN).readStruct(structDefinition);
   }
+
+  /**
+   * Creates a URL from either a buffer or byte array with specified MIME type
+   * @param buffer - The buffer containing data (if null, byteArray will be used)
+   * @param byteArray - The byte array to use if buffer is null
+   * @param mimeType - The MIME type of the content being created
+   * @returns URL string created from the data
+   */
+  static MakeURL(buffer, byteArray, mimeType) {
+    let blob;
+
+    if (buffer) {
+      blob = new Blob([buffer], {
+        type: mimeType
+      });
+    } else {
+      const tempBuffer = new ArrayBuffer(10);
+      const dataStream = new T3DataStream(tempBuffer);
+      dataStream.endianness = T3DataStream.LITTLE_ENDIAN;
+      DSUtil.writeNativeByteArray(dataStream, byteArray);
+      blob = new Blob([dataStream.buffer], {
+        type: mimeType
+      });
+    }
+
+    const urlCreator = window.URL || window.webkitURL;
+    let url = "";
+
+    if (urlCreator && urlCreator.createObjectURL) {
+      url = urlCreator.createObjectURL(blob);
+    }
+
+    return url;
+  }
 }
 
 export default DSUtil

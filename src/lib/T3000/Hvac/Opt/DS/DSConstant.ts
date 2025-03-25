@@ -8121,6 +8121,8 @@ class DSConstant {
   static FVERSIONVSM = 37
   static SDF_FVERSION2022 = 41
   static SDF_PVERSION859 = 859
+
+  static LONGVALUE2_Struct = ["value", "uint32", "type", "uint32"]
 }
 
 export default DSConstant

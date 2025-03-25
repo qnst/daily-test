@@ -6664,6 +6664,258 @@ class OptUtil {
 
     return docCoords;
   }
+
+  /**
+   * Toggles the lock state of selected objects in the document.
+   * Locked objects cannot be modified until they are unlocked.
+   * If no objectId is provided, it uses the currently selected objects.
+   *
+   * @param objectId - ID of the object to toggle lock state
+   * @param forceToggle - If true, forces the operation even if no objects are selected
+   * @returns void
+   */
+  Lock(objectId, forceToggle?) {
+    // Get the list of selected objects
+    const selectedObjects = T3Gv.stdObj.GetObject(this.theSelectedListBlockID).Data;
+    const objectCount = selectedObjects.length;
+
+    // Proceed only if there are selected objects or if forceToggle is true
+    if (objectCount !== 0 || forceToggle) {
+      let currentObject;
+      let objectIndex = 0;
+      let shouldLock = true;
+      const lockFlag = NvConstant.ObjFlags.Lock;
+
+      // Determine whether to lock or unlock by checking the specified object
+      if ((currentObject = DataUtil.GetObjectPtr(objectId, false))) {
+        shouldLock = (currentObject.flags & lockFlag) === 0;
+      }
+
+      // Begin secondary edit if collaborating
+      if (false/*Collab.AllowMessage()*/) {
+        /*Collab.BeginSecondaryEdit()*/;
+      }
+
+      // Apply lock/unlock to all selected objects
+      for (objectIndex = 0; objectIndex < objectCount; ++objectIndex) {
+        currentObject = DataUtil.GetObjectPtr(selectedObjects[objectIndex], true);
+        currentObject.flags = Utils2.SetFlag(currentObject.flags, lockFlag, shouldLock);
+        DataUtil.AddToDirtyList(selectedObjects[objectIndex]);
+      }
+
+      // Send collaboration message if collaborating
+      if (false/*Collab.AllowMessage()*/) {
+        const messageData = {
+          BlockID: objectId
+        };
+        /*Collab.BuildMessage(NvConstant.CollabMessages.Lock, messageData, true)*/
+      }
+
+      // Complete the operation
+      DrawUtil.CompleteOperation(null);
+    } else {
+      // Show error if no objects are selected and forceToggle is false
+      T3Util.Log("O.Opt Lock - Error: No objects selected");
+    }
+  }
+
+  /**
+   * Imports an SVG symbol into the document as a new shape
+   * This function handles loading an SVG file, creating a rectangular shape to contain it,
+   * and positioning it in the document workspace.
+   *
+   * The process involves:
+   * 1. Creating an SVG importer to load the file
+   * 2. Calculating appropriate dimensions for the SVG
+   * 3. Creating a rectangle with transparent fill
+   * 4. Placing the SVG content in the rectangle
+   * 5. Adding the new shape to the document
+   *
+   * @param svgSource - The source of the SVG (file path, URL, or raw SVG content)
+   * @returns void
+   */
+  ImportSVGSymbol(svgSource) {
+    // Initialize variables to store SVG data
+    let imageUrl = "";
+    let imageBlob = null;
+    let imageBytes = null;
+    // const self = this;
+
+    /**
+     * Callback function that creates a shape containing the SVG after dimensions are calculated
+     * @param width - The width of the SVG
+     * @param height - The height of the SVG
+     * @param skipRendering - Whether to skip rendering the new object
+     */
+    const createSvgShape = (width, height, skipRendering) => {
+      let newObjectId;
+      const newObjectList = [];
+
+      // Only proceed if dimensions are valid and rendering is not skipped
+      if (!skipRendering && width > 0 && height > 0) {
+        // Calculate dimensions maintaining aspect ratio
+        let finalWidth = 200;
+        let finalHeight = 200;
+
+        if (width < height) {
+          finalHeight *= width / height;
+        } else {
+          finalWidth *= height / width;
+        }
+
+        // Calculate position to center the SVG in work area
+        const centerPosition = this.CalcWorkAreaCenterUL(finalHeight, finalWidth);
+
+        // Create a transparent style for the SVG container
+        const transparentStyle = new QuickStyle();
+        transparentStyle.Name = "";
+        transparentStyle.Line.Thickness = 0;
+        transparentStyle.Fill.Paint.FillType = NvConstant.FillTypes.Transparent;
+
+        // Create data for the new rectangle object
+        const rectangleData = {
+          Frame: {
+            x: centerPosition.x,
+            y: centerPosition.y,
+            width: finalWidth,
+            height: finalHeight
+          },
+          TextGrow: NvConstant.TextGrowBehavior.ProPortional,
+          ImageURL: imageUrl,
+          StyleRecord: transparentStyle,
+          ObjGrow: OptConstant.GrowBehavior.ProPortional,
+          flags: NvConstant.ObjFlags.ImageOnly,
+          extraflags: OptConstant.ExtraFlags.NoColor
+        };
+
+        // Create the rectangle object
+        const rectangleObject = new Instance.Shape.Rect(rectangleData);
+
+        // Add the new object to the document
+        newObjectId = DrawUtil.AddNewObject(rectangleObject, false, true);
+
+        // Set the SVG blob data in the object
+        const newObject = DataUtil.GetObjectPtr(newObjectId, false);
+        if (newObject) {
+          const imageDir = DSUtil.GetImageDir(imageBlob);
+          newObject.SetBlobBytes(imageBytes, imageDir);
+        }
+
+        // Add to list of created objects
+        newObjectList.push(newObjectId);
+
+        // Complete the operation
+        DrawUtil.CompleteOperation(newObjectList);
+      }
+    };
+
+    // Create an SVG importer and load the SVG
+    const svgImporter = new Instance.Shape.SVGImporter();
+    if (svgImporter) {
+      svgImporter.ImportSVG(svgSource, (url, blob, bytes) => {
+        // Store SVG data
+        imageUrl = url;
+        imageBlob = blob;
+        imageBytes = bytes;
+
+        // Calculate dimensions and create the shape
+        this.CalcSVGSymbolDimensions(blob, url, createSvgShape);
+      });
+    }
+  }
+
+  /**
+   * Calculates the dimensions of an SVG symbol from a blob
+   * This function extracts width and height information from an SVG file by:
+   * 1. Reading the blob contents as text
+   * 2. Parsing the SVG XML
+   * 3. Checking for width/height attributes
+   * 4. Falling back to viewBox attribute if direct dimensions aren't specified
+   *
+   * @param svgBlob - The SVG file as a Blob object
+   * @param svgUrl - The URL or path of the SVG (used for reference)
+   * @param callback - Function to call with the extracted dimensions (width, height, error)
+   */
+  CalcSVGSymbolDimensions(svgBlob, svgUrl, callback) {
+    if (svgBlob) {
+      // Create a FileReader to read the blob contents
+      const fileReader = new FileReader();
+
+      // Store callback reference for use in the onload handler
+      fileReader.UserData = {
+        callback: callback
+      };
+
+      // Handle the file load event
+      fileReader.onload = function (event) {
+        const svgText = this.result;
+        let svgDocument = null;
+
+        // Parse the SVG text into an XML document
+        if (window.DOMParser) {
+          // Modern browsers
+          svgDocument = (new DOMParser()).parseFromString(svgText, "text/xml");
+        } else {
+          // IE fallback (legacy support)
+          svgDocument = new ActiveXObject("Microsoft.XMLDOM");
+          svgDocument.async = false;
+          svgDocument.loadXML(svgText);
+        }
+
+        // Try to get width and height directly from attributes
+        let width = svgDocument.documentElement.getAttribute("width");
+        if (width) {
+          width = width.match(/\d*\.*\d*/)[0]; // Extract numeric part
+        }
+
+        let height = svgDocument.documentElement.getAttribute("height");
+        if (height) {
+          height = height.match(/\d*\.*\d*/)[0]; // Extract numeric part
+        }
+
+        // If direct dimensions are available, use them
+        if (width && height) {
+          this.UserData.callback(width, height, null);
+        } else {
+          // Try to extract dimensions from viewBox attribute
+          const viewBox = svgDocument.documentElement.getAttribute("viewBox");
+
+          if (viewBox) {
+            const viewBoxParts = viewBox.split(" ");
+
+            width = parseFloat(viewBoxParts[2]);
+            width = width.match(/\d*\.*\d*/)[0]; // Extract numeric part
+
+            height = parseFloat(viewBoxParts[3]);
+            height = height.match(/\d*\.*\d*/)[0]; // Extract numeric part
+
+            if (width && height) {
+              this.UserData.callback(width, height, null);
+            } else {
+              this.UserData.callback(0, 0, {
+                error: "No width/height and viewbox bad"
+              });
+            }
+          } else {
+            // No dimensions could be found
+            this.UserData.callback(0, 0, {
+              error: "No viewbox or width/height"
+            });
+          }
+        }
+      };
+
+      // Start reading the blob as text
+      fileReader.readAsText(svgBlob);
+    } else {
+      // Handle case where no blob is provided
+      if (callback) {
+        callback(0, 0, {
+          error: "No blob passed in"
+        });
+      }
+    }
+  }
 }
 
 export default OptUtil

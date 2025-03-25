@@ -22,6 +22,7 @@ import ShapeContainer from "../../Shape/S.ShapeContainer"
 import SVGFragmentSymbol from "../../Shape/S.SVGFragmentSymbol"
 import BaseDrawObject from "../../Shape/S.BaseDrawObject"
 import BitmapImporter from "../../Shape/S.BitmapImporter"
+import SVGImporter from "../../Shape/S.SVGImporter"
 
 /**
  * The Shape object is a centralized registry for various shape and symbol implementations
@@ -202,6 +203,7 @@ const Shape = {
 
   BitmapImporter,
 
+  SVGImporter
 }
 
 export default Shape

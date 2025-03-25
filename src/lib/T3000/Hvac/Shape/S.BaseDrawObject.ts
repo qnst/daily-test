@@ -5799,6 +5799,8 @@ class BaseDrawObject {
   }
 
   ApplyEffects(targetElement: any, effectParams: any, isSecondary: boolean) {
+    return;
+
     T3Util.Log("= S.BaseDrawObject: ApplyEffects - Input:", { targetElement, effectParams, isSecondary });
 
     targetElement = targetElement || T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
