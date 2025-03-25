@@ -552,7 +552,7 @@
               <button id="btn_try_Lib_HeatPump">Heat Pump</button>
 
               &nbsp;
-              <button id="btn_try_Lib_Pump">Heat Pump</button>
+              <button id="btn_try_Lib_Pump">Pump</button>
 
               &nbsp;
               <button id="btn_try_Lib_ValueThreeWay">Value Three-Way</button>
