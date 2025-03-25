@@ -42,6 +42,7 @@ import LMEvtUtil from '../Opt/Opt/LMEvtUtil'
 import HookUtil from '../Opt/Opt/HookUtil'
 import LayerUtil from '../Opt/Opt/LayerUtil'
 import SelectUtil from '../Opt/Opt/SelectUtil'
+import BlobBytes from '../Model/BlobBytes'
 
 /**
  * BaseDrawObject is the fundamental class for all drawable elements within the T3000 HVAC system.
@@ -6700,6 +6701,17 @@ class BaseDrawObject {
   }
 
   GetFieldDataStyleOverride() {
+  }
+
+  SetBlobBytes(e, t) {
+    var a = new BlobBytes(t, e);
+    if (this.BlobBytesID >= 0) {
+      var r = T3Gv.stdObj.PreserveBlock(this.BlobBytesID);
+      r && (r.Data = a)
+    } else {
+      var i = T3Gv.stdObj.CreateBlock(StateConstant.StoredObjectType.BlobBytesObject, a);
+      i && (this.BlobBytesID = i.ID)
+    }
   }
 }
 

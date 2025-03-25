@@ -353,7 +353,7 @@ class LayerUtil {
     const layers = layersManager.layers;
     const activeLayerIndex = layersManager.activelayer;
     let currentLayer = layers[activeLayerIndex];
-    if ((currentLayer.flags & NvConstant.LayerFlags.NoAdd) || (currentLayer.flags & additionalLayerFlag)) {
+    if (/*(currentLayer.flags & NvConstant.LayerFlags.NoAdd) */true/*|| (currentLayer.flags & additionalLayerFlag)*/) {
       const totalLayers = layers.length;
       for (let index = 0; index < totalLayers; index++) {
         if ((layers[index].flags & NvConstant.LayerFlags.NoAdd) === 0) {
@@ -443,7 +443,7 @@ class LayerUtil {
 
     // Close any active editing operations
     const listManager = DataUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
-    listManager.CloseEdit();
+    T3Gv.opt.CloseEdit();
 
     // Handle layer tab visibility in the session
     const session = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
@@ -555,7 +555,7 @@ class LayerUtil {
     }
 
     // Create a new layer instance
-    const newLayer = new Instance.Shape.Layer;
+    const newLayer = new Instance.Basic.Layer;
     newLayer.name = layerName;
     newLayer.flags = 0;
 

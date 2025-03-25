@@ -200,7 +200,8 @@ const Shape = {
    */
   SVGFragmentSymbol,
 
-  BitmapImporter
+  BitmapImporter,
+
 }
 
 export default Shape

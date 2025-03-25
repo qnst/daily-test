@@ -764,7 +764,7 @@ class EvtOpt {
 
   BindLibSetBackgroundImageEvent() {
     $("#btn_try_Lib_SetBackgroundImage").on("pointerdown", (event) => {
-      EvtOpt.toolOpt.LibSetBackgroundImageAct(event);
+      EvtOpt.toolOpt.LibSetBackgroundImageAct(event, true);
     });
   }
 

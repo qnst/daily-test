@@ -2239,7 +2239,7 @@ class DrawUtil {
 
     let nativeSymbolResult;
     let symbolTitle;
-    let layerFlag = 0;
+    let layerFlag = 16;
     let symbolData = null;
     let isStandardShape = false;
 
