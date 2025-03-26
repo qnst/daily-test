@@ -828,7 +828,7 @@ class TextUtil {
                       let svgFrame = shape.GetSVGFrame(newFrame);
                       textElement.SetPos(textRect.x - svgFrame.x, textRect.y - svgFrame.y);
                       textElement.SetConstraints(
-                        T3Gv.opt.contentHeader.MaxWorkDim.x,
+                        T3Gv.opt.header.MaxWorkDim.x,
                         textRect.width,
                         textRect.height
                       );

@@ -1973,7 +1973,7 @@ class PolyLine extends BaseLine {
     Utils2.GetPolyRect(boundingRect, polyPoints);
 
     if (boundingRect.x >= 0 && boundingRect.y >= 0) {
-      if (T3Gv.opt.contentHeader.flags & OptConstant.CntHeaderFlags.NoAuto) {
+      if (T3Gv.opt.header.flags & OptConstant.CntHeaderFlags.NoAuto) {
         const sessionBlock = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
         if (boundingRect.x + boundingRect.width > sessionBlock.dim.x || boundingRect.y + boundingRect.height > sessionBlock.dim.y) {
           return;

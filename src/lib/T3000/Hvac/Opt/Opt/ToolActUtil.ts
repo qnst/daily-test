@@ -103,8 +103,8 @@ class ToolActUtil {
     }
 
     // Update page settings if changed
-    if (T3Gv.docUtil.PagesNotEqual(sessionObject.Page, T3Gv.opt.contentHeader.Page)) {
-      T3Gv.opt.contentHeader.Page = Utils1.DeepCopy(sessionObject.Page);
+    if (T3Gv.docUtil.PagesNotEqual(sessionObject.Page, T3Gv.opt.header.Page)) {
+      T3Gv.opt.header.Page = Utils1.DeepCopy(sessionObject.Page);
     }
 
     // Ensure an active outline is selected if no selection exists
@@ -233,8 +233,8 @@ class ToolActUtil {
     }
 
     // Update page settings if changed
-    if (T3Gv.docUtil.PagesNotEqual(updatDataData.Page, T3Gv.opt.contentHeader.Page)) {
-      T3Gv.opt.contentHeader.Page = Utils1.DeepCopy(updatDataData.Page);
+    if (T3Gv.docUtil.PagesNotEqual(updatDataData.Page, T3Gv.opt.header.Page)) {
+      T3Gv.opt.header.Page = Utils1.DeepCopy(updatDataData.Page);
     }
 
     // Get the current selection list
@@ -649,8 +649,8 @@ class ToolActUtil {
       if ((textEditSession.theActiveTextEditObjectID !== -1 || T3Gv.opt.bInNoteEdit)) {
         // Case 1.1: Paste table content if the clipboard has table data
         // if (textEditSession.theActiveTableObjectID >= 0 &&
-        //   this.contentHeader.ClipboardType === T3Constant.ClipboardType.Table &&
-        //   this.contentHeader.ClipboardBuffer) {
+        //   this.header.ClipboardType === T3Constant.ClipboardType.Table &&
+        //   this.header.ClipboardBuffer) {
         //   // this.Table_PasteCellContent(textEditSession.theActiveTableObjectID);
         //   T3Util.Log("O.Opt PasteObjects - Output: Table content pasted");
         //   return;
@@ -706,7 +706,7 @@ class ToolActUtil {
 
       // Case 4: Handle image clipboard content
       if (T3Gv.opt.imageClipboard &&
-        T3Gv.opt.contentHeader.ClipboardType === T3Constant.ClipboardType.Image) {
+        T3Gv.opt.header.ClipboardType === T3Constant.ClipboardType.Image) {
         T3Gv.opt.SetBackgroundImage(T3Gv.opt.imageClipboard, 0);
         T3Util.Log("O.Opt PasteObjects - Output: Image pasted as background");
         return;
@@ -715,8 +715,8 @@ class ToolActUtil {
       // // Case 5: Handle table cell content paste
       // if (textEditSession.theActiveTableObjectID >= 0) {
       //   const hasTableClipboard = (
-      //     this.contentHeader.ClipboardType === T3Constant.ClipboardType.Table &&
-      //     this.contentHeader.ClipboardBuffer
+      //     this.header.ClipboardType === T3Constant.ClipboardType.Table &&
+      //     this.header.ClipboardBuffer
       //   );
 
       //   const hasTextClipboard = (
@@ -735,10 +735,10 @@ class ToolActUtil {
       // Default case: Close any active edit and paste LM content
       T3Gv.opt.CloseEdit(false);
 
-      if (T3Gv.opt.contentHeader.ClipboardBuffer &&
-        T3Gv.opt.contentHeader.ClipboardType === T3Constant.ClipboardType.LM) {
+      if (T3Gv.opt.header.ClipboardBuffer &&
+        T3Gv.opt.header.ClipboardType === T3Constant.ClipboardType.LM) {
         // Collab.BeginSecondaryEdit();
-        this.PasteLM(T3Gv.opt.contentHeader.ClipboardBuffer);
+        this.PasteLM(T3Gv.opt.header.ClipboardBuffer);
         T3Util.Log("O.Opt PasteObjects - Output: LM content pasted");
       } else {
         T3Util.Log("O.Opt PasteObjects - Output: No pasteable content found");
@@ -1041,7 +1041,7 @@ class ToolActUtil {
               shape.RotationAngle = angleDegrees;
               shape.UpdateFrame(shape.Frame);
 
-              if (T3Gv.opt.contentHeader.flags & OptConstant.CntHeaderFlags.NoAuto) {
+              if (T3Gv.opt.header.flags & OptConstant.CntHeaderFlags.NoAuto) {
                 let rightBoundary = shape.r.x + shape.r.width;
                 let bottomBoundary = shape.r.y + shape.r.height;
                 let offsetX = 0, offsetY = 0;
@@ -1204,8 +1204,8 @@ class ToolActUtil {
           T3Gv.opt.textClipboard = copiedText;
         }
         // SDUI.Commands.MainController.Selection.SetPasteEnable(this.textClipboard != null);
-        T3Gv.opt.contentHeader.ClipboardBuffer = null;
-        T3Gv.opt.contentHeader.ClipboardType = T3Constant.ClipboardType.Text;
+        T3Gv.opt.header.ClipboardBuffer = null;
+        T3Gv.opt.header.ClipboardType = T3Constant.ClipboardType.Text;
       }
       clipboardContent = T3Gv.opt.textClipboard;
       T3Util.Log("O.Opt CopyObjects - Output:", clipboardContent);
@@ -1229,7 +1229,7 @@ class ToolActUtil {
 
     const selectedObjectBlock = DataUtil.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
     SelectUtil.UpdateSelectionAttributes(selectedObjectBlock);
-    clipboardContent = T3Gv.opt.contentHeader.ClipboardBuffer;
+    clipboardContent = T3Gv.opt.header.ClipboardBuffer;
     T3Util.Log("O.Opt CopyObjects - Output:", clipboardContent);
     return clipboardContent;
   }
@@ -1372,8 +1372,8 @@ class ToolActUtil {
           // Collab.BeginSecondaryEdit();
           TextUtil.RegisterLastTEOp(NvConstant.TextElemLastOpt.Cut);
           activeTextEditor.Delete();
-          T3Gv.opt.contentHeader.ClipboardBuffer = null;
-          T3Gv.opt.contentHeader.ClipboardType = T3Constant.ClipboardType.Text;
+          T3Gv.opt.header.ClipboardBuffer = null;
+          T3Gv.opt.header.ClipboardType = T3Constant.ClipboardType.Text;
           TextUtil.RegisterLastTEOp(NvConstant.TextElemLastOpt.Timeout);
         }
         T3Util.Log("O.Opt CutObjects - Output:", "Text cut completed.");
@@ -1467,8 +1467,8 @@ class ToolActUtil {
       }
 
       // Otherwise update the clipboard buffer and clipboard type.
-      T3Gv.opt.contentHeader.ClipboardBuffer = ShapeUtil.WriteSelect(sortedObjects, false, true, false);
-      T3Gv.opt.contentHeader.ClipboardType = T3Constant.ClipboardType.LM;
+      T3Gv.opt.header.ClipboardBuffer = ShapeUtil.WriteSelect(sortedObjects, false, true, false);
+      T3Gv.opt.header.ClipboardType = T3Constant.ClipboardType.LM;
 
       // Refresh the selected objects list by removing any objects that are not visible.
       const updatedSelectedObjects = DataUtil.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);

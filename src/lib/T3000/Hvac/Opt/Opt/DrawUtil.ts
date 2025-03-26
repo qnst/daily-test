@@ -2490,7 +2490,7 @@ class DrawUtil {
     let sessionData = T3Gv.stdObj.GetObject(T3Gv.opt.sdDataBlockId).Data;
 
     // If auto-grow is disabled by content header flags, constrain coordinates to session dimensions
-    if (T3Gv.opt.contentHeader.flags & OptConstant.CntHeaderFlags.NoAuto) {
+    if (T3Gv.opt.header.flags & OptConstant.CntHeaderFlags.NoAuto) {
       if (dragPoint.x > sessionData.dim.x) {
         dragPoint.x = sessionData.dim.x;
       }
@@ -2510,16 +2510,16 @@ class DrawUtil {
         sessionData = T3Gv.stdObj.PreserveBlock(T3Gv.opt.sdDataBlockId).Data;
         newDimension = {
           x: sessionData.dim.x +
-            T3Gv.opt.contentHeader.Page.papersize.x -
-            (T3Gv.opt.contentHeader.Page.margins.left +
-              T3Gv.opt.contentHeader.Page.margins.right),
+            T3Gv.opt.header.Page.papersize.x -
+            (T3Gv.opt.header.Page.margins.left +
+              T3Gv.opt.header.Page.margins.right),
           y: sessionData.dim.y
         };
 
         T3Gv.opt.UpdateEdgeLayers([], sessionData.dim, newDimension);
-        sessionData.dim.x += T3Gv.opt.contentHeader.Page.papersize.x -
-          (T3Gv.opt.contentHeader.Page.margins.left +
-            T3Gv.opt.contentHeader.Page.margins.right);
+        sessionData.dim.x += T3Gv.opt.header.Page.papersize.x -
+          (T3Gv.opt.header.Page.margins.left +
+            T3Gv.opt.header.Page.margins.right);
         T3Gv.opt.inAutoScroll = true;
         UIUtil.ResizeSVGDocument();
         T3Gv.opt.inAutoScroll = false;
@@ -2554,15 +2554,15 @@ class DrawUtil {
         newDimension = {
           x: sessionData.dim.x,
           y: sessionData.dim.y +
-            T3Gv.opt.contentHeader.Page.papersize.y -
-            (T3Gv.opt.contentHeader.Page.margins.top +
-              T3Gv.opt.contentHeader.Page.margins.bottom)
+            T3Gv.opt.header.Page.papersize.y -
+            (T3Gv.opt.header.Page.margins.top +
+              T3Gv.opt.header.Page.margins.bottom)
         };
 
         T3Gv.opt.UpdateEdgeLayers([], sessionData.dim, newDimension);
-        sessionData.dim.y += T3Gv.opt.contentHeader.Page.papersize.y -
-          (T3Gv.opt.contentHeader.Page.margins.top +
-            T3Gv.opt.contentHeader.Page.margins.bottom);
+        sessionData.dim.y += T3Gv.opt.header.Page.papersize.y -
+          (T3Gv.opt.header.Page.margins.top +
+            T3Gv.opt.header.Page.margins.bottom);
         T3Gv.opt.inAutoScroll = true;
         UIUtil.ResizeSVGDocument();
         T3Gv.opt.inAutoScroll = false;

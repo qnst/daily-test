@@ -156,6 +156,7 @@ class Utils1 {
     const result = T3Gv.state.CurrentStateID > 0 &&
       T3Gv.state.States[T3Gv.state.CurrentStateID].IsOpen;
 
+    console.log("=U.Utils1 - IsStateOpen:", result);
     return result;
   }
 

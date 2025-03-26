@@ -296,7 +296,7 @@ class Connector extends BaseDrawObject {
       textData.Data.runtimeText = textElement.GetRuntimeText();
     }
 
-    textElement.SetConstraints(T3Gv.opt.contentHeader.MaxWorkDim.x, 0, rect.height);
+    textElement.SetConstraints(T3Gv.opt.header.MaxWorkDim.x, 0, rect.height);
     if (this.bInGroup) {
       textElement.DisableHyperlinks(true);
     }

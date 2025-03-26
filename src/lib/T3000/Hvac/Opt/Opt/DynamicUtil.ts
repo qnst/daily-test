@@ -1037,7 +1037,7 @@ class DynamicUtil {
 
       const sessionBlock = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, !1);
       const guideColor = "#2C75F9";
-      const fontStyle = Utils1.DeepCopy(T3Gv.opt.contentHeader.DimensionFontStyle);
+      const fontStyle = Utils1.DeepCopy(T3Gv.opt.header.DimensionFontStyle);
       fontStyle.color = guideColor;
 
       const docToScreenScale = T3Gv.opt.svgDoc.docInfo.docToScreenScale;

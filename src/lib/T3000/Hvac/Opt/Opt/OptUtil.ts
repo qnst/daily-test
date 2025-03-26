@@ -11,7 +11,7 @@ import StateConstant from "../../Data/State/StateConstant";
 import T3Gv from '../../Data/T3Gv';
 import ArrowDefs from '../../Model/ArrowDefs';
 import ArrowSizes from '../../Model/ArrowSizes';
-import ContentHeader from '../../Model/ContentHeader';
+import HeaderInfo from '../../Model/HeaderInfo';
 import Layer from "../../Model/Layer";
 import LayersManager from "../../Model/LayersManager";
 import ParagraphFormat from '../../Model/ParagraphFormat';
@@ -278,7 +278,7 @@ class OptUtil {
   public TextureList: TextureList;       // List of available textures
   public nStdTextures: number;           // Number of standard textures
   public richGradients: any[];           // List of gradient definitions
-  public contentHeader: ContentHeader;   // Document metadata and settings
+  public header: HeaderInfo;             // Document metadata and settings
   public FileVersion: number;            // File format version
   public bDrawEffects: boolean;          // Whether to draw effects
   public hasBlockDirectory: boolean;     // Whether block directory exists
@@ -625,7 +625,7 @@ class OptUtil {
     this.TextureList = new TextureList();        // List of available textures
     this.nStdTextures = 0;                       // Number of standard textures
     this.richGradients = [];                     // List of gradient definitions
-    this.contentHeader = new ContentHeader();    // Document metadata and settings
+    this.header = new HeaderInfo();    // Document metadata and settings
     this.FileVersion = 41;                       // File format version
     this.bDrawEffects = true;                    // Whether to draw effects
     this.hasBlockDirectory = false;              // Whether block directory exists
@@ -815,13 +815,13 @@ class OptUtil {
 
     const TEXT_FACE = TextConstant.TextFace;
 
-    this.selectionState.fontid = -1; // T3Gv.opt.GetFontIdByName(T3Gv.opt.contentHeader.DimensionFont.fontName)
-    this.selectionState.fontsize = T3Gv.opt.contentHeader.DimensionFont.fontSize;
-    this.selectionState.bold = (T3Gv.opt.contentHeader.DimensionFont.face & TEXT_FACE.Bold) > 0;
-    this.selectionState.italic = (T3Gv.opt.contentHeader.DimensionFont.face & TEXT_FACE.Italic) > 0;
-    this.selectionState.underline = (T3Gv.opt.contentHeader.DimensionFont.face & TEXT_FACE.Underline) > 0;
-    this.selectionState.superscript = (T3Gv.opt.contentHeader.DimensionFont.face & TEXT_FACE.Superscript) > 0;
-    this.selectionState.subscript = (T3Gv.opt.contentHeader.DimensionFont.face & TEXT_FACE.Subscript) > 0;
+    this.selectionState.fontid = -1; // T3Gv.opt.GetFontIdByName(T3Gv.opt.header.DimensionFont.fontName)
+    this.selectionState.fontsize = T3Gv.opt.header.DimensionFont.fontSize;
+    this.selectionState.bold = (T3Gv.opt.header.DimensionFont.face & TEXT_FACE.Bold) > 0;
+    this.selectionState.italic = (T3Gv.opt.header.DimensionFont.face & TEXT_FACE.Italic) > 0;
+    this.selectionState.underline = (T3Gv.opt.header.DimensionFont.face & TEXT_FACE.Underline) > 0;
+    this.selectionState.superscript = (T3Gv.opt.header.DimensionFont.face & TEXT_FACE.Superscript) > 0;
+    this.selectionState.subscript = (T3Gv.opt.header.DimensionFont.face & TEXT_FACE.Subscript) > 0;
     this.selectionState.csOptMng = null;
 
     T3Util.Log('O.Opt HandleDimensionEditMode - Output: Dimension edit mode processed');
@@ -1350,8 +1350,8 @@ class OptUtil {
 
     const editMode = OptCMUtil.GetEditMode();
     if (editMode === NvConstant.EditState.Stamp) {
-      this.actionStoredObjectId = -1;
-      this.CancelObjectDragDrop(true);
+      T3Gv.opt.actionStoredObjectId = -1;
+      DrawUtil.CancelObjectDragDrop(true);
 
       if (T3Gv.opt.mainAppHammer) {
         T3Gv.opt.UnbindDragDropOrStamp();
@@ -5922,7 +5922,7 @@ class OptUtil {
     // Get session data and check if auto-grow is disabled
     const sessionData = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
 
-    if (T3Gv.opt.contentHeader.flags & OptConstant.CntHeaderFlags.NoAuto) {
+    if (T3Gv.opt.header.flags & OptConstant.CntHeaderFlags.NoAuto) {
       // Constrain to document dimensions
       const rightEdge = T3Gv.opt.moveBounds.x +
         T3Gv.opt.moveBounds.width +

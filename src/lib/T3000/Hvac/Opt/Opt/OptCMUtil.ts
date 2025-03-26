@@ -52,8 +52,8 @@ class OptCMUtil {
       }
     }
     // Check for Layout Manager content in clipboard
-    else if (T3Gv.opt.contentHeader.ClipboardBuffer &&
-      T3Gv.opt.contentHeader.ClipboardType === T3Constant.ClipboardType.LM) {
+    else if (T3Gv.opt.header.ClipboardBuffer &&
+      T3Gv.opt.header.ClipboardType === T3Constant.ClipboardType.LM) {
       clipboardType = T3Constant.ClipboardType.LM;
     }
     // Check for text selection with available clipboard text

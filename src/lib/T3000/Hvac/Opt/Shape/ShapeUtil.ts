@@ -45,6 +45,7 @@ import LayerUtil from '../Opt/LayerUtil'
 import UIUtil from '../UI/UIUtil'
 import ToolActUtil from '../Opt/ToolActUtil'
 import ExportUtil from '../Opt/ExportUtil'
+import ImageRecord from '../../Model/ImageRecord'
 
 class ShapeUtil {
 
@@ -731,7 +732,7 @@ class ShapeUtil {
 
           // Check if we need to adjust document size
           if (boundingRect.x + boundingRect.width > sessionBlock.dim.x) {
-            if (T3Gv.opt.contentHeader.flags & OptConstant.CntHeaderFlags.NoAuto) {
+            if (T3Gv.opt.header.flags & OptConstant.CntHeaderFlags.NoAuto) {
               offsetX = boundingRect.x + boundingRect.width - sessionBlock.dim.x;
               newWidth = 0;
             } else {
@@ -741,7 +742,7 @@ class ShapeUtil {
           }
 
           if (boundingRect.y + boundingRect.height > sessionBlock.dim.y) {
-            if (T3Gv.opt.contentHeader.flags & OptConstant.CntHeaderFlags.NoAuto) {
+            if (T3Gv.opt.header.flags & OptConstant.CntHeaderFlags.NoAuto) {
               offsetY = boundingRect.y + boundingRect.height - sessionBlock.dim.y;
             } else {
               newHeight = boundingRect.y + boundingRect.height;
@@ -2279,7 +2280,7 @@ class ShapeUtil {
 
     // Special handling for Genograms panel if not a symbol
     if (!resultObject.isSymbol &&
-      T3Gv.opt.contentHeader.smartpanelname === 'Genograms') {
+      T3Gv.opt.header.smartpanelname === 'Genograms') {
       // Enable linking lines
       sessionObject.flags = Utils2.SetFlag(sessionObject.flags, sessionFlags.SEDS_LLink, true);
       // Hide connector expansion handles
@@ -3057,7 +3058,7 @@ class ShapeUtil {
 
         case opCodes.cDrawImage8:
           // Process image record data
-          imageRecord = new TODO.ImageRecord();
+          imageRecord = new ImageRecord();
           imageRecord.croprect = codeData.codes[codeIndex].data.croprect;
           imageRecord.scale = codeData.codes[codeIndex].data.scale;
           imageRecord.imageflags = codeData.codes[codeIndex].data.imageflags;
@@ -4299,7 +4300,7 @@ class ShapeUtil {
           n.ImageURL = e.codes[t].data.name;
           break;
         case r.cDrawImage8:
-          (s = new TODO.ImageRecord).mr = e.codes[t].data.mr,
+          (s = new ImageRecord()).mr = e.codes[t].data.mr,
             s.croprect = e.codes[t].data.croprect,
             s.scale = e.codes[t].data.scale,
             s.imageflags = e.codes[t].data.imageflags,
@@ -5489,7 +5490,7 @@ class ShapeUtil {
     // Get current session, layer manager and content header
     result.sdp = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
     result.tLMB = DataUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
-    result.ctp = T3Gv.opt.contentHeader;
+    result.ctp = T3Gv.opt.header;
 
     // Mark as selection-only operation
     result.selectonly = true;
@@ -5563,7 +5564,7 @@ class ShapeUtil {
     }
 
     // Write structured data if available and not ignored
-    if (T3Gv.opt.contentHeader.STDataID >= 0 && !ignoreDataCheck) {
+    if (T3Gv.opt.header.STDataID >= 0 && !ignoreDataCheck) {
       // FROM SDData
       ShapeUtil.WriteSTDATA(dataStream, resultObject);
     }
@@ -5699,7 +5700,7 @@ class ShapeUtil {
       if (!resultObject.WriteBlocks) {
         ShapeUtil.WriteString(
           dataStream,
-          T3Gv.opt.contentHeader.importSourcePath,
+          T3Gv.opt.header.importSourcePath,
           opCodes.SDF_C_IMPORT_SOURCE_PATH,
           resultObject
         );
@@ -5711,7 +5712,7 @@ class ShapeUtil {
     if (skipCodes == null || skipCodes.indexOf(opCodes.cBusinessModule) == -1) {
       ShapeUtil.WriteString(
         dataStream,
-        T3Gv.opt.contentHeader.BusinessModule,
+        T3Gv.opt.header.BusinessModule,
         opCodes.cBusinessModule,
         resultObject
       );
@@ -5721,7 +5722,7 @@ class ShapeUtil {
     if (skipCodes == null || skipCodes.indexOf(opCodes.cSymbolSearchString) == -1) {
       ShapeUtil.WriteString(
         dataStream,
-        T3Gv.opt.contentHeader.SymbolSearchString,
+        T3Gv.opt.header.SymbolSearchString,
         opCodes.cSymbolSearchString,
         resultObject
       );
@@ -5729,8 +5730,8 @@ class ShapeUtil {
 
     // Write organization chart table information if not explicitly skipped
     if (skipCodes == null || skipCodes.indexOf(opCodes.cOrgChartTable) == -1) {
-      // if (T3Gv.opt.contentHeader.orgcharttable.length) {
-      //   let tableIndex = TODO.OrgChartTables.indexOf(T3Gv.opt.contentHeader.orgcharttable);
+      // if (T3Gv.opt.header.orgcharttable.length) {
+      //   let tableIndex = TODO.OrgChartTables.indexOf(T3Gv.opt.header.orgcharttable);
 
       //   if (tableIndex >= 0) {
       //     // Write standard org chart table
@@ -5742,7 +5743,7 @@ class ShapeUtil {
       //     );
       //   } else {
       //     // Check if it's a mind map table
-      //     // tableIndex = TODO.MindMapTables.indexOf(T3Gv.opt.contentHeader.orgcharttable);
+      //     // tableIndex = TODO.MindMapTables.indexOf(T3Gv.opt.header.orgcharttable);
 
       //     // if (tableIndex >= 0) {
       //     //   ShapeUtil.WriteString(
@@ -5758,7 +5759,7 @@ class ShapeUtil {
       //   if (tableIndex < 0) {
       //     ShapeUtil.WriteString(
       //       dataStream,
-      //       T3Gv.opt.contentHeader.orgcharttable,
+      //       T3Gv.opt.header.orgcharttable,
       //       opCodes.cOrgChartTable,
       //       resultObject
       //     );
@@ -5770,16 +5771,16 @@ class ShapeUtil {
     if (skipCodes == null) {
       ShapeUtil.WriteString(
         dataStream,
-        T3Gv.opt.contentHeader.smarthelpname,
+        T3Gv.opt.header.smarthelpname,
         opCodes.cGuide,
         resultObject
       );
 
       // Write parent page ID if available
-      if (T3Gv.opt.contentHeader.ParentPageID.length) {
+      if (T3Gv.opt.header.ParentPageID.length) {
         ShapeUtil.WriteString(
           dataStream,
-          T3Gv.opt.contentHeader.ParentPageID,
+          T3Gv.opt.header.ParentPageID,
           opCodes.cParentPageId,
           resultObject
         );
@@ -6076,10 +6077,10 @@ class ShapeUtil {
       linetoolindex: ShapeUtil.JStoWinLineTool(NvConstant.DocumentContext.LineTool),
       shapetoolindex: NvConstant.DocumentContext.ShapeTool,
       datetime2007: 0,
-      holidaymask: T3Gv.opt.contentHeader.holidaymask,
+      holidaymask: T3Gv.opt.header.holidaymask,
       datetime1: 0,
       datetime2: 0,
-      // nonworkingdays: T3Gv.opt.contentHeader.nonworkingdays,
+      // nonworkingdays: T3Gv.opt.header.nonworkingdays,
       swimlaneformat: NvConstant.DocumentContext.SwimlaneFormat,
       autocontainer: autoContainer,
       actascontainer: actAsContainer,
@@ -8456,6 +8457,8 @@ class ShapeUtil {
    * @param deltaState - The delta state information
    */
   static SaveAllBlocks(stateId?, deltaState?) {
+    console.log("=U.ShapeUtil.SaveAllBlocks", stateId, deltaState);
+    return;
     if (true) {
       if (false) {
         const pendingActionCount = T3Gv.opt.socketAction.length;
@@ -8739,7 +8742,7 @@ class ShapeUtil {
       case objectTypes.STDataObject:
         // Handle data objects
         if (countOnly) return true;
-        if (T3Gv.opt.contentHeader.STDataID >= 0) {
+        if (T3Gv.opt.header.STDataID >= 0) {
           //from SDDataBlock
           serializedBlock = ShapeUtil.WriteSTDataBlock(resultObject, blockIndex);
         }
@@ -8779,6 +8782,10 @@ class ShapeUtil {
    * @param customStoredObjects - Optional specific objects to save instead of all from the state
    */
   static SaveChangedBlocks(stateId, deltaState, targetStateId?, customStoredObjects?) {
+
+    console.log('=U.ShapeUtil SaveChangedBlocks', stateId, deltaState, targetStateId, customStoredObjects);
+    return;
+
     try {
 
       // Prepare result object and track deleted objects
@@ -8797,9 +8804,9 @@ class ShapeUtil {
 
       // Initialize result object with document context
       resultObject.sdp = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
-      resultObject.ctp = T3Gv.opt.contentHeader;
+      resultObject.ctp = T3Gv.opt.header;
       resultObject.tLMB = DataUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
-      resultObject.fontlist = T3Gv.opt.contentHeader.FontList;
+      resultObject.fontlist = T3Gv.opt.header.FontList;
       resultObject.richGradients = T3Gv.opt.richGradients;
       resultObject.WriteBlocks = true;
 
@@ -8828,44 +8835,44 @@ class ShapeUtil {
       }
 
       // Update content header flags with current configuration
-      T3Gv.opt.contentHeader.flags = Utils2.SetFlag(
-        T3Gv.opt.contentHeader.flags,
+      T3Gv.opt.header.flags = Utils2.SetFlag(
+        T3Gv.opt.header.flags,
         OptConstant.CntHeaderFlags.ShowGrid,
         T3Gv.docUtil.docConfig.showGrid
       );
 
-      T3Gv.opt.contentHeader.flags = Utils2.SetFlag(
-        T3Gv.opt.contentHeader.flags,
+      T3Gv.opt.header.flags = Utils2.SetFlag(
+        T3Gv.opt.header.flags,
         OptConstant.CntHeaderFlags.ShowRulers,
         T3Gv.docUtil.docConfig.showRulers
       );
 
-      T3Gv.opt.contentHeader.flags = Utils2.SetFlag(
-        T3Gv.opt.contentHeader.flags,
+      T3Gv.opt.header.flags = Utils2.SetFlag(
+        T3Gv.opt.header.flags,
         OptConstant.CntHeaderFlags.SnapToGridC,
         T3Gv.docUtil.docConfig.centerSnap && T3Gv.docUtil.docConfig.enableSnap
       );
 
-      T3Gv.opt.contentHeader.flags = Utils2.SetFlag(
-        T3Gv.opt.contentHeader.flags,
+      T3Gv.opt.header.flags = Utils2.SetFlag(
+        T3Gv.opt.header.flags,
         OptConstant.CntHeaderFlags.SnapToGridTL,
         !T3Gv.docUtil.docConfig.centerSnap && T3Gv.docUtil.docConfig.enableSnap
       );
 
-      T3Gv.opt.contentHeader.flags = Utils2.SetFlag(
-        T3Gv.opt.contentHeader.flags,
+      T3Gv.opt.header.flags = Utils2.SetFlag(
+        T3Gv.opt.header.flags,
         OptConstant.CntHeaderFlags.ShowPageDividers,
         T3Gv.docUtil.docConfig.showPageDivider
       );
 
-      T3Gv.opt.contentHeader.flags = Utils2.SetFlag(
-        T3Gv.opt.contentHeader.flags,
+      T3Gv.opt.header.flags = Utils2.SetFlag(
+        T3Gv.opt.header.flags,
         OptConstant.CntHeaderFlags.SnapToShapesOff,
         T3Gv.docUtil.docConfig.snapToShapes == 0
       );
 
-      T3Gv.opt.contentHeader.flags = Utils2.SetFlag(
-        T3Gv.opt.contentHeader.flags,
+      T3Gv.opt.header.flags = Utils2.SetFlag(
+        T3Gv.opt.header.flags,
         OptConstant.CntHeaderFlags.ShowRulers,
         T3Gv.docUtil.docConfig.showRulers
       );

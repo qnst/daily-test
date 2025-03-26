@@ -52,7 +52,7 @@ class StateBase {
     this.ID = stateId != null ? stateId : -1;
     this.CreatedBy = creatorName || null;
     this.StateType = stateTypeId || null;
-    this.IsOpen = isStateOpen != null ? isStateOpen : true;
+    this.IsOpen = false;// isStateOpen != null ? isStateOpen : true;
     this.currentObjSeqId = T3Gv.currentObjSeqId;
   }
 }
