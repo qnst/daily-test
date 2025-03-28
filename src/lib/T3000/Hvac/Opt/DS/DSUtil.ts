@@ -2226,3 +2226,10 @@ class DSUtil {
 }
 
 export default DSUtil
+
+
+// class DSUtil {
+//   empty DSUtil for testing if possible to remove the DataStream part
+// }
+
+// export default DSUtil

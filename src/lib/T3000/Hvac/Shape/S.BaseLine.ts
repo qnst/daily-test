@@ -3568,7 +3568,11 @@ class BaseLine extends BaseDrawObject {
   }
 
   WriteShapeData(outputStream, options) {
+
+
     T3Util.Log("= S.BaseLine: WriteShapeData called with input:", { outputStream: outputStream, options: options });
+
+    return;
 
     // Initialize attach flag and a temporary DataID holder.
     let attachFlag = 0;

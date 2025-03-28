@@ -833,6 +833,8 @@ class Polygon extends BaseShape {
   WriteShapeData(outputStream, context) {
     T3Util.Log('S.Polygon: WriteShapeData input:', { outputStream, context });
 
+    return;
+
     let vertexCount, width, height, polyId, vertexX, vertexY, polySegment;
     if (this.dataclass && this.dataclass === PolygonConstant.ShapeTypes.POLYGON) {
       if (this.polylist) {

@@ -751,6 +751,8 @@ class GroupSymbol extends BaseSymbol {
   WriteShapeData(outputStream, writeOptions) {
     T3Util.Log("S.GroupSymbol - WriteShapeData input:", { outputStream, writeOptions });
 
+    return;
+
     let numShapes: number, shapeObj: any, buffer: any, codeLength: any;
     let nativeStorageResult = new WResult();
     let dataId = this.DataID;

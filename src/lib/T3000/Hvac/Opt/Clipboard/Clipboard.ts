@@ -863,6 +863,7 @@ class Clipboard {
 
       // Clear clipboard buffer and execute paste
       T3Gv.opt.header.ClipboardBuffer = null;
+      T3Gv.opt.header.clipboardJson = null;
       ToolActUtil.PasteObjects();
       return;
     }

@@ -4755,6 +4755,8 @@ class Connector extends BaseDrawObject {
   WriteShapeData(outputStream, context) {
     T3Util.Log("S.Connector: WriteShapeData called with", { outputStream, context });
 
+    return;
+
     // Rename parameters and variables for readability
     const styles = OptConstant.AStyles;
     const connectorDefines = OptConstant.ConnectorDefines;

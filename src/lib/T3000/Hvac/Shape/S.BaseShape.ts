@@ -5754,6 +5754,8 @@ class BaseShape extends BaseDrawObject {
   WriteShapeData(outputStream, options) {
     T3Util.Log("S.BasicShape - WriteShapeData input:", { outputStream, options });
 
+    return;
+
     let blobBytes, emfBlobBytes;
     let textDataId = this.DataID;
     // let table = this.GetTable(false);

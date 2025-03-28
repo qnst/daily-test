@@ -531,6 +531,805 @@ class ShapeUtil {
 
   static UnsupportedTypes = []
 
+  static ReadSymbolFromJson(buffer, jsonData, positionX, positionY, offset, ignoreErrors, renderObjects,
+    selectedObjects, adjustPosition, skipLinks, noTextBlocks,
+    libraryFlags, allowAddEMFHash, outputDimensions, isSymbolFlag) {
+    let objectsToDelete;
+    let objectCount;
+    let index;
+    let linksCount;
+    let object;
+    let boundingRect;
+    let offsetX;
+    let offsetY;
+    let newWidth;
+    let newHeight;
+    let changedObject;
+    let applyColorChanges = false;
+    let result = new ShapeUtil.Result();
+
+    let formattedTextObject = null;
+    let sessionBlock = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, true);
+    let objectsToRemove = [];
+
+    result.isTemplate = false;
+    result.IgnoreHeader = true;
+    result.sdp = new SDData();
+    result.sdp.def.style = Utils1.DeepCopy(sessionBlock.def.style);
+    result.isSymbol = isSymbolFlag !== 0;
+    // result.gHash = new HashController();
+    result.tLMB = new LayersManager();
+    result.AllowAddEMFHash = allowAddEMFHash;
+    ShapeUtil.FragmentLoad_RefCount = 0;
+
+    if (libraryFlags) {
+      if ((libraryFlags.ObjectAttributeFlags & DSConstant.LibraryFlags.SEDL_NoColor) === 0) {
+        result.SetColorChanges = true;
+        result.ColorFilter = libraryFlags.ColorFilter;
+      }
+      applyColorChanges = true;
+    }
+
+    if (noTextBlocks) {
+      result.NoTextBlocks = true;
+    }
+
+    if (positionX != null) {
+      result.SymbolPosition.x = positionX;
+    }
+
+    if (positionY != null) {
+      result.SymbolPosition.y = positionY;
+    }
+
+    let errorCode = ShapeUtil.ReadJson(buffer, jsonData, result, offset, false, ShapeUtil.ReadSymbolFromJsonComplete);
+    if (errorCode && errorCode != ShapeUtil.Errors.WaitingForCallBack) {
+      return ignoreErrors ? result.error : errorCode;
+    }
+
+    if (result.WarnMeta) {
+      if (ignoreErrors) return ShapeUtil.Errors.WarnMeta;
+      alert('Metafile not read');
+    }
+
+    if (outputDimensions && errorCode !== ShapeUtil.Errors.WaitingForCallBack) {
+      outputDimensions.x = result.sdp.dim.x;
+      outputDimensions.y = result.sdp.dim.y;
+    }
+
+    if (errorCode !== ShapeUtil.Errors.WaitingForCallBack) {
+      const isPlanningDocument = UIUtil.IsPlanningDocument();
+      const layersManager = DataUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, true);
+
+      objectCount = result.zList.length;
+      for (index = 0; index < objectCount; index++) {
+        object = DataUtil.GetObjectPtr(result.zList[index], false);
+
+        // if (object.objecttype === NvConstant.FNObjectTypes.SD_OBJT_BPMN_POOL) {
+        //   DSUtil.ConvertBPMNPool(object);
+        // }
+
+        let tableID = -1;
+        if (object.datasetID >= 0) {
+          tableID = TODO.STData.GetTableID(object.datasetID, TODO.DataTableNames.PLANNING_TASKS);
+        }
+
+        let targetLayer;
+        if (isPlanningDocument && object.Layer != null &&
+          (tableID >= 0 /*|| object.objecttype === NvConstant.FNObjectTypes.SD_OBJT_MINDMAP_CONNECTOR*/)) {
+          targetLayer = layersManager.layers[object.Layer].zList;
+        } else {
+          targetLayer = layersManager.layers[layersManager.activelayer].zList;
+          object.Layer = layersManager.activelayer;
+        }
+
+        targetLayer.push(result.zList[index]);
+
+        // if (result.IsVisio && object && object.ShapeType === OptConstant.ShapeType.GroupSymbol &&
+        //   object.InitialGroupBounds.x < 0) {
+        //   object.InitialGroupBounds.x = 1;
+        // }
+
+        DataUtil.AddToDirtyList(result.zList[index]);
+
+        if (object && (object.flags & NvConstant.ObjFlags.NotVisible) === 0) {
+          selectedObjects.selectedList.push(result.zList[index]);
+        }
+
+        if (result.STData == null) {
+          object.datasetTableID = -1;
+          object.datasetElemID = -1;
+          object.datasetID = -1;
+          object.datasetType = -1;
+          object.dataStyleOverride = null;
+        }
+      }
+
+      if (objectsToRemove.length) {
+        DataUtil.DeleteObjects(objectsToRemove);
+      }
+
+      // FROM SDData_Transfer
+      if (result.STData && T3Gv.opt.STData_Transfer) {
+        T3Gv.opt.STData_Transfer(result.zList, result.STData, applyColorChanges);
+      }
+
+      linksCount = result.links.length;
+      if (!skipLinks && linksCount > 0) {
+        let linksBlock = DataUtil.GetObjectPtr(T3Gv.opt.linksBlockId, true);
+        for (index = 0; index < linksCount; index++) {
+          linksBlock.push(result.links[index]);
+        }
+
+        linksBlock.sort(function (a, b) {
+          return a.targetid - b.targetid;
+        });
+      }
+
+      // Calculate bounding rectangle for all objects
+      let objectWithBoundsCount = 0;
+      for (index = 0; index < objectCount; index++) {
+        object = DataUtil.GetObjectPtr(result.zList[index], false);
+        if (object && (object.flags & NvConstant.ObjFlags.NotVisible) === 0) {
+          if (objectWithBoundsCount === 0) {
+            boundingRect = new Rectangle(object.r.x, object.r.y, object.r.width, object.r.height);
+          } else {
+            Utils2.UnionRect(object.r, boundingRect, boundingRect);
+          }
+          objectWithBoundsCount++;
+        }
+      }
+
+      if (boundingRect) {
+        if (adjustPosition) {
+          offsetX = boundingRect.x < 0 ? -boundingRect.x : 0;
+          offsetY = boundingRect.y < 0 ? -boundingRect.y : 0;
+        } else {
+          offsetX = 0;
+          offsetY = 0;
+        }
+
+        // Apply offset if needed
+        if (offsetX || offsetY) {
+          for (index = 0; index < objectCount; index++) {
+            object = DataUtil.GetObjectPtr(result.zList[index], false);
+            if (object && (object.flags & NvConstant.ObjFlags.NotVisible) === 0) {
+              object.OffsetShape(offsetX, offsetY);
+            }
+          }
+        }
+
+        if (adjustPosition) {
+          boundingRect.x += offsetX;
+          boundingRect.y += offsetY;
+          offsetX = 0;
+          offsetY = 0;
+          newWidth = 0;
+          newHeight = 0;
+
+          const originalDimensions = {
+            x: sessionBlock.dim.x,
+            y: sessionBlock.dim.y
+          };
+
+          // Check if we need to adjust document size
+          if (boundingRect.x + boundingRect.width > sessionBlock.dim.x) {
+            if (T3Gv.opt.header.flags & OptConstant.CntHeaderFlags.NoAuto) {
+              offsetX = boundingRect.x + boundingRect.width - sessionBlock.dim.x;
+              newWidth = 0;
+            } else {
+              newWidth = boundingRect.x + boundingRect.width;
+              sessionBlock.dim.x = newWidth;
+            }
+          }
+
+          if (boundingRect.y + boundingRect.height > sessionBlock.dim.y) {
+            if (T3Gv.opt.header.flags & OptConstant.CntHeaderFlags.NoAuto) {
+              offsetY = boundingRect.y + boundingRect.height - sessionBlock.dim.y;
+            } else {
+              newHeight = boundingRect.y + boundingRect.height;
+              sessionBlock.dim.y = newHeight;
+            }
+          }
+
+          if (newWidth || newHeight) {
+            const layersManagerBlock = DataUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
+            const layerCount = layersManagerBlock.nlayers;
+            let activeLayerUsesEdges = false;
+            let anyVisibleLayerUsesEdges = false;
+
+            if (layersManagerBlock.layers[layersManagerBlock.activelayer].flags & NvConstant.LayerFlags.UseEdges) {
+              activeLayerUsesEdges = true;
+            }
+
+            for (index = 0; index < layerCount; index++) {
+              if ((layersManagerBlock.layers[index].flags & NvConstant.LayerFlags.UseEdges) &&
+                (layersManagerBlock.layers[index].flags & NvConstant.LayerFlags.Visible) ||
+                activeLayerUsesEdges) {
+                anyVisibleLayerUsesEdges = true;
+                break;
+              }
+            }
+
+            if (anyVisibleLayerUsesEdges) {
+              T3Gv.opt.UpdateEdgeLayers([], originalDimensions, sessionBlock.dim);
+            }
+
+            T3Gv.docUtil.ResizeDocument(sessionBlock.dim.x, sessionBlock.dim.y);
+          } else if (offsetX || offsetY) {
+            // If we need to shift objects to stay within bounds
+            for (index = 0; index < objectCount; index++) {
+              object = DataUtil.GetObjectPtr(result.zList[index], false);
+              if (object && (object.flags & NvConstant.ObjFlags.NotVisible) === 0) {
+                object.OffsetShape(-offsetX, -offsetY);
+              }
+            }
+          }
+        }
+      }
+
+      if (!skipLinks && adjustPosition) {
+        T3Gv.opt.UpdateLinks();
+      }
+
+      if (renderObjects) {
+        SvgUtil.RenderDirtySVGObjects();
+      } else if (objectCount === 1) {
+        T3Gv.opt.RenderDirtySVGObjectsNoSetMouse();
+      }
+
+      return result.error;
+    }
+  }
+
+
+  static ReadJson(buffer, jsonData, result, offset, ignoreErrors, callback) {
+    // Initialize a data stream from the buffer
+    const opCodes = DSConstant.OpNameCode;
+    // let dataStream = new T3DataStream(buffer);
+    let minimumFileVersion = DSConstant.SDF_MINFVERSION;
+
+    // Symbol files require a higher minimum version
+    if (result.isSymbol) {
+      minimumFileVersion = DSConstant.SDF_MINSVERSION;
+    }
+
+    // Set endianness and handle offset
+    // dataStream.endianness = T3DataStream.LITTLE_ENDIAN;
+
+    // Handle offset logic
+    if (offset === 4) {
+      // Get content length from first 4 bytes
+      // const contentLength = dataStream.readUint32() + 4;
+      // if (contentLength < dataStream._byteLength) {
+      //   dataStream._byteLength = contentLength;
+      // }
+    } else if (offset) {
+      // Skip specified number of bytes
+      // dataStream.readUint8Array(offset);
+    }
+
+    // Read header structure
+    // let fileHeader = dataStream.readStruct(DSStruct.T3HeaderOnlyStruct);
+    // dataStream = null;
+
+    // Validate file header and signature
+    // if (!fileHeader || !fileHeader.start || fileHeader.start != ShapeUtil.Signature) {
+    //   result.error = ShapeUtil.Errors.UnknownFile;
+    //   return result.error;
+    // }
+
+    // // Check that codes array exists and has elements
+    // if (!(fileHeader.codes.length >= 1)) {
+    //   result.error = ShapeUtil.Errors.UnknownFile;
+    //   return result.error;
+    // }
+
+    // // Check for version code
+    // if (fileHeader.codes[0].code !== DSConstant.OpNameCode.cVersion) {
+    //   result.error = ShapeUtil.Errors.UnknownFile;
+    //   return result.error;
+    // }
+
+    // // Check minimum version compatibility
+    // if (fileHeader.codes[0].data.MinVer > DSConstant.SDF_FVERSION) {
+    //   result.error = ShapeUtil.Errors.Version;
+    //   return result.error;
+    // }
+
+    // // Check if file version is too old
+    // if (fileHeader.codes[0].data.FVersion < minimumFileVersion) {
+    //   result.error = ShapeUtil.Errors.MinVersion;
+    //   return result.error;
+    // }
+
+    // Set conversion flags based on file version
+    // if (fileHeader.codes[0].data.FVersion < DSConstant.SDF_FVERSION) {
+    //   result.ConvertOnSave = true;
+    //   if (fileHeader.codes[0].data.FVersion <= DSConstant.FVERSIONVSM &&
+    //     (!result.isTemplate && !result.isSymbol || result.AllowAddEMFHash)) {
+    //     result.AddEMFHash = true;
+    //   }
+    // }
+
+    // Handle different source platform formats
+    // switch (fileHeader.codes[0].data.Platform) {
+    //   case DSConstant.Platforms.SDF_SDJSBLOCK:
+    //   case DSConstant.Platforms.SDF_SDJS:
+    //     // Native format, no special handling needed
+    //     break;
+    //   case DSConstant.Platforms.SDF_VISIO:
+    //     result.IsVisio = true;
+    //     break;
+    //   case DSConstant.Platforms.SDF_VISIOLUCID:
+    //     result.IsVisio = true;
+    //     result.IsLucid = true;
+    //     break;
+    //   default:
+    //     // Add EMF hash for non-template, non-symbol content, if allowed
+    //     if ((!result.isTemplate && !result.isSymbol || result.AllowAddEMFHash)) {
+    //       result.AddEMFHash = true;
+    //     }
+    //     result.FromWindows = true;
+    // }
+
+    // Set async validation flag if needed
+    if (result.AddEMFHash && !result.isSymbol && !ignoreErrors) {
+      result.ValidateHashesAsync = true;
+    }
+
+    // Store version information
+    // result.PVersion = fileHeader.codes[0].data.PVersion;
+    // result.FVersion = fileHeader.codes[0].data.FVersion;
+
+    // Calculate coordinate scale factor based on resolution
+    if (result.FVersion < DSConstant.SDF_FVERSION2022) {
+      result.coordScaleFactor = T3Gv.docUtil.svgDoc.docInfo.docDpi / fileHeader.codes[0].data.drawres;
+    } else {
+      result.coordScaleFactor = 1;
+    }
+
+    // Set block reading flag for block format
+    // // // // // if (fileHeader.codes[0].data.Platform === DSConstant.Platforms.SDF_SDJSBLOCK) {
+    // // // // //   result.ReadBlocks = true;
+    // // // // // }
+
+    // Enable text updating
+    result.updatetext = true;
+
+    // Read full file structure
+    // dataStream = new T3DataStream(buffer);
+    // dataStream.endianness = T3DataStream.LITTLE_ENDIAN;
+
+    // Handle offset logic (repeated)
+    // if (offset === 4) {
+    //   const contentLength = dataStream.readUint32() + 4;
+    //   if (contentLength < dataStream._byteLength) {
+    //     dataStream._byteLength = contentLength;
+    //   }
+    // } else if (offset) {
+    //   dataStream.readUint8Array(offset);
+    // }
+
+    // Read full file structure
+    // fileHeader = dataStream.readStruct(DSStruct.T3Struct);
+    // dataStream = null;
+
+    // Process file contents
+    if (result.ValidateHashesAsync && callback) {
+      // Handle asynchronous validation
+      return ShapeUtil.ValidateHashCodes(null, fileHeader, opCodes, result, ignoreErrors, callback) ||
+        ShapeUtil.Errors.WaitingForCallBack;
+    } else {
+      // Process synchronously
+      ShapeUtil.ReadSymbolFromJsonComplete(null, jsonData, result, ignoreErrors);
+      return result.error;
+    }
+  }
+
+  //parsed code struct with field and field type
+  static ReadSymbolFromJsonComplete(dicParsed, jsonData, result, ignoreErrors) {
+    try {
+      const opCodes = DSConstant.OpNameCode;
+      const CDim = OptConstant.Common.DimMax;
+      const minConnectorSegments = OptConstant.ConnectorDefines.NSkip;
+      let dataBlockLoaded = false;
+      let codeIndex, objectCount, objectIndex, segmentIndex, objectId, object, layer;
+      let hookLength, hookCount, textParent, svgElement, ganttInfo;
+
+      // Process all codes until end of file
+      // for (codeIndex = 1; parsedData.codes[codeIndex].code != opCodes.cEndFile; codeIndex++) {
+      //   switch (parsedData.codes[codeIndex].code) {
+      //     // Block directory information
+      //     case opCodes.cBlockDirectory:
+      //       result.hasBlockDirectory = true;
+      //       break;
+
+      //     // Process Smart Draw data blocks
+      //     case opCodes.SDF_C_SDDATABLOCK:
+      //       TODO.STData.LoadDataSets(parsedData.codes[codeIndex].data.bytes, true, true, result);
+      //       dataBlockLoaded = true;
+      //       break;
+
+      //     // Process compressed data block
+      //     case opCodes.cSdData64c:
+      //       if (!dataBlockLoaded) {
+      //         TODO.STData.LoadDataSets(parsedData.codes[codeIndex].data.bytes, true, true, result);
+      //         dataBlockLoaded = true;
+      //       }
+      //       break;
+
+      //     // Process 64-bit data block if version supports it
+      //     case opCodes.cSdData64:
+      //       if (!dataBlockLoaded && result.PVersion >= DSConstant.SDF_PVERSION861) {
+      //         TODO.STData.LoadDataSets(parsedData.codes[codeIndex].data.bytes, true, false, result);
+      //         dataBlockLoaded = true;
+      //       }
+      //       break;
+
+      //     // Skip metadata blocks
+      //     case opCodes.cSdData:
+      //     // case opCodes.SDF_C_GUIDSTR:
+      //     // case opCodes.SDF_C_SDTS_TIMESTAMPS:
+      //     case opCodes.cThumbnail:
+      //     case opCodes.cCThumbnail:
+      //     case opCodes.cKeyWords:
+      //     case opCodes.cDescription:
+      //     // case opCodes.SDF_C_FILEPATH:
+      //     case opCodes.cTrialData:
+      //     case opCodes.cCmsData:
+      //     case opCodes.cTLicense:
+      //       break;
+
+      //     // Process header section
+      //     case opCodes.cHeader:
+      //       codeIndex = ShapeUtil.ReadHeader(parsedData, codeIndex, result, opCodes);
+      //       if (result.error) {
+      //         return result.error;
+      //       }
+      //       break;
+
+      //     // Process drawing objects in different file versions
+      //     case opCodes.cDraw12:
+      //       codeIndex = ShapeUtil.ReadDraw(parsedData, codeIndex, result, opCodes, opCodes.cDraw12End);
+      //       if (codeIndex < 0) break;
+      //       break;
+
+      //     case opCodes.cDraw8:
+      //       codeIndex = ShapeUtil.ReadDraw(parsedData, codeIndex, result, opCodes, opCodes.cDraw8End);
+      //       if (codeIndex < 0) break;
+      //       break;
+
+      //     case opCodes.cDraw:
+      //       codeIndex = ShapeUtil.ReadDraw(parsedData, codeIndex, result, opCodes, opCodes.cDrawEnd);
+      //       if (codeIndex < 0) break;
+      //       break;
+
+      //     // Process any other blocks with begin/end structure
+      //     default:
+      //       if (parsedData.codes[codeIndex].code & DSConstant.SDF_BEGIN) {
+      //         codeIndex = ShapeUtil.ReadFrame(
+      //           parsedData,
+      //           codeIndex,
+      //           (parsedData.codes[codeIndex].code & DSConstant.SDF_MASK) | DSConstant.SDF_END
+      //         );
+      //       }
+      //   }
+
+      //   if (codeIndex < 0) break;
+      // }
+
+      codeIndex = ShapeUtil.ReadDraw(parsedData, codeIndex, result, opCodes, opCodes.cDraw12End);
+
+      // Remap links if no errors so far
+      if (result.error === 0) {
+        ShapeUtil.ReMapLinks(result.IDMap, result.links, result, ignoreErrors);
+      }
+
+      // Process all objects in the list
+      objectCount = result.zList.length;
+      for (objectIndex = 0; objectIndex < objectCount; objectIndex++) {
+        objectId = result.zList[objectIndex];
+        object = DataUtil.GetObjectPtr(objectId, false);
+
+        if (!object) continue;
+
+        // Fix texture fill type if needed
+        if (object.StyleRecord.Fill.Paint.FillType === NvConstant.FillTypes.Texture &&
+          object.StyleRecord.Fill.Paint.Texture === undefined) {
+          object.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.Transparent;
+        }
+
+        // Determine object base class, handling special case for closed polylines
+        let baseClass = object.DrawingObjectBaseClass;
+        if (baseClass === OptConstant.DrawObjectBaseClass.Line &&
+          object.LineType === OptConstant.LineType.POLYLINE &&
+          object.polylist && object.polylist.closed) {
+          baseClass = OptConstant.DrawObjectBaseClass.Shape;
+        }
+
+        // // Check for Gantt chart with incompatible version
+        // if (result.PVersion < ShapeUtil.SDF_PVERSION861 &&
+        //   object.objecttype === NvConstant.FNObjectTypes.SD_OBJT_GANTT_CHART) {
+        //   result.error = ShapeUtil.Errors.MinVersionProjectChart;
+        //   return -1;
+        // }
+
+        // Process objects based on their base class
+        switch (baseClass) {
+          case OptConstant.DrawObjectBaseClass.Line:
+            // Handle different line types
+            switch (object.LineType) {
+              case OptConstant.LineType.POLYLINE:
+                break;
+
+              case OptConstant.LineType.SEGLINE:
+              case OptConstant.LineType.ARCSEGLINE:
+                // Ensure segmented lines are properly formatted
+                const originalOrigin = {
+                  x: object.Frame.x,
+                  y: object.Frame.y
+                };
+
+                if (originalOrigin.x < 0 || originalOrigin.y < 0) {
+                  object.SetShapeOrigin(30000, 30000);
+                }
+
+                object.SegLFormat(
+                  object.EndPoint,
+                  OptConstant.ActionTriggerType.SeglPreserve,
+                  0
+                );
+
+                object.CalcFrame();
+
+                if (originalOrigin.x < 0 || originalOrigin.y < 0) {
+                  object.SetShapeOrigin(originalOrigin.x, originalOrigin.y);
+                }
+            }
+
+            // Set text object for older versions
+            if (object.DataID >= 0 && result.PVersion < DSConstant.SDF_PVERSION859 && result.ReadBlocks) {
+              object.SetTextObject(object.DataID);
+            }
+            break;
+
+          case OptConstant.DrawObjectBaseClass.Connector:
+            // Clean up connectors with no hooks
+            if (object.hooks.length === 0) {
+              hookLength = object.arraylist.hook.length;
+              hookCount = hookLength - minConnectorSegments;
+
+              if (hookCount < 0) {
+                hookCount = 0;
+              }
+
+              if (hookLength >= minConnectorSegments) {
+                for (segmentIndex = 1; segmentIndex < minConnectorSegments; segmentIndex++) {
+                  if (object.arraylist.hook[segmentIndex].id >= 0) {
+                    hookCount++;
+                  }
+                }
+              }
+
+              if (hookCount === 0) {
+                result.DeleteList.push(objectId);
+              }
+            }
+            break;
+
+          case OptConstant.DrawObjectBaseClass.Shape:
+            // Handle shapes with line thickness (border)
+            if (object.StyleRecord.Line.BThick &&
+              object.polylist &&
+              object.polylist.closed &&
+              object.polylist.segs &&
+              object.polylist.segs.length) {
+
+              let polygonLine;
+              let vertices = [];
+              const borderThickness = object.StyleRecord.Line.Thickness / 2;
+
+              // Handle different shape types
+              if (object instanceof Instance.Shape.Polygon && objectId.polylist) {
+                const polygonData = {
+                  Frame: object.Frame,
+                  inside: object.inside
+                };
+
+                polygonLine = new Instance.Shape.PolyLine(polygonData);
+                polygonLine.polylist = object.polylist;
+                polygonLine.StartPoint = object.StartPoint;
+                polygonLine.EndPoint = object.EndPoint;
+              } else {
+                polygonLine = object;
+              }
+
+              const points = polygonLine.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, true, false, vertices);
+              let polyPoints = [];
+
+              // Extract vertices from points
+              if (vertices.length > 0) {
+                polyPoints.push(new Point(points[0].x, points[0].y));
+                for (segmentIndex = 0; segmentIndex < vertices.length; segmentIndex++) {
+                  polyPoints.push(new Point(points[vertices[segmentIndex]].x, points[vertices[segmentIndex]].y));
+                }
+              } else {
+                polyPoints = Utils1.DeepCopy(points);
+              }
+
+              // Inflate the line to create border
+              const inflatedPoints = T3Gv.opt.InflateLine(polyPoints, borderThickness, true, true);
+              if (!inflatedPoints || inflatedPoints.length === 0) break;
+
+              // Update start and end points
+              object.StartPoint.x = inflatedPoints[0].x;
+              object.StartPoint.y = inflatedPoints[0].y;
+              object.EndPoint.x = inflatedPoints[inflatedPoints.length - 1].x;
+              object.EndPoint.y = inflatedPoints[inflatedPoints.length - 1].y;
+
+              // Copy and update segment data
+              const originalSegments = Utils1.DeepCopy(object.polylist.segs);
+              object.polylist.segs = [];
+
+              for (segmentIndex = 0; segmentIndex < points.length; segmentIndex++) {
+                object.polylist.segs.push(
+                  new PolySeg(1,
+                    inflatedPoints[segmentIndex].x - object.StartPoint.x,
+                    inflatedPoints[segmentIndex].y - object.StartPoint.y
+                  )
+                );
+
+                // Copy properties from original segments if available
+                if (segmentIndex < originalSegments.length) {
+                  object.polylist.segs[segmentIndex].LineType = originalSegments[segmentIndex].LineType;
+                  object.polylist.segs[segmentIndex].ShortRef = originalSegments[segmentIndex].ShortRef;
+                  object.polylist.segs[segmentIndex].dataclass = originalSegments[segmentIndex].dataclass;
+                  object.polylist.segs[segmentIndex].dimDeflection = originalSegments[segmentIndex].dimDeflection;
+                  object.polylist.segs[segmentIndex].flags = originalSegments[segmentIndex].flags;
+                  object.polylist.segs[segmentIndex].param = originalSegments[segmentIndex].param;
+                  object.polylist.segs[segmentIndex].weight = originalSegments[segmentIndex].weight;
+                }
+              }
+
+              // Recalculate frame for BaseLine objects
+              if (object instanceof Instance.Shape.BaseLine) {
+                object.CalcFrame();
+              }
+              // Scale and adjust polygon shapes
+              else if (object instanceof Instance.Shape.Polygon && object.polylist) {
+                const thickness = object.StyleRecord.Line.BThick;
+                let width = object.Frame.width;
+
+                if (width <= 0) {
+                  width = 1;
+                }
+
+                const scaleX = (width + 2 * thickness) / width;
+
+                let height = object.Frame.height;
+                if (height <= 0) {
+                  height = 1;
+                }
+
+                const scaleY = (height + 2 * thickness) / height;
+                const offsetX = -(object.Frame.x * scaleX - object.Frame.x + thickness);
+                const offsetY = -(object.Frame.y * scaleY - object.Frame.y + thickness);
+
+                object.ScaleObject(offsetX, offsetY, null, 0, scaleX, scaleY, false);
+                T3Gv.opt.CalcPolyVertices(object);
+              }
+            } else if (result.AddEMFHash || result.isTemplate || result.isSymbol) {
+              object.UpdateFrame(object.Frame);
+            }
+        }
+
+        // Handle graph formatting if needed
+        const graph = object.GetGraph(false);
+        if (graph !== null) {
+          T3Gv.opt.GraphFormat(object, graph, object.Frame, true);
+        }
+
+        // // Handle table formatting if needed
+        // textTable = object.GetTable(false);
+        // if (textTable) {
+        //   if (object.subtype !== NvConstant.ObjectSubTypes.SD_SUBT_MEETINGTASK &&
+        //     object.subtype !== NvConstant.ObjectSubTypes.SD_SUBT_MEETINGPERSON &&
+        //     object.objecttype !== NvConstant.FNObjectTypes.SD_OBJT_TIMELINE) {
+        //     T3Gv.opt.Table_Format(object, textTable, object.TextGrow, false);
+        //   }
+        // }
+        // // Handle text formatting for Visio objects
+        // else
+
+        if (object.DataID >= 0 && result.updatetext) {
+          if (result.IsVisio) {
+            object.StyleRecord.name = OptConstant.Common.TextBlockStyle;
+
+            if (object.moreflags & OptConstant.ObjMoreFlags.SED_MF_VisioText && !result.ReadingGroup) {
+              object.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.Transparent;
+              object.StyleRecord.Line.Thickness = 0;
+
+              const parentId = -1;// T3Gv.opt.SD_GetVisioTextParent(object.BlockID);
+              textParent = DataUtil.GetObjectPtr(parentId, false);
+
+              if (textParent) {
+                textParent.just = object.just;
+                textParent.vjust = object.vjust;
+
+                // Center alignment handling for Visio text
+                if (object.hookdisp.x === 0 &&
+                  object.hookdisp.y === 0 &&
+                  object.hooks[0].connect.x === CDim / 2 &&
+                  object.hooks[0].connect.y === CDim / 2 &&
+                  textParent.ShapeType !== OptConstant.ShapeType.GroupSymbol &&
+                  textParent.DrawingObjectBaseClass !== OptConstant.DrawObjectBaseClass.Line) {
+                  object.sizedim.width = object.trect.width;
+                  object.sizedim.height = object.trect.height;
+                }
+
+                if (textParent.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Line) {
+                  textParent.TextDirection = false;
+                }
+              }
+            }
+          }
+
+          // Render and resize text
+          SvgUtil.AddSVGObject(null, objectId, true, false);
+          T3Gv.opt.TextResizeCommon(objectId, false, true);
+          svgElement = T3Gv.opt.svgObjectLayer.GetElementById(objectId);
+
+          if (svgElement) {
+            // Special handling for Visio line text
+            if (result.IsVisio &&
+              object.DrawingObjectBaseClass == OptConstant.DrawObjectBaseClass.Line) {
+              const textAlignment = ShapeUtil.TextAlignToJust(object.TextAlign);
+
+              if (svgElement.textElem.formatter.renderedLines.length === 1 &&
+                textAlignment.just === TextConstant.TextAlign.Center) {
+                object.TextGrow = NvConstant.TextGrowBehavior.Horizontal;
+                object.sizedim.width = OptConstant.Common.MinDim;
+                T3Gv.opt.TextResizeCommon(objectId, false, true);
+              }
+            }
+
+            // Clean up SVG element and reset collab flag
+            T3Gv.opt.svgObjectLayer.RemoveElement(svgElement);
+            // Collab.NoRedrawFromSameEditor = false;
+          }
+        }
+      }
+
+      // Set file version information for non-symbol files
+      if (result.isSymbol === false) {
+        if (result.VisioFileVersion) {
+          T3Gv.opt.FileVersion = ShapeUtil.SDF_FVERSION2022;
+        }
+
+        // FROM SDDataDatasetIDByName
+        // Check for planning or fielded data datasets and update version
+        const hasPlanningData = TODO.STData.GetSTDataDatasetIDByName(
+          result.STData,
+          TODO.DataSetNameList[TODO.DataSetNameListIndexes.DATASET_PLANNING]
+        ) >= 0;
+
+        const hasFieldedData = TODO.STData.GetSTDataDatasetIDByName(
+          result.STData,
+          TODO.DataSetNameList[TODO.DataSetNameListIndexes.DATASET_FIELDEDDATA]
+        ) >= 0;
+
+        if (hasPlanningData || hasFieldedData) {
+          T3Gv.opt.FileVersion = ShapeUtil.SDF_FVERSION2022;
+        }
+      }
+
+      return result.error;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   /**
    * Reads a symbol from a buffer and creates objects in the document
    * @param buffer - The source buffer containing symbol data
@@ -5512,8 +6311,101 @@ class ShapeUtil {
     // Update layer information for selected objects
     LayerUtil.UpdateObjectLayerIndices(result);
 
+    console.log("=U.ShapeUtil WriteSelect result=", result);
     // Write objects to buffer with selection-only flag
     return ShapeUtil.WriteBuffer(result, true, true, ignoreDataCheck);
+  }
+
+  static WriteJson(selectedObjects, skipTables, unused, preserveSegmentDirection, ignoreDataCheck) {
+    // Create a new write result object to hold serialization state
+    const result = new WResult();
+
+    // Get current session, layer manager and content header
+    result.sdp = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
+    result.tLMB = DataUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
+    result.ctp = T3Gv.opt.header;
+
+    // Mark as selection-only operation
+    result.selectonly = true;
+
+    // Preserve segment direction if requested
+    if (preserveSegmentDirection) {
+      result.KeepSegDir = true;
+    }
+
+    // Get work area information (unused result)
+    T3Gv.docUtil.svgDoc.GetWorkArea();
+
+    // Configure result with current document settings
+    result.docDpi = T3Gv.docUtil.svgDoc.docInfo.docDpi;
+    result.zList = selectedObjects;
+    result.noTables = skipTables;
+    result.richGradients = T3Gv.opt.richGradients;
+
+    // Update layer information for selected objects
+    LayerUtil.UpdateObjectLayerIndices(result);
+
+    console.log("=U.ShapeUtil WriteSelect result=", result);
+    // Write objects to buffer with selection-only flag
+    return ShapeUtil.WriteJsonData(result, true, true, ignoreDataCheck);
+  }
+
+  static WriteJsonData(resultObject, isSelectOnly, returnRawBuffer, ignoreDataCheck) {
+
+    // Create a new data stream buffer
+    // const buffer = new ArrayBuffer(10);
+    // const dataStream = new T3DataStream(buffer);
+
+    // Set endianness and write signature
+    // dataStream.endianness = T3DataStream.LITTLE_ENDIAN;
+    // dataStream.writeCString(ShapeUtil.Signature, ShapeUtil.Signature.length);
+
+    // Handle special file format versions and set coordinate scale factor
+    if (resultObject.WriteWin32) {
+      // ShapeUtil.WriteCVersion(dataStream, DSConstant.Platforms.SDF_SDJS, ShapeUtil.FVERSION2015);
+      resultObject.coordScaleFactor = ShapeUtil.DRAWRES / T3Gv.docUtil.svgDoc.docInfo.docDpi;
+    } else {
+      // ShapeUtil.WriteCVersion(
+      //   dataStream,
+      //   DSConstant.Platforms.SDF_SDJS,
+      //   T3Gv.opt.FileVersion
+      // );
+    }
+
+    // Set ruler configuration
+    resultObject.rulerConfig = T3Gv.docUtil.rulerConfig;
+    resultObject.rulerConfig.show = T3Gv.docUtil.docConfig.showRulers;
+
+    // Write appropriate header based on operation mode
+    if (isSelectOnly) {
+      // ShapeUtil.WriteSelectHeader(dataStream, resultObject);
+      // if (resultObject.error) return null;
+    } else {
+      // ShapeUtil.WriteHeader(dataStream, resultObject, null);
+      // if (resultObject.error) return null;
+    }
+
+    // Write structured data if available and not ignored
+    if (T3Gv.opt.header.STDataID >= 0 && !ignoreDataCheck) {
+      // FROM SDData
+      // ShapeUtil.WriteSTDATA(dataStream, resultObject);
+    }
+
+    // Write the drawing content
+    // ShapeUtil.WriteDraw(dataStream, resultObject);
+
+    // Return null on error, otherwise return the appropriate buffer format
+    if (resultObject.error) {
+      return null;
+    } else {
+      // Write end of file marker
+      // dataStream.writeUint16(DSConstant.OpNameCode.cEndFile);
+
+      // Return raw buffer or Blob based on parameters
+      // return (isSelectOnly || returnRawBuffer) ? dataStream.buffer : new Blob([dataStream.buffer]);
+
+      return resultObject;
+    }
   }
 
   /**
@@ -8446,6 +9338,10 @@ class ShapeUtil {
     SaveAs: 13
   }
 
+  static SaveAllBlock(stateId?, deltaState?) {
+    return;
+  }
+
   /**
    * Saves all blocks to the storage format
    *
@@ -8456,7 +9352,8 @@ class ShapeUtil {
    * @param stateId - The state identifier to save from
    * @param deltaState - The delta state information
    */
-  static SaveAllBlocks(stateId?, deltaState?) {
+  static SaveAllBlocks1(stateId?, deltaState?) {
+
     console.log("=U.ShapeUtil.SaveAllBlocks", stateId, deltaState);
     return;
     if (true) {
@@ -8767,6 +9664,10 @@ class ShapeUtil {
     return serializedBlock;
   }
 
+  static SaveChangedBlocks(stateId, deltaState, targetStateId?, customStoredObjects?) {
+    return;
+  }
+
   /**
    * Saves blocks that have changed between states to the storage format
    *
@@ -8781,7 +9682,7 @@ class ShapeUtil {
    * @param targetStateId - Optional target state ID (defaults to source state if not provided)
    * @param customStoredObjects - Optional specific objects to save instead of all from the state
    */
-  static SaveChangedBlocks(stateId, deltaState, targetStateId?, customStoredObjects?) {
+  static SaveChangedBlocks1(stateId, deltaState, targetStateId?, customStoredObjects?) {
 
     console.log('=U.ShapeUtil SaveChangedBlocks', stateId, deltaState, targetStateId, customStoredObjects);
     return;

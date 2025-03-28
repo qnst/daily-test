@@ -738,7 +738,7 @@ class ToolActUtil {
       if (T3Gv.opt.header.ClipboardBuffer &&
         T3Gv.opt.header.ClipboardType === T3Constant.ClipboardType.LM) {
         // Collab.BeginSecondaryEdit();
-        this.PasteLM(T3Gv.opt.header.ClipboardBuffer);
+        this.PasteLM(T3Gv.opt.header.ClipboardBuffer, T3Gv.opt.header.clipboardJson);
         T3Util.Log("O.Opt PasteObjects - Output: LM content pasted");
       } else {
         T3Util.Log("O.Opt PasteObjects - Output: No pasteable content found");
@@ -1205,6 +1205,7 @@ class ToolActUtil {
         }
         // SDUI.Commands.MainController.Selection.SetPasteEnable(this.textClipboard != null);
         T3Gv.opt.header.ClipboardBuffer = null;
+        T3Gv.opt.header.clipboardJson = null;
         T3Gv.opt.header.ClipboardType = T3Constant.ClipboardType.Text;
       }
       clipboardContent = T3Gv.opt.textClipboard;
@@ -1229,7 +1230,11 @@ class ToolActUtil {
 
     const selectedObjectBlock = DataUtil.GetObjectPtr(T3Gv.opt.theSelectedListBlockID, false);
     SelectUtil.UpdateSelectionAttributes(selectedObjectBlock);
+
     clipboardContent = T3Gv.opt.header.ClipboardBuffer;
+
+    clipboardContent = T3Gv.opt.header.clipboardJson;
+
     T3Util.Log("O.Opt CopyObjects - Output:", clipboardContent);
     return clipboardContent;
   }
@@ -1239,7 +1244,7 @@ class ToolActUtil {
      * @param buffer - The buffer containing the object data.
      * @returns An array of selected object IDs that were pasted.
      */
-  static PasteLM(buffer: string): number[] {
+  static PasteLM(buffer: string, jsonData: any): number[] {
     T3Util.Log("O.Opt PasteLM - Input:", buffer);
 
     const resultWrapper = { selectedList: [] as number[] };
@@ -1267,6 +1272,16 @@ class ToolActUtil {
       false,
       false
     );
+
+    ShapeUtil.ReadSymbolFromJson(buffer, jsonData, pastePosition.x, pastePosition.y, 0,
+      false,
+      true,
+      resultWrapper,
+      true,
+      false,
+      false,
+      false,
+      false)
 
     T3Gv.opt.PastePoint = null;
     DrawUtil.CompleteOperation(resultWrapper.selectedList);
@@ -1373,6 +1388,7 @@ class ToolActUtil {
           TextUtil.RegisterLastTEOp(NvConstant.TextElemLastOpt.Cut);
           activeTextEditor.Delete();
           T3Gv.opt.header.ClipboardBuffer = null;
+          T3Gv.opt.header.clipboardJson = null;
           T3Gv.opt.header.ClipboardType = T3Constant.ClipboardType.Text;
           TextUtil.RegisterLastTEOp(NvConstant.TextElemLastOpt.Timeout);
         }
@@ -1468,6 +1484,11 @@ class ToolActUtil {
 
       // Otherwise update the clipboard buffer and clipboard type.
       T3Gv.opt.header.ClipboardBuffer = ShapeUtil.WriteSelect(sortedObjects, false, true, false);
+
+      var dataToStore = ShapeUtil.WriteJson(sortedObjects);
+      T3Gv.opt.header.clipboardJson = JSON.stringify(dataToStore);
+      console.log("=U.ToolActUtil.CopyObjectsCommon - Output: Clipboard Json =", T3Gv.opt.header.clipboardJson);
+
       T3Gv.opt.header.ClipboardType = T3Constant.ClipboardType.LM;
 
       // Refresh the selected objects list by removing any objects that are not visible.

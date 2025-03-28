@@ -6400,8 +6400,8 @@ class OptUtil {
             selectedObject = DataUtil.GetObjectPtr(targetObjectId, false);
 
             // Check if object is of compatible type
-            if (excludedObjectTypes.indexOf(selectedObject.objecttype) < 0 &&
-              excludedObjectSubtypes.indexOf(selectedObject.subtype) < 0) {
+            if (excludedObjectTypes?.indexOf(selectedObject.objecttype) < 0 &&
+              excludedObjectSubtypes?.indexOf(selectedObject.subtype) < 0) {
 
               // Only shapes that aren't symbols and don't have existing symbls can have images replaced
               if (selectedObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape &&
@@ -6554,8 +6554,8 @@ class OptUtil {
           selectedObject = DataUtil.GetObjectPtr(targetObjectId, false);
 
           // Check if object can receive an image
-          if (excludedObjectTypes.indexOf(selectedObject.objecttype) < 0 &&
-            excludedObjectSubtypes.indexOf(selectedObject.subtype) < 0) {
+          if (excludedObjectTypes?.indexOf(selectedObject.objecttype) < 0 &&
+            excludedObjectSubtypes?.indexOf(selectedObject.subtype) < 0) {
 
             // Check if object is a valid shape for image replacement
             if (selectedObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape &&

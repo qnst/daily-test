@@ -4243,6 +4243,8 @@ class SegmentedLine extends BaseLine {
   WriteShapeData(outputStream, exportOptions) {
     T3Util.Log("= S.SegmentedLine: WriteShapeData input", { outputStream, exportOptions });
 
+    return;
+
     const pointCount = this.segl.pts.length;
     T3Util.Log("= S.SegmentedLine: Number of segmentation points", { pointCount });
 
