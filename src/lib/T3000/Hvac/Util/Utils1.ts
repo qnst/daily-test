@@ -1,7 +1,7 @@
 
 
 import HvConstant from '../Data/Constant/HvConstant'
-import StoredObject from '../Data/State/StoredObject'
+import DataObj from '../Data/State/DataObj'
 import T3Gv from '../Data/T3Gv'
 import SegmentData from '../Model/SegmentData'
 import $ from 'jquery'
@@ -90,8 +90,8 @@ class Utils1 {
 
     let result;
 
-    if (storedObject.constructor === StoredObject) {
-      result = new StoredObject(null, null, null, false, false, true);
+    if (storedObject.constructor === DataObj) {
+      result = new DataObj(null, null, null, false, false, true);
     } else if (storedObject instanceof Array) {
       result = [];
     } else {
@@ -153,8 +153,8 @@ class Utils1 {
    * @returns Boolean indicating if current state is open
    */
   static IsStateOpen() {
-    const result = T3Gv.state.CurrentStateID > 0 &&
-      T3Gv.state.States[T3Gv.state.CurrentStateID].IsOpen;
+    const result = T3Gv.state.currentStateId > 0 &&
+      T3Gv.state.states[T3Gv.state.currentStateId].IsOpen;
 
     console.log("=U.Utils1 - IsStateOpen:", result);
     return result;

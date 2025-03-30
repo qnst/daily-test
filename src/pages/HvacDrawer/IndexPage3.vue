@@ -665,6 +665,125 @@
 
 
 
+    <q-menu v-if="contextMenuShow" touch-position target="#svg-area" context-menu>
+      <q-list>
+        <!-- Copy Option -->
+        <q-item dense clickable v-close-popup @click="saveSelectedToClipboard">
+          <q-item-section avatar>
+            <q-avatar size="sm" icon="content_copy" color="grey-7" text-color="white" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Copy</q-item-label>
+          </q-item-section>
+          <q-item-section side>
+            <q-chip>Ctrl + C</q-chip>
+          </q-item-section>
+        </q-item>
+        <q-separator />
+        <!-- Duplicate Option -->
+        <q-item dense clickable v-close-popup @click="duplicateSelected">
+          <q-item-section avatar>
+            <q-avatar size="sm" icon="content_copy" color="grey-7" text-color="white" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Duplicate</q-item-label>
+          </q-item-section>
+          <q-item-section side>
+            <q-chip>Ctrl + D</q-chip>
+          </q-item-section>
+        </q-item>
+        <q-separator />
+        <!-- Group Option -->
+        <q-item dense clickable v-close-popup @click="groupSelected">
+          <q-item-section avatar>
+            <q-avatar size="sm" icon="join_full" color="grey-7" text-color="white" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Group</q-item-label>
+          </q-item-section>
+          <q-item-section side>
+            <q-chip>Ctrl + G</q-chip>
+          </q-item-section>
+        </q-item>
+        <q-item dense clickable v-close-popup @click="ungroupSelected">
+          <q-item-section avatar>
+            <q-avatar size="sm" icon="join_inner" color="grey-7" text-color="white" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Ungroup</q-item-label>
+          </q-item-section>
+          <q-item-section side>
+            <q-chip>Ctrl + Shift + G</q-chip>
+          </q-item-section>
+        </q-item>
+        <q-separator />
+        <!-- Add to Library Option -->
+        <q-item dense clickable v-close-popup @click="addToLibrary">
+          <q-item-section avatar>
+            <q-avatar size="sm" icon="library_books" color="grey-7" text-color="white" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Add to Library</q-item-label>
+          </q-item-section>
+          <q-item-section side>
+            <q-chip>Ctrl + L</q-chip>
+          </q-item-section>
+        </q-item>
+        <q-separator />
+        <!-- Bring to Front Option -->
+        <q-item dense clickable v-close-popup @click="bringSelectedToFront()">
+          <q-item-section avatar>
+            <q-avatar size="sm" icon="flip_to_front" color="grey-7" text-color="white" />
+          </q-item-section>
+          <q-item-section class="py-2">Bring to front</q-item-section>
+        </q-item>
+        <!-- Send to Back Option -->
+        <q-item dense clickable v-close-popup @click="sendSelectedToBack()">
+          <q-item-section avatar>
+            <q-avatar size="sm" icon="flip_to_back" color="grey-7" text-color="white" />
+          </q-item-section>
+          <q-item-section class="py-2">Send to Back</q-item-section>
+        </q-item>
+        <q-separator />
+        <!-- Rotate 90 Degrees Option -->
+        <q-item dense clickable v-close-popup @click="rotate90Selected()">
+          <q-item-section avatar>
+            <q-avatar size="sm" icon="autorenew" color="grey-7" text-color="white" />
+          </q-item-section>
+          <q-item-section>Rotate 90°</q-item-section>
+        </q-item>
+        <!-- Rotate -90 Degrees Option -->
+        <q-item dense clickable v-close-popup @click="rotate90Selected(true)">
+          <q-item-section avatar>
+            <q-avatar size="sm" icon="sync" color="grey-7" text-color="white" />
+          </q-item-section>
+          <q-item-section>Rotate -90°</q-item-section>
+        </q-item>
+        <q-separator />
+        <!-- Delete Option -->
+        <q-item dense clickable v-close-popup @click="deleteSelected">
+          <q-item-section avatar>
+            <q-avatar size="sm" icon="delete" color="grey-7" text-color="white" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Delete</q-item-label>
+          </q-item-section>
+          <q-item-section side>
+            <q-chip>Delete</q-chip>
+          </q-item-section>
+        </q-item>
+        <!-- Weld Option -->
+        <q-item dense clickable v-close-popup @click="weldSelected">
+          <q-item-section avatar>
+            <q-avatar size="sm" icon="splitscreen" color="grey-7" text-color="white" />
+          </q-item-section>
+          <q-item-section>Weld Selected</q-item-section>
+          <q-item-section side>
+            <q-chip>Ctrl + B</q-chip>
+          </q-item-section>
+        </q-item>
+      </q-list>
+    </q-menu>
 
 
 
@@ -674,15 +793,15 @@
 
 
 
+    <!-- !locked &&
+      appState.items[appState.activeItemIndex] &&
+      (appState.activeItemIndex || appState.activeItemIndex === 0 &&objectConfigShow)
 
-
+      :object="appState.items[appState.activeItemIndex]"
+      -->
 
     <!-- Object config sidebar -->
-    <ObjectConfig :object="appState.items[appState.activeItemIndex]" v-if="
-      !locked &&
-      appState.items[appState.activeItemIndex] &&
-      (appState.activeItemIndex || appState.activeItemIndex === 0)
-    " @refresh-moveable="refreshMoveable" @T3UpdateEntryField="T3UpdateEntryField"
+    <ObjectConfig v-if="objectConfigShow" @refresh-moveable="refreshMoveable" @T3UpdateEntryField="T3UpdateEntryField"
       @linkT3Entry="linkT3EntryDialogAction" @gaugeSettings="gaugeSettingsDialogAction"
       @mounted="addActionToHistory('Object settings opened')" @no-change="objectSettingsUnchanged" />
   </q-page>
@@ -796,6 +915,7 @@ import BottomToolbar from "src/components/BottomToolbar.vue";
 // import T3000 from "src/lib/T3000";
 import T3000 from 'src/lib/T3000/T3000';
 
+import { contextMenuShow, objectConfigShow } from "src/lib/T3000/Hvac/Data/Constant/RefConstant"
 
 // Meta information for the application
 // Set the meta information
@@ -837,7 +957,7 @@ const continuesObjectTypes = ["Duct", "Wall", "Int_Ext_Wall"];
 // State of the import JSON dialog
 const importJsonDialog = ref({ addedCount: 0, active: false, uploadBtnLoading: false, data: null });
 const savedNotify = ref(false); // Notification state for saving
-const contextMenuShow = ref(false); // State of the context menu visibility
+// const contextMenuShow = ref(false); // State of the context menu visibility
 
 // Panel options for selection
 const selectPanelOptions = ref(T3000_Data.value.panelsData);
@@ -917,7 +1037,9 @@ onMounted(() => {
 
   document.addEventListener("wheel", function (event) { if (event.ctrlKey) { event.preventDefault() } }, { passive: false });
 
-  T3000.Hvac.UI.Initialize(); // Initialize the HVAC UI
+  T3000.Hvac.UI.Initialize($q); // Initialize the HVAC UI
+
+
 
   // Set global navigation properties
   globalNav.value.title = "HVAC Drawer";

@@ -28,6 +28,8 @@ import HookUtil from './HookUtil';
 import PolyUtil from './PolyUtil';
 import DynamicUtil from './DynamicUtil';
 import TextUtil from './TextUtil';
+import QuasarUtil from '../Quasar/QuasarUtil';
+import UIUtil from '../UI/UIUtil';
 
 class LMEvtUtil {
 
@@ -104,7 +106,7 @@ class LMEvtUtil {
               T3Gv.opt.linkParams.ConnectInside
             );
             if ((hookUpdateStatus !== 0 && hookUpdateStatus !== undefined) === false) {
-              OptCMUtil.SetLinkFlag(T3Gv.opt.linkParams.ConnectIndex, DSConstant.LinkFlags.SED_L_MOVE);
+              OptCMUtil.SetLinkFlag(T3Gv.opt.linkParams.ConnectIndex, DSConstant.LinkFlags.Move);
             }
           }
         }
@@ -934,7 +936,7 @@ class LMEvtUtil {
 
               OptCMUtil.SetLinkFlag(
                 T3Gv.opt.linkParams.ConnectIndex,
-                DSConstant.LinkFlags.SED_L_MOVE
+                DSConstant.LinkFlags.Move
               );
 
               HookUtil.CleanupHooks(T3Gv.opt.dragTargetId, T3Gv.opt.linkParams.ConnectIndex);
@@ -1463,6 +1465,12 @@ class LMEvtUtil {
       // Register event handlers for drag operations
       T3Gv.opt.WorkAreaHammer.on('drag', EvtUtil.Evt_ShapeDrag);
       T3Gv.opt.WorkAreaHammer.on('dragend', EvtUtil.Evt_ShapeDragEnd);
+
+      //clear context menu
+      const isRightClick = MouseUtil.IsRightClick(event);
+      if (!isRightClick) {
+        UIUtil.ShowContextMenu(false, "", event.gesture.center.clientX, event.gesture.center.clientY);
+      }
 
       T3Util.Log("O.Opt LMMoveClick - Output: Move operation set up successfully");
     } catch (error) {

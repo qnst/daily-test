@@ -805,7 +805,7 @@ class PolyUtil {
 
       f.CalcFrame();
       DataUtil.AddToDirtyList(f.BlockID);
-      OptCMUtil.SetLinkFlag(e, DSConstant.LinkFlags.SED_L_MOVE);
+      OptCMUtil.SetLinkFlag(e, DSConstant.LinkFlags.Move);
       HookUtil.MaintainLink(e, f, null, _, !1);
       return k;
     }
@@ -1137,7 +1137,7 @@ class PolyUtil {
       n = 0; n < M.length; n++)
       HookUtil.MoveLinks(c, M[n], null, null);
     if (DataUtil.DeleteObjects(M, !1),
-      OptCMUtil.SetLinkFlag(c, DSConstant.LinkFlags.SED_L_MOVE),
+      OptCMUtil.SetLinkFlag(c, DSConstant.LinkFlags.Move),
       HookUtil.MaintainLink(c, I, null, _, !1),
       T3Gv.opt.UpdateLinks(),
       R.push(c),

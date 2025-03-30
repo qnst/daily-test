@@ -294,14 +294,14 @@ class OptCMUtil {
 
     // If processing the next state, handle CREATE operations
     if (isNextState) {
-      storedObjectCount = T3Gv.state.States[stateId + 1].StoredObjects.length;
+      storedObjectCount = T3Gv.state.states[stateId + 1].storedObjects.length;
 
       for (objectIndex = 0; objectIndex < storedObjectCount; objectIndex++) {
-        storedObject = T3Gv.state.States[stateId + 1].StoredObjects[objectIndex];
+        storedObject = T3Gv.state.states[stateId + 1].storedObjects[objectIndex];
 
         // Handle drawing objects with CREATE operations
         if (storedObject.Type === StateConstant.StoredObjectType.BaseDrawObject) {
-          if (storedObject.StateOperationTypeID === StateConstant.StateOperationType.CREATE) {
+          if (storedObject.stateOptTypeId === StateConstant.StateOperationType.CREATE) {
             objectData = storedObject.Data;
 
             if (this.IsBlobURL(objectData.ImageURL)) {
@@ -318,7 +318,7 @@ class OptCMUtil {
         }
         // // Handle table objects with CREATE operations
         // else if (storedObject.Type === StateConstant.StoredObjectType.TABLE_OBJECT &&
-        //   storedObject.StateOperationTypeID === StateConstant.StateOperationType.CREATE) {
+        //   storedObject.stateOptTypeId === StateConstant.StateOperationType.CREATE) {
         //   tableObject = T3Gv.stdObj.GetObject(storedObject.ID);
 
         //   if (tableObject) {
@@ -330,15 +330,15 @@ class OptCMUtil {
     }
 
     // Process current state objects
-    storedObjectCount = T3Gv.state.States[stateId].StoredObjects.length;
+    storedObjectCount = T3Gv.state.states[stateId].storedObjects.length;
 
     for (objectIndex = 0; objectIndex < storedObjectCount; objectIndex++) {
-      storedObject = T3Gv.state.States[stateId].StoredObjects[objectIndex];
+      storedObject = T3Gv.state.states[stateId].storedObjects[objectIndex];
 
       // Handle drawing objects
       if (storedObject.Type === StateConstant.StoredObjectType.BaseDrawObject) {
         // Handle DELETE operations
-        if (storedObject.StateOperationTypeID === StateConstant.StateOperationType.DELETE) {
+        if (storedObject.stateOptTypeId === StateConstant.StateOperationType.DELETE) {
           if (!isNextState) {
             objectInstance = T3Gv.stdObj.GetObject(storedObject.ID);
 
@@ -399,7 +399,7 @@ class OptCMUtil {
       }
       // // Handle table objects
       // else if (storedObject.Type === StateConstant.StoredObjectType.TABLE_OBJECT) {
-      //   if (storedObject.StateOperationTypeID === StateConstant.StateOperationType.DELETE) {
+      //   if (storedObject.stateOptTypeId === StateConstant.StateOperationType.DELETE) {
       //     if (!isNextState) {
       //       tableObject = T3Gv.stdObj.GetObject(storedObject.ID);
 

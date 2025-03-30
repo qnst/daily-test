@@ -282,8 +282,8 @@ class OptUtil {
   public FileVersion: number;            // File format version
   public bDrawEffects: boolean;          // Whether to draw effects
   public hasBlockDirectory: boolean;     // Whether block directory exists
-  public initialStateID: number;         // Initial state ID for undo
-  public nObjectStoreStart: number;      // Initial object store count
+  // public initialStateID: number;         // Initial state ID for undo
+  public nDataStoreStart: number;      // Initial object store count
 
   /**
    * Clipboard and paste state
@@ -629,8 +629,8 @@ class OptUtil {
     this.FileVersion = 41;                       // File format version
     this.bDrawEffects = true;                    // Whether to draw effects
     this.hasBlockDirectory = false;              // Whether block directory exists
-    this.initialStateID = T3Gv.state.CurrentStateID;  // Initial state ID
-    this.nObjectStoreStart = T3Gv.stdObj.StoredObjects.length;  // Initial object count
+    // this.initialStateID = T3Gv.state.currentStateId;  // Initial state ID
+    this.nDataStoreStart = T3Gv.stdObj.storedObjects.length;  // Initial object count
     // #endregion
 
     // #region Clipboard & Paste
@@ -1545,7 +1545,7 @@ class OptUtil {
     // First pass: Delete marked links
     for (linkIndex = links.length - 1; linkIndex >= 0 && !(linkIndex >= links.length); linkIndex--) {
       // Handle links marked for deletion
-      if (links[linkIndex].flags & DSConstant.LinkFlags.SED_L_DELT) {
+      if (links[linkIndex].flags & DSConstant.LinkFlags.DeleteTarget) {
         // Ensure we're working with a modifiable copy of links
         if (!isLinksModified) {
           links = DataUtil.GetObjectPtr(this.linksBlockId, true);
@@ -1557,8 +1557,8 @@ class OptUtil {
       }
       // Handle links with missing or broken hook objects
       else if (
-        links[linkIndex].flags & DSConstant.LinkFlags.SED_L_DELL ||
-        links[linkIndex].flagss & DSConstant.LinkFlags.SED_L_BREAK ||
+        links[linkIndex].flags & DSConstant.LinkFlags.DeleteLink ||
+        links[linkIndex].flagss & DSConstant.LinkFlags.Break ||
         (hookObject = DataUtil.GetObjectPtr(links[linkIndex].hookid, false)) == null
       ) {
         if (!isLinksModified) {
@@ -1594,7 +1594,7 @@ class OptUtil {
       };
 
       for (linkIndex = 0; linkIndex < linkCount; linkIndex++) {
-        linkHasMoveFlag = links[linkIndex].flags & DSConstant.LinkFlags.SED_L_MOVE;
+        linkHasMoveFlag = links[linkIndex].flags & DSConstant.LinkFlags.Move;
 
         if (linkHasMoveFlag) {
           targetObject = DataUtil.GetObjectPtr(links[linkIndex].targetid, false);
@@ -1604,7 +1604,7 @@ class OptUtil {
             treeTopInfo.topshape >= 0) {
             OptCMUtil.SetLinkFlag(
               treeTopInfo.topshape,
-              DSConstant.LinkFlags.SED_L_MOVE
+              DSConstant.LinkFlags.Move
             );
           }
 
@@ -1620,7 +1620,7 @@ class OptUtil {
       continueProcessing = false;
 
       for (linkIndex = 0; linkIndex < links.length; linkIndex++) {
-        if (links[linkIndex].flags & DSConstant.LinkFlags.SED_L_MOVE) {
+        if (links[linkIndex].flags & DSConstant.LinkFlags.Move) {
           // Ensure we're working with a modifiable copy of links
           if (!isLinksModified) {
             links = DataUtil.GetObjectPtr(this.linksBlockId, true);
@@ -1633,12 +1633,12 @@ class OptUtil {
           if (hookObject == null) {
             links[linkIndex].flags = Utils2.SetFlag(
               links[linkIndex].flags,
-              DSConstant.LinkFlags.SED_L_DELL,
+              DSConstant.LinkFlags.DeleteLink,
               true
             );
             links[linkIndex].flags = Utils2.SetFlag(
               links[linkIndex].flags,
-              DSConstant.LinkFlags.SED_L_MOVE,
+              DSConstant.LinkFlags.Move,
               false
             );
             hasDeletedLinks = true;
@@ -1657,13 +1657,13 @@ class OptUtil {
             if (hookObject.objecttype === NvConstant.FNObjectTypes.Multiplicity) {
               links[linkIndex].flags = Utils2.SetFlag(
                 links[linkIndex].flags,
-                DSConstant.LinkFlags.SED_L_CHANGE,
+                DSConstant.LinkFlags.Change,
                 false
               );
             }
 
             // If the link has the change flag set, update connection points
-            if (links[linkIndex].flags & DSConstant.LinkFlags.SED_L_CHANGE) {
+            if (links[linkIndex].flags & DSConstant.LinkFlags.Change) {
               hookPoint = hookObject.HookToPoint(hookObject.hooks[hookIndex].hookpt, null);
 
               hookFlags = NvConstant.HookFlags.LcNoSnaps |
@@ -1718,7 +1718,7 @@ class OptUtil {
               // Clear the change flag
               links[linkIndex].flags = Utils2.SetFlag(
                 links[linkIndex].flags,
-                DSConstant.LinkFlags.SED_L_CHANGE,
+                DSConstant.LinkFlags.Change,
                 false
               );
             }
@@ -1794,7 +1794,7 @@ class OptUtil {
             // Clear move flag and continue processing
             links[linkIndex].flags = Utils2.SetFlag(
               links[linkIndex].flags,
-              DSConstant.LinkFlags.SED_L_MOVE,
+              DSConstant.LinkFlags.Move,
               false
             );
             continueProcessing = true;
@@ -1808,13 +1808,13 @@ class OptUtil {
     // Clean up any links marked for deletion
     if (hasDeletedLinks) {
       for (linkIndex = links.length - 1; linkIndex >= 0 && !(linkIndex >= links.length); linkIndex--) {
-        if (links[linkIndex].flags & DSConstant.LinkFlags.SED_L_DELT) {
+        if (links[linkIndex].flags & DSConstant.LinkFlags.DeleteTarget) {
           HookUtil.DeleteLink(links, links[linkIndex].targetid, -1, null, 0, false);
           linkIndex = links.length;
         }
         else if (
-          links[linkIndex].flags & DSConstant.LinkFlags.SED_L_DELL ||
-          links[linkIndex].flagss & DSConstant.LinkFlags.SED_L_BREAK ||
+          links[linkIndex].flags & DSConstant.LinkFlags.DeleteLink ||
+          links[linkIndex].flagss & DSConstant.LinkFlags.Break ||
           (hookObject = DataUtil.GetObjectPtr(links[linkIndex].hookid, false)) == null
         ) {
           HookUtil.DeleteLink(
@@ -2487,7 +2487,7 @@ class OptUtil {
 
     // If position changed, set the link flag
     if (newX - originalPosition.x || newY - originalPosition.y) {
-      OptCMUtil.SetLinkFlag(objectId, DSConstant.LinkFlags.SED_L_MOVE);
+      OptCMUtil.SetLinkFlag(objectId, DSConstant.LinkFlags.Move);
     }
 
     T3Util.Log("O.Opt SetShapeOriginNoDirty - Output: Shape origin updated");
@@ -2628,7 +2628,7 @@ class OptUtil {
 
         OptCMUtil.SetLinkFlag(
           objectId,
-          DSConstant.LinkFlags.SED_L_MOVE | DSConstant.LinkFlags.SED_L_CHANGE
+          DSConstant.LinkFlags.Move | DSConstant.LinkFlags.Change
         );
       }
     }
@@ -2654,7 +2654,7 @@ class OptUtil {
 
               OptCMUtil.SetLinkFlag(
                 moveObject.hooks[hookIndex].objid,
-                DSConstant.LinkFlags.SED_L_MOVE | DSConstant.LinkFlags.SED_L_CHANGE
+                DSConstant.LinkFlags.Move | DSConstant.LinkFlags.Change
               );
             }
           }
@@ -2864,10 +2864,10 @@ class OptUtil {
     }
 
     // Set link flags for the object and connected objects
-    OptCMUtil.SetLinkFlag(objectId, DSConstant.LinkFlags.SED_L_MOVE);
+    OptCMUtil.SetLinkFlag(objectId, DSConstant.LinkFlags.Move);
 
     if (targetObject.hooks.length) {
-      OptCMUtil.SetLinkFlag(targetObject.hooks[0].objid, DSConstant.LinkFlags.SED_L_MOVE);
+      OptCMUtil.SetLinkFlag(targetObject.hooks[0].objid, DSConstant.LinkFlags.Move);
     }
 
     // Update the object's frame
@@ -4545,7 +4545,7 @@ class OptUtil {
                   }
                 }
                 childObj.flags = SDJS.Utils.SetFlag(childObj.flags, NvConstant.ObjFlags.Obj1, true);
-                OptCMUtil.SetLinkFlag(childId, DSConstant.LinkFlags.SED_L_MOVE);
+                OptCMUtil.SetLinkFlag(childId, DSConstant.LinkFlags.Move);
               }
               childSearchIndex = childId;
             }
@@ -4848,7 +4848,7 @@ class OptUtil {
           o.hooks[d].connect,
           o.hooks[d].cellid
         ),
-        OptCMUtil.SetLinkFlag(o.hooks[d].objid, DSConstant.LinkFlags.SED_L_MOVE),
+        OptCMUtil.SetLinkFlag(o.hooks[d].objid, DSConstant.LinkFlags.Move),
         this.UpdateLinks(),
         M[1];
       if (_ >= 0 && E < 0) return o.hooks[0].hookpt === OptConstant.HookPts.KTL ? (
@@ -5399,7 +5399,7 @@ class OptUtil {
     if (targetObject && targetObject.hooks) {
       const hookCount = targetObject.hooks.length;
       for (let hookIndex = 0; hookIndex < hookCount; hookIndex++) {
-        T3Gv.opt.InsertLink(linkList, objectId, hookIndex, DSConstant.LinkFlags.SED_L_MOVE);
+        T3Gv.opt.InsertLink(linkList, objectId, hookIndex, DSConstant.LinkFlags.Move);
       }
     }
     T3Util.Log("O.Opt RebuildLinks - Output: Completed");
@@ -6913,6 +6913,160 @@ class OptUtil {
         callback(0, 0, {
           error: "No blob passed in"
         });
+      }
+    }
+  }
+
+  /**
+   * Converts a shape object to a polyline representation
+   * This function transforms a standard shape object into either a PolyLine or PolyLineContainer,
+   * preserving its dimensions, rotation, and other properties. It handles both creating a new
+   * polyline from a shape and processing existing polylines.
+   *
+   * @param objectId - ID of the shape object to convert
+   * @param createContainer - If true, creates a PolyLineContainer; otherwise, creates a PolyLine
+   * @param skipSelection - If true, skips adding to selection and rendering changes
+   * @param existingObject - Optional existing object to use instead of fetching by ID
+   * @returns The created polyline object
+   */
+  ShapeToPolyLine(objectId, createContainer, skipSelection, existingObject) {
+    let polyLineObject;
+    let shapeObject;
+    let segmentCount;
+    let hasPolyList;
+    let selectionList = [];
+    let originalFrame = {};
+
+    // Use provided object or get by ID
+    if (existingObject) {
+      shapeObject = existingObject;
+      hasPolyList = true;
+      originalFrame = $.extend(true, {}, shapeObject.Frame);
+    } else {
+      shapeObject = this.GetObjectPtr(objectId, false);
+
+      // Initialize polylist if needed
+      if (shapeObject.polylist == null) {
+        shapeObject.polylist = shapeObject.GetPolyList();
+        shapeObject.StartPoint = {};
+        shapeObject.EndPoint = {};
+      } else {
+        hasPolyList = true;
+      }
+
+      // Preserve the block for modification
+      const objectBlock = T3Gv.stdObj.PreserveBlock(objectId);
+      if (objectBlock == null) return;
+
+      shapeObject = objectBlock.Data;
+      originalFrame = $.extend(true, {}, shapeObject.Frame);
+    }
+
+    // Handle existing polylist
+    if (hasPolyList) {
+      if (!shapeObject.polylist) return null;
+
+      // Check if dimensions need scaling
+      T3Gv.opt.GetClosedPolyDim(shapeObject);
+      if (!Utils2.IsEqual(shapeObject.polylist.dim.x, originalFrame.width)) {
+        const tempObject = Utils1.DeepCopy(shapeObject);
+        tempObject.inside = $.extend(true, {}, shapeObject.Frame);
+
+        // Scale the object
+        Instance.Shape.PolyLine.prototype.ScaleObject.call(
+          tempObject, 0, 0, 0, 0, 0, 0
+        );
+
+        shapeObject.polylist = tempObject.polylist;
+      }
+    }
+
+    // Set start and end points based on polylist
+    segmentCount = shapeObject.polylist.segs.length;
+    shapeObject.StartPoint.x =
+      shapeObject.Frame.x + shapeObject.polylist.segs[0].pt.x + shapeObject.polylist.offset.x;
+    shapeObject.StartPoint.y =
+      shapeObject.Frame.y + shapeObject.polylist.segs[0].pt.y + shapeObject.polylist.offset.y;
+    shapeObject.EndPoint.x =
+      shapeObject.Frame.x + shapeObject.polylist.segs[segmentCount - 1].pt.x + shapeObject.polylist.offset.x;
+    shapeObject.EndPoint.y =
+      shapeObject.Frame.y + shapeObject.polylist.segs[segmentCount - 1].pt.y + shapeObject.polylist.offset.y;
+
+    // Create the appropriate polyline type
+    polyLineObject = createContainer
+      ? new Instance.Shape.PolyLineContainer(shapeObject)
+      : new Instance.Shape.PolyLine(shapeObject);
+
+    // Set properties from the original shape
+    polyLineObject.BlockID = shapeObject.BlockID;
+    polyLineObject.polylist.Shape_Rotation = shapeObject.RotationAngle;
+    polyLineObject.polylist.Shape_DataID = shapeObject.DataID;
+    polyLineObject.RotationAngle = 0;
+    polyLineObject.DataID = -1;
+
+    // Update the block data if not using existing object
+    if (!existingObject) {
+      objectBlock.Data = polyLineObject;
+    }
+
+    // Handle rendering and selection unless skipping
+    if (!skipSelection) {
+      this.AddToDirtyList(objectId);
+      this.RenderDirtySVGObjects();
+      selectionList.push(objectId);
+      this.SelectObjects(selectionList, false, true);
+    }
+
+    // Set inside property before returning
+    polyLineObject.inside = $.extend(true, {}, shapeObject.Frame);
+
+    return polyLineObject;
+  }
+
+  /**
+   * Calculates dimensions for a closed polyline shape
+   * This function computes the width and height of a closed polyline
+   * by examining its points and calculating a bounding rectangle.
+   * The results are stored in the shape's polylist.dim property.
+   *
+   * @param shapeObject - The shape object containing a polylist to dimension
+   */
+  GetClosedPolyDim(shapeObject) {
+    let polyPoints;
+    let boundingRect = {};
+
+    if (shapeObject.polylist) {
+      // Create a deep copy of the shape to work with
+      const tempShape = Utils1.DeepCopy(shapeObject);
+      const polyLine = new Instance.Shape.PolyLine(tempShape);
+
+      // Initialize dimensions
+      polyLine.inside = $.extend(true, {}, shapeObject.Frame);
+      polyLine.polylist.dim.x = 0;
+      polyLine.polylist.dim.y = 0;
+
+      // Get polygon points and calculate bounds
+      polyPoints = polyLine.GetPolyPoints(
+        OptConstant.Common.MaxPolyPoints,
+        false,
+        false,
+        false,
+        null
+      );
+
+      if (polyPoints && polyPoints.length) {
+        // Calculate bounding rectangle from points
+        Utils2.GetPolyRect(boundingRect, polyPoints);
+
+        // Ensure minimum dimensions
+        if (boundingRect.width < 1) boundingRect.width = 1;
+        if (boundingRect.height < 1) boundingRect.height = 1;
+
+        // Update dimensions for closed polylines
+        if (shapeObject.polylist.closed) {
+          shapeObject.polylist.dim.x = boundingRect.width;
+          shapeObject.polylist.dim.y = boundingRect.height;
+        }
       }
     }
   }

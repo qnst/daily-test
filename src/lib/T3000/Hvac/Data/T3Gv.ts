@@ -3,7 +3,7 @@
 import DocUtil from "../Doc/DocUtil";
 import OptUtil from "../Opt/Opt/OptUtil";
 import WallOpt from "../Opt/Wall/WallOpt";
-import ObjectStore from "./State/ObjectStore";
+import DataStore from "./State/DataStore";
 import StateOpt from "./State/StateOpt";
 
 class T3Gv {
@@ -19,7 +19,7 @@ class T3Gv {
   static wallOpt: WallOpt;                // Wall options configuration
   static maxUndo: number = 25;            // Maximum number of undo operations stored
   static state: StateOpt;                 // Application state utility
-  static stdObj: ObjectStore;             // Standard object storage
+  static stdObj: DataStore;             // Standard object storage
   static userSetting: any;                // User preferences and settings
 
   // Event handlers

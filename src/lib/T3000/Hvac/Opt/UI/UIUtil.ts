@@ -19,6 +19,7 @@ import TextUtil from "../Opt/TextUtil";
 import SelectUtil from "../Opt/SelectUtil";
 import SvgUtil from "../Opt/SvgUtil";
 import LayerUtil from '../Opt/LayerUtil';
+import QuasarUtil from '../Quasar/QuasarUtil';
 
 class UIUtil {
 
@@ -29,7 +30,7 @@ class UIUtil {
    * @param positionY - The Y position where to show the dropdown
    * @returns void
    */
-  static ShowContextMenu(element, positionX, positionY) {
+  static ShowContextMenu(isShow, element, positionX, positionY) {
     // const self = this;
 
     // // Hide all currently visible dropdowns
@@ -50,6 +51,12 @@ class UIUtil {
     //   // Show the dropdown at the specified position
     //   self.Dropdowns.ShowDropdown(element, positionX, positionY);
     // });
+
+    QuasarUtil.ShowContextMenu(isShow);
+  }
+
+  static ShowObjectConfig(isShow) {
+    QuasarUtil.ShowObjectConfig(isShow);
   }
 
   static ShowFrame(isShowFrame: boolean) {

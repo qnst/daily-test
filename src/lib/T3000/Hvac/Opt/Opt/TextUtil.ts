@@ -80,11 +80,11 @@ class TextUtil {
           messageData.theTEWasResized = true;
           OptCMUtil.SetLinkFlag(
             session.theActiveTextEditObjectID,
-            DSConstant.LinkFlags.SED_L_MOVE
+            DSConstant.LinkFlags.Move
           );
 
           if (drawingObject.hooks.length) {
-            OptCMUtil.SetLinkFlag(drawingObject.hooks[0].objid, DSConstant.LinkFlags.SED_L_MOVE);
+            OptCMUtil.SetLinkFlag(drawingObject.hooks[0].objid, DSConstant.LinkFlags.Move);
           }
 
           session.theTEWasResized = false;
@@ -869,7 +869,7 @@ class TextUtil {
 
                     // Update link flags
                     if (!skipLinkFlagUpdate) {
-                      this.ResizeSetLinkFlag(shapeId, DSConstant.LinkFlags.SED_L_MOVE);
+                      this.ResizeSetLinkFlag(shapeId, DSConstant.LinkFlags.Move);
                     }
                   }
                 }

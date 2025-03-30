@@ -312,7 +312,7 @@ class HookUtil {
             );
 
             // Update link flags and format the connector
-            OptCMUtil.SetLinkFlag(sourceObject.BlockID, DSConstant.LinkFlags.SED_L_MOVE);
+            OptCMUtil.SetLinkFlag(sourceObject.BlockID, DSConstant.LinkFlags.Move);
             childConnector.PrFormat(connectorId);
             DataUtil.AddToDirtyList(connectorId);
           }
@@ -784,7 +784,7 @@ class HookUtil {
                 // Just mark multiplicity links as moved
                 linksList[linkIndex].flags = Utils2.SetFlag(
                   linksList[linkIndex].flags,
-                  DSConstant.LinkFlags.SED_L_MOVE,
+                  DSConstant.LinkFlags.Move,
                   true
                 );
 
@@ -1039,7 +1039,7 @@ class HookUtil {
     // Check if target object exists
     if (targetObject == null) {
       // Mark link for deletion if target object doesn't exist
-      linkData.flags = Utils2.SetFlag(linkData.flags, linkFlags.SED_L_DELL, true);
+      linkData.flags = Utils2.SetFlag(linkData.flags, linkFlags.DeleteLink, true);
       T3Util.Log("O.Opt VerifyLink - Output: Target object doesn't exist (-1)");
       return -1;
     }
@@ -1066,7 +1066,7 @@ class HookUtil {
 
         {
           // Mark link for deletion if cell doesn't exist
-          linkData.flags = Utils2.SetFlag(linkData.flags, linkFlags.SED_L_DELL, true);
+          linkData.flags = Utils2.SetFlag(linkData.flags, linkFlags.DeleteLink, true);
           T3Util.Log("O.Opt VerifyLink - Output: Cell doesn't exist (-1)");
           return -1;
         }
@@ -1286,7 +1286,7 @@ class HookUtil {
       if (hookObject &&
         (hookObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector ||
           hookObject instanceof Instance.Shape.ShapeContainer)) {
-        OptCMUtil.SetLinkFlag(hookObjectId, DSConstant.LinkFlags.SED_L_MOVE);
+        OptCMUtil.SetLinkFlag(hookObjectId, DSConstant.LinkFlags.Move);
       }
     }
 
@@ -1611,7 +1611,7 @@ class HookUtil {
 
         OptCMUtil.SetLinkFlag(
           T3Gv.opt.linkParams.ConnectIndex,
-          DSConstant.LinkFlags.SED_L_MOVE
+          DSConstant.LinkFlags.Move
         );
 
         this.CleanupHooks(
@@ -1956,7 +1956,7 @@ class HookUtil {
         currentObj.hooks = currentObj.hooks.filter(h => h.objid != hookPairs[i].hookObjectId);
         const linkIndex = T3Gv.opt.FindExactLink(links, hookPairs[i].hookObjectId, hookPairs[i].objectId);
         if (linkIndex >= 0) {
-          links[linkIndex].flags = Utils2.SetFlag(links[linkIndex].flags, DSConstant.LinkFlags.SED_L_DELT, true);
+          links[linkIndex].flags = Utils2.SetFlag(links[linkIndex].flags, DSConstant.LinkFlags.DeleteTarget, true);
         }
       }
     })(circularHookPairs);

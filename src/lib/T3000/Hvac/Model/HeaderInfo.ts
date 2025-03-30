@@ -84,7 +84,7 @@ class HeaderInfo {
   public AllowReplace: boolean;
   public FontList: any[];
   public SymbolSearchString: any;
-  public Save_HistoryState: any;
+  // public Save_HistoryState: any;
   public ParentPageID: any;
 
   public clipboardJson: any;
@@ -120,7 +120,7 @@ class HeaderInfo {
     this.AllowReplace = !0;
     this.FontList = [];
     this.SymbolSearchString = '';
-    this.Save_HistoryState = - 1;
+    // this.Save_HistoryState = - 1;
     this.ParentPageID = '';
   }
 }
