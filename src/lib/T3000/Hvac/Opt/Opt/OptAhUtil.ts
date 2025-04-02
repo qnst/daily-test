@@ -179,25 +179,7 @@ class OptAhUtil {
           if (childObject.IsFlowChartConnector()) {
             return -1;
           }
-
-          // // Special handling for cause-effect branches
-          // if (currentObject.hooks[0].connect.x < 0 &&
-          //   childObject.objecttype === NvConstant.FNObjectTypes.SD_OBJT_CAUSEEFFECT_BRANCH) {
-
-          //   if (childObject.hooks.length) {
-          //     const grandChildObject = DataUtil.GetObjectPtr(childObject.hooks[0].objid, false);
-          //     if (grandChildObject && grandChildObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
-          //       nextSelection = OptAhUtil.GetConnectorNextSelect(grandChildObject, childObject.BlockID, currentListSelection);
-          //     }
-          //   }
-          // }
-          // // Handle genogram branches
-          // else if (childObject.objecttype === NvConstant.FNObjectTypes.SD_OBJT_GENOGRAM_BRANCH) {
-          //   // return gGenogramManager.GetNextSelect();
-          // } else
-          {
-            nextSelection = OptAhUtil.GetConnectorNextSelect(childObject, currentSelectedId, currentListSelection);
-          }
+          nextSelection = OptAhUtil.GetConnectorNextSelect(childObject, currentSelectedId, currentListSelection);
         }
         // Handle container shapes
         else if (childObject && childObject instanceof Instance.Shape.ShapeContainer) {
@@ -216,12 +198,6 @@ class OptAhUtil {
           }
 
           if (isSparse) {
-            // Try navigation methods for sparse containers
-            // nextSelection = gContainerManager.NavUpDown(true, true);
-
-            if (nextSelection < 0) {
-              // nextSelection = gContainerManager.NavUpDown(false, true);
-            }
 
             if (nextSelection >= 0) {
               return nextSelection;
@@ -261,9 +237,6 @@ class OptAhUtil {
       const childArrayId = T3Gv.opt.FindChildArray(currentSelectedId, -1);
       if (childArrayId >= 0) {
         const childArray = DataUtil.GetObjectPtr(childArrayId, false);
-        // if (childArray.objecttype === NvConstant.FNObjectTypes.SD_OBJT_GENOGRAM_BRANCH) {
-        //   return gGenogramManager.GetNextSelect();
-        // }
       }
     }
     return nextSelection;

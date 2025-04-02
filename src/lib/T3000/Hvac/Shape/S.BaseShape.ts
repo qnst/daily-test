@@ -162,14 +162,14 @@ class BaseShape extends BaseDrawObject {
 
     // Define default cursor types for knobs (8 directions)
     const defaultCursorTypes = [
-      CursorConstant.CursorType.RESIZE_LT,
-      CursorConstant.CursorType.RESIZE_T,
-      CursorConstant.CursorType.RESIZE_RT,
-      CursorConstant.CursorType.RESIZE_R,
-      CursorConstant.CursorType.RESIZE_RB,
-      CursorConstant.CursorType.RESIZE_B,
-      CursorConstant.CursorType.RESIZE_LB,
-      CursorConstant.CursorType.RESIZE_L
+      CursorConstant.CursorType.ResizeLT,
+      CursorConstant.CursorType.ResizeT,
+      CursorConstant.CursorType.ResizeRT,
+      CursorConstant.CursorType.ResizeR,
+      CursorConstant.CursorType.ResizeRB,
+      CursorConstant.CursorType.ResizeB,
+      CursorConstant.CursorType.ResizeLB,
+      CursorConstant.CursorType.ResizeL
     ];
 
     // Create a container group for all triggers
@@ -272,7 +272,7 @@ class BaseShape extends BaseDrawObject {
 
       // Set all cursor types to default when growth is not allowed
       for (let i = 0; i < 8; i++) {
-        rotatedCursorTypes[i] = CursorConstant.CursorType.DEFAULT;
+        rotatedCursorTypes[i] = CursorConstant.CursorType.Default;
       }
     }
 
@@ -426,8 +426,8 @@ class BaseShape extends BaseDrawObject {
           if (Utils2.sqrt(deltaX * deltaX + deltaY * deltaY) > minimumSidePointLength) {
             // Choose cursor based on segment orientation
             knobConfig.cursorType = (deltaX * deltaX > deltaY * deltaY)
-              ? CursorConstant.CursorType.RESIZE_TB
-              : CursorConstant.CursorType.RESIZE_LR;
+              ? CursorConstant.CursorType.ResizeTB
+              : CursorConstant.CursorType.ResizeLR;
 
             // Position knob at segment midpoint
             knobConfig.x = polyPoints[i - 1].x + deltaX / 2;
@@ -471,7 +471,7 @@ class BaseShape extends BaseDrawObject {
         : frameWithKnobsWidth - 3 * scaledRotationKnobSize;
 
       knobConfig.y = frameWithKnobsHeight / 2 - scaledRotationKnobSize / 2;
-      knobConfig.cursorType = CursorConstant.CursorType.ROTATE;
+      knobConfig.cursorType = CursorConstant.CursorType.Rotate;
       knobConfig.knobID = OptConstant.ActionTriggerType.Rotate;
       knobConfig.fillColor = 'white';
       knobConfig.fillOpacity = 0.001;
@@ -574,7 +574,7 @@ class BaseShape extends BaseDrawObject {
       strokeSize: 1,
       strokeColor: "#777777",
       KnobID: 0,
-      cursorType: CursorConstant.CursorType.ANCHOR
+      cursorType: CursorConstant.CursorType.Anchor
     };
 
     let knobElement: any;
@@ -639,13 +639,13 @@ class BaseShape extends BaseDrawObject {
         // For format painting mode, set the paint brush cursor
         const shapeElement = svgElement.GetElementById(OptConstant.SVGElementClass.Shape);
         if (shapeElement) {
-          shapeElement.SetCursor(CursorConstant.CursorType.PAINT);
+          shapeElement.SetCursor(CursorConstant.CursorType.Paint);
         }
 
         // Also set paint cursor on the slop element (interactive area around the shape)
         const slopElement = svgElement.GetElementById(OptConstant.SVGElementClass.Slop);
         if (slopElement) {
-          slopElement.SetCursor(CursorConstant.CursorType.PAINT);
+          slopElement.SetCursor(CursorConstant.CursorType.Paint);
         }
         break;
       }
@@ -3726,7 +3726,6 @@ class BaseShape extends BaseDrawObject {
 
     // Build collaboration message and post object draw event
     const collaborationData = {};
-    // T3Gv.opt.BuildCreateMessage(collaborationData, true);
     DrawUtil.PostObjectDraw();
 
     T3Util.Log("= S.BaseShape - LMDrawRelease output:", { newBoundingBox, collaborationData });
@@ -5753,214 +5752,214 @@ class BaseShape extends BaseDrawObject {
    * @param outputStream - The stream where data will be written
    * @param options - Configuration options that control how data is written
    */
-  WriteShapeData(outputStream, options) {
-    T3Util.Log("S.BasicShape - WriteShapeData input:", { outputStream, options });
+  // WriteShapeData(outputStream, options) {
+  //   T3Util.Log("S.BasicShape - WriteShapeData input:", { outputStream, options });
 
-    return;
+  //   return;
 
-    let blobBytes, emfBlobBytes;
-    let textDataId = this.DataID;
-    // let table = this.GetTable(false);
-    let graph = this.GetGraph(false);
-    let hasWrittenEMFHash = false;
+  //   let blobBytes, emfBlobBytes;
+  //   let textDataId = this.DataID;
+  //   // let table = this.GetTable(false);
+  //   let graph = this.GetGraph(false);
+  //   let hasWrittenEMFHash = false;
 
-    // Check if we should skip writing text data ID
-    if (
-      (this.TextFlags & NvConstant.TextFlags.AttachB ||
-        this.TextFlags & NvConstant.TextFlags.AttachA) && !options.WriteBlocks
-    ) {
-      textDataId = -1;
-    }
+  //   // Check if we should skip writing text data ID
+  //   if (
+  //     (this.TextFlags & NvConstant.TextFlags.AttachB ||
+  //       this.TextFlags & NvConstant.TextFlags.AttachA) && !options.WriteBlocks
+  //   ) {
+  //     textDataId = -1;
+  //   }
 
-    // Write text parameters
-    ShapeUtil.WriteTextParams(outputStream, this, textDataId, options);
+  //   // Write text parameters
+  //   ShapeUtil.WriteTextParams(outputStream, this, textDataId, options);
 
-    // // Handle table data
-    // if (table) {
-    //   const isTableWithShapeContainer =
-    //     options.WriteGroupBlock &&
-    //     this.objecttype === NvConstant.FNObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER;
+  //   // // Handle table data
+  //   // if (table) {
+  //   //   const isTableWithShapeContainer =
+  //   //     options.WriteGroupBlock &&
+  //   //     this.objecttype === NvConstant.FNObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER;
 
-    //   if (options.noTables || options.WriteBlocks || (options.WriteGroupBlock && !isTableWithShapeContainer)) {
-    //     // Only write table ID if writing blocks or group blocks
-    //     if (options.WriteBlocks || options.WriteGroupBlock) {
-    //       ShapeUtil.WriteTableID(outputStream, this.TableID, options);
-    //     }
-    //   }
-    // } else
+  //   //   if (options.noTables || options.WriteBlocks || (options.WriteGroupBlock && !isTableWithShapeContainer)) {
+  //   //     // Only write table ID if writing blocks or group blocks
+  //   //     if (options.WriteBlocks || options.WriteGroupBlock) {
+  //   //       ShapeUtil.WriteTableID(outputStream, this.TableID, options);
+  //   //     }
+  //   //   }
+  //   // } else
 
-    if (graph) {
-      // Handle graph data
-      if (options.WriteBlocks || options.WriteGroupBlock) {
-        // Only write graph ID if writing blocks or group blocks
-        if (options.WriteBlocks || options.WriteGroupBlock) {
-          ShapeUtil.WriteGraphID(outputStream, this.GraphID, options);
-        }
-      } else {
-        // Write the entire graph
-        ShapeUtil.WriteGraph(outputStream, graph, options);
-      }
-    } else if (textDataId >= 0 && !options.WriteBlocks && !options.WriteGroupBlock) {
-      // Write text data if not writing blocks or group blocks
-      ShapeUtil.WriteText(outputStream, this, null, null, false, options);
-    }
+  //   if (graph) {
+  //     // Handle graph data
+  //     if (options.WriteBlocks || options.WriteGroupBlock) {
+  //       // Only write graph ID if writing blocks or group blocks
+  //       if (options.WriteBlocks || options.WriteGroupBlock) {
+  //         ShapeUtil.WriteGraphID(outputStream, this.GraphID, options);
+  //       }
+  //     } else {
+  //       // Write the entire graph
+  //       ShapeUtil.WriteGraph(outputStream, graph, options);
+  //     }
+  //   } else if (textDataId >= 0 && !options.WriteBlocks && !options.WriteGroupBlock) {
+  //     // Write text data if not writing blocks or group blocks
+  //     ShapeUtil.WriteText(outputStream, this, null, null, false, options);
+  //   }
 
-    // Handle SVG Fragment Symbol EMF hash
-    if (this instanceof Instance.Shape.SVGFragmentSymbol && this.EMFHash) {
-      ShapeUtil.WriteString8(
-        outputStream,
-        this.EMFHash,
-        DSConstant.OpNameCode.cEmfHash,
-        options
-      );
-      hasWrittenEMFHash = true;
-    }
+  //   // Handle SVG Fragment Symbol EMF hash
+  //   if (this instanceof Instance.Shape.SVGFragmentSymbol && this.EMFHash) {
+  //     ShapeUtil.WriteString8(
+  //       outputStream,
+  //       this.EMFHash,
+  //       DSConstant.OpNameCode.cEmfHash,
+  //       options
+  //     );
+  //     hasWrittenEMFHash = true;
+  //   }
 
-    // Handle EMF (Enhanced Metafile) blob bytes
-    emfBlobBytes = this.GetEMFBlobBytes();
-    if (emfBlobBytes && !options.noTables) {
-      ShapeUtil.WriteImageHeader(outputStream, this, options);
+  //   // Handle EMF (Enhanced Metafile) blob bytes
+  //   emfBlobBytes = this.GetEMFBlobBytes();
+  //   if (emfBlobBytes && !options.noTables) {
+  //     ShapeUtil.WriteImageHeader(outputStream, this, options);
 
-      // Write EMF hash if not already written
-      if (this.EMFHash && !hasWrittenEMFHash) {
-        ShapeUtil.WriteString8(
-          outputStream,
-          this.EMFHash,
-          DSConstant.OpNameCode.cEmfHash,
-          options
-        );
-      }
+  //     // Write EMF hash if not already written
+  //     if (this.EMFHash && !hasWrittenEMFHash) {
+  //       ShapeUtil.WriteString8(
+  //         outputStream,
+  //         this.EMFHash,
+  //         DSConstant.OpNameCode.cEmfHash,
+  //         options
+  //       );
+  //     }
 
-      // Write EMF blob bytes or ID depending on options
-      if (options.WriteBlocks || options.WriteGroupBlock) {
-        ShapeUtil.WriteEMFBlobBytesID(outputStream, this.EMFBlobBytesID, StyleConstant.ImageDir.Meta, options);
-      } else {
-        ShapeUtil.WriteBlob(outputStream, emfBlobBytes.Bytes, DSConstant.OpNameCode.cDrawMeta);
-      }
+  //     // Write EMF blob bytes or ID depending on options
+  //     if (options.WriteBlocks || options.WriteGroupBlock) {
+  //       ShapeUtil.WriteEMFBlobBytesID(outputStream, this.EMFBlobBytesID, StyleConstant.ImageDir.Meta, options);
+  //     } else {
+  //       ShapeUtil.WriteBlob(outputStream, emfBlobBytes.Bytes, DSConstant.OpNameCode.cDrawMeta);
+  //     }
 
-      // Handle preview blob bytes
-      blobBytes = this.GetBlobBytes();
-      if (blobBytes) {
-        if (options.WriteBlocks || options.WriteGroupBlock) {
-          ShapeUtil.WriteBlobBytesID(outputStream, this.BlobBytesID, StyleConstant.ImageDir.Png, options);
-        } else {
-          ShapeUtil.WriteBlob(
-            outputStream,
-            blobBytes.Bytes,
-            DSConstant.OpNameCode.cDrawPreviewPng
-          );
-        }
-      }
-    } else {
-      // Handle standard blob bytes (non-EMF)
-      blobBytes = this.GetBlobBytes();
-      if (blobBytes && !options.noTables) {
-        ShapeUtil.WriteImageHeader(outputStream, this, options);
+  //     // Handle preview blob bytes
+  //     blobBytes = this.GetBlobBytes();
+  //     if (blobBytes) {
+  //       if (options.WriteBlocks || options.WriteGroupBlock) {
+  //         ShapeUtil.WriteBlobBytesID(outputStream, this.BlobBytesID, StyleConstant.ImageDir.Png, options);
+  //       } else {
+  //         ShapeUtil.WriteBlob(
+  //           outputStream,
+  //           blobBytes.Bytes,
+  //           DSConstant.OpNameCode.cDrawPreviewPng
+  //         );
+  //       }
+  //     }
+  //   } else {
+  //     // Handle standard blob bytes (non-EMF)
+  //     blobBytes = this.GetBlobBytes();
+  //     if (blobBytes && !options.noTables) {
+  //       ShapeUtil.WriteImageHeader(outputStream, this, options);
 
-        // Handle different image formats
-        switch (blobBytes.ImageDir) {
-          case StyleConstant.ImageDir.Jpg:
-            ShapeUtil.WriteImageHeader(outputStream, this, options);
-            if (options.WriteBlocks || options.WriteGroupBlock) {
-              ShapeUtil.WriteBlobBytesID(outputStream, this.BlobBytesID, StyleConstant.ImageDir.Jpg, options);
-            } else {
-              ShapeUtil.WriteBlob(outputStream, blobBytes.Bytes, DSConstant.OpNameCode.cDrawJpg);
-            }
-            break;
+  //       // Handle different image formats
+  //       switch (blobBytes.ImageDir) {
+  //         case StyleConstant.ImageDir.Jpg:
+  //           ShapeUtil.WriteImageHeader(outputStream, this, options);
+  //           if (options.WriteBlocks || options.WriteGroupBlock) {
+  //             ShapeUtil.WriteBlobBytesID(outputStream, this.BlobBytesID, StyleConstant.ImageDir.Jpg, options);
+  //           } else {
+  //             ShapeUtil.WriteBlob(outputStream, blobBytes.Bytes, DSConstant.OpNameCode.cDrawJpg);
+  //           }
+  //           break;
 
-          case StyleConstant.ImageDir.Png:
-            ShapeUtil.WriteImageHeader(outputStream, this, options);
-            if (options.WriteBlocks || options.WriteGroupBlock) {
-              ShapeUtil.WriteBlobBytesID(outputStream, this.BlobBytesID, StyleConstant.ImageDir.Png, options);
-            } else {
-              ShapeUtil.WriteBlob(outputStream, blobBytes.Bytes, DSConstant.OpNameCode.cDrawPng);
-            }
-            break;
+  //         case StyleConstant.ImageDir.Png:
+  //           ShapeUtil.WriteImageHeader(outputStream, this, options);
+  //           if (options.WriteBlocks || options.WriteGroupBlock) {
+  //             ShapeUtil.WriteBlobBytesID(outputStream, this.BlobBytesID, StyleConstant.ImageDir.Png, options);
+  //           } else {
+  //             ShapeUtil.WriteBlob(outputStream, blobBytes.Bytes, DSConstant.OpNameCode.cDrawPng);
+  //           }
+  //           break;
 
-          case StyleConstant.ImageDir.Svg:
-            ShapeUtil.WriteImageHeader(outputStream, this, options);
-            if (options.WriteBlocks) {
-              ShapeUtil.WriteBlobBytesID(outputStream, this.BlobBytesID, StyleConstant.ImageDir.Svg, options);
-            } else {
-              ShapeUtil.WriteBlob(outputStream, blobBytes.Bytes, DSConstant.OpNameCode.cDrawSvg);
-            }
-            break;
-        }
-      } else if (
-        this.ImageID != null &&
-        this.ImageID.length > 0 &&
-        !options.noTables &&
-        this.ImageDir === StyleConstant.ImageDir.Svg
-      ) {
-        // Write SVG Image ID
-        ShapeUtil.WriteString(
-          outputStream,
-          this.ImageID,
-          DSConstant.OpNameCode.cSvgImageId,
-          options
-        );
-        hasWrittenEMFHash = true;
-      }
-    }
+  //         case StyleConstant.ImageDir.Svg:
+  //           ShapeUtil.WriteImageHeader(outputStream, this, options);
+  //           if (options.WriteBlocks) {
+  //             ShapeUtil.WriteBlobBytesID(outputStream, this.BlobBytesID, StyleConstant.ImageDir.Svg, options);
+  //           } else {
+  //             ShapeUtil.WriteBlob(outputStream, blobBytes.Bytes, DSConstant.OpNameCode.cDrawSvg);
+  //           }
+  //           break;
+  //       }
+  //     } else if (
+  //       this.ImageID != null &&
+  //       this.ImageID.length > 0 &&
+  //       !options.noTables &&
+  //       this.ImageDir === StyleConstant.ImageDir.Svg
+  //     ) {
+  //       // Write SVG Image ID
+  //       ShapeUtil.WriteString(
+  //         outputStream,
+  //         this.ImageID,
+  //         DSConstant.OpNameCode.cSvgImageId,
+  //         options
+  //       );
+  //       hasWrittenEMFHash = true;
+  //     }
+  //   }
 
-    // Write EMF hash if not already written
-    if (this.EMFHash && !hasWrittenEMFHash) {
-      ShapeUtil.WriteString8(
-        outputStream,
-        this.EMFHash,
-        DSConstant.OpNameCode.cEmfHash,
-        options
-      );
-      hasWrittenEMFHash = true;
-    }
+  //   // Write EMF hash if not already written
+  //   if (this.EMFHash && !hasWrittenEMFHash) {
+  //     ShapeUtil.WriteString8(
+  //       outputStream,
+  //       this.EMFHash,
+  //       DSConstant.OpNameCode.cEmfHash,
+  //       options
+  //     );
+  //     hasWrittenEMFHash = true;
+  //   }
 
-    // Handle OLE (Object Linking and Embedding) data
-    if (this.OleHeader) {
-      ShapeUtil.WriteOleHeader(outputStream, this.OleHeader, options);
-    }
+  //   // Handle OLE (Object Linking and Embedding) data
+  //   if (this.OleHeader) {
+  //     ShapeUtil.WriteOleHeader(outputStream, this.OleHeader, options);
+  //   }
 
-    if (this.OleBlobBytesID >= 0) {
-      blobBytes = this.GetOleBlobBytes();
-      if (options.WriteBlocks) {
-        ShapeUtil.WriteOleBlobBytesID(outputStream, this.OleBlobBytesID, StyleConstant.ImageDir.Store, options);
-      } else {
-        ShapeUtil.WriteBlob(outputStream, blobBytes.Bytes, DSConstant.OpNameCode.cOleStorage);
-      }
-    }
+  //   if (this.OleBlobBytesID >= 0) {
+  //     blobBytes = this.GetOleBlobBytes();
+  //     if (options.WriteBlocks) {
+  //       ShapeUtil.WriteOleBlobBytesID(outputStream, this.OleBlobBytesID, StyleConstant.ImageDir.Store, options);
+  //     } else {
+  //       ShapeUtil.WriteBlob(outputStream, blobBytes.Bytes, DSConstant.OpNameCode.cOleStorage);
+  //     }
+  //   }
 
-    // Handle native data
-    if (this.NativeID >= 0) {
-      if (options.WriteBlocks) {
-        ShapeUtil.WriteNativeID(outputStream, this.NativeID, options);
-      } else {
-        const nativeObject = DataUtil.GetObjectPtr(this.NativeID, false);
-        if (nativeObject) {
-          const codePosition = ShapeUtil.WriteCode(outputStream, DSConstant.OpNameCode.cNativeStorage);
-          DSConstant.writeNativeSdfBuffer(outputStream, nativeObject);
-          ShapeUtil.WriteLength(outputStream, codePosition);
-        }
-      }
-    }
+  //   // Handle native data
+  //   if (this.NativeID >= 0) {
+  //     if (options.WriteBlocks) {
+  //       ShapeUtil.WriteNativeID(outputStream, this.NativeID, options);
+  //     } else {
+  //       const nativeObject = DataUtil.GetObjectPtr(this.NativeID, false);
+  //       if (nativeObject) {
+  //         const codePosition = ShapeUtil.WriteCode(outputStream, DSConstant.OpNameCode.cNativeStorage);
+  //         DSConstant.writeNativeSdfBuffer(outputStream, nativeObject);
+  //         ShapeUtil.WriteLength(outputStream, codePosition);
+  //       }
+  //     }
+  //   }
 
-    // Handle expanded view
-    if (this.ExpandedViewID >= 0) {
-      const expandedViewObject = DataUtil.GetObjectPtr(this.ExpandedViewID, false);
-      if (options.WriteBlocks || options.WriteGroupBlock) {
-        if (options.WriteBlocks || options.WriteGroupBlock) {
-          ShapeUtil.WriteExpandedViewID(outputStream, this.ExpandedViewID, options);
-        }
-      } else {
-        ShapeUtil.WriteExpandedView(outputStream, expandedViewObject, options);
-      }
-    }
+  //   // Handle expanded view
+  //   if (this.ExpandedViewID >= 0) {
+  //     const expandedViewObject = DataUtil.GetObjectPtr(this.ExpandedViewID, false);
+  //     if (options.WriteBlocks || options.WriteGroupBlock) {
+  //       if (options.WriteBlocks || options.WriteGroupBlock) {
+  //         ShapeUtil.WriteExpandedViewID(outputStream, this.ExpandedViewID, options);
+  //       }
+  //     } else {
+  //       ShapeUtil.WriteExpandedView(outputStream, expandedViewObject, options);
+  //     }
+  //   }
 
-    // Write container list if it exists
-    if (this.ContainerList) {
-      ShapeUtil.WriteContainerList(outputStream, this.ContainerList, options);
-    }
+  //   // Write container list if it exists
+  //   if (this.ContainerList) {
+  //     ShapeUtil.WriteContainerList(outputStream, this.ContainerList, options);
+  //   }
 
-    T3Util.Log("S.BasicShape - WriteShapeData output: completed");
-  }
+  //   T3Util.Log("S.BasicShape - WriteShapeData output: completed");
+  // }
 
   GetIconShape() {
     // var e = this.GetTable(!1);
@@ -6591,7 +6590,8 @@ class BaseShape extends BaseDrawObject {
           const currentBlockId = this.BlockID;
           const self = this;
           // In mobile, disable runtime effects; otherwise enable them.
-          T3Gv.opt.isMobilePlatform ? this.SetRuntimeEffects(false) : this.SetRuntimeEffects(true);
+          // T3Gv.opt.isMobilePlatform ? this.SetRuntimeEffects(false) : this.SetRuntimeEffects(true);
+          this.SetRuntimeEffects(true);
           this.SetCursors();
           T3Gv.opt.curHiliteShape = this.BlockID;
 
@@ -6712,7 +6712,7 @@ class BaseShape extends BaseDrawObject {
                 pathCreator.Apply();
                 leftArrow.SetFillColor("#FF0000");
                 leftArrow.SetStrokeWidth(0);
-                leftArrow.SetCursor(CursorConstant.CursorType.ADD_LEFT);
+                leftArrow.SetCursor(CursorConstant.CursorType.AddLeft);
               }
               leftArrow.SetID(OptConstant.ActionArrow.Left);
               leftArrow.SetUserData(currentBlockId);
@@ -6734,7 +6734,7 @@ class BaseShape extends BaseDrawObject {
                 pathCreator.Apply();
                 upArrow.SetFillColor("#FFD64A");
                 upArrow.SetStrokeWidth(0);
-                upArrow.SetCursor(CursorConstant.CursorType.ADD_UP);
+                upArrow.SetCursor(CursorConstant.CursorType.AddUp);
               }
               upArrow.SetID(OptConstant.ActionArrow.Up);
               upArrow.SetUserData(currentBlockId);
@@ -6778,7 +6778,7 @@ class BaseShape extends BaseDrawObject {
                 pathCreator.Apply();
                 downArrow.SetFillColor("#FFD64A");
                 downArrow.SetStrokeWidth(0);
-                downArrow.SetCursor(CursorConstant.CursorType.ADD_DOWN);
+                downArrow.SetCursor(CursorConstant.CursorType.AddDown);
               }
               downArrow.SetID(OptConstant.ActionArrow.Down);
               downArrow.SetUserData(currentBlockId);
@@ -6824,9 +6824,9 @@ class BaseShape extends BaseDrawObject {
               if (overlayElement) {
                 const targetForEvt = overlayElement.GetTargetForEvent(evt);
                 if (targetForEvt) {
-                  if (T3Gv.opt.isMobilePlatform) {
-                    temporaryElem = T3Gv.opt.svgOverlayLayer.GetElementById("actionArrow" + self.BlockID);
-                  }
+                  // if (T3Gv.opt.isMobilePlatform) {
+                  //   temporaryElem = T3Gv.opt.svgOverlayLayer.GetElementById("actionArrow" + self.BlockID);
+                  // }
                   const targetId = targetForEvt.GetID();
                   const userData = overlayElement.GetUserData();
                   const targetObj = DataUtil.GetObjectPtr(userData, false);
@@ -6849,19 +6849,19 @@ class BaseShape extends BaseDrawObject {
                         gBusinessController.AddCustom(evt, userData, targetId - OptConstant.ActionArrow.Custom);
                       }
                   }
-                  if (T3Gv.opt.isMobilePlatform) {
-                    T3Gv.opt.svgOverlayLayer.AddElement(temporaryElem);
-                    setTimeout(function () {
-                      ActionUtil.RemoveActionArrows(currentBlockId);
-                      const zList = LayerUtil.ZList();
-                      if (zList.length) {
-                        SelectUtil.SelectObjects([zList[zList.length - 1]], false, false);
-                        const lastObj = DataUtil.GetObjectPtr(zList[zList.length - 1], false);
-                        const svgElem = T3Gv.opt.svgObjectLayer.GetElementById(lastObj.BlockID);
-                        lastObj.SetRolloverActions(T3Gv.opt.svgDoc, svgElem);
-                      }
-                    }, 0);
-                  }
+                  // if (T3Gv.opt.isMobilePlatform) {
+                  //   T3Gv.opt.svgOverlayLayer.AddElement(temporaryElem);
+                  //   setTimeout(function () {
+                  //     ActionUtil.RemoveActionArrows(currentBlockId);
+                  //     const zList = LayerUtil.ZList();
+                  //     if (zList.length) {
+                  //       SelectUtil.SelectObjects([zList[zList.length - 1]], false, false);
+                  //       const lastObj = DataUtil.GetObjectPtr(zList[zList.length - 1], false);
+                  //       const svgElem = T3Gv.opt.svgObjectLayer.GetElementById(lastObj.BlockID);
+                  //       lastObj.SetRolloverActions(T3Gv.opt.svgDoc, svgElem);
+                  //     }
+                  //   }, 0);
+                  // }
                   return false;
                 }
               }

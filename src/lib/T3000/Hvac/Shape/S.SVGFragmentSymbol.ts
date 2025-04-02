@@ -319,14 +319,14 @@ class SVGFragmentSymbol extends BaseSymbol {
     T3Util.Log("= S.SVGFragmentSymbol | BaseShapeCreateActionTriggers Input:", { svgDoc, triggerId, shape, additionalParams });
 
     const cursors = [
-      CursorConstant.CursorType.RESIZE_LT,
-      CursorConstant.CursorType.RESIZE_T,
-      CursorConstant.CursorType.RESIZE_RT,
-      CursorConstant.CursorType.RESIZE_R,
-      CursorConstant.CursorType.RESIZE_RB,
-      CursorConstant.CursorType.RESIZE_B,
-      CursorConstant.CursorType.RESIZE_LB,
-      CursorConstant.CursorType.RESIZE_L,
+      CursorConstant.CursorType.ResizeLT,
+      CursorConstant.CursorType.ResizeT,
+      CursorConstant.CursorType.ResizeRT,
+      CursorConstant.CursorType.ResizeR,
+      CursorConstant.CursorType.ResizeRB,
+      CursorConstant.CursorType.ResizeB,
+      CursorConstant.CursorType.ResizeLB,
+      CursorConstant.CursorType.ResizeL,
     ];
 
     let connectorData,
@@ -415,14 +415,14 @@ class SVGFragmentSymbol extends BaseSymbol {
       hasSideKnobs = false;
       knobConfig.strokeColor = 'red';
       rotatedCursors = [
-        CursorConstant.CursorType.DEFAULT,
-        CursorConstant.CursorType.DEFAULT,
-        CursorConstant.CursorType.DEFAULT,
-        CursorConstant.CursorType.DEFAULT,
-        CursorConstant.CursorType.DEFAULT,
-        CursorConstant.CursorType.DEFAULT,
-        CursorConstant.CursorType.DEFAULT,
-        CursorConstant.CursorType.DEFAULT,
+        CursorConstant.CursorType.Default,
+        CursorConstant.CursorType.Default,
+        CursorConstant.CursorType.Default,
+        CursorConstant.CursorType.Default,
+        CursorConstant.CursorType.Default,
+        CursorConstant.CursorType.Default,
+        CursorConstant.CursorType.Default,
+        CursorConstant.CursorType.Default,
       ];
     }
 
@@ -550,7 +550,7 @@ class SVGFragmentSymbol extends BaseSymbol {
           const diffX = polyPoints[i].x - polyPoints[i - 1].x,
             diffY = polyPoints[i].y - polyPoints[i - 1].y;
           if (Utils2.sqrt(diffX * diffX + diffY * diffY) > minSidePointLength) {
-            knobConfig.cursorType = (diffX * diffX > diffY * diffY) ? CursorConstant.CursorType.RESIZE_TB : CursorConstant.CursorType.RESIZE_LR;
+            knobConfig.cursorType = (diffX * diffX > diffY * diffY) ? CursorConstant.CursorType.ResizeTB : CursorConstant.CursorType.ResizeLR;
             knobConfig.x = polyPoints[i - 1].x + diffX / 2;
             knobConfig.y = polyPoints[i - 1].y + diffY / 2;
             const knob = this.GenericKnob(knobConfig);
@@ -585,7 +585,7 @@ class SVGFragmentSymbol extends BaseSymbol {
       knobConfig.shapeType = OptConstant.CSType.Oval;
       knobConfig.x = isTextGrowHorizontal ? width + adjustedRKnobSize : width - 3 * adjustedRKnobSize;
       knobConfig.y = height / 2 - adjustedRKnobSize / 2;
-      knobConfig.cursorType = CursorConstant.CursorType.ROTATE;
+      knobConfig.cursorType = CursorConstant.CursorType.Rotate;
       knobConfig.knobID = OptConstant.ActionTriggerType.Rotate;
       knobConfig.fillColor = 'white';
       knobConfig.fillOpacity = 0.001;

@@ -29,6 +29,8 @@ import ToolAct2Util from './ToolAct2Util';
 
 class ToolActUtil {
 
+  public static rflags;
+
   static Undo(restoreSequence?: boolean, cancelModalOperation?: boolean): boolean {
     T3Util.Log("O.Opt Undo - Input:", { restoreSequence, cancelModalOperation });
 
@@ -148,7 +150,7 @@ class ToolActUtil {
 
     // Save changed blocks if state was not open before undo
     if (!isStateOpen) {
-      ShapeUtil.SaveChangedBlocks(currentStateId, -1);
+      // ShapeUtil.SaveChangedBlocks(currentStateId, -1);
     }
 
     T3Util.Log("O.Opt Undo - Output:", true);
@@ -287,7 +289,7 @@ class ToolActUtil {
 
     // Save changed blocks if state wasn't open
     if (!isStateOpen) {
-      ShapeUtil.SaveChangedBlocks(currentStateId, 1);
+      // ShapeUtil.SaveChangedBlocks(currentStateId, 1);
     }
 
     T3Util.Log("O.Opt Redo - Output: true");
@@ -1478,13 +1480,13 @@ class ToolActUtil {
       }
 
       // If returnBuffer flag is true, return the sorted zList and written buffer.
-      if (returnBuffer) {
-        T3Util.Log("O.Opt CopyObjectsCommon - Output:", { zList: sortedObjects, buffer: ShapeUtil.WriteSelect(sortedObjects, false, true, false) });
-        return {
-          zList: sortedObjects,
-          buffer: ShapeUtil.WriteSelect(sortedObjects, false, true, false)
-        };
-      }
+      // if (returnBuffer) {
+      //   T3Util.Log("O.Opt CopyObjectsCommon - Output:", { zList: sortedObjects, buffer: ShapeUtil.WriteSelect(sortedObjects, false, true, false) });
+      //   return {
+      //     zList: sortedObjects,
+      //     buffer: ShapeUtil.WriteSelect(sortedObjects, false, true, false)
+      //   };
+      // }
 
       // Otherwise update the clipboard buffer and clipboard type.
       T3Gv.opt.header.ClipboardBuffer = ShapeUtil.WriteSelect(sortedObjects, false, true, false);

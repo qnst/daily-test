@@ -5044,13 +5044,13 @@ class BaseDrawObject {
     T3Util.Log("= S.BaseDrawObject: SetBackgroundImageURL - Output: Completed");
   }
 
-  WriteShapeData(outputStream: any, options: any) {
-    T3Util.Log("= S.BaseDrawObject: WriteShapeData - Input:", { outputStream, options });
+  // WriteShapeData(outputStream: any, options: any) {
+  //   T3Util.Log("= S.BaseDrawObject: WriteShapeData - Input:", { outputStream, options });
 
-    // TODO: Add your implementation logic here
+  //   // TODO: Add your implementation logic here
 
-    T3Util.Log("= S.BaseDrawObject: WriteShapeData - Output: Completed");
-  }
+  //   T3Util.Log("= S.BaseDrawObject: WriteShapeData - Output: Completed");
+  // }
 
   CalcTextPosition(inputPosition: any): any {
     T3Util.Log("= S.BaseDrawObject: CalcTextPosition - Input:", inputPosition);
@@ -5402,7 +5402,7 @@ class BaseDrawObject {
       let iconParams = {
         svgDoc: svgDoc,
         iconSize: this.iconSize,
-        cursorType: CursorConstant.CursorType.POINTER
+        cursorType: CursorConstant.CursorType.Pointer
       };
 
       // Data action icon if available
@@ -5571,35 +5571,35 @@ class BaseDrawObject {
         const shapeElement = svgElement.GetElementById(OptConstant.SVGElementClass.Shape);
         if (shapeElement) {
           if (this.objecttype === NvConstant.FNObjectTypes.FrameContainer) {
-            shapeElement.SetCursor(CursorConstant.CursorType.DEFAULT);
+            shapeElement.SetCursor(CursorConstant.CursorType.Default);
           } else {
-            shapeElement.SetCursor(CursorConstant.CursorType.ADD);
+            shapeElement.SetCursor(CursorConstant.CursorType.Add);
           }
         }
 
         // Set cursors for various icon elements to POINTER
         let iconElement = svgElement.GetElementById(OptConstant.ShapeIconType.HyperLink);
-        if (iconElement) iconElement.SetCursor(CursorConstant.CursorType.POINTER);
+        if (iconElement) iconElement.SetCursor(CursorConstant.CursorType.Pointer);
 
         iconElement = svgElement.GetElementById(OptConstant.ShapeIconType.Notes);
-        if (iconElement) iconElement.SetCursor(CursorConstant.CursorType.POINTER);
+        if (iconElement) iconElement.SetCursor(CursorConstant.CursorType.Pointer);
 
         iconElement = svgElement.GetElementById(OptConstant.ShapeIconType.ExpandedView);
-        if (iconElement) iconElement.SetCursor(CursorConstant.CursorType.POINTER);
+        if (iconElement) iconElement.SetCursor(CursorConstant.CursorType.Pointer);
 
         iconElement = svgElement.GetElementById(OptConstant.ShapeIconType.Comment);
-        if (iconElement) iconElement.SetCursor(CursorConstant.CursorType.POINTER);
+        if (iconElement) iconElement.SetCursor(CursorConstant.CursorType.Pointer);
 
         iconElement = svgElement.GetElementById(OptConstant.ShapeIconType.Attachment);
-        if (iconElement) iconElement.SetCursor(CursorConstant.CursorType.POINTER);
+        if (iconElement) iconElement.SetCursor(CursorConstant.CursorType.Pointer);
 
         iconElement = svgElement.GetElementById(OptConstant.ShapeIconType.FieldData);
-        if (iconElement) iconElement.SetCursor(CursorConstant.CursorType.POINTER);
+        if (iconElement) iconElement.SetCursor(CursorConstant.CursorType.Pointer);
 
         // Set cursor for "slope" element
         const slopeElement = svgElement.GetElementById(OptConstant.SVGElementClass.Slop);
         if (slopeElement) {
-          slopeElement.SetCursor(CursorConstant.CursorType.ADD);
+          slopeElement.SetCursor(CursorConstant.CursorType.Add);
         }
 
         // Check for active text editing element
@@ -5607,7 +5607,7 @@ class BaseDrawObject {
         if (this.DataID && this.DataID >= 0 && svgElement.textElem) {
           if (svgElement.textElem === activeEditElement) {
             if (shapeElement) {
-              shapeElement.SetCursor(CursorConstant.CursorType.TEXT);
+              shapeElement.SetCursor(CursorConstant.CursorType.Text);
             }
             svgElement.textElem.SetCursorState(CursorConstant.CursorState.EditLink);
           } else {
@@ -6371,11 +6371,14 @@ class BaseDrawObject {
     }
 
     // Set runtime effects for current object based on mobile platform
-    if (T3Gv.opt.isMobilePlatform) {
-      this.SetRuntimeEffects(false);
-    } else {
-      this.SetRuntimeEffects(true);
-    }
+    // if (T3Gv.opt.isMobilePlatform) {
+    //   this.SetRuntimeEffects(false);
+    // } else {
+    //   this.SetRuntimeEffects(true);
+    // }
+
+    this.SetRuntimeEffects(true);
+
     this.SetCursors();
     T3Gv.opt.curHiliteShape = this.BlockID;
     const self = this; // preserve context for event handler
@@ -6400,31 +6403,31 @@ class BaseDrawObject {
     angle = 10 * Math.round(angle / 10);
 
     // Initialize the cursor with a default value.
-    let cursor: string = CursorConstant.CursorType.RESIZE_LR;
+    let cursor: string = CursorConstant.CursorType.ResizeLR;
 
     // Determine the cursor type based on the angle.
     if ((angle > 0 && angle < 90) || (angle > 180 && angle < 270)) {
-      cursor = CursorConstant.CursorType.NWSE_RESIZE;
+      cursor = CursorConstant.CursorType.NwseResize;
     } else if ((angle > 90 && angle < 180) || (angle > 270 && angle < 360)) {
-      cursor = CursorConstant.CursorType.NESW_RESIZE;
+      cursor = CursorConstant.CursorType.NeswResize;
     } else if (angle === 90 || angle === 270) {
-      cursor = CursorConstant.CursorType.RESIZE_TB;
+      cursor = CursorConstant.CursorType.ResizeTB;
     }
 
     // Optionally swap the cursor type.
     if (swap) {
       switch (cursor) {
-        case CursorConstant.CursorType.RESIZE_LR:
-          cursor = CursorConstant.CursorType.RESIZE_TB;
+        case CursorConstant.CursorType.ResizeLR:
+          cursor = CursorConstant.CursorType.ResizeTB;
           break;
-        case CursorConstant.CursorType.RESIZE_TB:
-          cursor = CursorConstant.CursorType.RESIZE_LR;
+        case CursorConstant.CursorType.ResizeTB:
+          cursor = CursorConstant.CursorType.ResizeLR;
           break;
-        case CursorConstant.CursorType.NWSE_RESIZE:
-          cursor = CursorConstant.CursorType.NESW_RESIZE;
+        case CursorConstant.CursorType.NwseResize:
+          cursor = CursorConstant.CursorType.NeswResize;
           break;
-        case CursorConstant.CursorType.NESW_RESIZE:
-          cursor = CursorConstant.CursorType.NWSE_RESIZE;
+        case CursorConstant.CursorType.NeswResize:
+          cursor = CursorConstant.CursorType.NwseResize;
           break;
       }
     }

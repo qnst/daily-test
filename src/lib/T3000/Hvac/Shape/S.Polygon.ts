@@ -830,66 +830,66 @@ class Polygon extends BaseShape {
     });
   }
 
-  WriteShapeData(outputStream, context) {
-    T3Util.Log('S.Polygon: WriteShapeData input:', { outputStream, context });
+  // WriteShapeData(outputStream, context) {
+  //   T3Util.Log('S.Polygon: WriteShapeData input:', { outputStream, context });
 
-    return;
+  //   return;
 
-    let vertexCount, width, height, polyId, vertexX, vertexY, polySegment;
-    if (this.dataclass && this.dataclass === PolygonConstant.ShapeTypes.POLYGON) {
-      if (this.polylist) {
-        Instance.Shape.PolyLine.prototype.WriteShapeData.call(this, outputStream, context, true);
-      } else {
-        let code = ShapeUtil.WriteCode(outputStream, DSConstant.OpNameCode.cDrawPoly);
-        vertexCount = this.VertexArray.length;
-        width = ShapeUtil.ToSDWinCoords(this.Frame.width, context.coordScaleFactor);
-        height = ShapeUtil.ToSDWinCoords(this.Frame.height, context.coordScaleFactor);
-        polyId = context.WriteBlocks ? this.BlockID : context.polyid++;
+  //   let vertexCount, width, height, polyId, vertexX, vertexY, polySegment;
+  //   if (this.dataclass && this.dataclass === PolygonConstant.ShapeTypes.POLYGON) {
+  //     if (this.polylist) {
+  //       Instance.Shape.PolyLine.prototype.WriteShapeData.call(this, outputStream, context, true);
+  //     } else {
+  //       let code = ShapeUtil.WriteCode(outputStream, DSConstant.OpNameCode.cDrawPoly);
+  //       vertexCount = this.VertexArray.length;
+  //       width = ShapeUtil.ToSDWinCoords(this.Frame.width, context.coordScaleFactor);
+  //       height = ShapeUtil.ToSDWinCoords(this.Frame.height, context.coordScaleFactor);
+  //       polyId = context.WriteBlocks ? this.BlockID : context.polyid++;
 
-        let polyListStruct;
-        if (context.WriteWin32) {
-          polyListStruct = {
-            InstID: polyId,
-            n: vertexCount,
-            dim: { x: 0, y: 0 },
-            flags: DSConstant.PolyListFlags.FreeHand,
-            ldim: { x: width, y: height }
-          };
-          outputStream.writeStruct(DSConstant.PolyListStruct20, polyListStruct);
-        } else {
-          polyListStruct = {
-            InstID: polyId,
-            n: vertexCount,
-            flags: DSConstant.PolyListFlags.FreeHand,
-            ldim: { x: width, y: height }
-          };
-          outputStream.writeStruct(DSConstant.PolyListStruct24, polyListStruct);
-        }
-        ShapeUtil.WriteLength(outputStream, code);
+  //       let polyListStruct;
+  //       if (context.WriteWin32) {
+  //         polyListStruct = {
+  //           InstID: polyId,
+  //           n: vertexCount,
+  //           dim: { x: 0, y: 0 },
+  //           flags: DSConstant.PolyListFlags.FreeHand,
+  //           ldim: { x: width, y: height }
+  //         };
+  //         outputStream.writeStruct(DSConstant.PolyListStruct20, polyListStruct);
+  //       } else {
+  //         polyListStruct = {
+  //           InstID: polyId,
+  //           n: vertexCount,
+  //           flags: DSConstant.PolyListFlags.FreeHand,
+  //           ldim: { x: width, y: height }
+  //         };
+  //         outputStream.writeStruct(DSConstant.PolyListStruct24, polyListStruct);
+  //       }
+  //       ShapeUtil.WriteLength(outputStream, code);
 
-        for (let i = 0; i < vertexCount; i++) {
-          vertexX = this.VertexArray[i].x * width;
-          vertexY = this.VertexArray[i].y * height;
-          polySegment = {
-            otype: NvConstant.FNObjectTypes.SED_LineD,
-            dataclass: 0,
-            ShortRef: 0,
-            param: 0,
-            pt: { x: 0, y: 0 },
-            lpt: { x: vertexX, y: vertexY },
-            dimDeflection: 0
-          };
-          code = ShapeUtil.WriteCode(outputStream, DSConstant.OpNameCode.cDrawPolySeg);
-          outputStream.writeStruct(DSConstant.PolySegStruct, polySegment);
-          ShapeUtil.WriteLength(outputStream, code);
-        }
-        outputStream.writeUint16(DSConstant.OpNameCode.cDrawPolyEnd);
-      }
-    }
-    super.WriteShapeData(outputStream, context);
+  //       for (let i = 0; i < vertexCount; i++) {
+  //         vertexX = this.VertexArray[i].x * width;
+  //         vertexY = this.VertexArray[i].y * height;
+  //         polySegment = {
+  //           otype: NvConstant.FNObjectTypes.SED_LineD,
+  //           dataclass: 0,
+  //           ShortRef: 0,
+  //           param: 0,
+  //           pt: { x: 0, y: 0 },
+  //           lpt: { x: vertexX, y: vertexY },
+  //           dimDeflection: 0
+  //         };
+  //         code = ShapeUtil.WriteCode(outputStream, DSConstant.OpNameCode.cDrawPolySeg);
+  //         outputStream.writeStruct(DSConstant.PolySegStruct, polySegment);
+  //         ShapeUtil.WriteLength(outputStream, code);
+  //       }
+  //       outputStream.writeUint16(DSConstant.OpNameCode.cDrawPolyEnd);
+  //     }
+  //   }
+  //   super.WriteShapeData(outputStream, context);
 
-    T3Util.Log('S.Polygon: WriteShapeData output:', { outputStream, context });
-  }
+  //   T3Util.Log('S.Polygon: WriteShapeData output:', { outputStream, context });
+  // }
 
   Flip(flipType) {
     T3Util.Log('S.Polygon: Flip input:', { flipType });

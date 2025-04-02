@@ -188,7 +188,7 @@ class ObjectUtil {
         if (!shouldKeepStateOpen && isStateOpen) {
           if (UIUtil.GetDocDirtyState()) {
             // Save only blocks that have changed
-            ShapeUtil.SaveChangedBlocks(T3Gv.state.currentStateId, 1);
+            // ShapeUtil.SaveChangedBlocks(T3Gv.state.currentStateId, 1);
           } else {
             // Save all blocks if doc isn't already marked dirty
             ShapeUtil.SaveAllBlocks();

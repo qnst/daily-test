@@ -329,829 +329,1435 @@ class PolyUtil {
     return intersectionCount;
   }
 
-  static ArcToChord(e, t, a, r, i) {
-    var n,
-      o,
-      s,
-      l,
-      S,
-      c,
-      u,
-      p,
-      d,
-      D,
-      g = {},
-      h = {},
-      m = {},
-      C = {},
-      y = {};
-    (g.x = (t.x + e.x) / 2),
-      (g.y = (t.y + e.y) / 2),
-      (o = t.x - e.x),
-      (l = (s = t.y - e.y) / (n = Math.sqrt(o * o + s * s))),
-      (S = o / n),
-      Math.abs(l) < 1e-4 && (l = 0),
-      Math.abs(o) < 1e-4 && (o = 0),
-      (p = Math.asin(l)),
-      (D = Math.acos(S));
-    var f = {},
-      L = {};
-    return (
-      o < 0 && s < 0 ? (p = -D) : p > 0 && o < 0 && (p = -p),
-      (l = Math.sin(p)),
-      (S = Math.cos(p)),
-      (c = e.x - g.x),
-      (u = e.y - g.y),
-      (f.x = c * S + u * l + g.x),
-      (f.y = -c * l + u * S + g.y),
-      (c = t.x - g.x),
-      (u = t.y - g.y),
-      (L.x = c * S + u * l + g.x),
-      (L.y = -c * l + u * S + g.y),
-      (C.x = i.StartPoint.x),
-      (C.y = i.StartPoint.y),
-      (y.x = i.EndPoint.x),
-      (y.y = i.EndPoint.y),
-      (c = C.x - g.x),
-      (u = C.y - g.y),
-      (C.x = c * S + u * l + g.x),
-      (C.y = -c * l + u * S + g.y),
-      (c = y.x - g.x),
-      (u = y.y - g.y),
-      (y.x = c * S + u * l + g.x),
-      (y.y = -c * l + u * S + g.y),
-      (c = a.x - g.x),
-      (u = a.y - g.y),
-      (h.x = c * S + u * l + g.x),
-      (h.y = -c * l + u * S + g.y),
-      r &&
-      ((c = r.center.x - g.x),
-        (u = r.center.y - g.y),
-        (m.x = c * S + u * l + g.x),
-        (m.y = -c * l + u * S + g.y),
-        (d = g.y < m.y ? h.y < m.y : h.y > m.y) &&
-        (C.x < y.x
-          ? h.x > C.x &&
-          h.x < y.x &&
-          (y.x - h.x < h.x - C.x ? (h.x = y.x) : (h.x = C.x))
-          : h.x > y.x &&
-          h.x < C.x &&
-          (C.x - h.x < h.x - y.x ? (h.x = C.x) : (h.x = y.x)))),
-      (h.y = g.y),
-      (c = h.x - g.x),
-      (u = h.y - g.y),
-      (l = Math.sin(-p)),
-      (S = Math.cos(-p)),
-      (h.x = c * S + u * l + g.x),
-      (h.y = -c * l + u * S + g.y),
-      (c = f.x - g.x),
-      (u = f.y - g.y),
-      (f.x = c * S + u * l + g.x),
-      (f.y = -c * l + u * S + g.y),
-      r && ((h.x = 2 * Math.round((h.x + 0.5) / 2)), !0 === d && h.x--),
-      h
-    );
-  }
+  /**
+   * Converts an arc point to its corresponding chord point
+   * This function transforms a point on an arc to a point on a straight line (chord)
+   * @param startPoint - The starting point of the arc
+   * @param endPoint - The ending point of the arc
+   * @param targetPoint - The target point to convert
+   * @param connectionLine - The connection line information (optional)
+   * @param lineSegment - The line segment object containing the arc
+   * @returns The converted chord point
+   */
+  static ArcToChord(startPoint, endPoint, targetPoint, connectionLine, lineSegment) {
+    // Calculate midpoint between start and end points
+    const midpoint = {
+      x: (endPoint.x + startPoint.x) / 2,
+      y: (endPoint.y + startPoint.y) / 2
+    };
 
-  static ChordToArc(e, t, a, r, i, n, o, s) {
-    var l,
-      S,
-      c,
-      u,
-      p,
-      d,
-      D,
-      g,
-      h,
-      m = {},
-      C = {},
-      y = {},
-      f = {};
-    return (
-      (S = t.x - e.x),
-      (u = (c = t.y - e.y) / (l = Math.sqrt(S * S + c * c))),
-      (p = S / l),
-      Math.abs(u) < 1e-4 && (u = 0),
-      Math.abs(S) < 1e-4 && (S = 0),
-      (((g = Math.asin(u)) > 0 && S < 0) || (g < 0 && S < 0 && c < 0)) &&
-      (g = -g),
-      (u = Math.sin(g)),
-      (p = Math.cos(g)),
-      (d = e.x - a.x),
-      (D = e.y - a.y),
-      (y.x = d * p + D * u + a.x),
-      (y.y = -d * u + D * p + a.y),
-      (d = t.x - a.x),
-      (D = t.y - a.y),
-      (f.x = d * p + D * u + a.x),
-      (f.y = -d * u + D * p + a.y),
-      (d = s.x - a.x),
-      (D = s.y - a.y),
-      (m.x = d * p + D * u + a.x),
-      (m.y = -d * u + D * p + a.y),
-      (d = e.x - a.x),
-      (D = e.y - a.y),
-      (C.x = d * p + D * u + a.x),
-      (C.y = -d * u + D * p + a.y),
-      (h = (C.y > a.y && !o) || (C.y <= a.y && o)),
-      n && (h = !h),
-      (d = m.x - a.x),
-      Math.abs(d) > r && (d = r),
-      (D = SDJS.Utils.sqrt(r * r - d * d)),
-      h
-        ? ((m.y = a.y + D), i && ((D = C.y - m.y), (m.y = C.y + D)))
-        : ((m.y = a.y - D), i && ((D = C.y - m.y), (m.y = C.y + D))),
-      (d = m.x - a.x),
-      (D = m.y - a.y),
-      (u = Math.sin(-g)),
-      (p = Math.cos(-g)),
-      (m.x = d * p + D * u + a.x),
-      (m.y = -d * u + D * p + a.y),
-      m
-    );
-  }
+    // Calculate vector from start to end
+    const deltaX = endPoint.x - startPoint.x;
+    const deltaY = endPoint.y - startPoint.y;
 
-  static ArcIntersect(e, t, a) {
-    var r,
-      i,
-      n,
-      o,
-      s,
-      l,
-      S,
-      c,
-      u,
-      p,
-      d,
-      D,
-      g,
-      h,
-      m,
-      C,
-      y,
-      f = !1,
-      L = {},
-      I = {},
-      T = [];
-    return (
-      (r = e.EndPoint.x - e.StartPoint.x),
-      (i = e.EndPoint.y - e.StartPoint.y),
-      0 === r ? (!0, (l = e.EndPoint.x), 1) : i / r,
-      e.StartPoint.x,
-      e.StartPoint.y,
-      (L = e.IsReversed
-        ? e.CalcRadiusAndCenter(
-          e.EndPoint.x,
-          e.EndPoint.y,
-          e.StartPoint.x,
-          e.StartPoint.y,
-          e.CurveAdjust,
-          e.IsReversed
-        )
-        : e.CalcRadiusAndCenter(
-          e.StartPoint.x,
-          e.StartPoint.y,
-          e.EndPoint.x,
-          e.EndPoint.y,
-          e.CurveAdjust,
-          e.IsReversed
-        )),
-      (I.x = L.centerX),
-      (I.y = L.centerY),
-      (C = L.radius),
-      (n = t.EndPoint.x - t.StartPoint.x),
-      (o = t.EndPoint.y - t.StartPoint.y),
-      0 === n ? ((f = !0), (l = t.EndPoint.x), (s = 1)) : (s = o / n),
-      (p = t.StartPoint.x),
-      (u = t.StartPoint.y),
-      0 === s
-        ? !((c = C * C - (m = (S = t.StartPoint.y) - I.y) * m) < 0) &&
-        ((l = (h = SDJS.Utils.sqrt(c)) + I.x),
-          (a.x = l),
-          (a.y = S),
-          (T = e.GetPolyPoints(
-            SDJS.ListManager.Defines.NPOLYPTS,
-            !1,
-            !1,
-            !1,
-            null
-          )),
-          !!SDJS.ListManager.LM.prototype.LineDStyleHit(
-            T,
-            a,
-            e.StyleRecord.lineThickness,
-            0,
-            null
-          ) ||
-          !!SDJS.Utils.PtInRect(e.Frame, a) ||
-          ((l = -h + I.x),
-            (a.x = l),
-            (a.y = S),
-            !!SDJS.ListManager.LM.prototype.LineDStyleHit(
-              T,
-              a,
-              e.StyleRecord.lineThickness,
-              0,
-              null
-            ) || !!SDJS.Utils.PtInRect(e.Frame, a)))
-        : f
-          ? !((c = C * C - (h = (l = t.StartPoint.x) - I.x) * h) < 0) &&
-          ((S = (m = SDJS.Utils.sqrt(c)) + I.y),
-            (a.x = l),
-            (a.y = S),
-            (T = e.GetPolyPoints(
-              SDJS.ListManager.Defines.NPOLYPTS,
-              !1,
-              !1,
-              !1,
-              null
-            )),
-            !!SDJS.ListManager.LM.prototype.LineDStyleHit(
-              T,
-              a,
-              e.StyleRecord.lineThickness,
-              0,
-              null
-            ) ||
-            !!SDJS.Utils.PtInRect(e.Frame, a) ||
-            ((S = -m + I.y),
-              (a.x = l),
-              (a.y = S),
-              !!SDJS.ListManager.LM.prototype.LineDStyleHit(
-                T,
-                a,
-                e.StyleRecord.lineThickness,
-                0,
-                null
-              ) || !!SDJS.Utils.PtInRect(e.Frame, a)))
-          : ((d = s * s + 1),
-            !(
-              (g =
-                (D = 2 * s * (y = u - I.y - s * p) - 2 * I.x) * D -
-                4 * d * (I.x * I.x + y * y - C * C)) < 0
-            ) &&
-            ((S = u + s * ((l = (-D + (g = SDJS.Utils.sqrt(g))) / (2 * d)) - p)),
-              (a.x = l),
-              (a.y = S),
-              (T = e.GetPolyPoints(
-                SDJS.ListManager.Defines.NPOLYPTS,
-                !1,
-                !1,
-                !1,
-                null
-              )),
-              !!SDJS.ListManager.LM.prototype.LineDStyleHit(
-                T,
-                a,
-                e.StyleRecord.lineThickness,
-                0,
-                null
-              ) ||
-              !!SDJS.Utils.PtInRect(e.Frame, a) ||
-              ((S = u + s * ((l = (-D - g) / (2 * d)) - p)),
-                (a.x = l),
-                (a.y = S),
-                !!SDJS.ListManager.LM.prototype.LineDStyleHit(
-                  T,
-                  a,
-                  e.StyleRecord.lineThickness,
-                  0,
-                  null
-                ) || !!SDJS.Utils.PtInRect(e.Frame, a))))
-    );
-  }
+    // Calculate distance and normalized direction
+    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    const normalizedY = deltaY / distance;
+    const normalizedX = deltaX / distance;
 
-  static LinesMaintainDist(e, t, a, r) {
-    var i,
-      n,
-      o,
-      s,
-      l,
-      S,
-      c,
-      u,
-      p,
-      d,
-      D,
-      g = {},
-      h = {
-        x: 0,
-        y: 0,
-      },
-      m = {};
-    if (
-      (null === t && (t = e),
-        (g = t.GetConnectLine())
-          ? ((D = g.startpt), (d = g.endpt))
-          : ((D = t.StartPoint), (d = t.EndPoint)),
-        (i = d.x - D.x),
-        (n = d.y - D.y),
-        Math.sqrt(i * i + n * n),
-        (h.x = r.x),
-        (h.y = r.y),
-        t.LineType === SDJS.ListManager.LineType.ARCLINE &&
-        (h = this.ArcToChord(D, d, h, g, t)),
-        a === SDJS.ListManager.ActionTriggerType.LINESTART
-          ? ((i = h.x - d.x), (n = h.y - d.y))
-          : ((i = h.x - D.x), (n = h.y - D.y)),
-        (o = Math.sqrt(i * i + n * n)),
-        (g = e.GetConnectLine())
-          ? ((D = g.startpt), (d = g.endpt))
-          : ((D = e.StartPoint), (d = e.EndPoint)),
-        a === SDJS.ListManager.ActionTriggerType.LINESTART
-          ? ((c = d), (i = -(d.x - D.x)), (n = -(d.y - D.y)))
-          : ((c = D), (i = d.x - D.x), (n = d.y - D.y)),
-        o > (s = Math.sqrt(i * i + n * n)) && (o = s),
-        s < 1
-          ? ((r.x = D.x), (r.y = D.y))
-          : ((l = n / s), (S = i / s), (r.x = c.x + S * o), (r.y = c.y + l * o)),
-        e.LineType === SDJS.ListManager.LineType.ARCLINE)
-    ) {
-      var C = e.CalcRadiusAndCenter(
-        e.StartPoint.x,
-        e.StartPoint.y,
-        e.EndPoint.x,
-        e.EndPoint.y,
-        e.CurveAdjust,
-        e.IsReversed
-      );
-      g ? ((u = !1), (p = !1)) : ((u = !1), (p = e.IsReversed)),
-        (m.x = C.centerX),
-        (m.y = C.centerY),
-        (r = this.ChordToArc(D, d, m, C.radius, p, u, C.centerInside, r));
+    // Handle very small values
+    const adjustedNormalizedY = Math.abs(normalizedY) < 1e-4 ? 0 : normalizedY;
+    const adjustedDeltaX = Math.abs(deltaX) < 1e-4 ? 0 : deltaX;
+
+    // Calculate angles
+    const arcSine = Math.asin(adjustedNormalizedY);
+    const arcCosine = Math.acos(normalizedX);
+
+    // Initialize points for calculations
+    const startRotated = {};
+    const endRotated = {};
+
+    // Adjust angle based on quadrant
+    let angle;
+    if (adjustedDeltaX < 0 && deltaY < 0) {
+      angle = -arcCosine;
+    } else if (arcSine > 0 && adjustedDeltaX < 0) {
+      angle = -arcSine;
+    } else {
+      angle = arcSine;
     }
+
+    // Calculate sine and cosine of the adjusted angle
+    const sinAngle = Math.sin(angle);
+    const cosAngle = Math.cos(angle);
+
+    // Calculate rotated coordinates for start point
+    let relativeX = startPoint.x - midpoint.x;
+    let relativeY = startPoint.y - midpoint.y;
+    startRotated.x = relativeX * cosAngle + relativeY * sinAngle + midpoint.x;
+    startRotated.y = -relativeX * sinAngle + relativeY * cosAngle + midpoint.y;
+
+    // Calculate rotated coordinates for end point
+    relativeX = endPoint.x - midpoint.x;
+    relativeY = endPoint.y - midpoint.y;
+    endRotated.x = relativeX * cosAngle + relativeY * sinAngle + midpoint.x;
+    endRotated.y = -relativeX * sinAngle + relativeY * cosAngle + midpoint.y;
+
+    // Initialize and rotate line segment points
+    const lineStartPoint = {
+      x: lineSegment.StartPoint.x,
+      y: lineSegment.StartPoint.y
+    };
+    const lineEndPoint = {
+      x: lineSegment.EndPoint.x,
+      y: lineSegment.EndPoint.y
+    };
+
+    // Rotate line start point
+    relativeX = lineStartPoint.x - midpoint.x;
+    relativeY = lineStartPoint.y - midpoint.y;
+    lineStartPoint.x = relativeX * cosAngle + relativeY * sinAngle + midpoint.x;
+    lineStartPoint.y = -relativeX * sinAngle + relativeY * cosAngle + midpoint.y;
+
+    // Rotate line end point
+    relativeX = lineEndPoint.x - midpoint.x;
+    relativeY = lineEndPoint.y - midpoint.y;
+    lineEndPoint.x = relativeX * cosAngle + relativeY * sinAngle + midpoint.x;
+    lineEndPoint.y = -relativeX * sinAngle + relativeY * cosAngle + midpoint.y;
+
+    // Rotate target point
+    relativeX = targetPoint.x - midpoint.x;
+    relativeY = targetPoint.y - midpoint.y;
+    const resultPoint = {
+      x: relativeX * cosAngle + relativeY * sinAngle + midpoint.x,
+      y: -relativeX * sinAngle + relativeY * cosAngle + midpoint.y
+    };
+
+    let centerPoint = {};
+    let isBelowCenter = false;
+
+    // Process connection line if provided
+    if (connectionLine) {
+      // Rotate center point
+      relativeX = connectionLine.center.x - midpoint.x;
+      relativeY = connectionLine.center.y - midpoint.y;
+      centerPoint.x = relativeX * cosAngle + relativeY * sinAngle + midpoint.x;
+      centerPoint.y = -relativeX * sinAngle + relativeY * cosAngle + midpoint.y;
+
+      // Determine if result point is below center
+      isBelowCenter = midpoint.y < centerPoint.y ? resultPoint.y < centerPoint.y : resultPoint.y > centerPoint.y;
+
+      // Adjust x position based on relative positions
+      if (isBelowCenter) {
+        if (lineStartPoint.x < lineEndPoint.x) {
+          if (resultPoint.x > lineStartPoint.x && resultPoint.x < lineEndPoint.x) {
+            if (lineEndPoint.x - resultPoint.x < resultPoint.x - lineStartPoint.x) {
+              resultPoint.x = lineEndPoint.x;
+            } else {
+              resultPoint.x = lineStartPoint.x;
+            }
+          }
+        } else {
+          if (resultPoint.x > lineEndPoint.x && resultPoint.x < lineStartPoint.x) {
+            if (lineStartPoint.x - resultPoint.x < resultPoint.x - lineEndPoint.x) {
+              resultPoint.x = lineStartPoint.x;
+            } else {
+              resultPoint.x = lineEndPoint.x;
+            }
+          }
+        }
+      }
+    }
+
+    // Set y to midpoint y and prepare to rotate back
+    resultPoint.y = midpoint.y;
+    relativeX = resultPoint.x - midpoint.x;
+    relativeY = resultPoint.y - midpoint.y;
+
+    // Rotate back using negative angle
+    const negSinAngle = Math.sin(-angle);
+    const negCosAngle = Math.cos(-angle);
+
+    // Final position calculation
+    resultPoint.x = relativeX * negCosAngle + relativeY * negSinAngle + midpoint.x;
+    resultPoint.y = -relativeX * negSinAngle + relativeY * negCosAngle + midpoint.y;
+
+    // Rotate start point back
+    relativeX = startRotated.x - midpoint.x;
+    relativeY = startRotated.y - midpoint.y;
+    startRotated.x = relativeX * negCosAngle + relativeY * negSinAngle + midpoint.x;
+    startRotated.y = -relativeX * negSinAngle + relativeY * negCosAngle + midpoint.y;
+
+    // Round and adjust if needed
+    if (connectionLine) {
+      resultPoint.x = 2 * Math.round((resultPoint.x + 0.5) / 2);
+      if (isBelowCenter === true) {
+        resultPoint.x--;
+      }
+    }
+
+    return resultPoint;
   }
 
-  static GetMaxDim(e) {
-    return (
-      (e.x = SDJS.ListManager.Defines.SD_MaxLongDim),
-      (e.y = SDJS.ListManager.Defines.SD_MaxLongDim),
-      !0
-    );
+  /**
+   * Converts a chord point to its corresponding arc point
+   * This function transforms a point on a straight line (chord) to a point on an arc
+   * @param startPoint - The starting point of the chord
+   * @param endPoint - The ending point of the chord
+   * @param centerPoint - The center point of the arc
+   * @param radius - The radius of the arc
+   * @param isInverted - Whether the arc is inverted
+   * @param flipArc - Whether to flip the arc direction
+   * @param isCenterInside - Whether the center is inside the arc
+   * @param targetPoint - The target point to convert
+   * @returns The converted arc point
+   */
+  static ChordToArc(startPoint, endPoint, centerPoint, radius, isInverted, flipArc, isCenterInside, targetPoint) {
+    // Calculate vector from start to end
+    const deltaX = endPoint.x - startPoint.x;
+    const deltaY = endPoint.y - startPoint.y;
+
+    // Calculate distance and normalized direction
+    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    const normalizedY = deltaY / distance;
+    const normalizedX = deltaX / distance;
+
+    // Handle very small values
+    const adjustedNormalizedY = Math.abs(normalizedY) < 1e-4 ? 0 : normalizedY;
+    const adjustedDeltaX = Math.abs(deltaX) < 1e-4 ? 0 : deltaX;
+
+    // Calculate angle
+    let arcSine = Math.asin(adjustedNormalizedY);
+
+    // Adjust angle based on quadrant
+    if ((arcSine > 0 && deltaX < 0) || (arcSine < 0 && deltaX < 0 && deltaY < 0)) {
+      arcSine = -arcSine;
+    }
+
+    // Calculate sine and cosine of the angle
+    const sinAngle = Math.sin(arcSine);
+    const cosAngle = Math.cos(arcSine);
+
+    // Initialize points for rotations
+    const resultPoint = {};
+    const startRotated = {};
+    const targetRotated = {};
+    const endRotated = {};
+
+    // Calculate rotated coordinates for start point
+    let relativeX = startPoint.x - centerPoint.x;
+    let relativeY = startPoint.y - centerPoint.y;
+    targetRotated.x = relativeX * cosAngle + relativeY * sinAngle + centerPoint.x;
+    targetRotated.y = -relativeX * sinAngle + relativeY * cosAngle + centerPoint.y;
+
+    // Calculate rotated coordinates for end point
+    relativeX = endPoint.x - centerPoint.x;
+    relativeY = endPoint.y - centerPoint.y;
+    endRotated.x = relativeX * cosAngle + relativeY * sinAngle + centerPoint.x;
+    endRotated.y = -relativeX * sinAngle + relativeY * cosAngle + centerPoint.y;
+
+    // Calculate rotated coordinates for target point
+    relativeX = targetPoint.x - centerPoint.x;
+    relativeY = targetPoint.y - centerPoint.y;
+    resultPoint.x = relativeX * cosAngle + relativeY * sinAngle + centerPoint.x;
+    resultPoint.y = -relativeX * sinAngle + relativeY * cosAngle + centerPoint.y;
+
+    // Calculate rotated coordinates for start point (used for reference)
+    relativeX = startPoint.x - centerPoint.x;
+    relativeY = startPoint.y - centerPoint.y;
+    startRotated.x = relativeX * cosAngle + relativeY * sinAngle + centerPoint.x;
+    startRotated.y = -relativeX * sinAngle + relativeY * cosAngle + centerPoint.y;
+
+    // Determine if point is above center
+    let isAboveCenter = (startRotated.y > centerPoint.y && !isCenterInside) ||
+      (startRotated.y <= centerPoint.y && isCenterInside);
+
+    // Handle flip arc option
+    if (flipArc) {
+      isAboveCenter = !isAboveCenter;
+    }
+
+    // Calculate x distance and ensure it's within radius
+    relativeX = resultPoint.x - centerPoint.x;
+    if (Math.abs(relativeX) > radius) {
+      relativeX = radius;
+    }
+
+    // Calculate y component using Pythagorean theorem
+    const yComponent = SDJS.Utils.sqrt(radius * radius - relativeX * relativeX);
+
+    // Set y position based on whether point is above or below center
+    if (isAboveCenter) {
+      resultPoint.y = centerPoint.y + yComponent;
+      if (isInverted) {
+        const yOffset = startRotated.y - resultPoint.y;
+        resultPoint.y = startRotated.y + yOffset;
+      }
+    } else {
+      resultPoint.y = centerPoint.y - yComponent;
+      if (isInverted) {
+        const yOffset = startRotated.y - resultPoint.y;
+        resultPoint.y = startRotated.y + yOffset;
+      }
+    }
+
+    // Calculate relative position for final rotation
+    relativeX = resultPoint.x - centerPoint.x;
+    relativeY = resultPoint.y - centerPoint.y;
+
+    // Rotate back using negative angle
+    const negSinAngle = Math.sin(-arcSine);
+    const negCosAngle = Math.cos(-arcSine);
+
+    // Final position calculation
+    resultPoint.x = relativeX * negCosAngle + relativeY * negSinAngle + centerPoint.x;
+    resultPoint.y = -relativeX * negSinAngle + relativeY * negCosAngle + centerPoint.y;
+
+    return resultPoint;
   }
 
-  static LinesAddCurve(e, t, a, r, i, n) {
-    var o,
-      s = [],
-      l = [],
-      S = {};
-    if (e)
-      if (t > 0 && a > 0)
-        for (
-          S.x = r,
-          S.y = i,
-          S.width = n,
-          S.height = -2 * n,
-          gListManager.PolyYCurve(l, S, 20, 0, 0, 0, -n, !0),
-          o = l.length - 1;
-          o >= 0;
-          o--
-        )
-          s.push(l[o]);
-      else
-        t < 0 && a > 0
-          ? ((S.x = r),
-            (S.y = i + 2 * n),
-            (S.width = n),
-            (S.height = -2 * n),
-            gListManager.PolyYCurve(s, S, 20, 0, 0, -n, 0, !0))
-          : t > 0 && a < 0
-            ? ((S.x = r),
-              (S.y = i - 2 * n),
-              (S.width = -n),
-              (S.height = 2 * n),
-              gListManager.PolyYCurve(s, S, 20, 0, 0, n, 0, !0))
-            : t < 0 &&
-            a < 0 &&
-            ((S.x = r),
-              (S.y = i + 2 * n),
-              (S.width = -n),
-              (S.height = -2 * n),
-              gListManager.PolyYCurve(s, S, 20, 0, 0, -n, 0, !0));
-    else if (t > 0 && a > 0)
-      (S.x = r - n),
-        (S.y = i),
-        (S.width = n),
-        (S.height = 2 * n),
-        gListManager.PolyYCurve(s, S, 20, 0, 0, 0, n, !1);
-    else if (t < 0 && a > 0)
-      (S.x = r),
-        (S.y = i),
-        (S.width = n),
-        (S.height = 2 * n),
-        gListManager.PolyYCurve(s, S, 20, 0, 0, 0, n, !0);
-    else if (t > 0 && a < 0)
-      (S.x = r - n),
-        (S.y = i),
-        (S.width = n),
-        (S.height = -2 * n),
-        gListManager.PolyYCurve(s, S, 20, 0, 0, 0, -n, !1);
-    else if (t < 0 && a < 0)
-      for (
-        S.x = r,
-        S.y = i - 2 * n,
-        S.width = n,
-        S.height = 2 * n,
-        gListManager.PolyYCurve(l, S, 20, 0, 0, n, 0, !0),
-        o = l.length - 1;
-        o >= 0;
-        o--
+  /**
+   * Calculates the intersection point between an arc and a line
+   * This function determines if and where a line intersects with an arc segment,
+   * and returns the intersection point in the provided output parameter
+   *
+   * @param arcSegment - The arc segment to test for intersection
+   * @param lineSegment - The line segment to test for intersection
+   * @param intersectionPoint - Object to store the intersection point coordinates
+   * @returns True if an intersection is found, false otherwise
+   */
+  static ArcIntersect(arcSegment, lineSegment, intersectionPoint) {
+    // Calculate the arc's center and radius
+    let arcDeltaX = arcSegment.EndPoint.x - arcSegment.StartPoint.x;
+    let arcDeltaY = arcSegment.EndPoint.y - arcSegment.StartPoint.y;
+
+    // Calculate the center and radius of the arc
+    let arcInfo = arcSegment.IsReversed
+      ? arcSegment.CalcRadiusAndCenter(
+        arcSegment.EndPoint.x,
+        arcSegment.EndPoint.y,
+        arcSegment.StartPoint.x,
+        arcSegment.StartPoint.y,
+        arcSegment.CurveAdjust,
+        arcSegment.IsReversed
       )
-        s.push(l[o]);
-    return s;
-  }
+      : arcSegment.CalcRadiusAndCenter(
+        arcSegment.StartPoint.x,
+        arcSegment.StartPoint.y,
+        arcSegment.EndPoint.x,
+        arcSegment.EndPoint.y,
+        arcSegment.CurveAdjust,
+        arcSegment.IsReversed
+      );
 
-  static PolyLJoin(e, t, a, r, i) {
-    var n, o, s, l, S, c, u, p, d, D, g, h, m, C, y, f = null, L = null, I = null, T = null, b = [], M = [], P = !1, R = [], A = !1, _ = OptConstant.ActionTriggerType.LineEnd, E = {
-      x: 0,
-      y: 0
-    }, w = {}, F = OptConstant.Common.KnobSize, v = -1, G = LayerUtil.ActiveVisibleZList(), N = !1;
+    let arcCenter = {
+      x: arcInfo.centerX,
+      y: arcInfo.centerY
+    };
+    let radius = arcInfo.radius;
 
-    f = DataUtil.GetObjectPtr(e, !0);
-    if (f == null) return -1;
+    // Calculate the line's parameters
+    let lineDeltaX = lineSegment.EndPoint.x - lineSegment.StartPoint.x;
+    let lineDeltaY = lineSegment.EndPoint.y - lineSegment.StartPoint.y;
+    let isLineVertical = lineDeltaX === 0;
+    let lineSlope = isLineVertical ? 1 : lineDeltaY / lineDeltaX;
+    let lineStartX = lineSegment.StartPoint.x;
+    let lineStartY = lineSegment.StartPoint.y;
 
-    L = DataUtil.GetObjectPtr(a, !0);
-    if (L == null) return -1;
+    // Get arc points for hit testing
+    let arcPoints = arcSegment.GetPolyPoints(
+      SDJS.ListManager.Defines.NPOLYPTS,
+      false,
+      false,
+      false,
+      null
+    );
 
-    h = f.DataID;
-    if (L.DataID >= 0) h = L.DataID;
+    // Check for horizontal line case (slope = 0)
+    if (lineSlope === 0) {
+      // Calculate distance from line to arc center on Y axis
+      let distanceToArcCenter = lineSegment.StartPoint.y - arcCenter.y;
+      let squaredDistance = distanceToArcCenter * distanceToArcCenter;
+      let discriminant = radius * radius - squaredDistance;
 
-    m = f.NoteID;
-    if (L.NoteID >= 0) m = L.NoteID;
+      // No intersection if discriminant is negative
+      if (discriminant < 0) return false;
 
-    y = f.CommentID;
-    if (L.CommentID >= 0) y = L.CommentID;
+      // Calculate the two possible X coordinates
+      let xOffset = Utils2.sqrt(discriminant);
 
-    C = f.HyperlinkText;
-    if (L.HyperlinkText) C = L.HyperlinkText;
+      // First possible intersection point
+      let x1 = xOffset + arcCenter.x;
+      intersectionPoint.x = x1;
+      intersectionPoint.y = lineStartY;
 
-    if (r === OptConstant.HookPts.WTL || r === OptConstant.HookPts.WTR) r = OptConstant.HookPts.KTL;
-
-    if (e === a && f.LineType === OptConstant.LineType.POLYLINE) {
-      A = f.polylist.closed;
-      f.polylist.closed = !0;
-      s = f.polylist.segs.length;
-      f.polylist.segs[s - 1].pt.x = f.polylist.segs[0].pt.x;
-      f.polylist.segs[s - 1].pt.y = f.polylist.segs[0].pt.y;
-      f.EndPoint.x = f.StartPoint.x;
-      f.EndPoint.y = f.StartPoint.y;
-      if (f.objecttype !== NvConstant.FNObjectTypes.FlWall) this.OpenShapeEdit(e);
-
-      var k = -1;
-      if (f instanceof Instance.Shape.PolyLineContainer && !A && i !== !0) {
-        f.MaintainDimensionThroughPolygonOpennessChange(f.polylist.closed);
-        k = -2;
+      // Check if the point is on the arc segment
+      if (SDJS.ListManager.LM.prototype.LineDStyleHit(
+        arcPoints,
+        intersectionPoint,
+        arcSegment.StyleRecord.lineThickness,
+        0,
+        null
+      ) || Utils2.PtInRect(arcSegment.Frame, intersectionPoint)) {
+        return true;
       }
 
-      f.CalcFrame();
-      DataUtil.AddToDirtyList(f.BlockID);
-      OptCMUtil.SetLinkFlag(e, DSConstant.LinkFlags.Move);
-      HookUtil.MaintainLink(e, f, null, _, !1);
-      return k;
+      // Second possible intersection point
+      let x2 = -xOffset + arcCenter.x;
+      intersectionPoint.x = x2;
+      intersectionPoint.y = lineStartY;
+
+      // Check if the point is on the arc segment
+      return SDJS.ListManager.LM.prototype.LineDStyleHit(
+        arcPoints,
+        intersectionPoint,
+        arcSegment.StyleRecord.lineThickness,
+        0,
+        null
+      ) || Utils2.PtInRect(arcSegment.Frame, intersectionPoint);
     }
-    if (f.LineType === OptConstant.LineType.POLYLINE) {
-      I = f;
-      T = L;
-      M.push(a);
-      c = e;
-    } else if (L.LineType === OptConstant.LineType.POLYLINE) {
-      I = L;
-      T = f;
-      u = t;
-      t = r;
-      r = u;
-      M.push(e);
-      c = a;
+    // Check for vertical line case
+    else if (isLineVertical) {
+      // Calculate distance from line to arc center on X axis
+      let distanceToArcCenter = lineSegment.StartPoint.x - arcCenter.x;
+      let squaredDistance = distanceToArcCenter * distanceToArcCenter;
+      let discriminant = radius * radius - squaredDistance;
+
+      // No intersection if discriminant is negative
+      if (discriminant < 0) return false;
+
+      // Calculate the two possible Y coordinates
+      let yOffset = SDJS.Utils.sqrt(discriminant);
+
+      // First possible intersection point
+      let y1 = yOffset + arcCenter.y;
+      intersectionPoint.x = lineStartX;
+      intersectionPoint.y = y1;
+
+      // Check if the point is on the arc segment
+      if (SDJS.ListManager.LM.prototype.LineDStyleHit(
+        arcPoints,
+        intersectionPoint,
+        arcSegment.StyleRecord.lineThickness,
+        0,
+        null
+      ) || Utils2.PtInRect(arcSegment.Frame, intersectionPoint)) {
+        return true;
+      }
+
+      // Second possible intersection point
+      let y2 = -yOffset + arcCenter.y;
+      intersectionPoint.x = lineStartX;
+      intersectionPoint.y = y2;
+
+      // Check if the point is on the arc segment
+      return SDJS.ListManager.LM.prototype.LineDStyleHit(
+        arcPoints,
+        intersectionPoint,
+        arcSegment.StyleRecord.lineThickness,
+        0,
+        null
+      ) || Utils2.PtInRect(arcSegment.Frame, intersectionPoint);
+    }
+    // General case: sloped line
+    else {
+      // Calculate coefficients for quadratic formula
+      let a = lineSlope * lineSlope + 1;
+      let yIntercept = lineStartY - lineSlope * lineStartX - arcCenter.y;
+      let b = 2 * lineSlope * yIntercept - 2 * arcCenter.x;
+      let c = arcCenter.x * arcCenter.x + yIntercept * yIntercept - radius * radius;
+
+      // Calculate discriminant of quadratic equation
+      let discriminant = b * b - 4 * a * c;
+
+      // No intersection if discriminant is negative
+      if (discriminant < 0) return false;
+
+      // Calculate the square root of discriminant
+      let sqrtDiscriminant = SDJS.Utils.sqrt(discriminant);
+
+      // First possible intersection point
+      let x1 = (-b + sqrtDiscriminant) / (2 * a);
+      let y1 = lineStartY + lineSlope * (x1 - lineStartX);
+      intersectionPoint.x = x1;
+      intersectionPoint.y = y1;
+
+      // Check if the point is on the arc segment
+      if (SDJS.ListManager.LM.prototype.LineDStyleHit(
+        arcPoints,
+        intersectionPoint,
+        arcSegment.StyleRecord.lineThickness,
+        0,
+        null
+      ) || Utils2.PtInRect(arcSegment.Frame, intersectionPoint)) {
+        return true;
+      }
+
+      // Second possible intersection point
+      let x2 = (-b - sqrtDiscriminant) / (2 * a);
+      let y2 = lineStartY + lineSlope * (x2 - lineStartX);
+      intersectionPoint.x = x2;
+      intersectionPoint.y = y2;
+
+      // Check if the point is on the arc segment
+      return SDJS.ListManager.LM.prototype.LineDStyleHit(
+        arcPoints,
+        intersectionPoint,
+        arcSegment.StyleRecord.lineThickness,
+        0,
+        null
+      ) || Utils2.PtInRect(arcSegment.Frame, intersectionPoint);
+    }
+  }
+
+  /**
+   * Maintains a consistent distance between lines or constrains point movement along a line
+   * @param targetLine - The primary line to maintain distance for
+   * @param referenceLine - The reference line (defaults to targetLine if null)
+   * @param actionType - The action trigger type (LINESTART or LINEEND)
+   * @param pointToAdjust - The point whose position will be adjusted
+   */
+  static LinesMaintainDist(targetLine, referenceLine, actionType, pointToAdjust) {
+    let deltaX, deltaY, distance, maxDistance;
+    let lineLength, normalizedDeltaY, normalizedDeltaX;
+    let startPoint, endPoint, anchorPoint;
+    let connectLine = {};
+    let adjustedPoint = { x: 0, y: 0 };
+    let arcCenterPoint = {};
+
+    // Use the target line as reference if none provided
+    if (referenceLine === null) {
+      referenceLine = targetLine;
     }
 
-    if (I == null) {
-      M.push(a);
-      M.push(e);
-      v = Math.min(G.indexOf(a), G.indexOf(e));
-      var U = {
+    // Get line points either from connectLine or directly
+    connectLine = referenceLine.GetConnectLine();
+    if (connectLine) {
+      startPoint = connectLine.startpt;
+      endPoint = connectLine.endpt;
+    } else {
+      startPoint = referenceLine.StartPoint;
+      endPoint = referenceLine.EndPoint;
+    }
+
+    // Calculate reference line vector
+    deltaX = endPoint.x - startPoint.x;
+    deltaY = endPoint.y - startPoint.y;
+
+    Math.sqrt(deltaX * deltaX + deltaY * deltaY); // Unused calculation
+
+    // Create a working copy of the point
+    adjustedPoint.x = pointToAdjust.x;
+    adjustedPoint.y = pointToAdjust.y;
+
+    // Convert arc point to chord point for arc lines
+    if (referenceLine.LineType === SDJS.ListManager.LineType.ARCLINE) {
+      adjustedPoint = this.ArcToChord(startPoint, endPoint, adjustedPoint, connectLine, referenceLine);
+    }
+
+    // Calculate the vector from anchor point to adjustedPoint based on action type
+    if (actionType === SDJS.ListManager.ActionTriggerType.LINESTART) {
+      deltaX = adjustedPoint.x - endPoint.x;
+      deltaY = adjustedPoint.y - endPoint.y;
+    } else {
+      deltaX = adjustedPoint.x - startPoint.x;
+      deltaY = adjustedPoint.y - startPoint.y;
+    }
+
+    // Calculate distance to maintain
+    distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+    // Get points for target line
+    connectLine = targetLine.GetConnectLine();
+    if (connectLine) {
+      startPoint = connectLine.startpt;
+      endPoint = connectLine.endpt;
+    } else {
+      startPoint = targetLine.StartPoint;
+      endPoint = targetLine.EndPoint;
+    }
+
+    // Set anchor point and calculate vector based on action type
+    if (actionType === SDJS.ListManager.ActionTriggerType.LINESTART) {
+      anchorPoint = endPoint;
+      deltaX = -(endPoint.x - startPoint.x);
+      deltaY = -(endPoint.y - startPoint.y);
+    } else {
+      anchorPoint = startPoint;
+      deltaX = endPoint.x - startPoint.x;
+      deltaY = endPoint.y - startPoint.y;
+    }
+
+    // Calculate maximum allowed distance
+    maxDistance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+    // Constrain distance to max line length
+    if (distance > maxDistance) {
+      distance = maxDistance;
+    }
+
+    // Handle degenerate case
+    if (maxDistance < 1) {
+      pointToAdjust.x = startPoint.x;
+      pointToAdjust.y = startPoint.y;
+    } else {
+      // Normalize direction vector
+      normalizedDeltaY = deltaY / maxDistance;
+      normalizedDeltaX = deltaX / maxDistance;
+
+      // Calculate new position
+      pointToAdjust.x = anchorPoint.x + normalizedDeltaX * distance;
+      pointToAdjust.y = anchorPoint.y + normalizedDeltaY * distance;
+    }
+
+    // Convert chord point back to arc point for arc lines
+    if (targetLine.LineType === SDJS.ListManager.LineType.ARCLINE) {
+      const arcInfo = targetLine.CalcRadiusAndCenter(
+        targetLine.StartPoint.x,
+        targetLine.StartPoint.y,
+        targetLine.EndPoint.x,
+        targetLine.EndPoint.y,
+        targetLine.CurveAdjust,
+        targetLine.IsReversed
+      );
+
+      const isFlipArc = false;
+      const isReversed = connectLine ? false : targetLine.IsReversed;
+
+      arcCenterPoint.x = arcInfo.centerX;
+      arcCenterPoint.y = arcInfo.centerY;
+
+      pointToAdjust = this.ChordToArc(
+        startPoint,
+        endPoint,
+        arcCenterPoint,
+        arcInfo.radius,
+        isReversed,
+        isFlipArc,
+        arcInfo.centerInside,
+        pointToAdjust
+      );
+    }
+  }
+
+  /**
+   * Sets a point to the maximum allowable dimensions
+   * @param point - The point to set to maximum dimensions
+   * @returns Always returns true
+   */
+  static GetMaxDim(point) {
+    point.x = SDJS.ListManager.Defines.SD_MaxLongDim;
+    point.y = SDJS.ListManager.Defines.SD_MaxLongDim;
+    return true;
+  }
+
+  /**
+   * Generates curve points for line connections based on direction vectors
+   * @param isRightSide - Whether to place curve on the right side
+   * @param directionX - X direction vector (-1 for left, 1 for right)
+   * @param directionY - Y direction vector (-1 for up, 1 for down)
+   * @param originX - X coordinate of curve origin
+   * @param originY - Y coordinate of curve origin
+   * @param curveSize - Size/radius of the curve
+   * @returns Array of points defining the curve
+   */
+  static LinesAddCurve(isRightSide, directionX, directionY, originX, originY, curveSize) {
+    let index;
+    let curvePoints = [];
+    let tempPoints = [];
+    let curveRect = {};
+
+    if (isRightSide) {
+      // Right side curves
+      if (directionX > 0 && directionY > 0) {
+        // Right-down direction
+        curveRect.x = originX;
+        curveRect.y = originY;
+        curveRect.width = curveSize;
+        curveRect.height = -2 * curveSize;
+
+        gListManager.PolyYCurve(tempPoints, curveRect, 20, 0, 0, 0, -curveSize, true);
+
+        // Reverse points order
+        for (index = tempPoints.length - 1; index >= 0; index--) {
+          curvePoints.push(tempPoints[index]);
+        }
+      } else if (directionX < 0 && directionY > 0) {
+        // Left-down direction
+        curveRect.x = originX;
+        curveRect.y = originY + 2 * curveSize;
+        curveRect.width = curveSize;
+        curveRect.height = -2 * curveSize;
+
+        gListManager.PolyYCurve(curvePoints, curveRect, 20, 0, 0, -curveSize, 0, true);
+      } else if (directionX > 0 && directionY < 0) {
+        // Right-up direction
+        curveRect.x = originX;
+        curveRect.y = originY - 2 * curveSize;
+        curveRect.width = -curveSize;
+        curveRect.height = 2 * curveSize;
+
+        gListManager.PolyYCurve(curvePoints, curveRect, 20, 0, 0, curveSize, 0, true);
+      } else if (directionX < 0 && directionY < 0) {
+        // Left-up direction
+        curveRect.x = originX;
+        curveRect.y = originY + 2 * curveSize;
+        curveRect.width = -curveSize;
+        curveRect.height = -2 * curveSize;
+
+        gListManager.PolyYCurve(curvePoints, curveRect, 20, 0, 0, -curveSize, 0, true);
+      }
+    } else {
+      // Left side curves
+      if (directionX > 0 && directionY > 0) {
+        // Right-down direction
+        curveRect.x = originX - curveSize;
+        curveRect.y = originY;
+        curveRect.width = curveSize;
+        curveRect.height = 2 * curveSize;
+
+        gListManager.PolyYCurve(curvePoints, curveRect, 20, 0, 0, 0, curveSize, false);
+      } else if (directionX < 0 && directionY > 0) {
+        // Left-down direction
+        curveRect.x = originX;
+        curveRect.y = originY;
+        curveRect.width = curveSize;
+        curveRect.height = 2 * curveSize;
+
+        gListManager.PolyYCurve(curvePoints, curveRect, 20, 0, 0, 0, curveSize, true);
+      } else if (directionX > 0 && directionY < 0) {
+        // Right-up direction
+        curveRect.x = originX - curveSize;
+        curveRect.y = originY;
+        curveRect.width = curveSize;
+        curveRect.height = -2 * curveSize;
+
+        gListManager.PolyYCurve(curvePoints, curveRect, 20, 0, 0, 0, -curveSize, false);
+      } else if (directionX < 0 && directionY < 0) {
+        // Left-up direction
+        curveRect.x = originX;
+        curveRect.y = originY - 2 * curveSize;
+        curveRect.width = curveSize;
+        curveRect.height = 2 * curveSize;
+
+        gListManager.PolyYCurve(tempPoints, curveRect, 20, 0, 0, curveSize, 0, true);
+
+        // Reverse points order
+        for (index = tempPoints.length - 1; index >= 0; index--) {
+          curvePoints.push(tempPoints[index]);
+        }
+      }
+    }
+
+    return curvePoints;
+  }
+
+  /**
+   * Joins two polylines together or closes a polyline to form a polygon
+   * This function connects two polylines at their endpoints, forming a single polyline,
+   * or closes a single polyline to form a polygon.
+   *
+   * @param sourceBlockId - Block ID of the source polyline
+   * @param sourceHookPoint - Connection point on the source polyline
+   * @param targetBlockId - Block ID of the target polyline
+   * @param targetHookPoint - Connection point on the target polyline
+   * @param skipDimensionMaintenance - Whether to skip dimension maintenance during the operation
+   * @returns The block ID of the resulting polyline/polygon, or a status code (-1 if failed, -2 for special cases)
+   */
+  static PolyLJoin(sourceBlockId, sourceHookPoint, targetBlockId, targetHookPoint, skipDimensionMaintenance) {
+    let sourceIndex, targetIndex, segmentCount, offsetX, offsetY, lineType;
+    let polyPointsCount, blockIndexInLayer;
+    let resultBlockId, currentHookPoint;
+    let arcQuadrantInfo, polySegmentIndex, distanceCheckRect;
+    let dataId, noteId, commentId, hyperlinkText;
+
+    let sourceObject = null;
+    let targetObject = null;
+    let mainPolyline = null;
+    let secondaryPolyline = null;
+    let blocksToDelete = [];
+    let objectsToSelect = [];
+    let wasSourceClosed = false;
+    let needsRender = false;
+
+    // Action trigger type for hook maintenance
+    let hookTriggerType = OptConstant.ActionTriggerType.LineEnd;
+
+    // Temporary points and objects
+    let tempPoint = { x: 0, y: 0 };
+    let tempPoint2 = {};
+
+    // Constants
+    const KNOB_SIZE = OptConstant.Common.KnobSize;
+
+    // Get layer information
+    let layerPosition = -1;
+    let visibleLayers = LayerUtil.ActiveVisibleZList();
+
+    // Get source object
+    sourceObject = DataUtil.GetObjectPtr(sourceBlockId, true);
+    if (sourceObject == null) return -1;
+
+    // Get target object
+    targetObject = DataUtil.GetObjectPtr(targetBlockId, true);
+    if (targetObject == null) return -1;
+
+    // Preserve metadata from objects (use the valid ones)
+    dataId = sourceObject.DataID;
+    if (targetObject.DataID >= 0) dataId = targetObject.DataID;
+
+    noteId = sourceObject.NoteID;
+    if (targetObject.NoteID >= 0) noteId = targetObject.NoteID;
+
+    commentId = sourceObject.CommentID;
+    if (targetObject.CommentID >= 0) commentId = targetObject.CommentID;
+
+    hyperlinkText = sourceObject.HyperlinkText;
+    if (targetObject.HyperlinkText) hyperlinkText = targetObject.HyperlinkText;
+
+    // Convert wall connection points if needed
+    if (targetHookPoint === OptConstant.HookPts.WTL || targetHookPoint === OptConstant.HookPts.WTR) {
+      targetHookPoint = OptConstant.HookPts.KTL;
+    }
+
+    // Handle self-connection case (closing a polyline to form a polygon)
+    if (sourceBlockId === targetBlockId && sourceObject.LineType === OptConstant.LineType.POLYLINE) {
+      wasSourceClosed = sourceObject.polylist.closed;
+      sourceObject.polylist.closed = true;
+      segmentCount = sourceObject.polylist.segs.length;
+
+      // Connect the last point to the first point
+      sourceObject.polylist.segs[segmentCount - 1].pt.x = sourceObject.polylist.segs[0].pt.x;
+      sourceObject.polylist.segs[segmentCount - 1].pt.y = sourceObject.polylist.segs[0].pt.y;
+      sourceObject.EndPoint.x = sourceObject.StartPoint.x;
+      sourceObject.EndPoint.y = sourceObject.StartPoint.y;
+
+      // Open shape editor if not a wall
+      if (sourceObject.objecttype !== NvConstant.FNObjectTypes.FlWall) {
+        this.OpenShapeEdit(sourceBlockId);
+      }
+
+      // Handle dimension maintenance for PolyLineContainers
+      let result = -1;
+      if (sourceObject instanceof Instance.Shape.PolyLineContainer && !wasSourceClosed && skipDimensionMaintenance !== true) {
+        sourceObject.MaintainDimensionThroughPolygonOpennessChange(sourceObject.polylist.closed);
+        result = -2;
+      }
+
+      // Update frame and mark as dirty
+      sourceObject.CalcFrame();
+      DataUtil.AddToDirtyList(sourceObject.BlockID);
+      OptCMUtil.SetLinkFlag(sourceBlockId, DSConstant.LinkFlags.Move);
+      HookUtil.MaintainLink(sourceBlockId, sourceObject, null, hookTriggerType, false);
+      return result;
+    }
+
+    // Determine which object is the polyline (if either)
+    if (sourceObject.LineType === OptConstant.LineType.POLYLINE) {
+      mainPolyline = sourceObject;
+      secondaryPolyline = targetObject;
+      blocksToDelete.push(targetBlockId);
+      resultBlockId = sourceBlockId;
+    } else if (targetObject.LineType === OptConstant.LineType.POLYLINE) {
+      mainPolyline = targetObject;
+      secondaryPolyline = sourceObject;
+      // Swap hook points
+      let tempHook = sourceHookPoint;
+      sourceHookPoint = targetHookPoint;
+      targetHookPoint = tempHook;
+      blocksToDelete.push(sourceBlockId);
+      resultBlockId = targetBlockId;
+    }
+
+    // If neither is a polyline, create a new one
+    if (mainPolyline == null) {
+      blocksToDelete.push(targetBlockId);
+      blocksToDelete.push(sourceBlockId);
+
+      // Remember layer position to restore it later
+      layerPosition = Math.min(visibleLayers.indexOf(targetBlockId), visibleLayers.indexOf(sourceBlockId));
+
+      // Create new polyline object
+      let newPolylineData = {
         Frame: {
-          x: f.Frame.x,
-          y: f.Frame.x,
-          width: f.Frame.width,
-          height: f.Frame.height
+          x: sourceObject.Frame.x,
+          y: sourceObject.Frame.x,
+          width: sourceObject.Frame.width,
+          height: sourceObject.Frame.height
         },
         inside: {
-          x: f.inside.x,
-          y: f.inside.x,
-          width: f.inside.width,
-          height: f.inside.height
+          x: sourceObject.inside.x,
+          y: sourceObject.inside.x,
+          width: sourceObject.inside.width,
+          height: sourceObject.inside.height
         },
         StartPoint: {
-          x: f.StartPoint.x,
-          y: f.StartPoint.y
+          x: sourceObject.StartPoint.x,
+          y: sourceObject.StartPoint.y
         },
         EndPoint: {
-          x: f.EndPoint.x,
-          y: f.EndPoint.y
+          x: sourceObject.EndPoint.x,
+          y: sourceObject.EndPoint.y
         },
         flags: NvConstant.ObjFlags.Erase | NvConstant.ObjFlags.EraseOnGrow,
         extraflags: OptConstant.ExtraFlags.SideKnobs,
-        StartArrowID: L.StartArrowID,
-        EndArrowID: L.EndArrowID,
-        StartArrowDisp: L.StartArrowDisp,
-        EndArrowDisp: L.EndArrowDisp,
-        ArrowSizeIndex: L.ArrowSizeIndex,
-        TextFlags: f.TextFlags,
-        objecttype: f.objecttype,
-        Dimensions: f.Dimensions,
+        StartArrowID: targetObject.StartArrowID,
+        EndArrowID: targetObject.EndArrowID,
+        StartArrowDisp: targetObject.StartArrowDisp,
+        EndArrowDisp: targetObject.EndArrowDisp,
+        ArrowSizeIndex: targetObject.ArrowSizeIndex,
+        TextFlags: sourceObject.TextFlags,
+        objecttype: sourceObject.objecttype,
+        Dimensions: sourceObject.Dimensions,
         dataclass: PolygonConstant.ShapeTypes.POLYGON,
         polylist: new PolyList()
       };
 
-      if (L.StartArrowID === 0 && f.StartArrowID > 0) {
-        U.StartArrowID = f.StartArrowID;
-        U.StartArrowDisp = f.StartArrowDisp;
-        U.ArrowSizeIndex = f.ArrowSizeIndex;
+      // Set arrow properties (use non-zero values from either source)
+      if (targetObject.StartArrowID === 0 && sourceObject.StartArrowID > 0) {
+        newPolylineData.StartArrowID = sourceObject.StartArrowID;
+        newPolylineData.StartArrowDisp = sourceObject.StartArrowDisp;
+        newPolylineData.ArrowSizeIndex = sourceObject.ArrowSizeIndex;
       }
 
-      if (L.EndArrowID === 0 && f.EndArrowID > 0) {
-        U.EndArrowID = f.EndArrowID;
-        U.EndArrowDisp = f.EndArrowDisp;
-        U.ArrowSizeIndex = f.ArrowSizeIndex;
+      if (targetObject.EndArrowID === 0 && sourceObject.EndArrowID > 0) {
+        newPolylineData.EndArrowID = sourceObject.EndArrowID;
+        newPolylineData.EndArrowDisp = sourceObject.EndArrowDisp;
+        newPolylineData.ArrowSizeIndex = sourceObject.ArrowSizeIndex;
       }
 
-      U.StyleRecord = Utils1.DeepCopy(f.StyleRecord);
+      // Copy style from source object
+      newPolylineData.StyleRecord = Utils1.DeepCopy(sourceObject.StyleRecord);
 
-      if (U.objecttype === NvConstant.FNObjectTypes.FlWall) {
-        U.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.Transparent;
+      // For walls, use transparent fill
+      if (newPolylineData.objecttype === NvConstant.FNObjectTypes.FlWall) {
+        newPolylineData.StyleRecord.Fill.Paint.FillType = NvConstant.FillTypes.Transparent;
       }
 
-      U.StyleRecord.Fill.Hatch = 0;
+      // Clear hatch pattern
+      newPolylineData.StyleRecord.Fill.Hatch = 0;
 
-      var polyPoints = f.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, true, false, null);
-      var numPoints = polyPoints.length;
+      // Get polyline points from source
+      let polyPoints = sourceObject.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, true, false, null);
+      let numPoints = polyPoints.length;
 
-      for (var n = 0; n < numPoints; n++) {
-        var lineType = (n === 0 || f.LineType === OptConstant.LineType.SEGLINE) ? OptConstant.LineType.LINE : f.LineType;
-        U.polylist.segs.push(new PolySeg(lineType, polyPoints[n].x - f.StartPoint.x, polyPoints[n].y - f.StartPoint.y));
+      // Create segments for the polyline
+      for (let i = 0; i < numPoints; i++) {
+        // Use appropriate line type
+        let currentLineType = (i === 0 || sourceObject.LineType === OptConstant.LineType.SEGLINE)
+          ? OptConstant.LineType.LINE
+          : sourceObject.LineType;
 
-        if (lineType === OptConstant.LineType.ARCLINE) {
-          U.polylist.segs[U.polylist.segs.length - 1].param = f.IsReversed ? f.CurveAdjust : -f.CurveAdjust;
-        } else if (lineType === OptConstant.LineType.ARCSEGLINE) {
+        newPolylineData.polylist.segs.push(new PolySeg(
+          currentLineType,
+          polyPoints[i].x - sourceObject.StartPoint.x,
+          polyPoints[i].y - sourceObject.StartPoint.y
+        ));
 
-          var arcQuadrant = this.PolyLinePrPolyLGetArcQuadrant(polyPoints[n - 1], polyPoints[n], 0);
+        // Set parameters for arc lines
+        if (currentLineType === OptConstant.LineType.ARCLINE) {
+          newPolylineData.polylist.segs[newPolylineData.polylist.segs.length - 1].param =
+            sourceObject.IsReversed ? sourceObject.CurveAdjust : -sourceObject.CurveAdjust;
+        } else if (currentLineType === OptConstant.LineType.ARCSEGLINE) {
+          // Calculate arc quadrant parameters
+          let arcQuadrant = this.PolyLinePrPolyLGetArcQuadrant(polyPoints[i - 1], polyPoints[i], 0);
 
-          U.polylist.segs[U.polylist.segs.length - 1].param = arcQuadrant.param;
-          U.polylist.segs[U.polylist.segs.length - 1].ShortRef = arcQuadrant.ShortRef;
+          newPolylineData.polylist.segs[newPolylineData.polylist.segs.length - 1].param = arcQuadrant.param;
+          newPolylineData.polylist.segs[newPolylineData.polylist.segs.length - 1].ShortRef = arcQuadrant.ShortRef;
         }
       }
 
-      I = wallOpt.AddNewPolyLine(f.objecttype, U) || new Instance.Shape.PolyLine(U);
-      T = L;
-      P = true;
+      // Create the new polyline object
+      mainPolyline = wallOpt.AddNewPolyLine(sourceObject.objecttype, newPolylineData) || new Instance.Shape.PolyLine(newPolylineData);
+      secondaryPolyline = targetObject;
+      needsRender = true;
     }
-    if (t === OptConstant.HookPts.KTL)
-      var J = {
-        x: I.StartPoint.x,
-        y: I.StartPoint.y
+
+    // Get connection points based on hook points
+    let firstPoint, secondPoint;
+
+    if (sourceHookPoint === OptConstant.HookPts.KTL) {
+      firstPoint = {
+        x: mainPolyline.StartPoint.x,
+        y: mainPolyline.StartPoint.y
       };
-    else
-      J = {
-        x: I.EndPoint.x,
-        y: I.EndPoint.y
-      };
-    if (r === OptConstant.HookPts.KTL)
-      var x = {
-        x: T.StartPoint.x,
-        y: T.StartPoint.y
-      };
-    else
-      x = {
-        x: T.EndPoint.x,
-        y: T.EndPoint.y
-      };
-    if (l = J.x - x.x,
-      S = J.y - x.y,
-      T.StartPoint.x += l,
-      T.StartPoint.y += S,
-      T.EndPoint.x += l,
-      T.EndPoint.y += S,
-      (o = (b = T.GetPolyPoints(OptConstant.Common.MaxPolyPoints, !1, !0, !1, null)).length) + (s = I.polylist.segs.length) > OptConstant.Common.MaxPolySegs)
-      -1;
-    if (t === OptConstant.HookPts.KTL) {
-      if (_ = OptConstant.ActionTriggerType.LineStart,
-        r === OptConstant.HookPts.KTL) {
-        for (l = I.StartPoint.x - b[o - 1].x,
-          S = I.StartPoint.y - b[o - 1].y,
-          n = 0; n < s; n++)
-          I.polylist.segs[n].pt.x += l,
-            I.polylist.segs[n].pt.y += S;
-        for (I.StartPoint.x = b[o - 1].x,
-          I.StartPoint.y = b[o - 1].y,
-          n = 1; n < o; n++) {
-          switch (T.LineType) {
-            case OptConstant.LineType.POLYLINE:
-              E.x = I.polylist.segs[0].pt.x,
-                E.y = I.polylist.segs[0].pt.y,
-                I.polylist.segs[0] = Utils1.DeepCopy(T.polylist.segs[n]),
-                I.polylist.segs[0].pt.x = E.x,
-                I.polylist.segs[0].pt.y = E.y,
-                I.polylist.segs[0].param = -I.polylist.segs[0].param;
-              break;
-            case OptConstant.LineType.ARCLINE:
-              I.polylist.segs[0].LineType = T.LineType,
-                T.IsReversed ? I.polylist.segs[0].param = -T.CurveAdjust : I.polylist.segs[0].param = T.CurveAdjust;
-              break;
-            case OptConstant.LineType.ARCSEGLINE:
-              I.polylist.segs[0].LineType = T.LineType,
-                I.polylist.segs[0].param = 0,
-                g = I.PrPolyLGetArcQuadrant(b[n], b[n - 1], 0),
-                I.polylist.segs[0].param = g.param,
-                I.polylist.segs[0].ShortRef = g.ShortRef;
-              break;
-            default:
-              I.polylist.segs[0].LineType = OptConstant.LineType.LINE
-          }
-          I.polylist.segs.unshift(new PolySeg(OptConstant.LineType.LINE, b[n].x - I.StartPoint.x, b[n].y - I.StartPoint.y))
-        }
-      } else {
-        for (l = I.StartPoint.x - b[0].x,
-          S = I.StartPoint.y - b[0].y,
-          n = 0; n < s; n++)
-          I.polylist.segs[n].pt.x += l,
-            I.polylist.segs[n].pt.y += S;
-        switch (I.StartPoint.x = b[0].x,
-        I.StartPoint.y = b[0].y,
-        T.LineType) {
-          case OptConstant.LineType.POLYLINE:
-            E.x = I.polylist.segs[0].pt.x,
-              E.y = I.polylist.segs[0].pt.y,
-              I.polylist.segs[0] = Utils1.DeepCopy(T.polylist.segs[o - 1]),
-              I.polylist.segs[0].pt.x = E.x,
-              I.polylist.segs[0].pt.y = E.y;
-            break;
-          case OptConstant.LineType.ARCLINE:
-            I.polylist.segs[0].LineType = T.LineType,
-              T.IsReversed ? I.polylist.segs[0].param = T.CurveAdjust : I.polylist.segs[0].param = -T.CurveAdjust;
-            break;
-          case OptConstant.LineType.ARCSEGLINE:
-            I.polylist.segs[0].LineType = T.LineType,
-              I.polylist.segs[0].param = 0,
-              g = I.PrPolyLGetArcQuadrant(b[o - 2], b[o - 1], 0),
-              I.polylist.segs[0].param = g.param,
-              I.polylist.segs[0].ShortRef = g.ShortRef;
-            break;
-          default:
-            I.polylist.segs[0].LineType = OptConstant.LineType.LINE
-        }
-        for (n = o - 2; n >= 0; n--)
-          if (I.polylist.segs.unshift(new PolySeg(OptConstant.LineType.LINE, b[n].x - I.StartPoint.x, b[n].y - I.StartPoint.y)),
-            n > 0)
-            switch (T.LineType) {
-              case OptConstant.LineType.POLYLINE:
-                E.x = I.polylist.segs[0].pt.x,
-                  E.y = I.polylist.segs[0].pt.y,
-                  I.polylist.segs[0] = Utils1.DeepCopy(T.polylist.segs[n]),
-                  I.polylist.segs[0].pt.x = E.x,
-                  I.polylist.segs[0].pt.y = E.y;
-                break;
-              case OptConstant.LineType.ARCSEGLINE:
-                I.polylist.segs[0].LineType = T.LineType,
-                  w.x = b[n].x - I.StartPoint.x,
-                  w.y = b[n].y - I.StartPoint.y,
-                  I.polylist.segs[0].param = 0,
-                  g = I.PrPolyLGetArcQuadrant(b[n - 1], b[n], 0),
-                  I.polylist.segs[0].param = g.param,
-                  I.polylist.segs[0].ShortRef = g.ShortRef
-            }
-      }
-      D = Utils2.InflatePoint(I.polylist.segs[0].pt, F),
-        !I.polylist.closed && Utils2.pointInRect(D, I.polylist.segs[I.polylist.segs.length - 1].pt) && (I.polylist.closed = !0,
-          I.polylist.segs[I.polylist.segs.length - 1].pt.x = I.polylist.segs[0].pt.x,
-          I.polylist.segs[I.polylist.segs.length - 1].pt.y = I.polylist.segs[0].pt.y,
-          I.EndPoint.x = I.StartPoint.x,
-          I.EndPoint.y = I.StartPoint.y,
-          I instanceof Instance.Shape.PolyLine && !0 !== i && I.MaintainDimensionThroughPolygonOpennessChange(I.polylist.closed),
-          I.objecttype !== NvConstant.FNObjectTypes.FlWall && this.OpenShapeEdit(I.BlockID),
-          DataUtil.AddToDirtyList(I.BlockID))
     } else {
-      if (r === OptConstant.HookPts.KTL) {
-        for (n = 1; n < o; n++) {
-          switch (T.LineType) {
-            case OptConstant.LineType.POLYLINE:
-              p = T.polylist.segs[n].LineType;
-              break;
-            case OptConstant.LineType.ARCLINE:
-            case OptConstant.LineType.ARCSEGLINE:
-              p = T.LineType;
-              break;
-            default:
-              p = OptConstant.LineType.LINE
-          }
-          switch (I.polylist.segs.push(new PolySeg(p, b[n].x - I.StartPoint.x, b[n].y - I.StartPoint.y)),
-          T.LineType) {
-            case OptConstant.LineType.ARCLINE:
-              T.IsReversed ? I.polylist.segs[I.polylist.segs.length - 1].param = T.CurveAdjust : I.polylist.segs[I.polylist.segs.length - 1].param = -T.CurveAdjust;
-              break;
-            case OptConstant.LineType.POLYLINE:
-              I.polylist.segs[I.polylist.segs.length - 1] = Utils1.DeepCopy(T.polylist.segs[n]),
-                I.polylist.segs[I.polylist.segs.length - 1].pt.x = b[n].x - I.StartPoint.x,
-                I.polylist.segs[I.polylist.segs.length - 1].pt.y = b[n].y - I.StartPoint.y;
-              break;
-            case OptConstant.LineType.ARCSEGLINE:
-              w.x = b[n].x - I.StartPoint.x,
-                w.y = b[n].y - I.StartPoint.y,
-                d = I.polylist.segs.length,
-                I.polylist.segs[d - 1].param = 0,
-                g = I.PrPolyLGetArcQuadrant(b[n - 1], b[n], 0),
-                I.polylist.segs[d - 1].param = g.param,
-                I.polylist.segs[d - 1].ShortRef = g.ShortRef
-          }
+      firstPoint = {
+        x: mainPolyline.EndPoint.x,
+        y: mainPolyline.EndPoint.y
+      };
+    }
+
+    if (targetHookPoint === OptConstant.HookPts.KTL) {
+      secondPoint = {
+        x: secondaryPolyline.StartPoint.x,
+        y: secondaryPolyline.StartPoint.y
+      };
+    } else {
+      secondPoint = {
+        x: secondaryPolyline.EndPoint.x,
+        y: secondaryPolyline.EndPoint.y
+      };
+    }
+
+    // Calculate offset needed to align secondary polyline with main polyline
+    offsetX = firstPoint.x - secondPoint.x;
+    offsetY = firstPoint.y - secondPoint.y;
+
+    // Apply offset to secondary polyline
+    secondaryPolyline.StartPoint.x += offsetX;
+    secondaryPolyline.StartPoint.y += offsetY;
+    secondaryPolyline.EndPoint.x += offsetX;
+    secondaryPolyline.EndPoint.y += offsetY;
+
+    // Get polyline points
+    let polyPoints = secondaryPolyline.GetPolyPoints(OptConstant.Common.MaxPolyPoints, false, true, false, null);
+    polyPointsCount = polyPoints.length;
+    let mainPolySegmentCount = mainPolyline.polylist.segs.length;
+
+    // Check if the combined polyline would exceed maximum segment limit
+    if (polyPointsCount + mainPolySegmentCount > OptConstant.Common.MaxPolySegs) {
+      return -1;
+    }
+
+    // Handle connection at the start of the main polyline
+    if (sourceHookPoint === OptConstant.HookPts.KTL) {
+      // Update hook trigger type
+      hookTriggerType = OptConstant.ActionTriggerType.LineStart;
+
+      if (targetHookPoint === OptConstant.HookPts.KTL) {
+        // We're connecting start to start, so reverse secondary polyline
+
+        // Offset main polyline to match secondary polyline endpoint
+        offsetX = mainPolyline.StartPoint.x - polyPoints[polyPointsCount - 1].x;
+        offsetY = mainPolyline.StartPoint.y - polyPoints[polyPointsCount - 1].y;
+
+        for (let i = 0; i < mainPolySegmentCount; i++) {
+          mainPolyline.polylist.segs[i].pt.x += offsetX;
+          mainPolyline.polylist.segs[i].pt.y += offsetY;
         }
-        I.EndPoint.x = b[o - 1].x,
-          I.EndPoint.y = b[o - 1].y
+
+        // Update start point
+        mainPolyline.StartPoint.x = polyPoints[polyPointsCount - 1].x;
+        mainPolyline.StartPoint.y = polyPoints[polyPointsCount - 1].y;
+
+        // Add secondary polyline segments in reverse order
+        for (let i = 1; i < polyPointsCount; i++) {
+          switch (secondaryPolyline.LineType) {
+            case OptConstant.LineType.POLYLINE:
+              // Copy segment with correct properties
+              tempPoint.x = mainPolyline.polylist.segs[0].pt.x;
+              tempPoint.y = mainPolyline.polylist.segs[0].pt.y;
+              mainPolyline.polylist.segs[0] = Utils1.DeepCopy(secondaryPolyline.polylist.segs[i]);
+              mainPolyline.polylist.segs[0].pt.x = tempPoint.x;
+              mainPolyline.polylist.segs[0].pt.y = tempPoint.y;
+              mainPolyline.polylist.segs[0].param = -mainPolyline.polylist.segs[0].param;
+              break;
+
+            case OptConstant.LineType.ARCLINE:
+              // Set arc line properties
+              mainPolyline.polylist.segs[0].LineType = secondaryPolyline.LineType;
+              mainPolyline.polylist.segs[0].param = secondaryPolyline.IsReversed ?
+                -secondaryPolyline.CurveAdjust : secondaryPolyline.CurveAdjust;
+              break;
+
+            case OptConstant.LineType.ARCSEGLINE:
+              // Set arc segment properties
+              mainPolyline.polylist.segs[0].LineType = secondaryPolyline.LineType;
+              mainPolyline.polylist.segs[0].param = 0;
+              arcQuadrantInfo = mainPolyline.PrPolyLGetArcQuadrant(polyPoints[i], polyPoints[i - 1], 0);
+              mainPolyline.polylist.segs[0].param = arcQuadrantInfo.param;
+              mainPolyline.polylist.segs[0].ShortRef = arcQuadrantInfo.ShortRef;
+              break;
+
+            default:
+              mainPolyline.polylist.segs[0].LineType = OptConstant.LineType.LINE;
+          }
+
+          // Insert new segment at beginning
+          mainPolyline.polylist.segs.unshift(new PolySeg(
+            OptConstant.LineType.LINE,
+            polyPoints[i].x - mainPolyline.StartPoint.x,
+            polyPoints[i].y - mainPolyline.StartPoint.y
+          ));
+        }
       } else {
-        for (n = o - 2; n >= 0; n--) {
-          switch (T.LineType) {
-            case OptConstant.LineType.POLYLINE:
-              p = T.polylist.segs[n + 1].LineType;
-              break;
-            case OptConstant.LineType.ARCLINE:
-            case OptConstant.LineType.ARCSEGLINE:
-              p = T.LineType;
-              break;
-            default:
-              p = OptConstant.LineType.LINE
-          }
-          switch (I.polylist.segs.push(new PolySeg(p, b[n].x - I.StartPoint.x, b[n].y - I.StartPoint.y)),
-          T.LineType) {
-            case OptConstant.LineType.ARCLINE:
-              T.IsReversed ? I.polylist.segs[I.polylist.segs.length - 1].param = -T.CurveAdjust : I.polylist.segs[I.polylist.segs.length - 1].param = T.CurveAdjust;
-              break;
-            case OptConstant.LineType.POLYLINE:
-              I.polylist.segs[I.polylist.segs.length - 1] = Utils1.DeepCopy(T.polylist.segs[n + 1]),
-                I.polylist.segs[I.polylist.segs.length - 1].pt.x = b[n].x - I.StartPoint.x,
-                I.polylist.segs[I.polylist.segs.length - 1].pt.y = b[n].y - I.StartPoint.y,
-                I.polylist.segs[I.polylist.segs.length - 1].param = -I.polylist.segs[I.polylist.segs.length - 1].param;
-              break;
-            case OptConstant.LineType.ARCSEGLINE:
-              d = I.polylist.segs.length,
-                I.polylist.segs[d - 1].param = 0,
-                g = I.PrPolyLGetArcQuadrant(b[n + 1], b[n], 0),
-                I.polylist.segs[d - 1].param = g.param,
-                I.polylist.segs[d - 1].ShortRef = g.ShortRef
+        // We're connecting start to end
+
+        // Offset main polyline to match secondary polyline start
+        offsetX = mainPolyline.StartPoint.x - polyPoints[0].x;
+        offsetY = mainPolyline.StartPoint.y - polyPoints[0].y;
+
+        for (let i = 0; i < mainPolySegmentCount; i++) {
+          mainPolyline.polylist.segs[i].pt.x += offsetX;
+          mainPolyline.polylist.segs[i].pt.y += offsetY;
+        }
+
+        // Update start point
+        mainPolyline.StartPoint.x = polyPoints[0].x;
+        mainPolyline.StartPoint.y = polyPoints[0].y;
+
+        // Set line type for first segment
+        switch (secondaryPolyline.LineType) {
+          case OptConstant.LineType.POLYLINE:
+            // Copy segment with correct properties
+            tempPoint.x = mainPolyline.polylist.segs[0].pt.x;
+            tempPoint.y = mainPolyline.polylist.segs[0].pt.y;
+            mainPolyline.polylist.segs[0] = Utils1.DeepCopy(secondaryPolyline.polylist.segs[polyPointsCount - 1]);
+            mainPolyline.polylist.segs[0].pt.x = tempPoint.x;
+            mainPolyline.polylist.segs[0].pt.y = tempPoint.y;
+            break;
+
+          case OptConstant.LineType.ARCLINE:
+            // Set arc line properties
+            mainPolyline.polylist.segs[0].LineType = secondaryPolyline.LineType;
+            mainPolyline.polylist.segs[0].param = secondaryPolyline.IsReversed ?
+              secondaryPolyline.CurveAdjust : -secondaryPolyline.CurveAdjust;
+            break;
+
+          case OptConstant.LineType.ARCSEGLINE:
+            // Set arc segment properties
+            mainPolyline.polylist.segs[0].LineType = secondaryPolyline.LineType;
+            mainPolyline.polylist.segs[0].param = 0;
+            arcQuadrantInfo = mainPolyline.PrPolyLGetArcQuadrant(polyPoints[polyPointsCount - 2], polyPoints[polyPointsCount - 1], 0);
+            mainPolyline.polylist.segs[0].param = arcQuadrantInfo.param;
+            mainPolyline.polylist.segs[0].ShortRef = arcQuadrantInfo.ShortRef;
+            break;
+
+          default:
+            mainPolyline.polylist.segs[0].LineType = OptConstant.LineType.LINE;
+        }
+
+        // Add remaining secondary polyline segments in reverse order
+        for (let i = polyPointsCount - 2; i >= 0; i--) {
+          // Add the segment
+          mainPolyline.polylist.segs.unshift(new PolySeg(
+            OptConstant.LineType.LINE,
+            polyPoints[i].x - mainPolyline.StartPoint.x,
+            polyPoints[i].y - mainPolyline.StartPoint.y
+          ));
+
+          // Set line type for the segment (if not the first one)
+          if (i > 0) {
+            switch (secondaryPolyline.LineType) {
+              case OptConstant.LineType.POLYLINE:
+                // Copy segment properties
+                tempPoint.x = mainPolyline.polylist.segs[0].pt.x;
+                tempPoint.y = mainPolyline.polylist.segs[0].pt.y;
+                mainPolyline.polylist.segs[0] = Utils1.DeepCopy(secondaryPolyline.polylist.segs[i]);
+                mainPolyline.polylist.segs[0].pt.x = tempPoint.x;
+                mainPolyline.polylist.segs[0].pt.y = tempPoint.y;
+                break;
+
+              case OptConstant.LineType.ARCSEGLINE:
+                // Set arc segment properties
+                mainPolyline.polylist.segs[0].LineType = secondaryPolyline.LineType;
+                tempPoint2.x = polyPoints[i].x - mainPolyline.StartPoint.x;
+                tempPoint2.y = polyPoints[i].y - mainPolyline.StartPoint.y;
+                mainPolyline.polylist.segs[0].param = 0;
+                arcQuadrantInfo = mainPolyline.PrPolyLGetArcQuadrant(polyPoints[i - 1], polyPoints[i], 0);
+                mainPolyline.polylist.segs[0].param = arcQuadrantInfo.param;
+                mainPolyline.polylist.segs[0].ShortRef = arcQuadrantInfo.ShortRef;
+                break;
+            }
           }
         }
-        I.EndPoint.x = b[0].x,
-          I.EndPoint.y = b[0].y
       }
-      D = Utils2.InflatePoint(I.polylist.segs[I.polylist.segs.length - 1].pt, F),
-        Utils2.pointInRect(D, I.polylist.segs[0].pt) && (I.polylist.closed = !0,
-          I.polylist.segs[I.polylist.segs.length - 1].pt.x = I.polylist.segs[0].pt.x,
-          I.polylist.segs[I.polylist.segs.length - 1].pt.y = I.polylist.segs[0].pt.y,
-          I.EndPoint.x = I.StartPoint.x,
-          I.EndPoint.y = I.StartPoint.y,
-          I.objecttype !== NvConstant.FNObjectTypes.FlWall && this.OpenShapeEdit(I.BlockID),
-          I instanceof Instance.Shape.PolyLine && !0 !== i && I.MaintainDimensionThroughPolygonOpennessChange(I.polylist.closed),
-          DataUtil.AddToDirtyList(I.BlockID))
+
+      // Check if the polyline should be closed
+      distanceCheckRect = Utils2.InflatePoint(mainPolyline.polylist.segs[0].pt, KNOB_SIZE);
+
+      if (!mainPolyline.polylist.closed &&
+        Utils2.pointInRect(distanceCheckRect, mainPolyline.polylist.segs[mainPolyline.polylist.segs.length - 1].pt)) {
+        // Close the polyline
+        mainPolyline.polylist.closed = true;
+        mainPolyline.polylist.segs[mainPolyline.polylist.segs.length - 1].pt.x = mainPolyline.polylist.segs[0].pt.x;
+        mainPolyline.polylist.segs[mainPolyline.polylist.segs.length - 1].pt.y = mainPolyline.polylist.segs[0].pt.y;
+        mainPolyline.EndPoint.x = mainPolyline.StartPoint.x;
+        mainPolyline.EndPoint.y = mainPolyline.StartPoint.y;
+
+        // Handle dimension maintenance
+        if (mainPolyline instanceof Instance.Shape.PolyLine && skipDimensionMaintenance !== true) {
+          mainPolyline.MaintainDimensionThroughPolygonOpennessChange(mainPolyline.polylist.closed);
+        }
+
+        // Open shape editor if needed
+        if (mainPolyline.objecttype !== NvConstant.FNObjectTypes.FlWall) {
+          this.OpenShapeEdit(mainPolyline.BlockID);
+        }
+
+        // Mark as dirty
+        DataUtil.AddToDirtyList(mainPolyline.BlockID);
+      }
+    } else {
+      // Handle connection at the end of the main polyline
+
+      if (targetHookPoint === OptConstant.HookPts.KTL) {
+        // Connect end to start
+
+        // Add secondary polyline segments
+        for (let i = 1; i < polyPointsCount; i++) {
+          // Determine line type
+          switch (secondaryPolyline.LineType) {
+            case OptConstant.LineType.POLYLINE:
+              lineType = secondaryPolyline.polylist.segs[i].LineType;
+              break;
+            case OptConstant.LineType.ARCLINE:
+            case OptConstant.LineType.ARCSEGLINE:
+              lineType = secondaryPolyline.LineType;
+              break;
+            default:
+              lineType = OptConstant.LineType.LINE;
+          }
+
+          // Add the segment
+          mainPolyline.polylist.segs.push(new PolySeg(
+            lineType,
+            polyPoints[i].x - mainPolyline.StartPoint.x,
+            polyPoints[i].y - mainPolyline.StartPoint.y
+          ));
+
+          // Set properties based on line type
+          switch (secondaryPolyline.LineType) {
+            case OptConstant.LineType.ARCLINE:
+              // Set arc properties
+              mainPolyline.polylist.segs[mainPolyline.polylist.segs.length - 1].param =
+                secondaryPolyline.IsReversed ?
+                  secondaryPolyline.CurveAdjust : -secondaryPolyline.CurveAdjust;
+              break;
+
+            case OptConstant.LineType.POLYLINE:
+              // Copy polyline segment
+              mainPolyline.polylist.segs[mainPolyline.polylist.segs.length - 1] =
+                Utils1.DeepCopy(secondaryPolyline.polylist.segs[i]);
+              mainPolyline.polylist.segs[mainPolyline.polylist.segs.length - 1].pt.x =
+                polyPoints[i].x - mainPolyline.StartPoint.x;
+              mainPolyline.polylist.segs[mainPolyline.polylist.segs.length - 1].pt.y =
+                polyPoints[i].y - mainPolyline.StartPoint.y;
+              break;
+
+            case OptConstant.LineType.ARCSEGLINE:
+              // Set arc segment properties
+              tempPoint2.x = polyPoints[i].x - mainPolyline.StartPoint.x;
+              tempPoint2.y = polyPoints[i].y - mainPolyline.StartPoint.y;
+              polySegmentIndex = mainPolyline.polylist.segs.length;
+              mainPolyline.polylist.segs[polySegmentIndex - 1].param = 0;
+              arcQuadrantInfo = mainPolyline.PrPolyLGetArcQuadrant(polyPoints[i - 1], polyPoints[i], 0);
+              mainPolyline.polylist.segs[polySegmentIndex - 1].param = arcQuadrantInfo.param;
+              mainPolyline.polylist.segs[polySegmentIndex - 1].ShortRef = arcQuadrantInfo.ShortRef;
+              break;
+          }
+        }
+
+        // Update end point
+        mainPolyline.EndPoint.x = polyPoints[polyPointsCount - 1].x;
+        mainPolyline.EndPoint.y = polyPoints[polyPointsCount - 1].y;
+
+      } else {
+        // Connect end to end, so reverse secondary polyline
+
+        // Add secondary polyline segments in reverse order
+        for (let i = polyPointsCount - 2; i >= 0; i--) {
+          // Determine line type
+          switch (secondaryPolyline.LineType) {
+            case OptConstant.LineType.POLYLINE:
+              lineType = secondaryPolyline.polylist.segs[i + 1].LineType;
+              break;
+            case OptConstant.LineType.ARCLINE:
+            case OptConstant.LineType.ARCSEGLINE:
+              lineType = secondaryPolyline.LineType;
+              break;
+            default:
+              lineType = OptConstant.LineType.LINE;
+          }
+
+          // Add the segment
+          mainPolyline.polylist.segs.push(new PolySeg(
+            lineType,
+            polyPoints[i].x - mainPolyline.StartPoint.x,
+            polyPoints[i].y - mainPolyline.StartPoint.y
+          ));
+
+          // Set properties based on line type
+          switch (secondaryPolyline.LineType) {
+            case OptConstant.LineType.ARCLINE:
+              // Set arc properties with reversed direction
+              mainPolyline.polylist.segs[mainPolyline.polylist.segs.length - 1].param =
+                secondaryPolyline.IsReversed ?
+                  -secondaryPolyline.CurveAdjust : secondaryPolyline.CurveAdjust;
+              break;
+
+            case OptConstant.LineType.POLYLINE:
+              // Copy polyline segment with reversed direction
+              mainPolyline.polylist.segs[mainPolyline.polylist.segs.length - 1] =
+                Utils1.DeepCopy(secondaryPolyline.polylist.segs[i + 1]);
+              mainPolyline.polylist.segs[mainPolyline.polylist.segs.length - 1].pt.x =
+                polyPoints[i].x - mainPolyline.StartPoint.x;
+              mainPolyline.polylist.segs[mainPolyline.polylist.segs.length - 1].pt.y =
+                polyPoints[i].y - mainPolyline.StartPoint.y;
+              mainPolyline.polylist.segs[mainPolyline.polylist.segs.length - 1].param =
+                -mainPolyline.polylist.segs[mainPolyline.polylist.segs.length - 1].param;
+              break;
+
+            case OptConstant.LineType.ARCSEGLINE:
+              // Set arc segment properties
+              polySegmentIndex = mainPolyline.polylist.segs.length;
+              mainPolyline.polylist.segs[polySegmentIndex - 1].param = 0;
+              arcQuadrantInfo = mainPolyline.PrPolyLGetArcQuadrant(polyPoints[i + 1], polyPoints[i], 0);
+              mainPolyline.polylist.segs[polySegmentIndex - 1].param = arcQuadrantInfo.param;
+              mainPolyline.polylist.segs[polySegmentIndex - 1].ShortRef = arcQuadrantInfo.ShortRef;
+              break;
+          }
+        }
+
+        // Update end point
+        mainPolyline.EndPoint.x = polyPoints[0].x;
+        mainPolyline.EndPoint.y = polyPoints[0].y;
+      }
+
+      // Check if the polyline should be closed
+      distanceCheckRect = Utils2.InflatePoint(
+        mainPolyline.polylist.segs[mainPolyline.polylist.segs.length - 1].pt,
+        KNOB_SIZE
+      );
+
+      if (Utils2.pointInRect(distanceCheckRect, mainPolyline.polylist.segs[0].pt)) {
+        // Close the polyline
+        mainPolyline.polylist.closed = true;
+        mainPolyline.polylist.segs[mainPolyline.polylist.segs.length - 1].pt.x = mainPolyline.polylist.segs[0].pt.x;
+        mainPolyline.polylist.segs[mainPolyline.polylist.segs.length - 1].pt.y = mainPolyline.polylist.segs[0].pt.y;
+        mainPolyline.EndPoint.x = mainPolyline.StartPoint.x;
+        mainPolyline.EndPoint.y = mainPolyline.StartPoint.y;
+
+        // Open shape editor if needed
+        if (mainPolyline.objecttype !== NvConstant.FNObjectTypes.FlWall) {
+          this.OpenShapeEdit(mainPolyline.BlockID);
+        }
+
+        // Handle dimension maintenance
+        if (mainPolyline instanceof Instance.Shape.PolyLine && skipDimensionMaintenance !== true) {
+          mainPolyline.MaintainDimensionThroughPolygonOpennessChange(mainPolyline.polylist.closed);
+        }
+
+        // Mark as dirty
+        DataUtil.AddToDirtyList(mainPolyline.BlockID);
+      }
     }
-    if (I.CalcFrame(),
-      P)
-      c = DrawUtil.AddNewObject(I, !1, !0),
-        // Collab.AddNewBlockToSecondary(c),
-        // Collab.ClearCreateList(),
-        // Collab.AddToCreateList(c),
-        N = !0,
-        DataUtil.AddToDirtyList(c);
-    else {
-      var O = LayerUtil.VisibleZList().indexOf(c);
-      O >= 0 && SvgUtil.AddSVGObject(O, c, !0, !0)
+
+    // Update frame calculations
+    mainPolyline.CalcFrame();
+
+    // Add new object if we created a new polyline
+    if (needsRender) {
+      resultBlockId = DrawUtil.AddNewObject(mainPolyline, false, true);
+      // Uncomment if needed:
+      // Collab.AddNewBlockToSecondary(resultBlockId);
+      // Collab.ClearCreateList();
+      // Collab.AddToCreateList(resultBlockId);
+      needsRender = true;
+      DataUtil.AddToDirtyList(resultBlockId);
+    } else {
+      // Get current layer position
+      let currentLayerIndex = LayerUtil.VisibleZList().indexOf(resultBlockId);
+      if (currentLayerIndex >= 0) {
+        SvgUtil.AddSVGObject(currentLayerIndex, resultBlockId, true, true);
+      }
     }
-    for ((I = DataUtil.GetObjectPtr(c, !1)) && I.DataID < 0 && (I.DataID = h,
-      f.DataID === h ? (I.TextDirection = f.TextDirection,
-        f.DataID = -1) : L.DataID === h && (I.TextDirection = L.TextDirection,
-          L.DataID = -1),
-      I.TextFlags = Utils2.SetFlag(I.TextFlags, NvConstant.TextFlags.HorizText, !I.TextDirection)),
-      I && I.NoteID < 0 && (I.NoteID = m,
-        f.NoteID === m ? f.NoteID = -1 : L.NoteID === m && (L.NoteID = -1),
-        I.TextFlags = Utils2.SetFlag(I.TextFlags, NvConstant.TextFlags.HorizText, !I.TextDirection)),
-      I && I.CommentID < 0 && (I.CommentID = y,
-        f.CommentID === y ? f.CommentID = -1 : L.CommentID === y && (L.CommentID = -1),
-        I.TextFlags = Utils2.SetFlag(I.TextFlags, NvConstant.TextFlags.HorizText, !I.TextDirection)),
-      I && !I.HyperlinkText && (I.HyperlinkText = C),
-      n = 0; n < M.length; n++)
-      HookUtil.MoveLinks(c, M[n], null, null);
-    if (DataUtil.DeleteObjects(M, !1),
-      OptCMUtil.SetLinkFlag(c, DSConstant.LinkFlags.Move),
-      HookUtil.MaintainLink(c, I, null, _, !1),
-      T3Gv.opt.UpdateLinks(),
-      R.push(c),
-      SelectUtil.SelectObjects(R, !1, !0),
-      P && v >= 0) {
-      var B = G.indexOf(c);
-      G.splice(B, 1),
-        G.splice(v, 0, c),
-        N = !0,
-        DataUtil.AddToDirtyList(c)
+
+    // Transfer metadata to the resulting polyline
+    mainPolyline = DataUtil.GetObjectPtr(resultBlockId, false);
+    if (mainPolyline) {
+      // Transfer DataID
+      if (mainPolyline.DataID < 0) {
+        mainPolyline.DataID = dataId;
+
+        if (sourceObject.DataID === dataId) {
+          mainPolyline.TextDirection = sourceObject.TextDirection;
+          sourceObject.DataID = -1;
+        } else if (targetObject.DataID === dataId) {
+          mainPolyline.TextDirection = targetObject.TextDirection;
+          targetObject.DataID = -1;
+        }
+
+        mainPolyline.TextFlags = Utils2.SetFlag(
+          mainPolyline.TextFlags,
+          NvConstant.TextFlags.HorizText,
+          !mainPolyline.TextDirection
+        );
+      }
+
+      // Transfer NoteID
+      if (mainPolyline && mainPolyline.NoteID < 0) {
+        mainPolyline.NoteID = noteId;
+
+        if (sourceObject.NoteID === noteId) {
+          sourceObject.NoteID = -1;
+        } else if (targetObject.NoteID === noteId) {
+          targetObject.NoteID = -1;
+        }
+
+        mainPolyline.TextFlags = Utils2.SetFlag(
+          mainPolyline.TextFlags,
+          NvConstant.TextFlags.HorizText,
+          !mainPolyline.TextDirection
+        );
+      }
+
+      // Transfer CommentID
+      if (mainPolyline && mainPolyline.CommentID < 0) {
+        mainPolyline.CommentID = commentId;
+
+        if (sourceObject.CommentID === commentId) {
+          sourceObject.CommentID = -1;
+        } else if (targetObject.CommentID === commentId) {
+          targetObject.CommentID = -1;
+        }
+
+        mainPolyline.TextFlags = Utils2.SetFlag(
+          mainPolyline.TextFlags,
+          NvConstant.TextFlags.HorizText,
+          !mainPolyline.TextDirection
+        );
+      }
+
+      // Transfer hyperlink text
+      if (mainPolyline && !mainPolyline.HyperlinkText) {
+        mainPolyline.HyperlinkText = hyperlinkText;
+      }
     }
-    return I instanceof Instance.Shape.PolyLineContainer && I.MoveBehindAllLinked() && (N = !0),
-      N && (LayerUtil.IsTopMostVisibleLayer() ? SvgUtil.RenderDirtySVGObjects() : SvgUtil.RenderAllSVGObjects()),
-      c
+
+    // Transfer links from deleted objects to the resulting polyline
+    for (let i = 0; i < blocksToDelete.length; i++) {
+      HookUtil.MoveLinks(resultBlockId, blocksToDelete[i], null, null);
+    }
+
+    // Delete the original objects
+    DataUtil.DeleteObjects(blocksToDelete, false);
+
+    // Update links
+    OptCMUtil.SetLinkFlag(resultBlockId, DSConstant.LinkFlags.Move);
+    HookUtil.MaintainLink(resultBlockId, mainPolyline, null, hookTriggerType, false);
+    T3Gv.opt.UpdateLinks();
+
+    // Select the resulting polyline
+    objectsToSelect.push(resultBlockId);
+    SelectUtil.SelectObjects(objectsToSelect, false, true);
+
+    // Restore layer position if needed
+    if (needsRender && layerPosition >= 0) {
+      let currentLayerIndex = visibleLayers.indexOf(resultBlockId);
+      visibleLayers.splice(currentLayerIndex, 1);
+      visibleLayers.splice(layerPosition, 0, resultBlockId);
+      needsRender = true;
+      DataUtil.AddToDirtyList(resultBlockId);
+    }
+
+    // Handle special cases for PolyLineContainer
+    if (mainPolyline instanceof Instance.Shape.PolyLineContainer &&
+      mainPolyline.MoveBehindAllLinked()) {
+      needsRender = true;
+    }
+
+    // Render objects if needed
+    if (needsRender) {
+      if (LayerUtil.IsTopMostVisibleLayer()) {
+        SvgUtil.RenderDirtySVGObjects();
+      } else {
+        SvgUtil.RenderAllSVGObjects();
+      }
+    }
+
+    return resultBlockId;
   }
 
   /**
@@ -1429,151 +2035,249 @@ class PolyUtil {
     return isInside;
   }
 
-  static PolyLIntersect(e, t, a, r) {
-    var i,
-      n,
-      o,
-      s,
-      l,
-      S,
-      c,
-      u,
-      p,
-      d,
-      D,
-      g,
-      h,
-      m,
-      C = null,
-      y = -1,
-      f = -1,
-      L = {
-        x: 0,
-        y: 0,
-      },
-      I = {
-        x: 0,
-        y: 0,
-      },
-      T = 0;
-    if (((S = Math.abs(t.x - e.x)), Math.abs(t.y - e.y) < 1 && S >= 1)) {
-      for (i = 1; i < r; i++)
-        if (
-          (a[i].y > a[i - 1].y
-            ? ((s = a[i - 1].y), (l = a[i].y))
-            : ((s = a[i].y), (l = a[i - 1].y)),
-            t.y >= s && t.y < l)
-        ) {
-          (y = i), (I.y = t.y);
+  /**
+   * Finds the intersection point between a line segment and a polyline
+   * This function calculates where a given line segment intersects with a polyline,
+   * handling various cases including horizontal lines, vertical lines, and general cases.
+   *
+   * @param lineStart - Starting point of the line segment
+   * @param lineEnd - Ending point of the line segment
+   * @param polylinePoints - Array of points defining the polyline
+   * @param pointCount - Number of points in the polyline
+   * @returns Object containing success flag, intersection point, and segment index
+   */
+  static PolyLIntersect(lineStart, lineEnd, polylinePoints, pointCount) {
+    // Loop counter
+    let i;
+
+    // Bounds for coordinate ranges
+    let minX, maxX;
+    let minY, maxY;
+
+    // Line and segment calculation variables
+    let deltaX;
+    let lineSlope;
+    let yIntercept;
+    let segmentSlope;
+    let slopeDifference;
+    let interceptDifference;
+    let intersectionX;
+
+    // Intersection data
+    let boundingBox = null;
+    let horizontalIntersectionIndex = -1;
+    let verticalIntersectionIndex = -1;
+
+    // Points for calculations
+    let tempIntersection = {
+      x: 0,
+      y: 0
+    };
+
+    let resultIntersection = {
+      x: 0,
+      y: 0
+    };
+
+    let intersectedSegment = 0;
+
+    // Check for horizontal line case
+    let horizontalDifference = Math.abs(lineEnd.x - lineStart.x);
+    if (Math.abs(lineEnd.y - lineStart.y) < 1 && horizontalDifference >= 1) {
+      // Search for segments that intersect the horizontal line
+      for (i = 1; i < pointCount; i++) {
+        if (polylinePoints[i].y > polylinePoints[i - 1].y) {
+          minY = polylinePoints[i - 1].y;
+          maxY = polylinePoints[i].y;
+        } else {
+          minY = polylinePoints[i].y;
+          maxY = polylinePoints[i - 1].y;
+        }
+
+        // If horizontal line intersects this segment's Y range
+        if (lineEnd.y >= minY && lineEnd.y < maxY) {
+          horizontalIntersectionIndex = i;
+          resultIntersection.y = lineEnd.y;
           break;
         }
-      if (y >= 0)
-        return (
-          (T = y),
-          a[y].x - a[y - 1].x == 0
-            ? ((I.x = a[y].x),
-            {
-              bSuccess: !0,
-              ipt: I,
-              lpseg: T,
-            })
-            : a[y].y - a[y - 1].y == 0
-              ? (a[y].x > a[y - 1].x
-                ? ((n = a[y - 1].x), (o = a[y].x))
-                : ((n = a[y].x), (o = a[y - 1].x)),
-                I.x < n && (I.x = n),
-                I.x > o && (I.x = o),
-              {
-                bSuccess: !0,
-                ipt: I,
-                lpseg: T,
-              })
-              : ((c = a[y].x - a[y - 1].x),
-                (d = (a[y].y - a[y - 1].y) / c),
-                (D = a[y].y - d * a[y].x),
-                (I.x = (I.y - D) / d),
-              {
-                bSuccess: !0,
-                ipt: I,
-                lpseg: T,
-              })
-        );
-    } else if (S < 1) {
-      for (i = 1; i < r; i++)
-        if (
-          (a[i].x > a[i - 1].x
-            ? ((n = a[i - 1].x), (o = a[i].x))
-            : ((n = a[i].x), (o = a[i - 1].x)),
-            t.x >= n && t.x < o)
-        ) {
-          (f = i), (I.x = t.x);
-          break;
-        }
-      if (f >= 0)
-        return (
-          (T = f),
-          a[f].y - a[f - 1].y == 0
-            ? ((I.y = a[f].y),
-            {
-              bSuccess: !0,
-              ipt: I,
-              lpseg: T,
-            })
-            : a[f].x - a[f - 1].x == 0
-              ? (a[f].y > a[f - 1].y
-                ? ((s = a[f - 1].y), (l = a[f].y))
-                : ((s = a[f].y), (l = a[f - 1].y)),
-                I.y < s && (I.y = s),
-                I.y > l && (I.y = l),
-              {
-                bSuccess: !0,
-                ipt: I,
-                lpseg: T,
-              })
-              : ((c = a[f].x - a[f - 1].x),
-                (d = (a[f].y - a[f - 1].y) / c),
-                (D = a[f].y - d * a[f].x),
-                (I.y = d * I.x + D),
-              {
-                bSuccess: !0,
-                ipt: I,
-                lpseg: T,
-              })
-        );
-    } else
-      for (
-        c = t.x - e.x, u = (t.y - e.y) / c, p = t.y - u * t.x, i = 1;
-        i < r;
-        i++
-      ) {
-        if (a[i].x - a[i - 1].x == 0) (L.x = a[i].x), (L.y = u * L.x + p);
-        else if (a[i].y - a[i - 1].y == 0) (L.y = a[i].y), (L.x = (L.y - p) / u);
-        else {
-          if (
-            ((c = a[i].x - a[i - 1].x),
-              (h = u - (d = (a[i].y - a[i - 1].y) / c)),
-              (m = (D = a[i].y - d * a[i].x) - p),
-              Math.abs(h) < 0.001)
-          )
-            continue;
-          (g = m / h), (L.y = u * g + p), (L.x = g);
-        }
-        if (
-          ((C = Utils2.Pt2Rect(a[i], a[i - 1])).y + C.height == C.y &&
-            C.height++,
-            C.x + C.width == C.x && C.width++,
-            Utils2.pointInRect(C, L))
-        )
-          return {
-            bSuccess: !0,
-            ipt: (I = L),
-            lpseg: (T = i),
-          };
       }
+
+      if (horizontalIntersectionIndex >= 0) {
+        intersectedSegment = horizontalIntersectionIndex;
+
+        // Handle vertical segment
+        if (polylinePoints[horizontalIntersectionIndex].x - polylinePoints[horizontalIntersectionIndex - 1].x == 0) {
+          resultIntersection.x = polylinePoints[horizontalIntersectionIndex].x;
+          return {
+            bSuccess: true,
+            ipt: resultIntersection,
+            lpseg: intersectedSegment
+          };
+        }
+        // Handle horizontal segment
+        else if (polylinePoints[horizontalIntersectionIndex].y - polylinePoints[horizontalIntersectionIndex - 1].y == 0) {
+          if (polylinePoints[horizontalIntersectionIndex].x > polylinePoints[horizontalIntersectionIndex - 1].x) {
+            minX = polylinePoints[horizontalIntersectionIndex - 1].x;
+            maxX = polylinePoints[horizontalIntersectionIndex].x;
+          } else {
+            minX = polylinePoints[horizontalIntersectionIndex].x;
+            maxX = polylinePoints[horizontalIntersectionIndex - 1].x;
+          }
+
+          // Clamp X coordinate to segment bounds
+          if (resultIntersection.x < minX) resultIntersection.x = minX;
+          if (resultIntersection.x > maxX) resultIntersection.x = maxX;
+
+          return {
+            bSuccess: true,
+            ipt: resultIntersection,
+            lpseg: intersectedSegment
+          };
+        }
+        // Handle sloped segment
+        else {
+          deltaX = polylinePoints[horizontalIntersectionIndex].x - polylinePoints[horizontalIntersectionIndex - 1].x;
+          segmentSlope = (polylinePoints[horizontalIntersectionIndex].y - polylinePoints[horizontalIntersectionIndex - 1].y) / deltaX;
+          yIntercept = polylinePoints[horizontalIntersectionIndex].y - segmentSlope * polylinePoints[horizontalIntersectionIndex].x;
+          resultIntersection.x = (resultIntersection.y - yIntercept) / segmentSlope;
+
+          return {
+            bSuccess: true,
+            ipt: resultIntersection,
+            lpseg: intersectedSegment
+          };
+        }
+      }
+    }
+    // Check for vertical line case
+    else if (horizontalDifference < 1) {
+      // Search for segments that intersect the vertical line
+      for (i = 1; i < pointCount; i++) {
+        if (polylinePoints[i].x > polylinePoints[i - 1].x) {
+          minX = polylinePoints[i - 1].x;
+          maxX = polylinePoints[i].x;
+        } else {
+          minX = polylinePoints[i].x;
+          maxX = polylinePoints[i - 1].x;
+        }
+
+        // If vertical line intersects this segment's X range
+        if (lineEnd.x >= minX && lineEnd.x < maxX) {
+          verticalIntersectionIndex = i;
+          resultIntersection.x = lineEnd.x;
+          break;
+        }
+      }
+
+      if (verticalIntersectionIndex >= 0) {
+        intersectedSegment = verticalIntersectionIndex;
+
+        // Handle horizontal segment
+        if (polylinePoints[verticalIntersectionIndex].y - polylinePoints[verticalIntersectionIndex - 1].y == 0) {
+          resultIntersection.y = polylinePoints[verticalIntersectionIndex].y;
+          return {
+            bSuccess: true,
+            ipt: resultIntersection,
+            lpseg: intersectedSegment
+          };
+        }
+        // Handle vertical segment
+        else if (polylinePoints[verticalIntersectionIndex].x - polylinePoints[verticalIntersectionIndex - 1].x == 0) {
+          if (polylinePoints[verticalIntersectionIndex].y > polylinePoints[verticalIntersectionIndex - 1].y) {
+            minY = polylinePoints[verticalIntersectionIndex - 1].y;
+            maxY = polylinePoints[verticalIntersectionIndex].y;
+          } else {
+            minY = polylinePoints[verticalIntersectionIndex].y;
+            maxY = polylinePoints[verticalIntersectionIndex - 1].y;
+          }
+
+          // Clamp Y coordinate to segment bounds
+          if (resultIntersection.y < minY) resultIntersection.y = minY;
+          if (resultIntersection.y > maxY) resultIntersection.y = maxY;
+
+          return {
+            bSuccess: true,
+            ipt: resultIntersection,
+            lpseg: intersectedSegment
+          };
+        }
+        // Handle sloped segment
+        else {
+          deltaX = polylinePoints[verticalIntersectionIndex].x - polylinePoints[verticalIntersectionIndex - 1].x;
+          segmentSlope = (polylinePoints[verticalIntersectionIndex].y - polylinePoints[verticalIntersectionIndex - 1].y) / deltaX;
+          yIntercept = polylinePoints[verticalIntersectionIndex].y - segmentSlope * polylinePoints[verticalIntersectionIndex].x;
+          resultIntersection.y = segmentSlope * resultIntersection.x + yIntercept;
+
+          return {
+            bSuccess: true,
+            ipt: resultIntersection,
+            lpseg: intersectedSegment
+          };
+        }
+      }
+    }
+    // General case - sloped line
+    else {
+      // Calculate line equation: y = mx + b
+      deltaX = lineEnd.x - lineStart.x;
+      lineSlope = (lineEnd.y - lineStart.y) / deltaX;
+      yIntercept = lineEnd.y - lineSlope * lineEnd.x;
+
+      // Check intersection with each polyline segment
+      for (i = 1; i < pointCount; i++) {
+        // Handle vertical segment
+        if (polylinePoints[i].x - polylinePoints[i - 1].x == 0) {
+          tempIntersection.x = polylinePoints[i].x;
+          tempIntersection.y = lineSlope * tempIntersection.x + yIntercept;
+        }
+        // Handle horizontal segment
+        else if (polylinePoints[i].y - polylinePoints[i - 1].y == 0) {
+          tempIntersection.y = polylinePoints[i].y;
+          tempIntersection.x = (tempIntersection.y - yIntercept) / lineSlope;
+        }
+        // Handle sloped segment
+        else {
+          deltaX = polylinePoints[i].x - polylinePoints[i - 1].x;
+          segmentSlope = (polylinePoints[i].y - polylinePoints[i - 1].y) / deltaX;
+          yIntercept = polylinePoints[i].y - segmentSlope * polylinePoints[i].x;
+
+          // Calculate intersection of two lines
+          slopeDifference = lineSlope - segmentSlope;
+          interceptDifference = yIntercept - yIntercept;
+
+          // Skip parallel lines (avoid division by near-zero)
+          if (Math.abs(slopeDifference) < 0.001) {
+            continue;
+          }
+
+          intersectionX = interceptDifference / slopeDifference;
+          tempIntersection.x = intersectionX;
+          tempIntersection.y = lineSlope * intersectionX + yIntercept;
+        }
+
+        // Create bounding box for segment
+        boundingBox = Utils2.Pt2Rect(polylinePoints[i], polylinePoints[i - 1]);
+
+        // Fix zero dimensions in bounding box
+        if (boundingBox.y + boundingBox.height == boundingBox.y) boundingBox.height++;
+        if (boundingBox.x + boundingBox.width == boundingBox.x) boundingBox.width++;
+
+        // Check if intersection is within segment bounds
+        if (Utils2.pointInRect(boundingBox, tempIntersection)) {
+          return {
+            bSuccess: true,
+            ipt: tempIntersection,
+            lpseg: i
+          };
+        }
+      }
+    }
+
+    // No intersection found
     return {
-      bSuccess: !1,
-      ipt: I,
-      lpseg: T,
+      bSuccess: false,
+      ipt: resultIntersection,
+      lpseg: intersectedSegment
     };
   }
 }

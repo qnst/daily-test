@@ -1262,14 +1262,14 @@ class ShapeContainer extends Rect {
     const connectorInfo = containerList.Arrangement === NvConstant.ContainerListArrangements.Row
       ? {
         knobID: actionTriggerType.ContainerAdj,
-        cursorType: CursorConstant.CursorType.RESIZE_R,
+        cursorType: CursorConstant.CursorType.ResizeR,
         knobData: 0,
         hook: eventData.hookpt,
         polyType: "horizontal"
       }
       : {
         knobID: actionTriggerType.ContainerAdj,
-        cursorType: CursorConstant.CursorType.RESIZE_B,
+        cursorType: CursorConstant.CursorType.ResizeB,
         knobData: 0,
         hook: eventData.hookpt,
         polyType: "vertical"

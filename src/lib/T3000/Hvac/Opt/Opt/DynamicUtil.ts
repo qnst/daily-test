@@ -1467,59 +1467,6 @@ class DynamicUtil {
     // Clean up guides reference
     guides = null;
   }
-
-  // static DynamicSnapsUpdateGuides(e, t, a) {
-
-  // }
-
-  // static DynamicSnapsRemoveGuides(guides: any) {
-  //   T3Util.Log('O.Opt DynamicSnapsRemoveGuides - Input:', guides);
-  //   if (guides) {
-  //     for (const guideKey in guides) {
-  //       if (guides[guideKey]) {
-  //         const labelId = guideKey + 'label';
-  //         const backgroundId = guideKey + 'back';
-  //         let guideElement = T3Gv.opt.svgHighlightLayer.GetElementById(guideKey);
-  //         let labelElement = T3Gv.opt.svgHighlightLayer.GetElementById(labelId);
-  //         let backgroundElement = T3Gv.opt.svgHighlightLayer.GetElementById(backgroundId);
-
-  //         if (guideElement) {
-  //           T3Gv.opt.svgHighlightLayer.RemoveElement(guideElement);
-  //         }
-  //         if (labelElement) {
-  //           T3Gv.opt.svgHighlightLayer.RemoveElement(labelElement);
-  //         }
-  //         if (backgroundElement) {
-  //           T3Gv.opt.svgHighlightLayer.RemoveElement(backgroundElement);
-  //         }
-
-  //         if (guides[guideKey].otherhits) {
-  //           const otherHits = guides[guideKey].otherhits;
-  //           for (let index = 0; index < otherHits.length; index++) {
-  //             const otherHit = otherHits[index];
-  //             const otherLabelId = guideKey + otherHit.ID.toString() + 'label';
-  //             const otherBackgroundId = guideKey + otherHit.ID.toString() + 'back';
-  //             guideElement = T3Gv.opt.svgHighlightLayer.GetElementById(guideKey + otherHit.ID.toString());
-  //             labelElement = T3Gv.opt.svgHighlightLayer.GetElementById(otherLabelId);
-  //             backgroundElement = T3Gv.opt.svgHighlightLayer.GetElementById(otherBackgroundId);
-
-  //             if (guideElement) {
-  //               T3Gv.opt.svgHighlightLayer.RemoveElement(guideElement);
-  //             }
-  //             if (labelElement) {
-  //               T3Gv.opt.svgHighlightLayer.RemoveElement(labelElement);
-  //             }
-  //             if (backgroundElement) {
-  //               T3Gv.opt.svgHighlightLayer.RemoveElement(backgroundElement);
-  //             }
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  //   guides = null;
-  //   T3Util.Log('O.Opt DynamicSnapsRemoveGuides - Output: guides cleared');
-  // }
 }
 
 export default DynamicUtil

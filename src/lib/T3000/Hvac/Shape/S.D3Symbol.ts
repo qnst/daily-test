@@ -562,22 +562,22 @@ class D3Symbol extends BaseSymbol {
     T3Util.Log("S.D3Symbol: SetD3Settings - Output d3Settings:", this.d3Settings);
   }
 
-  WriteShapeData(outputStream, options) {
-    T3Util.Log("S.D3Symbol: WriteShapeData - Input:", { outputStream, options });
+  // WriteShapeData(outputStream, options) {
+  //   T3Util.Log("S.D3Symbol: WriteShapeData - Input:", { outputStream, options });
 
-    return;
+  //   return;
 
-    Instance.Shape.BaseSymbol.prototype.WriteShapeData.call(this, outputStream, options);
+  //   Instance.Shape.BaseSymbol.prototype.WriteShapeData.call(this, outputStream, options);
 
-    if (this.d3Settings) {
-      const d3SettingsString = this.ExportD3Settings();
-      if (d3SettingsString) {
-        ShapeUtil.WriteString(outputStream, d3SettingsString, DSConstant.OpNameCode.cD3Settings, options);
-      }
-    }
+  //   if (this.d3Settings) {
+  //     const d3SettingsString = this.ExportD3Settings();
+  //     if (d3SettingsString) {
+  //       ShapeUtil.WriteString(outputStream, d3SettingsString, DSConstant.OpNameCode.cD3Settings, options);
+  //     }
+  //   }
 
-    T3Util.Log("S.D3Symbol: WriteShapeData - Completed");
-  }
+  //   T3Util.Log("S.D3Symbol: WriteShapeData - Completed");
+  // }
 
   Resize(svgElement, newSize, additionalParams) {
     T3Util.Log("S.D3Symbol: Resize - Input parameters:", { svgElement, newSize, additionalParams });

@@ -1909,8 +1909,6 @@ class SelectUtil {
 
     return T3Gv.opt.moveList;
   }
-
-
 }
 
 export default SelectUtil

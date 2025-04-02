@@ -341,7 +341,7 @@ class DrawUtil {
     if (drawingShape.flags & NvConstant.ObjFlags.TextOnly) {
       OptCMUtil.SetEditMode(NvConstant.EditState.Text);
     } else {
-      OptCMUtil.SetEditMode(NvConstant.EditState.Stamp, CursorConstant.CursorType.STAMP);
+      OptCMUtil.SetEditMode(NvConstant.EditState.Stamp, CursorConstant.CursorType.Stamp);
     }
 
     // Disable WorkAreaHammer to prevent conflicts with stamp operation
@@ -349,9 +349,9 @@ class DrawUtil {
 
     // Bind mouse event handlers for stamping operation
     $(window).bind('mousemove', EvtUtil.Evt_MouseStampObjectMove);
-    T3Gv.Evt_LM_MouseStampObjectDone = EvtUtil.Evt_MouseStampObjectDoneFactory(useDefaultStyle);
-    $(window).bind('mousedown', T3Gv.Evt_LM_MouseStampObjectDone);
-    $(window).bind('click', T3Gv.Evt_LM_MouseStampObjectDone);
+    T3Gv.Evt_LMMouseStpObjectDone = EvtUtil.Evt_MouseStampObjectDoneFactory(useDefaultStyle);
+    $(window).bind('mousedown', T3Gv.Evt_LMMouseStpObjectDone);
+    $(window).bind('click', T3Gv.Evt_LMMouseStpObjectDone);
 
     // Prepare for stamping
     LMEvtUtil.LMStampPreTrack();
@@ -484,9 +484,6 @@ class DrawUtil {
 
       // Include link parameters for collaboration
       messageData.linkParams = Utils1.DeepCopy(T3Gv.opt.linkParams);
-
-      // Create collaboration message
-      // const collabMessage = this.BuildCreateMessage(messageData, false);
 
       // Update link flags for closed polylines
       T3Gv.opt.SetLinkFlagsOnFilledClosedPolylines();
@@ -1147,265 +1144,6 @@ class DrawUtil {
     T3Util.Log("O.Opt StampObjectMoveCommon - Output: Object positioned at", currentPosition);
   }
 
-  static StampObjectMoveCommonV1(e, t, a) {
-    var r,
-      i,
-      n,
-      o,
-      s,
-      l,
-      S,
-      c,
-      u,
-      p,
-      d,
-      D,
-      g = 0,
-      h = 0,
-      m = {},
-      C = {
-        x: e,
-        y: t,
-      },
-      y = null,
-      f = this.svgDoc.ConvertDocToWindowCoords(e, t);
-    if (null != f) {
-      var L, I;
-      if (this.theActionStoredObjectID > 0) {
-        if (
-          f.x < gListManager.svgDoc.docInfo.dispX ||
-          f.y < gListManager.svgDoc.docInfo.dispY
-        ) {
-          if (this.NewObjectVisible) {
-            if (this.theMoveList && this.theMoveList.length)
-              for (n = this.theMoveList.length, i = 0; i < n; ++i)
-                (p = this.theMoveList[i]),
-                  (d = gListManager.GetSVGDragElement(i)) && d.SetVisible(!1);
-            else this.theActionSVGObject.SetVisible(!1);
-            (this.NewObjectVisible = !1),
-              gListManager.ShowFrame(!1),
-              gListManager.ShowXY(!1);
-          }
-          return;
-        }
-        if (!this.NewObjectVisible) {
-          if (this.theMoveList && this.theMoveList.length)
-            for (n = this.theMoveList.length, i = 0; i < n; ++i)
-              (p = this.theMoveList[i]),
-                (d = gListManager.GetSVGDragElement(i)) && d.SetVisible(!0);
-          else this.theActionSVGObject.SetVisible(!0);
-          (this.NewObjectVisible = !0),
-            gListManager.ShowFrame(!0),
-            gListManager.ShowXY(!0);
-        }
-      }
-      var T = this.theDrawShape.flags & SDJS.ListManager.ObjFlags.SEDO_TextOnly;
-      if ((r = this.GetObjectPtr(this.theActionStoredObjectID, !1))) {
-        r.r.x, r.Frame.x, r.r.width, r.Frame.width;
-        var b,
-          M,
-          P = this.LinkParams && this.LinkParams.SConnectIndex >= 0;
-        this.OverrideSnaps(a) && (P = !0);
-        var R = {
-          x: null,
-          y: null,
-        };
-        if (
-          !(this.theMoveList && this.theMoveList.length > 0) &&
-          this.AllowSnapToShapes() &&
-          !T
-        ) {
-          var A = {},
-            _ = r.CanSnapToShapes(A);
-          if (_ >= 0) {
-            var E = new SDJS.ListManager.Dynamic_Guides();
-            o = this.GetObjectPtr(_, !1).GetSnapRect();
-            var w = $.extend(!0, {}, o);
-            (w.x = C.x - o.width / 2),
-              (w.y = C.y - o.height / 2),
-              null !=
-              (R = this.DynamicSnaps_GetSnapObjects(
-                _,
-                w,
-                E,
-                this.theMoveList,
-                null,
-                A
-              )).x && ((w.x += R.x), (C.x += R.x)),
-              null != R.y && ((w.y += R.y), (C.y += R.y));
-          }
-        }
-        if (
-          gDocumentHandler.documentConfig.enableSnap &&
-          !P &&
-          !T &&
-          (this.theMoveList && this.theMoveList.length
-            ? ((D = this.theMoveList.indexOf(this.theActionStoredObjectID)),
-              (b = SDJS.Editor.DeepCopy(gListManager.theDragBBoxList[D])),
-              (o = r.GetSnapRect()))
-            : ((b = SDJS.Editor.DeepCopy(this.theActionBBox)),
-              (o = r.GetSnapRect())),
-            (y = this.theDragEnclosingRect
-              ? SDJS.Editor.DeepCopy(this.theDragEnclosingRect)
-              : o) && b)
-        ) {
-          (s = y.x - b.x),
-            (l = y.y - b.y),
-            (y.x = C.x - y.width / 2),
-            (y.y = C.y - y.height / 2);
-          var F = {
-            x: y.x - s,
-            y: y.y - l,
-          };
-          if (
-            (((M = $.extend(!0, {}, o)).x = C.x - o.width / 2),
-              (M.y = C.y - o.height / 2),
-              r.CustomSnap(F.x, F.y, 0, 0, !1, C))
-          );
-          else if (gDocumentHandler.documentConfig.centerSnap)
-            (I = gDocumentHandler.SnapToGrid(C)),
-              null == R.x && (C.x = I.x),
-              null == R.y && (C.y = I.y);
-          else {
-            var v = gDocumentHandler.SnapRect(M);
-            null == R.x && (C.x += v.x), null == R.y && (C.y += v.y);
-          }
-        }
-        if (this.theMoveList && this.theMoveList.length) {
-          (n = this.theMoveList.length),
-            (D = this.theMoveList.indexOf(this.theActionStoredObjectID)),
-            (o = this.theDragEnclosingRect),
-            (L = {
-              x: C.x + o.width / 2,
-              y: C.y + o.height / 2,
-            }),
-            (L = gListManager.DoAutoGrowDrag(L)),
-            (C.x = L.x - o.width / 2),
-            (C.y = L.y - o.height / 2),
-            (s = C.x - o.x - o.width / 2),
-            (l = C.y - o.y - o.height / 2),
-            o.x + s < 0 && (s = -o.x),
-            o.y + l < 0 && (l = -o.y),
-            (o = gListManager.theDragBBoxList[D]),
-            r.SetShapeOrigin(o.x + s, o.y + l),
-            (C = this.LM_StampDuringTrack(C, r));
-          var G = r.GetDimensionsForDisplay();
-          gListManager.UpdateDisplayCoordinates(
-            G,
-            C,
-            SDUI.CollabOverlayContoller.CursorTypes.Plus,
-            r
-          ),
-            ((k = new SDJS.ListManager.SelectionAttributes()).left = G.x),
-            (k.top = G.y);
-          var N =
-            r.Dimensions &
-            SDJS.ListManager.DimensionFlags.SED_DF_ShowFeetAsInches;
-          for (
-            k.widthstr = SDUI.Resources.DocumentContext.CurrentWidth,
-            k.heightstr = SDUI.Resources.DocumentContext.CurrentHeight,
-            k.leftstr = this.GetLengthInRulerUnits(
-              k.left,
-              !1,
-              gDocumentHandler.rulerSettings.originx,
-              N
-            ),
-            k.topstr = this.GetLengthInRulerUnits(
-              k.top,
-              !1,
-              gDocumentHandler.rulerSettings.originy,
-              N
-            ),
-            SDUI.Commands.MainController.UpdateRibbonDimensions(k),
-            i = 0;
-            i < n;
-            ++i
-          )
-            if (((p = this.theMoveList[i]), (S = this.GetObjectPtr(p)))) {
-              if (p !== this.theActionStoredObjectID) {
-                if (null == (o = gListManager.theDragBBoxList[i])) continue;
-                S.SetShapeOrigin(o.x + s, o.y + l);
-              }
-              null == (d = gListManager.GetSVGDragElement(i)) &&
-                S.ShapeType === SDJS.ListManager.ShapeType.SVGFRAGMENTSYMBOL &&
-                null != S.SVGFragment &&
-                (null == u && (u = gListManager.VisibleZList()),
-                  (c = u.indexOf(p)),
-                  this.AddSVGObject(c, p, !0, !1),
-                  (d = gListManager.svgObjectLayer.GetElementById(p))),
-                d && d.SetPos(o.x + s, o.y + l);
-            }
-        } else {
-          (o = SDJS.Editor.DeepCopy(this.theActionBBox)),
-            (y = SDJS.Editor.DeepCopy(this.theDragEnclosingRect)),
-            (L = {
-              x: C.x + y.width / 2,
-              y: C.y + y.height / 2,
-            }),
-            (L = gListManager.DoAutoGrowDrag(L)),
-            (C.x = L.x - y.width / 2),
-            (C.y = L.y - y.height / 2),
-            (s = C.x - y.x - y.width / 2),
-            (l = C.y - y.y - y.height / 2),
-            (s = o.x + s < 0 ? -y.x : C.x - o.x - o.width / 2),
-            (l = o.y + l < 0 ? -y.y : C.y - o.y - o.height / 2),
-            r.SetShapeOrigin(o.x + s, o.y + l),
-            (C = this.LM_StampDuringTrack(C, r));
-          var k;
-          G = r.GetDimensionsForDisplay();
-          gListManager.UpdateDisplayCoordinates(
-            G,
-            C,
-            SDUI.CollabOverlayContoller.CursorTypes.Move,
-            r
-          ),
-            ((k = new SDJS.ListManager.SelectionAttributes()).left = G.x),
-            (k.top = G.y);
-          N =
-            r.Dimensions &
-            SDJS.ListManager.DimensionFlags.SED_DF_ShowFeetAsInches;
-          (k.widthstr = SDUI.Resources.DocumentContext.CurrentWidth),
-            (k.heightstr = SDUI.Resources.DocumentContext.CurrentHeight),
-            (k.leftstr = this.GetLengthInRulerUnits(
-              k.left,
-              !1,
-              gDocumentHandler.rulerSettings.originx,
-              N
-            )),
-            (k.topstr = this.GetLengthInRulerUnits(
-              k.top,
-              !1,
-              gDocumentHandler.rulerSettings.originy,
-              N
-            )),
-            SDUI.Commands.MainController.UpdateRibbonDimensions(k),
-            (s = C.x - y.x - y.width / 2),
-            (l = C.y - y.y - y.height / 2),
-            y.x + s - g < 0
-              ? ((s = -y.x + g), (g = 0))
-              : (s = C.x - o.x - o.width / 2),
-            y.y + l - h < 0
-              ? ((l = -y.y + h), (h = 0))
-              : (l = C.y - o.y - o.height / 2),
-            r.SetShapeOrigin(o.x + s, o.y + l),
-            ((this.LinkParams && this.LinkParams.ConnectIndex >= 0) ||
-              this.LinkParams.ConnectIndexHistory.length > 0) &&
-            (((m = SDJS.Editor.DeepCopy(o)).x += s),
-              (m.y += l),
-              this.HandleHookedObjectMoving(r, m)),
-            this.theActionSVGObject.SetPos(o.x + s - g, o.y + l - h);
-          var U = this.LinkParams && this.LinkParams.SConnectIndex >= 0;
-          E &&
-            (U
-              ? this.Dynamic_Guides &&
-              (this.DynamicSnaps_RemoveGuides(this.Dynamic_Guides),
-                (this.Dynamic_Guides = null))
-              : this.DynamicSnaps_UpdateGuides(E, _, w));
-        }
-      }
-    }
-  }
-
   /**
    * Handles the completion of a drag and drop operation
    * @param event - The event that triggered the completion of the drag drop
@@ -1564,27 +1302,6 @@ class DrawUtil {
         // Get latest version of the action object
         DataUtil.GetObjectPtr(T3Gv.opt.actionStoredObjectId, true);
       }
-
-      // // Prepare collaboration message data
-      // messageData.linkParams = Utils1.DeepCopy(this.linkParams);
-      // messageData.AllowMany = true;
-      // messageData.CustomSymbol = false;
-
-      // // Handle symbol data if present
-      // if (this.drawShape && this.drawShape.SymbolID != null) {
-      //   const symbolObject = SDUI.Commands.MainController.Symbols.GetLMObject(this.drawShape.SymbolID);
-
-      //   if (symbolObject &&
-      //     symbolObject.SymbolData &&
-      //     symbolObject.SymbolData.IsCustomContent &&
-      //     symbolObject.nativeDataArrayBuffer) {
-      //     messageData.nativeDataString = Collab.BufferToString(symbolObject.nativeDataArrayBuffer);
-      //     messageData.SymbolData = Utils1.DeepCopy(symbolObject.SymbolData);
-      //   }
-      // }
-
-      // Build collaboration message
-      // const collabMessage = this.BuildCreateMessage(messageData, false);
 
       // Reset edit mode and prepare selection
       OptCMUtil.SetEditMode(NvConstant.EditState.Default);
@@ -1940,7 +1657,6 @@ class DrawUtil {
     // Collab.AddNewBlockToSecondary(this.drawShape.BlockID);
 
     let collaborationData = {};
-    // this.BuildCreateMessage(collaborationData, true);
 
     DataUtil.GetObjectPtr(T3Gv.opt.actionStoredObjectId, true);
     OptCMUtil.SetEditMode(NvConstant.EditState.Default);

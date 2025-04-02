@@ -806,7 +806,7 @@ class OptUtil {
     UIUtil.InitSVGDocument();
     this.sVGroot = this.svgDoc.svgObj.node;
     SelectUtil.UpdateSelectionAttributes(null);
-    this.BuildArrowheadLookupTables();
+    this.BuildarrowHlkTables();
     OptCMUtil.SetEditMode(NvConstant.EditState.Default);
   }
 
@@ -815,7 +815,7 @@ class OptUtil {
 
     const TEXT_FACE = TextConstant.TextFace;
 
-    this.selectionState.fontid = -1; // T3Gv.opt.GetFontIdByName(T3Gv.opt.header.DimensionFont.fontName)
+    this.selectionState.fontid = -1;
     this.selectionState.fontsize = T3Gv.opt.header.DimensionFont.fontSize;
     this.selectionState.bold = (T3Gv.opt.header.DimensionFont.face & TEXT_FACE.Bold) > 0;
     this.selectionState.italic = (T3Gv.opt.header.DimensionFont.face & TEXT_FACE.Italic) > 0;
@@ -832,7 +832,7 @@ class OptUtil {
 
     const TEXT_FACE = TextConstant.TextFace;
 
-    this.selectionState.fontid = -1; // T3Gv.opt.GetFontIdByName(sessionData.def.lf.fontName)
+    this.selectionState.fontid = -1;
     this.selectionState.fontsize = sessionData.def.style.Text.FontSize;
     this.selectionState.bold = (sessionData.def.style.Text.Face & TEXT_FACE.Bold) > 0;
     this.selectionState.italic = (sessionData.def.style.Text.Face & TEXT_FACE.Italic) > 0;
@@ -902,15 +902,6 @@ class OptUtil {
         this.selectionState.heightstr = '';
       }
 
-      // // Handle table objects
-      // const table = T3Gv.opt.TableHideUI(targetObject) ? null : targetObject.GetTable(false);
-      // if (table) {
-      //   this.selectionState.IsTargetTable = true;
-      //   this.selectionState.NTableRows = table.rows.length;
-      //   this.selectionState.NTableCols = table.cols.length;
-      //   this.selectionState.ntablesselected++;
-      // }
-
       // Check if selection has text
       this.selectionState.selectionhastext = targetObject.DataID >= 0;
     }
@@ -930,27 +921,10 @@ class OptUtil {
     }
 
     // Handle swimlane or shape container
-    if (/*object.IsSwimlane() ||*/ object instanceof Instance.Shape.ShapeContainer) {
+    if (object instanceof Instance.Shape.ShapeContainer) {
       this.selectionState.lockedTableSelected = true;
       this.selectionState.IsTargetTable = true;
     }
-
-    // // Handle tables
-    // const table = object.GetTable(false);
-    // if (table) {
-    //   if ((table.flags & TODO.Table.TableFlags.SDT_TF_LOCK) > 0) {
-    //     this.selectionState.lockedTableSelected = true;
-    //   }
-
-    //   if (SDUI.AppSettings.Application !== DSConstant.Application.Builder &&
-    //     object.objecttype === NvConstant.FNObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER) {
-    //     this.selectionState.lockedTableSelected = true;
-    //   }
-
-    //   if (T3Gv.opt.Table_GetCellWithType(table, TODO.Table.CellTypes.SD_CT_JIRA_ISSUEKEY)) {
-    //     this.selectionState.isJiraCard = true;
-    //   }
-    // }
 
     // Handle wall objects
     if (object.objecttype === NvConstant.FNObjectTypes.FlWall) {
@@ -966,7 +940,6 @@ class OptUtil {
     // Process object based on its class
     switch (objectClass) {
       case DRAWING_OBJECT_CLASS.Shape:
-        // this.ProcessShapeObject(object, table);
         this.ProcessShapeObject(object, null);
         break;
 
@@ -988,24 +961,12 @@ class OptUtil {
       this.selectionState.ngroupsselected++;
     }
 
-    // Handle active table
-    // const activeTableId = this.Table_GetActiveID();
-    // if (activeTableId === object.BlockID) {
-    //   this.Table_UpdateSelectionAttributes(activeTableId, false);
-    // } else {
-    //   this.HandleTextFormatAttributes(textObject, objectIndex);
-    // }
-
     TextUtil.HandleTextFormatAttributes(textObject, objectIndex);
 
     // Handle special object types
     if (object instanceof Instance.Shape.PolyLineContainer) {
       this.selectionState.npolylinecontainerselected++;
     }
-
-    // if (object.subtype === NvConstant.ObjectSubTypes.SD_SUBT_TASK) {
-    //   this.selectionState.projectTableSelected = true;
-    // }
 
     // Handle polyline objects
     if (object instanceof Instance.Shape.PolyLine && object.polylist && object.polylist.segs) {
@@ -1022,13 +983,8 @@ class OptUtil {
   }
 
   ProcessShapeObject(shape, table) {
-    // T3Util.Log('O.Opt ProcessShapeObject - Input:', { shape, hasTable: !!table });
 
     this.selectionState.nshapeselected++;
-
-    // if (table) {
-    //   this.selectionState.ntablesselected++;
-    // }
 
     // Handle rectangle corner radius
     if (shape.ShapeType === OptConstant.ShapeType.Rect || shape.ShapeType === OptConstant.ShapeType.RRect) {
@@ -1100,34 +1056,25 @@ class OptUtil {
     });
   }
 
-  // Table_GetActiveID() {
-  //   T3Util.Log('O.Opt Table_GetActiveID - Input: No parameters');
-
-  //   const activeTableId = DataUtil.GetObjectPtr(this.teDataBlockId, false).theActiveTableObjectID;
-
-  //   T3Util.Log('O.Opt Table_GetActiveID - Output:', activeTableId);
-  //   return activeTableId;
-  // }
-
-  BuildArrowheadLookupTables() {
-    T3Util.Log("O.Opt BuildArrowheadLookupTables - Input: No parameters");
+  BuildarrowHlkTables() {
+    T3Util.Log("O.Opt BuildarrowHlkTables - Input: No parameters");
 
     const arrowDefs = new ArrowDefs().uiArrowDefs;
     const arrowSizes = new ArrowSizes().uiarrowSizes;
 
     // Initialize lookup tables to the correct size
-    T3Gv.ArrowheadLookupTable.length = arrowDefs.length;
+    T3Gv.arrowHlkTable.length = arrowDefs.length;
     for (let index = 0; index < arrowDefs.length; index++) {
-      T3Gv.ArrowheadLookupTable[arrowDefs[index].id] = arrowDefs[index];
+      T3Gv.arrowHlkTable[arrowDefs[index].id] = arrowDefs[index];
     }
 
     // Initialize size table to the correct size
-    T3Gv.ArrowheadSizeTable.length = arrowSizes.length;
+    T3Gv.arrowHsTable.length = arrowSizes.length;
     for (let index = 0; index < arrowSizes.length; index++) {
-      T3Gv.ArrowheadSizeTable[index] = arrowSizes[index];
+      T3Gv.arrowHsTable[index] = arrowSizes[index];
     }
 
-    T3Util.Log("O.Opt BuildArrowheadLookupTables - Output: Arrowhead lookup tables built");
+    T3Util.Log("O.Opt BuildarrowHlkTables - Output: Arrowhead lookup tables built");
   }
 
   SetDimensionVisibility(objects, isVisible) {
@@ -1149,11 +1096,10 @@ class OptUtil {
 
     const isProcessingMessage = false;
 
-    if (!isProcessingMessage/*Collab.IsProcessingMessage()*/) {
+    if (!isProcessingMessage) {
       let isNudgeActive = false;
       if (this.nudgeOpen) {
         isNudgeActive = true;
-        // T3Gv.opt.CloseOpenNudge();
       }
       if (!skipTooltipProcessing) {
         TextUtil.HandleDataTooltipClose(true);
@@ -1161,7 +1107,6 @@ class OptUtil {
       UIUtil.SetFormatPainter(true, false);
       this.DeactivateAllTextEdit(false, !skipShapeClose);
       if (this.bInNoteEdit) {
-        // this.Note_CloseEdit();
       }
       if (!skipShapeClose) {
         this.CloseShapeEdit(closeOption);
@@ -1213,18 +1158,15 @@ class OptUtil {
           T3Util.Log("O.Opt CloseShapeEdit - Output: Active outline is a wall opt wall, skipping close");
           return;
         }
-        // Begin secondary edit and re-fetch the shape object.
-        // Collab.BeginSecondaryEdit();
 
         shapeObject = DataUtil.GetObjectPtr(activeOutlineId, false);
         if (
           shapeObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Line &&
           shapeObject.LineType === OptConstant.LineType.POLYLINE &&
           shapeObject.polylist.closed &&
-          (this.PolyLineToShape(activeOutlineId)/*, Collab.AllowMessage()*/)
+          (this.PolyLineToShape(activeOutlineId))
         ) {
           const messagePayload = { BlockID: activeOutlineId };
-          // Collab.BuildMessage(NvConstant.CollabMessages.CloseShapeEdit, messagePayload, false);
         }
       }
       if (!useAlternate) {
@@ -1361,8 +1303,6 @@ class OptUtil {
     T3Util.Log('O.Opt EndStampSession - Output: done');
   }
 
-
-
   /**
    * Checks if snap behavior should be overridden (based on Alt key)
    * @param inputEvent - The input event to check for Alt key state
@@ -1440,10 +1380,6 @@ class OptUtil {
         T3Util.Log('O.Opt allowAddToRecent - Output:', false);
         return false;
       }
-      // if (item.IsSwimlane()) {
-      //   T3Util.Log('O.Opt allowAddToRecent - Output:', false);
-      //   return false;
-      // }
     }
     T3Util.Log('O.Opt allowAddToRecent - Output:', true);
     return true;
@@ -2127,60 +2063,6 @@ class OptUtil {
     T3Util.Log("O.Opt ScrollObjectIntoView - Output: Scrolled to make object visible", { scrollX, scrollY });
   }
 
-  // /**
-  //  * Updates the active drawing tool based on current selection state.
-  //  * This function handles tool persistence when sticky selection is enabled,
-  //  * and resets to the default selection tool when sticky selection is disabled.
-  //  */
-  // UpdateTools() {
-  //   T3Util.Log("O.Opt UpdateTools - Input: No parameters");
-
-  //   let mouseEvent;
-
-  //   if (!NvConstant.DocumentContext.SelectionToolSticky) {
-  //     // If sticky selection is not enabled, set tool back to Select
-  //     if (NvConstant.DocumentContext.SelectionTool !== Resources.Tools.Select) {
-  //       // SDUI.Commands.MainController.Selection.SetSelectionTool(Resources.Tools.Select, false);
-  //     }
-  //   } else {
-  //     // If sticky selection is enabled, maintain the current drawing tool
-  //     switch (NvConstant.DocumentContext.SelectionTool) {
-  //       case Resources.Tools.Line:
-  //         Commands.MainController.Shapes.DrawNewLineShape(null, false, true);
-  //         break;
-
-  //       case Resources.Tools.Shape:
-  //         mouseEvent = { type: 'mousedown' };
-  //         Commands.MainController.Shapes.StampOrDragDropNewShape(mouseEvent, null);
-  //         mouseEvent = { type: 'mouseup' };
-  //         Commands.MainController.Shapes.StampOrDragDropNewShape(mouseEvent, null);
-  //         break;
-
-  //       case Resources.Tools.Text:
-  //         Commands.MainController.Shapes.StampTextLabel(true, true);
-  //         break;
-
-  //       case Resources.Tools.Wall:
-  //         Commands.MainController.Shapes.DrawNewWallShape(true, null);
-  //         break;
-
-  //       case Resources.Tools.Symbol:
-  //         mouseEvent = { type: 'mousedown' };
-  //         const selectedButton = Commands.MainController.Symbols.GetSelectedButton();
-  //         Commands.MainController.Shapes.DragDropSymbol(mouseEvent, selectedButton);
-  //         mouseEvent = { type: 'click' };
-  //         Commands.MainController.Shapes.DragDropSymbol(mouseEvent, selectedButton);
-  //         break;
-
-  //       case Resources.Tools.StyledLine:
-  //         Commands.MainController.Shapes.DrawNewStyledLineShape(null, true);
-  //         break;
-  //     }
-  //   }
-
-  //   T3Util.Log("O.Opt UpdateTools - Output: Tool selection updated");
-  // }
-
   SetControlDragMode(controlElement) {
     T3Util.Log("O.Opt SetControlDragMode - Input:", controlElement);
 
@@ -2204,122 +2086,6 @@ class OptUtil {
 
     T3Util.Log('O.Opt UnbindShapeMoveHammerEvents - Output: Events unbound');
   }
-
-
-
-  // Table_Release = function (e, t) {
-  //   return false;
-
-  //   var a,
-  //     r,
-  //     i,
-  //     n,
-  //     o,
-  //     s,
-  //     l,
-  //     S,
-  //     c,
-  //     u,
-  //     p,
-  //     d = T3Gv.opt.Table_GetActiveID();
-  //   if (d >= 0) {
-  //     if ((a = DataUtil.GetObjectPtr(d, !1)) && a.GetTable) {
-  //       var D,
-  //         g,
-  //         h = a.GetTable(!t);
-  //       if (a && h) {
-  //         var m = this.svgObjectLayer.GetElementById(a.BlockID);
-  //         for (r = h.cells.length, i = 0; i < r; i++) (n = h.cells[i]).flags = Utils2.SetFlag(n.flags, TODO.Table.CellFlags.SDT_F_Select, !1),
-  //           n.childcontainer >= 0 &&
-  //           (D = this.svgObjectLayer.GetElementById(n.childcontainer)) &&
-  //           (g = D.GetElementById(OptConstant.Common.TableSelection)) &&
-  //           D.RemoveElement(g);
-  //         for (
-  //           m &&
-  //           (g = m.GetElementById(OptConstant.Common.TableSelection)) &&
-  //           m.RemoveElement(g),
-  //           r = h.rows.length,
-  //           i = 0;
-  //           i < r;
-  //           i++
-  //         ) {
-  //           if ((o = h.rows[i]).selected && m) for (l = o.segments.length, S = 0; S < l; S++) c = i + '.' + S,
-  //             (
-  //               g = m.GetElementById(OptConstant.Common.TableRowSelection, c)
-  //             ) &&
-  //             m.RemoveElement(g);
-  //           o.selected = !1
-  //         }
-  //         if (
-  //           m &&
-  //           (
-  //             u = m.GetElementListWithId(OptConstant.Common.TableRowHitHidden)
-  //           )
-  //         ) for (r = u.length, i = 0; i < r; i++) u[i].SetStrokeOpacity(0);
-  //         for (r = h.cols.length, i = 0; i < r; i++) {
-  //           if ((s = h.cols[i]).selected && m) for (l = s.segments.length, S = 0; S < l; S++) c = i + '.' + S,
-  //             (
-  //               g = m.GetElementById(OptConstant.Common.TableColSelection, c)
-  //             ) &&
-  //             m.RemoveElement(g);
-  //           s.selected = !1
-  //         }
-  //         if (
-  //           m &&
-  //           (
-  //             u = m.GetElementListWithId(OptConstant.Common.TableColHitHidden)
-  //           )
-  //         ) for (r = u.length, i = 0; i < r; i++) u[i].SetStrokeOpacity(0);
-  //         e ||
-  //           (h.select = - 1),
-  //           h.rselect = - 1,
-  //           h.cselect = - 1,
-  //           (p = DataUtil.GetObjectPtr(this.teDataBlockId, !1)).theActiveTableObjectIndex >= 0 &&
-  //           m &&
-  //           (
-  //             T3Gv.opt.svgObjectLayer.RemoveElement(m),
-  //             T3Gv.opt.svgObjectLayer.AddElement(m, p.theActiveTableObjectIndex)
-  //           )
-  //       }
-  //     }
-  //     if (!e && !t) return p = DataUtil.GetObjectPtr(this.teDataBlockId, !0),
-  //       SvgUtil.ShowSVGSelectionState(p.theActiveTableObjectID, !0),
-  //       p.theActiveTableObjectID = - 1,
-  //       p.theActiveTableObjectIndex = - 1,
-  //       !0
-  //   }
-  //   return !1
-  // }
-
-  // IsLoneFlowchartShape(objectToCheck, resultContainer) {
-  //   T3Util.Log("O.Opt IsLoneFlowchartShape - Input:", { objectToCheck, resultContainer });
-
-  //   // If object doesn't exist or has no hooks, return false
-  //   if (!objectToCheck || !objectToCheck.hooks.length) {
-  //     T3Util.Log("O.Opt IsLoneFlowchartShape - Output: false (no object or no hooks)");
-  //     return false;
-  //   }
-
-  //   // Get the connected object from the first hook
-  //   const connectedObject = DataUtil.GetObjectPtr(objectToCheck.hooks[0].objid, false);
-
-  //   // Check if this is a lone flowchart connector
-  //   const isLoneFlowchart = !!(
-  //     connectedObject &&
-  //     connectedObject.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector &&
-  //     connectedObject.IsFlowChartConnector() &&
-  //     connectedObject.hooks.length === 0 &&
-  //     connectedObject.arraylist.hook.length === ConnectorDefines.NSkip + 1
-  //   );
-
-  //   // If it's a lone flowchart, set the ID in the result container
-  //   if (isLoneFlowchart) {
-  //     resultContainer.id = connectedObject.BlockID;
-  //   }
-
-  //   T3Util.Log("O.Opt IsLoneFlowchartShape - Output:", isLoneFlowchart);
-  //   return isLoneFlowchart;
-  // }
 
   IsConnectorEndShape(objectData, connectorObject, resultContainer) {
     T3Util.Log("O.Opt IsConnectorEndShape - Input:", { objectData, connectorObject, resultContainer });
@@ -2384,14 +2150,6 @@ class OptUtil {
           T3Util.Log("O.Opt IsGenogramPartner - Output: true (genogram connector found)");
           return true;
         }
-
-        // // Check if it's a genogram branch with child lines
-        // if (connectedObject.objecttype === NvConstant.FNObjectTypes.SD_OBJT_GENOGRAM_BRANCH &&
-        //   this.FindChildObject(objectData.BlockID, OptConstant.DrawObjectBaseClass.Line, -1) >= 0) {
-        //   resultContainer.id = objectData.hooks[0].objid;
-        //   T3Util.Log("O.Opt IsGenogramPartner - Output: true (genogram branch found)");
-        //   return true;
-        // }
       }
     }
     // Case 2: Check if object has a child array with a genogram connector
@@ -3164,21 +2922,6 @@ class OptUtil {
     T3Util.Log("O.Opt LinesIntersect - Output: Lines do not intersect");
     return false;
   }
-
-  // /**
-  //  * Determines if an object is a UI element that should be hidden in tables
-  //  * @param drawingObject - The drawing object to check
-  //  * @returns True if the object is a UI element, false otherwise
-  //  */
-  // TableHideUI(drawingObject) {
-  //   T3Util.Log("O.Opt TableHideUI - Input:", drawingObject ? drawingObject.BlockID : null);
-
-  //   const objectTypes = NvConstant.FNObjectTypes;
-  //   const isUIElement = drawingObject.objecttype === objectTypes.UiElement;
-
-  //   T3Util.Log("O.Opt TableHideUI - Output:", isUIElement);
-  //   return isUIElement;
-  // }
 
   /**
     * Creates an inflated outline around a polyline with specified thickness
@@ -3991,100 +3734,6 @@ class OptUtil {
     return angle;
   }
 
-  // /**
-  //    * Extends table lines based on intersection points with a polyline
-  //    * @param polylineObject - The polyline object containing points
-  //    * @param tableData - Table data containing rows and columns
-  //    */
-  // Table_ExtendLines(polylineObject: any, tableData: any) {
-  //   T3Util.Log("O.Opt Table_ExtendLines - Input:", {
-  //     polylineObject: polylineObject?.BlockID,
-  //     tableData: {
-  //       rowCount: tableData?.rows?.length,
-  //       colCount: tableData?.cols?.length
-  //     }
-  //   });
-
-  //   const polyPoints = polylineObject.GetPolyPoints(
-  //     OptConstant.Common.MaxPolyPoints,
-  //     true,
-  //     false,
-  //     false,
-  //     null
-  //   );
-
-  //   const intersectionPoints = [0, 0];
-
-  //   // Calculate offsets
-  //   const rectOffsetX = polylineObject.trect.x - polylineObject.Frame.x;
-  //   const rectOffsetY = polylineObject.trect.y - polylineObject.Frame.y;
-  //   const insideOffsetX = polylineObject.inside.x - polylineObject.Frame.x;
-  //   const insideOffsetY = polylineObject.inside.y - polylineObject.Frame.y;
-
-  //   const rowCount = tableData.rows.length;
-  //   const colCount = tableData.cols.length;
-
-  //   // Process rows
-  //   for (let rowIndex = 0; rowIndex < rowCount - 1; rowIndex++) {
-  //     const currentRow = tableData.rows[rowIndex];
-  //     const segmentCount = currentRow.segments.length;
-
-  //     // Calculate intersection line y-position
-  //     let intersectionY = currentRow.frame.y + currentRow.frame.height + rectOffsetY;
-  //     intersectionY -= tableData.cells[currentRow.start].hdisp / 2;
-
-  //     // Check for horizontal intersections
-  //     if (this.PolyGetIntersect(polyPoints, intersectionY, intersectionPoints, null, false) === 2) {
-  //       // Update segment endpoints
-  //       for (let segIndex = 0; segIndex < segmentCount; segIndex++) {
-  //         const segment = currentRow.segments[segIndex];
-
-  //         // Extend left endpoint if at start
-  //         if (segment.x_start <= 0) {
-  //           segment.x_start = intersectionPoints[0] - rectOffsetX + insideOffsetX;
-  //         }
-
-  //         // Extend right endpoint if at end
-  //         if (segment.ncells + segment.start === currentRow.ncells) {
-  //           segment.x_end = intersectionPoints[1] - rectOffsetX - insideOffsetX;
-  //         }
-  //       }
-  //     }
-  //   }
-
-  //   // Process columns
-  //   for (let colIndex = 0; colIndex < colCount - 1; colIndex++) {
-  //     const currentCol = tableData.cols[colIndex];
-  //     const segmentCount = currentCol.segments.length;
-
-  //     // Calculate intersection line x-position
-  //     const intersectionX = currentCol.x + rectOffsetX - currentCol.vdisp / 2;
-
-  //     // Check for vertical intersections
-  //     if (this.PolyGetIntersect(polyPoints, intersectionX, intersectionPoints, null, true) === 2) {
-  //       // Update segment endpoints
-  //       for (let segIndex = 0; segIndex < segmentCount; segIndex++) {
-  //         const segment = currentCol.segments[segIndex];
-
-  //         // Extend top endpoint if at start
-  //         if (segment.rowstart === 0) {
-  //           segment.y = intersectionPoints[0] - rectOffsetY + insideOffsetY;
-  //         }
-
-  //         // Extend bottom endpoint if at end
-  //         if (segment.rowend === rowCount - 1) {
-  //           segment.bottom = intersectionPoints[1] - rectOffsetY - insideOffsetY;
-  //         }
-  //       }
-  //     }
-  //   }
-
-  //   T3Util.Log("O.Opt Table_ExtendLines - Output: Lines extended for table with", {
-  //     rowCount,
-  //     colCount
-  //   });
-  // }
-
   /**
      * Gets shape parameters for different shape types
      * @param shapeType - The type of shape
@@ -4218,87 +3867,6 @@ class OptUtil {
     return result;
   }
 
-  BuildCreateMessage(message: any, shouldSend: boolean): any {
-    T3Util.Log("O.Opt BuildCreateMessage - Input:", { message, shouldSend });
-    /*
-    if (Collab.AllowMessage()) {
-      let createList: any[] = [];
-
-
-      // Populate createList for secondary collaborator if applicable
-      if (
-        Collab.IsSecondary() &&
-        (this.moveList && this.moveList.length
-          ? (createList = createList.concat(this.moveList))
-          : createList.push(this.drawShape.BlockID))
-      ) {
-        // No additional actions needed here
-      }
-
-      // If the drawn shape has a symbol identifier, process as a symbol creation
-      if (this.drawShape.SymbolID) {
-        message.symbolID = this.drawShape.SymbolID;
-        message.CreateList = createList;
-        message.StyleRecord = Utils1.DeepCopy(this.drawShape.StyleRecord);
-        message.Actions = [];
-
-        let action = new Collab.MessageAction(NvConstant.CollabMessageActions.CreateSymbol);
-        message.Actions.push(action);
-        action = new Collab.MessageAction(NvConstant.CollabMessageActions.MoveObject);
-        message.Actions.push(action);
-        action = new Collab.MessageAction(NvConstant.CollabMessageActions.LinkObject);
-        message.Actions.push(action);
-
-        const builtMessage = Collab.BuildMessage(NvConstant.CollabMessages.AddSymbol, message, false, true);
-
-        if (!shouldSend) {
-          T3Util.Log("O.Opt BuildCreateMessage - Output:", builtMessage);
-          return builtMessage;
-        }
-
-        Collab.SendMessage(builtMessage);
-        T3Util.Log("O.Opt BuildCreateMessage - Output:", builtMessage);
-      } else {
-        // Otherwise process as a shape creation
-        message.attributes = {};
-        message.CreateList = createList;
-        message.attributes.StyleRecord = Utils1.DeepCopy(this.drawShape.StyleRecord);
-        message.attributes.Frame = Utils1.DeepCopy(this.drawShape.Frame);
-        message.attributes.TMargins = Utils1.DeepCopy(this.drawShape.TMargins);
-        message.attributes.TextGrow = this.drawShape.TextGrow;
-        message.attributes.ObjGrow = this.drawShape.ObjGrow;
-        message.attributes.TextAlign = this.drawShape.TextAlign;
-        message.attributes.flags = this.drawShape.flags;
-        message.attributes.moreflags = this.drawShape.moreflags;
-        message.attributes.shapeparam = this.drawShape.shapeparam;
-        message.attributes.Dimensions = this.drawShape.Dimensions;
-        if (this.drawShape.VertexArray) {
-          message.attributes.VertexArray = Utils1.DeepCopy(this.drawShape.VertexArray);
-        }
-        message.ShapeType = this.drawShape.ShapeType;
-        message.Actions = [];
-
-        let action = new Collab.MessageAction(NvConstant.CollabMessageActions.CreateShape);
-        message.Actions.push(action);
-        action = new Collab.MessageAction(NvConstant.CollabMessageActions.MoveObject);
-        message.Actions.push(action);
-        action = new Collab.MessageAction(NvConstant.CollabMessageActions.LinkObject);
-        message.Actions.push(action);
-
-        const builtMessage = Collab.BuildMessage(NvConstant.CollabMessages.AddSymbol, message, false, true);
-
-        if (!shouldSend) {
-          T3Util.Log("O.Opt BuildCreateMessage - Output:", builtMessage);
-          return builtMessage;
-        }
-
-        Collab.SendMessage(builtMessage);
-        T3Util.Log("O.Opt BuildCreateMessage - Output:", builtMessage);
-      }
-  }
-  */
-  }
-
   AddtoDelete(objectIds: number[], isForced: boolean, additionalData: any) {
     T3Util.Log("O.Opt AddtoDelete - Input:", { objectIds, isForced, additionalData });
 
@@ -4323,15 +3891,6 @@ class OptUtil {
         // Save the current object's id
         tempId = objectIds[currentIndex];
 
-        // if (currentObj.objecttype === NvConstant.FNObjectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER) {
-        //   this.TableContainerAddtoDelete(currentObj, objectIds);
-        // } else if (/*currentObj.IsSwimlane && currentObj.IsSwimlane()*/false) {
-        //   //this.SwimlaneAddtoDelete(currentObj, objectIds);
-        //   //objectCount = objectIds.length;
-        // } else
-        // if (currentObj.objecttype === NvConstant.FNObjectTypes.SD_OBJT_NG_TIMELINE) {
-        //   this.TimelineAddtoDelete(currentObj, objectIds);
-        // } else
         if (currentObj instanceof Instance.Shape.ShapeContainer) {
           this.ContainerAddtoDelete(currentObj, objectIds);
           hasContainerConnector = true;
@@ -4341,68 +3900,18 @@ class OptUtil {
           hasContainerConnector = true;
           if (currentObj.IsFlowChartConnector && currentObj.IsFlowChartConnector()) {
             switch (currentObj.objecttype) {
-              // case NvConstant.FNObjectTypes.SD_OBJT_BAD_STEPCHART_BRANCH:
-              //   break;
-              // case NvConstant.FNObjectTypes.SD_OBJT_STEPCHARTH_BRANCH:
-              // case NvConstant.FNObjectTypes.SD_OBJT_STEPCHARTV_BRANCH:
-              //   if (!isForced) {
-              //     objectIds.splice(currentIndex, 1);
-              //     objectCount--;
-              //     currentIndex--;
-              //   }
-              //   break;
+
               default:
                 OptAhUtil.GetConnectorTree(objectIds[currentIndex], objectIds);
             }
           } else {
-            // if (currentObj.objecttype === NvConstant.FNObjectTypes.SD_OBJT_CAUSEEFFECT_BRANCH) {
-            //   if (typeof connectorHookCount === "undefined" && currentObj.hooks.length) {
-            //     tempObj = DataUtil.GetObjectPtr(currentObj.hooks[0].objid, false);
-            //     if (tempObj && tempObj.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Connector) {
-            //       connectorHookCount = tempObj.arraylist.hook.length - connectorDefines.SEDA_NSkip;
-            //       if (connectorHookCount < 0) {
-            //         connectorHookCount = 0;
-            //       }
-            //       if (0 === (tempObj.extraflags & OptConstant.ExtraFlags.NoDelete)) {
-            //         connectorHookCount++;
-            //       }
-            //     }
-            //   }
-            //   if (typeof connectorHookCount !== "undefined") {
-            //     if ((connectorHookCount - connectorUsageCount > 1 && (currentObj.extraflags & OptConstant.ExtraFlags.NoDelete) === 0) || isForced) {
-            //       OptAhUtil.GetConnectorTree(objectIds[currentIndex], objectIds);
-            //       connectorUsageCount++;
-            //     } else {
-            //       objectIds.splice(currentIndex, 1);
-            //       currentIndex--;
-            //       objectCount--;
-            //       tempId = -1;
-            //       // Reset helper id.
-            //       let helperId: number = -1;
-            //       if (currentObj.arraylist.hook[connectorDefines.A_Cl].id >= 0) {
-            //         helperId = currentObj.arraylist.hook[connectorDefines.A_Cl].id;
-            //       }
-            //       if (currentObj.arraylist.hook[connectorDefines.A_Cr].id >= 0) {
-            //         helperId = currentObj.arraylist.hook[connectorDefines.A_Cr].id;
-            //       }
-            //       if (helperId >= 0) {
-            //         let foundIndex = objectIds.indexOf(helperId);
-            //         if (foundIndex >= 0) {
-            //           objectIds.splice(foundIndex, 1);
-            //         }
-            //       }
-            //     }
-            //   }
-            // } else
 
-            {
-              OptAhUtil.GetConnectorTree(objectIds[currentIndex], objectIds);
-              objectCount = objectIds.length;
-              if (isForced && currentObj.hooks.length) {
-                tempObj = DataUtil.GetObjectPtr(currentObj.hooks[0].objid, false);
-                if (tempObj && tempObj.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape && objectIds.indexOf(currentObj.hooks[0].objid) < 0) {
-                  objectIds.push(currentObj.hooks[0].objid);
-                }
+            OptAhUtil.GetConnectorTree(objectIds[currentIndex], objectIds);
+            objectCount = objectIds.length;
+            if (isForced && currentObj.hooks.length) {
+              tempObj = DataUtil.GetObjectPtr(currentObj.hooks[0].objid, false);
+              if (tempObj && tempObj.DrawingObjectBaseClass === OptConstant.DrawObjectBaseClass.Shape && objectIds.indexOf(currentObj.hooks[0].objid) < 0) {
+                objectIds.push(currentObj.hooks[0].objid);
               }
             }
           }
@@ -4439,10 +3948,6 @@ class OptUtil {
                     objectIds.splice(parentIndex, 1);
                   }
                 }
-                // if (tempObj.objecttype === NvConstant.FNObjectTypes.SD_OBJT_GENOGRAM_BRANCH) {
-                //   flagSkip = gGenogramManager.DeleteConnector(tempObj, objectIds, currentIndex, deleteInfo);
-                //   tempId = deleteInfo.parentshape;
-                // } else
 
                 if (tempObj.IsFlowChartConnector && tempObj.IsFlowChartConnector()) {
                   childIds = [];
@@ -4451,22 +3956,6 @@ class OptUtil {
                   if (childObj == null) {
                     childObj = tempObj;
                   }
-                  // if (tempObj.objecttype === NvConstant.FNObjectTypes.SD_OBJT_STEPCHARTV_BRANCH ||
-                  //   childObj.objecttype === NvConstant.FNObjectTypes.SD_OBJT_STEPCHARTV_BRANCH) {
-                  //   if (gStepChartVManager && !isForced) {
-                  //     helperValue = gStepChartVManager.DeleteShape(objectIds[currentIndex], objectIds, false, null, childIds);
-                  //   }
-                  // }
-
-                  // else if (tempObj.objecttype === NvConstant.FNObjectTypes.SD_OBJT_STEPCHARTH_BRANCH ||
-                  //   childObj.objecttype === NvConstant.FNObjectTypes.SD_OBJT_STEPCHARTH_BRANCH) {
-                  //   if (gStepChartHManager && !isForced) {
-                  //     helperValue = gStepChartHManager.DeleteShape(objectIds[currentIndex], objectIds, false, null, childIds);
-                  //   }
-                  // }
-                  // else if (gFlowChartManager && !isForced) {
-                  //   helperValue = gFlowChartManager.DeleteShape(objectIds[currentIndex], objectIds, false, childIds);
-                  // }
                 } else if (tempObj.arraylist.styleflags & OptConstant.AStyles.CoManager) {
                   if (isForced) {
                     tempId = tempObj.arraylist.hook[connectorDefines.SEDA_NSkip].id;
@@ -4500,16 +3989,12 @@ class OptUtil {
           } else {
             // No parent connector found.
             let repeatCount: number;
-            // if (currentObj.objecttype === NvConstant.FNObjectTypes.SD_OBJT_MINDMAP_MAIN) {
-            //   repeatCount = 2;
-            //   flagSkip = false;
-            // } else
-            // {
+
             repeatCount = 1;
             if (!isForced) {
               flagSkip = true;
             }
-            // }
+
             let childSearchIndex: number = -1;
             for (let j = 0; j < repeatCount; j++) {
               let childId = T3Gv.opt.FindChildArray(objectIds[currentIndex], childSearchIndex);
@@ -4625,413 +4110,712 @@ class OptUtil {
     return helperValue;
   }
 
-  HealLine(e, t, a) {
-    var r,
-      i,
-      n,
-      o,
-      s,
-      l,
-      S,
-      c,
-      u,
-      p,
-      d,
-      D,
-      g,
-      h,
-      m,
-      C,
-      y,
-      f,
-      L,
-      I,
-      T,
-      b = [],
-      M = [],
-      P = [],
-      R = [],
-      A = DataUtil.GetObjectPtr(this.linksBlockId, !1),
-      _ = - 1,
-      E = - 1,
-      w = !1,
-      F = (OptConstant.Common.DimMax, !1),
-      v = [],
-      G = OptConstant.HookPts,
-      N = function (e, t, a, r, i, n) {
-        var o,
-          s,
-          l,
-          S,
-          c,
-          u,
-          p = [],
-          d = [];
-        if (
-          o = e.segl.pts.length,
-          s = t.segl.pts.length,
-          c = Utils2.IsEqual(a.y, r.y, 0.1) ? Math.abs(a.x - r.x) : Math.abs(a.y - r.y),
-          n
-        ) for (S = 2; S < s; S++) l = Utils2.IsEqual(t.segl.pts[S].y, t.segl.pts[S - 1].y) ? Math.abs(t.segl.pts[S].x - t.segl.pts[S - 1].x) : Math.abs(t.segl.pts[S].y - t.segl.pts[S - 1].y),
-          d.push(l);
-        else for (S = s - 2; S > 0; S--) l = Utils2.IsEqual(t.segl.pts[S].y, t.segl.pts[S - 1].y) ? Math.abs(t.segl.pts[S].x - t.segl.pts[S - 1].x) : Math.abs(t.segl.pts[S].y - t.segl.pts[S - 1].y),
-          d.push(l);
-        if (i) {
-          for (S = (u = d.length) - 1; S >= 0; S--) p.push(d[S]);
-          for (p.push(c), S = 2; S < o; S++) l = Utils2.IsEqual(e.segl.pts[S].y, e.segl.pts[S - 1].y) ? Math.abs(e.segl.pts[S].x - e.segl.pts[S - 1].x) : Math.abs(e.segl.pts[S].y - e.segl.pts[S - 1].y),
-            p.push(l)
+  /**
+   * Heals or connects line segments by intelligently joining them.
+   * This function identifies lines connected to a given object and attempts to join them
+   * by analyzing their connection points, directions, and segment properties. It handles
+   * hook updates, segment formatting, and proper connection geometry.
+   *
+   * @param sourceObject - The object whose line connections should be healed
+   * @param checkOnly - If true, only checks if healing is possible without performing the operation
+   * @param resultArray - Array to store connected object IDs
+   * @returns ID of the connected line or -1 if no healing was possible
+   */
+  HealLine(sourceObject, checkOnly, resultArray) {
+    // Initialize variables
+    let objectCount;
+    let objectIndex;
+    let currentObject;
+    let secondObject;
+    let linkStartIndex;
+    let lineDirection;
+    let connectionPoint;
+    let firstHookIndex;
+    let secondHookIndex;
+    let firstConnectHookIndex;
+    let secondConnectHookIndex;
+    let sourceObjectId;
+    let northObject;
+    let southObject;
+    let westObject;
+    let eastObject;
+    let startPoint;
+    let endPoint;
+    let firstHookPositionPoint;
+    let secondHookPositionPoint;
+
+    // Arrays to store data
+    let connectedObjects = [];
+    let lineObjectIds = [];
+    let connectionPoints = [];
+    let directionTypes = [];
+
+    // Get links data
+    const links = DataUtil.GetObjectPtr(this.linksBlockId, false);
+    let firstConnectedObjectId = -1;
+    let secondConnectedObjectId = -1;
+    let foundMatchingDirection = false;
+    let isConnectFromEnd = false;
+    let segmentLengths = [];
+    const hookPoints = OptConstant.HookPts;
+
+    /**
+     * Calculates segment lengths for combining two line objects
+     * @param firstLine - First line object
+     * @param secondLine - Second line object
+     * @param firstPoint - Connection point on first line
+     * @param secondPoint - Connection point on second line
+     * @param isFirstLineFirst - Whether to process first line segments first
+     * @param isSecondLineReversed - Whether second line segments should be processed in reverse
+     * @returns Array of segment lengths for the combined line
+     */
+    const calculateSegmentLengths = function (firstLine, secondLine, firstPoint, secondPoint, isFirstLineFirst, isSecondLineReversed) {
+      let pointCount1, pointCount2, segLength, secondIndex, combinedSegLengths = [], secondLineSegLengths = [];
+
+      // Get point counts from both lines
+      pointCount1 = firstLine.segl.pts.length;
+      pointCount2 = secondLine.segl.pts.length;
+
+      // Calculate the connection segment length
+      segLength = Utils2.IsEqual(firstPoint.y, secondPoint.y, 0.1)
+        ? Math.abs(firstPoint.x - secondPoint.x)
+        : Math.abs(firstPoint.y - secondPoint.y);
+
+      // Process second line's segments
+      if (isSecondLineReversed) {
+        for (secondIndex = 2; secondIndex < pointCount2; secondIndex++) {
+          let length = Utils2.IsEqual(secondLine.segl.pts[secondIndex].y, secondLine.segl.pts[secondIndex - 1].y)
+            ? Math.abs(secondLine.segl.pts[secondIndex].x - secondLine.segl.pts[secondIndex - 1].x)
+            : Math.abs(secondLine.segl.pts[secondIndex].y - secondLine.segl.pts[secondIndex - 1].y);
+          secondLineSegLengths.push(length);
+        }
+      } else {
+        for (secondIndex = pointCount2 - 2; secondIndex > 0; secondIndex--) {
+          let length = Utils2.IsEqual(secondLine.segl.pts[secondIndex].y, secondLine.segl.pts[secondIndex - 1].y)
+            ? Math.abs(secondLine.segl.pts[secondIndex].x - secondLine.segl.pts[secondIndex - 1].x)
+            : Math.abs(secondLine.segl.pts[secondIndex].y - secondLine.segl.pts[secondIndex - 1].y);
+          secondLineSegLengths.push(length);
+        }
+      }
+
+      // Combine segment lengths in the proper order
+      if (isFirstLineFirst) {
+        // Add second line segments in reverse
+        for (secondIndex = secondLineSegLengths.length - 1; secondIndex >= 0; secondIndex--) {
+          combinedSegLengths.push(secondLineSegLengths[secondIndex]);
+        }
+
+        // Add connection segment
+        combinedSegLengths.push(segLength);
+
+        // Add first line segments
+        for (secondIndex = 2; secondIndex < pointCount1; secondIndex++) {
+          let length = Utils2.IsEqual(firstLine.segl.pts[secondIndex].y, firstLine.segl.pts[secondIndex - 1].y)
+            ? Math.abs(firstLine.segl.pts[secondIndex].x - firstLine.segl.pts[secondIndex - 1].x)
+            : Math.abs(firstLine.segl.pts[secondIndex].y - firstLine.segl.pts[secondIndex - 1].y);
+          combinedSegLengths.push(length);
+        }
+      } else {
+        // Add first line segments
+        for (secondIndex = 1; secondIndex < pointCount1 - 1; secondIndex++) {
+          let length = Utils2.IsEqual(firstLine.segl.pts[secondIndex].y, firstLine.segl.pts[secondIndex - 1].y)
+            ? Math.abs(firstLine.segl.pts[secondIndex].x - firstLine.segl.pts[secondIndex - 1].x)
+            : Math.abs(firstLine.segl.pts[secondIndex].y - firstLine.segl.pts[secondIndex - 1].y);
+          combinedSegLengths.push(length);
+        }
+
+        // Add connection segment
+        combinedSegLengths.push(segLength);
+
+        // Add second line segments
+        for (let i = 0; i < secondLineSegLengths.length; i++) {
+          combinedSegLengths.push(secondLineSegLengths[i]);
+        }
+      }
+
+      return combinedSegLengths;
+    };
+
+    /**
+     * Updates the segment lengths of a line
+     * @param lineObject - The line object to update
+     * @param newLengths - The new segment lengths to apply
+     */
+    const updateSegmentLengths = function (lineObject, newLengths) {
+      let index;
+      let segmentLengthsLength = newLengths.length;
+      let pointsCount = lineObject.segl.pts.length - 1;
+
+      // Special case for 5-point segments
+      if (pointsCount === 5) {
+        newLengths[2] = newLengths[4];
+      }
+
+      // Update segment lengths
+      for (index = 0; index < segmentLengthsLength && index <= pointsCount; index++) {
+        lineObject.segl.lengths[index] = newLengths[index];
+      }
+    };
+
+    // Find the starting index for this object's links
+    linkStartIndex = OptCMUtil.FindLink(links, sourceObject.BlockID, true);
+    sourceObjectId = sourceObject.BlockID;
+
+    // If no links found, return immediately
+    if (linkStartIndex < 0) {
+      return -1;
+    }
+
+    // Collect all objects connected to the source object
+    this.AddToHookList(
+      links,
+      connectedObjects,
+      linkStartIndex,
+      sourceObject.BlockID,
+      NvConstant.ListCodes.TopOnly,
+      1,
+      {}
+    );
+
+    // Store total object count
+    let totalObjectCount = objectCount = connectedObjects.length;
+
+    // Process each connected object
+    for (objectIndex = 0; objectIndex < objectCount; objectIndex++) {
+      currentObject = DataUtil.GetObjectPtr(connectedObjects[objectIndex], false);
+
+      // Check if object allows healing
+      if (currentObject.AllowHeal()) {
+        // Store line object IDs
+        lineObjectIds.push(connectedObjects[objectIndex]);
+
+        // Process object's hooks to find connections to the source object
+        const hookCount = currentObject.hooks.length;
+        for (let hookIndex = 0; hookIndex < hookCount; hookIndex++) {
+          if (currentObject.hooks[hookIndex].objid === sourceObjectId) {
+            connectionPoints[lineObjectIds.length - 1] = currentObject.hooks[hookIndex].connect;
+
+            // Store direction based on hook point
+            if (currentObject.hooks[hookIndex].hookpt === hookPoints.SED_KTL) {
+              directionTypes.push(currentObject.segl.firstdir);
+            } else {
+              directionTypes.push(currentObject.segl.lastdir);
+            }
+          }
+        }
+      }
+    }
+
+    // Check if we have at least 2 connected objects
+    if ((objectCount = lineObjectIds.length) >= 2 && objectCount < 4) {
+      // Try to match objects by direction
+      for (objectIndex = 0; objectIndex < objectCount; objectIndex++) {
+        switch (directionTypes[objectIndex]) {
+          case hookPoints.SED_KTC:
+            northObject = lineObjectIds[objectIndex];
+            if (southObject !== undefined) {
+              lineObjectIds[0] = northObject;
+              lineObjectIds[1] = southObject;
+              objectCount = 2;
+              foundMatchingDirection = true;
+            }
+            break;
+
+          case hookPoints.SED_KBC:
+            southObject = lineObjectIds[objectIndex];
+            if (northObject !== undefined) {
+              lineObjectIds[0] = northObject;
+              lineObjectIds[1] = southObject;
+              objectCount = 2;
+              foundMatchingDirection = true;
+            }
+            break;
+
+          case hookPoints.SED_KLC:
+            westObject = lineObjectIds[objectIndex];
+            if (eastObject !== undefined) {
+              lineObjectIds[0] = westObject;
+              lineObjectIds[1] = eastObject;
+              objectCount = 2;
+              foundMatchingDirection = true;
+            }
+            break;
+
+          case hookPoints.SED_KRC:
+            eastObject = lineObjectIds[objectIndex];
+            if (westObject !== undefined) {
+              lineObjectIds[0] = westObject;
+              lineObjectIds[1] = eastObject;
+              objectCount = 2;
+              foundMatchingDirection = true;
+            }
+            break;
+        }
+
+        if (foundMatchingDirection) {
+          break;
+        }
+      }
+    }
+
+    // If check only mode and matching direction found, return success
+    if (checkOnly && foundMatchingDirection) {
+      return 1;
+    }
+
+    // If we found matching directions, process the healing
+    if (foundMatchingDirection) {
+      // Get writable copies of both objects
+      currentObject = DataUtil.GetObjectPtr(lineObjectIds[0], true);
+      secondObject = DataUtil.GetObjectPtr(lineObjectIds[1], true);
+
+      // If first object has one hook and second has two, swap them
+      if (currentObject.hooks.length === 1 && secondObject.hooks.length === 2) {
+        let tempId = lineObjectIds[0];
+        lineObjectIds[0] = lineObjectIds[1];
+        lineObjectIds[1] = tempId;
+        currentObject = DataUtil.GetObjectPtr(lineObjectIds[0], true);
+        secondObject = DataUtil.GetObjectPtr(lineObjectIds[1], true);
+      }
+
+      // Get bounding rectangles for both objects
+      const firstRect = Utils2.Pt2Rect(currentObject.StartPoint, currentObject.EndPoint);
+      const secondRect = Utils2.Pt2Rect(secondObject.StartPoint, secondObject.EndPoint);
+
+      // Get links for both objects
+      const firstObjectLinks = T3Gv.opt.GetPolyLineLinks(lineObjectIds[0], 0);
+      const secondObjectLinks = T3Gv.opt.GetPolyLineLinks(lineObjectIds[1], 0);
+
+      // Find hook indices
+      for (objectCount = currentObject.hooks.length, objectIndex = 0; objectIndex < objectCount; objectIndex++) {
+        if (currentObject.hooks[objectIndex].objid != sourceObject.BlockID) {
+          firstConnectedObjectId = currentObject.hooks[objectIndex].objid;
         } else {
-          for (S = 1; S < o - 1; S++) l = Utils2.IsEqual(e.segl.pts[S].y, e.segl.pts[S - 1].y) ? Math.abs(e.segl.pts[S].x - e.segl.pts[S - 1].x) : Math.abs(e.segl.pts[S].y - e.segl.pts[S - 1].y),
-            p.push(l);
-          for (p.push(c), u = d.length, S = 0; S < u; S++) p.push(d[S])
+          firstHookIndex = objectIndex;
         }
-        return p
-      },
-      k = function (e, t) {
-        var a,
-          r,
-          i;
-        for (
-          r = t.length,
-          5 === (i = e.segl.pts.length - 1) &&
-          (t[2] = t[4]),
-          a = 0;
-          a < r &&
-          (e.segl.lengths[a] = t[a], !(a >= i));
-          a++
+      }
+
+      for (objectCount = secondObject.hooks.length, objectIndex = 0; objectIndex < objectCount; objectIndex++) {
+        if (secondObject.hooks[objectIndex].objid != sourceObject.BlockID) {
+          secondConnectedObjectId = secondObject.hooks[objectIndex].objid;
+          secondConnectHookIndex = objectIndex;
+        } else {
+          secondHookIndex = objectIndex;
+        }
+      }
+
+      // Handle case: both objects connected to different objects (not the source)
+      if (firstConnectedObjectId >= 0 && secondConnectedObjectId >= 0 && firstConnectedObjectId != secondConnectedObjectId) {
+        // Determine connection direction and points
+        if (secondObject.hooks[secondHookIndex].hookpt === hookPoints.KTL) {
+          lineDirection = secondObject.segl.firstdir;
+          connectionPoint = secondObject.StartPoint;
+          isConnectFromEnd = false;
+          secondHookPositionPoint = {
+            x: secondObject.StartPoint.x,
+            y: secondObject.StartPoint.y
+          };
+
+          const pointCount = secondObject.segl.pts.length;
+          if (pointCount > 2) {
+            secondHookPositionPoint.x = secondRect.x + secondObject.segl.pts[pointCount - 2].x;
+            secondHookPositionPoint.y = secondRect.y + secondObject.segl.pts[pointCount - 2].y;
+          }
+        } else {
+          lineDirection = secondObject.segl.lastdir;
+          connectionPoint = secondObject.EndPoint;
+          isConnectFromEnd = true;
+
+          secondHookPositionPoint = {
+            x: secondObject.StartPoint.x,
+            y: secondObject.StartPoint.y
+          };
+
+          secondHookPositionPoint.x = secondRect.x + secondObject.segl.pts[1].x;
+          secondHookPositionPoint.y = secondRect.y + secondObject.segl.pts[1].y;
+        }
+
+        // Connect objects based on hook position
+        if (currentObject.hooks[firstHookIndex].hookpt === hookPoints.KTL) {
+          firstHookPositionPoint = {
+            x: currentObject.StartPoint.x,
+            y: currentObject.StartPoint.y
+          };
+
+          firstHookPositionPoint.x = firstRect.x + currentObject.segl.pts[1].x;
+          firstHookPositionPoint.y = firstRect.y + currentObject.segl.pts[1].y;
+
+          // Calculate segment lengths for the combined line
+          segmentLengths = calculateSegmentLengths(
+            currentObject,
+            secondObject,
+            firstHookPositionPoint,
+            secondHookPositionPoint,
+            true,
+            isConnectFromEnd
+          );
+
+          // Update first object's properties
+          currentObject.segl.firstdir = lineDirection;
+          currentObject.StartPoint.x = connectionPoint.x;
+          currentObject.StartPoint.y = connectionPoint.y;
+          currentObject.SegLFormat(connectionPoint, OptConstant.ActionTriggerType.LineStart, 0);
+          updateSegmentLengths(currentObject, segmentLengths);
+          currentObject.SegLFormat(connectionPoint, OptConstant.ActionTriggerType.LineStart, 0);
+        } else {
+          firstHookPositionPoint = {
+            x: currentObject.StartPoint.x,
+            y: currentObject.StartPoint.y
+          };
+
+          const pointCount = currentObject.segl.pts.length;
+          if (pointCount > 2) {
+            firstHookPositionPoint.x = firstRect.x + currentObject.segl.pts[pointCount - 2].x;
+            firstHookPositionPoint.y = firstRect.y + currentObject.segl.pts[pointCount - 2].y;
+          }
+
+          // Calculate segment lengths for the combined line
+          segmentLengths = calculateSegmentLengths(
+            currentObject,
+            secondObject,
+            firstHookPositionPoint,
+            secondHookPositionPoint,
+            false,
+            isConnectFromEnd
+          );
+
+          // Update first object's properties
+          currentObject.segl.lastdir = lineDirection;
+          currentObject.EndPoint.x = connectionPoint.x;
+          currentObject.EndPoint.y = connectionPoint.y;
+          currentObject.SegLFormat(connectionPoint, OptConstant.ActionTriggerType.LineEnd, 0);
+          updateSegmentLengths(currentObject, segmentLengths);
+          currentObject.SegLFormat(connectionPoint, OptConstant.ActionTriggerType.LineEnd, 0);
+        }
+
+        // Handle special case for exactly 2 total objects
+        if (totalObjectCount === 2) {
+          // Determine shift direction based on position
+          let shiftDirection;
+          if (Utils2.IsEqual(firstHookPositionPoint.y, secondHookPositionPoint.y, 2)) {
+            shiftDirection = OptConstant.ActionArrow.Right;
+          } else {
+            shiftDirection = OptConstant.ActionArrow.Down;
+          }
+
+          // Shift connected shapes to maintain spacing
+          OptAhUtil.ShiftConnectedShapes(
+            sourceObject.BlockID,
+            secondConnectedObjectId,
+            currentObject.BlockID,
+            shiftDirection,
+            false
+          );
+        }
+
+        // Update frame and apply changes
+        currentObject.CalcFrame();
+        this.FilterLinks(firstObjectLinks, secondObjectLinks, resultArray);
+
+        // Move links if needed
+        if (secondObjectLinks && secondObjectLinks.length) {
+          HookUtil.MoveLinks(lineObjectIds[0], lineObjectIds[1], secondObjectLinks, null);
+        }
+
+        if (firstObjectLinks && firstObjectLinks.length) {
+          HookUtil.MoveLinks(lineObjectIds[0], lineObjectIds[0], firstObjectLinks, null);
+        }
+
+        // Clear hops and update
+        currentObject.hoplist.hops = [];
+        currentObject.hoplist.nhops = 0;
+        DataUtil.AddToDirtyList(lineObjectIds[0]);
+
+        // Update hook connections
+        HookUtil.UpdateHook(
+          lineObjectIds[0],
+          firstHookIndex,
+          secondConnectedObjectId,
+          currentObject.hooks[firstHookIndex].hookpt,
+          secondObject.hooks[secondHookIndex].connect,
+          secondObject.hooks[secondHookIndex].cellid
         );
-      };
-    if (s = OptCMUtil.FindLink(A, e.BlockID, !0), g = e.BlockID, !(s >= 0)) return - 1;
-    for (
-      this.AddToHookList(
-        A,
-        b,
-        s,
-        e.BlockID,
-        NvConstant.ListCodes.TopOnly,
-        1,
-        {
+
+        // Set link flag and update links
+        OptCMUtil.SetLinkFlag(secondObject.hooks[secondHookIndex].objid, DSConstant.LinkFlags.Move);
+        this.UpdateLinks();
+
+        return lineObjectIds[1];
+      }
+
+      // Handle case: first object connected to something, second not connected
+      if (firstConnectedObjectId >= 0 && secondConnectedObjectId < 0) {
+        // Determine connection direction and points
+        if (secondObject.hooks[0].hookpt === hookPoints.KTL) {
+          lineDirection = secondObject.segl.lastdir;
+          connectionPoint = secondObject.EndPoint;
+          isConnectFromEnd = true;
+
+          secondHookPositionPoint = {
+            x: secondObject.StartPoint.x,
+            y: secondObject.StartPoint.y
+          };
+
+          secondHookPositionPoint.x = secondRect.x + secondObject.segl.pts[1].x;
+          secondHookPositionPoint.y = secondRect.y + secondObject.segl.pts[1].y;
+        } else {
+          lineDirection = secondObject.segl.firstdir;
+          connectionPoint = secondObject.StartPoint;
+          isConnectFromEnd = false;
+
+          secondHookPositionPoint = {
+            x: secondObject.StartPoint.x,
+            y: secondObject.StartPoint.y
+          };
+
+          const pointCount = secondObject.segl.pts.length;
+          if (pointCount > 2) {
+            secondHookPositionPoint.x = secondRect.x + secondObject.segl.pts[pointCount - 2].x;
+            secondHookPositionPoint.y = secondRect.y + secondObject.segl.pts[pointCount - 2].y;
+          }
         }
-      ),
-      T = r = b.length,
-      i = 0;
-      i < r;
-      i++
-    ) if ((n = DataUtil.GetObjectPtr(b[i], !1)).AllowHeal()) for (M.push(b[i]), u = n.hooks.length, c = 0; c < u; c++) n.hooks[c].objid === g &&
-      (
-        P[M.length - 1] = n.hooks[c].connect,
-        n.hooks[c].hookpt === G.SED_KTL ? R.push(n.segl.firstdir) : R.push(n.segl.lastdir)
+
+        // Connect objects based on hook position
+        if (currentObject.hooks[firstHookIndex].hookpt === hookPoints.KTL) {
+          firstHookPositionPoint = {
+            x: currentObject.StartPoint.x,
+            y: currentObject.StartPoint.y
+          };
+
+          firstHookPositionPoint.x = firstRect.x + currentObject.segl.pts[1].x;
+          firstHookPositionPoint.y = firstRect.y + currentObject.segl.pts[1].y;
+
+          // Calculate segment lengths for the combined line
+          segmentLengths = calculateSegmentLengths(
+            currentObject,
+            secondObject,
+            firstHookPositionPoint,
+            secondHookPositionPoint,
+            true,
+            isConnectFromEnd
+          );
+
+          // Update first object's properties
+          currentObject.segl.firstdir = lineDirection;
+          currentObject.StartPoint.x = connectionPoint.x;
+          currentObject.StartPoint.y = connectionPoint.y;
+          currentObject.SegLFormat(connectionPoint, OptConstant.ActionTriggerType.LineStart, 0);
+          currentObject.CalcFrame();
+          updateSegmentLengths(currentObject, segmentLengths);
+          currentObject.SegLFormat(connectionPoint, OptConstant.ActionTriggerType.LineStart, 0);
+        } else {
+          firstHookPositionPoint = {
+            x: currentObject.StartPoint.x,
+            y: currentObject.StartPoint.y
+          };
+
+          const pointCount = currentObject.segl.pts.length;
+          if (pointCount > 2) {
+            firstHookPositionPoint.x = firstRect.x + currentObject.segl.pts[pointCount - 2].x;
+            firstHookPositionPoint.y = firstRect.y + currentObject.segl.pts[pointCount - 2].y;
+          }
+
+          // Calculate segment lengths for the combined line
+          segmentLengths = calculateSegmentLengths(
+            currentObject,
+            secondObject,
+            firstHookPositionPoint,
+            secondHookPositionPoint,
+            false,
+            isConnectFromEnd
+          );
+
+          // Update first object's properties
+          currentObject.segl.lastdir = lineDirection;
+          currentObject.EndPoint.x = connectionPoint.x;
+          currentObject.EndPoint.y = connectionPoint.y;
+          currentObject.SegLFormat(connectionPoint, OptConstant.ActionTriggerType.LineEnd, 0);
+          currentObject.CalcFrame();
+          updateSegmentLengths(currentObject, segmentLengths);
+          currentObject.SegLFormat(connectionPoint, OptConstant.ActionTriggerType.LineEnd, 0);
+        }
+
+        // Update links
+        this.FilterLinks(firstObjectLinks, secondObjectLinks, resultArray);
+
+        // Move links if needed
+        if (secondObjectLinks && secondObjectLinks.length) {
+          HookUtil.MoveLinks(lineObjectIds[0], lineObjectIds[1], secondObjectLinks, null);
+        }
+
+        if (firstObjectLinks && firstObjectLinks.length) {
+          HookUtil.MoveLinks(lineObjectIds[0], lineObjectIds[0], firstObjectLinks, null);
+        }
+
+        // Clear hops and update hooks
+        currentObject.hoplist.hops = [];
+        currentObject.hoplist.nhops = 0;
+
+        HookUtil.UpdateHook(
+          lineObjectIds[0],
+          firstHookIndex,
+          -1,
+          currentObject.hooks[firstHookIndex].hookpt,
+          currentObject.hooks[firstHookIndex].connect,
+          currentObject.hooks[firstHookIndex].cellid
+        );
+
+        DataUtil.AddToDirtyList(lineObjectIds[0]);
+        return lineObjectIds[1];
+      }
+
+      // Handle case: neither object connected or special case
+      let mergedSegLine;
+
+      /**
+       * Combines two line objects into a single segment line
+       * @param firstLine - First line object
+       * @param firstHookPoint - Hook point on first line
+       * @param secondLine - Second line object
+       * @param secondHookPoint - Hook point on second line
+       * @returns New segment line with combined points
+       */
+      const combineSegmentLines = function (firstLine, firstHookPoint, secondLine, secondHookPoint) {
+        let i, pointCount;
+        let newSegLine = new Instance.Shape.SegLine();
+        let firstRect = Utils2.Pt2Rect(firstLine.StartPoint, firstLine.EndPoint);
+
+        // Add points from first line based on hook point
+        pointCount = firstLine.segl.pts.length;
+        if (firstHookPoint === hookPoints.KTL) {
+          for (i = pointCount - 1; i > 0; i--) {
+            newSegLine.pts.push({
+              x: firstLine.segl.pts[i].x + firstRect.x,
+              y: firstLine.segl.pts[i].y + firstRect.y
+            });
+          }
+          newSegLine.firstdir = firstLine.segl.lastdir;
+        } else {
+          for (i = 0; i < pointCount - 1; i++) {
+            newSegLine.pts.push({
+              x: firstLine.segl.pts[i].x + firstRect.x,
+              y: firstLine.segl.pts[i].y + firstRect.y
+            });
+          }
+          newSegLine.firstdir = firstLine.segl.firstdir;
+        }
+
+        // Add points from second line based on hook point
+        pointCount = secondLine.segl.pts.length;
+        secondRect = Utils2.Pt2Rect(secondLine.StartPoint, secondLine.EndPoint);
+
+        if (secondHookPoint === hookPoints.KTR) {
+          for (i = pointCount - 2; i >= 0; i--) {
+            newSegLine.pts.push({
+              x: secondLine.segl.pts[i].x + secondRect.x,
+              y: secondLine.segl.pts[i].y + secondRect.y
+            });
+          }
+          newSegLine.lastdir = secondLine.segl.firstdir;
+        } else {
+          for (i = 1; i < pointCount; i++) {
+            newSegLine.pts.push({
+              x: secondLine.segl.pts[i].x + secondRect.x,
+              y: secondLine.segl.pts[i].y + secondRect.y
+            });
+          }
+          newSegLine.lastdir = secondLine.segl.lastdir;
+        }
+
+        // Calculate segment lengths
+        pointCount = newSegLine.pts.length;
+        for (i = 1; i < pointCount; i++) {
+          if (newSegLine.pts[i].x == newSegLine.pts[i - 1].x) {
+            newSegLine.lengths.push(Math.abs(newSegLine.pts[i].y - newSegLine.pts[i - 1].y));
+          } else {
+            newSegLine.lengths.push(Math.abs(newSegLine.pts[i].x - newSegLine.pts[i - 1].x));
+          }
+        }
+
+        return newSegLine;
+      };
+
+      // Create merged segment line
+      mergedSegLine = combineSegmentLines(
+        secondObject,
+        secondObject.hooks[0].hookpt,
+        currentObject,
+        currentObject.hooks[0].hookpt
       );
-    if ((r = M.length) >= 2 && r < 4) for (i = 0; i < r; i++) {
-      switch (R[i]) {
-        case G.SED_KTC:
-          C = M[i],
-            void 0 !== y &&
-            (M[0] = C, M[1] = y, nlines = 2, w = !0);
-          break;
-        case G.SED_KBC:
-          y = M[i],
-            void 0 !== C &&
-            (M[0] = C, M[1] = y, nlines = 2, w = !0);
-          break;
-        case G.SED_KLC:
-          h = M[i],
-            void 0 !== m &&
-            (M[0] = h, M[1] = m, nlines = 2, w = !0);
-          break;
-        case G.SED_KRC:
-          m = M[i],
-            void 0 !== h &&
-            (M[0] = h, M[1] = m, nlines = 2, w = !0)
+
+      // If second object's hook is at start point, swap arrow properties
+      if (secondObject.hooks[0].hookpt === hookPoints.KTL) {
+        let tempArrow = secondObject.EndArrowID;
+        secondObject.EndArrowID = secondObject.StartArrowID;
+        secondObject.StartArrowID = tempArrow;
+
+        tempArrow = secondObject.EndArrowDisp;
+        secondObject.EndArrowDisp = secondObject.StartArrowDisp;
+        secondObject.StartArrowDisp = tempArrow;
       }
-      if (w) break
-    }
-    if (t && w) return 1;
-    if (w) {
-      if (
-        n = DataUtil.GetObjectPtr(M[0], !0),
-        o = DataUtil.GetObjectPtr(M[1], !0),
-        1 === n.hooks.length &&
-        2 === o.hooks.length
-      ) {
-        var U = M[0];
-        M[0] = M[1],
-          M[1] = U,
-          n = DataUtil.GetObjectPtr(M[0], !0),
-          o = DataUtil.GetObjectPtr(M[1], !0)
+
+      // Clear hops and update second object with merged segments
+      secondObject.hoplist.hops = [];
+      secondObject.hoplist.nhops = 0;
+      secondObject.segl = mergedSegLine;
+
+      // Update start and end points
+      pointCount = mergedSegLine.pts.length;
+      secondObject.StartPoint.x = mergedSegLine.pts[0].x;
+      secondObject.StartPoint.y = mergedSegLine.pts[0].y;
+      secondObject.EndPoint.x = mergedSegLine.pts[pointCount - 1].x;
+      secondObject.EndPoint.y = mergedSegLine.pts[pointCount - 1].y;
+
+      // Adjust segment points to be relative to the new frame
+      const newBoundingRect = Utils2.Pt2Rect(secondObject.StartPoint, secondObject.EndPoint);
+      for (objectIndex = 0; objectIndex < pointCount; objectIndex++) {
+        secondObject.segl.pts[objectIndex].x -= newBoundingRect.x;
+        secondObject.segl.pts[objectIndex].y -= newBoundingRect.y;
       }
-      var J = Utils2.Pt2Rect(n.StartPoint, n.EndPoint),
-        x = Utils2.Pt2Rect(o.StartPoint, o.EndPoint),
-        O = T3Gv.opt.GetPolyLineLinks(M[0], 0),
-        B = T3Gv.opt.GetPolyLineLinks(M[1], 0);
-      for (r = n.hooks.length, i = 0; i < r; i++) n.hooks[i].objid != e.BlockID ? _ = n.hooks[i].objid : p = i;
-      for (r = o.hooks.length, i = 0; i < r; i++) o.hooks[i].objid != e.BlockID ? (E = o.hooks[i].objid, d = i) : D = i;
-      if (_ >= 0 && E >= 0 && _ != E) return o.hooks[d].hookpt === OptConstant.HookPts.KTL ? (
-        l = o.segl.firstdir,
-        S = o.StartPoint,
-        F = !1,
-        f = {
-          x: o.StartPoint.x,
-          y: o.StartPoint.y
-        },
-        (I = o.segl.pts.length) > 2 &&
-        (f.x = x.x + o.segl.pts[I - 2].x, f.y = x.y + o.segl.pts[I - 2].y)
-      ) : (
-        l = o.segl.lastdir,
-        S = o.EndPoint,
-        F = !0,
-        (f = {
-          x: o.StartPoint.x,
-          y: o.StartPoint.y
-        }).x = x.x + o.segl.pts[1].x,
-        f.y = x.y + o.segl.pts[1].y
-      ),
-        n.hooks[p].hookpt === OptConstant.HookPts.KTL ? (
-          (L = {
-            x: n.StartPoint.x,
-            y: n.StartPoint.y
-          }).x = J.x + n.segl.pts[1].x,
-          L.y = J.y + n.segl.pts[1].y,
-          v = N(n, o, L, f, !0, F),
-          n.segl.firstdir = l,
-          n.StartPoint.x = S.x,
-          n.StartPoint.y = S.y,
-          n.SegLFormat(S, OptConstant.ActionTriggerType.LineStart, 0),
-          k(n, v),
-          n.SegLFormat(S, OptConstant.ActionTriggerType.LineStart, 0)
-        ) : (
-          L = {
-            x: n.StartPoint.x,
-            y: n.StartPoint.y
-          },
-          (I = n.segl.pts.length) > 2 &&
-          (L.x = J.x + n.segl.pts[I - 2].x, L.y = J.y + n.segl.pts[I - 2].y),
-          v = N(n, o, L, f, !1, F),
-          n.segl.lastdir = l,
-          n.EndPoint.x = S.x,
-          n.EndPoint.y = S.y,
-          n.SegLFormat(S, OptConstant.ActionTriggerType.LineEnd, 0),
-          k(n, v),
-          n.SegLFormat(S, OptConstant.ActionTriggerType.LineEnd, 0)
-        ),
-        2 === T &&
-        function () {
-          var t,
-            a = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, !1);
-          Utils2.IsEqual(L.y, f.y, 2) ? (
-            e.Frame.width + a.def.h_arraywidth,
-            0,
-            t = OptConstant.ActionArrow.Right
-          ) : (
-            e.Frame.height + a.def.v_arraywidth,
-            0,
-            t = OptConstant.ActionArrow.Down
-          ),
-            OptAhUtil.ShiftConnectedShapes(e.BlockID, E, n.BlockID, t, !1)
-        }(),
-        n.CalcFrame(),
-        this.FilterLinks(O, B, a),
-        B &&
-        B.length &&
-        HookUtil.MoveLinks(M[0], M[1], B, null),
-        O &&
-        O.length &&
-        HookUtil.MoveLinks(M[0], M[0], O, null),
-        n.hoplist.hops = [],
-        n.hoplist.nhops = 0,
-        DataUtil.AddToDirtyList(M[0]),
-        HookUtil.UpdateHook(
-          M[0],
-          p,
-          E,
-          n.hooks[p].hookpt,
-          o.hooks[d].connect,
-          o.hooks[d].cellid
-        ),
-        OptCMUtil.SetLinkFlag(o.hooks[d].objid, DSConstant.LinkFlags.Move),
-        this.UpdateLinks(),
-        M[1];
-      if (_ >= 0 && E < 0) return o.hooks[0].hookpt === OptConstant.HookPts.KTL ? (
-        l = o.segl.lastdir,
-        S = o.EndPoint,
-        F = !0,
-        (f = {
-          x: o.StartPoint.x,
-          y: o.StartPoint.y
-        }).x = x.x + o.segl.pts[1].x,
-        f.y = x.y + o.segl.pts[1].y
-      ) : (
-        l = o.segl.firstdir,
-        S = o.StartPoint,
-        F = !1,
-        f = {
-          x: o.StartPoint.x,
-          y: o.StartPoint.y
-        },
-        (I = o.segl.pts.length) > 2 &&
-        (f.x = x.x + o.segl.pts[I - 2].x, f.y = x.y + o.segl.pts[I - 2].y)
-      ),
-        n.hooks[p].hookpt === OptConstant.HookPts.KTL ? (
-          (L = {
-            x: n.StartPoint.x,
-            y: n.StartPoint.y
-          }).x = J.x + n.segl.pts[1].x,
-          L.y = J.y + n.segl.pts[1].y,
-          v = N(n, o, L, f, !0, F),
-          n.segl.firstdir = l,
-          n.StartPoint.x = S.x,
-          n.StartPoint.y = S.y,
-          n.SegLFormat(S, OptConstant.ActionTriggerType.LineStart, 0),
-          n.CalcFrame(),
-          k(n, v),
-          n.SegLFormat(S, OptConstant.ActionTriggerType.LineStart, 0)
-        ) : (
-          L = {
-            x: n.StartPoint.x,
-            y: n.StartPoint.y
-          },
-          (I = n.segl.pts.length) > 2 &&
-          (L.x = J.x + n.segl.pts[I - 2].x, L.y = J.y + n.segl.pts[I - 2].y),
-          v = N(n, o, L, f, !1, F),
-          n.segl.lastdir = l,
-          n.EndPoint.x = S.x,
-          n.EndPoint.y = S.y,
-          n.SegLFormat(S, OptConstant.ActionTriggerType.LineEnd, 0),
-          n.CalcFrame(),
-          k(n, v),
-          n.SegLFormat(S, OptConstant.ActionTriggerType.LineEnd, 0)
-        ),
-        this.FilterLinks(O, B, a),
-        B &&
-        B.length &&
-        HookUtil.MoveLinks(M[0], M[1], B, null),
-        O &&
-        O.length &&
-        HookUtil.MoveLinks(M[0], M[0], O, null),
-        n.hoplist.hops = [],
-        n.hoplist.nhops = 0,
-        HookUtil.UpdateHook(
-          M[0],
-          p,
-          - 1,
-          n.hooks[p].hookpt,
-          n.hooks[p].connect,
-          n.hooks[p].cellid
-        ),
-        DataUtil.AddToDirtyList(M[0]),
-        M[1];
-      var H,
-        V = function (e, t, a, r) {
-          var i,
-            n,
-            o = new Instance.Shape.SegLine,
-            s = Utils2.Pt2Rect(e.StartPoint, e.EndPoint);
-          if (n = e.segl.pts.length, t === OptConstant.HookPts.KTL) {
-            for (i = n - 1; i > 0; i--) o.pts.push({
-              x: e.segl.pts[i].x + s.x,
-              y: e.segl.pts[i].y + s.y
-            });
-            o.firstdir = e.segl.lastdir
-          } else {
-            for (i = 0; i < n - 1; i++) o.pts.push({
-              x: e.segl.pts[i].x + s.x,
-              y: e.segl.pts[i].y + s.y
-            });
-            o.firstdir = e.segl.firstdir
-          }
-          if (
-            n = a.segl.pts.length,
-            s = Utils2.Pt2Rect(a.StartPoint, a.EndPoint),
-            r === OptConstant.HookPts.KTR
-          ) {
-            for (i = n - 2; i >= 0; i--) o.pts.push({
-              x: a.segl.pts[i].x + s.x,
-              y: a.segl.pts[i].y + s.y
-            });
-            o.lastdir = a.segl.firstdir
-          } else {
-            for (i = 1; i < n; i++) o.pts.push({
-              x: a.segl.pts[i].x + s.x,
-              y: a.segl.pts[i].y + s.y
-            });
-            o.lastdir = a.segl.lastdir
-          }
-          for (n = o.pts.length, i = 1; i < n; i++) o.pts[i].x == o.pts[i - 1].x ? o.lengths.push(Math.abs(o.pts[i].y - o.pts[i - 1].y)) : o.lengths.push(Math.abs(o.pts[i].x - o.pts[i - 1].x));
-          return o
-        }(o, o.hooks[0].hookpt, n, n.hooks[0].hookpt);
-      o.hooks[0].hookpt === OptConstant.HookPts.KTL &&
-        (
-          H = o.EndArrowID,
-          o.EndArrowID = o.StartArrowID,
-          o.StartArrowID = H,
-          H = o.EndArrowDisp,
-          o.EndArrowDisp = o.StartArrowDisp,
-          o.StartArrowDisp = H
-        ),
-        o.hoplist.hops = [],
-        o.hoplist.nhops = 0,
-        o.segl = V,
-        r = V.pts.length,
-        o.StartPoint.x = V.pts[0].x,
-        o.StartPoint.y = V.pts[0].y,
-        o.EndPoint.x = V.pts[r - 1].x,
-        o.EndPoint.y = V.pts[r - 1].y;
-      var j = Utils2.Pt2Rect(o.StartPoint, o.EndPoint);
-      for (i = 0; i < r; i++) o.segl.pts[i].x -= j.x,
-        o.segl.pts[i].y -= j.y;
-      return o.CalcFrame(),
-        S = o.EndPoint,
-        o.SegLFormat(S, OptConstant.ActionTriggerType.LineEnd, 0),
-        o.CalcFrame(),
-        this.FilterLinks(B, O, a),
-        O &&
-        O.length &&
-        HookUtil.MoveLinks(M[1], M[0], O, null),
-        B &&
-        B.length &&
-        HookUtil.MoveLinks(M[1], M[1], B, null),
-        HookUtil.UpdateHook(
-          M[1],
-          D,
-          - 1,
-          o.hooks[D].hookpt,
-          o.hooks[D].connect,
-          o.hooks[D].cellid
-        ),
-        DataUtil.AddToDirtyList(M[1]),
-        M[0]
+
+      // Update frame and format
+      secondObject.CalcFrame();
+      connectionPoint = secondObject.EndPoint;
+      secondObject.SegLFormat(connectionPoint, OptConstant.ActionTriggerType.LineEnd, 0);
+      secondObject.CalcFrame();
+
+      // Update links
+      this.FilterLinks(secondObjectLinks, firstObjectLinks, resultArray);
+
+      // Move links if needed
+      if (firstObjectLinks && firstObjectLinks.length) {
+        HookUtil.MoveLinks(lineObjectIds[1], lineObjectIds[0], firstObjectLinks, null);
+      }
+
+      if (secondObjectLinks && secondObjectLinks.length) {
+        HookUtil.MoveLinks(lineObjectIds[1], lineObjectIds[1], secondObjectLinks, null);
+      }
+
+      // Update hook and mark as dirty
+      HookUtil.UpdateHook(
+        lineObjectIds[1],
+        secondHookIndex,
+        -1,
+        secondObject.hooks[secondHookIndex].hookpt,
+        secondObject.hooks[secondHookIndex].connect,
+        secondObject.hooks[secondHookIndex].cellid
+      );
+
+      DataUtil.AddToDirtyList(lineObjectIds[1]);
+      return lineObjectIds[0];
     }
-    return - 1
+
+    // If no healing was possible
+    return -1;
   }
 
   SetVirtualKeyboardLifter(editor: any) {
-    // T3Util.Log("O.Opt SetVirtualKeyboardLifter - Input:", editor);
 
-    // if (T3Gv.opt.isAndroid || T3Gv.gDebugMobileTextDialog) {
-    //   editor.SetVirtualKeyboardHook(
-    //     function (editorInstance: any, proxyElement: any) {
-    //       T3Util.Log("O.Opt MobileTextDialogTrigger Callback - Input:", editorInstance, proxyElement);
-    //       T3Gv.opt.MobileTextDialogTrigger(editorInstance, proxyElement);
-    //       T3Util.Log("O.Opt MobileTextDialogTrigger Callback - Output");
-    //     },
-    //     null
-    //   );
-    // } else {
-    //   if (!T3Gv.opt.workAreaTextInputProxy) {
-    //     T3Gv.opt.workAreaTextInputProxy = $('#T3TouchProxy');
-    //   }
-    //   T3Gv.opt.workAreaTextInputProxy.val('');
-    //   editor.SetVirtualKeyboardHook(
-    //     function (editorInstance: any, proxyElement: any) {
-    //       T3Util.Log("O.Opt VirtualKeyboardLifter Callback - Input:", editorInstance, proxyElement);
-    //       T3Gv.opt.VirtualKeyboardLifter(editorInstance, proxyElement);
-    //       T3Util.Log("O.Opt VirtualKeyboardLifter Callback - Output");
-    //     },
-    //     T3Gv.opt.workAreaTextInputProxy
-    //   );
-    // }
-
-    // T3Util.Log("O.Opt SetVirtualKeyboardLifter - Output: hook set");
   }
 
   VirtualKeyboardLifter(element: any, isActive: boolean) {
@@ -5150,10 +4934,6 @@ class OptUtil {
       // or if the current object does not have a container parent.
       if (!skipContainerParents || !OptAhUtil.HasContainerParent(currentObject)) {
         switch (currentObject.objecttype) {
-          // case objectTypes.SD_OBJT_SWIMLANE_COLS:
-          // case objectTypes.SwimLaneRows:
-          // case objectTypes.SD_OBJT_SWIMLANE_GRID:
-          //   break;
         }
 
         // Add the current object's ID if not already present.
@@ -5168,19 +4948,11 @@ class OptUtil {
           }
         }
 
-        // // Process swimlane objects.
-        // if (currentObject.IsSwimlane()) {
-        //   T3Gv.opt.SwimlaneAddtoDelete(currentObject, associatedIds, true);
-        // }
-
         // Process container types.
         switch (currentObject.objecttype) {
           case objectTypes.ShapeContainer:
             T3Gv.opt.ContainerAddtoDelete(currentObject, associatedIds);
             break;
-          // case objectTypes.SD_OBJT_TABLE_WITH_SHAPECONTAINER:
-          //   T3Gv.opt.TableContainerAddtoDelete(currentObject, associatedIds);
-          //   break;
         }
       }
     }
@@ -5235,24 +5007,10 @@ class OptUtil {
     for (let index = 0; index < selectedObjects.length; index++) {
       currentObject = DataUtil.GetObjectPtr(selectedObjects[index], false);
 
-      // if (currentObject.subtype === NvConstant.FNObjectTypes.SD_SUBT_KANBAN_TABLE) {
-      //   T3Util.Log("O.Opt IsGroupNonDelete - Output: true");
-      //   return true;
-      // }
-
       if (currentObject.extraflags & OptConstant.ExtraFlags.NoDelete) {
         T3Util.Log("O.Opt IsGroupNonDelete - Output: true");
         return true;
       }
-
-      // if (
-      //   currentObject.objecttype === NvConstant.FNObjectTypes.SD_OBJT_TIMELINE_EVENT &&
-      //   currentObject.hooks.length > 0 &&
-      //   DataUtil.GetObjectPtr(currentObject.hooks[0].objid, false).objecttype === NvConstant.FNObjectTypes.SD_OBJT_TIMELINE
-      // ) {
-      //   T3Util.Log("O.Opt IsGroupNonDelete - Output: true");
-      //   return true;
-      // }
     }
 
     T3Util.Log("O.Opt IsGroupNonDelete - Output: false");
@@ -5325,68 +5083,6 @@ class OptUtil {
     return null;
   }
 
-  // /**
-  //    * Checks and replaces standard text in the provided text source.
-  //    * @param textSource - The object containing the text and optional table data.
-  //    * @param currentText - The current text string to evaluate for replacement.
-  //    * @param textEditor - The text editor element that can update its text.
-  //    * @param checkOnly - Flag indicating if the function should only check for a match without performing the replacement.
-  //    * @returns True if a replacement condition is met; otherwise, false.
-  //    */
-  // ReplaceStdText(textSource, currentText, textEditor, checkOnly) {
-  //   T3Util.Log("O.Opt ReplaceStdText - Input:", { textSource, currentText, textEditor, checkOnly });
-
-  //   let index, textPart, tempPart, isMatched, upperText;
-  //   let replaceStringCount = TextConstant.ReplaceTextStrings.length;
-
-  //   // Get substring from currentText to compare with the first replacement string.
-  //   replaceStringCount = TextConstant.ReplaceTextStrings[0].length;
-  //   textPart = currentText.slice(0, replaceStringCount);
-
-  //   // Get substring from currentText to compare with the second replacement string.
-  //   replaceStringCount = TextConstant.ReplaceTextStrings[1].length;
-  //   tempPart = currentText.slice(0, replaceStringCount);
-
-  //   // Determine if either starting substring matches (case insensitive).
-  //   isMatched = textPart.toUpperCase() === TextConstant.ReplaceTextStrings[0].toUpperCase() ||
-  //     tempPart.toUpperCase() === TextConstant.ReplaceTextStrings[1].toUpperCase();
-
-  //   // Get the complete currentText in uppercase.
-  //   upperText = currentText.toUpperCase();
-
-  //   // Loop through all replacement strings starting from index 1.
-  //   replaceStringCount = TextConstant.ReplaceTextStrings.length;
-  //   for (index = 1; index < replaceStringCount; index++) {
-  //     if (isMatched || upperText === TextConstant.ReplaceTextStrings[index].toUpperCase()) {
-  //       // If only checking, log and return true immediately.
-  //       if (checkOnly) {
-  //         T3Util.Log("O.Opt ReplaceStdText - Output:", true);
-  //         return true;
-  //       }
-  //       // Clear the text in the text editor.
-  //       textEditor.SetText('');
-  //       // // Check if the textSource contains a table.
-  //       // tableData = textSource.GetTable(true);
-  //       // if (tableData) {
-  //       //   // If there is a valid cell selection in the table, update its flags.
-  //       //   if (tableData.select >= 0) {
-  //       //     let cell = tableData.cells[tableData.select];
-  //       //     cell.flags = Utils2.SetFlag(cell.flags, TODO.Table.CellFlags.SDT_F_Clickhere, true);
-  //       //   }
-  //       // } else
-
-  //       {
-  //         // Otherwise, update the text flags on the text source.
-  //         textSource.TextFlags = Utils2.SetFlag(textSource.TextFlags, NvConstant.TextFlags.Clickhere, true);
-  //       }
-  //       T3Util.Log("O.Opt ReplaceStdText - Output:", true);
-  //       return true;
-  //     }
-  //   }
-  //   T3Util.Log("O.Opt ReplaceStdText - Output:", false);
-  //   return false;
-  // }
-
   /**
      * Rebuilds the links for the specified object.
      * Inserts a move link for each hook present in the object.
@@ -5404,26 +5100,6 @@ class OptUtil {
     }
     T3Util.Log("O.Opt RebuildLinks - Output: Completed");
   }
-
-  // /**
-  //  * Checks if the specified object is currently targeted by a comment popup
-  //  * @param objectId - The ID of the object to check
-  //  * @returns True if the object is targeted by an active comment popup, false otherwise
-  //  */
-  // Comment_IsTarget(objectId: number): boolean {
-  //   T3Util.Log("O.Opt Comment_IsTarget - Input:", objectId);
-
-  //   if (objectId >= 0) {
-  //     const commentPopup = Resources.Controls.Dropdowns.CommentPopup.GetControl(false);
-  //     if (commentPopup && commentPopup[0].style.display === 'block') {
-  //       T3Util.Log("O.Opt Comment_IsTarget - Output: true");
-  //       return true;
-  //     }
-  //   }
-
-  //   T3Util.Log("O.Opt Comment_IsTarget - Output: false");
-  //   return false;
-  // }
 
   /**
      * Collects blob images from objects and stores them in a blob map.
@@ -5457,22 +5133,6 @@ class OptUtil {
           this.GetBlobImages(currentObject.ShapesInGroup, blobMap);
         }
       } else {
-        // // Process tables with images in cells
-        // tableData = currentObject.GetTable(false);
-        // if (tableData) {
-        //   for (cellIndex = 0; cellIndex < tableData.cells.length; cellIndex++) {
-        //     tableCell = tableData.cells[cellIndex];
-        //     imageUrl = tableCell.ImageURL;
-
-        //     if (imageUrl) {
-        //       blobBytes = this.Table_CellGetBlobBytes(tableCell);
-        //       if (blobBytes && !blobMap[imageUrl]) {
-        //         blobMap[imageUrl] = blobBytes;
-        //       }
-        //     }
-        //   }
-        // }
-
         // Process object's direct image or symbol URL
         imageUrl = '';
         if (currentObject.ImageURL) {
@@ -5607,8 +5267,6 @@ class OptUtil {
 
     // Only take action if we're not already using the primary state manager
     if (!T3Gv.bIsPrimaryStateManager) {
-      // this.RestorePrimaryStateManagerLMMethods();
-      // SDJS_select_primary_state_manager();
       SvgUtil.RenderAllSVGObjects();
     }
 
@@ -6160,15 +5818,7 @@ class OptUtil {
         existingObjects = layersManager.layers[backgroundLayerIndex].zList;
 
         if (existingObjects.length > 0 && importOptions == null) {
-          // Ask for confirmation before deleting existing background
-          // UIUtil.ShowMessageBox(
-          //   "Delete existing image?",
-          //   0,
-          //   () => {
-          //     LayerUtil.DeleteObjects(existingObjects);
-          //     setBackgroundImage();
-          //   }
-          // );
+
           return;
         }
 
@@ -6219,13 +5869,6 @@ class OptUtil {
     let targetWidth = 800;
     let targetHeight = 800;
 
-    // // Object types and subtypes that can't receive background images
-    // const excludedObjectTypes = [OptConstant.ObjectTypes.GanttChart];
-    // const excludedObjectSubtypes = [
-    //   OptConstant.ObjectSubTypes.TaskMap,
-    //   OptConstant.ObjectSubTypes.Task
-    // ];
-
     // Function to add a new image shape
     const createImageShape = (width, height, skipRendering) => {
       let newObjectId;
@@ -6235,11 +5878,6 @@ class OptUtil {
       if (!skipRendering && width > 0 && height > 0) {
         let imageHeight = height;
         let imageWidth = width;
-
-        // If collaborating, ensure we're in secondary edit mode
-        /*if (Collab.AllowMessage()) {
-          Collab.BeginSecondaryEdit();
-        }*/
 
         // Calculate position to center the image in work area
         const centerPosition = self.CalcWorkAreaCenterUL(imageWidth, imageHeight);
@@ -6286,17 +5924,6 @@ class OptUtil {
         // Add the new object to the document
         newObjectId = DrawUtil.AddNewObject(rectangleObject, false, true);
 
-        // Handle collaboration
-        /*if (Collab.AddNewBlockToSecondary) {
-          Collab.AddNewBlockToSecondary(newObjectId);
-        }
-
-        // Get collaboration list if needed
-        let collaborationList = [];
-        if (Collab.IsSecondary()) {
-          collaborationList = collaborationList.concat(Collab.CreateList);
-        }*/
-
         // Update object properties
         const newObject = DataUtil.GetObjectPtr(newObjectId, false);
         if (newObject) {
@@ -6304,31 +5931,6 @@ class OptUtil {
           newObject.ImageHeader = new ImageRecord();
           newObjectList.push(newObjectId);
         }
-
-        // Send collaboration message if needed
-        /*if (Collab.AllowMessage()) {
-          if (isBackground == null) {
-            isBackground = false;
-          }
-
-          const messageData = {
-            ImageDir: imageDir,
-            bytes: imageBlobBytes,
-            width: width,
-            height: height,
-            background: isBackground
-          };
-
-          if (collaborationList) {
-            messageData.CreateList = collaborationList;
-          }
-
-          Collab.BuildMessage(
-            OptConstant.CollabMessages.AddShape_ImportPicture,
-            messageData,
-            false
-          );
-        }*/
 
         // Handle background layer flags
         const layersManager = DataUtil.GetObjectPtr(this.layersManagerBlockId, false);
@@ -6424,21 +6026,8 @@ class OptUtil {
 
           // Handle table objects differently
           if (selectedObject.GetTable(false)) {
-            // Import picture into table cell
-            /*this.Table_ImportPicture(
-              targetObjectId,
-              url,
-              imageDir,
-              bytes,
-              svgDimensions,
-              null,
-              callback
-            );*/
+
           } else {
-            // Begin secondary edit mode if needed
-            /*if (Collab.AllowMessage()) {
-              Collab.BeginSecondaryEdit();
-            }*/
 
             // Get writable copy of the object
             selectedObject = DataUtil.GetObjectPtr(targetObjectId, true);
@@ -6476,24 +6065,6 @@ class OptUtil {
             // Mark object as dirty for rendering
             DataUtil.AddToDirtyList(targetObjectId);
 
-            // Handle collaboration message
-            /*if (Collab.AllowMessage()) {
-              const messageData = {
-                BlockID: targetObjectId,
-                ImageDir: imageDir,
-                bytes: bytes
-              };
-
-              // Add SVG dimensions if needed
-              messageData.SVGDim = Utils1.DeepCopy(svgDimensions);
-
-              Collab.BuildMessage(
-                OptConstant.CollabMessages.Shape_ImportPicture,
-                messageData,
-                false
-              );
-            }*/
-
             // Complete the operation
             DrawUtil.CompleteOperation(null);
           }
@@ -6517,30 +6088,7 @@ class OptUtil {
 
     // Main processing logic starts here
     if (importData) {
-      // Handle collaboration message
-      // const messageTypes = OptConstant.CollabMessages;
 
-      // switch (importData.MessageType) {
-      //   case messageTypes.Shape_ImportPicture:
-      //   case messageTypes.OrgAddPicture:
-      //     processLoadedImage(
-      //       importData.Data.url,
-      //       importData.Data.blob,
-      //       importData.Data.Bytes,
-      //       importData
-      //     );
-      //     break;
-
-      //   case messageTypes.AddShape_ImportPicture:
-      //     // Extract data from message
-      //     imageBlob = importData.Data.blob;
-      //     imageSourceUrl = importData.Data.url;
-      //     imageBlobBytes = importData.Data.Bytes;
-
-      //     // Create image shape with dimensions from message
-      //     createImageShape(importData.Data.width, importData.Data.height, false);
-      //     break;
-      // }
     } else {
       // Handle direct image import
       let targetObjectId = SelectUtil.GetTargetSelect();
@@ -6564,9 +6112,6 @@ class OptUtil {
               selectedObject.ImageURL !== "" &&
               selectedObject.GetTable(false) == null) {
 
-              // Open bitmap insert dialog
-              /*UIUtil.InsertBitmapController.SetFile(imageUrl);
-              UIUtil.ShowModal("InsertBitmap");*/
               return;
             }
           } else {
@@ -6590,18 +6135,8 @@ class OptUtil {
         if (shouldReplaceExistingImage) {
           selectedObject = DataUtil.GetObjectPtr(targetObjectId, false);
 
-          // if (selectedObject.GetTable(false)) {
-          //   objectDimensions = this.Table_GetImportPictureDim(targetObjectId);
-          //   if (objectDimensions) {
-          //     targetWidth = objectDimensions.x;
-          //     targetHeight = objectDimensions.y;
-          //   }
-          // } else
-
-          {
-            targetWidth = selectedObject.Frame.width;
-            targetHeight = selectedObject.Frame.height;
-          }
+          targetWidth = selectedObject.Frame.width;
+          targetHeight = selectedObject.Frame.height;
         }
       }
 

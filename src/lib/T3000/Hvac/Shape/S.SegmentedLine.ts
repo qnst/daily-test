@@ -2922,7 +2922,7 @@ class SegmentedLine extends BaseLine {
     } else if (this.NoGrow()) {
       knobConfig.fillColor = "red";
       knobConfig.strokeColor = "red";
-      knobConfig.cursorType = CursorConstant.CursorType.DEFAULT;
+      knobConfig.cursorType = CursorConstant.CursorType.Default;
     }
 
     // Create start point knob
@@ -2992,7 +2992,7 @@ class SegmentedLine extends BaseLine {
         knobConfig.knobID = OptConstant.ActionTriggerType.SeglOne + pointIndex - 2;
 
         if (this.NoGrow()) {
-          knobConfig.cursorType = CursorConstant.CursorType.DEFAULT;
+          knobConfig.cursorType = CursorConstant.CursorType.Default;
         }
 
         let segmentKnob = this.GenericKnob(knobConfig);
@@ -4240,147 +4240,147 @@ class SegmentedLine extends BaseLine {
    * converts coordinate systems, and ensures proper segment ordering. The function
    * supports both standard and Win32-specific serialization formats.
    */
-  WriteShapeData(outputStream, exportOptions) {
-    T3Util.Log("= S.SegmentedLine: WriteShapeData input", { outputStream, exportOptions });
+  // WriteShapeData(outputStream, exportOptions) {
+  //   T3Util.Log("= S.SegmentedLine: WriteShapeData input", { outputStream, exportOptions });
 
-    return;
+  //   return;
 
-    const pointCount = this.segl.pts.length;
-    T3Util.Log("= S.SegmentedLine: Number of segmentation points", { pointCount });
+  //   const pointCount = this.segl.pts.length;
+  //   T3Util.Log("= S.SegmentedLine: Number of segmentation points", { pointCount });
 
-    const instanceId = exportOptions.WriteBlocks ? this.BlockID : exportOptions.nsegl++;
-    T3Util.Log("= S.SegmentedLine: Instance ID", { instanceId });
+  //   const instanceId = exportOptions.WriteBlocks ? this.BlockID : exportOptions.nsegl++;
+  //   T3Util.Log("= S.SegmentedLine: Instance ID", { instanceId });
 
-    const isLineReversed = ShapeUtil.LineIsReversed(this, exportOptions, false);
-    T3Util.Log("= S.SegmentedLine: Is line reversed?", { isLineReversed });
+  //   const isLineReversed = ShapeUtil.LineIsReversed(this, exportOptions, false);
+  //   T3Util.Log("= S.SegmentedLine: Is line reversed?", { isLineReversed });
 
-    let segmentationCopy = Utils1.DeepCopy(this.segl);
-    let lastSegmentIndex = pointCount - 1;
-    if (lastSegmentIndex < 0) lastSegmentIndex = 0;
+  //   let segmentationCopy = Utils1.DeepCopy(this.segl);
+  //   let lastSegmentIndex = pointCount - 1;
+  //   if (lastSegmentIndex < 0) lastSegmentIndex = 0;
 
-    // If the line is reversed, reverse the segmentation points and swap the direction flags.
-    if (isLineReversed) {
-      T3Util.Log("= S.SegmentedLine: Reversing segmentation points and swapping direction flags");
-      for (let pointIndex = 0; pointIndex < pointCount; pointIndex++) {
-        segmentationCopy.pts[pointCount - 1 - pointIndex].x = this.segl.pts[pointIndex].x;
-        segmentationCopy.pts[pointCount - 1 - pointIndex].y = this.segl.pts[pointIndex].y;
-      }
-      const tempDirection = segmentationCopy.firstdir;
-      segmentationCopy.firstdir = segmentationCopy.lastdir;
-      segmentationCopy.lastdir = tempDirection;
-      T3Util.Log("= S.SegmentedLine: Reversed direction flags", {
-        firstdir: segmentationCopy.firstdir,
-        lastdir: segmentationCopy.lastdir,
-      });
+  //   // If the line is reversed, reverse the segmentation points and swap the direction flags.
+  //   if (isLineReversed) {
+  //     T3Util.Log("= S.SegmentedLine: Reversing segmentation points and swapping direction flags");
+  //     for (let pointIndex = 0; pointIndex < pointCount; pointIndex++) {
+  //       segmentationCopy.pts[pointCount - 1 - pointIndex].x = this.segl.pts[pointIndex].x;
+  //       segmentationCopy.pts[pointCount - 1 - pointIndex].y = this.segl.pts[pointIndex].y;
+  //     }
+  //     const tempDirection = segmentationCopy.firstdir;
+  //     segmentationCopy.firstdir = segmentationCopy.lastdir;
+  //     segmentationCopy.lastdir = tempDirection;
+  //     T3Util.Log("= S.SegmentedLine: Reversed direction flags", {
+  //       firstdir: segmentationCopy.firstdir,
+  //       lastdir: segmentationCopy.lastdir,
+  //     });
 
-      for (let segmentIndex = 0; segmentIndex < pointCount - 1; segmentIndex++) {
-        if (Utils2.IsEqual(segmentationCopy.pts[segmentIndex + 1].x, segmentationCopy.pts[segmentIndex].x)) {
-          segmentationCopy.lengths[segmentIndex] = Math.abs(segmentationCopy.pts[segmentIndex + 1].y - segmentationCopy.pts[segmentIndex].y);
-        } else {
-          segmentationCopy.lengths[segmentIndex] = Math.abs(segmentationCopy.pts[segmentIndex + 1].x - segmentationCopy.pts[segmentIndex].x);
-        }
-      }
-      if (pointCount === 6) {
-        segmentationCopy.lengths[2] = segmentationCopy.lengths[4];
-      }
-    }
+  //     for (let segmentIndex = 0; segmentIndex < pointCount - 1; segmentIndex++) {
+  //       if (Utils2.IsEqual(segmentationCopy.pts[segmentIndex + 1].x, segmentationCopy.pts[segmentIndex].x)) {
+  //         segmentationCopy.lengths[segmentIndex] = Math.abs(segmentationCopy.pts[segmentIndex + 1].y - segmentationCopy.pts[segmentIndex].y);
+  //       } else {
+  //         segmentationCopy.lengths[segmentIndex] = Math.abs(segmentationCopy.pts[segmentIndex + 1].x - segmentationCopy.pts[segmentIndex].x);
+  //       }
+  //     }
+  //     if (pointCount === 6) {
+  //       segmentationCopy.lengths[2] = segmentationCopy.lengths[4];
+  //     }
+  //   }
 
-    let serializationData;
-    if (exportOptions.WriteWin32) {
-      serializationData = {
-        InstId: instanceId,
-        firstdir: segmentationCopy.firstdir,
-        lastdir: segmentationCopy.lastdir,
-        nsegs: lastSegmentIndex,
-        segr: [],
-        lengths: [0, 0, 0, 0, 0],
-        lsegr: [],
-        llengths: [0, 0, 0, 0, 0],
-      };
-    } else {
-      serializationData = {
-        InstId: instanceId,
-        firstdir: segmentationCopy.firstdir,
-        lastdir: segmentationCopy.lastdir,
-        curveparam: segmentationCopy.curveparam,
-        nsegs: lastSegmentIndex,
-        lsegr: [],
-        llengths: [0, 0, 0, 0, 0],
-      };
-    }
-    T3Util.Log("= S.SegmentedLine: Initialized serializationData", serializationData);
+  //   let serializationData;
+  //   if (exportOptions.WriteWin32) {
+  //     serializationData = {
+  //       InstId: instanceId,
+  //       firstdir: segmentationCopy.firstdir,
+  //       lastdir: segmentationCopy.lastdir,
+  //       nsegs: lastSegmentIndex,
+  //       segr: [],
+  //       lengths: [0, 0, 0, 0, 0],
+  //       lsegr: [],
+  //       llengths: [0, 0, 0, 0, 0],
+  //     };
+  //   } else {
+  //     serializationData = {
+  //       InstId: instanceId,
+  //       firstdir: segmentationCopy.firstdir,
+  //       lastdir: segmentationCopy.lastdir,
+  //       curveparam: segmentationCopy.curveparam,
+  //       nsegs: lastSegmentIndex,
+  //       lsegr: [],
+  //       llengths: [0, 0, 0, 0, 0],
+  //     };
+  //   }
+  //   T3Util.Log("= S.SegmentedLine: Initialized serializationData", serializationData);
 
-    // Determine the minimum X and Y coordinates from all segmentation points.
-    let minimumX, minimumY;
-    for (let pointIndex = 0; pointIndex < pointCount; pointIndex++) {
-      if (pointIndex === 0 || segmentationCopy.pts[pointIndex].x < minimumX) {
-        minimumX = segmentationCopy.pts[pointIndex].x;
-      }
-      if (pointIndex === 0 || segmentationCopy.pts[pointIndex].y < minimumY) {
-        minimumY = segmentationCopy.pts[pointIndex].y;
-      }
-    }
-    T3Util.Log("= S.SegmentedLine: Computed minimumX and minimumY", { minimumX, minimumY });
+  //   // Determine the minimum X and Y coordinates from all segmentation points.
+  //   let minimumX, minimumY;
+  //   for (let pointIndex = 0; pointIndex < pointCount; pointIndex++) {
+  //     if (pointIndex === 0 || segmentationCopy.pts[pointIndex].x < minimumX) {
+  //       minimumX = segmentationCopy.pts[pointIndex].x;
+  //     }
+  //     if (pointIndex === 0 || segmentationCopy.pts[pointIndex].y < minimumY) {
+  //       minimumY = segmentationCopy.pts[pointIndex].y;
+  //     }
+  //   }
+  //   T3Util.Log("= S.SegmentedLine: Computed minimumX and minimumY", { minimumX, minimumY });
 
-    // Convert each segment's length to SD window coordinates.
-    const lengthsCount = segmentationCopy.lengths.length;
-    for (let lengthIndex = 0; lengthIndex < lengthsCount; lengthIndex++) {
-      serializationData.llengths[lengthIndex] = ShapeUtil.ToSDWinCoords(segmentationCopy.lengths[lengthIndex], exportOptions.coordScaleFactor);
-    }
-    T3Util.Log("= S.SegmentedLine: Converted segment lengths", { llengths: serializationData.llengths });
+  //   // Convert each segment's length to SD window coordinates.
+  //   const lengthsCount = segmentationCopy.lengths.length;
+  //   for (let lengthIndex = 0; lengthIndex < lengthsCount; lengthIndex++) {
+  //     serializationData.llengths[lengthIndex] = ShapeUtil.ToSDWinCoords(segmentationCopy.lengths[lengthIndex], exportOptions.coordScaleFactor);
+  //   }
+  //   T3Util.Log("= S.SegmentedLine: Converted segment lengths", { llengths: serializationData.llengths });
 
-    // Create rectangle info for each segment between adjacent points.
-    for (let segmentIndex = 0; segmentIndex < pointCount - 1; segmentIndex++) {
-      let segmentRectangle = {
-        left: ShapeUtil.ToSDWinCoords(segmentationCopy.pts[segmentIndex].x - minimumX, exportOptions.coordScaleFactor),
-        top: ShapeUtil.ToSDWinCoords(segmentationCopy.pts[segmentIndex].y - minimumY, exportOptions.coordScaleFactor),
-        right: ShapeUtil.ToSDWinCoords(segmentationCopy.pts[segmentIndex + 1].x - minimumX, exportOptions.coordScaleFactor),
-        bottom: ShapeUtil.ToSDWinCoords(segmentationCopy.pts[segmentIndex + 1].y - minimumY, exportOptions.coordScaleFactor),
-      };
+  //   // Create rectangle info for each segment between adjacent points.
+  //   for (let segmentIndex = 0; segmentIndex < pointCount - 1; segmentIndex++) {
+  //     let segmentRectangle = {
+  //       left: ShapeUtil.ToSDWinCoords(segmentationCopy.pts[segmentIndex].x - minimumX, exportOptions.coordScaleFactor),
+  //       top: ShapeUtil.ToSDWinCoords(segmentationCopy.pts[segmentIndex].y - minimumY, exportOptions.coordScaleFactor),
+  //       right: ShapeUtil.ToSDWinCoords(segmentationCopy.pts[segmentIndex + 1].x - minimumX, exportOptions.coordScaleFactor),
+  //       bottom: ShapeUtil.ToSDWinCoords(segmentationCopy.pts[segmentIndex + 1].y - minimumY, exportOptions.coordScaleFactor),
+  //     };
 
-      // Ensure the rectangle is properly ordered.
-      if (pointCount > 2) {
-        if (segmentRectangle.left > segmentRectangle.right) {
-          let temp = segmentRectangle.left;
-          segmentRectangle.left = segmentRectangle.right;
-          segmentRectangle.right = temp;
-        }
-        if (segmentRectangle.top > segmentRectangle.bottom) {
-          let temp = segmentRectangle.top;
-          segmentRectangle.top = segmentRectangle.bottom;
-          segmentRectangle.bottom = temp;
-        }
-      }
-      serializationData.lsegr.push(segmentRectangle);
+  //     // Ensure the rectangle is properly ordered.
+  //     if (pointCount > 2) {
+  //       if (segmentRectangle.left > segmentRectangle.right) {
+  //         let temp = segmentRectangle.left;
+  //         segmentRectangle.left = segmentRectangle.right;
+  //         segmentRectangle.right = temp;
+  //       }
+  //       if (segmentRectangle.top > segmentRectangle.bottom) {
+  //         let temp = segmentRectangle.top;
+  //         segmentRectangle.top = segmentRectangle.bottom;
+  //         segmentRectangle.bottom = temp;
+  //       }
+  //     }
+  //     serializationData.lsegr.push(segmentRectangle);
 
-      if (exportOptions.WriteWin32) {
-        serializationData.segr.push({ left: 0, top: 0, right: 0, bottom: 0 });
-      }
-    }
-    T3Util.Log("= S.SegmentedLine: Created segmentation rectangles", { lsegr: serializationData.lsegr });
+  //     if (exportOptions.WriteWin32) {
+  //       serializationData.segr.push({ left: 0, top: 0, right: 0, bottom: 0 });
+  //     }
+  //   }
+  //   T3Util.Log("= S.SegmentedLine: Created segmentation rectangles", { lsegr: serializationData.lsegr });
 
-    // If there are fewer than 5 segments, pad the remaining segment info with zeros.
-    for (let paddingIndex = pointCount - 1; paddingIndex < 5; paddingIndex++) {
-      serializationData.lsegr.push({ left: 0, top: 0, right: 0, bottom: 0 });
-      if (exportOptions.WriteWin32) {
-        serializationData.segr.push({ left: 0, top: 0, right: 0, bottom: 0 });
-      }
-    }
-    T3Util.Log("= S.SegmentedLine: Padded segmentation rectangles", { lsegr: serializationData.lsegr });
+  //   // If there are fewer than 5 segments, pad the remaining segment info with zeros.
+  //   for (let paddingIndex = pointCount - 1; paddingIndex < 5; paddingIndex++) {
+  //     serializationData.lsegr.push({ left: 0, top: 0, right: 0, bottom: 0 });
+  //     if (exportOptions.WriteWin32) {
+  //       serializationData.segr.push({ left: 0, top: 0, right: 0, bottom: 0 });
+  //     }
+  //   }
+  //   T3Util.Log("= S.SegmentedLine: Padded segmentation rectangles", { lsegr: serializationData.lsegr });
 
-    const operationCode = ShapeUtil.WriteCode(outputStream, DSConstant.OpNameCode.cDrawSegl);
-    if (exportOptions.WriteWin32) {
-      outputStream.writeStruct(DSConstant.SegLineStruct, serializationData);
-    } else {
-      outputStream.writeStruct(DSConstant.SegLineStruct210, serializationData);
-    }
-    ShapeUtil.WriteLength(outputStream, operationCode);
+  //   const operationCode = ShapeUtil.WriteCode(outputStream, DSConstant.OpNameCode.cDrawSegl);
+  //   if (exportOptions.WriteWin32) {
+  //     outputStream.writeStruct(DSConstant.SegLineStruct, serializationData);
+  //   } else {
+  //     outputStream.writeStruct(DSConstant.SegLineStruct210, serializationData);
+  //   }
+  //   ShapeUtil.WriteLength(outputStream, operationCode);
 
-    // Call the base class implementation.
-    super.WriteShapeData(outputStream, exportOptions);
+  //   // Call the base class implementation.
+  //   super.WriteShapeData(outputStream, exportOptions);
 
-    T3Util.Log("= S.SegmentedLine: WriteShapeData output", { serializationData, operationCode });
-  }
+  //   T3Util.Log("= S.SegmentedLine: WriteShapeData output", { serializationData, operationCode });
+  // }
 }
 
 export default SegmentedLine

@@ -166,19 +166,33 @@ class Clipboard {
           return;
         }
 
-        if (!T3Gv.opt.isMobilePlatform) {
-          // Skip if focus is not on clipboard elements for cut/copy
-          if ((clipboardAction === "cut" || clipboardAction === "copy") &&
-            $("#_clipboardInput:focus,#_IEclipboardDiv:focus,#T3TouchProxy:focus").length <= 0) {
-            return;
-          }
+        // if (!T3Gv.opt.isMobilePlatform) {
+        //   // Skip if focus is not on clipboard elements for cut/copy
+        //   if ((clipboardAction === "cut" || clipboardAction === "copy") &&
+        //     $("#_clipboardInput:focus,#_IEclipboardDiv:focus,#T3TouchProxy:focus").length <= 0) {
+        //     return;
+        //   }
 
-          // Skip if paste and focus is on other input elements
-          if (clipboardAction === "paste" &&
-            ($("input:focus").length > 0 || $("textarea:focus").length > 0) &&
-            $("#_clipboardInput:focus,#_IEclipboardDiv:focus,#T3TouchProxy:focus").length <= 0) {
-            return;
-          }
+        //   // Skip if paste and focus is on other input elements
+        //   if (clipboardAction === "paste" &&
+        //     ($("input:focus").length > 0 || $("textarea:focus").length > 0) &&
+        //     $("#_clipboardInput:focus,#_IEclipboardDiv:focus,#T3TouchProxy:focus").length <= 0) {
+        //     return;
+        //   }
+        // }
+
+
+        // Skip if focus is not on clipboard elements for cut/copy
+        if ((clipboardAction === "cut" || clipboardAction === "copy") &&
+          $("#_clipboardInput:focus,#_IEclipboardDiv:focus,#T3TouchProxy:focus").length <= 0) {
+          return;
+        }
+
+        // Skip if paste and focus is on other input elements
+        if (clipboardAction === "paste" &&
+          ($("input:focus").length > 0 || $("textarea:focus").length > 0) &&
+          $("#_clipboardInput:focus,#_IEclipboardDiv:focus,#T3TouchProxy:focus").length <= 0) {
+          return;
         }
 
         // Get clipboard data from appropriate source
@@ -735,11 +749,11 @@ class Clipboard {
     const isAnyInputFocused = $("input:focus").length > 0;
     const isAnySelectFocused = $("select:focus").length > 0;
     const isAnyTextareaFocused = $("textarea:focus").length > 0;
-    const isMobilePlatform = T3Gv.opt.isMobilePlatform;
+    // const isMobilePlatform = T3Gv.opt.isMobilePlatform;
 
     // Focus on clipboard input only if no other input elements are focused
     // or if we're on a mobile platform
-    if ((!isAnyInputFocused && !isAnySelectFocused && !isAnyTextareaFocused) || isMobilePlatform) {
+    if ((!isAnyInputFocused && !isAnySelectFocused && !isAnyTextareaFocused) /*|| isMobilePlatform*/) {
       Clipboard.clipboardInputElement.val(" ");
       Clipboard.clipboardInputElement.focus().select();
     }
