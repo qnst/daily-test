@@ -185,20 +185,6 @@ class SVGFragmentSymbol extends BaseSymbol {
           )
         );
         shapeElement.fillPaintType = fillType;
-      } else if (fillType === NvConstant.FillTypes.Texture) {
-        // const texture = styleRecord.Fill.Paint.Texture;
-        // const textureData = T3Gv.opt.TextureList.Textures[texture];
-        // if (textureData) {
-        //   const textureFill = {
-        //     url: textureData.ImageURL || (Constants.FilePath_CMSRoot + Constants.FilePath_Textures + textureData.filename),
-        //     scale: T3Gv.opt.CalcTextureScale(styleRecord.Fill.Paint.TextureScale, textureData.dim.x),
-        //     alignment: styleRecord.Fill.Paint.TextureScale.AlignmentScalar,
-        //     dim: textureData.dim
-        //   };
-        //   // Update scale inside styleRecord for consistency
-        //   styleRecord.Fill.Paint.TextureScale.Scale = textureFill.scale;
-        //   shapeElement.SetTextureFill(textureFill);
-        // }
       } else if (fillType === NvConstant.FillTypes.Transparent) {
         shapeElement.SetFillColor('none');
       } else {
@@ -597,7 +583,7 @@ class SVGFragmentSymbol extends BaseSymbol {
 
     // Create dimension adjustment knobs if applicable
     if ((this.Dimensions & NvConstant.DimensionFlags.Standoff) && this.CanUseStandOffDimensionLines()) {
-      const svgObj = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID);
+      const svgObj = T3Gv.opt.svgObjectLayer.GetElementById(this.BlockID.toString());
       this.CreateDimensionAdjustmentKnobs(groupShape, svgObj, knobConfig);
     }
 

@@ -812,44 +812,6 @@ class FreehandLine extends BaseLine {
       throw error;
     }
   }
-
-  /**
-   * Writes the freehand line attributes to the Shape Format Util file
-   * @param writer - The file writer object
-   * @param options - Options for writing
-   */
-  // WriteShapeData(outputStream, options) {
-  //   T3Util.Log('S.FreehandLine.WriteShapeData - Input:', { outputStream, options });
-
-  //   return;
-
-  //   // Get a copy of freehand points (true means relative to frame)
-  //   let freehandPoints = Utils1.DeepCopy(this).GetFreehandPoints(true);
-
-  //   // Write the freehand line opcode
-  //   let codePosition = ShapeUtil.WriteCode(outputStream, DSConstant.OpNameCode.cFreeHandLine);
-
-  //   // Prepare the data structure
-  //   let pointData,
-  //     lineData = {
-  //       InstID: this.BlockID,
-  //       npts: freehandPoints.length,
-  //       pts: []
-  //     };
-
-  //   // Convert all points
-  //   let pointCount = freehandPoints.length;
-  //   for (let i = 0; i < pointCount; i++) {
-  //     pointData = new Point(freehandPoints[i].x, freehandPoints[i].y);
-  //     lineData.pts.push(pointData);
-  //   }
-
-  //   // Write the structure to the file
-  //   outputStream.writeStruct(DSConstant.FreehandLineStruct, lineData);
-  //   ShapeUtil.WriteLength(outputStream, codePosition);
-
-  //   T3Util.Log('S.FreehandLine.WriteShapeData - Output:', { freehandPoints });
-  // }
 }
 
 export default FreehandLine

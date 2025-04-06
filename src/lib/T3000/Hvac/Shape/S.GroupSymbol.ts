@@ -395,11 +395,6 @@ class GroupSymbol extends BaseSymbol {
       CursorConstant.CursorType.ResizeL
     ];
 
-    // if (T3Gv.opt.Table_GetActiveID() === this.BlockID) {
-    //   T3Util.Log("S.GroupSymbol - BaseShapeCreateActionTriggers output:", null);
-    //   return null;
-    // }
-
     let actionTriggerGroup = svgDocument.CreateShape(OptConstant.CSType.Group);
     const knobSize = OptConstant.Common.KnobSize;
     const smallKnobSize = OptConstant.Common.RKnobSize;
@@ -748,64 +743,6 @@ class GroupSymbol extends BaseSymbol {
     }
   }
 
-  // WriteShapeData(outputStream, writeOptions) {
-  //   T3Util.Log("S.GroupSymbol - WriteShapeData input:", { outputStream, writeOptions });
-
-  //   return;
-
-  //   let numShapes: number, shapeObj: any, buffer: any, codeLength: any;
-  //   let nativeStorageResult = new WResult();
-  //   let dataId = this.DataID;
-
-  //   // Modify dataId if text attachment flags are set and we are not writing blocks
-  //   if ((this.TextFlags & NvConstant.TextFlags.AttachB ||
-  //     this.TextFlags & NvConstant.TextFlags.AttachA) &&
-  //     !writeOptions.WriteBlocks) {
-  //     dataId = -1;
-  //   }
-
-  //   nativeStorageResult.richGradients = T3Gv.opt.richGradients;
-
-  //   ShapeUtil.WriteTextParams(outputStream, this, dataId, writeOptions);
-
-  //   if (writeOptions.WriteBlocks) {
-  //     ShapeUtil.WriteNativeID(outputStream, this.NativeID, writeOptions);
-  //   } else if (this.NativeID && (numShapes = this.ShapesInGroup.length)) {
-  //     for (let i = 0; i < numShapes; i++) {
-  //       const shapeId = this.ShapesInGroup[i];
-  //       nativeStorageResult.zList.push(shapeId);
-  //       shapeObj = DataUtil.GetObjectPtr(shapeId, false);
-  //       shapeObj.layer = this.Layer;
-  //       shapeObj.GetTextures(nativeStorageResult.TextureList);
-  //     }
-
-  //     nativeStorageResult.sdp = DataUtil.GetObjectPtr(T3Gv.opt.sdDataBlockId, false);
-  //     nativeStorageResult.tLMB = DataUtil.GetObjectPtr(T3Gv.opt.layersManagerBlockId, false);
-  //     nativeStorageResult.ctp = T3Gv.opt.header;
-
-  //     if (this.InitialGroupBounds.x > 0 || this.InitialGroupBounds.y > 0) {
-  //       nativeStorageResult.GroupOffset.x = this.Frame.x + writeOptions.GroupOffset.x;
-  //       nativeStorageResult.GroupOffset.y = this.Frame.y + writeOptions.GroupOffset.y;
-  //     } else {
-  //       nativeStorageResult.GroupOffset.x = writeOptions.GroupOffset.x;
-  //       nativeStorageResult.GroupOffset.y = writeOptions.GroupOffset.y;
-  //     }
-
-  //     nativeStorageResult.WriteGroupBlock = writeOptions.WriteGroupBlock;
-  //     nativeStorageResult.WriteWin32 = writeOptions.WriteWin32;
-
-  //     T3Gv.docUtil.svgDoc.GetWorkArea();
-  //     nativeStorageResult.docDpi = T3Gv.docUtil.svgDoc.docInfo.docDpi;
-
-  //     buffer = ShapeUtil.WriteBuffer(nativeStorageResult, true, true, true);
-  //     codeLength = ShapeUtil.WriteCode(outputStream, DSConstant.OpNameCode.cNativeStorage);
-  //     DSUtil.writeNativeBuffer(outputStream, buffer);
-  //     ShapeUtil.WriteLength(outputStream, codeLength);
-  //   }
-
-  //   T3Util.Log("S.GroupSymbol - WriteShapeData output executed");
-  // }
-
   DeleteObject() {
     T3Util.Log("S.GroupSymbol - DeleteObject input: none");
     const shapesInGroup = this.ShapesInGroup;
@@ -831,18 +768,6 @@ class GroupSymbol extends BaseSymbol {
     let hookObject = null;
     let tempHookElement = null;
     let hooksBackup = [];
-
-    // // Delete Table object if exists
-    // if (this.TableID !== -1) {
-    //   let tablePointer = DataUtil.GetObjectPtr(this.TableID, true);
-    //   if (tablePointer) {
-    //     T3Gv.opt.Table_DeleteObject(tablePointer);
-    //   }
-    //   currentObject = T3Gv.stdObj.GetObject(this.TableID);
-    //   if (currentObject) {
-    //     currentObject.Delete();
-    //   }
-    // }
 
     // Delete Data object if exists
     if (this.DataID !== -1) {
@@ -909,11 +834,6 @@ class GroupSymbol extends BaseSymbol {
         this.hooks = hooksBackup;
       }
     }
-
-    // // Delete Comment object if exists
-    // if (this.CommentID >= 0) {
-    //   T3Gv.opt.CommentObjectDelete(this);
-    // }
 
     T3Util.Log("S.GroupSymbol - BaseDrawObjectDeleteObject output: executed");
   }

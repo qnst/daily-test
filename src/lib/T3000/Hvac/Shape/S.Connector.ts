@@ -4752,195 +4752,6 @@ class Connector extends BaseDrawObject {
     return hookPoints;
   }
 
-  // WriteShapeData(outputStream, context) {
-  //   T3Util.Log("S.Connector: WriteShapeData called with", { outputStream, context });
-
-  //   return;
-
-  //   // Rename parameters and variables for readability
-  //   const styles = OptConstant.AStyles;
-  //   const connectorDefines = OptConstant.ConnectorDefines;
-
-  //   let hookArrayLength = this.arraylist.hook.length;
-  //   let skipCount = connectorDefines.SEDA_NSkip;
-  //   let numberOfShapes = hookArrayLength - skipCount;
-  //   if (numberOfShapes < 0) {
-  //     numberOfShapes = 0;
-  //   }
-
-  //   let linearStyle = this.arraylist.styleflags & styles.SEDA_Linear;
-  //   let styleFlags = this.arraylist.styleflags;
-  //   let reverseColumnApplied = false;
-
-  //   // Remove reverse column flag if necessary when vertical is true
-  //   if (styleFlags & styles.SEDA_ReverseCol && this.vertical) {
-  //     styleFlags = Utils2.SetFlag(styleFlags, styles.SEDA_ReverseCol, false);
-  //     reverseColumnApplied = true;
-  //   }
-
-  //   // Determine the instance ID based on the context
-  //   let instanceID = context.WriteBlocks ? this.BlockID : context.arrayid++;
-  //   let profileRect = Utils2.CRect2Rect(this.arraylist.profile, this.vertical);
-
-  //   let structToWrite;
-  //   if (context.WriteWin32) {
-  //     structToWrite = {
-  //       InstID: instanceID,
-  //       styleflags: this.arraylist.styleflags,
-  //       tilt: this.arraylist.tilt,
-  //       ht: 0,
-  //       wd: 0,
-  //       nshapes: numberOfShapes,
-  //       nlines: hookArrayLength,
-  //       lht: ShapeUtil.ToSDWinCoords(this.arraylist.ht, context.coordScaleFactor),
-  //       lwd: ShapeUtil.ToSDWinCoords(this.arraylist.wd, context.coordScaleFactor),
-  //       profile: {
-  //         x: profileRect.x,
-  //         y: profileRect.y,
-  //         width: profileRect.width,
-  //         height: profileRect.height
-  //       },
-  //       angle: this.arraylist.angle
-  //     };
-  //     outputStream.writeStruct(DSConstant.ArrayStruct, structToWrite);
-  //   } else {
-  //     structToWrite = {
-  //       InstID: instanceID,
-  //       styleflags: this.arraylist.styleflags,
-  //       tilt: this.arraylist.tilt,
-  //       nshapes: numberOfShapes,
-  //       nlines: hookArrayLength,
-  //       lht: ShapeUtil.ToSDWinCoords(this.arraylist.ht, context.coordScaleFactor),
-  //       lwd: ShapeUtil.ToSDWinCoords(this.arraylist.wd, context.coordScaleFactor),
-  //       angle: this.arraylist.angle,
-  //       curveparam: this.arraylist.curveparam
-  //     };
-  //     outputStream.writeStruct(DSConstant.ArrayStruct34, structToWrite);
-  //   }
-
-  //   let drawArrayCode = ShapeUtil.WriteCode(outputStream, DSConstant.OpNameCode.cDrawArray);
-  //   ShapeUtil.WriteLength(outputStream, drawArrayCode);
-
-  //   // Compute the offset for hook rectangles relative to the frame
-  //   let offsetPoint = new Point(
-  //     this.StartPoint.x - this.Frame.x,
-  //     this.StartPoint.y - this.Frame.y
-  //   );
-  //   // For vertical connectors, set horizontal offset to 0; otherwise, vertical offset is 0
-  //   if (this.vertical) {
-  //     offsetPoint.x = 0;
-  //   } else {
-  //     offsetPoint.y = 0;
-  //   }
-
-  //   // Temporary object to hold hook rectangle dimensions
-  //   let hookRect = {};
-
-  //   // Loop over each hook in the arraylist
-  //   for (let hookIndex = 0; hookIndex < hookArrayLength; hookIndex++) {
-  //     let currentHook = this.arraylist.hook[hookIndex];
-
-  //     // Calculate horizontal dimensions of the hook rectangle
-  //     if (currentHook.startpoint.h < currentHook.endpoint.h) {
-  //       hookRect.h = currentHook.startpoint.h;
-  //       hookRect.hdist = currentHook.endpoint.h - currentHook.startpoint.h;
-  //     } else {
-  //       hookRect.h = currentHook.endpoint.h;
-  //       hookRect.hdist = currentHook.startpoint.h - currentHook.endpoint.h;
-  //     }
-
-  //     // Calculate vertical dimensions of the hook rectangle
-  //     if (currentHook.startpoint.v < currentHook.endpoint.v) {
-  //       hookRect.v = currentHook.startpoint.v;
-  //       hookRect.vdist = currentHook.endpoint.v - currentHook.startpoint.v;
-  //     } else {
-  //       hookRect.v = currentHook.endpoint.v;
-  //       hookRect.vdist = currentHook.startpoint.v - currentHook.endpoint.v;
-  //     }
-
-  //     let convertedRect = Utils2.CRect2Rect(hookRect, this.vertical);
-  //     let winRect = ShapeUtil.ToSDWinRect(convertedRect, context.coordScaleFactor, offsetPoint);
-  //     let gapValue = currentHook.gap;
-
-  //     // Adjust gap for reverse column if flag was applied above
-  //     if (reverseColumnApplied) {
-  //       if (hookIndex === connectorDefines.A_Cl) {
-  //         gapValue = 0;
-  //       } else if (hookIndex === connectorDefines.A_Cr) {
-  //         gapValue = this.arraylist.hook[connectorDefines.A_Cl].gap;
-  //       }
-  //     }
-
-  //     let drawArrayHookCode = ShapeUtil.WriteCode(outputStream, DSConstant.OpNameCode.cDrawArrayHook);
-
-  //     // Write hook structure based on output context type
-  //     if (context.WriteWin32) {
-  //       let hookStruct = {
-  //         liner: { left: 0, top: 0, right: 0, bottom: 0 },
-  //         uniqueid: ShapeUtil.BlockIDtoUniqueID(currentHook.id, context),
-  //         index: 0,
-  //         gap: 0,
-  //         extra: ShapeUtil.ToSDWinCoords(currentHook.extra, context.coordScaleFactor),
-  //         lliner: {
-  //           left: winRect.left,
-  //           top: winRect.top,
-  //           right: winRect.right,
-  //           bottom: winRect.bottom
-  //         },
-  //         lgap: ShapeUtil.ToSDWinCoords(gapValue, context.coordScaleFactor)
-  //       };
-  //       outputStream.writeStruct(DSConstant.ArrayHookStruct38, hookStruct);
-  //     } else {
-  //       let hookStruct = {
-  //         uniqueid: ShapeUtil.BlockIDtoUniqueID(currentHook.id, context),
-  //         extra: ShapeUtil.ToSDWinCoords(currentHook.extra, context.coordScaleFactor),
-  //         lliner: {
-  //           left: winRect.left,
-  //           top: winRect.top,
-  //           right: winRect.right,
-  //           bottom: winRect.bottom
-  //         },
-  //         lgap: ShapeUtil.ToSDWinCoords(gapValue, context.coordScaleFactor)
-  //       };
-  //       outputStream.writeStruct(DSConstant.ArrayHookStruct50, hookStruct);
-  //     }
-
-  //     ShapeUtil.WriteLength(outputStream, drawArrayHookCode);
-
-  //     // Determine which hook to use for text association
-  //     let hookForText = (linearStyle && hookIndex >= skipCount)
-  //       ? (hookIndex < hookArrayLength - 1 ? this.arraylist.hook[hookIndex + 1] : null)
-  //       : currentHook;
-
-  //     if (hookForText && hookForText.textid >= 0) {
-  //       let textStruct;
-  //       if (context.WriteBlocks || context.WriteGroupBlock) {
-  //         textStruct = {
-  //           tindex: 0,
-  //           tuniqueid: hookForText.textid
-  //         };
-  //       } else {
-  //         textStruct = {
-  //           tindex: 0,
-  //           tuniqueid: ShapeUtil.BlockIDtoUniqueID(-hookForText.textid, context)
-  //         };
-  //       }
-  //       let textCode = ShapeUtil.WriteCode(outputStream, DSConstant.OpNameCode.cDrawArrayText);
-  //       outputStream.writeStruct(DSConstant.ArrayHookTextStruct, textStruct);
-  //       ShapeUtil.WriteLength(outputStream, textCode);
-  //     }
-  //   }
-
-  //   outputStream.writeUint16(DSConstant.OpNameCode.cDrawArrayEnd);
-
-  //   // Adjust text flags based on text direction
-  //   this.TextFlags = Utils2.SetFlag(this.TextFlags, NvConstant.TextFlags.HorizText, !this.TextDirection);
-  //   ShapeUtil.WriteTextParams(outputStream, this, -1, context);
-  //   ShapeUtil.WriteArrowheads(outputStream, context, this);
-
-  //   T3Util.Log("S.Connector: WriteShapeData completed", { instanceID, numberOfShapes });
-  // }
-
   GetTextIDs() {
     T3Util.Log("S.Connector: GetTextIDs called");
 
@@ -5913,15 +5724,6 @@ class Connector extends BaseDrawObject {
     let swimlaneHeight = 0;
     let gapAdjustment = 0;
 
-    // // Determine swimlane adjustment if applicable
-    // if (session.moreflags & NvConstant.SessionMoreFlags.SEDSM_Swimlane_Rows && this.vertical && !skipAdjustment) {
-    //   isSwimlaneAdjust = true;
-    //   swimlaneHeight = 75;
-    // } else if (session.moreflags & NvConstant.SessionMoreFlags.SwimlaneCols && !this.vertical && !skipAdjustment) {
-    //   isSwimlaneAdjust = true;
-    //   swimlaneHeight = 150;
-    // }
-
     // Check for left/right adjustments based on the first hook
     if (
       numHooks >= minHooks &&
@@ -6402,10 +6204,10 @@ class Connector extends BaseDrawObject {
     let resultSteps: StepRect[] = [];
 
     const styles = OptConstant.AStyles;
-    const isStartLeft = Boolean(this.arraylist.styleflags & styles.SEDA_StartLeft);
-    const isBothSides = Boolean(this.arraylist.styleflags & styles.SEDA_BothSides);
+    const isStartLeft = Boolean(this.arraylist.styleflags & styles.StartLeft);
+    const isBothSides = Boolean(this.arraylist.styleflags & styles.BothSides);
     // The reverse column flag is read here but not used:
-    this.arraylist.styleflags, styles.SEDA_ReverseCol;
+    this.arraylist.styleflags, styles.ReverseCol;
 
     const totalHooks = this.arraylist.hook.length;
     const hookSkipCount = OptConstant.ConnectorDefines.NSkip;

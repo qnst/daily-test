@@ -725,10 +725,6 @@ class Line extends BaseLine {
     Utils3.RotatePointsAboutCenter(this.Frame, -radians, newPoints);
 
     if (Math.abs(newPoints[1].y - newPoints[2].y) <= this.StyleRecord.Line.Thickness) {
-      // if (Collab.AllowMessage()) {
-      //   Collab.BeginSecondaryEdit();
-      //   const message = { BlockID: this.BlockID, point: { x: point.x, y: point.y } };
-      // }
 
       newPoints[2].y = newPoints[0].y;
       if (Math.abs(newPoints[1].x - newPoints[2].x) > Math.abs(newPoints[0].x - newPoints[2].x)) {
@@ -789,17 +785,6 @@ class Line extends BaseLine {
 
       joinedObject.UpdateDimensionFromText(joinedElement, dimensionText, { segment: 2 });
       DataUtil.AddToDirtyList(this.BlockID);
-
-      // Collab.ClearCreateList();
-      // Collab.AddToCreateList(joinID);
-
-      // if (Collab.AllowMessage()) {
-      //   if (Collab.IsSecondary() && Collab.CreateList.length) {
-      //     message.CreateList = [joinID];
-      //   }
-      //   Collab.BuildMessage(NvConstant.CollabMessages.AddCorner, message, false);
-      // }
-
       DrawUtil.CompleteOperation(null);
     }
 

@@ -5044,14 +5044,6 @@ class BaseDrawObject {
     T3Util.Log("= S.BaseDrawObject: SetBackgroundImageURL - Output: Completed");
   }
 
-  // WriteShapeData(outputStream: any, options: any) {
-  //   T3Util.Log("= S.BaseDrawObject: WriteShapeData - Input:", { outputStream, options });
-
-  //   // TODO: Add your implementation logic here
-
-  //   T3Util.Log("= S.BaseDrawObject: WriteShapeData - Output: Completed");
-  // }
-
   CalcTextPosition(inputPosition: any): any {
     T3Util.Log("= S.BaseDrawObject: CalcTextPosition - Input:", inputPosition);
 

@@ -268,23 +268,6 @@ class ShapeContainer extends Rect {
     let numDown = containerList.ndown;
     let numAcross = containerList.nacross;
 
-    // // Adjust grid dimensions if container is in cell and in sparse mode
-    // if (isContainerInCell && isSparse) {
-    //   let heightDifference = containerFrame.height - containerList.height;
-    //   let additionalRows = Math.floor(heightDifference / containerList.childheight);
-    //   if (additionalRows < 0) {
-    //     additionalRows = 0;
-    //   }
-    //   numDown += additionalRows;
-
-    //   let widthDifference = containerFrame.width - containerList.width;
-    //   let additionalCols = Math.floor(widthDifference / containerList.childwidth);
-    //   if (additionalCols < 0) {
-    //     additionalCols = 0;
-    //   }
-    //   numAcross += additionalCols;
-    // }
-
     // Process for sparse container list
     if (isSparse) {
       for (let row = 0; row <= numDown; row++) {
@@ -420,18 +403,6 @@ class ShapeContainer extends Rect {
       }
       return maxWidth + 2 * containerList.HorizontalSpacing;
     };
-
-    // if (!target) {
-    //   const ctrlKey = event.gesture.srcEvent.ctrlKey;
-    //   const shiftKey = event.gesture.srcEvent.shiftKey;
-    //   // const containerInCell = T3Gv.opt.ContainerIsInCell(this);
-    //   // if (containerInCell && (shiftKey || ctrlKey)) {
-    //   //   T3Util.Log("= S.ShapeContainer DoubleClick - Detected container in cell with modifier keys.");
-    //   //   T3Gv.opt.Table_SetupAction(event, containerInCell.obj.BlockID, OptConstant.Common.TableCellHit, null);
-    //   //   T3Util.Log("= S.ShapeContainer DoubleClick - Output: action triggered via Table_SetupAction");
-    //   //   return;
-    //   // }
-    // }
 
     if (isSparse) {
       if (target) {
@@ -1032,12 +1003,6 @@ class ShapeContainer extends Rect {
 
       return { start: currentIndex, rowht: finalRowHeight, left: runningX };
     };
-
-    // // Check if container is in a table cell
-    // const containerInCell = T3Gv.opt.ContainerIsInCell(this);
-    // if (containerInCell) {
-    //   parentCellDimensions = { width: this.trect.width, height: this.trect.height };
-    // }
 
     // Get container frame information
     const containerFrameData = this.PrGetContainerFrame();

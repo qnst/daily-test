@@ -909,26 +909,17 @@ class PolyLineContainer extends PolyLine {
 
     switch (editMode) {
       case NvConstant.EditState.Default:
-        // const activeTableID = T3Gv.opt.Table_GetActiveID();
-        // const table = this.GetTable(false);
 
-        // if (table && (isOneClick || this.BlockID === activeTableID)) {
-        //   T3Gv.opt.Table_SetCursors(svgElement, this, table, false);
-        // } else
-        {
-          // if (table) {
-          //   T3Gv.opt.Table_SetCursors(svgElement, this, table, true);
-          // }
-          this.BaseDrawingObjectSetCursors();
+        this.BaseDrawingObjectSetCursors();
 
-          if (isOneClick) {
-            const shapeElement = svgElement.GetElementById(OptConstant.SVGElementClass.Shape);
-            if (shapeElement) {
-              shapeElement.SetCursor(CursorConstant.CursorType.Text);
-            }
-            const slopElement = svgElement.GetElementById(OptConstant.SVGElementClass.Slop);
+        if (isOneClick) {
+          const shapeElement = svgElement.GetElementById(OptConstant.SVGElementClass.Shape);
+          if (shapeElement) {
+            shapeElement.SetCursor(CursorConstant.CursorType.Text);
           }
+          const slopElement = svgElement.GetElementById(OptConstant.SVGElementClass.Slop);
         }
+
         break;
 
       case NvConstant.EditState.FormatPaint:
